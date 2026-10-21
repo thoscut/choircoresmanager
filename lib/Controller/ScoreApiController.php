@@ -198,9 +198,6 @@ class ScoreApiController extends OCSController {
 		$score = $this->callService(fn () => $this->scoreService->getScoreById($id));
 		$params = $this->request->getParams();
 
-		// drop NC-added "_route" param if exists
-		unset($params['_route']);
-
 		// Handle score book info separately
 		$scoreBookInfo = null;
 		$hasScoreBook = array_key_exists('scoreBook', $params);
@@ -222,16 +219,32 @@ class ScoreApiController extends OCSController {
 			}
 		}
 
-		// Remove score book param from regular field updates
-		unset($params['scoreBook']);
-		/** @var string $field
-		 * @psalm-suppress MixedAssignment
-		 * @psalm-suppress MixedArgumentTypeCoercion
-		 */
-		foreach ($params as $field => $value) {
-			if ($field === 'tagIds') {
+		if (array_key_exists('title', $params) && ($title === null || trim($title) === '')) {
+			throw new OCSBadRequestException('Title cannot be empty');
+		}
+
+		// Only these fields may be changed. Values come from the typed method arguments,
+		// presence in the request decides whether a field is updated (so fields can be set to null).
+		$updatableFields = [
+			'title' => $title,
+			'titleShort' => $titleShort,
+			'composer' => $composer,
+			'arranger' => $arranger,
+			'publisher' => $publisher,
+			'year' => $year,
+			'difficulty' => $difficulty,
+			'medleyContents' => $medleyContents,
+			'defects' => $defects,
+			'physicalCopiesStatus' => $physicalCopiesStatus,
+			'digitalStatus' => $digitalStatus,
+			'gemaIds' => $gemaIds,
+			'duration' => $duration,
+		];
+		/** @psalm-suppress MixedAssignment */
+		foreach ($updatableFields as $field => $value) {
+			if (!array_key_exists($field, $params)) {
 				continue;
-			} // handled separately in service
+			}
 			$score->{'set' . ucfirst($field)}($value);
 		}
 

@@ -163,6 +163,46 @@ final class ScoreApiControllerTest extends TestCase {
 		$this->controller->postScore(title: 'Test');
 	}
 
+	public function testPatchScoreIgnoresFieldsOutsideWhitelist(): void {
+		$score = new Score();
+		$score->setId(1);
+		$score->setTitle('Original Title');
+		$score->resetUpdatedFields();
+
+		$this->scoreService->method('getScoreById')->willReturn($score);
+		$this->request->method('getParams')->willReturn([
+			'id' => 1,
+			'composer' => 'Bach',
+			'tags' => [['id' => 5]],
+			'scoreBook' => null,
+			'unknownField' => 'x',
+		]);
+
+		$this->scoreService->expects($this->once())
+			->method('updateScore')
+			->with($this->callback(function (Score $s): bool {
+				return $s->getComposer() === 'Bach'
+					&& $s->getTitle() === 'Original Title'
+					&& array_keys($s->getUpdatedFields()) === ['composer'];
+			}))
+			->willReturn($score);
+
+		$this->controller->patchScore(id: 1, composer: 'Bach', scoreBook: null);
+	}
+
+	public function testPatchScoreRejectsEmptyTitle(): void {
+		$score = new Score();
+		$score->setId(1);
+
+		$this->scoreService->method('getScoreById')->willReturn($score);
+		$this->request->method('getParams')->willReturn(['id' => 1, 'title' => ' ']);
+		$this->scoreService->expects($this->never())->method('updateScore');
+
+		$this->expectException(OCSBadRequestException::class);
+
+		$this->controller->patchScore(id: 1, title: ' ');
+	}
+
 	public function testPatchScoreUpdatesExistingScore(): void {
 		$score = new Score();
 		$score->setId(1);
