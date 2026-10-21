@@ -4,6 +4,7 @@
 			<template v-if="score.musicxmlFile">
 				<span class="musicxml-tab__file-name" :title="score.musicxmlFile">{{ score.musicxmlFile }}</span>
 				<NcButton
+					v-if="canAccessFile"
 					variant="tertiary"
 					:aria-label="t('Download MusicXML')"
 					:title="t('Download MusicXML')"
@@ -42,12 +43,18 @@
 			</NcButton>
 		</div>
 
-		<NcNoteCard v-if="score.musicxmlFile && score.rightsStatus === 'free'" type="info">
-			{{ t('This score is marked as free, so it is shown on the public page if that page is enabled.') }}
+		<NcNoteCard v-if="score.musicxmlFile && isPublic(score)" type="info">
+			{{ t('This score is released for publication and its rights allow it, so it is shown on the public page if that page is enabled.') }}
+		</NcNoteCard>
+
+		<NcNoteCard v-if="score.musicxmlFile && score.publicationStatus === 'internal_copy'" type="warning">
+			{{ editable
+				? t('This score is an internal preservation copy. Only editors can view and play it.')
+				: t('This score is an internal preservation copy. It can only be viewed by the music librarians.') }}
 		</NcNoteCard>
 
 		<MusicXmlPlayer
-			v-if="score.musicxmlFile"
+			v-if="score.musicxmlFile && canAccessFile"
 			:key="`${score.id}-${score.musicxmlFile}-${uploadCount}`"
 			:loadFile="loadFile" />
 	</div>
@@ -57,7 +64,7 @@
 import type { Score } from '@/api/generated/openapi/data-contracts'
 
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
@@ -67,6 +74,7 @@ import { useScoreSidebarStore } from '@/stores/scoreSidebarStore'
 import { useScoresStore } from '@/stores/scoresStore'
 import { tryShowError } from '@/utils/errorHandling'
 import { t } from '@/utils/l10n'
+import { isPublic } from '@/utils/rightsStatus'
 
 interface Props {
 	score: Score
@@ -83,6 +91,11 @@ const busy = ref(false)
 const uploadCount = ref(0)
 
 const MAX_SIZE = 20 * 1024 * 1024
+
+/**
+ * Internal preservation copies are only shown to editors, the server enforces the same rule
+ */
+const canAccessFile = computed(() => props.editable || props.score.publicationStatus !== 'internal_copy')
 
 /**
  * Load the score's MusicXML file for the player

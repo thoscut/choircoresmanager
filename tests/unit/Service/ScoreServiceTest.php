@@ -280,15 +280,40 @@ final class ScoreServiceTest extends TestCase {
 		$this->service->createScore($score);
 	}
 
-	public function testUpdateScoreAcceptsFreeRightsStatus(): void {
+	public function testCreateScoreRejectsOldRightsStatus(): void {
+		$score = new Score();
+		$score->setTitle('Test Score');
+		$score->setRightsStatus('free');
+
+		$this->scoreMapper->expects($this->never())->method('insert');
+
+		$this->expectException(\InvalidArgumentException::class);
+		$this->service->createScore($score);
+	}
+
+	public function testCreateScoreRejectsInvalidPublicationStatus(): void {
+		$score = new Score();
+		$score->setTitle('Test Score');
+		$score->setPublicationStatus('public');
+
+		$this->scoreMapper->expects($this->never())->method('insert');
+
+		$this->expectException(\InvalidArgumentException::class);
+		$this->service->createScore($score);
+	}
+
+	public function testUpdateScoreAcceptsRightsAndPublicationStatus(): void {
 		$score = new Score();
 		$score->setId(1);
-		$score->setRightsStatus('free');
+		$score->setRightsStatus('public_domain');
+		$score->setPublicationStatus('internal_copy');
 
 		$this->scoreMapper->expects($this->once())->method('update')->with($score);
 		$this->scoreMapper->method('find')->willReturn($score);
 
-		$this->assertSame('free', $this->service->updateScore($score)->getRightsStatus());
+		$updated = $this->service->updateScore($score);
+		$this->assertSame('public_domain', $updated->getRightsStatus());
+		$this->assertSame('internal_copy', $updated->getPublicationStatus());
 	}
 
 	public function testCreateScoreWithTags(): void {

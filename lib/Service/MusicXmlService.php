@@ -42,6 +42,7 @@ class MusicXmlService {
 		private readonly ScoreMapper $scoreMapper,
 		private readonly AuthorizationService $authorizationService,
 		private readonly ScorePolicy $scorePolicy,
+		private readonly PermissionService $permissionService,
 		private IL10N $l,
 	) {
 	}
@@ -120,6 +121,8 @@ class MusicXmlService {
 	/**
 	 * Get the MusicXML file of a score for an authenticated user.
 	 *
+	 * Files of internal preservation copies are only served to editors.
+	 *
 	 * @param int $scoreId
 	 * @return array{content: string, mimeType: string, fileName: string}
 	 * @throws \InvalidArgumentException if the score or file does not exist
@@ -127,7 +130,11 @@ class MusicXmlService {
 	 */
 	public function getForScore(int $scoreId): array {
 		$this->authorizationService->authorizePolicy($this->scorePolicy, PolicyInterface::ACTION_READ);
-		return $this->readFile($this->findScore($scoreId));
+		$score = $this->findScore($scoreId);
+		if (!$this->permissionService->canAccessFiles($score)) {
+			throw new Exceptions\PermissionDeniedException($this->l->t('This score is an internal preservation copy'));
+		}
+		return $this->readFile($score);
 	}
 
 	/**

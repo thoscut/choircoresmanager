@@ -90,7 +90,9 @@ export interface Score {
   gemaIds: string[] | null;
   /** @format int64 */
   duration: number | null;
-  rightsStatus: "free" | "unclear" | "restricted";
+  rightsStatus: "public_domain" | "licensed" | "protected" | "open";
+  publicationStatus: "free" | "to_clarify" | "blocked" | "internal_copy";
+  publicationBlockedUntil: string | null;
   rightsNote: string | null;
   musicxmlFile: string | null;
   tags: string[] | null;
@@ -166,7 +168,9 @@ export interface ScoreIndexed {
   gemaIds: string[] | null;
   /** @format int64 */
   duration: number | null;
-  rightsStatus: "free" | "unclear" | "restricted";
+  rightsStatus: "public_domain" | "licensed" | "protected" | "open";
+  publicationStatus: "free" | "to_clarify" | "blocked" | "internal_copy";
+  publicationBlockedUntil: string | null;
   rightsNote: string | null;
   musicxmlFile: string | null;
   tags: string[] | null;
@@ -528,10 +532,25 @@ export interface ScoreApiPostScorePayload {
    */
   duration?: number | null;
   /**
-   * The publication rights status of the score
+   * The copyright status of the score
    * @default null
    */
-  rightsStatus?: "free" | "unclear" | "restricted" | null;
+  rightsStatus?: "public_domain" | "licensed" | "protected" | "open" | null;
+  /**
+   * Whether the score may be published
+   * @default null
+   */
+  publicationStatus?:
+    | "free"
+    | "to_clarify"
+    | "blocked"
+    | "internal_copy"
+    | null;
+  /**
+   * Date until which publication is blocked (Y-m-d format)
+   * @default null
+   */
+  publicationBlockedUntil?: string | null;
   /**
    * A note explaining the rights status
    * @default null
@@ -631,10 +650,25 @@ export interface ScoreApiPatchScorePayload {
    */
   duration?: number | null;
   /**
-   * The publication rights status of the score
+   * The copyright status of the score
    * @default null
    */
-  rightsStatus?: "free" | "unclear" | "restricted" | null;
+  rightsStatus?: "public_domain" | "licensed" | "protected" | "open" | null;
+  /**
+   * Whether the score may be published
+   * @default null
+   */
+  publicationStatus?:
+    | "free"
+    | "to_clarify"
+    | "blocked"
+    | "internal_copy"
+    | null;
+  /**
+   * Date until which publication is blocked (Y-m-d format)
+   * @default null
+   */
+  publicationBlockedUntil?: string | null;
   /**
    * A note explaining the rights status
    * @default null

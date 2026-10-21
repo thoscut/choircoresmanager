@@ -11,6 +11,7 @@ use OCA\OrchestraScoresManager\Policy\ScorePolicy;
 use OCA\OrchestraScoresManager\Service\AuthorizationService;
 use OCA\OrchestraScoresManager\Service\Exceptions\PermissionDeniedException;
 use OCA\OrchestraScoresManager\Service\MusicXmlService;
+use OCA\OrchestraScoresManager\Service\PermissionService;
 use OCP\Files\IAppData;
 use OCP\Files\NotFoundException;
 use OCP\Files\SimpleFS\ISimpleFile;
@@ -32,6 +33,7 @@ final class MusicXmlServiceTest extends TestCase {
 	private ScoreMapper $scoreMapper;
 	private AuthorizationService $authorizationService;
 	private ScorePolicy $scorePolicy;
+	private PermissionService $permissionService;
 	private MusicXmlService $service;
 	/** @var list<string> */
 	private array $tmpFiles = [];
@@ -45,6 +47,7 @@ final class MusicXmlServiceTest extends TestCase {
 		$this->scoreMapper = $this->createMock(ScoreMapper::class);
 		$this->authorizationService = $this->createMock(AuthorizationService::class);
 		$this->scorePolicy = $this->createMock(ScorePolicy::class);
+		$this->permissionService = $this->createMock(PermissionService::class);
 		$l10n = $this->createMock(IL10N::class);
 		$l10n->method('t')->willReturnCallback(fn ($text, $params = []) => vsprintf($text, $params));
 
@@ -53,6 +56,7 @@ final class MusicXmlServiceTest extends TestCase {
 			$this->scoreMapper,
 			$this->authorizationService,
 			$this->scorePolicy,
+			$this->permissionService,
 			$l10n,
 		);
 	}
@@ -267,5 +271,19 @@ final class MusicXmlServiceTest extends TestCase {
 
 		$this->expectException(PermissionDeniedException::class);
 		$this->service->getForScore(1);
+	}
+
+	public function testGetForScoreRefusesFilesWithoutFileAccess(): void {
+		$score = $this->createScore(6, 'copy.musicxml');
+		$score->setPublicationStatus('internal_copy');
+		$this->scoreMapper->method('find')->willReturn($score);
+		$this->permissionService->expects($this->once())
+			->method('canAccessFiles')
+			->with($score)
+			->willReturn(false);
+		$this->folder->expects($this->never())->method('getFile');
+
+		$this->expectException(PermissionDeniedException::class);
+		$this->service->getForScore(6);
 	}
 }

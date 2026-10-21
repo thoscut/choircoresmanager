@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2026-10-21 20:59+0000\n"
+"POT-Creation-Date: 2026-10-21 23:37+0000\n"
 "PO-Revision-Date: 2025-11-28 22:37+0000\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -18,10 +18,10 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "No file uploaded"
-msgstr ""
+msgstr "Keine Datei hochgeladen"
 
 msgid "Public scores"
-msgstr ""
+msgstr "Öffentliche Noten"
 
 msgid "Insufficient permissions"
 msgstr "Unzureichende Berechtigungen"
@@ -101,32 +101,35 @@ msgid "New version must start at least one day after the current version"
 msgstr "Neue Version muss mindestens einen Tag nach der aktuellen Version beginnen"
 
 msgid "Only MusicXML files (.musicxml, .xml, .mxl) are allowed"
-msgstr ""
+msgstr "Nur MusicXML-Dateien (.musicxml, .xml, .mxl) sind erlaubt"
 
 msgid "The uploaded file is empty"
-msgstr ""
+msgstr "Die hochgeladene Datei ist leer"
 
 #, php-format
 msgid "The uploaded file is too large (maximum %d MB)"
-msgstr ""
+msgstr "Die hochgeladene Datei ist zu groß (höchstens %d MB)"
 
 msgid "The uploaded file could not be read"
-msgstr ""
+msgstr "Die hochgeladene Datei konnte nicht gelesen werden"
+
+msgid "This score is an internal preservation copy"
+msgstr "Diese Partitur ist eine interne Erhaltungskopie"
 
 msgid "No MusicXML file available for this score"
-msgstr ""
+msgstr "Für diese Partitur gibt es keine MusicXML-Datei"
 
 msgid "The uploaded file is not a valid MusicXML file"
-msgstr ""
+msgstr "Die hochgeladene Datei ist keine gültige MusicXML-Datei"
 
 msgid "MusicXML files with entity declarations are not supported"
-msgstr ""
+msgstr "MusicXML-Dateien mit Entity-Deklarationen werden nicht unterstützt"
 
 msgid "The uploaded file is not a valid compressed MusicXML file"
-msgstr ""
+msgstr "Die hochgeladene Datei ist keine gültige komprimierte MusicXML-Datei"
 
 msgid "The uploaded file is too large when uncompressed"
-msgstr ""
+msgstr "Die hochgeladene Datei ist entpackt zu groß"
 
 msgid "Cannot delete score book with linked scores. Remove all scores first."
 msgstr "Notenbuch mit verknüpften Partituren kann nicht gelöscht werden. Entfernen Sie zuerst alle Partituren."
@@ -175,8 +178,11 @@ msgstr "Partitur kann nicht gelöscht werden, da sie Teil einer Ordnersammlung i
 msgid "Score is already part of another score book. Remove it first."
 msgstr "Partitur ist bereits Teil eines anderen Notenbuchs. Entfernen Sie sie zuerst."
 
-msgid "Invalid rights status. Must be \"free\", \"unclear\" or \"restricted\"."
-msgstr ""
+msgid "Invalid rights status. Must be \"public_domain\", \"licensed\", \"protected\" or \"open\"."
+msgstr "Ungültiger Rechtestatus. Erlaubt sind \"public_domain\", \"licensed\", \"protected\" und \"open\"."
+
+msgid "Invalid publication status. Must be \"free\", \"to_clarify\", \"blocked\" or \"internal_copy\"."
+msgstr "Ungültiger Veröffentlichungsstatus. Erlaubt sind \"free\", \"to_clarify\", \"blocked\" und \"internal_copy\"."
 
 msgid "Setlist entry not found"
 msgstr "Setlist-Eintrag nicht gefunden"
@@ -259,19 +265,19 @@ msgid "Allowed Groups"
 msgstr "Erlaubte Gruppen"
 
 msgid "Select groups…"
-msgstr ""
+msgstr "Gruppen auswählen …"
 
 msgid "Public page"
-msgstr ""
+msgstr "Öffentliche Seite"
 
-msgid "Show all scores marked as free (public domain) on a page that can be opened without logging in. Visitors can view and play the MusicXML files of these scores. No other scores or internal details are shown."
-msgstr ""
+msgid "Show all scores that are released for publication and whose rights allow it (public domain or licensed) on a page that can be opened without logging in. Visitors can view and play the MusicXML files of these scores. No other scores or internal details are shown."
+msgstr "Zeigt alle Partituren, die zur Veröffentlichung freigegeben sind und deren Rechte das erlauben (gemeinfrei oder lizenziert), auf einer Seite, die ohne Anmeldung aufgerufen werden kann. Besucher können die MusicXML-Dateien dieser Partituren ansehen und abspielen. Andere Partituren und interne Angaben werden nicht gezeigt."
 
 msgid "Enable public page"
-msgstr ""
+msgstr "Öffentliche Seite aktivieren"
 
 msgid "Public address:"
-msgstr ""
+msgstr "Öffentliche Adresse:"
 
 msgid "Invalid default moderation time format. Use (HH:)MM:SS"
 msgstr "Ungültiges Format für Standard-Moderationszeit. Verwenden Sie (HH:)MM:SS"
@@ -298,7 +304,7 @@ msgid "Select folder collection"
 msgstr "Ordnersammlung auswählen"
 
 msgid "Saving …"
-msgstr ""
+msgstr "Wird gespeichert …"
 
 msgid "Save"
 msgstr "Speichern"
@@ -346,7 +352,7 @@ msgid "Confirm"
 msgstr "Bestätigen"
 
 msgid "Loading…"
-msgstr ""
+msgstr "Wird geladen …"
 
 msgid "An error occurred"
 msgstr "Ein Fehler ist aufgetreten"
@@ -373,40 +379,40 @@ msgid "Export CSV"
 msgstr "CSV exportieren"
 
 msgid "The score could not be loaded"
-msgstr ""
+msgstr "Die Partitur konnte nicht geladen werden"
 
 msgid "Pause"
-msgstr ""
+msgstr "Pause"
 
 msgid "Play"
-msgstr ""
+msgstr "Abspielen"
 
 msgid "Stop"
-msgstr ""
+msgstr "Stopp"
 
 msgid "Tempo"
-msgstr ""
+msgstr "Tempo"
 
 msgid "Previous page"
-msgstr ""
+msgstr "Vorherige Seite"
 
 msgid "Page {page} of {count}"
-msgstr ""
+msgstr "Seite {page} von {count}"
 
 msgid "Next page"
-msgstr ""
+msgstr "Nächste Seite"
 
 msgid "Solo"
-msgstr ""
+msgstr "Solo"
 
 msgid "Mute"
-msgstr ""
+msgstr "Stumm"
 
 msgid "Volume of {voice}"
-msgstr ""
+msgstr "Lautstärke von {voice}"
 
 msgid "Loading score…"
-msgstr ""
+msgstr "Partitur wird geladen …"
 
 msgid "Main app navigation"
 msgstr "Haupt App-Navigation"
@@ -445,7 +451,7 @@ msgid "Comments"
 msgstr "Kommentare"
 
 msgid "Notes & Playback"
-msgstr ""
+msgstr "Noten & Wiedergabe"
 
 msgid "Folder Collections"
 msgstr "Ordnersammlungen"
@@ -522,14 +528,20 @@ msgstr "Physische Exemplare"
 msgid "Tags"
 msgstr "Tags"
 
-msgid "Publication"
-msgstr ""
+msgid "Rights"
+msgstr "Rechte"
 
-msgid "Publication Note"
-msgstr ""
+msgid "Publication"
+msgstr "Veröffentlichung"
+
+msgid "Blocked until"
+msgstr "Gesperrt bis"
+
+msgid "Rights Note"
+msgstr "Rechtevermerk"
 
 msgid "MusicXML"
-msgstr ""
+msgstr "MusicXML"
 
 msgid "Active"
 msgstr "Aktiv"
@@ -793,7 +805,7 @@ msgid "No comments yet"
 msgstr "Noch keine Kommentare"
 
 msgid "Write a new comment …"
-msgstr ""
+msgstr "Neuen Kommentar schreiben …"
 
 msgid "GitHub flavored markdown is supported."
 msgstr "GitHub Markdown wird unterstützt."
@@ -805,40 +817,46 @@ msgid "Submit comment"
 msgstr "Kommentar senden"
 
 msgid "Downloading the file failed: "
-msgstr ""
+msgstr "Herunterladen der Datei fehlgeschlagen: "
 
 msgid "The file is too large (maximum {size} MB)"
-msgstr ""
+msgstr "Die Datei ist zu groß (höchstens {size} MB)"
 
 msgid "MusicXML file uploaded"
-msgstr ""
+msgstr "MusicXML-Datei hochgeladen"
 
 msgid "Uploading the file failed: "
-msgstr ""
+msgstr "Hochladen der Datei fehlgeschlagen: "
 
 msgid "MusicXML file removed"
-msgstr ""
+msgstr "MusicXML-Datei entfernt"
 
 msgid "Removing the file failed: "
-msgstr ""
+msgstr "Entfernen der Datei fehlgeschlagen: "
 
 msgid "Download MusicXML"
-msgstr ""
+msgstr "MusicXML herunterladen"
 
 msgid "No MusicXML file uploaded yet."
-msgstr ""
+msgstr "Noch keine MusicXML-Datei hochgeladen."
 
 msgid "Replace file"
-msgstr ""
+msgstr "Datei ersetzen"
 
 msgid "Upload MusicXML"
-msgstr ""
+msgstr "MusicXML hochladen"
 
 msgid "Remove file"
-msgstr ""
+msgstr "Datei entfernen"
 
-msgid "This score is marked as free, so it is shown on the public page if that page is enabled."
-msgstr ""
+msgid "This score is released for publication and its rights allow it, so it is shown on the public page if that page is enabled."
+msgstr "Diese Partitur ist zur Veröffentlichung freigegeben und die Rechte erlauben das. Sie erscheint deshalb auf der öffentlichen Seite, sofern diese aktiviert ist."
+
+msgid "This score is an internal preservation copy. Only editors can view and play it."
+msgstr "Diese Partitur ist eine interne Erhaltungskopie. Nur Bearbeiter können sie ansehen und abspielen."
+
+msgid "This score is an internal preservation copy. It can only be viewed by the music librarians."
+msgstr "Diese Partitur ist eine interne Erhaltungskopie. Nur die Notenwarte können sie ansehen."
 
 msgid "Scores in this book"
 msgstr "Partituren in diesem Notenbuch"
@@ -940,7 +958,7 @@ msgid "Is Published"
 msgstr "Ist veröffentlicht"
 
 msgid "Saving…"
-msgstr ""
+msgstr "Wird gespeichert …"
 
 msgid "Saved"
 msgstr "Gespeichert"
@@ -1024,31 +1042,31 @@ msgid "Are you sure you want to delete this setlist?"
 msgstr "Sind Sie sicher, dass Sie diese Setliste löschen möchten?"
 
 msgid "arr. {arranger}"
-msgstr ""
+msgstr "bearb. {arranger}"
 
 msgid "Freely available scores"
-msgstr ""
+msgstr "Frei verfügbare Noten"
 
-msgid "These scores are in the public domain. Select a score to view the notes and listen to the individual voices."
-msgstr ""
+msgid "These scores are in the public domain or licensed for publication. Select a score to view the notes and listen to the individual voices."
+msgstr "Diese Stücke sind gemeinfrei oder zur Veröffentlichung lizenziert. Wähle ein Stück, um die Noten zu sehen und die einzelnen Stimmen anzuhören."
 
 msgid "Search by title or composer"
-msgstr ""
+msgstr "Nach Titel oder Komponist suchen"
 
 msgid "Close"
-msgstr ""
+msgstr "Schließen"
 
 msgid "No freely available scores yet"
-msgstr ""
+msgstr "Noch keine frei verfügbaren Noten"
 
 msgid "No scores match your search"
-msgstr ""
+msgstr "Keine Stücke passen zu deiner Suche"
 
 msgid "Show & play"
-msgstr ""
+msgstr "Ansehen & abspielen"
 
 msgid "No digital notes"
-msgstr ""
+msgstr "Keine digitalen Noten"
 
 msgid "Starting"
 msgstr "Ab"
@@ -1063,7 +1081,7 @@ msgid "This index is already occupied"
 msgstr "Dieser Index ist bereits belegt"
 
 msgid "Loading occupied indices…"
-msgstr ""
+msgstr "Belegte Nummern werden geladen …"
 
 msgid "Index is unchanged"
 msgstr "Index unverändert"
@@ -1078,13 +1096,13 @@ msgid "Setlist"
 msgstr "Setlist"
 
 msgid "The file could not be read as MusicXML"
-msgstr ""
+msgstr "Die Datei konnte nicht als MusicXML gelesen werden"
 
 msgid "Voice {number}"
-msgstr ""
+msgstr "Stimme {number}"
 
 msgid "The score could not be displayed"
-msgstr ""
+msgstr "Die Partitur konnte nicht angezeigt werden"
 
 msgid "Value must not be empty"
 msgstr "Wert darf nicht leer sein"
@@ -1110,14 +1128,29 @@ msgstr "Moderation & Pausen"
 msgid "Overall Duration"
 msgstr "Gesamtdauer"
 
-msgid "Free (public domain)"
-msgstr ""
+msgid "Public domain"
+msgstr "Gemeinfrei"
 
-msgid "Unclear"
-msgstr ""
+msgid "Licensed"
+msgstr "Lizenziert"
 
-msgid "Restricted"
-msgstr ""
+msgid "Protected"
+msgstr "Geschützt"
+
+msgid "Undetermined"
+msgstr "Offen"
+
+msgid "Free"
+msgstr "Frei"
+
+msgid "To clarify"
+msgstr "Zu klären"
+
+msgid "Blocked"
+msgstr "Gesperrt"
+
+msgid "Internal preservation copy"
+msgstr "Interne Erhaltungskopie"
 
 msgid "Invalid duration format"
 msgstr "Ungültiges Spieldauerformat"

@@ -208,19 +208,50 @@ final class ScoreApiControllerTest extends TestCase {
 		$this->scoreService->method('getScoreById')->willReturn($score);
 		$this->request->method('getParams')->willReturn([
 			'id' => 1,
-			'rightsStatus' => 'free',
+			'rightsStatus' => 'public_domain',
+			'publicationStatus' => 'blocked',
+			'publicationBlockedUntil' => '2027-03-31',
 			'rightsNote' => 'Composer died 1791',
 			'musicxmlFile' => '../../evil.xml',
 		]);
 
 		$this->scoreService->expects($this->once())
 			->method('updateScore')
-			->with($this->callback(fn (Score $s) => $s->getRightsStatus() === 'free'
+			->with($this->callback(fn (Score $s) => $s->getRightsStatus() === 'public_domain'
+				&& $s->getPublicationStatus() === 'blocked'
+				&& $s->getPublicationBlockedUntil()?->format('Y-m-d') === '2027-03-31'
 				&& $s->getRightsNote() === 'Composer died 1791'
 				&& $s->getMusicxmlFile() === null))
 			->willReturnArgument(0);
 
-		$this->controller->patchScore(id: 1, rightsStatus: 'free', rightsNote: 'Composer died 1791');
+		$this->controller->patchScore(id: 1, rightsStatus: 'public_domain', publicationStatus: 'blocked', publicationBlockedUntil: '2027-03-31', rightsNote: 'Composer died 1791');
+	}
+
+	public function testPatchScoreRejectsInvalidBlockedUntilDate(): void {
+		$score = new Score();
+		$score->setId(1);
+
+		$this->scoreService->method('getScoreById')->willReturn($score);
+		$this->request->method('getParams')->willReturn(['id' => 1, 'publicationBlockedUntil' => '31.03.2027']);
+		$this->scoreService->expects($this->never())->method('updateScore');
+
+		$this->expectException(OCSBadRequestException::class);
+		$this->controller->patchScore(id: 1, publicationBlockedUntil: '31.03.2027');
+	}
+
+	public function testPatchScoreClearsBlockedUntilDate(): void {
+		$score = new Score();
+		$score->setId(1);
+		$score->setPublicationBlockedUntil('2027-03-31');
+
+		$this->scoreService->method('getScoreById')->willReturn($score);
+		$this->request->method('getParams')->willReturn(['id' => 1, 'publicationBlockedUntil' => null]);
+		$this->scoreService->expects($this->once())
+			->method('updateScore')
+			->with($this->callback(fn (Score $s) => $s->getPublicationBlockedUntil() === null))
+			->willReturnArgument(0);
+
+		$this->controller->patchScore(id: 1);
 	}
 
 	public function testPatchScoreTurnsNullRightsStatusIntoInvalidValue(): void {
@@ -228,11 +259,11 @@ final class ScoreApiControllerTest extends TestCase {
 		$score->setId(1);
 
 		$this->scoreService->method('getScoreById')->willReturn($score);
-		$this->request->method('getParams')->willReturn(['id' => 1, 'rightsStatus' => null]);
+		$this->request->method('getParams')->willReturn(['id' => 1, 'rightsStatus' => null, 'publicationStatus' => null]);
 
 		$this->scoreService->expects($this->once())
 			->method('updateScore')
-			->with($this->callback(fn (Score $s) => $s->getRightsStatus() === ''))
+			->with($this->callback(fn (Score $s) => $s->getRightsStatus() === '' && $s->getPublicationStatus() === ''))
 			->willReturnArgument(0);
 
 		$this->controller->patchScore(id: 1);

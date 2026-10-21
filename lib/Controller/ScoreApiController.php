@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OCA\OrchestraScoresManager\Controller;
 
 use OCA\OrchestraScoresManager\Db\Comment;
+use OCA\OrchestraScoresManager\Db\Enum\PublicationStatus;
 use OCA\OrchestraScoresManager\Db\Enum\RightsStatus;
 use OCA\OrchestraScoresManager\Db\Score;
 use OCA\OrchestraScoresManager\Db\ScoreMapper;
@@ -86,7 +87,9 @@ class ScoreApiController extends OCSController {
 	 * @param string|null $digitalStatus The digital status of the score
 	 * @param list<string>|null $gemaIds The GEMA IDs of the score
 	 * @param int|null $duration The duration of the score in seconds
-	 * @param 'free'|'unclear'|'restricted'|null $rightsStatus The publication rights status of the score
+	 * @param 'public_domain'|'licensed'|'protected'|'open'|null $rightsStatus The copyright status of the score
+	 * @param 'free'|'to_clarify'|'blocked'|'internal_copy'|null $publicationStatus Whether the score may be published
+	 * @param string|null $publicationBlockedUntil Date until which publication is blocked (Y-m-d format)
 	 * @param string|null $rightsNote A note explaining the rights status
 	 * @param list<int>|null $tagIds optional list of tag ids to link
 	 * @param array{id: int, index: int}|null $scoreBook Score book info with id and index (both required)
@@ -115,11 +118,13 @@ class ScoreApiController extends OCSController {
 		?array $gemaIds = null,
 		?int $duration = null,
 		?string $rightsStatus = null,
+		?string $publicationStatus = null,
+		?string $publicationBlockedUntil = null,
 		?string $rightsNote = null,
 		?array $tagIds = null,
 		?array $scoreBook = null,
 	): DataResponse {
-		$score = Score::fromParams([
+		$score = $this->callService(fn () => Score::fromParams([
 			'title' => $title,
 			'titleShort' => $titleShort,
 			'composer' => $composer,
@@ -133,9 +138,11 @@ class ScoreApiController extends OCSController {
 			'digitalStatus' => $digitalStatus,
 			'gemaIds' => $gemaIds,
 			'duration' => $duration,
-			'rightsStatus' => $rightsStatus ?? RightsStatus::UNCLEAR->value,
+			'rightsStatus' => $rightsStatus ?? RightsStatus::OPEN->value,
+			'publicationStatus' => $publicationStatus ?? PublicationStatus::TO_CLARIFY->value,
+			'publicationBlockedUntil' => $publicationBlockedUntil,
 			'rightsNote' => $rightsNote,
-		]);
+		]));
 
 		// Build score book info if provided
 		$scoreBookInfo = null;
@@ -168,7 +175,9 @@ class ScoreApiController extends OCSController {
 	 * @param string|null $digitalStatus The digital status of the score
 	 * @param list<string>|null $gemaIds The GEMA IDs of the score
 	 * @param int|null $duration The duration of the score in seconds
-	 * @param 'free'|'unclear'|'restricted'|null $rightsStatus The publication rights status of the score
+	 * @param 'public_domain'|'licensed'|'protected'|'open'|null $rightsStatus The copyright status of the score
+	 * @param 'free'|'to_clarify'|'blocked'|'internal_copy'|null $publicationStatus Whether the score may be published
+	 * @param string|null $publicationBlockedUntil Date until which publication is blocked (Y-m-d format)
 	 * @param string|null $rightsNote A note explaining the rights status
 	 * @param list<int>|null $tagIds optional list of tag ids to link
 	 * @param array{id?: int, index?: int}|null $scoreBook Score book info (id and/or index). Set id to null to remove from book.
@@ -201,6 +210,8 @@ class ScoreApiController extends OCSController {
 		?array $gemaIds = null,
 		?int $duration = null,
 		?string $rightsStatus = null,
+		?string $publicationStatus = null,
+		?string $publicationBlockedUntil = null,
 		?string $rightsNote = null,
 		?array $tagIds = null,
 		?array $scoreBook = null,
@@ -213,9 +224,11 @@ class ScoreApiController extends OCSController {
 		unset($params['_route']);
 		// the MusicXML file is managed via its own endpoints
 		unset($params['musicxmlFile']);
-		// the rights status is not nullable, let the service reject a null value
-		if (array_key_exists('rightsStatus', $params) && $params['rightsStatus'] === null) {
-			$params['rightsStatus'] = '';
+		// the rights and publication status are not nullable, let the service reject a null value
+		foreach (['rightsStatus', 'publicationStatus'] as $statusField) {
+			if (array_key_exists($statusField, $params) && $params[$statusField] === null) {
+				$params[$statusField] = '';
+			}
 		}
 
 		// Handle score book info separately
@@ -245,12 +258,14 @@ class ScoreApiController extends OCSController {
 		 * @psalm-suppress MixedAssignment
 		 * @psalm-suppress MixedArgumentTypeCoercion
 		 */
-		foreach ($params as $field => $value) {
-			if ($field === 'tagIds') {
-				continue;
-			} // handled separately in service
-			$score->{'set' . ucfirst($field)}($value);
-		}
+		$this->callService(function () use ($params, $score): void {
+			foreach ($params as $field => $value) {
+				if ($field === 'tagIds') {
+					continue;
+				} // handled separately in service
+				$score->{'set' . ucfirst($field)}($value);
+			}
+		});
 
 		$updated = $this->callService(fn () => $this->scoreService->updateScore($score, $tagIds, $scoreBookInfo));
 		return new DataResponse($updated, Http::STATUS_OK);

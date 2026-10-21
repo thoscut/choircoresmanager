@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace OCA\OrchestraScoresManager\Db;
 
+use OCA\OrchestraScoresManager\Db\Enum\PublicationStatus;
+use OCA\OrchestraScoresManager\Db\Enum\RightsStatus;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\AppFramework\Db\QBMapper;
@@ -194,40 +196,47 @@ class ScoreMapper extends QBMapper {
 	}
 
 	/**
-	 * Find all scores with the given rights status, without transient properties.
+	 * Find all scores that may be shown publicly, without transient properties.
 	 *
+	 * A score is public if it is released for publication and its rights status allows it.
 	 * The filter is applied in SQL so that callers serving anonymous requests
 	 * never load scores they must not expose.
 	 *
-	 * @param string $rightsStatus
 	 * @return array<Score>
 	 * @throws Exception
 	 */
-	public function findByRightsStatus(string $rightsStatus): array {
+	public function findPublic(): array {
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('*')
 			->from($this->getTableName())
-			->where($qb->expr()->eq('rights_status', $qb->createNamedParameter($rightsStatus, IQueryBuilder::PARAM_STR)))
 			->orderBy('title', 'ASC');
+		$this->wherePublic($qb);
 		return $this->findEntities($qb);
 	}
 
 	/**
-	 * Find a single score by ID and rights status, without transient properties.
+	 * Find a single score by ID if it may be shown publicly, without transient properties.
 	 *
 	 * @param int $id
-	 * @param string $rightsStatus
 	 * @return Score
 	 * @throws MultipleObjectsReturnedException
 	 * @throws DoesNotExistException
 	 * @throws Exception
 	 */
-	public function findByIdAndRightsStatus(int $id, string $rightsStatus): Score {
+	public function findPublicById(int $id): Score {
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('*')
 			->from($this->getTableName())
-			->where($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)))
-			->andWhere($qb->expr()->eq('rights_status', $qb->createNamedParameter($rightsStatus, IQueryBuilder::PARAM_STR)));
+			->where($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
+		$this->wherePublic($qb);
 		return $this->findEntity($qb);
+	}
+
+	/**
+	 * Restrict a query to scores that may be shown publicly.
+	 */
+	private function wherePublic(IQueryBuilder $qb): void {
+		$qb->andWhere($qb->expr()->eq('publication_status', $qb->createNamedParameter(PublicationStatus::FREE->value, IQueryBuilder::PARAM_STR)))
+			->andWhere($qb->expr()->in('rights_status', $qb->createNamedParameter(RightsStatus::publishableValues(), IQueryBuilder::PARAM_STR_ARRAY)));
 	}
 }

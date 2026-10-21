@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OCA\OrchestraScoresManager\Service;
 
 use OCA\OrchestraScoresManager\Db\CommentMapper;
+use OCA\OrchestraScoresManager\Db\Enum\PublicationStatus;
 use OCA\OrchestraScoresManager\Db\Enum\RightsStatus;
 use OCA\OrchestraScoresManager\Db\Score;
 use OCA\OrchestraScoresManager\Db\ScoreBookScoreLinkMapper;
@@ -125,6 +126,9 @@ class ScoreService {
 	public function createScore(Score $score, ?array $tagIds = null, ?array $scoreBookInfo = null): Score {
 		$this->authorizationService->authorizePolicy($this->scorePolicy, PolicyInterface::ACTION_CREATE);
 		$this->validateRightsStatus($score);
+		// Always write both status columns, the database default may stem from an older schema
+		$score->setRightsStatus($score->getRightsStatus());
+		$score->setPublicationStatus($score->getPublicationStatus());
 
 		$created = $this->scoreMapper->insert($score);
 		if ($tagIds !== null) {
@@ -258,14 +262,17 @@ class ScoreService {
 	}
 
 	/**
-	 * Ensure the rights status of a score is one of the allowed values.
+	 * Ensure the rights and publication status of a score are allowed values.
 	 *
 	 * @param Score $score
 	 * @throws \InvalidArgumentException
 	 */
 	private function validateRightsStatus(Score $score): void {
 		if (RightsStatus::tryFrom($score->getRightsStatus()) === null) {
-			throw new \InvalidArgumentException($this->l->t('Invalid rights status. Must be "free", "unclear" or "restricted".'));
+			throw new \InvalidArgumentException($this->l->t('Invalid rights status. Must be "public_domain", "licensed", "protected" or "open".'));
+		}
+		if (PublicationStatus::tryFrom($score->getPublicationStatus()) === null) {
+			throw new \InvalidArgumentException($this->l->t('Invalid publication status. Must be "free", "to_clarify", "blocked" or "internal_copy".'));
 		}
 	}
 }

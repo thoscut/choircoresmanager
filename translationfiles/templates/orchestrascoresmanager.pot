@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2026-10-21 20:59+0000\n"
+"POT-Creation-Date: 2026-10-21 23:37+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -119,6 +119,9 @@ msgstr ""
 msgid "The uploaded file could not be read"
 msgstr ""
 
+msgid "This score is an internal preservation copy"
+msgstr ""
+
 msgid "No MusicXML file available for this score"
 msgstr ""
 
@@ -181,7 +184,14 @@ msgstr ""
 msgid "Score is already part of another score book. Remove it first."
 msgstr ""
 
-msgid "Invalid rights status. Must be \"free\", \"unclear\" or \"restricted\"."
+msgid ""
+"Invalid rights status. Must be \"public_domain\", \"licensed\", "
+"\"protected\" or \"open\"."
+msgstr ""
+
+msgid ""
+"Invalid publication status. Must be \"free\", \"to_clarify\", \"blocked\" or "
+"\"internal_copy\"."
 msgstr ""
 
 msgid "Setlist entry not found"
@@ -263,9 +273,10 @@ msgid "Public page"
 msgstr ""
 
 msgid ""
-"Show all scores marked as free (public domain) on a page that can be opened "
-"without logging in. Visitors can view and play the MusicXML files of these "
-"scores. No other scores or internal details are shown."
+"Show all scores that are released for publication and whose rights allow it "
+"(public domain or licensed) on a page that can be opened without logging in. "
+"Visitors can view and play the MusicXML files of these scores. No other "
+"scores or internal details are shown."
 msgstr ""
 
 msgid "Enable public page"
@@ -526,10 +537,16 @@ msgstr ""
 msgid "Tags"
 msgstr ""
 
+msgid "Rights"
+msgstr ""
+
 msgid "Publication"
 msgstr ""
 
-msgid "Publication Note"
+msgid "Blocked until"
+msgstr ""
+
+msgid "Rights Note"
 msgstr ""
 
 msgid "MusicXML"
@@ -853,8 +870,18 @@ msgid "Remove file"
 msgstr ""
 
 msgid ""
-"This score is marked as free, so it is shown on the public page if that page "
-"is enabled."
+"This score is released for publication and its rights allow it, so it is "
+"shown on the public page if that page is enabled."
+msgstr ""
+
+msgid ""
+"This score is an internal preservation copy. Only editors can view and play "
+"it."
+msgstr ""
+
+msgid ""
+"This score is an internal preservation copy. It can only be viewed by the "
+"music librarians."
 msgstr ""
 
 msgid "Scores in this book"
@@ -1047,8 +1074,8 @@ msgid "Freely available scores"
 msgstr ""
 
 msgid ""
-"These scores are in the public domain. Select a score to view the notes and "
-"listen to the individual voices."
+"These scores are in the public domain or licensed for publication. Select a "
+"score to view the notes and listen to the individual voices."
 msgstr ""
 
 msgid "Search by title or composer"
@@ -1129,13 +1156,28 @@ msgstr ""
 msgid "Overall Duration"
 msgstr ""
 
-msgid "Free (public domain)"
+msgid "Public domain"
 msgstr ""
 
-msgid "Unclear"
+msgid "Licensed"
 msgstr ""
 
-msgid "Restricted"
+msgid "Protected"
+msgstr ""
+
+msgid "Undetermined"
+msgstr ""
+
+msgid "Free"
+msgstr ""
+
+msgid "To clarify"
+msgstr ""
+
+msgid "Blocked"
+msgstr ""
+
+msgid "Internal preservation copy"
 msgstr ""
 
 msgid "Invalid duration format"
