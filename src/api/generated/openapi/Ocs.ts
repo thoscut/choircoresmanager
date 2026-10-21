@@ -19,8 +19,8 @@ import {
   FolderCollectionApiGetFolderCollectionData,
   FolderCollectionApiGetFolderCollectionScoreBooksData,
   FolderCollectionApiGetFolderCollectionScoresData,
-  FolderCollectionApiGetFolderCollectionsData,
   FolderCollectionApiGetFolderCollectionVersionsData,
+  FolderCollectionApiGetFolderCollectionsData,
   FolderCollectionApiPatchFolderCollectionData,
   FolderCollectionApiPatchFolderCollectionPayload,
   FolderCollectionApiPostFolderCollectionData,
@@ -85,6 +85,13 @@ import {
   SetlistEntryApiPatchSetlistEntryPayload,
   SetlistEntryApiPostSetlistEntriesBatchData,
   SetlistEntryApiPostSetlistEntriesBatchPayload,
+  ShareApiDeleteShareData,
+  ShareApiGetAllSharesData,
+  ShareApiGetShareGroupsData,
+  ShareApiGetSharedWithMeData,
+  ShareApiGetSharesData,
+  ShareApiPostShareData,
+  ShareApiPostSharePayload,
   TagApiGetTagsData,
   TagApiPostTagData,
   TagApiPostTagPayload,
@@ -1620,6 +1627,173 @@ export class Ocs<
       body: data,
       secure: true,
       type: "application/json",
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description the shares
+   *
+   * @tags share_api
+   * @name ShareApiGetShares
+   * @summary Get all shares of a score or folder collection
+   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/shares
+   * @secure
+   */
+  shareApiGetShares = (
+    query: {
+      /** The type of the shared item */
+      targetType: "score" | "folder_collection";
+      /**
+       * The ID of the shared item
+       * @format int64
+       */
+      targetId: number;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<
+      ShareApiGetSharesData,
+      {
+        ocs: {
+          meta: OCSMeta;
+          data: any;
+        };
+      }
+    >({
+      path: `/ocs/v2.php/apps/orchestrascoresmanager/shares`,
+      method: "GET",
+      query: query,
+      secure: true,
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description Public links only ever show scores whose rights status is "free". the new share
+   *
+   * @tags share_api
+   * @name ShareApiPostShare
+   * @summary Share a score or folder collection with a group or by a public link
+   * @request POST:/ocs/v2.php/apps/orchestrascoresmanager/shares
+   * @secure
+   */
+  shareApiPostShare = (
+    data: ShareApiPostSharePayload,
+    params: RequestParams = {},
+  ) =>
+    this.request<
+      ShareApiPostShareData,
+      {
+        ocs: {
+          meta: OCSMeta;
+          data: any;
+        };
+      }
+    >({
+      path: `/ocs/v2.php/apps/orchestrascoresmanager/shares`,
+      method: "POST",
+      body: data,
+      secure: true,
+      type: "application/json",
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description all shares, newest first
+   *
+   * @tags share_api
+   * @name ShareApiGetAllShares
+   * @summary Get all shares
+   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/shares/all
+   * @secure
+   */
+  shareApiGetAllShares = (params: RequestParams = {}) =>
+    this.request<
+      ShareApiGetAllSharesData,
+      {
+        ocs: {
+          meta: OCSMeta;
+          data: any;
+        };
+      }
+    >({
+      path: `/ocs/v2.php/apps/orchestrascoresmanager/shares/all`,
+      method: "GET",
+      secure: true,
+      format: "json",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags share_api
+   * @name ShareApiDeleteShare
+   * @summary Delete a share
+   * @request DELETE:/ocs/v2.php/apps/orchestrascoresmanager/shares/{id}
+   * @secure
+   */
+  shareApiDeleteShare = (id: number, params: RequestParams = {}) =>
+    this.request<
+      ShareApiDeleteShareData,
+      {
+        ocs: {
+          meta: OCSMeta;
+          data: any;
+        };
+      }
+    >({
+      path: `/ocs/v2.php/apps/orchestrascoresmanager/shares/${id}`,
+      method: "DELETE",
+      secure: true,
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description the groups
+   *
+   * @tags share_api
+   * @name ShareApiGetShareGroups
+   * @summary Get the groups items can be shared with
+   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/shares/groups
+   * @secure
+   */
+  shareApiGetShareGroups = (params: RequestParams = {}) =>
+    this.request<
+      ShareApiGetShareGroupsData,
+      {
+        ocs: {
+          meta: OCSMeta;
+          data: any;
+        };
+      }
+    >({
+      path: `/ocs/v2.php/apps/orchestrascoresmanager/shares/groups`,
+      method: "GET",
+      secure: true,
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description the shared items
+   *
+   * @tags share_api
+   * @name ShareApiGetSharedWithMe
+   * @summary Get the items shared with the groups of the current user
+   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/shares/mine
+   * @secure
+   */
+  shareApiGetSharedWithMe = (params: RequestParams = {}) =>
+    this.request<
+      ShareApiGetSharedWithMeData,
+      {
+        ocs: {
+          meta: OCSMeta;
+          data: any;
+        };
+      }
+    >({
+      path: `/ocs/v2.php/apps/orchestrascoresmanager/shares/mine`,
+      method: "GET",
+      secure: true,
       format: "json",
       ...params,
     });

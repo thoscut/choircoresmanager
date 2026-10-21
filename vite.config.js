@@ -12,6 +12,7 @@ export default defineConfig((env) => {
 			main: resolve(join('src', 'main.ts')),
 			adminSettings: resolve(join('src', 'admin-settings.ts')),
 			public: resolve(join('src', 'public.ts')),
+			share: resolve(join('src', 'share.ts')),
 		},
 		{
 			config: {

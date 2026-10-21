@@ -230,4 +230,26 @@ class ScoreMapper extends QBMapper {
 			->andWhere($qb->expr()->eq('rights_status', $qb->createNamedParameter($rightsStatus, IQueryBuilder::PARAM_STR)));
 		return $this->findEntity($qb);
 	}
+
+	/**
+	 * Find scores by IDs without transient properties, optionally only those with a given rights status.
+	 *
+	 * @param list<int> $ids
+	 * @param string|null $rightsStatus Only return scores with this rights status, filtered in SQL
+	 * @return array<Score>
+	 * @throws Exception
+	 */
+	public function findMultipleByRightsStatus(array $ids, ?string $rightsStatus): array {
+		if ($ids === []) {
+			return [];
+		}
+		$qb = $this->db->getQueryBuilder();
+		$qb->select('*')
+			->from($this->getTableName())
+			->where($qb->expr()->in('id', $qb->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)));
+		if ($rightsStatus !== null) {
+			$qb->andWhere($qb->expr()->eq('rights_status', $qb->createNamedParameter($rightsStatus, IQueryBuilder::PARAM_STR)));
+		}
+		return $this->findEntities($qb);
+	}
 }

@@ -65,6 +65,17 @@
 				@scoreAdded="handleScoreAdded"
 				@scorebookAdded="handleScoreBookAdded" />
 
+			<NcButton
+				v-if="editable && folderCollection"
+				:aria-label="t('Share')"
+				:size="buttonSize"
+				:text="buttonText(t('Share'))"
+				@click="openShareDialog">
+				<template #icon>
+					<ShareIcon :size="20" />
+				</template>
+			</NcButton>
+
 			<!-- Export CSV Button -->
 			<ExportCsvButton :tableRef="scoresTableRef?.tableRef ?? null" />
 
@@ -90,6 +101,7 @@ import { loadState } from '@nextcloud/initial-state'
 import { spawnDialog } from '@nextcloud/vue/functions/dialog'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import NcButton from '@nextcloud/vue/components/NcButton'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import AddToCollectionButton from './components/AddToCollectionButton.vue'
@@ -101,9 +113,11 @@ import ExportCsvButton from '@/components/ExportCsvButton.vue'
 import Layout from '@/components/Layout.vue'
 import ScoreSidebar from '@/components/ScoreSidebar.vue'
 import ScoresTable from '@/components/ScoresTable.vue'
+import ShareDialog from '@/components/shares/ShareDialog.vue'
 import { apiClients } from '@/api/client'
+import { useBreakpoints } from '@/composables/useBreakpoints'
 import { formatDateStr } from '@/composables/useDateFormatting'
-import { ScoreIcon } from '@/icons/vue-material'
+import { ScoreIcon, ShareIcon } from '@/icons/vue-material'
 import { useFolderCollectionsStore } from '@/stores/folderCollectionsStore'
 import { useFolderCollectionVersionsStore } from '@/stores/folderCollectionVersionsStore'
 import { useScoreBooksStore } from '@/stores/scoreBooksStore'
@@ -137,6 +151,7 @@ const scores = ref<(Score | ScoreIndexed)[]>([])
 const scoreBooks = ref<(ScoreBook | ScoreBookIndexed)[]>([])
 const scoreBookScoresMap = ref<Map<number, Score[]>>(new Map())
 const editable = ref<boolean>(!!loadState('orchestrascoresmanager', 'editable'))
+const { buttonSize, buttonText } = useBreakpoints()
 
 // Ref to access ScoresTable and its tableRef
 const scoresTableRef = ref<{ tableRef: { exportAsCsv?: (fileName?: string) => boolean } | null } | null>(null)
@@ -151,6 +166,19 @@ const folderCollection = computed(() => {
 	}
 	return folderCollectionsStore.getFolderCollectionById(id)
 })
+
+/**
+ * Open the dialog to share this folder collection
+ */
+function openShareDialog(): void {
+	if (folderCollection.value) {
+		spawnDialog(ShareDialog, {
+			targetType: 'folder_collection',
+			targetId: folderCollection.value.id,
+			title: folderCollection.value.title,
+		})
+	}
+}
 
 /**
  * Get versions for current folder collection

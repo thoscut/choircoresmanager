@@ -67,6 +67,8 @@ class PageController extends Controller {
 	#[FrontpageRoute(verb: 'GET', url: '/foldercollections/{id}', postfix: 'foldercollection')]
 	#[FrontpageRoute(verb: 'GET', url: '/setlists', postfix: 'setlists')]
 	#[FrontpageRoute(verb: 'GET', url: '/setlists/{id}', postfix: 'setlist')]
+	#[FrontpageRoute(verb: 'GET', url: '/shared', postfix: 'shared')]
+	#[FrontpageRoute(verb: 'GET', url: '/shares', postfix: 'shares')]
 	public function pages(): TemplateResponse {
 
 		// Set initial state for the frontend

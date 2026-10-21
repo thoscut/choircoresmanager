@@ -10,6 +10,7 @@ use OCA\OrchestraScoresManager\Db\ScoreBookScoreLinkMapper;
 use OCA\OrchestraScoresManager\Db\ScoreFolderCollectionLinkMapper;
 use OCA\OrchestraScoresManager\Db\ScoreMapper;
 use OCA\OrchestraScoresManager\Db\ScoreTagLinkMapper;
+use OCA\OrchestraScoresManager\Db\ShareMapper;
 use OCA\OrchestraScoresManager\Db\Tag;
 use OCA\OrchestraScoresManager\Db\TagMapper;
 use OCA\OrchestraScoresManager\Policy\PolicyInterface;
@@ -39,6 +40,7 @@ final class ScoreServiceTest extends TestCase {
 	private IL10N $l10n;
 	private MusicXmlService $musicXmlService;
 	private PdfService $pdfService;
+	private ShareMapper $shareMapper;
 	private ScoreService $service;
 
 	protected function setUp(): void {
@@ -55,6 +57,7 @@ final class ScoreServiceTest extends TestCase {
 		$this->l10n = $this->createMock(IL10N::class);
 		$this->musicXmlService = $this->createMock(MusicXmlService::class);
 		$this->pdfService = $this->createMock(PdfService::class);
+		$this->shareMapper = $this->createMock(ShareMapper::class);
 
 		$this->l10n->method('t')->willReturnCallback(fn ($text, $params = []) => vsprintf($text, $params));
 
@@ -70,6 +73,7 @@ final class ScoreServiceTest extends TestCase {
 			$this->l10n,
 			$this->musicXmlService,
 			$this->pdfService,
+			$this->shareMapper,
 		);
 	}
 
@@ -224,6 +228,10 @@ final class ScoreServiceTest extends TestCase {
 		$this->pdfService->expects($this->once())
 			->method('removeFile')
 			->with(1);
+
+		$this->shareMapper->expects($this->once())
+			->method('deleteForTarget')
+			->with('score', 1);
 
 		$this->service->deleteScoreById(1);
 	}

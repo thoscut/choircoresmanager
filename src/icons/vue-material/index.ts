@@ -51,3 +51,9 @@ export { default as CommentIcon } from 'vue-material-design-icons/CommentTextOut
 export { default as ExpandedIcon } from 'vue-material-design-icons/ChevronDown.vue'
 export { default as CollapsedIcon } from 'vue-material-design-icons/ChevronRight.vue'
 export { default as DragVerticalIcon } from 'vue-material-design-icons/DragHorizontal.vue'
+
+// Sharing icons
+export { default as ShareIcon } from 'vue-material-design-icons/ShareVariant.vue'
+export { default as LinkIcon } from 'vue-material-design-icons/Link.vue'
+export { default as GroupIcon } from 'vue-material-design-icons/AccountGroup.vue'
+export { default as ManageSharesIcon } from 'vue-material-design-icons/AccountMultipleCheck.vue'

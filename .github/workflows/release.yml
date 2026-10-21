@@ -134,6 +134,7 @@ jobs:
           INCLUDE_PATHS=(
             "appinfo"
             "css"
+            "dist"
             "img"
             "js"
             "l10n"

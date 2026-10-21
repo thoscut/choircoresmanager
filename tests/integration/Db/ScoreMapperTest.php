@@ -236,4 +236,22 @@ final class ScoreMapperTest extends MapperTestCase {
 		$this->expectException(DoesNotExistException::class);
 		$this->mapper->findByIdAndRightsStatus($inserted->getId(), 'free');
 	}
+
+	public function testFindMultipleByRightsStatusFiltersInQuery(): void {
+		$ids = [];
+		foreach (['free', 'restricted', 'unclear'] as $status) {
+			$score = new Score();
+			$score->setTitle('Score ' . $status);
+			$score->setRightsStatus($status);
+			$ids[$status] = $this->mapper->insert($score)->getId();
+		}
+
+		$free = $this->mapper->findMultipleByRightsStatus(array_values($ids), 'free');
+		$this->assertSame([$ids['free']], array_map(fn (Score $s) => $s->getId(), $free));
+
+		$all = $this->mapper->findMultipleByRightsStatus(array_values($ids), null);
+		$this->assertCount(3, $all);
+
+		$this->assertSame([], $this->mapper->findMultipleByRightsStatus([], null));
+	}
 }

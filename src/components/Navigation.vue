@@ -103,7 +103,7 @@ onMounted(() => {
  * Static navigation items (non-folder collection items)
  */
 const staticNavigationItems = computed((): NavigationItem[] => {
-	return navigation.filter((item) => item.name !== 'foldercollections')
+	return navigation.filter((item) => item.name !== 'foldercollections' && (!item.editorOnly || editable.value))
 })
 
 /**

@@ -7,6 +7,8 @@ export interface NavigationItem {
 	displayName: string
 	component: Component | (() => Promise<Component>)
 	icon?: Component | null
+	/** Only shown to users who can edit */
+	editorOnly?: boolean
 }
 
 export interface RouteMeta {
