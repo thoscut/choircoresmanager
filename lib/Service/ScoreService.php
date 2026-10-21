@@ -134,9 +134,6 @@ class ScoreService {
 	public function createScore(Score $score, ?array $tagIds = null, ?array $scoreBookInfo = null): Score {
 		$this->authorizationService->authorizePolicy($this->scorePolicy, PolicyInterface::ACTION_CREATE);
 		$this->validateRightsStatus($score);
-		// Always write both status columns, the database default may stem from an older schema
-		$score->setRightsStatus($score->getRightsStatus());
-		$score->setPublicationStatus($score->getPublicationStatus());
 
 		// Validate before writing anything, so a bad tag id doesn't leave a half-created score behind
 		$validIds = $tagIds !== null ? $this->validateTagIds($tagIds) : null;

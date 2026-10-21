@@ -224,4 +224,25 @@ final class ScoreTest extends TestCase {
 		$this->assertSame([], $json['tags']);
 		$this->assertNull($json['scoreBook']);
 	}
+
+	public function testNewScoreAlwaysWritesStatusColumns(): void {
+		$score = new Score();
+
+		$this->assertArrayHasKey('rightsStatus', $score->getUpdatedFields());
+		$this->assertArrayHasKey('publicationStatus', $score->getUpdatedFields());
+		$this->assertSame('open', $score->getRightsStatus());
+		$this->assertSame('to_clarify', $score->getPublicationStatus());
+	}
+
+	public function testPublicationBlockedUntilAcceptsDateStrings(): void {
+		$score = new Score();
+		$score->setPublicationBlockedUntil('2027-03-31');
+		$this->assertSame('2027-03-31', $score->jsonSerialize()['publicationBlockedUntil']);
+
+		$score->setPublicationBlockedUntil('');
+		$this->assertNull($score->getPublicationBlockedUntil());
+
+		$this->expectException(\InvalidArgumentException::class);
+		$score->setPublicationBlockedUntil('31.03.2027');
+	}
 }

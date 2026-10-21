@@ -95,6 +95,10 @@ class Score extends Entity implements JsonSerializable {
 		$this->addType('publicationBlockedUntil', Types::DATE_IMMUTABLE);
 		$this->addType('rightsNote', Types::TEXT);
 		$this->addType('musicxmlFile', Types::STRING);
+
+		// Always write both status columns on insert, the database default may stem from an older schema
+		$this->markFieldUpdated('rightsStatus');
+		$this->markFieldUpdated('publicationStatus');
 	}
 
 	public function jsonSerialize(): array {
