@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OCA\OrchestraScoresManager\Controller;
 
 use OCA\OrchestraScoresManager\Db\Comment;
+use OCA\OrchestraScoresManager\Db\Enum\PublicationStatus;
 use OCA\OrchestraScoresManager\Db\Enum\RightsStatus;
 use OCA\OrchestraScoresManager\Db\Score;
 use OCA\OrchestraScoresManager\Db\ScoreMapper;
@@ -35,6 +36,19 @@ use OCP\IRequest;
 #[OpenAPI(scope: OpenAPI::SCOPE_DEFAULT)]
 class ScoreApiController extends OCSController {
 	use ServiceExceptionBridgeTrait;
+
+	/** Fields that may be changed with a PATCH request; everything else in the request is ignored */
+	private const PATCHABLE_FIELDS = [
+		'title', 'titleShort', 'composer', 'arranger', 'publisher', 'year', 'difficulty',
+		'medleyContents', 'defects', 'physicalCopiesStatus', 'digitalStatus', 'gemaIds', 'duration',
+		'rightsStatus', 'rightsNote', 'rightsConfirmedAt', 'rightsConfirmedBy',
+		'publicationStatus', 'publicationNote', 'publicationBlockedUntil',
+		'tagIds', 'scoreBook',
+	];
+	/** Fields given as Y-m-d strings in the API */
+	private const DATE_FIELDS = ['rightsConfirmedAt', 'publicationBlockedUntil'];
+	/** Fields that must not be null; a null value is turned into an invalid value for the service to reject */
+	private const NON_NULLABLE_STATUS_FIELDS = ['rightsStatus', 'publicationStatus'];
 
 	public function __construct(
 		string $appName,
@@ -86,8 +100,13 @@ class ScoreApiController extends OCSController {
 	 * @param string|null $digitalStatus The digital status of the score
 	 * @param list<string>|null $gemaIds The GEMA IDs of the score
 	 * @param int|null $duration The duration of the score in seconds
-	 * @param 'free'|'unclear'|'restricted'|null $rightsStatus The publication rights status of the score
-	 * @param string|null $rightsNote A note explaining the rights status
+	 * @param 'public_domain'|'licensed'|'protected'|'open'|null $rightsStatus The rights status of the score
+	 * @param string|null $rightsNote The reasoning for the rights status
+	 * @param string|null $rightsConfirmedAt The date (Y-m-d) on which a person confirmed the rights status
+	 * @param string|null $rightsConfirmedBy Who confirmed the rights status, e.g. initials (at most 32 characters)
+	 * @param 'approved'|'to_clarify'|'blocked'|'internal_preservation_copy'|null $publicationStatus The publication status of the score
+	 * @param string|null $publicationNote The reasoning for the publication status
+	 * @param string|null $publicationBlockedUntil The date (Y-m-d) until which a blocked score stays blocked; only allowed for blocked scores
 	 * @param list<int>|null $tagIds optional list of tag ids to link
 	 * @param array{id: int, index: int}|null $scoreBook Score book info with id and index (both required)
 	 *
@@ -116,9 +135,17 @@ class ScoreApiController extends OCSController {
 		?int $duration = null,
 		?string $rightsStatus = null,
 		?string $rightsNote = null,
+		?string $rightsConfirmedAt = null,
+		?string $rightsConfirmedBy = null,
+		?string $publicationStatus = null,
+		?string $publicationNote = null,
+		?string $publicationBlockedUntil = null,
 		?array $tagIds = null,
 		?array $scoreBook = null,
 	): DataResponse {
+		$confirmedAt = $this->callService(fn () => $this->scoreService->parseDate($rightsConfirmedAt));
+		$blockedUntil = $this->callService(fn () => $this->scoreService->parseDate($publicationBlockedUntil));
+
 		$score = Score::fromParams([
 			'title' => $title,
 			'titleShort' => $titleShort,
@@ -133,8 +160,13 @@ class ScoreApiController extends OCSController {
 			'digitalStatus' => $digitalStatus,
 			'gemaIds' => $gemaIds,
 			'duration' => $duration,
-			'rightsStatus' => $rightsStatus ?? RightsStatus::UNCLEAR->value,
+			'rightsStatus' => $rightsStatus ?? RightsStatus::OPEN->value,
 			'rightsNote' => $rightsNote,
+			'rightsConfirmedAt' => $confirmedAt,
+			'rightsConfirmedBy' => $rightsConfirmedBy,
+			'publicationStatus' => $publicationStatus ?? PublicationStatus::TO_CLARIFY->value,
+			'publicationNote' => $publicationNote,
+			'publicationBlockedUntil' => $blockedUntil,
 		]);
 
 		// Build score book info if provided
@@ -168,8 +200,13 @@ class ScoreApiController extends OCSController {
 	 * @param string|null $digitalStatus The digital status of the score
 	 * @param list<string>|null $gemaIds The GEMA IDs of the score
 	 * @param int|null $duration The duration of the score in seconds
-	 * @param 'free'|'unclear'|'restricted'|null $rightsStatus The publication rights status of the score
-	 * @param string|null $rightsNote A note explaining the rights status
+	 * @param 'public_domain'|'licensed'|'protected'|'open'|null $rightsStatus The rights status of the score
+	 * @param string|null $rightsNote The reasoning for the rights status
+	 * @param string|null $rightsConfirmedAt The date (Y-m-d) on which a person confirmed the rights status
+	 * @param string|null $rightsConfirmedBy Who confirmed the rights status, e.g. initials (at most 32 characters)
+	 * @param 'approved'|'to_clarify'|'blocked'|'internal_preservation_copy'|null $publicationStatus The publication status of the score
+	 * @param string|null $publicationNote The reasoning for the publication status
+	 * @param string|null $publicationBlockedUntil The date (Y-m-d) until which a blocked score stays blocked; only allowed for blocked scores
 	 * @param list<int>|null $tagIds optional list of tag ids to link
 	 * @param array{id?: int, index?: int}|null $scoreBook Score book info (id and/or index). Set id to null to remove from book.
 	 *
@@ -202,20 +239,31 @@ class ScoreApiController extends OCSController {
 		?int $duration = null,
 		?string $rightsStatus = null,
 		?string $rightsNote = null,
+		?string $rightsConfirmedAt = null,
+		?string $rightsConfirmedBy = null,
+		?string $publicationStatus = null,
+		?string $publicationNote = null,
+		?string $publicationBlockedUntil = null,
 		?array $tagIds = null,
 		?array $scoreBook = null,
 	): DataResponse {
 		// authorization will be handled in services
 		$score = $this->callService(fn () => $this->scoreService->getScoreById($id));
-		$params = $this->request->getParams();
+		// Only take over known fields. This also drops the NC-added "_route" param and keeps
+		// fields managed elsewhere (e.g. the MusicXML file) from being set via PATCH.
+		$params = array_intersect_key($this->request->getParams(), array_flip(self::PATCHABLE_FIELDS));
 
-		// drop NC-added "_route" param if exists
-		unset($params['_route']);
-		// the MusicXML file is managed via its own endpoints
-		unset($params['musicxmlFile']);
-		// the rights status is not nullable, let the service reject a null value
-		if (array_key_exists('rightsStatus', $params) && $params['rightsStatus'] === null) {
-			$params['rightsStatus'] = '';
+		foreach (self::NON_NULLABLE_STATUS_FIELDS as $field) {
+			if (array_key_exists($field, $params) && $params[$field] === null) {
+				$params[$field] = '';
+			}
+		}
+		foreach (self::DATE_FIELDS as $field) {
+			if (array_key_exists($field, $params)) {
+				/** @psalm-suppress MixedAssignment */
+				$value = $params[$field];
+				$params[$field] = $this->callService(fn () => $this->scoreService->parseDate($value));
+			}
 		}
 
 		// Handle score book info separately

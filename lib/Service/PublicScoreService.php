@@ -53,7 +53,7 @@ class PublicScoreService {
 		$this->assertEnabled();
 		return array_values(array_map(
 			fn (Score $score) => self::toPublicArray($score),
-			$this->scoreMapper->findByRightsStatus(RightsStatus::FREE->value),
+			$this->scoreMapper->findByRightsStatus(RightsStatus::PUBLIC_DOMAIN->value),
 		));
 	}
 
@@ -67,7 +67,7 @@ class PublicScoreService {
 	public function getPublicMusicXml(int $id): array {
 		$this->assertEnabled();
 		try {
-			$score = $this->scoreMapper->findByIdAndRightsStatus($id, RightsStatus::FREE->value);
+			$score = $this->scoreMapper->findByIdAndRightsStatus($id, RightsStatus::PUBLIC_DOMAIN->value);
 		} catch (DoesNotExistException|MultipleObjectsReturnedException|Exception) {
 			throw new \InvalidArgumentException('Score not found');
 		}

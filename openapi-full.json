@@ -223,6 +223,11 @@
                     "duration",
                     "rightsStatus",
                     "rightsNote",
+                    "rightsConfirmedAt",
+                    "rightsConfirmedBy",
+                    "publicationStatus",
+                    "publicationNote",
+                    "publicationBlockedUntil",
                     "musicxmlFile",
                     "tags",
                     "scoreBook"
@@ -295,12 +300,38 @@
                     "rightsStatus": {
                         "type": "string",
                         "enum": [
-                            "free",
-                            "unclear",
-                            "restricted"
+                            "public_domain",
+                            "licensed",
+                            "protected",
+                            "open"
                         ]
                     },
                     "rightsNote": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "rightsConfirmedAt": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "rightsConfirmedBy": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "publicationStatus": {
+                        "type": "string",
+                        "enum": [
+                            "approved",
+                            "to_clarify",
+                            "blocked",
+                            "internal_preservation_copy"
+                        ]
+                    },
+                    "publicationNote": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "publicationBlockedUntil": {
                         "type": "string",
                         "nullable": true
                     },
@@ -524,6 +555,11 @@
                     "duration",
                     "rightsStatus",
                     "rightsNote",
+                    "rightsConfirmedAt",
+                    "rightsConfirmedBy",
+                    "publicationStatus",
+                    "publicationNote",
+                    "publicationBlockedUntil",
                     "musicxmlFile",
                     "tags",
                     "scoreBook",
@@ -597,12 +633,38 @@
                     "rightsStatus": {
                         "type": "string",
                         "enum": [
-                            "free",
-                            "unclear",
-                            "restricted"
+                            "public_domain",
+                            "licensed",
+                            "protected",
+                            "open"
                         ]
                     },
                     "rightsNote": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "rightsConfirmedAt": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "rightsConfirmedBy": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "publicationStatus": {
+                        "type": "string",
+                        "enum": [
+                            "approved",
+                            "to_clarify",
+                            "blocked",
+                            "internal_preservation_copy"
+                        ]
+                    },
+                    "publicationNote": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "publicationBlockedUntil": {
                         "type": "string",
                         "nullable": true
                     },
@@ -5105,17 +5167,54 @@
                                         "nullable": true,
                                         "default": null,
                                         "enum": [
-                                            "free",
-                                            "unclear",
-                                            "restricted"
+                                            "public_domain",
+                                            "licensed",
+                                            "protected",
+                                            "open"
                                         ],
-                                        "description": "The publication rights status of the score"
+                                        "description": "The rights status of the score"
                                     },
                                     "rightsNote": {
                                         "type": "string",
                                         "nullable": true,
                                         "default": null,
-                                        "description": "A note explaining the rights status"
+                                        "description": "The reasoning for the rights status"
+                                    },
+                                    "rightsConfirmedAt": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "The date (Y-m-d) on which a person confirmed the rights status"
+                                    },
+                                    "rightsConfirmedBy": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "Who confirmed the rights status, e.g. initials (at most 32 characters)"
+                                    },
+                                    "publicationStatus": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "enum": [
+                                            "approved",
+                                            "to_clarify",
+                                            "blocked",
+                                            "internal_preservation_copy"
+                                        ],
+                                        "description": "The publication status of the score"
+                                    },
+                                    "publicationNote": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "The reasoning for the publication status"
+                                    },
+                                    "publicationBlockedUntil": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "The date (Y-m-d) until which a blocked score stays blocked; only allowed for blocked scores"
                                     },
                                     "tagIds": {
                                         "type": "array",
@@ -5351,17 +5450,54 @@
                                         "nullable": true,
                                         "default": null,
                                         "enum": [
-                                            "free",
-                                            "unclear",
-                                            "restricted"
+                                            "public_domain",
+                                            "licensed",
+                                            "protected",
+                                            "open"
                                         ],
-                                        "description": "The publication rights status of the score"
+                                        "description": "The rights status of the score"
                                     },
                                     "rightsNote": {
                                         "type": "string",
                                         "nullable": true,
                                         "default": null,
-                                        "description": "A note explaining the rights status"
+                                        "description": "The reasoning for the rights status"
+                                    },
+                                    "rightsConfirmedAt": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "The date (Y-m-d) on which a person confirmed the rights status"
+                                    },
+                                    "rightsConfirmedBy": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "Who confirmed the rights status, e.g. initials (at most 32 characters)"
+                                    },
+                                    "publicationStatus": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "enum": [
+                                            "approved",
+                                            "to_clarify",
+                                            "blocked",
+                                            "internal_preservation_copy"
+                                        ],
+                                        "description": "The publication status of the score"
+                                    },
+                                    "publicationNote": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "The reasoning for the publication status"
+                                    },
+                                    "publicationBlockedUntil": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "The date (Y-m-d) until which a blocked score stays blocked; only allowed for blocked scores"
                                     },
                                     "tagIds": {
                                         "type": "array",

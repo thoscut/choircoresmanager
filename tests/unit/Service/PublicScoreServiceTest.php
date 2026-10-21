@@ -40,13 +40,13 @@ final class PublicScoreServiceTest extends TestCase {
 		$score->setComposer('Mozart');
 		$score->setDefects('torn page');
 		$score->setGemaIds(['123']);
-		$score->setRightsStatus('free');
+		$score->setRightsStatus('public_domain');
 		$score->setRightsNote('internal note');
 		$score->setMusicxmlFile('ave.musicxml');
 
 		$this->scoreMapper->expects($this->once())
 			->method('findByRightsStatus')
-			->with('free')
+			->with('public_domain')
 			->willReturn([$score]);
 
 		$result = $this->service->getPublicScores();
@@ -77,7 +77,7 @@ final class PublicScoreServiceTest extends TestCase {
 		$score->setId(3);
 		$this->scoreMapper->expects($this->once())
 			->method('findByIdAndRightsStatus')
-			->with(3, 'free')
+			->with(3, 'public_domain')
 			->willReturn($score);
 
 		$file = ['content' => 'x', 'mimeType' => MusicXmlService::MIME_TYPE_XML, 'fileName' => 'score-3.musicxml'];

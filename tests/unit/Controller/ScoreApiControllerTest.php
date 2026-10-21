@@ -150,6 +150,27 @@ final class ScoreApiControllerTest extends TestCase {
 		$this->assertEquals(Http::STATUS_CREATED, $response->getStatus());
 	}
 
+	public function testPostScoreUsesDefaultStatuses(): void {
+		$this->scoreService->expects($this->once())
+			->method('createScore')
+			->with($this->callback(fn (Score $s) => $s->getRightsStatus() === 'open'
+				&& $s->getPublicationStatus() === 'to_clarify'
+				&& $s->getRightsConfirmedAt() === null
+				&& $s->getPublicationBlockedUntil() === null))
+			->willReturnArgument(0);
+
+		$this->controller->postScore(title: 'New Score');
+	}
+
+	public function testPostScoreRejectsInvalidDate(): void {
+		$this->scoreService->method('parseDate')
+			->willThrowException(new \InvalidArgumentException('Invalid date. Use the format YYYY-MM-DD.'));
+		$this->scoreService->expects($this->never())->method('createScore');
+
+		$this->expectException(OCSBadRequestException::class);
+		$this->controller->postScore(title: 'New Score', rightsConfirmedAt: 'yesterday');
+	}
+
 	#[TestWith([PermissionDeniedException::class, OCSForbiddenException::class, 'Cannot create score'])]
 	#[TestWith([\InvalidArgumentException::class, OCSBadRequestException::class, 'Title cannot be empty'])]
 	public function testPostScoreThrowsExceptions(string $serviceException, string $expectedOCSException, string $message): void {
@@ -199,7 +220,7 @@ final class ScoreApiControllerTest extends TestCase {
 		$this->assertEquals(1791, $response->getData()->getYear());
 	}
 
-	public function testPatchScoreIgnoresMusicXmlFileAndSetsRights(): void {
+	public function testPatchScoreIgnoresUnknownAndManagedFieldsAndSetsRights(): void {
 		$score = new Score();
 		$score->setId(1);
 		$score->setTitle('Title');
@@ -208,31 +229,79 @@ final class ScoreApiControllerTest extends TestCase {
 		$this->scoreService->method('getScoreById')->willReturn($score);
 		$this->request->method('getParams')->willReturn([
 			'id' => 1,
-			'rightsStatus' => 'free',
+			'_route' => 'ocs.orchestrascoresmanager.score_api.patch_score',
+			'rightsStatus' => 'public_domain',
 			'rightsNote' => 'Composer died 1791',
 			'musicxmlFile' => '../../evil.xml',
+			'unknownField' => 'x',
 		]);
 
 		$this->scoreService->expects($this->once())
 			->method('updateScore')
-			->with($this->callback(fn (Score $s) => $s->getRightsStatus() === 'free'
+			->with($this->callback(fn (Score $s) => $s->getRightsStatus() === 'public_domain'
 				&& $s->getRightsNote() === 'Composer died 1791'
 				&& $s->getMusicxmlFile() === null))
 			->willReturnArgument(0);
 
-		$this->controller->patchScore(id: 1, rightsStatus: 'free', rightsNote: 'Composer died 1791');
+		$this->controller->patchScore(id: 1, rightsStatus: 'public_domain', rightsNote: 'Composer died 1791');
 	}
 
-	public function testPatchScoreTurnsNullRightsStatusIntoInvalidValue(): void {
+	public function testPatchScoreSetsPublicationFieldsAndParsesDates(): void {
+		$score = new Score();
+		$score->setId(1);
+		$score->resetUpdatedFields();
+
+		$this->scoreService->method('getScoreById')->willReturn($score);
+		$this->scoreService->method('parseDate')
+			->willReturnCallback(fn ($value) => $value === null ? null : new \DateTimeImmutable($value . ' 00:00:00', new \DateTimeZone('UTC')));
+		$this->request->method('getParams')->willReturn([
+			'id' => 1,
+			'rightsConfirmedAt' => '2026-10-20',
+			'rightsConfirmedBy' => 'TS',
+			'publicationStatus' => 'blocked',
+			'publicationNote' => 'Waiting for the publisher',
+			'publicationBlockedUntil' => '2027-01-31',
+		]);
+
+		$this->scoreService->expects($this->once())
+			->method('updateScore')
+			->with($this->callback(fn (Score $s) => $s->getRightsConfirmedAt()?->format('Y-m-d') === '2026-10-20'
+				&& $s->getRightsConfirmedBy() === 'TS'
+				&& $s->getPublicationStatus() === 'blocked'
+				&& $s->getPublicationNote() === 'Waiting for the publisher'
+				&& $s->getPublicationBlockedUntil()?->format('Y-m-d') === '2027-01-31'))
+			->willReturnArgument(0);
+
+		$this->controller->patchScore(id: 1);
+	}
+
+	public function testPatchScoreRejectsInvalidDate(): void {
 		$score = new Score();
 		$score->setId(1);
 
 		$this->scoreService->method('getScoreById')->willReturn($score);
-		$this->request->method('getParams')->willReturn(['id' => 1, 'rightsStatus' => null]);
+		$this->scoreService->method('parseDate')
+			->willThrowException(new \InvalidArgumentException('Invalid date. Use the format YYYY-MM-DD.'));
+		$this->request->method('getParams')->willReturn(['id' => 1, 'rightsConfirmedAt' => '2026-02-30']);
+		$this->scoreService->expects($this->never())->method('updateScore');
+
+		$this->expectException(OCSBadRequestException::class);
+		$this->expectExceptionMessage('Invalid date');
+		$this->controller->patchScore(id: 1);
+	}
+
+	#[TestWith(['rightsStatus'])]
+	#[TestWith(['publicationStatus'])]
+	public function testPatchScoreTurnsNullStatusIntoInvalidValue(string $field): void {
+		$score = new Score();
+		$score->setId(1);
+
+		$this->scoreService->method('getScoreById')->willReturn($score);
+		$this->request->method('getParams')->willReturn(['id' => 1, $field => null]);
 
 		$this->scoreService->expects($this->once())
 			->method('updateScore')
-			->with($this->callback(fn (Score $s) => $s->getRightsStatus() === ''))
+			->with($this->callback(fn (Score $s) => $s->{'get' . ucfirst($field)}() === ''))
 			->willReturnArgument(0);
 
 		$this->controller->patchScore(id: 1);

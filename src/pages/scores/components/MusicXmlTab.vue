@@ -42,8 +42,8 @@
 			</NcButton>
 		</div>
 
-		<NcNoteCard v-if="score.musicxmlFile && score.rightsStatus === 'free'" type="info">
-			{{ t('This score is marked as free, so it is shown on the public page if that page is enabled.') }}
+		<NcNoteCard v-if="score.musicxmlFile && isPublishable(score)" type="info">
+			{{ t('This score is approved for publication and its rights are confirmed, so it is shown on the public page if that page is enabled.') }}
 		</NcNoteCard>
 
 		<MusicXmlPlayer
@@ -67,6 +67,7 @@ import { useScoreSidebarStore } from '@/stores/scoreSidebarStore'
 import { useScoresStore } from '@/stores/scoresStore'
 import { tryShowError } from '@/utils/errorHandling'
 import { t } from '@/utils/l10n'
+import { isPublishable } from '@/utils/scoreStatus'
 
 interface Props {
 	score: Score

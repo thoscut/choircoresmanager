@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace OCA\OrchestraScoresManager\Db;
 
+use DateTimeImmutable;
 use JsonSerializable;
 use OCP\AppFramework\Db\Entity;
 use OCP\DB\Types;
@@ -42,6 +43,16 @@ use OCP\DB\Types;
  * @method void setRightsStatus(string $value)
  * @method string|null getRightsNote()
  * @method void setRightsNote(?string $value)
+ * @method DateTimeImmutable|null getRightsConfirmedAt()
+ * @method void setRightsConfirmedAt(?DateTimeImmutable $value)
+ * @method string|null getRightsConfirmedBy()
+ * @method void setRightsConfirmedBy(?string $value)
+ * @method string getPublicationStatus()
+ * @method void setPublicationStatus(string $value)
+ * @method string|null getPublicationNote()
+ * @method void setPublicationNote(?string $value)
+ * @method DateTimeImmutable|null getPublicationBlockedUntil()
+ * @method void setPublicationBlockedUntil(?DateTimeImmutable $value)
  * @method string|null getMusicxmlFile()
  * @method void setMusicxmlFile(?string $value)
  */
@@ -59,8 +70,15 @@ class Score extends Entity implements JsonSerializable {
 	protected ?string $digitalStatus = null;
 	protected ?string $gemaIds = null;
 	protected ?int $duration = null;
-	protected string $rightsStatus = 'unclear';
+	protected string $rightsStatus = 'open';
 	protected ?string $rightsNote = null;
+	/** DATE field, normalized to midnight UTC and serialized as Y-m-d */
+	protected ?DateTimeImmutable $rightsConfirmedAt = null;
+	protected ?string $rightsConfirmedBy = null;
+	protected string $publicationStatus = 'to_clarify';
+	protected ?string $publicationNote = null;
+	/** DATE field, normalized to midnight UTC and serialized as Y-m-d */
+	protected ?DateTimeImmutable $publicationBlockedUntil = null;
 	protected ?string $musicxmlFile = null;
 
 	// transient properties, not stored in DB
@@ -85,6 +103,11 @@ class Score extends Entity implements JsonSerializable {
 		$this->addType('duration', Types::INTEGER);
 		$this->addType('rightsStatus', Types::STRING);
 		$this->addType('rightsNote', Types::TEXT);
+		$this->addType('rightsConfirmedAt', Types::DATE_IMMUTABLE);
+		$this->addType('rightsConfirmedBy', Types::STRING);
+		$this->addType('publicationStatus', Types::STRING);
+		$this->addType('publicationNote', Types::TEXT);
+		$this->addType('publicationBlockedUntil', Types::DATE_IMMUTABLE);
 		$this->addType('musicxmlFile', Types::STRING);
 	}
 
@@ -108,6 +131,11 @@ class Score extends Entity implements JsonSerializable {
 			'duration' => $this->duration,
 			'rightsStatus' => $this->rightsStatus,
 			'rightsNote' => $this->rightsNote,
+			'rightsConfirmedAt' => $this->rightsConfirmedAt?->format('Y-m-d'),
+			'rightsConfirmedBy' => $this->rightsConfirmedBy,
+			'publicationStatus' => $this->publicationStatus,
+			'publicationNote' => $this->publicationNote,
+			'publicationBlockedUntil' => $this->publicationBlockedUntil?->format('Y-m-d'),
 			'musicxmlFile' => $this->musicxmlFile,
 		];
 	}

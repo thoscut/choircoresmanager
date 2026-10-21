@@ -200,40 +200,68 @@ final class ScoreMapperTest extends MapperTestCase {
 		$this->assertCount(2, $found);
 	}
 
-	public function testRightsStatusDefaultsToUnclear(): void {
+	public function testRightsAndPublicationFieldsHaveDefaults(): void {
 		$score = new Score();
 		$score->setTitle('Test Score');
 		$inserted = $this->mapper->insert($score);
 
 		$found = $this->mapper->find($inserted->getId());
 
-		$this->assertSame('unclear', $found->getRightsStatus());
+		$this->assertSame('open', $found->getRightsStatus());
 		$this->assertNull($found->getRightsNote());
+		$this->assertNull($found->getRightsConfirmedAt());
+		$this->assertNull($found->getRightsConfirmedBy());
+		$this->assertSame('to_clarify', $found->getPublicationStatus());
+		$this->assertNull($found->getPublicationNote());
+		$this->assertNull($found->getPublicationBlockedUntil());
 		$this->assertNull($found->getMusicxmlFile());
 	}
 
+	public function testRightsAndPublicationFieldsAreStored(): void {
+		$score = new Score();
+		$score->setTitle('Test Score');
+		$score->setRightsStatus('licensed');
+		$score->setRightsNote('Licence of 2026-10-01');
+		$score->setRightsConfirmedAt(new \DateTimeImmutable('2026-10-20 00:00:00', new \DateTimeZone('UTC')));
+		$score->setRightsConfirmedBy('TS');
+		$score->setPublicationStatus('blocked');
+		$score->setPublicationNote('Waiting for the publisher');
+		$score->setPublicationBlockedUntil(new \DateTimeImmutable('2027-01-31 00:00:00', new \DateTimeZone('UTC')));
+		$inserted = $this->mapper->insert($score);
+
+		$serialized = $this->mapper->find($inserted->getId())->jsonSerialize();
+
+		$this->assertSame('licensed', $serialized['rightsStatus']);
+		$this->assertSame('Licence of 2026-10-01', $serialized['rightsNote']);
+		$this->assertSame('2026-10-20', $serialized['rightsConfirmedAt']);
+		$this->assertSame('TS', $serialized['rightsConfirmedBy']);
+		$this->assertSame('blocked', $serialized['publicationStatus']);
+		$this->assertSame('Waiting for the publisher', $serialized['publicationNote']);
+		$this->assertSame('2027-01-31', $serialized['publicationBlockedUntil']);
+	}
+
 	public function testFindByRightsStatusOnlyReturnsMatchingScores(): void {
-		foreach (['B free' => 'free', 'Restricted' => 'restricted', 'Unclear' => 'unclear', 'A free' => 'free'] as $title => $status) {
+		foreach (['B free' => 'public_domain', 'Protected' => 'protected', 'Open' => 'open', 'A free' => 'public_domain'] as $title => $status) {
 			$score = new Score();
 			$score->setTitle($title);
 			$score->setRightsStatus($status);
 			$this->mapper->insert($score);
 		}
 
-		$free = $this->mapper->findByRightsStatus('free');
+		$free = $this->mapper->findByRightsStatus('public_domain');
 
 		$this->assertSame(['A free', 'B free'], array_map(fn (Score $s) => $s->getTitle(), $free));
 	}
 
 	public function testFindByIdAndRightsStatus(): void {
 		$score = new Score();
-		$score->setTitle('Restricted');
-		$score->setRightsStatus('restricted');
+		$score->setTitle('Protected');
+		$score->setRightsStatus('protected');
 		$inserted = $this->mapper->insert($score);
 
-		$this->assertSame($inserted->getId(), $this->mapper->findByIdAndRightsStatus($inserted->getId(), 'restricted')->getId());
+		$this->assertSame($inserted->getId(), $this->mapper->findByIdAndRightsStatus($inserted->getId(), 'protected')->getId());
 
 		$this->expectException(DoesNotExistException::class);
-		$this->mapper->findByIdAndRightsStatus($inserted->getId(), 'free');
+		$this->mapper->findByIdAndRightsStatus($inserted->getId(), 'public_domain');
 	}
 }
