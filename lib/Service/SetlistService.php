@@ -14,7 +14,9 @@ use OCA\OrchestraScoresManager\Policy\SetlistPolicy;
 use OCA\OrchestraScoresManager\Utility\SetlistValidationHelper;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
+use OCP\AppFramework\Db\TTransactional;
 use OCP\DB\Exception;
+use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\IUserSession;
 
@@ -22,6 +24,8 @@ use OCP\IUserSession;
  * Service for managing Setlists and their entries.
  */
 class SetlistService {
+	use TTransactional;
+
 	/** @psalm-suppress PossiblyUnusedMethod - Constructor used by DI container */
 	public function __construct(
 		private readonly SetlistMapper $setlistMapper,
@@ -33,6 +37,7 @@ class SetlistService {
 		private readonly FolderCollectionService $folderCollectionService,
 		private readonly IUserSession $userSession,
 		private readonly IL10N $l,
+		private readonly IDBConnection $db,
 	) {
 	}
 
@@ -286,20 +291,23 @@ class SetlistService {
 		$clone->setIsDraft(true);
 		$clone->setIsPublished(false);
 
-		$created = $this->setlistMapper->insert($clone);
+		$created = $this->atomic(function () use ($clone, $id) {
+			$created = $this->setlistMapper->insert($clone);
 
-		// Copy all entries from the source setlist
-		$sourceEntries = $this->setlistEntryMapper->findBySetlistId($id);
-		foreach ($sourceEntries as $sourceEntry) {
-			$entryClone = new SetlistEntry();
-			$entryClone->setSetlistId($created->getId());
-			$entryClone->setIndex($sourceEntry->getIndex());
-			$entryClone->setComment($sourceEntry->getComment());
-			$entryClone->setModerationDuration($sourceEntry->getModerationDuration());
-			$entryClone->setBreakDuration($sourceEntry->getBreakDuration());
-			$entryClone->setScoreId($sourceEntry->getScoreId());
-			$this->setlistEntryMapper->insert($entryClone);
-		}
+			// Copy all entries from the source setlist
+			$sourceEntries = $this->setlistEntryMapper->findBySetlistId($id);
+			foreach ($sourceEntries as $sourceEntry) {
+				$entryClone = new SetlistEntry();
+				$entryClone->setSetlistId($created->getId());
+				$entryClone->setIndex($sourceEntry->getIndex());
+				$entryClone->setComment($sourceEntry->getComment());
+				$entryClone->setModerationDuration($sourceEntry->getModerationDuration());
+				$entryClone->setBreakDuration($sourceEntry->getBreakDuration());
+				$entryClone->setScoreId($sourceEntry->getScoreId());
+				$this->setlistEntryMapper->insert($entryClone);
+			}
+			return $created;
+		}, $this->db);
 
 		return $this->serializeSetlist($created);
 	}

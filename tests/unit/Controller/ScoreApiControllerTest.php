@@ -11,6 +11,7 @@ use OCA\OrchestraScoresManager\Db\ScoreMapper;
 use OCA\OrchestraScoresManager\Db\ScoreTagLinkMapper;
 use OCA\OrchestraScoresManager\Db\TagMapper;
 use OCA\OrchestraScoresManager\Service\CommentService;
+use OCA\OrchestraScoresManager\Service\Exceptions\NotFoundException;
 use OCA\OrchestraScoresManager\Service\Exceptions\PermissionDeniedException;
 use OCA\OrchestraScoresManager\Service\FolderCollectionService;
 use OCA\OrchestraScoresManager\Service\ScoreService;
@@ -18,6 +19,7 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCS\OCSBadRequestException;
 use OCP\AppFramework\OCS\OCSForbiddenException;
+use OCP\AppFramework\OCS\OCSNotFoundException;
 use OCP\IRequest;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
@@ -163,6 +165,46 @@ final class ScoreApiControllerTest extends TestCase {
 		$this->controller->postScore(title: 'Test');
 	}
 
+	public function testPatchScoreIgnoresFieldsOutsideWhitelist(): void {
+		$score = new Score();
+		$score->setId(1);
+		$score->setTitle('Original Title');
+		$score->resetUpdatedFields();
+
+		$this->scoreService->method('getScoreById')->willReturn($score);
+		$this->request->method('getParams')->willReturn([
+			'id' => 1,
+			'composer' => 'Bach',
+			'tags' => [['id' => 5]],
+			'scoreBook' => null,
+			'unknownField' => 'x',
+		]);
+
+		$this->scoreService->expects($this->once())
+			->method('updateScore')
+			->with($this->callback(function (Score $s): bool {
+				return $s->getComposer() === 'Bach'
+					&& $s->getTitle() === 'Original Title'
+					&& array_keys($s->getUpdatedFields()) === ['composer'];
+			}))
+			->willReturn($score);
+
+		$this->controller->patchScore(id: 1, composer: 'Bach', scoreBook: null);
+	}
+
+	public function testPatchScoreRejectsEmptyTitle(): void {
+		$score = new Score();
+		$score->setId(1);
+
+		$this->scoreService->method('getScoreById')->willReturn($score);
+		$this->request->method('getParams')->willReturn(['id' => 1, 'title' => ' ']);
+		$this->scoreService->expects($this->never())->method('updateScore');
+
+		$this->expectException(OCSBadRequestException::class);
+
+		$this->controller->patchScore(id: 1, title: ' ');
+	}
+
 	public function testPatchScoreUpdatesExistingScore(): void {
 		$score = new Score();
 		$score->setId(1);
@@ -240,6 +282,7 @@ final class ScoreApiControllerTest extends TestCase {
 
 	#[TestWith([PermissionDeniedException::class, OCSForbiddenException::class, 'Cannot update score'])]
 	#[TestWith([\InvalidArgumentException::class, OCSBadRequestException::class, 'Score not found'])]
+	#[TestWith([NotFoundException::class, OCSNotFoundException::class, 'Score not found'])]
 	public function testPatchScoreThrowsExceptions(string $serviceException, string $expectedOCSException, string $message): void {
 		$this->scoreService->expects($this->once())
 			->method('getScoreById')
@@ -321,8 +364,6 @@ final class ScoreApiControllerTest extends TestCase {
 		$response = $this->controller->postScoreComment(
 			id: 1,
 			content: 'New comment',
-			userId: 'user1',
-			creationDate: 1234567890
 		);
 
 		$this->assertInstanceOf(DataResponse::class, $response);
@@ -341,8 +382,6 @@ final class ScoreApiControllerTest extends TestCase {
 		$this->controller->postScoreComment(
 			id: 1,
 			content: 'Test',
-			userId: 'user1',
-			creationDate: 1234567890
 		);
 	}
 

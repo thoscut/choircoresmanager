@@ -35,6 +35,18 @@ final class PermissionServiceTest extends TestCase {
 		);
 	}
 
+	public function testIsCurrentUserLoggedInReturnsFalseWithoutUser(): void {
+		$this->userSession->method('getUser')->willReturn(null);
+
+		$this->assertFalse($this->service->isCurrentUserLoggedIn());
+	}
+
+	public function testIsCurrentUserLoggedInReturnsTrueWithUser(): void {
+		$this->userSession->method('getUser')->willReturn($this->createMock(IUser::class));
+
+		$this->assertTrue($this->service->isCurrentUserLoggedIn());
+	}
+
 	public function testCanCurrentUserEditReturnsFalseWhenNoUserLoggedIn(): void {
 		$this->userSession->expects($this->once())
 			->method('getUser')
