@@ -24,6 +24,16 @@ export { default as PDFIcon } from 'vue-material-design-icons/FilePdfBox.vue'
 export { default as SettingsIcon } from 'vue-material-design-icons/CogOutline.vue'
 export { default as TableViewIcon } from 'vue-material-design-icons/TableHeadersEye.vue'
 export { default as EditIcon } from 'vue-material-design-icons/Pencil.vue'
+export { default as UploadIcon } from 'vue-material-design-icons/Upload.vue'
+
+// Player icons
+export { default as PlayIcon } from 'vue-material-design-icons/Play.vue'
+export { default as PauseIcon } from 'vue-material-design-icons/Pause.vue'
+export { default as StopIcon } from 'vue-material-design-icons/Stop.vue'
+export { default as PreviousIcon } from 'vue-material-design-icons/ChevronLeft.vue'
+export { default as NextIcon } from 'vue-material-design-icons/ChevronRight.vue'
+export { default as MusicXmlIcon } from 'vue-material-design-icons/MusicNote.vue'
+export { default as PublicIcon } from 'vue-material-design-icons/Earth.vue'
 
 // State icons
 export { default as ErrorIcon } from 'vue-material-design-icons/AlertCircle.vue'
