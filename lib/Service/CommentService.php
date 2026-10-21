@@ -8,6 +8,7 @@ use OCA\OrchestraScoresManager\Db\Comment;
 use OCA\OrchestraScoresManager\Db\CommentMapper;
 use OCA\OrchestraScoresManager\Policy\CommentPolicy;
 use OCA\OrchestraScoresManager\Policy\PolicyInterface;
+use OCA\OrchestraScoresManager\Service\Exceptions\NotFoundException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\DB\Exception;
@@ -28,7 +29,7 @@ class CommentService {
 	 *
 	 * @param int $id
 	 * @return Comment
-	 * @throws \Exception
+	 * @throws NotFoundException
 	 */
 	public function getCommentById(int $id): Comment {
 		$this->authorizationService->authorizePolicy($this->commentPolicy, PolicyInterface::ACTION_READ);
@@ -37,7 +38,7 @@ class CommentService {
 			$this->enrichCommentWithDisplayName($comment);
 			return $comment;
 		} catch (MultipleObjectsReturnedException|DoesNotExistException|Exception $e) {
-			throw new \Exception('Comment not found');
+			throw new NotFoundException('Comment not found', 0, $e);
 		}
 	}
 
@@ -81,12 +82,15 @@ class CommentService {
 	 *
 	 * @param int $id
 	 * @throws Exception
-	 * @throws DoesNotExistException
-	 * @throws MultipleObjectsReturnedException
+	 * @throws NotFoundException
 	 */
 	public function deleteComment(int $id): void {
 		$this->authorizationService->authorizePolicy($this->commentPolicy, PolicyInterface::ACTION_DELETE);
-		$comment = $this->commentMapper->find($id);
+		try {
+			$comment = $this->commentMapper->find($id);
+		} catch (MultipleObjectsReturnedException|DoesNotExistException $e) {
+			throw new NotFoundException('Comment not found', 0, $e);
+		}
 		$this->commentMapper->delete($comment);
 	}
 

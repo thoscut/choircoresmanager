@@ -255,7 +255,7 @@ class ScoreBookService {
 		try {
 			$this->scoreBookScoreLinkMapper->addScoreToScoreBook($scoreBookId, $scoreId, $index);
 		} catch (Exception $e) {
-			throw new \Exception($this->l->t('Failed to add score to score book: %1$s', [$e->getMessage()]));
+			throw new \Exception($this->l->t('Failed to add score to score book'), 0, $e);
 		}
 	}
 
@@ -318,7 +318,7 @@ class ScoreBookService {
 		try {
 			$this->scoreBookScoreLinkMapper->addScoresToScoreBook($scoreBookId, $scoresToAdd);
 		} catch (Exception $e) {
-			throw new \Exception($this->l->t('Failed to add scores to score book: %1$s', [$e->getMessage()]));
+			throw new \Exception($this->l->t('Failed to add scores to score book'), 0, $e);
 		}
 	}
 
@@ -335,7 +335,7 @@ class ScoreBookService {
 		try {
 			$this->scoreBookScoreLinkMapper->removeScoreFromScoreBook($scoreBookId, $scoreId);
 		} catch (Exception $e) {
-			throw new \Exception($this->l->t('Failed to remove score from score book: %1$s', [$e->getMessage()]));
+			throw new \Exception($this->l->t('Failed to remove score from score book'), 0, $e);
 		}
 	}
 
@@ -417,7 +417,7 @@ class ScoreBookService {
 			try {
 				$this->tagMapper->find($tid);
 			} catch (DoesNotExistException|MultipleObjectsReturnedException|\RuntimeException $e) {
-				throw new \Exception($this->l->t('Tag not found: %s', [$tid]) . ' - ' . $e->getMessage());
+				throw new \InvalidArgumentException($this->l->t('Tag not found: %s', [$tid]), 0, $e);
 			}
 		}
 		$this->scoreBookTagLinkMapper->setTagsForScoreBook($scoreBookId, $validIds);

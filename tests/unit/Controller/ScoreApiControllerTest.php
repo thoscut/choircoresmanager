@@ -11,6 +11,7 @@ use OCA\OrchestraScoresManager\Db\ScoreMapper;
 use OCA\OrchestraScoresManager\Db\ScoreTagLinkMapper;
 use OCA\OrchestraScoresManager\Db\TagMapper;
 use OCA\OrchestraScoresManager\Service\CommentService;
+use OCA\OrchestraScoresManager\Service\Exceptions\NotFoundException;
 use OCA\OrchestraScoresManager\Service\Exceptions\PermissionDeniedException;
 use OCA\OrchestraScoresManager\Service\FolderCollectionService;
 use OCA\OrchestraScoresManager\Service\ScoreService;
@@ -18,6 +19,7 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCS\OCSBadRequestException;
 use OCP\AppFramework\OCS\OCSForbiddenException;
+use OCP\AppFramework\OCS\OCSNotFoundException;
 use OCP\IRequest;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
@@ -201,6 +203,7 @@ final class ScoreApiControllerTest extends TestCase {
 
 	#[TestWith([PermissionDeniedException::class, OCSForbiddenException::class, 'Cannot update score'])]
 	#[TestWith([\InvalidArgumentException::class, OCSBadRequestException::class, 'Score not found'])]
+	#[TestWith([NotFoundException::class, OCSNotFoundException::class, 'Score not found'])]
 	public function testPatchScoreThrowsExceptions(string $serviceException, string $expectedOCSException, string $message): void {
 		$this->scoreService->expects($this->once())
 			->method('getScoreById')

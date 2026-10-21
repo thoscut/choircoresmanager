@@ -16,6 +16,7 @@ use OCA\OrchestraScoresManager\Db\ScoreMapper;
 use OCA\OrchestraScoresManager\Policy\FolderCollectionPolicy;
 use OCA\OrchestraScoresManager\Policy\FolderCollectionVersionPolicy;
 use OCA\OrchestraScoresManager\Policy\PolicyInterface;
+use OCA\OrchestraScoresManager\Service\Exceptions\NotFoundException;
 use OCA\OrchestraScoresManager\Utility\DateTimeHelper;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
@@ -358,7 +359,7 @@ class FolderCollectionService {
 		try {
 			$this->scoreMapper->find($scoreId);
 		} catch (DoesNotExistException|MultipleObjectsReturnedException|Exception $e) {
-			throw new \Exception($this->l->t('Score not found'));
+			throw new NotFoundException($this->l->t('Score not found'), 0, $e);
 		}
 
 		$folderCollections = [];
@@ -447,15 +448,14 @@ class FolderCollectionService {
 			$this->linkMapper->addScoreToVersion($scoreId, $activeVersionId, $index);
 		} catch (Exception $e) {
 			// Check if this is a unique constraint violation for the index
-			$lowerMessage = strtolower($e->getMessage());
-			if (str_contains($lowerMessage, 'duplicate entry')) {
+			if ($e->getReason() === Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
 				if ($isIndexed) {
 					throw new \InvalidArgumentException($this->l->t('Index %d or score %d is already used in this folder collection', [$index, $scoreId]));
 				}
 				// For alphabetical collections, re-adding the same score doesn't change anything
 				return;
 			}
-			throw new \Exception($this->l->t('Failed to add score to folder collection: %1$s', [$e->getMessage()]));
+			throw new \Exception($this->l->t('Failed to add score to folder collection'), 0, $e);
 		}
 	}
 
@@ -486,7 +486,7 @@ class FolderCollectionService {
 		try {
 			$this->linkMapper->removeScoreFromVersion($scoreId, $activeVersionId);
 		} catch (Exception $e) {
-			throw new \Exception($this->l->t('Failed to remove score from folder collection'));
+			throw new \Exception($this->l->t('Failed to remove score from folder collection'), 0, $e);
 		}
 	}
 
@@ -536,14 +536,13 @@ class FolderCollectionService {
 		try {
 			$this->linkMapper->addScoreBookToVersion($scoreBookId, $activeVersionId, $index);
 		} catch (Exception $e) {
-			$lowerMessage = strtolower($e->getMessage());
-			if (str_contains($lowerMessage, 'duplicate entry')) {
+			if ($e->getReason() === Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
 				if ($isIndexed) {
 					throw new \InvalidArgumentException($this->l->t('Index %d or score book %d is already used in this folder collection', [$index, $scoreBookId]));
 				}
 				return;
 			}
-			throw new \Exception($this->l->t('Failed to add score book to folder collection: %1$s', [$e->getMessage()]));
+			throw new \Exception($this->l->t('Failed to add score book to folder collection'), 0, $e);
 		}
 	}
 
@@ -613,7 +612,7 @@ class FolderCollectionService {
 		try {
 			$this->linkMapper->removeScoreBookFromVersion($scoreBookId, $activeVersionId);
 		} catch (Exception $e) {
-			throw new \Exception($this->l->t('Failed to remove score book from folder collection: %1$s', [$e->getMessage()]));
+			throw new \Exception($this->l->t('Failed to remove score book from folder collection'), 0, $e);
 		}
 	}
 

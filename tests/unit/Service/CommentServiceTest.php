@@ -10,6 +10,7 @@ use OCA\OrchestraScoresManager\Policy\CommentPolicy;
 use OCA\OrchestraScoresManager\Policy\PolicyInterface;
 use OCA\OrchestraScoresManager\Service\AuthorizationService;
 use OCA\OrchestraScoresManager\Service\CommentService;
+use OCA\OrchestraScoresManager\Service\Exceptions\NotFoundException;
 use OCA\OrchestraScoresManager\Service\Exceptions\PermissionDeniedException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\DB\Exception;
@@ -218,7 +219,7 @@ final class CommentServiceTest extends TestCase {
 			->with(999)
 			->willThrowException(new DoesNotExistException('Not found'));
 
-		$this->expectException(DoesNotExistException::class);
+		$this->expectException(NotFoundException::class);
 
 		$this->service->deleteComment(999);
 	}

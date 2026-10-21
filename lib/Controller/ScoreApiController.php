@@ -20,6 +20,7 @@ use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCS\OCSBadRequestException;
 use OCP\AppFramework\OCS\OCSForbiddenException;
+use OCP\AppFramework\OCS\OCSNotFoundException;
 use OCP\AppFramework\OCSController;
 use OCP\DB\Exception;
 use OCP\IRequest;
@@ -166,7 +167,8 @@ class ScoreApiController extends OCSController {
 	 *
 	 * @return DataResponse<Http::STATUS_OK, OrchestraScoresManagerScore, array{}> the updated score
 	 *
-	 * @throws OCSBadRequestException If the score is not found
+	 * @throws OCSBadRequestException If the input is invalid
+	 * @throws OCSNotFoundException If the score is not found
 	 * @throws Exception
 	 * @throws \Throwable If adding/removing tags fails
 	 *
@@ -318,6 +320,8 @@ class ScoreApiController extends OCSController {
 	 * 200: Successful response with the list of folder collections
 	 * 400: Bad request
 	 * 403: Forbidden
+	 * 404: Score not found
+	 * @throws OCSNotFoundException if the score does not exist
 	 * @throws OCSBadRequestException if the request is invalid
 	 * @throws OCSForbiddenException if the user does not have permission
 	 */
