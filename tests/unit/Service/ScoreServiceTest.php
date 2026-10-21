@@ -512,6 +512,8 @@ final class ScoreServiceTest extends TestCase {
 
 	public function testUpdateScoreSkipsMapperUpdateWhenNoFieldsChanged(): void {
 		$score = new Score();
+		// Like a score loaded from the database
+		$score->resetUpdatedFields();
 		$score->setId(1);
 		// Don't modify any fields, so getUpdatedFields should only have 'id'
 

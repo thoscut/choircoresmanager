@@ -22,8 +22,8 @@ use OCP\Migration\SimpleMigrationStep;
  * - 'restricted' becomes rights 'protected'
  *
  * The column default of rights_status is left alone, because changing it rebuilds the
- * table on SQLite, which fails with the foreign keys pointing to it. ScoreService always
- * writes both status columns when creating a score.
+ * table on SQLite, which fails with the foreign keys pointing to it. The Score entity always
+ * writes both status columns when a score is inserted.
  *
  * @psalm-suppress UnusedClass - Migration class discovered by Nextcloud framework
  */
