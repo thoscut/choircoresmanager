@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Copyright status per score (public domain / licensed / protected / open) and, separately, a publication status (free / to clarify / blocked until a date / internal preservation copy), with a note
 - Internal preservation copies stay with the editors: no player, viewer or download for anyone else
 - Upload of MusicXML files (.musicxml, .xml, .mxl) per score, with notation view and playback (per-voice solo, mute and volume, tempo control)
+- PDF file per score with an in-browser viewer (no download or print button)
+- Sharing of scores and folder collections: group shares appear in "Shared with me" for the group's members, public links work without login and only show scores that may be published; editors manage shares on "Manage shares", in the folder collection header and in the score sidebar
 - Optional public page listing all scores released for publication whose rights allow it (public domain or licensed), with notation view, playback and MusicXML download (disabled by default, enabled in the admin settings)
 
 ## [1.2.2] - 2026-08-28
