@@ -18,7 +18,8 @@ use OCP\Migration\SimpleMigrationStep;
  * - lyricist: author of the lyrics
  * - voicing: choir voicing (e.g. "TTBB")
  * - language: language of the lyrics
- * - repertoire_status: one of active, dormant, archived (null = not set)
+ * - inventory_status: one of active, retired, missing, lent (default active)
+ * - last_performed_imported: date of the last performance as documented in an imported catalogue
  *
  * @psalm-suppress UnusedClass - Migration class discovered by Nextcloud framework
  */
@@ -66,12 +67,19 @@ class Version000008000Date20261021000000 extends SimpleMigrationStep {
 			]);
 			$changed = true;
 		}
-		if (!$table->hasColumn('repertoire_status')) {
-			$table->addColumn('repertoire_status', Types::STRING, [
-				'notnull' => false,
+		if (!$table->hasColumn('inventory_status')) {
+			$table->addColumn('inventory_status', Types::STRING, [
+				'notnull' => true,
 				'length' => 20,
+				'default' => 'active',
 			]);
-			$table->addIndex(['repertoire_status'], 'idx_osm_scores_rep_status');
+			$table->addIndex(['inventory_status'], 'idx_osm_scores_inv_status');
+			$changed = true;
+		}
+		if (!$table->hasColumn('last_performed_imported')) {
+			$table->addColumn('last_performed_imported', Types::DATE_IMMUTABLE, [
+				'notnull' => false,
+			]);
 			$changed = true;
 		}
 

@@ -86,7 +86,7 @@ import {
   UserSettingsPutSetlistSettingsData,
   UserSettingsPutSetlistSettingsPayload,
 } from "./data-contracts";
-import { ContentType, HttpClient, RequestParams } from "./http-client";
+import { HttpClient, RequestParams } from "./http-client";
 
 export class Ocs<
   SecurityDataType = unknown,
@@ -192,7 +192,7 @@ export class Ocs<
       method: "POST",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -251,7 +251,7 @@ export class Ocs<
       method: "PATCH",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -347,7 +347,7 @@ export class Ocs<
       method: "POST",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -444,7 +444,7 @@ export class Ocs<
       method: "POST",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -532,7 +532,7 @@ export class Ocs<
       method: "POST",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -563,7 +563,7 @@ export class Ocs<
       method: "POST",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -622,7 +622,7 @@ export class Ocs<
       method: "PATCH",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -688,7 +688,7 @@ export class Ocs<
       method: "POST",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -720,7 +720,7 @@ export class Ocs<
       method: "PATCH",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -800,7 +800,7 @@ export class Ocs<
       method: "POST",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -883,7 +883,7 @@ export class Ocs<
       method: "POST",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -939,7 +939,7 @@ export class Ocs<
       method: "PATCH",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -1020,7 +1020,7 @@ export class Ocs<
       method: "POST",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -1051,7 +1051,7 @@ export class Ocs<
       method: "POST",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -1183,7 +1183,7 @@ export class Ocs<
       method: "POST",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -1239,7 +1239,7 @@ export class Ocs<
       method: "PATCH",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -1295,7 +1295,7 @@ export class Ocs<
       method: "POST",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -1351,7 +1351,7 @@ export class Ocs<
       method: "POST",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -1407,7 +1407,7 @@ export class Ocs<
       method: "PATCH",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -1465,7 +1465,7 @@ export class Ocs<
       method: "POST",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -1517,7 +1517,7 @@ export class Ocs<
       method: "POST",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -1572,7 +1572,7 @@ export class Ocs<
       method: "PUT",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });

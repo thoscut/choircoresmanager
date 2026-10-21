@@ -17,7 +17,12 @@ use OCA\OrchestraScoresManager\Db\SetlistEntryMapper;
 use OCA\OrchestraScoresManager\Db\SetlistMapper;
 use OCA\OrchestraScoresManager\Db\Tag;
 use OCA\OrchestraScoresManager\Db\TagMapper;
+use OCA\OrchestraScoresManager\Service\ConfigService;
+use OCA\OrchestraScoresManager\Service\RepertoireClassifier;
 use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\IDateTimeZone;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Integration tests for ScoreMapper.
@@ -40,7 +45,16 @@ final class ScoreMapperTest extends MapperTestCase {
 		$this->scoreTagLinkMapper = new ScoreTagLinkMapper($this->db);
 		$this->scoreBookScoreLinkMapper = new ScoreBookScoreLinkMapper($this->db);
 		$this->scoreBookMapper = new ScoreBookMapper($this->db, $scoreBookTagLinkMapper, $this->tagMapper);
-		$this->mapper = new ScoreMapper($this->db, $this->scoreTagLinkMapper, $this->tagMapper, $this->scoreBookScoreLinkMapper);
+
+		$configService = $this->createMock(ConfigService::class);
+		$configService->method('getRepertoireThresholds')->willReturn(['currentYears' => 3, 'dormantYears' => 10]);
+		$timeFactory = $this->createMock(ITimeFactory::class);
+		$timeFactory->method('now')->willReturn(new \DateTimeImmutable('2026-06-01 12:00:00', new \DateTimeZone('UTC')));
+		$dateTimeZone = $this->createMock(IDateTimeZone::class);
+		$dateTimeZone->method('getDefaultTimeZone')->willReturn(new \DateTimeZone('UTC'));
+		$classifier = new RepertoireClassifier($configService, $timeFactory, $dateTimeZone);
+
+		$this->mapper = new ScoreMapper($this->db, $this->scoreTagLinkMapper, $this->tagMapper, $this->scoreBookScoreLinkMapper, $classifier);
 	}
 
 	private function createTestTag(string $name): Tag {
@@ -234,11 +248,12 @@ final class ScoreMapperTest extends MapperTestCase {
 		$this->createPerformance($score->getId(), null);
 
 		$found = $this->mapper->find($score->getId());
-		$this->assertNotNull($found->getLastPerformed());
-		$this->assertSame('2025-12-05', substr((string)$found->getLastPerformed(), 0, 10));
+		$this->assertSame('2025-12-05', $found->getLastPerformed());
+		$this->assertSame('current', $found->getRepertoireClass());
 
 		$all = $this->mapper->findAll();
 		$this->assertSame($found->getLastPerformed(), $all[0]->getLastPerformed());
+		$this->assertSame('current', $all[0]->getRepertoireClass());
 	}
 
 	public function testLastPerformedIsNullWithoutSetlists(): void {
@@ -246,6 +261,78 @@ final class ScoreMapperTest extends MapperTestCase {
 		$score->setTitle('Memory');
 		$score = $this->mapper->insert($score);
 
-		$this->assertNull($this->mapper->find($score->getId())->getLastPerformed());
+		$found = $this->mapper->find($score->getId());
+		$this->assertNull($found->getLastPerformed());
+		$this->assertSame('not_documented', $found->getRepertoireClass());
+	}
+
+	public function testImportedLastPerformedWinsWhenLater(): void {
+		$score = new Score();
+		$score->setTitle('Imported later');
+		$score->setLastPerformedImported('2026-01-10');
+		$score = $this->mapper->insert($score);
+		$this->createPerformance($score->getId(), new \DateTimeImmutable('2025-12-05 19:00:00'));
+
+		$found = $this->mapper->findMultiple([$score->getId()]);
+
+		$this->assertSame('2026-01-10', $found[0]->getLastPerformed());
+		$this->assertSame('2026-01-10', $found[0]->getLastPerformedImported()?->format('Y-m-d'));
+	}
+
+	public function testSetlistWinsWhenLaterThanImportedLastPerformed(): void {
+		$score = new Score();
+		$score->setTitle('Setlist later');
+		$score->setLastPerformedImported('2010-05-01');
+		$score = $this->mapper->insert($score);
+		$this->createPerformance($score->getId(), new \DateTimeImmutable('2024-06-22 18:00:00'));
+
+		$found = $this->mapper->find($score->getId());
+
+		$this->assertSame('2024-06-22', $found->getLastPerformed());
+		$this->assertSame('current', $found->getRepertoireClass());
+	}
+
+	public static function importedRepertoireClassProvider(): array {
+		// current year 2026 with thresholds 3 and 10
+		return [
+			'current' => ['2023-03-01', 'current'],
+			'dormant' => ['2016-03-01', 'dormant'],
+			'earlier' => ['2015-12-31', 'earlier'],
+		];
+	}
+
+	#[DataProvider('importedRepertoireClassProvider')]
+	public function testRepertoireClassFromImportedLastPerformed(string $imported, string $expected): void {
+		$score = new Score();
+		$score->setTitle('Imported');
+		$score->setLastPerformedImported($imported);
+		$score = $this->mapper->insert($score);
+
+		$found = $this->mapper->find($score->getId());
+
+		$this->assertSame($imported, $found->getLastPerformed());
+		$this->assertSame($expected, $found->getRepertoireClass());
+	}
+
+	public function testInventoryStatusDefaultsToActive(): void {
+		$score = new Score();
+		$score->setTitle('Default status');
+		$score = $this->mapper->insert($score);
+
+		$this->assertSame('active', $this->mapper->find($score->getId())->getInventoryStatus());
+	}
+
+	public function testInventoryStatusIsPersisted(): void {
+		$score = new Score();
+		$score->setTitle('Lent score');
+		$score->setInventoryStatus('lent');
+		$score = $this->mapper->insert($score);
+
+		$found = $this->mapper->find($score->getId());
+		$this->assertSame('lent', $found->getInventoryStatus());
+
+		$found->setInventoryStatus('retired');
+		$this->mapper->update($found);
+		$this->assertSame('retired', $this->mapper->find($score->getId())->getInventoryStatus());
 	}
 }

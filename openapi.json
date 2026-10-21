@@ -225,8 +225,10 @@
                     "lyricist",
                     "voicing",
                     "language",
-                    "repertoireStatus",
+                    "inventoryStatus",
                     "lastPerformed",
+                    "lastPerformedImported",
+                    "repertoireClass",
                     "tags",
                     "scoreBook"
                 ],
@@ -311,18 +313,31 @@
                         "type": "string",
                         "nullable": true
                     },
-                    "repertoireStatus": {
+                    "inventoryStatus": {
                         "type": "string",
-                        "nullable": true,
                         "enum": [
                             "active",
-                            "dormant",
-                            "archived"
+                            "retired",
+                            "missing",
+                            "lent"
                         ]
                     },
                     "lastPerformed": {
                         "type": "string",
                         "nullable": true
+                    },
+                    "lastPerformedImported": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "repertoireClass": {
+                        "type": "string",
+                        "enum": [
+                            "current",
+                            "dormant",
+                            "earlier",
+                            "not_documented"
+                        ]
                     },
                     "tags": {
                         "type": "array",
@@ -542,8 +557,10 @@
                     "lyricist",
                     "voicing",
                     "language",
-                    "repertoireStatus",
+                    "inventoryStatus",
                     "lastPerformed",
+                    "lastPerformedImported",
+                    "repertoireClass",
                     "tags",
                     "scoreBook",
                     "index"
@@ -629,18 +646,31 @@
                         "type": "string",
                         "nullable": true
                     },
-                    "repertoireStatus": {
+                    "inventoryStatus": {
                         "type": "string",
-                        "nullable": true,
                         "enum": [
                             "active",
-                            "dormant",
-                            "archived"
+                            "retired",
+                            "missing",
+                            "lent"
                         ]
                     },
                     "lastPerformed": {
                         "type": "string",
                         "nullable": true
+                    },
+                    "lastPerformedImported": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "repertoireClass": {
+                        "type": "string",
+                        "enum": [
+                            "current",
+                            "dormant",
+                            "earlier",
+                            "not_documented"
+                        ]
                     },
                     "tags": {
                         "type": "array",
@@ -4132,16 +4162,17 @@
                                         "default": null,
                                         "description": "The language of the lyrics"
                                     },
-                                    "repertoireStatus": {
+                                    "inventoryStatus": {
                                         "type": "string",
                                         "nullable": true,
                                         "default": null,
                                         "enum": [
                                             "active",
-                                            "dormant",
-                                            "archived"
+                                            "retired",
+                                            "missing",
+                                            "lent"
                                         ],
-                                        "description": "The repertoire status of the score"
+                                        "description": "The inventory status of the score (default active)"
                                     },
                                     "tagIds": {
                                         "type": "array",
@@ -4396,16 +4427,17 @@
                                         "default": null,
                                         "description": "The language of the lyrics"
                                     },
-                                    "repertoireStatus": {
+                                    "inventoryStatus": {
                                         "type": "string",
                                         "nullable": true,
                                         "default": null,
                                         "enum": [
                                             "active",
-                                            "dormant",
-                                            "archived"
+                                            "retired",
+                                            "missing",
+                                            "lent"
                                         ],
-                                        "description": "The repertoire status of the score"
+                                        "description": "The inventory status of the score (default active)"
                                     },
                                     "tagIds": {
                                         "type": "array",

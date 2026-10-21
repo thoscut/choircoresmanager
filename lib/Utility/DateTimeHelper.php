@@ -42,6 +42,22 @@ class DateTimeHelper {
 	}
 
 	/**
+	 * Parse a date string that must be exactly in YYYY-MM-DD format and a valid calendar date.
+	 * Unlike parseDate(), values such as '2024-2-3' or '2024-02-30' are rejected.
+	 *
+	 * @param string $dateStr Date string in YYYY-MM-DD format (e.g., '2024-12-07')
+	 * @return \DateTimeImmutable Date normalized to midnight UTC
+	 * @throws \InvalidArgumentException If the date string is not a valid YYYY-MM-DD date
+	 */
+	public static function parseStrictDate(string $dateStr): \DateTimeImmutable {
+		if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/D', $dateStr, $matches) !== 1
+			|| !checkdate((int)$matches[2], (int)$matches[3], (int)$matches[1])) {
+			throw new \InvalidArgumentException('Invalid date. Use YYYY-MM-DD.');
+		}
+		return self::parseDate($dateStr);
+	}
+
+	/**
 	 * Create a date for today (midnight UTC).
 	 * This method is for DATE values (not datetime).
 	 *

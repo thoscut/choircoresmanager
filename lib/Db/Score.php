@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace OCA\OrchestraScoresManager\Db;
 
 use JsonSerializable;
+use OCA\OrchestraScoresManager\Service\RepertoireClassifier;
+use OCA\OrchestraScoresManager\Utility\DateTimeHelper;
 use OCP\AppFramework\Db\Entity;
 use OCP\DB\Types;
 
@@ -46,16 +48,19 @@ use OCP\DB\Types;
  * @method void setVoicing(?string $value)
  * @method string|null getLanguage()
  * @method void setLanguage(?string $value)
- * @method string|null getRepertoireStatus()
+ * @method string getInventoryStatus()
+ * @method \DateTimeImmutable|null getLastPerformedImported()
  */
 class Score extends Entity implements JsonSerializable {
-	public const REPERTOIRE_STATUS_ACTIVE = 'active';
-	public const REPERTOIRE_STATUS_DORMANT = 'dormant';
-	public const REPERTOIRE_STATUS_ARCHIVED = 'archived';
-	public const REPERTOIRE_STATUSES = [
-		self::REPERTOIRE_STATUS_ACTIVE,
-		self::REPERTOIRE_STATUS_DORMANT,
-		self::REPERTOIRE_STATUS_ARCHIVED,
+	public const INVENTORY_STATUS_ACTIVE = 'active';
+	public const INVENTORY_STATUS_RETIRED = 'retired';
+	public const INVENTORY_STATUS_MISSING = 'missing';
+	public const INVENTORY_STATUS_LENT = 'lent';
+	public const INVENTORY_STATUSES = [
+		self::INVENTORY_STATUS_ACTIVE,
+		self::INVENTORY_STATUS_RETIRED,
+		self::INVENTORY_STATUS_MISSING,
+		self::INVENTORY_STATUS_LENT,
 	];
 
 	protected string $title = '';
@@ -75,15 +80,22 @@ class Score extends Entity implements JsonSerializable {
 	protected ?string $lyricist = null;
 	protected ?string $voicing = null;
 	protected ?string $language = null;
-	protected ?string $repertoireStatus = null;
+	protected string $inventoryStatus = self::INVENTORY_STATUS_ACTIVE;
+	/** Date of the last performance as documented in an imported catalogue (DATE field) */
+	protected ?\DateTimeImmutable $lastPerformedImported = null;
 
 	// transient properties, not stored in DB
 	// ensure to add setters & getters for these
 	protected ?array $tags = null;
 	/** @var array{id: int, index: int}|null */
 	protected ?array $scoreBook = null;
-	/** Start of the most recent non-draft setlist containing this score (ATOM) */
+	/**
+	 * Date (Y-m-d) of the most recent documented performance: the later of the most recent
+	 * past non-draft setlist containing this score and lastPerformedImported
+	 */
 	protected ?string $lastPerformed = null;
+	/** Repertoire class derived from lastPerformed, see RepertoireClassifier */
+	protected string $repertoireClass = RepertoireClassifier::CLASS_NOT_DOCUMENTED;
 
 	public function __construct() {
 		$this->addType('title', Types::STRING);
@@ -103,7 +115,8 @@ class Score extends Entity implements JsonSerializable {
 		$this->addType('lyricist', Types::STRING);
 		$this->addType('voicing', Types::STRING);
 		$this->addType('language', Types::STRING);
-		$this->addType('repertoireStatus', Types::STRING);
+		$this->addType('inventoryStatus', Types::STRING);
+		$this->addType('lastPerformedImported', Types::DATE_IMMUTABLE);
 	}
 
 	public function jsonSerialize(): array {
@@ -128,8 +141,10 @@ class Score extends Entity implements JsonSerializable {
 			'lyricist' => $this->lyricist,
 			'voicing' => $this->voicing,
 			'language' => $this->language,
-			'repertoireStatus' => $this->repertoireStatus,
+			'inventoryStatus' => $this->inventoryStatus,
 			'lastPerformed' => $this->lastPerformed,
+			'lastPerformedImported' => $this->lastPerformedImported?->format('Y-m-d'),
+			'repertoireClass' => $this->repertoireClass,
 		];
 	}
 
@@ -147,26 +162,51 @@ class Score extends Entity implements JsonSerializable {
 	}
 
 	/**
-	 * Set repertoire status.
+	 * Set inventory status.
 	 *
-	 * Empty strings are stored as null; any other value must be one of REPERTOIRE_STATUSES.
+	 * Null and empty strings select the default status "active"; any other value must be one of
+	 * INVENTORY_STATUSES. Scores leaving the inventory are not deleted, their status is set instead.
 	 *
-	 * @param string|null $repertoireStatus
+	 * @param string|null $inventoryStatus
 	 * @throws \InvalidArgumentException if the value is not an allowed status
 	 * @psalm-suppress PossiblyUnusedMethod - Called by Entity framework and API
 	 */
-	public function setRepertoireStatus(?string $repertoireStatus): void {
-		if ($repertoireStatus === '') {
-			$repertoireStatus = null;
+	public function setInventoryStatus(?string $inventoryStatus): void {
+		if ($inventoryStatus === null || $inventoryStatus === '') {
+			$inventoryStatus = self::INVENTORY_STATUS_ACTIVE;
 		}
-		if ($repertoireStatus !== null && !\in_array($repertoireStatus, self::REPERTOIRE_STATUSES, true)) {
-			throw new \InvalidArgumentException('Invalid repertoire status: ' . $repertoireStatus);
+		if (!\in_array($inventoryStatus, self::INVENTORY_STATUSES, true)) {
+			throw new \InvalidArgumentException('Invalid inventory status: ' . $inventoryStatus);
 		}
-		$this->setter('repertoireStatus', [$repertoireStatus]);
+		$this->setter('inventoryStatus', [$inventoryStatus]);
 	}
 
 	/**
-	 * Get transient last performed date.
+	 * Set the date of the last performance as documented in an imported catalogue.
+	 *
+	 * Setting the same calendar date again does not mark the field as updated.
+	 *
+	 * @param \DateTimeImmutable|string|null $lastPerformedImported Date or Y-m-d string; empty string is stored as null
+	 * @throws \InvalidArgumentException if a string is not a valid Y-m-d date
+	 * @psalm-suppress PossiblyUnusedMethod - Called by Entity framework and catalogue import
+	 */
+	public function setLastPerformedImported(\DateTimeImmutable|string|null $lastPerformedImported): void {
+		if ($lastPerformedImported === '') {
+			$lastPerformedImported = null;
+		}
+		if (is_string($lastPerformedImported)) {
+			$lastPerformedImported = DateTimeHelper::parseStrictDate($lastPerformedImported);
+		}
+		if ($lastPerformedImported !== null
+			&& $this->lastPerformedImported !== null
+			&& $lastPerformedImported->format('Y-m-d') === $this->lastPerformedImported->format('Y-m-d')) {
+			return;
+		}
+		$this->setter('lastPerformedImported', [$lastPerformedImported]);
+	}
+
+	/**
+	 * Get transient date (Y-m-d) of the most recent documented performance.
 	 *
 	 * @return string|null
 	 * @psalm-suppress PossiblyUnusedMethod - Called via jsonSerialize
@@ -176,12 +216,31 @@ class Score extends Entity implements JsonSerializable {
 	}
 
 	/**
-	 * Set transient last performed date (ATOM formatted).
+	 * Set transient date (Y-m-d) of the most recent documented performance.
 	 *
 	 * @param string|null $lastPerformed
 	 */
 	public function setLastPerformed(?string $lastPerformed): void {
 		$this->lastPerformed = $lastPerformed;
+	}
+
+	/**
+	 * Get transient repertoire class derived from the last performance.
+	 *
+	 * @return string One of RepertoireClassifier::CLASSES
+	 * @psalm-suppress PossiblyUnusedMethod - Called via jsonSerialize
+	 */
+	public function getRepertoireClass(): string {
+		return $this->repertoireClass;
+	}
+
+	/**
+	 * Set transient repertoire class.
+	 *
+	 * @param string $repertoireClass One of RepertoireClassifier::CLASSES
+	 */
+	public function setRepertoireClass(string $repertoireClass): void {
+		$this->repertoireClass = $repertoireClass;
 	}
 
 	/**

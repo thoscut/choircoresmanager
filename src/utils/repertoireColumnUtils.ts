@@ -1,27 +1,64 @@
-import type { ColDef } from 'ag-grid-community'
+import type { ColDef, ValueGetterParams } from 'ag-grid-community'
+import type { Score } from '@/api/generated/openapi/data-contracts'
 
 import { formatDateStr } from '../composables/useDateFormatting.ts'
 import { t } from './l10n.ts'
 
-export type RepertoireStatus = 'active' | 'dormant' | 'archived'
+export type InventoryStatus = Score['inventoryStatus']
+export type RepertoireClass = Score['repertoireClass']
 
-export const REPERTOIRE_STATUSES: RepertoireStatus[] = ['active', 'dormant', 'archived']
+export const INVENTORY_STATUSES: InventoryStatus[] = ['active', 'retired', 'missing', 'lent']
+export const REPERTOIRE_CLASSES: RepertoireClass[] = ['current', 'dormant', 'earlier', 'not_documented']
 
 /**
- * Get the translated label of a repertoire status
- * @param status - The repertoire status or null
- * @return Translated label, empty string for null
+ * Get the translated label of an inventory status
+ * @param status - The inventory status
+ * @return Translated label, the raw value for unknown statuses
  */
-export function repertoireStatusLabel(status: string | null | undefined): string {
+export function inventoryStatusLabel(status: string | null | undefined): string {
 	switch (status) {
 		case 'active':
 			return t('Active')
+		case 'retired':
+			return t('Retired')
+		case 'missing':
+			return t('Missing')
+		case 'lent':
+			return t('Lent')
+		default:
+			return status ?? ''
+	}
+}
+
+/**
+ * Get the translated label of a repertoire class
+ * @param repertoireClass - The repertoire class
+ * @return Translated label, the raw value for unknown classes
+ */
+export function repertoireClassLabel(repertoireClass: string | null | undefined): string {
+	switch (repertoireClass) {
+		case 'current':
+			return t('Current')
 		case 'dormant':
 			return t('Dormant')
-		case 'archived':
-			return t('Archived')
+		case 'earlier':
+			return t('Earlier')
+		case 'not_documented':
+			return t('Not documented')
 		default:
-			return ''
+			return repertoireClass ?? ''
+	}
+}
+
+/**
+ * Create a comparator that sorts values by their position in a fixed list
+ * @param order - The values in sort order
+ */
+function compareByOrder(order: readonly string[]): (valueA: unknown, valueB: unknown) => number {
+	return (valueA, valueB) => {
+		const indexA = order.indexOf(String(valueA))
+		const indexB = order.indexOf(String(valueB))
+		return (indexA === -1 ? order.length : indexA) - (indexB === -1 ? order.length : indexB)
 	}
 }
 
@@ -68,6 +105,19 @@ export function compareSignatures(valueA: unknown, valueB: unknown): number {
 }
 
 /**
+ * Parse a date string (Y-m-d) as a local date, avoiding timezone shifts
+ * @param value - The date string
+ * @return The date at local midnight, or null
+ */
+function parseLocalDate(value: string | null | undefined): Date | null {
+	if (!value) {
+		return null
+	}
+	const [year, month, day] = value.split('-').map(Number)
+	return new Date(year, month - 1, day)
+}
+
+/**
  * Create the column definitions for the repertoire fields of a score
  * @return Column definitions for ag-grid
  */
@@ -79,33 +129,31 @@ export function createRepertoireColumns(): ColDef[] {
 			comparator: compareSignatures,
 		},
 		{
-			field: 'repertoireStatus',
-			headerName: t('Repertoire'),
+			field: 'inventoryStatus',
+			headerName: t('Inventory status'),
 			cellEditor: 'agSelectCellEditor',
-			cellEditorParams: { values: ['', ...REPERTOIRE_STATUSES] },
-			refData: {
-				'': '',
-				active: repertoireStatusLabel('active'),
-				dormant: repertoireStatusLabel('dormant'),
-				archived: repertoireStatusLabel('archived'),
-			},
+			cellEditorParams: { values: INVENTORY_STATUSES },
+			refData: Object.fromEntries(INVENTORY_STATUSES.map((status) => [status, inventoryStatusLabel(status)])),
+			filterValueGetter: (params: ValueGetterParams) => inventoryStatusLabel((params.data as Score | undefined)?.inventoryStatus),
+			comparator: compareByOrder(INVENTORY_STATUSES),
+		},
+		{
+			field: 'repertoireClass',
+			headerName: t('Repertoire'),
+			editable: false,
+			refData: Object.fromEntries(REPERTOIRE_CLASSES.map((repertoireClass) => [repertoireClass, repertoireClassLabel(repertoireClass)])),
+			filterValueGetter: (params: ValueGetterParams) => repertoireClassLabel((params.data as Score | undefined)?.repertoireClass),
+			comparator: compareByOrder(REPERTOIRE_CLASSES),
 		},
 		{
 			field: 'lastPerformed',
 			headerName: t('Last performed'),
 			editable: false,
 			filter: 'agDateColumnFilter',
-			valueGetter: (params) => {
-				const value = (params.data as { lastPerformed?: string | null } | undefined)?.lastPerformed
-				return value ? new Date(value) : null
-			},
+			valueGetter: (params) => parseLocalDate((params.data as Score | undefined)?.lastPerformed),
 			valueFormatter: (params) => {
-				const value = params.value as Date | null
-				if (!value) {
-					return ''
-				}
-				const pad = (n: number) => String(n).padStart(2, '0')
-				return formatDateStr(`${value.getFullYear()}-${pad(value.getMonth() + 1)}-${pad(value.getDate())}`)
+				const value = (params.data as Score | undefined)?.lastPerformed
+				return value ? formatDateStr(value) : ''
 			},
 		},
 		{ field: 'lyricist', headerName: t('Lyricist') },

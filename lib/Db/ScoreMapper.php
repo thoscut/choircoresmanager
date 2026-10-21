@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace OCA\OrchestraScoresManager\Db;
 
+use OCA\OrchestraScoresManager\Service\RepertoireClassifier;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\AppFramework\Db\QBMapper;
@@ -21,6 +22,7 @@ class ScoreMapper extends QBMapper {
 		protected readonly ScoreTagLinkMapper $scoreTagLinkMapper,
 		protected readonly TagMapper $tagMapper,
 		protected readonly ScoreBookScoreLinkMapper $scoreBookScoreLinkMapper,
+		protected readonly RepertoireClassifier $repertoireClassifier,
 	) {
 		parent::__construct($db, 'osm_scores', Score::class);
 	}
@@ -197,9 +199,10 @@ class ScoreMapper extends QBMapper {
 	}
 
 	/**
-	 * Attach the date of the most recent performance to the given scores.
+	 * Attach the date of the most recent performance and the derived repertoire class to the given scores.
 	 *
-	 * A performance is a non-draft setlist with a start date in the past that contains the score.
+	 * A performance is a non-draft setlist with a start date in the past that contains the score,
+	 * or the last performance documented in an imported catalogue; the later date wins.
 	 *
 	 * @param Score[] $scores
 	 * @throws Exception
@@ -210,6 +213,7 @@ class ScoreMapper extends QBMapper {
 			return;
 		}
 
+		/** @var array<int, string> $lastPerformedMap score ID => Y-m-d */
 		$lastPerformedMap = [];
 		$now = new \DateTimeImmutable();
 		// chunk to stay below parameter limits of some DB backends
@@ -230,13 +234,21 @@ class ScoreMapper extends QBMapper {
 				if ($row['last_performed'] === null) {
 					continue;
 				}
-				$lastPerformedMap[(int)$row['score_id']] = (new \DateTimeImmutable($row['last_performed']))->format(\DateTimeInterface::ATOM);
+				// datetimes are stored in UTC
+				$start = new \DateTimeImmutable($row['last_performed'], new \DateTimeZone('UTC'));
+				$lastPerformedMap[(int)$row['score_id']] = $this->repertoireClassifier->toLocalDate($start);
 			}
 			$result->closeCursor();
 		}
 
 		foreach ($scores as $score) {
-			$score->setLastPerformed($lastPerformedMap[$score->getId()] ?? null);
+			$fromSetlists = $lastPerformedMap[$score->getId()] ?? null;
+			$imported = $score->getLastPerformedImported()?->format('Y-m-d');
+			// Y-m-d strings compare chronologically
+			$lastPerformed = max($fromSetlists ?? '', $imported ?? '');
+			$lastPerformed = $lastPerformed === '' ? null : $lastPerformed;
+			$score->setLastPerformed($lastPerformed);
+			$score->setRepertoireClass($this->repertoireClassifier->classify($lastPerformed));
 		}
 	}
 }
