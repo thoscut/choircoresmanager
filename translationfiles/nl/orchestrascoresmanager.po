@@ -940,3 +940,205 @@ msgstr "Totale duur"
 
 msgid "Invalid duration format"
 msgstr "Ongeldige duurnotatie"
+
+msgid "Dormant"
+msgstr "Rustend"
+
+msgid "Archived"
+msgstr "Gearchiveerd"
+
+msgid "Signature"
+msgstr "Signatuur"
+
+msgid "Repertoire"
+msgstr "Repertoire"
+
+msgid "Last performed"
+msgstr "Laatst uitgevoerd"
+
+msgid "Lyricist"
+msgstr "Tekstschrijver"
+
+msgid "Voicing"
+msgstr "Bezetting"
+
+msgid "Language"
+msgstr "Taal"
+
+msgid "No file uploaded"
+msgstr "Geen bestand geüpload"
+
+msgid "Public scores"
+msgstr "Openbare partituren"
+
+msgid "Only MusicXML files (.musicxml, .xml, .mxl) are allowed"
+msgstr "Alleen MusicXML-bestanden (.musicxml, .xml, .mxl) zijn toegestaan"
+
+msgid "The uploaded file is empty"
+msgstr "Het geüploade bestand is leeg"
+
+#, php-format
+msgid "The uploaded file is too large (maximum %d MB)"
+msgstr "Het geüploade bestand is te groot (maximaal %d MB)"
+
+msgid "The uploaded file could not be read"
+msgstr "Het geüploade bestand kon niet worden gelezen"
+
+msgid "No MusicXML file available for this score"
+msgstr "Geen MusicXML-bestand beschikbaar voor deze partituur"
+
+msgid "The uploaded file is not a valid MusicXML file"
+msgstr "Het geüploade bestand is geen geldig MusicXML-bestand"
+
+msgid "MusicXML files with entity declarations are not supported"
+msgstr "MusicXML-bestanden met entiteitsdeclaraties worden niet ondersteund"
+
+msgid "The uploaded file is not a valid compressed MusicXML file"
+msgstr "Het geüploade bestand is geen geldig gecomprimeerd MusicXML-bestand"
+
+msgid "The uploaded file is too large when uncompressed"
+msgstr "Het geüploade bestand is uitgepakt te groot"
+
+msgid "Invalid rights status. Must be \"free\", \"unclear\" or \"restricted\"."
+msgstr "Ongeldige rechtenstatus. Moet \"free\", \"unclear\" of \"restricted\" zijn."
+
+msgid "Public page"
+msgstr "Openbare pagina"
+
+msgid "Show all scores marked as free (public domain) on a page that can be opened without logging in. Visitors can view and play the MusicXML files of these scores. No other scores or internal details are shown."
+msgstr "Toon alle partituren die als vrij (publiek domein) zijn gemarkeerd op een pagina die zonder inloggen kan worden geopend. Bezoekers kunnen de MusicXML-bestanden van deze partituren bekijken en afspelen. Andere partituren of interne gegevens worden niet getoond."
+
+msgid "Enable public page"
+msgstr "Openbare pagina inschakelen"
+
+msgid "Public address:"
+msgstr "Openbaar adres:"
+
+msgid "The score could not be loaded"
+msgstr "De partituur kon niet worden geladen"
+
+msgid "Pause"
+msgstr "Pauzeren"
+
+msgid "Play"
+msgstr "Afspelen"
+
+msgid "Stop"
+msgstr "Stoppen"
+
+msgid "Tempo"
+msgstr "Tempo"
+
+msgid "Previous page"
+msgstr "Vorige pagina"
+
+msgid "Page {page} of {count}"
+msgstr "Pagina {page} van {count}"
+
+msgid "Next page"
+msgstr "Volgende pagina"
+
+msgid "Solo"
+msgstr "Solo"
+
+msgid "Mute"
+msgstr "Dempen"
+
+msgid "Volume of {voice}"
+msgstr "Volume van {voice}"
+
+msgid "Loading score…"
+msgstr "Partituur laden…"
+
+msgid "Notes & Playback"
+msgstr "Bladmuziek en afspelen"
+
+msgid "Publication"
+msgstr "Publicatie"
+
+msgid "Publication Note"
+msgstr "Opmerking over publicatie"
+
+msgid "MusicXML"
+msgstr "MusicXML"
+
+msgid "Downloading the file failed: "
+msgstr "Downloaden van het bestand mislukt: "
+
+msgid "The file is too large (maximum {size} MB)"
+msgstr "Het bestand is te groot (maximaal {size} MB)"
+
+msgid "MusicXML file uploaded"
+msgstr "MusicXML-bestand geüpload"
+
+msgid "Uploading the file failed: "
+msgstr "Uploaden van het bestand mislukt: "
+
+msgid "MusicXML file removed"
+msgstr "MusicXML-bestand verwijderd"
+
+msgid "Removing the file failed: "
+msgstr "Verwijderen van het bestand mislukt: "
+
+msgid "Download MusicXML"
+msgstr "MusicXML downloaden"
+
+msgid "No MusicXML file uploaded yet."
+msgstr "Nog geen MusicXML-bestand geüpload."
+
+msgid "Replace file"
+msgstr "Bestand vervangen"
+
+msgid "Upload MusicXML"
+msgstr "MusicXML uploaden"
+
+msgid "Remove file"
+msgstr "Bestand verwijderen"
+
+msgid "This score is marked as free, so it is shown on the public page if that page is enabled."
+msgstr "Deze partituur is als vrij gemarkeerd en wordt daarom op de openbare pagina getoond als die is ingeschakeld."
+
+msgid "arr. {arranger}"
+msgstr "arr. {arranger}"
+
+msgid "Freely available scores"
+msgstr "Vrij beschikbare bladmuziek"
+
+msgid "These scores are in the public domain. Select a score to view the notes and listen to the individual voices."
+msgstr "Deze bladmuziek is publiek domein. Selecteer een partituur om de noten te bekijken en de afzonderlijke stemmen te beluisteren."
+
+msgid "Search by title or composer"
+msgstr "Zoeken op titel of componist"
+
+msgid "Close"
+msgstr "Sluiten"
+
+msgid "No freely available scores yet"
+msgstr "Nog geen vrij beschikbare bladmuziek"
+
+msgid "No scores match your search"
+msgstr "Geen partituren gevonden die aan je zoekopdracht voldoen"
+
+msgid "Show & play"
+msgstr "Bekijken en afspelen"
+
+msgid "No digital notes"
+msgstr "Geen digitale bladmuziek"
+
+msgid "The file could not be read as MusicXML"
+msgstr "Het bestand kon niet als MusicXML worden gelezen"
+
+msgid "Voice {number}"
+msgstr "Stem {number}"
+
+msgid "The score could not be displayed"
+msgstr "De partituur kon niet worden weergegeven"
+
+msgid "Free (public domain)"
+msgstr "Vrij (publiek domein)"
+
+msgid "Unclear"
+msgstr "Onduidelijk"
+
+msgid "Restricted"
+msgstr "Beperkt"

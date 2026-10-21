@@ -955,3 +955,212 @@ msgstr ""
 
 msgid "Invalid duration format"
 msgstr ""
+
+msgid "Dormant"
+msgstr ""
+
+msgid "Archived"
+msgstr ""
+
+msgid "Signature"
+msgstr ""
+
+msgid "Repertoire"
+msgstr ""
+
+msgid "Last performed"
+msgstr ""
+
+msgid "Lyricist"
+msgstr ""
+
+msgid "Voicing"
+msgstr ""
+
+msgid "Language"
+msgstr ""
+
+msgid "No file uploaded"
+msgstr ""
+
+msgid "Public scores"
+msgstr ""
+
+msgid "Only MusicXML files (.musicxml, .xml, .mxl) are allowed"
+msgstr ""
+
+msgid "The uploaded file is empty"
+msgstr ""
+
+#, php-format
+msgid "The uploaded file is too large (maximum %d MB)"
+msgstr ""
+
+msgid "The uploaded file could not be read"
+msgstr ""
+
+msgid "No MusicXML file available for this score"
+msgstr ""
+
+msgid "The uploaded file is not a valid MusicXML file"
+msgstr ""
+
+msgid "MusicXML files with entity declarations are not supported"
+msgstr ""
+
+msgid "The uploaded file is not a valid compressed MusicXML file"
+msgstr ""
+
+msgid "The uploaded file is too large when uncompressed"
+msgstr ""
+
+msgid "Invalid rights status. Must be \"free\", \"unclear\" or \"restricted\"."
+msgstr ""
+
+msgid "Public page"
+msgstr ""
+
+msgid ""
+"Show all scores marked as free (public domain) on a page that can be opened "
+"without logging in. Visitors can view and play the MusicXML files of these "
+"scores. No other scores or internal details are shown."
+msgstr ""
+
+msgid "Enable public page"
+msgstr ""
+
+msgid "Public address:"
+msgstr ""
+
+msgid "The score could not be loaded"
+msgstr ""
+
+msgid "Pause"
+msgstr ""
+
+msgid "Play"
+msgstr ""
+
+msgid "Stop"
+msgstr ""
+
+msgid "Tempo"
+msgstr ""
+
+msgid "Previous page"
+msgstr ""
+
+msgid "Page {page} of {count}"
+msgstr ""
+
+msgid "Next page"
+msgstr ""
+
+msgid "Solo"
+msgstr ""
+
+msgid "Mute"
+msgstr ""
+
+msgid "Volume of {voice}"
+msgstr ""
+
+msgid "Loading score…"
+msgstr ""
+
+msgid "Notes & Playback"
+msgstr ""
+
+msgid "Publication"
+msgstr ""
+
+msgid "Publication Note"
+msgstr ""
+
+msgid "MusicXML"
+msgstr ""
+
+msgid "Downloading the file failed: "
+msgstr ""
+
+msgid "The file is too large (maximum {size} MB)"
+msgstr ""
+
+msgid "MusicXML file uploaded"
+msgstr ""
+
+msgid "Uploading the file failed: "
+msgstr ""
+
+msgid "MusicXML file removed"
+msgstr ""
+
+msgid "Removing the file failed: "
+msgstr ""
+
+msgid "Download MusicXML"
+msgstr ""
+
+msgid "No MusicXML file uploaded yet."
+msgstr ""
+
+msgid "Replace file"
+msgstr ""
+
+msgid "Upload MusicXML"
+msgstr ""
+
+msgid "Remove file"
+msgstr ""
+
+msgid ""
+"This score is marked as free, so it is shown on the public page if that page "
+"is enabled."
+msgstr ""
+
+msgid "arr. {arranger}"
+msgstr ""
+
+msgid "Freely available scores"
+msgstr ""
+
+msgid ""
+"These scores are in the public domain. Select a score to view the notes and "
+"listen to the individual voices."
+msgstr ""
+
+msgid "Search by title or composer"
+msgstr ""
+
+msgid "Close"
+msgstr ""
+
+msgid "No freely available scores yet"
+msgstr ""
+
+msgid "No scores match your search"
+msgstr ""
+
+msgid "Show & play"
+msgstr ""
+
+msgid "No digital notes"
+msgstr ""
+
+msgid "The file could not be read as MusicXML"
+msgstr ""
+
+msgid "Voice {number}"
+msgstr ""
+
+msgid "The score could not be displayed"
+msgstr ""
+
+msgid "Free (public domain)"
+msgstr ""
+
+msgid "Unclear"
+msgstr ""
+
+msgid "Restricted"
+msgstr ""

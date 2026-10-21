@@ -940,3 +940,205 @@ msgstr "Duración total"
 
 msgid "Invalid duration format"
 msgstr "Formato de duración no válido"
+
+msgid "Dormant"
+msgstr "En pausa"
+
+msgid "Archived"
+msgstr "Archivada"
+
+msgid "Signature"
+msgstr "Signatura"
+
+msgid "Repertoire"
+msgstr "Repertorio"
+
+msgid "Last performed"
+msgstr "Última interpretación"
+
+msgid "Lyricist"
+msgstr "Letrista"
+
+msgid "Voicing"
+msgstr "Formación vocal"
+
+msgid "Language"
+msgstr "Idioma"
+
+msgid "No file uploaded"
+msgstr "No se ha subido ningún archivo"
+
+msgid "Public scores"
+msgstr "Partituras públicas"
+
+msgid "Only MusicXML files (.musicxml, .xml, .mxl) are allowed"
+msgstr "Solo se permiten archivos MusicXML (.musicxml, .xml, .mxl)"
+
+msgid "The uploaded file is empty"
+msgstr "El archivo subido está vacío"
+
+#, php-format
+msgid "The uploaded file is too large (maximum %d MB)"
+msgstr "El archivo subido es demasiado grande (máximo %d MB)"
+
+msgid "The uploaded file could not be read"
+msgstr "No se pudo leer el archivo subido"
+
+msgid "No MusicXML file available for this score"
+msgstr "No hay ningún archivo MusicXML disponible para esta partitura"
+
+msgid "The uploaded file is not a valid MusicXML file"
+msgstr "El archivo subido no es un archivo MusicXML válido"
+
+msgid "MusicXML files with entity declarations are not supported"
+msgstr "No se admiten archivos MusicXML con declaraciones de entidades"
+
+msgid "The uploaded file is not a valid compressed MusicXML file"
+msgstr "El archivo subido no es un archivo MusicXML comprimido válido"
+
+msgid "The uploaded file is too large when uncompressed"
+msgstr "El archivo subido es demasiado grande una vez descomprimido"
+
+msgid "Invalid rights status. Must be \"free\", \"unclear\" or \"restricted\"."
+msgstr "Estado de derechos no válido. Debe ser \"free\", \"unclear\" o \"restricted\"."
+
+msgid "Public page"
+msgstr "Página pública"
+
+msgid "Show all scores marked as free (public domain) on a page that can be opened without logging in. Visitors can view and play the MusicXML files of these scores. No other scores or internal details are shown."
+msgstr "Mostrar todas las partituras marcadas como libres (dominio público) en una página accesible sin iniciar sesión. Los visitantes pueden ver y reproducir los archivos MusicXML de estas partituras. No se muestran otras partituras ni detalles internos."
+
+msgid "Enable public page"
+msgstr "Activar la página pública"
+
+msgid "Public address:"
+msgstr "Dirección pública:"
+
+msgid "The score could not be loaded"
+msgstr "No se pudo cargar la partitura"
+
+msgid "Pause"
+msgstr "Pausa"
+
+msgid "Play"
+msgstr "Reproducir"
+
+msgid "Stop"
+msgstr "Detener"
+
+msgid "Tempo"
+msgstr "Tempo"
+
+msgid "Previous page"
+msgstr "Página anterior"
+
+msgid "Page {page} of {count}"
+msgstr "Página {page} de {count}"
+
+msgid "Next page"
+msgstr "Página siguiente"
+
+msgid "Solo"
+msgstr "Solo"
+
+msgid "Mute"
+msgstr "Silenciar"
+
+msgid "Volume of {voice}"
+msgstr "Volumen de {voice}"
+
+msgid "Loading score…"
+msgstr "Cargando partitura…"
+
+msgid "Notes & Playback"
+msgstr "Partitura y reproducción"
+
+msgid "Publication"
+msgstr "Publicación"
+
+msgid "Publication Note"
+msgstr "Nota de publicación"
+
+msgid "MusicXML"
+msgstr "MusicXML"
+
+msgid "Downloading the file failed: "
+msgstr "Error al descargar el archivo: "
+
+msgid "The file is too large (maximum {size} MB)"
+msgstr "El archivo es demasiado grande (máximo {size} MB)"
+
+msgid "MusicXML file uploaded"
+msgstr "Archivo MusicXML subido"
+
+msgid "Uploading the file failed: "
+msgstr "Error al subir el archivo: "
+
+msgid "MusicXML file removed"
+msgstr "Archivo MusicXML eliminado"
+
+msgid "Removing the file failed: "
+msgstr "Error al eliminar el archivo: "
+
+msgid "Download MusicXML"
+msgstr "Descargar MusicXML"
+
+msgid "No MusicXML file uploaded yet."
+msgstr "Todavía no se ha subido ningún archivo MusicXML."
+
+msgid "Replace file"
+msgstr "Reemplazar archivo"
+
+msgid "Upload MusicXML"
+msgstr "Subir MusicXML"
+
+msgid "Remove file"
+msgstr "Eliminar archivo"
+
+msgid "This score is marked as free, so it is shown on the public page if that page is enabled."
+msgstr "Esta partitura está marcada como libre, por lo que se muestra en la página pública si está activada."
+
+msgid "arr. {arranger}"
+msgstr "arr. {arranger}"
+
+msgid "Freely available scores"
+msgstr "Partituras de libre acceso"
+
+msgid "These scores are in the public domain. Select a score to view the notes and listen to the individual voices."
+msgstr "Estas partituras son de dominio público. Seleccione una partitura para ver las notas y escuchar cada voz por separado."
+
+msgid "Search by title or composer"
+msgstr "Buscar por título o compositor"
+
+msgid "Close"
+msgstr "Cerrar"
+
+msgid "No freely available scores yet"
+msgstr "Todavía no hay partituras de libre acceso"
+
+msgid "No scores match your search"
+msgstr "Ninguna partitura coincide con su búsqueda"
+
+msgid "Show & play"
+msgstr "Ver y reproducir"
+
+msgid "No digital notes"
+msgstr "Sin partitura digital"
+
+msgid "The file could not be read as MusicXML"
+msgstr "No se pudo leer el archivo como MusicXML"
+
+msgid "Voice {number}"
+msgstr "Voz {number}"
+
+msgid "The score could not be displayed"
+msgstr "No se pudo mostrar la partitura"
+
+msgid "Free (public domain)"
+msgstr "Libre (dominio público)"
+
+msgid "Unclear"
+msgstr "Sin aclarar"
+
+msgid "Restricted"
+msgstr "Restringido"
