@@ -225,30 +225,55 @@ final class ScoreTest extends TestCase {
 		$this->assertNull($json['scoreBook']);
 	}
 
-	public static function validRepertoireStatusProvider(): array {
+	public static function validInventoryStatusProvider(): array {
 		return [
 			'active' => ['active', 'active'],
-			'dormant' => ['dormant', 'dormant'],
-			'archived' => ['archived', 'archived'],
+			'retired' => ['retired', 'retired'],
+			'missing' => ['missing', 'missing'],
+			'lent' => ['lent', 'lent'],
 			'null' => [null, null],
 			'empty string becomes null' => ['', null],
 		];
 	}
 
-	#[DataProvider('validRepertoireStatusProvider')]
-	public function testSetRepertoireStatus(?string $input, ?string $expected): void {
+	#[DataProvider('validInventoryStatusProvider')]
+	public function testSetInventoryStatus(?string $input, ?string $expected): void {
 		$score = new Score();
-		$score->setRepertoireStatus($input);
+		$score->setInventoryStatus($input);
 
-		$this->assertSame($expected, $score->getRepertoireStatus());
-		$this->assertSame($expected, $score->jsonSerialize()['repertoireStatus']);
+		$this->assertSame($expected, $score->getInventoryStatus());
+		$this->assertSame($expected, $score->jsonSerialize()['inventoryStatus']);
 	}
 
-	public function testSetRepertoireStatusRejectsUnknownValue(): void {
+	public function testSetInventoryStatusRejectsUnknownValue(): void {
 		$this->expectException(\InvalidArgumentException::class);
 
 		$score = new Score();
-		$score->setRepertoireStatus('sometimes');
+		$score->setInventoryStatus('dormant');
+	}
+
+	public static function repertoireClassProvider(): array {
+		return [
+			'never performed' => [null, 'none'],
+			'performed last year' => ['2025-12-05T19:00:00+00:00', 'current'],
+			'performed exactly at current threshold' => ['2023-10-21T12:00:00+00:00', 'current'],
+			'performed five years ago' => ['2021-06-01T19:00:00+00:00', 'dormant'],
+			'performed twenty years ago' => ['2006-06-01T19:00:00+00:00', 'former'],
+		];
+	}
+
+	#[DataProvider('repertoireClassProvider')]
+	public function testClassifyRepertoire(?string $lastPerformed, string $expected): void {
+		$score = new Score();
+		$score->setLastPerformed($lastPerformed);
+		$score->classifyRepertoire(3, 10, new \DateTimeImmutable('2026-10-21T12:00:00+00:00'));
+
+		$this->assertSame($expected, $score->getRepertoireClass());
+		$this->assertSame($expected, $score->jsonSerialize()['repertoireClass']);
+	}
+
+	public function testRepertoireClassIsNoneByDefault(): void {
+		$this->assertSame('none', (new Score())->jsonSerialize()['repertoireClass']);
 	}
 
 	public function testRepertoireFieldsInJson(): void {

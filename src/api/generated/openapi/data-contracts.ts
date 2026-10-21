@@ -94,8 +94,9 @@ export interface Score {
   lyricist: string | null;
   voicing: string | null;
   language: string | null;
-  repertoireStatus: "active" | "dormant" | "archived" | null;
+  inventoryStatus: "active" | "retired" | "missing" | "lent" | null;
   lastPerformed: string | null;
+  repertoireClass: "current" | "dormant" | "former" | "none";
   tags: string[] | null;
   scoreBook: ScoreBookInfo | null;
   viaScoreBook?: true;
@@ -173,8 +174,9 @@ export interface ScoreIndexed {
   lyricist: string | null;
   voicing: string | null;
   language: string | null;
-  repertoireStatus: "active" | "dormant" | "archived" | null;
+  inventoryStatus: "active" | "retired" | "missing" | "lent" | null;
   lastPerformed: string | null;
+  repertoireClass: "current" | "dormant" | "former" | "none";
   tags: string[] | null;
   scoreBook: ScoreBookInfo | null;
   viaScoreBook?: true;
@@ -537,10 +539,10 @@ export interface ScoreApiPostScorePayload {
    */
   language?: string | null;
   /**
-   * The repertoire status of the score
+   * The inventory status of the score
    * @default null
    */
-  repertoireStatus?: "active" | "dormant" | "archived" | null;
+  inventoryStatus?: "active" | "retired" | "missing" | "lent" | null;
   /**
    * optional list of tag ids to link
    * @default null
@@ -655,10 +657,10 @@ export interface ScoreApiPatchScorePayload {
    */
   language?: string | null;
   /**
-   * The repertoire status of the score
+   * The inventory status of the score
    * @default null
    */
-  repertoireStatus?: "active" | "dormant" | "archived" | null;
+  inventoryStatus?: "active" | "retired" | "missing" | "lent" | null;
   /**
    * optional list of tag ids to link
    * @default null

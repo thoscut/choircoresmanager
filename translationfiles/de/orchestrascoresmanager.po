@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2026-10-12 07:36+0000\n"
+"POT-Creation-Date: 2026-10-21 23:31+0000\n"
 "PO-Revision-Date: 2025-11-28 22:37+0000\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -206,6 +206,9 @@ msgstr "Abbrechen"
 msgid "Create"
 msgstr "Erstellen"
 
+msgid "The dormant threshold must not be smaller than the current threshold."
+msgstr "Die Schwelle für „ruhend“ darf nicht kleiner sein als die für „aktuell“."
+
 msgid "Settings updated successfully."
 msgstr "Einstellungen erfolgreich aktualisiert."
 
@@ -223,6 +226,21 @@ msgstr "Erlaubte Gruppen"
 
 msgid "Select groups…"
 msgstr ""
+
+msgid "Repertoire"
+msgstr "Repertoire"
+
+msgid "A score counts as current or dormant repertoire if it was performed within the given number of years. Performances are taken from setlists that are not drafts."
+msgstr "Ein Stück gilt als aktuelles oder ruhendes Repertoire, wenn es innerhalb der angegebenen Anzahl Jahre aufgeführt wurde. Als Aufführung zählen Setlisten, die keine Entwürfe sind."
+
+msgid "Current repertoire (years)"
+msgstr "Aktuelles Repertoire (Jahre)"
+
+msgid "Dormant repertoire (years)"
+msgstr "Ruhendes Repertoire (Jahre)"
+
+msgid "Save"
+msgstr "Speichern"
 
 msgid "Invalid default moderation time format. Use (HH:)MM:SS"
 msgstr "Ungültiges Format für Standard-Moderationszeit. Verwenden Sie (HH:)MM:SS"
@@ -250,9 +268,6 @@ msgstr "Ordnersammlung auswählen"
 
 msgid "Saving …"
 msgstr ""
-
-msgid "Save"
-msgstr "Speichern"
 
 msgid "Score book assignment updated"
 msgstr "Notenbuch-Zuweisung aktualisiert"
@@ -941,20 +956,38 @@ msgstr "Moderation & Pausen"
 msgid "Overall Duration"
 msgstr "Gesamtdauer"
 
+msgid "Retired"
+msgstr "Ausgemustert"
+
+msgid "Missing"
+msgstr "Vermisst"
+
+msgid "Lent"
+msgstr "Verliehen"
+
+msgid "Current"
+msgstr "Aktuell"
+
 msgid "Dormant"
 msgstr "Ruhend"
 
-msgid "Archived"
-msgstr "Archiv"
+msgid "Former"
+msgstr "Früher"
+
+msgid "Not performed"
+msgstr "Nicht belegt"
 
 msgid "Signature"
 msgstr "Signatur"
 
-msgid "Repertoire"
-msgstr "Repertoire"
+msgid "Derived from the performances in setlists"
+msgstr "Aus den Aufführungen in Setlisten berechnet"
 
 msgid "Last performed"
 msgstr "Zuletzt gesungen"
+
+msgid "Inventory"
+msgstr "Bestand"
 
 msgid "Lyricist"
 msgstr "Textdichter"
@@ -967,6 +1000,9 @@ msgstr "Sprache"
 
 msgid "Invalid duration format"
 msgstr "Ungültiges Spieldauerformat"
+
+#~ msgid "Archived"
+#~ msgstr "Archiv"
 
 #~ msgid "Select groups..."
 #~ msgstr "Gruppen auswählen..."

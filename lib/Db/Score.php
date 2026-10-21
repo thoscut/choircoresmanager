@@ -46,17 +46,26 @@ use OCP\DB\Types;
  * @method void setVoicing(?string $value)
  * @method string|null getLanguage()
  * @method void setLanguage(?string $value)
- * @method string|null getRepertoireStatus()
+ * @method string|null getInventoryStatus()
  */
 class Score extends Entity implements JsonSerializable {
-	public const REPERTOIRE_STATUS_ACTIVE = 'active';
-	public const REPERTOIRE_STATUS_DORMANT = 'dormant';
-	public const REPERTOIRE_STATUS_ARCHIVED = 'archived';
-	public const REPERTOIRE_STATUSES = [
-		self::REPERTOIRE_STATUS_ACTIVE,
-		self::REPERTOIRE_STATUS_DORMANT,
-		self::REPERTOIRE_STATUS_ARCHIVED,
+	/** Inventory status: set manually, describes the physical/digital copy in the archive */
+	public const INVENTORY_STATUS_ACTIVE = 'active';
+	public const INVENTORY_STATUS_RETIRED = 'retired';
+	public const INVENTORY_STATUS_MISSING = 'missing';
+	public const INVENTORY_STATUS_LENT = 'lent';
+	public const INVENTORY_STATUSES = [
+		self::INVENTORY_STATUS_ACTIVE,
+		self::INVENTORY_STATUS_RETIRED,
+		self::INVENTORY_STATUS_MISSING,
+		self::INVENTORY_STATUS_LENT,
 	];
+
+	/** Repertoire class: derived from performances, never set manually */
+	public const REPERTOIRE_CLASS_CURRENT = 'current';
+	public const REPERTOIRE_CLASS_DORMANT = 'dormant';
+	public const REPERTOIRE_CLASS_FORMER = 'former';
+	public const REPERTOIRE_CLASS_NONE = 'none';
 
 	protected string $title = '';
 	protected ?string $titleShort = null;
@@ -75,7 +84,7 @@ class Score extends Entity implements JsonSerializable {
 	protected ?string $lyricist = null;
 	protected ?string $voicing = null;
 	protected ?string $language = null;
-	protected ?string $repertoireStatus = null;
+	protected ?string $inventoryStatus = null;
 
 	// transient properties, not stored in DB
 	// ensure to add setters & getters for these
@@ -84,6 +93,8 @@ class Score extends Entity implements JsonSerializable {
 	protected ?array $scoreBook = null;
 	/** Start of the most recent non-draft setlist containing this score (ATOM) */
 	protected ?string $lastPerformed = null;
+	/** One of the REPERTOIRE_CLASS_* constants, derived from lastPerformed */
+	protected string $repertoireClass = self::REPERTOIRE_CLASS_NONE;
 
 	public function __construct() {
 		$this->addType('title', Types::STRING);
@@ -103,7 +114,7 @@ class Score extends Entity implements JsonSerializable {
 		$this->addType('lyricist', Types::STRING);
 		$this->addType('voicing', Types::STRING);
 		$this->addType('language', Types::STRING);
-		$this->addType('repertoireStatus', Types::STRING);
+		$this->addType('inventoryStatus', Types::STRING);
 	}
 
 	public function jsonSerialize(): array {
@@ -128,8 +139,9 @@ class Score extends Entity implements JsonSerializable {
 			'lyricist' => $this->lyricist,
 			'voicing' => $this->voicing,
 			'language' => $this->language,
-			'repertoireStatus' => $this->repertoireStatus,
+			'inventoryStatus' => $this->inventoryStatus,
 			'lastPerformed' => $this->lastPerformed,
+			'repertoireClass' => $this->repertoireClass,
 		];
 	}
 
@@ -147,22 +159,22 @@ class Score extends Entity implements JsonSerializable {
 	}
 
 	/**
-	 * Set repertoire status.
+	 * Set inventory status.
 	 *
-	 * Empty strings are stored as null; any other value must be one of REPERTOIRE_STATUSES.
+	 * Empty strings are stored as null; any other value must be one of INVENTORY_STATUSES.
 	 *
-	 * @param string|null $repertoireStatus
+	 * @param string|null $inventoryStatus
 	 * @throws \InvalidArgumentException if the value is not an allowed status
 	 * @psalm-suppress PossiblyUnusedMethod - Called by Entity framework and API
 	 */
-	public function setRepertoireStatus(?string $repertoireStatus): void {
-		if ($repertoireStatus === '') {
-			$repertoireStatus = null;
+	public function setInventoryStatus(?string $inventoryStatus): void {
+		if ($inventoryStatus === '') {
+			$inventoryStatus = null;
 		}
-		if ($repertoireStatus !== null && !\in_array($repertoireStatus, self::REPERTOIRE_STATUSES, true)) {
-			throw new \InvalidArgumentException('Invalid repertoire status: ' . $repertoireStatus);
+		if ($inventoryStatus !== null && !\in_array($inventoryStatus, self::INVENTORY_STATUSES, true)) {
+			throw new \InvalidArgumentException('Invalid inventory status: ' . $inventoryStatus);
 		}
-		$this->setter('repertoireStatus', [$repertoireStatus]);
+		$this->setter('inventoryStatus', [$inventoryStatus]);
 	}
 
 	/**
@@ -182,6 +194,43 @@ class Score extends Entity implements JsonSerializable {
 	 */
 	public function setLastPerformed(?string $lastPerformed): void {
 		$this->lastPerformed = $lastPerformed;
+	}
+
+	/**
+	 * Get the derived repertoire class.
+	 *
+	 * @return string one of the REPERTOIRE_CLASS_* constants
+	 * @psalm-suppress PossiblyUnusedMethod - Called via jsonSerialize
+	 */
+	public function getRepertoireClass(): string {
+		return $this->repertoireClass;
+	}
+
+	/**
+	 * Derive the repertoire class from the last performance.
+	 *
+	 * - current: performed within the last $currentYears years
+	 * - dormant: performed within the last $dormantYears years
+	 * - former: performed longer ago
+	 * - none: no performance recorded
+	 *
+	 * @param int $currentYears threshold for "current" in years
+	 * @param int $dormantYears threshold for "dormant" in years
+	 * @param \DateTimeImmutable $now reference date
+	 */
+	public function classifyRepertoire(int $currentYears, int $dormantYears, \DateTimeImmutable $now): void {
+		if ($this->lastPerformed === null) {
+			$this->repertoireClass = self::REPERTOIRE_CLASS_NONE;
+			return;
+		}
+		$lastPerformed = new \DateTimeImmutable($this->lastPerformed);
+		if ($lastPerformed >= $now->modify("-{$currentYears} years")) {
+			$this->repertoireClass = self::REPERTOIRE_CLASS_CURRENT;
+		} elseif ($lastPerformed >= $now->modify("-{$dormantYears} years")) {
+			$this->repertoireClass = self::REPERTOIRE_CLASS_DORMANT;
+		} else {
+			$this->repertoireClass = self::REPERTOIRE_CLASS_FORMER;
+		}
 	}
 
 	/**

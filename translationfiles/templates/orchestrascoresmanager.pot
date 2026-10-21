@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2026-10-12 07:36+0000\n"
+"POT-Creation-Date: 2026-10-21 23:31+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -204,6 +204,9 @@ msgstr ""
 msgid "Create"
 msgstr ""
 
+msgid "The dormant threshold must not be smaller than the current threshold."
+msgstr ""
+
 msgid "Settings updated successfully."
 msgstr ""
 
@@ -220,6 +223,24 @@ msgid "Allowed Groups"
 msgstr ""
 
 msgid "Select groups…"
+msgstr ""
+
+msgid "Repertoire"
+msgstr ""
+
+msgid ""
+"A score counts as current or dormant repertoire if it was performed within "
+"the given number of years. Performances are taken from setlists that are not "
+"drafts."
+msgstr ""
+
+msgid "Current repertoire (years)"
+msgstr ""
+
+msgid "Dormant repertoire (years)"
+msgstr ""
+
+msgid "Save"
 msgstr ""
 
 msgid "Invalid default moderation time format. Use (HH:)MM:SS"
@@ -247,9 +268,6 @@ msgid "Select folder collection"
 msgstr ""
 
 msgid "Saving …"
-msgstr ""
-
-msgid "Save"
 msgstr ""
 
 msgid "Score book assignment updated"
@@ -953,19 +971,37 @@ msgstr ""
 msgid "Overall Duration"
 msgstr ""
 
+msgid "Retired"
+msgstr ""
+
+msgid "Missing"
+msgstr ""
+
+msgid "Lent"
+msgstr ""
+
+msgid "Current"
+msgstr ""
+
 msgid "Dormant"
 msgstr ""
 
-msgid "Archived"
+msgid "Former"
+msgstr ""
+
+msgid "Not performed"
 msgstr ""
 
 msgid "Signature"
 msgstr ""
 
-msgid "Repertoire"
+msgid "Derived from the performances in setlists"
 msgstr ""
 
 msgid "Last performed"
+msgstr ""
+
+msgid "Inventory"
 msgstr ""
 
 msgid "Lyricist"

@@ -283,8 +283,8 @@ const columnEditHandlers: Record<string, ColumnEditHandler> = {
 		const gemaIds = parseArrayValue(newValue)
 		await scoresStore.updateScoreFieldApi(id, 'gemaIds', gemaIds)
 	},
-	repertoireStatus: async (id, newValue) => {
-		await scoresStore.updateScoreFieldApi(id, 'repertoireStatus', newValue === '' ? null : newValue)
+	inventoryStatus: async (id, newValue) => {
+		await scoresStore.updateScoreFieldApi(id, 'inventoryStatus', newValue === '' ? null : newValue)
 	},
 	duration: async (id, newValue) => {
 		let parsedDuration: number | null

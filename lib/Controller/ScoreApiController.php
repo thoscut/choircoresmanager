@@ -89,7 +89,7 @@ class ScoreApiController extends OCSController {
 	 * @param string|null $lyricist The author of the lyrics
 	 * @param string|null $voicing The voicing of the score, e.g. "TTBB"
 	 * @param string|null $language The language of the lyrics
-	 * @param 'active'|'dormant'|'archived'|null $repertoireStatus The repertoire status of the score
+	 * @param 'active'|'retired'|'missing'|'lent'|null $inventoryStatus The inventory status of the score
 	 * @param list<int>|null $tagIds optional list of tag ids to link
 	 * @param array{id: int, index: int}|null $scoreBook Score book info with id and index (both required)
 	 *
@@ -120,7 +120,7 @@ class ScoreApiController extends OCSController {
 		?string $lyricist = null,
 		?string $voicing = null,
 		?string $language = null,
-		?string $repertoireStatus = null,
+		?string $inventoryStatus = null,
 		?array $tagIds = null,
 		?array $scoreBook = null,
 	): DataResponse {
@@ -142,7 +142,7 @@ class ScoreApiController extends OCSController {
 			'lyricist' => $lyricist,
 			'voicing' => $voicing,
 			'language' => $language,
-			'repertoireStatus' => $repertoireStatus,
+			'inventoryStatus' => $inventoryStatus,
 		]));
 
 		// Build score book info if provided
@@ -180,7 +180,7 @@ class ScoreApiController extends OCSController {
 	 * @param string|null $lyricist The author of the lyrics
 	 * @param string|null $voicing The voicing of the score, e.g. "TTBB"
 	 * @param string|null $language The language of the lyrics
-	 * @param 'active'|'dormant'|'archived'|null $repertoireStatus The repertoire status of the score
+	 * @param 'active'|'retired'|'missing'|'lent'|null $inventoryStatus The inventory status of the score
 	 * @param list<int>|null $tagIds optional list of tag ids to link
 	 * @param array{id?: int, index?: int}|null $scoreBook Score book info (id and/or index). Set id to null to remove from book.
 	 *
@@ -215,7 +215,7 @@ class ScoreApiController extends OCSController {
 		?string $lyricist = null,
 		?string $voicing = null,
 		?string $language = null,
-		?string $repertoireStatus = null,
+		?string $inventoryStatus = null,
 		?array $tagIds = null,
 		?array $scoreBook = null,
 	): DataResponse {

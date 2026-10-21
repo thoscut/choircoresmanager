@@ -12,8 +12,11 @@
 
 import {
   AdminGetEditGroupsData,
+  AdminGetRepertoireThresholdsData,
   AdminPostEditGroupsData,
   AdminPostEditGroupsPayload,
+  AdminPostRepertoireThresholdsData,
+  AdminPostRepertoireThresholdsPayload,
   OCSMeta,
 } from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
@@ -69,6 +72,61 @@ export class Ocs<
       }
     >({
       path: `/ocs/v2.php/apps/orchestrascoresmanager/admin/editGroups`,
+      method: "POST",
+      body: data,
+      secure: true,
+      type: ContentType.Json,
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description Current thresholds This endpoint requires admin access
+   *
+   * @tags admin
+   * @name AdminGetRepertoireThresholds
+   * @summary Get the thresholds used to derive the repertoire class of a score
+   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/admin/repertoireThresholds
+   * @secure
+   */
+  adminGetRepertoireThresholds = (params: RequestParams = {}) =>
+    this.request<
+      AdminGetRepertoireThresholdsData,
+      {
+        ocs: {
+          meta: OCSMeta;
+          data: any;
+        };
+      }
+    >({
+      path: `/ocs/v2.php/apps/orchestrascoresmanager/admin/repertoireThresholds`,
+      method: "GET",
+      secure: true,
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description Updated thresholds This endpoint requires admin access This endpoint requires password confirmation
+   *
+   * @tags admin
+   * @name AdminPostRepertoireThresholds
+   * @summary Update the thresholds used to derive the repertoire class of a score
+   * @request POST:/ocs/v2.php/apps/orchestrascoresmanager/admin/repertoireThresholds
+   * @secure
+   */
+  adminPostRepertoireThresholds = (
+    data: AdminPostRepertoireThresholdsPayload,
+    params: RequestParams = {},
+  ) =>
+    this.request<
+      AdminPostRepertoireThresholdsData,
+      {
+        ocs: {
+          meta: OCSMeta;
+          data: any;
+        };
+      }
+    >({
+      path: `/ocs/v2.php/apps/orchestrascoresmanager/admin/repertoireThresholds`,
       method: "POST",
       body: data,
       secure: true,

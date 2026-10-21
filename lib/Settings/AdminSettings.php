@@ -33,6 +33,13 @@ class AdminSettings implements ISettings {
 			'allowed_groups',
 			$allowedGroups
 		);
+		$this->initialStateService->provideInitialState(
+			'repertoire_thresholds',
+			[
+				'currentYears' => $this->configService->getRepertoireCurrentYears(),
+				'dormantYears' => $this->configService->getRepertoireDormantYears(),
+			]
+		);
 
 		return new TemplateResponse(
 			'orchestrascoresmanager',

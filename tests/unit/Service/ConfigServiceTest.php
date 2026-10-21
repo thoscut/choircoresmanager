@@ -93,4 +93,32 @@ final class ConfigServiceTest extends TestCase {
 
 		$this->assertSame($expected, $result);
 	}
+
+	public function testGetRepertoireThresholdsUseDefaults(): void {
+		$this->appConfig->method('getAppValueInt')
+			->willReturnCallback(fn (string $key, int $default) => $default);
+
+		$this->assertSame(ConfigService::DEFAULT_REPERTOIRE_CURRENT_YEARS, $this->service->getRepertoireCurrentYears());
+		$this->assertSame(ConfigService::DEFAULT_REPERTOIRE_DORMANT_YEARS, $this->service->getRepertoireDormantYears());
+	}
+
+	public function testSetRepertoireThresholds(): void {
+		$calls = [];
+		$this->appConfig->method('setAppValueInt')
+			->willReturnCallback(function (string $key, int $value) use (&$calls): bool {
+				$calls[$key] = $value;
+				return true;
+			});
+
+		$this->service->setRepertoireThresholds(2, 8);
+
+		$this->assertSame(['repertoire_current_years' => 2, 'repertoire_dormant_years' => 8], $calls);
+	}
+
+	#[TestWith([0, 10])]
+	#[TestWith([5, 3])]
+	public function testSetRepertoireThresholdsRejectsInvalidValues(int $currentYears, int $dormantYears): void {
+		$this->expectException(\InvalidArgumentException::class);
+		$this->service->setRepertoireThresholds($currentYears, $dormantYears);
+	}
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace OCA\OrchestraScoresManager\Db;
 
+use OCA\OrchestraScoresManager\Service\ConfigService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\AppFramework\Db\QBMapper;
@@ -21,6 +22,7 @@ class ScoreMapper extends QBMapper {
 		protected readonly ScoreTagLinkMapper $scoreTagLinkMapper,
 		protected readonly TagMapper $tagMapper,
 		protected readonly ScoreBookScoreLinkMapper $scoreBookScoreLinkMapper,
+		protected readonly ?ConfigService $configService = null,
 	) {
 		parent::__construct($db, 'osm_scores', Score::class);
 	}
@@ -197,7 +199,7 @@ class ScoreMapper extends QBMapper {
 	}
 
 	/**
-	 * Attach the date of the most recent performance to the given scores.
+	 * Attach the date of the most recent performance and the derived repertoire class to the given scores.
 	 *
 	 * A performance is a non-draft setlist with a start date in the past that contains the score.
 	 *
@@ -235,8 +237,11 @@ class ScoreMapper extends QBMapper {
 			$result->closeCursor();
 		}
 
+		$currentYears = $this->configService?->getRepertoireCurrentYears() ?? ConfigService::DEFAULT_REPERTOIRE_CURRENT_YEARS;
+		$dormantYears = $this->configService?->getRepertoireDormantYears() ?? ConfigService::DEFAULT_REPERTOIRE_DORMANT_YEARS;
 		foreach ($scores as $score) {
 			$score->setLastPerformed($lastPerformedMap[$score->getId()] ?? null);
+			$score->classifyRepertoire($currentYears, $dormantYears, $now);
 		}
 	}
 }

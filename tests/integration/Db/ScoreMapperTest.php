@@ -236,6 +236,7 @@ final class ScoreMapperTest extends MapperTestCase {
 		$found = $this->mapper->find($score->getId());
 		$this->assertNotNull($found->getLastPerformed());
 		$this->assertSame('2025-12-05', substr((string)$found->getLastPerformed(), 0, 10));
+		$this->assertNotSame('none', $found->getRepertoireClass());
 
 		$all = $this->mapper->findAll();
 		$this->assertSame($found->getLastPerformed(), $all[0]->getLastPerformed());
@@ -246,6 +247,8 @@ final class ScoreMapperTest extends MapperTestCase {
 		$score->setTitle('Memory');
 		$score = $this->mapper->insert($score);
 
-		$this->assertNull($this->mapper->find($score->getId())->getLastPerformed());
+		$found = $this->mapper->find($score->getId());
+		$this->assertNull($found->getLastPerformed());
+		$this->assertSame('none', $found->getRepertoireClass());
 	}
 }

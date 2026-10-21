@@ -43,3 +43,40 @@ export interface AdminPostEditGroupsData {
     };
   };
 }
+
+export interface AdminGetRepertoireThresholdsData {
+  ocs: {
+    meta: OCSMeta;
+    data: {
+      /** @format int64 */
+      currentYears: number;
+      /** @format int64 */
+      dormantYears: number;
+    };
+  };
+}
+
+export interface AdminPostRepertoireThresholdsPayload {
+  /**
+   * Scores performed within this many years count as current
+   * @format int64
+   */
+  currentYears: number;
+  /**
+   * Scores performed within this many years count as dormant
+   * @format int64
+   */
+  dormantYears: number;
+}
+
+export interface AdminPostRepertoireThresholdsData {
+  ocs: {
+    meta: OCSMeta;
+    data: {
+      /** @format int64 */
+      currentYears: number;
+      /** @format int64 */
+      dormantYears: number;
+    };
+  };
+}

@@ -8,6 +8,7 @@ use OCA\OrchestraScoresManager\Controller\AdminController;
 use OCA\OrchestraScoresManager\Service\ConfigService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\OCS\OCSBadRequestException;
 use OCP\IRequest;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
@@ -63,5 +64,35 @@ final class AdminControllerTest extends TestCase {
 		$this->assertInstanceOf(DataResponse::class, $response);
 		$this->assertEquals(['editGroups' => $groups], $response->getData());
 		$this->assertEquals(Http::STATUS_OK, $response->getStatus());
+	}
+
+	public function testGetRepertoireThresholds(): void {
+		$this->configService->method('getRepertoireCurrentYears')->willReturn(3);
+		$this->configService->method('getRepertoireDormantYears')->willReturn(10);
+
+		$response = $this->controller->getRepertoireThresholds();
+
+		$this->assertEquals(['currentYears' => 3, 'dormantYears' => 10], $response->getData());
+		$this->assertEquals(Http::STATUS_OK, $response->getStatus());
+	}
+
+	public function testPostRepertoireThresholdsUpdatesSettings(): void {
+		$this->configService->expects($this->once())
+			->method('setRepertoireThresholds')
+			->with(2, 8);
+		$this->configService->method('getRepertoireCurrentYears')->willReturn(2);
+		$this->configService->method('getRepertoireDormantYears')->willReturn(8);
+
+		$response = $this->controller->postRepertoireThresholds(2, 8);
+
+		$this->assertEquals(['currentYears' => 2, 'dormantYears' => 8], $response->getData());
+	}
+
+	public function testPostRepertoireThresholdsRejectsInvalidInput(): void {
+		$this->configService->method('setRepertoireThresholds')
+			->willThrowException(new \InvalidArgumentException('invalid'));
+
+		$this->expectException(OCSBadRequestException::class);
+		$this->controller->postRepertoireThresholds(5, 2);
 	}
 }

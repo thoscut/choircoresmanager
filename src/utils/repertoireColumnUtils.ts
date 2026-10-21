@@ -3,25 +3,45 @@ import type { ColDef } from 'ag-grid-community'
 import { formatDateStr } from '../composables/useDateFormatting.ts'
 import { t } from './l10n.ts'
 
-export type RepertoireStatus = 'active' | 'dormant' | 'archived'
+export type InventoryStatus = 'active' | 'retired' | 'missing' | 'lent'
 
-export const REPERTOIRE_STATUSES: RepertoireStatus[] = ['active', 'dormant', 'archived']
+export const INVENTORY_STATUSES: InventoryStatus[] = ['active', 'retired', 'missing', 'lent']
 
 /**
- * Get the translated label of a repertoire status
- * @param status - The repertoire status or null
+ * Get the translated label of an inventory status
+ * @param status - The inventory status or null
  * @return Translated label, empty string for null
  */
-export function repertoireStatusLabel(status: string | null | undefined): string {
+export function inventoryStatusLabel(status: string | null | undefined): string {
 	switch (status) {
 		case 'active':
 			return t('Active')
-		case 'dormant':
-			return t('Dormant')
-		case 'archived':
-			return t('Archived')
+		case 'retired':
+			return t('Retired')
+		case 'missing':
+			return t('Missing')
+		case 'lent':
+			return t('Lent')
 		default:
 			return ''
+	}
+}
+
+/**
+ * Get the translated label of a derived repertoire class
+ * @param repertoireClass - The repertoire class
+ * @return Translated label
+ */
+export function repertoireClassLabel(repertoireClass: string | null | undefined): string {
+	switch (repertoireClass) {
+		case 'current':
+			return t('Current')
+		case 'dormant':
+			return t('Dormant')
+		case 'former':
+			return t('Former')
+		default:
+			return t('Not performed')
 	}
 }
 
@@ -79,15 +99,15 @@ export function createRepertoireColumns(): ColDef[] {
 			comparator: compareSignatures,
 		},
 		{
-			field: 'repertoireStatus',
+			field: 'repertoireClass',
 			headerName: t('Repertoire'),
-			cellEditor: 'agSelectCellEditor',
-			cellEditorParams: { values: ['', ...REPERTOIRE_STATUSES] },
+			editable: false,
+			headerTooltip: t('Derived from the performances in setlists'),
 			refData: {
-				'': '',
-				active: repertoireStatusLabel('active'),
-				dormant: repertoireStatusLabel('dormant'),
-				archived: repertoireStatusLabel('archived'),
+				current: repertoireClassLabel('current'),
+				dormant: repertoireClassLabel('dormant'),
+				former: repertoireClassLabel('former'),
+				none: repertoireClassLabel('none'),
 			},
 		},
 		{
@@ -106,6 +126,19 @@ export function createRepertoireColumns(): ColDef[] {
 				}
 				const pad = (n: number) => String(n).padStart(2, '0')
 				return formatDateStr(`${value.getFullYear()}-${pad(value.getMonth() + 1)}-${pad(value.getDate())}`)
+			},
+		},
+		{
+			field: 'inventoryStatus',
+			headerName: t('Inventory'),
+			cellEditor: 'agSelectCellEditor',
+			cellEditorParams: { values: ['', ...INVENTORY_STATUSES] },
+			refData: {
+				'': '',
+				active: inventoryStatusLabel('active'),
+				retired: inventoryStatusLabel('retired'),
+				missing: inventoryStatusLabel('missing'),
+				lent: inventoryStatusLabel('lent'),
 			},
 		},
 		{ field: 'lyricist', headerName: t('Lyricist') },
