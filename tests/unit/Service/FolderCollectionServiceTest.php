@@ -21,6 +21,7 @@ use OCA\OrchestraScoresManager\Policy\PolicyInterface;
 use OCA\OrchestraScoresManager\Service\AuthorizationService;
 use OCA\OrchestraScoresManager\Service\FolderCollectionService;
 use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\DB\Exception;
 use OCP\IDBConnection;
 use OCP\IL10N;
 use PHPUnit\Framework\Attributes\TestWith;
@@ -374,6 +375,103 @@ final class FolderCollectionServiceTest extends TestCase {
 		$this->linkMapper->expects($this->once())
 			->method('addScoreToVersion')
 			->with(100, 10, 5);
+
+		$this->service->addScoreToFolderCollection(100, 1, 5);
+	}
+
+	public function testAddScoreToIndexedCollectionReportsUniqueViolationAsBadRequest(): void {
+		$fc = new FolderCollection();
+		$fc->setId(1);
+		$fc->setActiveVersionId(10);
+		$fc->setCollectionType(FolderCollectionType::INDEXED->value);
+
+		$version = new FolderCollectionVersion();
+		$version->setId(10);
+		$version->setFolderCollectionId(1);
+		$version->setValidTo(null);
+
+		$score = new Score();
+		$score->setId(100);
+
+		$this->authorizationService->expects($this->exactly(2))
+			->method('authorizePolicy');
+
+		$this->folderCollectionMapper->expects($this->exactly(2))
+			->method('find')
+			->with(1)
+			->willReturn($fc);
+
+		$this->versionMapper->expects($this->once())
+			->method('find')
+			->with(10)
+			->willReturn($version);
+
+		$this->scoreMapper->expects($this->once())
+			->method('find')
+			->with(100)
+			->willReturn($score);
+
+		$this->scoreBookScoreLinkMapper->expects($this->once())
+			->method('findScoreBookForScore')
+			->with(100)
+			->willReturn(null);
+
+		$dbException = $this->createMock(Exception::class);
+		$dbException->method('getReason')->willReturn(Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION);
+		$this->linkMapper->expects($this->once())
+			->method('addScoreToVersion')
+			->willThrowException($dbException);
+
+		$this->expectException(\InvalidArgumentException::class);
+
+		$this->service->addScoreToFolderCollection(100, 1, 5);
+	}
+
+	public function testAddScoreToFolderCollectionHidesOtherDatabaseErrors(): void {
+		$fc = new FolderCollection();
+		$fc->setId(1);
+		$fc->setActiveVersionId(10);
+		$fc->setCollectionType(FolderCollectionType::INDEXED->value);
+
+		$version = new FolderCollectionVersion();
+		$version->setId(10);
+		$version->setFolderCollectionId(1);
+		$version->setValidTo(null);
+
+		$score = new Score();
+		$score->setId(100);
+
+		$this->authorizationService->expects($this->exactly(2))
+			->method('authorizePolicy');
+
+		$this->folderCollectionMapper->expects($this->exactly(2))
+			->method('find')
+			->with(1)
+			->willReturn($fc);
+
+		$this->versionMapper->expects($this->once())
+			->method('find')
+			->with(10)
+			->willReturn($version);
+
+		$this->scoreMapper->expects($this->once())
+			->method('find')
+			->with(100)
+			->willReturn($score);
+
+		$this->scoreBookScoreLinkMapper->expects($this->once())
+			->method('findScoreBookForScore')
+			->with(100)
+			->willReturn(null);
+
+		$dbException = $this->createMock(Exception::class);
+		$dbException->method('getReason')->willReturn(Exception::REASON_DATABASE_OBJECT_NOT_FOUND);
+		$this->linkMapper->expects($this->once())
+			->method('addScoreToVersion')
+			->willThrowException($dbException);
+
+		$this->expectException(\Exception::class);
+		$this->expectExceptionMessage('Failed to add score to folder collection');
 
 		$this->service->addScoreToFolderCollection(100, 1, 5);
 	}

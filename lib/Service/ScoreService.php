@@ -13,6 +13,7 @@ use OCA\OrchestraScoresManager\Db\ScoreTagLinkMapper;
 use OCA\OrchestraScoresManager\Db\TagMapper;
 use OCA\OrchestraScoresManager\Policy\PolicyInterface;
 use OCA\OrchestraScoresManager\Policy\ScorePolicy;
+use OCA\OrchestraScoresManager\Service\Exceptions\NotFoundException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\AppFramework\Db\TTransactional;
@@ -44,7 +45,7 @@ class ScoreService {
 	 *
 	 * @param int $id
 	 * @return Score
-	 * @throws \Exception
+	 * @throws NotFoundException
 	 */
 	public function getScoreById(int $id): Score {
 		$this->authorizationService->authorizePolicy($this->scorePolicy, PolicyInterface::ACTION_READ);
@@ -52,7 +53,7 @@ class ScoreService {
 		try {
 			return $this->scoreMapper->find($id);
 		} catch (MultipleObjectsReturnedException|DoesNotExistException|Exception $e) {
-			throw new \Exception($this->l->t('Score not found'));
+			throw new NotFoundException($this->l->t('Score not found'), 0, $e);
 		}
 	}
 
