@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2026-10-21 23:42+0000\n"
+"POT-Creation-Date: 2026-10-21 23:47+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
 msgid "No file uploaded"
 msgstr ""
@@ -134,6 +135,15 @@ msgstr ""
 msgid "The uploaded file is too large when uncompressed"
 msgstr ""
 
+msgid "Only PDF files are allowed"
+msgstr ""
+
+msgid "The uploaded file is not a valid PDF file"
+msgstr ""
+
+msgid "No PDF file available for this score"
+msgstr ""
+
 msgid "Cannot delete score book with linked scores. Remove all scores first."
 msgstr ""
 
@@ -211,6 +221,21 @@ msgid "Only one of scoreId or breakDuration can be set"
 msgstr ""
 
 msgid "An entry with this index already exists in the setlist"
+msgstr ""
+
+msgid "Invalid share type"
+msgstr ""
+
+msgid "Group not found"
+msgstr ""
+
+msgid "Already shared with this group"
+msgstr ""
+
+msgid "Share not found"
+msgstr ""
+
+msgid "Invalid share target"
 msgstr ""
 
 msgid "Orchestra Scores Manager"
@@ -420,6 +445,23 @@ msgstr ""
 msgid "No folder collections yet"
 msgstr ""
 
+msgid "Zoom out"
+msgstr ""
+
+msgid "Zoom in"
+msgstr ""
+
+msgid "Loading PDF…"
+msgstr ""
+
+msgid "The PDF could not be displayed"
+msgstr ""
+
+msgid "%n page"
+msgid_plural "%n pages"
+msgstr[0] ""
+msgstr[1] ""
+
 msgid "Operation failed: "
 msgstr ""
 
@@ -454,6 +496,12 @@ msgid "Comments"
 msgstr ""
 
 msgid "Notes & Playback"
+msgstr ""
+
+msgid "PDF"
+msgstr ""
+
+msgid "Shares"
 msgstr ""
 
 msgid "Folder Collections"
@@ -550,6 +598,73 @@ msgid "Active"
 msgstr ""
 
 msgid "History"
+msgstr ""
+
+msgid "Share {title}"
+msgstr ""
+
+msgid "Failed to load shares: "
+msgstr ""
+
+msgid "Failed to share: "
+msgstr ""
+
+msgid "Failed to remove share: "
+msgstr ""
+
+msgid "Link copied to the clipboard"
+msgstr ""
+
+msgid ""
+"Public links work without login and only show scores that are released for "
+"publication and whose rights allow it. Group shares show all scores, "
+"including PDFs, to the members of the group, except the files of internal "
+"preservation copies. Files cannot be downloaded from shares."
+msgstr ""
+
+msgid "Public link"
+msgstr ""
+
+msgid "Copy link"
+msgstr ""
+
+msgid "Open link"
+msgstr ""
+
+msgid "Remove share"
+msgstr ""
+
+msgid "Not shared yet"
+msgstr ""
+
+msgid "Title shown on the share (optional)"
+msgstr ""
+
+msgid "Share with group"
+msgstr ""
+
+msgid "Select group"
+msgstr ""
+
+msgid "Share"
+msgstr ""
+
+msgid "Create public link"
+msgstr ""
+
+msgid "No scores shared"
+msgstr ""
+
+msgid "arr. {arranger}"
+msgstr ""
+
+msgid "Close"
+msgstr ""
+
+msgid "Show & play"
+msgstr ""
+
+msgid "No digital notes"
 msgstr ""
 
 msgid "Remove score book from collection"
@@ -827,22 +942,7 @@ msgstr ""
 msgid "Submit comment"
 msgstr ""
 
-msgid "Downloading the file failed: "
-msgstr ""
-
-msgid "The file is too large (maximum {size} MB)"
-msgstr ""
-
-msgid "MusicXML file uploaded"
-msgstr ""
-
-msgid "Uploading the file failed: "
-msgstr ""
-
-msgid "MusicXML file removed"
-msgstr ""
-
-msgid "Removing the file failed: "
+msgid "Scores in this book"
 msgstr ""
 
 msgid "Download MusicXML"
@@ -851,10 +951,34 @@ msgstr ""
 msgid "No MusicXML file uploaded yet."
 msgstr ""
 
-msgid "Replace file"
+msgid "Upload MusicXML"
 msgstr ""
 
-msgid "Upload MusicXML"
+msgid "No PDF file uploaded yet."
+msgstr ""
+
+msgid "Upload PDF"
+msgstr ""
+
+msgid "Downloading the file failed: "
+msgstr ""
+
+msgid "The file is too large (maximum {size} MB)"
+msgstr ""
+
+msgid "File uploaded"
+msgstr ""
+
+msgid "Uploading the file failed: "
+msgstr ""
+
+msgid "File removed"
+msgstr ""
+
+msgid "Removing the file failed: "
+msgstr ""
+
+msgid "Replace file"
 msgstr ""
 
 msgid "Remove file"
@@ -873,9 +997,6 @@ msgstr ""
 msgid ""
 "This score is an internal preservation copy. It can only be viewed by the "
 "music librarians."
-msgstr ""
-
-msgid "Scores in this book"
 msgstr ""
 
 msgid "Failed to load setlist"
@@ -1058,7 +1179,47 @@ msgstr ""
 msgid "Are you sure you want to delete this setlist?"
 msgstr ""
 
-msgid "arr. {arranger}"
+msgid "Shared with me"
+msgstr ""
+
+msgid "Failed to load shared items"
+msgstr ""
+
+msgid "Please try again later."
+msgstr ""
+
+msgid "Nothing shared with you yet"
+msgstr ""
+
+msgid ""
+"Scores and folder collections shared with one of your groups appear here."
+msgstr ""
+
+msgid "Manage shares"
+msgstr ""
+
+msgid "What do you want to share?"
+msgstr ""
+
+msgid "Folder collection"
+msgstr ""
+
+msgid "All shares"
+msgstr ""
+
+msgid "Nothing has been shared yet"
+msgstr ""
+
+msgid "Deleted item"
+msgstr ""
+
+msgid "Public link (only published scores)"
+msgstr ""
+
+msgid "Group: {group}"
+msgstr ""
+
+msgid "Edit shares of this item"
 msgstr ""
 
 msgid "Freely available scores"
@@ -1072,19 +1233,18 @@ msgstr ""
 msgid "Search by title or composer"
 msgstr ""
 
-msgid "Close"
-msgstr ""
-
 msgid "No freely available scores yet"
 msgstr ""
 
 msgid "No scores match your search"
 msgstr ""
 
-msgid "Show & play"
+msgid ""
+"Only scores released for publication are shown. Select a score to view the "
+"notes and listen to the individual voices."
 msgstr ""
 
-msgid "No digital notes"
+msgid "No published scores in this share"
 msgstr ""
 
 msgid "Starting"

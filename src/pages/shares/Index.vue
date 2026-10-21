@@ -60,7 +60,7 @@
 									{{ share.label || share.targetTitle || t('Deleted item') }}
 								</button>
 								<span class="shares-page__meta">
-									<template v-if="share.shareType === 'link'">{{ t('Public link (only freely available scores)') }}</template>
+									<template v-if="share.shareType === 'link'">{{ t('Public link (only published scores)') }}</template>
 									<template v-else>{{ t('Group: {group}', { group: share.groupName ?? '' }) }}</template>
 								</span>
 							</div>

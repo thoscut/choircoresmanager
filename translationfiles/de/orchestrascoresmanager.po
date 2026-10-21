@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2026-10-21 23:42+0000\n"
+"POT-Creation-Date: 2026-10-21 23:47+0000\n"
 "PO-Revision-Date: 2025-11-28 22:37+0000\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -128,6 +128,15 @@ msgstr "Die hochgeladene Datei ist keine gültige komprimierte MusicXML-Datei"
 msgid "The uploaded file is too large when uncompressed"
 msgstr "Die hochgeladene Datei ist entpackt zu groß"
 
+msgid "Only PDF files are allowed"
+msgstr "Nur PDF-Dateien sind erlaubt"
+
+msgid "The uploaded file is not a valid PDF file"
+msgstr "Die hochgeladene Datei ist keine gültige PDF-Datei"
+
+msgid "No PDF file available for this score"
+msgstr "Für diese Partitur gibt es keine PDF-Datei"
+
 msgid "Cannot delete score book with linked scores. Remove all scores first."
 msgstr "Notenbuch mit verknüpften Partituren kann nicht gelöscht werden. Entfernen Sie zuerst alle Partituren."
 
@@ -202,6 +211,21 @@ msgstr "Nur eines von scoreId oder breakDuration kann gesetzt sein"
 
 msgid "An entry with this index already exists in the setlist"
 msgstr "Ein Eintrag mit diesem Index existiert bereits in der Setlist"
+
+msgid "Invalid share type"
+msgstr "Ungültige Art der Freigabe"
+
+msgid "Group not found"
+msgstr "Gruppe nicht gefunden"
+
+msgid "Already shared with this group"
+msgstr "Bereits für diese Gruppe freigegeben"
+
+msgid "Share not found"
+msgstr "Freigabe nicht gefunden"
+
+msgid "Invalid share target"
+msgstr "Ungültiges Freigabeziel"
 
 msgid "Orchestra Scores Manager"
 msgstr "Orchester-Noten-Verwaltung"
@@ -414,6 +438,23 @@ msgstr "Haupt App-Navigation"
 msgid "No folder collections yet"
 msgstr "Noch keine Ordnersammlungen"
 
+msgid "Zoom out"
+msgstr "Verkleinern"
+
+msgid "Zoom in"
+msgstr "Vergrößern"
+
+msgid "Loading PDF…"
+msgstr "PDF wird geladen …"
+
+msgid "The PDF could not be displayed"
+msgstr "Das PDF konnte nicht angezeigt werden"
+
+msgid "%n page"
+msgid_plural "%n pages"
+msgstr[0] "%n Seite"
+msgstr[1] "%n Seiten"
+
 msgid "Operation failed: "
 msgstr "Operation fehlgeschlagen: "
 
@@ -446,6 +487,12 @@ msgstr "Kommentare"
 
 msgid "Notes & Playback"
 msgstr "Noten & Wiedergabe"
+
+msgid "PDF"
+msgstr "PDF"
+
+msgid "Shares"
+msgstr "Freigaben"
 
 msgid "Folder Collections"
 msgstr "Ordnersammlungen"
@@ -542,6 +589,69 @@ msgstr "Aktiv"
 
 msgid "History"
 msgstr "Verlauf"
+
+msgid "Share {title}"
+msgstr "{title} freigeben"
+
+msgid "Failed to load shares: "
+msgstr "Freigaben konnten nicht geladen werden: "
+
+msgid "Failed to share: "
+msgstr "Freigeben fehlgeschlagen: "
+
+msgid "Failed to remove share: "
+msgstr "Freigabe konnte nicht entfernt werden: "
+
+msgid "Link copied to the clipboard"
+msgstr "Link in die Zwischenablage kopiert"
+
+msgid "Public links work without login and only show scores that are released for publication and whose rights allow it. Group shares show all scores, including PDFs, to the members of the group, except the files of internal preservation copies. Files cannot be downloaded from shares."
+msgstr "Öffentliche Links funktionieren ohne Anmeldung und zeigen nur Partituren, die zur Veröffentlichung freigegeben sind und deren Rechte das erlauben. Gruppenfreigaben zeigen den Mitgliedern der Gruppe alle Partituren einschließlich PDF, außer den Dateien interner Erhaltungskopien. Aus Freigaben kann nichts heruntergeladen werden."
+
+msgid "Public link"
+msgstr "Öffentlicher Link"
+
+msgid "Copy link"
+msgstr "Link kopieren"
+
+msgid "Open link"
+msgstr "Link öffnen"
+
+msgid "Remove share"
+msgstr "Freigabe entfernen"
+
+msgid "Not shared yet"
+msgstr "Noch nicht freigegeben"
+
+msgid "Title shown on the share (optional)"
+msgstr "Titel der Freigabe (optional)"
+
+msgid "Share with group"
+msgstr "Für Gruppe freigeben"
+
+msgid "Select group"
+msgstr "Gruppe auswählen"
+
+msgid "Share"
+msgstr "Freigeben"
+
+msgid "Create public link"
+msgstr "Öffentlichen Link erstellen"
+
+msgid "No scores shared"
+msgstr "Keine Partituren freigegeben"
+
+msgid "arr. {arranger}"
+msgstr "bearb. {arranger}"
+
+msgid "Close"
+msgstr "Schließen"
+
+msgid "Show & play"
+msgstr "Ansehen & abspielen"
+
+msgid "No digital notes"
+msgstr "Keine digitalen Noten"
 
 msgid "Remove score book from collection"
 msgstr "Notenbuch aus Sammlung entfernen"
@@ -807,23 +917,8 @@ msgstr "Mehr erfahren"
 msgid "Submit comment"
 msgstr "Kommentar senden"
 
-msgid "Downloading the file failed: "
-msgstr "Herunterladen der Datei fehlgeschlagen: "
-
-msgid "The file is too large (maximum {size} MB)"
-msgstr "Die Datei ist zu groß (höchstens {size} MB)"
-
-msgid "MusicXML file uploaded"
-msgstr "MusicXML-Datei hochgeladen"
-
-msgid "Uploading the file failed: "
-msgstr "Hochladen der Datei fehlgeschlagen: "
-
-msgid "MusicXML file removed"
-msgstr "MusicXML-Datei entfernt"
-
-msgid "Removing the file failed: "
-msgstr "Entfernen der Datei fehlgeschlagen: "
+msgid "Scores in this book"
+msgstr "Partituren in diesem Notenbuch"
 
 msgid "Download MusicXML"
 msgstr "MusicXML herunterladen"
@@ -831,11 +926,35 @@ msgstr "MusicXML herunterladen"
 msgid "No MusicXML file uploaded yet."
 msgstr "Noch keine MusicXML-Datei hochgeladen."
 
-msgid "Replace file"
-msgstr "Datei ersetzen"
-
 msgid "Upload MusicXML"
 msgstr "MusicXML hochladen"
+
+msgid "No PDF file uploaded yet."
+msgstr "Noch keine PDF-Datei hochgeladen."
+
+msgid "Upload PDF"
+msgstr "PDF hochladen"
+
+msgid "Downloading the file failed: "
+msgstr "Herunterladen der Datei fehlgeschlagen: "
+
+msgid "The file is too large (maximum {size} MB)"
+msgstr "Die Datei ist zu groß (höchstens {size} MB)"
+
+msgid "File uploaded"
+msgstr "Datei hochgeladen"
+
+msgid "Uploading the file failed: "
+msgstr "Hochladen der Datei fehlgeschlagen: "
+
+msgid "File removed"
+msgstr "Datei entfernt"
+
+msgid "Removing the file failed: "
+msgstr "Entfernen der Datei fehlgeschlagen: "
+
+msgid "Replace file"
+msgstr "Datei ersetzen"
 
 msgid "Remove file"
 msgstr "Datei entfernen"
@@ -848,9 +967,6 @@ msgstr "Diese Partitur ist eine interne Erhaltungskopie. Nur Bearbeiter können 
 
 msgid "This score is an internal preservation copy. It can only be viewed by the music librarians."
 msgstr "Diese Partitur ist eine interne Erhaltungskopie. Nur die Notenwarte können sie ansehen."
-
-msgid "Scores in this book"
-msgstr "Partituren in diesem Notenbuch"
 
 msgid "Failed to load setlist"
 msgstr "Setlist konnte nicht geladen werden"
@@ -1032,8 +1148,47 @@ msgstr "Setliste löschen"
 msgid "Are you sure you want to delete this setlist?"
 msgstr "Sind Sie sicher, dass Sie diese Setliste löschen möchten?"
 
-msgid "arr. {arranger}"
-msgstr "bearb. {arranger}"
+msgid "Shared with me"
+msgstr "Für mich freigegeben"
+
+msgid "Failed to load shared items"
+msgstr "Freigegebene Inhalte konnten nicht geladen werden"
+
+msgid "Please try again later."
+msgstr "Bitte versuche es später noch einmal."
+
+msgid "Nothing shared with you yet"
+msgstr "Noch nichts für dich freigegeben"
+
+msgid "Scores and folder collections shared with one of your groups appear here."
+msgstr "Hier erscheinen Partituren und Ordnersammlungen, die für eine deiner Gruppen freigegeben sind."
+
+msgid "Manage shares"
+msgstr "Freigaben verwalten"
+
+msgid "What do you want to share?"
+msgstr "Was möchtest du freigeben?"
+
+msgid "Folder collection"
+msgstr "Ordnersammlung"
+
+msgid "All shares"
+msgstr "Alle Freigaben"
+
+msgid "Nothing has been shared yet"
+msgstr "Bisher ist nichts freigegeben"
+
+msgid "Deleted item"
+msgstr "Gelöschter Eintrag"
+
+msgid "Public link (only published scores)"
+msgstr "Öffentlicher Link (nur veröffentlichte Stücke)"
+
+msgid "Group: {group}"
+msgstr "Gruppe: {group}"
+
+msgid "Edit shares of this item"
+msgstr "Freigaben dieses Eintrags bearbeiten"
 
 msgid "Freely available scores"
 msgstr "Frei verfügbare Noten"
@@ -1044,20 +1199,17 @@ msgstr "Diese Stücke sind gemeinfrei oder zur Veröffentlichung lizenziert. Wä
 msgid "Search by title or composer"
 msgstr "Nach Titel oder Komponist suchen"
 
-msgid "Close"
-msgstr "Schließen"
-
 msgid "No freely available scores yet"
 msgstr "Noch keine frei verfügbaren Noten"
 
 msgid "No scores match your search"
 msgstr "Keine Stücke passen zu deiner Suche"
 
-msgid "Show & play"
-msgstr "Ansehen & abspielen"
+msgid "Only scores released for publication are shown. Select a score to view the notes and listen to the individual voices."
+msgstr "Gezeigt werden nur Stücke, die zur Veröffentlichung freigegeben sind. Wähle ein Stück, um die Noten zu sehen und die einzelnen Stimmen anzuhören."
 
-msgid "No digital notes"
-msgstr "Keine digitalen Noten"
+msgid "No published scores in this share"
+msgstr "Diese Freigabe enthält keine veröffentlichten Stücke"
 
 msgid "Starting"
 msgstr "Ab"
@@ -1145,6 +1297,12 @@ msgstr "Interne Erhaltungskopie"
 
 msgid "Invalid duration format"
 msgstr "Ungültiges Spieldauerformat"
+
+#~ msgid "MusicXML file uploaded"
+#~ msgstr "MusicXML-Datei hochgeladen"
+
+#~ msgid "MusicXML file removed"
+#~ msgstr "MusicXML-Datei entfernt"
 
 #, php-format
 #~ msgid "Failed to add score to folder collection: %1$s"

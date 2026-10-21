@@ -6,13 +6,13 @@
 				{{ target.description }}
 			</p>
 			<p class="shared-page__meta">
-				{{ t('Only freely available scores are shown. Select a score to view the notes and listen to the individual voices.') }}
+				{{ t('Only scores released for publication are shown. Select a score to view the notes and listen to the individual voices.') }}
 			</p>
 		</header>
 		<SharedTargetView
 			:target="target"
 			:loadFile="loadFile"
-			:emptyText="t('No freely available scores in this share')" />
+			:emptyText="t('No published scores in this share')" />
 	</div>
 </template>
 
