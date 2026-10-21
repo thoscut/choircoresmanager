@@ -42,6 +42,17 @@
 						:name="t('No folder collections yet')" />
 				</ul>
 			</NcAppNavigationItem>
+
+			<!-- Link to the public page for freely available scores -->
+			<NcAppNavigationItem
+				v-if="publicPageEnabled"
+				:name="t('Public page')"
+				:href="publicPageUrl"
+				target="_blank">
+				<template #icon>
+					<PublicIcon :size="20" />
+				</template>
+			</NcAppNavigationItem>
 		</template>
 		<template #footer>
 			<div v-if="editable" class="navigation__footer">
@@ -61,6 +72,7 @@
 import type { NavigationItem } from '@/types/navigation'
 
 import { loadState } from '@nextcloud/initial-state'
+import { generateUrl } from '@nextcloud/router'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
@@ -68,7 +80,7 @@ import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCounterBubble from '@nextcloud/vue/components/NcCounterBubble'
 import AppSettings from '@/components/AppSettings.vue'
-import { SettingsIcon } from '@/icons/vue-material'
+import { PublicIcon, SettingsIcon } from '@/icons/vue-material'
 import { navigation } from '@/navigation'
 import { useFolderCollectionsStore } from '@/stores/folderCollectionsStore'
 import { t } from '@/utils/l10n'
@@ -79,6 +91,8 @@ const folderCollectionsStore = useFolderCollectionsStore()
 const showSettings = ref(false)
 // Load initial state from the server
 const editable = ref<boolean>(!!loadState('orchestrascoresmanager', 'editable'))
+const publicPageEnabled = loadState<boolean>('orchestrascoresmanager', 'publicPageEnabled', false)
+const publicPageUrl = generateUrl('/apps/orchestrascoresmanager/public')
 
 // Initialize folder collections store when navigation mounts
 onMounted(() => {

@@ -1,6 +1,8 @@
 import type { Score } from '@/api/generated/openapi/data-contracts'
 
+import ncAxios from '@nextcloud/axios'
 import { loadState } from '@nextcloud/initial-state'
+import { generateOcsUrl } from '@nextcloud/router'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { apiClients } from '@/api/client'
@@ -149,6 +151,67 @@ export const useScoresStore = defineStore('scores', () => {
 	}
 
 	/**
+	 * Replace a score in the store with an updated version from the API
+	 *
+	 * @param updated - The updated score
+	 */
+	function replaceScore(updated: Score): void {
+		const index = scores.value.findIndex((s) => s.id === updated.id)
+		if (index !== -1) {
+			scores.value[index] = updated
+		}
+	}
+
+	/**
+	 * Upload a MusicXML file for a score and update local state
+	 *
+	 * @param id - The score ID
+	 * @param file - The MusicXML file (.musicxml, .xml or .mxl)
+	 * @return The updated score
+	 * @throws { Error } if API call fails
+	 */
+	async function uploadMusicXml(id: number, file: File): Promise<Score> {
+		const formData = new FormData()
+		formData.append('file', file)
+		const response = await ncAxios.post(
+			generateOcsUrl('/apps/orchestrascoresmanager/scores/{id}/musicxml', { id }),
+			formData,
+			{ headers: { 'OCS-APIRequest': 'true', Accept: 'application/json' } },
+		)
+		const updated = response.data.ocs.data as Score
+		replaceScore(updated)
+		return updated
+	}
+
+	/**
+	 * Remove the MusicXML file of a score and update local state
+	 *
+	 * @param id - The score ID
+	 * @return The updated score
+	 * @throws { Error } if API call fails
+	 */
+	async function deleteMusicXml(id: number): Promise<Score> {
+		const response = await apiClients.default.musicXmlApiDeleteMusicXml(id)
+		const updated = response.data.ocs.data as Score
+		replaceScore(updated)
+		return updated
+	}
+
+	/**
+	 * Download the MusicXML file of a score
+	 *
+	 * @param id - The score ID
+	 * @return The file content
+	 */
+	async function fetchMusicXml(id: number): Promise<ArrayBuffer> {
+		const response = await ncAxios.get(
+			generateOcsUrl('/apps/orchestrascoresmanager/scores/{id}/musicxml', { id }),
+			{ headers: { 'OCS-APIRequest': 'true' }, responseType: 'arraybuffer' },
+		)
+		return response.data as ArrayBuffer
+	}
+
+	/**
 	 * Delete a score via API and remove from store
 	 *
 	 * @param id - The score ID to remove
@@ -171,6 +234,10 @@ export const useScoresStore = defineStore('scores', () => {
 		updateScoreBookAssignment,
 		updateScoreBookAssignmentApi,
 		updateScoreTags,
+		replaceScore,
+		uploadMusicXml,
+		deleteMusicXml,
+		fetchMusicXml,
 		deleteScore,
 	}
 })

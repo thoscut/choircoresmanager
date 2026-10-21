@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Complete and Polish the German Translation
+- Publication rights status (free / unclear / restricted) and note per score
+- Upload of MusicXML files (.musicxml, .xml, .mxl) per score, with notation view and playback (per-voice solo, mute and volume, tempo control)
+- Optional public page listing all scores marked as free, with notation view, playback and MusicXML download (disabled by default, enabled in the admin settings)
 
 ## [1.2.2] - 2026-08-28
 

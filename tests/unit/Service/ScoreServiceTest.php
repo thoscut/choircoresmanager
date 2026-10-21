@@ -16,6 +16,7 @@ use OCA\OrchestraScoresManager\Policy\PolicyInterface;
 use OCA\OrchestraScoresManager\Policy\ScorePolicy;
 use OCA\OrchestraScoresManager\Service\AuthorizationService;
 use OCA\OrchestraScoresManager\Service\Exceptions\PermissionDeniedException;
+use OCA\OrchestraScoresManager\Service\MusicXmlService;
 use OCA\OrchestraScoresManager\Service\ScoreService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\DB\Exception;
@@ -35,6 +36,7 @@ final class ScoreServiceTest extends TestCase {
 	private AuthorizationService $authorizationService;
 	private ScorePolicy $scorePolicy;
 	private IL10N $l10n;
+	private MusicXmlService $musicXmlService;
 	private ScoreService $service;
 
 	protected function setUp(): void {
@@ -49,6 +51,7 @@ final class ScoreServiceTest extends TestCase {
 		$this->authorizationService = $this->createMock(AuthorizationService::class);
 		$this->scorePolicy = $this->createMock(ScorePolicy::class);
 		$this->l10n = $this->createMock(IL10N::class);
+		$this->musicXmlService = $this->createMock(MusicXmlService::class);
 
 		$this->l10n->method('t')->willReturnCallback(fn ($text, $params = []) => vsprintf($text, $params));
 
@@ -61,7 +64,8 @@ final class ScoreServiceTest extends TestCase {
 			$this->scoreTagLinkMapper,
 			$this->authorizationService,
 			$this->scorePolicy,
-			$this->l10n
+			$this->l10n,
+			$this->musicXmlService,
 		);
 	}
 
@@ -209,6 +213,10 @@ final class ScoreServiceTest extends TestCase {
 			->method('delete')
 			->with($score);
 
+		$this->musicXmlService->expects($this->once())
+			->method('removeFile')
+			->with(1);
+
 		$this->service->deleteScoreById(1);
 	}
 
@@ -259,6 +267,28 @@ final class ScoreServiceTest extends TestCase {
 		$result = $this->service->createScore($score);
 
 		$this->assertSame($createdScore, $result);
+	}
+
+	public function testCreateScoreRejectsInvalidRightsStatus(): void {
+		$score = new Score();
+		$score->setTitle('Test Score');
+		$score->setRightsStatus('public');
+
+		$this->scoreMapper->expects($this->never())->method('insert');
+
+		$this->expectException(\InvalidArgumentException::class);
+		$this->service->createScore($score);
+	}
+
+	public function testUpdateScoreAcceptsFreeRightsStatus(): void {
+		$score = new Score();
+		$score->setId(1);
+		$score->setRightsStatus('free');
+
+		$this->scoreMapper->expects($this->once())->method('update')->with($score);
+		$this->scoreMapper->method('find')->willReturn($score);
+
+		$this->assertSame('free', $this->service->updateScore($score)->getRightsStatus());
 	}
 
 	public function testCreateScoreWithTags(): void {

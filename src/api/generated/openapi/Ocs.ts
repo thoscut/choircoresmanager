@@ -36,6 +36,9 @@ import {
   FolderCollectionVersionApiGetFolderCollectionVersionData,
   FolderCollectionVersionApiPatchFolderCollectionVersionData,
   FolderCollectionVersionApiPatchFolderCollectionVersionPayload,
+  MusicXmlApiDeleteMusicXmlData,
+  MusicXmlApiGetMusicXmlData,
+  MusicXmlApiPostMusicXmlData,
   OCSMeta,
   ScoreApiDeleteScoreData,
   ScoreApiGetScoreCommentsData,
@@ -86,7 +89,7 @@ import {
   UserSettingsPutSetlistSettingsData,
   UserSettingsPutSetlistSettingsPayload,
 } from "./data-contracts";
-import { ContentType, HttpClient, RequestParams } from "./http-client";
+import { HttpClient, RequestParams } from "./http-client";
 
 export class Ocs<
   SecurityDataType = unknown,
@@ -192,7 +195,7 @@ export class Ocs<
       method: "POST",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -251,7 +254,7 @@ export class Ocs<
       method: "PATCH",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -347,7 +350,7 @@ export class Ocs<
       method: "POST",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -444,7 +447,7 @@ export class Ocs<
       method: "POST",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -532,7 +535,7 @@ export class Ocs<
       method: "POST",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -563,7 +566,7 @@ export class Ocs<
       method: "POST",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -622,7 +625,81 @@ export class Ocs<
       method: "PATCH",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description the MusicXML file
+   *
+   * @tags music_xml_api
+   * @name MusicXmlApiGetMusicXml
+   * @summary Download the MusicXML file of a score
+   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/scores/{id}/musicxml
+   * @secure
+   */
+  musicXmlApiGetMusicXml = (id: number, params: RequestParams = {}) =>
+    this.request<
+      MusicXmlApiGetMusicXmlData,
+      {
+        ocs: {
+          meta: OCSMeta;
+          data: any;
+        };
+      }
+    >({
+      path: `/ocs/v2.php/apps/orchestrascoresmanager/scores/${id}/musicxml`,
+      method: "GET",
+      secure: true,
+      ...params,
+    });
+  /**
+   * @description The file must be sent as multipart form data in the field "file". the updated score
+   *
+   * @tags music_xml_api
+   * @name MusicXmlApiPostMusicXml
+   * @summary Upload a MusicXML file (.musicxml, .xml or .mxl) for a score, replacing an existing one
+   * @request POST:/ocs/v2.php/apps/orchestrascoresmanager/scores/{id}/musicxml
+   * @secure
+   */
+  musicXmlApiPostMusicXml = (id: number, params: RequestParams = {}) =>
+    this.request<
+      MusicXmlApiPostMusicXmlData,
+      {
+        ocs: {
+          meta: OCSMeta;
+          data: any;
+        };
+      }
+    >({
+      path: `/ocs/v2.php/apps/orchestrascoresmanager/scores/${id}/musicxml`,
+      method: "POST",
+      secure: true,
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description the updated score
+   *
+   * @tags music_xml_api
+   * @name MusicXmlApiDeleteMusicXml
+   * @summary Remove the MusicXML file of a score
+   * @request DELETE:/ocs/v2.php/apps/orchestrascoresmanager/scores/{id}/musicxml
+   * @secure
+   */
+  musicXmlApiDeleteMusicXml = (id: number, params: RequestParams = {}) =>
+    this.request<
+      MusicXmlApiDeleteMusicXmlData,
+      {
+        ocs: {
+          meta: OCSMeta;
+          data: any;
+        };
+      }
+    >({
+      path: `/ocs/v2.php/apps/orchestrascoresmanager/scores/${id}/musicxml`,
+      method: "DELETE",
+      secure: true,
       format: "json",
       ...params,
     });
@@ -688,7 +765,7 @@ export class Ocs<
       method: "POST",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -720,7 +797,7 @@ export class Ocs<
       method: "PATCH",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -800,7 +877,7 @@ export class Ocs<
       method: "POST",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -883,7 +960,7 @@ export class Ocs<
       method: "POST",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -939,7 +1016,7 @@ export class Ocs<
       method: "PATCH",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -1020,7 +1097,7 @@ export class Ocs<
       method: "POST",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -1051,7 +1128,7 @@ export class Ocs<
       method: "POST",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -1183,7 +1260,7 @@ export class Ocs<
       method: "POST",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -1239,7 +1316,7 @@ export class Ocs<
       method: "PATCH",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -1295,7 +1372,7 @@ export class Ocs<
       method: "POST",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -1351,7 +1428,7 @@ export class Ocs<
       method: "POST",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -1407,7 +1484,7 @@ export class Ocs<
       method: "PATCH",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -1465,7 +1542,7 @@ export class Ocs<
       method: "POST",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -1517,7 +1594,7 @@ export class Ocs<
       method: "POST",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });
@@ -1572,7 +1649,7 @@ export class Ocs<
       method: "PUT",
       body: data,
       secure: true,
-      type: ContentType.Json,
+      type: "application/json",
       format: "json",
       ...params,
     });

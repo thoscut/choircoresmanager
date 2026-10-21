@@ -96,6 +96,9 @@ export interface Score {
   language: string | null;
   repertoireStatus: "active" | "dormant" | "archived" | null;
   lastPerformed: string | null;
+  rightsStatus: "free" | "unclear" | "restricted";
+  rightsNote: string | null;
+  musicxmlFile: string | null;
   tags: string[] | null;
   scoreBook: ScoreBookInfo | null;
   viaScoreBook?: true;
@@ -175,6 +178,9 @@ export interface ScoreIndexed {
   language: string | null;
   repertoireStatus: "active" | "dormant" | "archived" | null;
   lastPerformed: string | null;
+  rightsStatus: "free" | "unclear" | "restricted";
+  rightsNote: string | null;
+  musicxmlFile: string | null;
   tags: string[] | null;
   scoreBook: ScoreBookInfo | null;
   viaScoreBook?: true;
@@ -443,6 +449,23 @@ export interface FolderCollectionVersionApiPatchFolderCollectionVersionData {
   };
 }
 
+/** @format binary */
+export type MusicXmlApiGetMusicXmlData = File;
+
+export interface MusicXmlApiPostMusicXmlData {
+  ocs: {
+    meta: OCSMeta;
+    data: Score;
+  };
+}
+
+export interface MusicXmlApiDeleteMusicXmlData {
+  ocs: {
+    meta: OCSMeta;
+    data: Score;
+  };
+}
+
 export interface ScoreApiGetScoresData {
   ocs: {
     meta: OCSMeta;
@@ -541,6 +564,16 @@ export interface ScoreApiPostScorePayload {
    * @default null
    */
   repertoireStatus?: "active" | "dormant" | "archived" | null;
+  /**
+   * The publication rights status of the score
+   * @default null
+   */
+  rightsStatus?: "free" | "unclear" | "restricted" | null;
+  /**
+   * A note explaining the rights status
+   * @default null
+   */
+  rightsNote?: string | null;
   /**
    * optional list of tag ids to link
    * @default null
@@ -659,6 +692,16 @@ export interface ScoreApiPatchScorePayload {
    * @default null
    */
   repertoireStatus?: "active" | "dormant" | "archived" | null;
+  /**
+   * The publication rights status of the score
+   * @default null
+   */
+  rightsStatus?: "free" | "unclear" | "restricted" | null;
+  /**
+   * A note explaining the rights status
+   * @default null
+   */
+  rightsNote?: string | null;
   /**
    * optional list of tag ids to link
    * @default null

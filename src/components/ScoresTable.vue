@@ -53,6 +53,7 @@ import { createDurationColumn } from '@/utils/durationColumnUtils'
 import { tryShowError } from '@/utils/errorHandling'
 import { t } from '@/utils/l10n'
 import { createRepertoireColumns } from '@/utils/repertoireColumnUtils'
+import { RIGHTS_STATUS_VALUES, rightsStatusLabels } from '@/utils/rightsStatus'
 import { parseDurationHHMMSS } from '@/utils/timeFormatUtils'
 
 const props = defineProps<Props>()
@@ -304,6 +305,9 @@ const columnEditHandlers: Record<string, ColumnEditHandler> = {
 	difficulty: inheritableFieldHandlerFactory('difficulty'),
 	defects: inheritableFieldHandlerFactory('defects'),
 	physicalCopiesStatus: inheritableFieldHandlerFactory('physicalCopiesStatus'),
+	rightsNote: async (id, newValue) => {
+		await scoresStore.updateScoreFieldApi(id, 'rightsNote', newValue === '' ? null : newValue)
+	},
 }
 
 /**
@@ -599,6 +603,23 @@ const columnDefs = computed<ColDef[]>(() => {
 		},
 		// custom valueParser to enable editing of array-type data
 		{ field: 'tags', headerName: t('Tags'), valueParser: (params) => parseArrayValue(params.newValue) },
+		{
+			field: 'rightsStatus',
+			headerName: t('Publication'),
+			cellEditor: 'agSelectCellEditor',
+			cellEditorParams: { values: RIGHTS_STATUS_VALUES },
+			refData: rightsStatusLabels(),
+			width: 190,
+		},
+		{ field: 'rightsNote', headerName: t('Publication Note') },
+		{
+			field: 'musicxmlFile',
+			headerName: t('MusicXML'),
+			editable: false,
+			valueFormatter: (params) => (params.value ? '✓' : ''),
+			tooltipValueGetter: (params) => params.value ?? null,
+			width: 110,
+		},
 	)
 
 	return cols

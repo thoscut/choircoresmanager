@@ -7,6 +7,7 @@ namespace OCA\OrchestraScoresManager\Settings;
 use OCA\OrchestraScoresManager\Service\ConfigService;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
+use OCP\IURLGenerator;
 use OCP\Settings\ISettings;
 
 /** @psalm-suppress UnusedClass - Settings class discovered by NextCloud framework */
@@ -17,6 +18,7 @@ class AdminSettings implements ISettings {
 	public function __construct(
 		private readonly ConfigService $configService,
 		IInitialState $initialStateService,
+		private readonly IURLGenerator $urlGenerator,
 	) {
 		$this->initialStateService = $initialStateService;
 	}
@@ -32,6 +34,15 @@ class AdminSettings implements ISettings {
 		$this->initialStateService->provideInitialState(
 			'allowed_groups',
 			$allowedGroups
+		);
+
+		$this->initialStateService->provideInitialState(
+			'public_page_enabled',
+			$this->configService->isPublicPageEnabled()
+		);
+		$this->initialStateService->provideInitialState(
+			'public_page_url',
+			$this->urlGenerator->linkToRouteAbsolute('orchestrascoresmanager.public.index')
 		);
 
 		return new TemplateResponse(

@@ -93,4 +93,21 @@ final class ConfigServiceTest extends TestCase {
 
 		$this->assertSame($expected, $result);
 	}
+
+	public function testPublicPageIsDisabledByDefault(): void {
+		$this->appConfig->expects($this->once())
+			->method('getAppValueBool')
+			->with('public_page_enabled', false)
+			->willReturn(false);
+
+		$this->assertFalse($this->service->isPublicPageEnabled());
+	}
+
+	public function testSetPublicPageEnabled(): void {
+		$this->appConfig->expects($this->once())
+			->method('setAppValueBool')
+			->with('public_page_enabled', true);
+
+		$this->service->setPublicPageEnabled(true);
+	}
 }

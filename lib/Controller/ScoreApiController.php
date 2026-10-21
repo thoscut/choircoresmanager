@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OCA\OrchestraScoresManager\Controller;
 
 use OCA\OrchestraScoresManager\Db\Comment;
+use OCA\OrchestraScoresManager\Db\Enum\RightsStatus;
 use OCA\OrchestraScoresManager\Db\Score;
 use OCA\OrchestraScoresManager\Db\ScoreMapper;
 use OCA\OrchestraScoresManager\Db\ScoreTagLinkMapper;
@@ -90,6 +91,8 @@ class ScoreApiController extends OCSController {
 	 * @param string|null $voicing The voicing of the score, e.g. "TTBB"
 	 * @param string|null $language The language of the lyrics
 	 * @param 'active'|'dormant'|'archived'|null $repertoireStatus The repertoire status of the score
+	 * @param 'free'|'unclear'|'restricted'|null $rightsStatus The publication rights status of the score
+	 * @param string|null $rightsNote A note explaining the rights status
 	 * @param list<int>|null $tagIds optional list of tag ids to link
 	 * @param array{id: int, index: int}|null $scoreBook Score book info with id and index (both required)
 	 *
@@ -121,6 +124,8 @@ class ScoreApiController extends OCSController {
 		?string $voicing = null,
 		?string $language = null,
 		?string $repertoireStatus = null,
+		?string $rightsStatus = null,
+		?string $rightsNote = null,
 		?array $tagIds = null,
 		?array $scoreBook = null,
 	): DataResponse {
@@ -143,6 +148,8 @@ class ScoreApiController extends OCSController {
 			'voicing' => $voicing,
 			'language' => $language,
 			'repertoireStatus' => $repertoireStatus,
+			'rightsStatus' => $rightsStatus ?? RightsStatus::UNCLEAR->value,
+			'rightsNote' => $rightsNote,
 		]));
 
 		// Build score book info if provided
@@ -181,6 +188,8 @@ class ScoreApiController extends OCSController {
 	 * @param string|null $voicing The voicing of the score, e.g. "TTBB"
 	 * @param string|null $language The language of the lyrics
 	 * @param 'active'|'dormant'|'archived'|null $repertoireStatus The repertoire status of the score
+	 * @param 'free'|'unclear'|'restricted'|null $rightsStatus The publication rights status of the score
+	 * @param string|null $rightsNote A note explaining the rights status
 	 * @param list<int>|null $tagIds optional list of tag ids to link
 	 * @param array{id?: int, index?: int}|null $scoreBook Score book info (id and/or index). Set id to null to remove from book.
 	 *
@@ -216,6 +225,8 @@ class ScoreApiController extends OCSController {
 		?string $voicing = null,
 		?string $language = null,
 		?string $repertoireStatus = null,
+		?string $rightsStatus = null,
+		?string $rightsNote = null,
 		?array $tagIds = null,
 		?array $scoreBook = null,
 	): DataResponse {
@@ -225,6 +236,12 @@ class ScoreApiController extends OCSController {
 
 		// drop NC-added "_route" param if exists
 		unset($params['_route']);
+		// the MusicXML file is managed via its own endpoints
+		unset($params['musicxmlFile']);
+		// the rights status is not nullable, let the service reject a null value
+		if (array_key_exists('rightsStatus', $params) && $params['rightsStatus'] === null) {
+			$params['rightsStatus'] = '';
+		}
 
 		// Handle score book info separately
 		$scoreBookInfo = null;
