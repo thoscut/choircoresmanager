@@ -19,10 +19,14 @@ use OCA\OrchestraScoresManager\Policy\PolicyInterface;
 use OCA\OrchestraScoresManager\Utility\DateTimeHelper;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
+use OCP\AppFramework\Db\TTransactional;
 use OCP\DB\Exception;
+use OCP\IDBConnection;
 use OCP\IL10N;
 
 class FolderCollectionService {
+	use TTransactional;
+
 	/** @psalm-suppress PossiblyUnusedMethod - Constructor used by DI container */
 	public function __construct(
 		private readonly FolderCollectionMapper $folderCollectionMapper,
@@ -35,6 +39,7 @@ class FolderCollectionService {
 		private readonly FolderCollectionPolicy $folderCollectionPolicy,
 		private readonly FolderCollectionVersionPolicy $versionPolicy,
 		private IL10N $l,
+		private readonly IDBConnection $db,
 	) {
 	}
 
@@ -185,9 +190,7 @@ class FolderCollectionService {
 			throw new \InvalidArgumentException($this->l->t('Invalid collection type. Must be "alphabetical" or "indexed".'));
 		}
 
-		$created = $this->folderCollectionMapper->insert($folderCollection);
-
-		// Create initial active version
+		// Parse the date before writing anything, so an invalid date doesn't leave a collection without version
 		if ($validFrom !== null) {
 			// Validate and parse the provided date using helper
 			$versionDate = DateTimeHelper::parseDate($validFrom);
@@ -196,15 +199,20 @@ class FolderCollectionService {
 			$versionDate = DateTimeHelper::today();
 		}
 
-		$version = new FolderCollectionVersion();
-		$version->setFolderCollectionId($created->getId());
-		$version->setValidFrom($versionDate);
-		$version->setValidTo(null);
-		$insertedVersion = $this->versionMapper->insert($version);
+		$updated = $this->atomic(function () use ($folderCollection, $versionDate) {
+			$created = $this->folderCollectionMapper->insert($folderCollection);
 
-		// Update folder collection with active version
-		$created->setActiveVersionId($insertedVersion->getId());
-		$updated = $this->folderCollectionMapper->update($created);
+			// Create initial active version
+			$version = new FolderCollectionVersion();
+			$version->setFolderCollectionId($created->getId());
+			$version->setValidFrom($versionDate);
+			$version->setValidTo(null);
+			$insertedVersion = $this->versionMapper->insert($version);
+
+			// Update folder collection with active version
+			$created->setActiveVersionId($insertedVersion->getId());
+			return $this->folderCollectionMapper->update($created);
+		}, $this->db);
 
 		$fcData = method_exists($updated, 'jsonSerialize') ? $updated->jsonSerialize() : (array)$updated;
 		$fcData['scoreCount'] = 0; // New folder collection has no scores

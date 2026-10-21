@@ -21,6 +21,7 @@ use OCA\OrchestraScoresManager\Policy\PolicyInterface;
 use OCA\OrchestraScoresManager\Service\AuthorizationService;
 use OCA\OrchestraScoresManager\Service\FolderCollectionService;
 use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\IDBConnection;
 use OCP\IL10N;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
@@ -67,7 +68,8 @@ final class FolderCollectionServiceTest extends TestCase {
 			$this->authorizationService,
 			$this->folderCollectionPolicy,
 			$this->versionPolicy,
-			$this->l10n
+			$this->l10n,
+			$this->createMock(IDBConnection::class)
 		);
 	}
 
@@ -178,6 +180,19 @@ final class FolderCollectionServiceTest extends TestCase {
 
 		$this->assertIsArray($result);
 		$this->assertSame(0, $result['scoreCount']);
+	}
+
+	public function testCreateFolderCollectionWritesNothingOnInvalidDate(): void {
+		$fc = new FolderCollection();
+		$fc->setTitle('Test');
+		$fc->setCollectionType('alphabetical');
+
+		$this->folderCollectionMapper->expects($this->never())->method('insert');
+		$this->versionMapper->expects($this->never())->method('insert');
+
+		$this->expectException(\InvalidArgumentException::class);
+
+		$this->service->createFolderCollection($fc, 'not-a-date');
 	}
 
 	public function testCreateFolderCollectionThrowsOnInvalidType(): void {
