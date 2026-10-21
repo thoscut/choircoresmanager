@@ -21,3 +21,6 @@ translationtool.phar
 /import_script/*.egg-info/
 /import_script/.env
 
+
+# Outreach material built locally (docs/outreach/README.md)
+/docs/outreach/ausgabe/

@@ -1,0 +1,25 @@
+{# SPDX-FileCopyrightText: 2026 choircoresmanager contributors #}
+{# SPDX-License-Identifier: AGPL-3.0-or-later #}
+{# Wide banner, 1500 x 500 px (website header, social profile header). #}
+{% extends "base.html" %}
+{% import "macros.html" as m %}
+{% block style %}
+.text { left: 470px; right: 60px; top: 78px; }
+.title { font-size: 84px; font-weight: 700; line-height: 1; color: {{ k.accent }}; }
+.short { margin-top: 18px; padding-left: 2px; font-size: 32px; line-height: 1.3; color: {{ k.ink }}; }
+.url { left: 472px; right: 80px; top: 420px; font-size: 22px; color: {{ k.muted }}; letter-spacing: 0.02em; }
+.sender { left: 472px; right: 80px; top: 452px; font-size: 16px; letter-spacing: 0.12em; text-transform: uppercase; color: {{ k.muted }}; }
+{% endblock %}
+{% block body %}
+<section class="page">
+  {{ m.staff(300, 70, 2.5, k.light, 'px', 0, 0) }}
+  {{ m.note(1290, 301, 26, k.accent, 'px') }}
+  <div class="abs" style="left: 110px; top: 70px;">{{ m.logo(s, 360, 'px') }}</div>
+  <div class="abs text">
+    <h1 class="title serif">{{ c.title }}</h1>
+    <p class="short">{{ c.short }}</p>
+  </div>
+  <p class="abs url">{{ c.project.url_short }} · {{ c.free_software }} ({{ c.project.license }})</p>
+  <p class="abs sender">{{ s.name }}</p>
+</section>
+{% endblock %}
