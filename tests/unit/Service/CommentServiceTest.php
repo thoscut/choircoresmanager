@@ -10,11 +10,14 @@ use OCA\OrchestraScoresManager\Policy\CommentPolicy;
 use OCA\OrchestraScoresManager\Policy\PolicyInterface;
 use OCA\OrchestraScoresManager\Service\AuthorizationService;
 use OCA\OrchestraScoresManager\Service\CommentService;
+use OCA\OrchestraScoresManager\Service\Exceptions\NotFoundException;
 use OCA\OrchestraScoresManager\Service\Exceptions\PermissionDeniedException;
 use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\Exception;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\IUserSession;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -25,6 +28,8 @@ final class CommentServiceTest extends TestCase {
 	private AuthorizationService $authorizationService;
 	private CommentPolicy $commentPolicy;
 	private IUserManager $userManager;
+	private IUserSession $userSession;
+	private ITimeFactory $timeFactory;
 	private CommentService $service;
 
 	protected function setUp(): void {
@@ -34,12 +39,17 @@ final class CommentServiceTest extends TestCase {
 		$this->authorizationService = $this->createMock(AuthorizationService::class);
 		$this->commentPolicy = $this->createMock(CommentPolicy::class);
 		$this->userManager = $this->createMock(IUserManager::class);
+		$this->userSession = $this->createMock(IUserSession::class);
+		$this->timeFactory = $this->createMock(ITimeFactory::class);
+		$this->timeFactory->method('getTime')->willReturn(1700000000);
 
 		$this->service = new CommentService(
 			$this->commentMapper,
 			$this->authorizationService,
 			$this->commentPolicy,
-			$this->userManager
+			$this->userManager,
+			$this->userSession,
+			$this->timeFactory
 		);
 	}
 
@@ -146,7 +156,10 @@ final class CommentServiceTest extends TestCase {
 
 	public function testCreateCommentRequiresAuthorization(): void {
 		$comment = new Comment();
-		$comment->setUserId('user1');
+		$comment->setContent('Hello');
+		$sessionUser = $this->createMock(IUser::class);
+		$sessionUser->method('getUID')->willReturn('user1');
+		$this->userSession->method('getUser')->willReturn($sessionUser);
 		$createdComment = new Comment();
 		$createdComment->setId(1);
 		$createdComment->setUserId('user1');
@@ -172,6 +185,48 @@ final class CommentServiceTest extends TestCase {
 
 		$this->assertSame($createdComment, $result);
 		$this->assertSame('User One', $result->getAuthorDisplayName());
+	}
+
+	public function testCreateCommentIgnoresClientSuppliedAuthorAndDate(): void {
+		$comment = new Comment();
+		$comment->setContent('Hello');
+		$comment->setUserId('someone-else');
+		$comment->setCreationDate(42);
+
+		$sessionUser = $this->createMock(IUser::class);
+		$sessionUser->method('getUID')->willReturn('user1');
+		$this->userSession->method('getUser')->willReturn($sessionUser);
+
+		$this->commentMapper->expects($this->once())
+			->method('insert')
+			->with($this->callback(fn (Comment $c) => $c->getUserId() === 'user1' && $c->getCreationDate() === 1700000000000))
+			->willReturnArgument(0);
+
+		$this->service->createComment($comment);
+	}
+
+	public function testCreateCommentThrowsWithoutSessionUser(): void {
+		$comment = new Comment();
+		$comment->setContent('Hello');
+		$this->userSession->method('getUser')->willReturn(null);
+
+		$this->commentMapper->expects($this->never())->method('insert');
+		$this->expectException(PermissionDeniedException::class);
+
+		$this->service->createComment($comment);
+	}
+
+	public function testCreateCommentThrowsForEmptyContent(): void {
+		$comment = new Comment();
+		$comment->setContent('   ');
+		$sessionUser = $this->createMock(IUser::class);
+		$sessionUser->method('getUID')->willReturn('user1');
+		$this->userSession->method('getUser')->willReturn($sessionUser);
+
+		$this->commentMapper->expects($this->never())->method('insert');
+		$this->expectException(\InvalidArgumentException::class);
+
+		$this->service->createComment($comment);
 	}
 
 	public function testCreateCommentThrowsWhenNotAuthorized(): void {
@@ -218,7 +273,7 @@ final class CommentServiceTest extends TestCase {
 			->with(999)
 			->willThrowException(new DoesNotExistException('Not found'));
 
-		$this->expectException(DoesNotExistException::class);
+		$this->expectException(NotFoundException::class);
 
 		$this->service->deleteComment(999);
 	}

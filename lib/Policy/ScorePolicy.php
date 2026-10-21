@@ -17,8 +17,8 @@ class ScorePolicy implements PolicyInterface {
 		// For now all write-ish actions are based on canCurrentUserEdit
 		return match ($action) {
 			self::ACTION_CREATE, self::ACTION_UPDATE, self::ACTION_DELETE, self::ACTION_SHARE => $this->permissionService->canCurrentUserEdit(),
-			// read is allowed for everyone
-			self::ACTION_READ => true,
+			// read is allowed for every logged-in user
+			self::ACTION_READ => $this->permissionService->isCurrentUserLoggedIn(),
 			// default deny
 			default => false,
 		};
