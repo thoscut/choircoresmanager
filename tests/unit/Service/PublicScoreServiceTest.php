@@ -40,13 +40,13 @@ final class PublicScoreServiceTest extends TestCase {
 		$score->setComposer('Mozart');
 		$score->setDefects('torn page');
 		$score->setGemaIds(['123']);
-		$score->setRightsStatus('free');
+		$score->setRightsStatus('public_domain');
+		$score->setPublicationStatus('free');
 		$score->setRightsNote('internal note');
 		$score->setMusicxmlFile('ave.musicxml');
 
 		$this->scoreMapper->expects($this->once())
-			->method('findByRightsStatus')
-			->with('free')
+			->method('findPublic')
 			->willReturn([$score]);
 
 		$result = $this->service->getPublicScores();
@@ -64,20 +64,20 @@ final class PublicScoreServiceTest extends TestCase {
 
 	public function testGetPublicScoresFailsWhenDisabled(): void {
 		$this->configService->method('isPublicPageEnabled')->willReturn(false);
-		$this->scoreMapper->expects($this->never())->method('findByRightsStatus');
+		$this->scoreMapper->expects($this->never())->method('findPublic');
 
 		$this->expectException(\InvalidArgumentException::class);
 		$this->service->getPublicScores();
 	}
 
-	public function testGetPublicMusicXmlChecksRightsStatusInQuery(): void {
+	public function testGetPublicMusicXmlChecksPublicationInQuery(): void {
 		$this->configService->method('isPublicPageEnabled')->willReturn(true);
 
 		$score = new Score();
 		$score->setId(3);
 		$this->scoreMapper->expects($this->once())
-			->method('findByIdAndRightsStatus')
-			->with(3, 'free')
+			->method('findPublicById')
+			->with(3)
 			->willReturn($score);
 
 		$file = ['content' => 'x', 'mimeType' => MusicXmlService::MIME_TYPE_XML, 'fileName' => 'score-3.musicxml'];
@@ -88,7 +88,7 @@ final class PublicScoreServiceTest extends TestCase {
 
 	public function testGetPublicMusicXmlFailsForNonFreeScore(): void {
 		$this->configService->method('isPublicPageEnabled')->willReturn(true);
-		$this->scoreMapper->method('findByIdAndRightsStatus')
+		$this->scoreMapper->method('findPublicById')
 			->willThrowException(new DoesNotExistException('not found'));
 		$this->musicXmlService->expects($this->never())->method('readFile');
 
@@ -98,7 +98,7 @@ final class PublicScoreServiceTest extends TestCase {
 
 	public function testGetPublicMusicXmlFailsWhenDisabled(): void {
 		$this->configService->method('isPublicPageEnabled')->willReturn(false);
-		$this->scoreMapper->expects($this->never())->method('findByIdAndRightsStatus');
+		$this->scoreMapper->expects($this->never())->method('findPublicById');
 
 		$this->expectException(\InvalidArgumentException::class);
 		$this->service->getPublicMusicXml(3);

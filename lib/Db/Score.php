@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace OCA\OrchestraScoresManager\Db;
 
+use DateTimeImmutable;
 use JsonSerializable;
+use OCA\OrchestraScoresManager\Utility\DateTimeHelper;
 use OCP\AppFramework\Db\Entity;
 use OCP\DB\Types;
 
@@ -40,6 +42,9 @@ use OCP\DB\Types;
  * @method void setDuration(?int $value)
  * @method string getRightsStatus()
  * @method void setRightsStatus(string $value)
+ * @method string getPublicationStatus()
+ * @method void setPublicationStatus(string $value)
+ * @method DateTimeImmutable|null getPublicationBlockedUntil()
  * @method string|null getRightsNote()
  * @method void setRightsNote(?string $value)
  * @method string|null getMusicxmlFile()
@@ -61,7 +66,9 @@ class Score extends Entity implements JsonSerializable {
 	protected ?string $digitalStatus = null;
 	protected ?string $gemaIds = null;
 	protected ?int $duration = null;
-	protected string $rightsStatus = 'unclear';
+	protected string $rightsStatus = 'open';
+	protected string $publicationStatus = 'to_clarify';
+	protected ?DateTimeImmutable $publicationBlockedUntil = null;
 	protected ?string $rightsNote = null;
 	protected ?string $musicxmlFile = null;
 	protected ?string $pdfFile = null;
@@ -87,6 +94,8 @@ class Score extends Entity implements JsonSerializable {
 		$this->addType('gemaIds', Types::STRING);
 		$this->addType('duration', Types::INTEGER);
 		$this->addType('rightsStatus', Types::STRING);
+		$this->addType('publicationStatus', Types::STRING);
+		$this->addType('publicationBlockedUntil', Types::DATE_IMMUTABLE);
 		$this->addType('rightsNote', Types::TEXT);
 		$this->addType('musicxmlFile', Types::STRING);
 		$this->addType('pdfFile', Types::STRING);
@@ -111,6 +120,8 @@ class Score extends Entity implements JsonSerializable {
 			'scoreBook' => $this->scoreBook,
 			'duration' => $this->duration,
 			'rightsStatus' => $this->rightsStatus,
+			'publicationStatus' => $this->publicationStatus,
+			'publicationBlockedUntil' => $this->publicationBlockedUntil?->format('Y-m-d'),
 			'rightsNote' => $this->rightsNote,
 			'musicxmlFile' => $this->musicxmlFile,
 			'pdfFile' => $this->pdfFile,
@@ -141,6 +152,20 @@ class Score extends Entity implements JsonSerializable {
 	public function setGemaIds(array|string|null $gemaIds): void {
 		$content = is_string($gemaIds) ? $gemaIds : $this->encodeJsonArray($gemaIds, 'gemaIds');
 		$this->setter('gemaIds', [$content]);
+	}
+
+	/**
+	 * Set the date until which publication is blocked.
+	 *
+	 * @param DateTimeImmutable|string|null $value Date or Y-m-d string from the API, empty string or null to clear
+	 * @throws \InvalidArgumentException if the string is not a valid date
+	 * @psalm-suppress PossiblyUnusedMethod - Called by Entity framework and API
+	 */
+	public function setPublicationBlockedUntil(DateTimeImmutable|string|null $value): void {
+		if (is_string($value)) {
+			$value = $value === '' ? null : DateTimeHelper::parseDate($value);
+		}
+		$this->setter('publicationBlockedUntil', [$value]);
 	}
 
 	/**

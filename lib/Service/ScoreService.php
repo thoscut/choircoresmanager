@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OCA\OrchestraScoresManager\Service;
 
 use OCA\OrchestraScoresManager\Db\CommentMapper;
+use OCA\OrchestraScoresManager\Db\Enum\PublicationStatus;
 use OCA\OrchestraScoresManager\Db\Enum\RightsStatus;
 use OCA\OrchestraScoresManager\Db\Enum\ShareTargetType;
 use OCA\OrchestraScoresManager\Db\Score;
@@ -16,13 +17,18 @@ use OCA\OrchestraScoresManager\Db\ShareMapper;
 use OCA\OrchestraScoresManager\Db\TagMapper;
 use OCA\OrchestraScoresManager\Policy\PolicyInterface;
 use OCA\OrchestraScoresManager\Policy\ScorePolicy;
+use OCA\OrchestraScoresManager\Service\Exceptions\NotFoundException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
+use OCP\AppFramework\Db\TTransactional;
 use OCP\DB\Exception;
+use OCP\IDBConnection;
 use OCP\IL10N;
 use Throwable;
 
 class ScoreService {
+	use TTransactional;
+
 	/** @psalm-suppress PossiblyUnusedMethod - Constructor used by DI container */
 	public function __construct(
 		private readonly CommentMapper $commentMapper,
@@ -34,6 +40,7 @@ class ScoreService {
 		private readonly AuthorizationService $authorizationService,
 		private readonly ScorePolicy $scorePolicy,
 		private IL10N $l,
+		private readonly IDBConnection $db,
 		private readonly MusicXmlService $musicXmlService,
 		private readonly PdfService $pdfService,
 		private readonly ShareMapper $shareMapper,
@@ -45,7 +52,7 @@ class ScoreService {
 	 *
 	 * @param int $id
 	 * @return Score
-	 * @throws \Exception
+	 * @throws NotFoundException
 	 */
 	public function getScoreById(int $id): Score {
 		$this->authorizationService->authorizePolicy($this->scorePolicy, PolicyInterface::ACTION_READ);
@@ -53,7 +60,7 @@ class ScoreService {
 		try {
 			return $this->scoreMapper->find($id);
 		} catch (MultipleObjectsReturnedException|DoesNotExistException|Exception $e) {
-			throw new \Exception($this->l->t('Score not found'));
+			throw new NotFoundException($this->l->t('Score not found'), 0, $e);
 		}
 	}
 
@@ -78,18 +85,20 @@ class ScoreService {
 			throw new \InvalidArgumentException($this->l->t('Cannot delete score because it is part of a folder collection'));
 		}
 
-		//Delete score from score books (cascade should handle this, but let's be sure)
-		$this->scoreBookScoreLinkMapper->removeScoreFromAllBooks($id);
+		$this->atomic(function () use ($id, $score): void {
+			//Delete score from score books (cascade should handle this, but let's be sure)
+			$this->scoreBookScoreLinkMapper->removeScoreFromAllBooks($id);
 
-		// Delete tag links first (cascade should handle this, but let's be sure)
-		$this->scoreTagLinkMapper->deleteAllTagsForScore($id);
+			// Delete tag links first (cascade should handle this, but let's be sure)
+			$this->scoreTagLinkMapper->deleteAllTagsForScore($id);
 
-		// Delete comments first (cascade should handle this, but let's be sure)
-		$this->commentMapper->deleteByScoreId($id);
+			// Delete comments first (cascade should handle this, but let's be sure)
+			$this->commentMapper->deleteByScoreId($id);
 
-		$this->shareMapper->deleteForTarget(ShareTargetType::SCORE->value, $id);
+			$this->shareMapper->deleteForTarget(ShareTargetType::SCORE->value, $id);
 
-		$this->scoreMapper->delete($score);
+			$this->scoreMapper->delete($score);
+		}, $this->db);
 
 		// Remove attached files, if any
 		$this->musicXmlService->removeFile($id);
@@ -132,27 +141,28 @@ class ScoreService {
 	public function createScore(Score $score, ?array $tagIds = null, ?array $scoreBookInfo = null): Score {
 		$this->authorizationService->authorizePolicy($this->scorePolicy, PolicyInterface::ACTION_CREATE);
 		$this->validateRightsStatus($score);
+		// Always write both status columns, the database default may stem from an older schema
+		$score->setRightsStatus($score->getRightsStatus());
+		$score->setPublicationStatus($score->getPublicationStatus());
 
-		$created = $this->scoreMapper->insert($score);
-		if ($tagIds !== null) {
-			$validIds = array_map('intval', $tagIds);
-			foreach ($validIds as $tid) {
-				try {
-					$this->tagMapper->find($tid);
-				} catch (DoesNotExistException|MultipleObjectsReturnedException|\RuntimeException $e) {
-					throw new \Exception($this->l->t('Tag not found: %s', [$tid]));
-				}
+		// Validate before writing anything, so a bad tag id doesn't leave a half-created score behind
+		$validIds = $tagIds !== null ? $this->validateTagIds($tagIds) : null;
+
+		$createdId = $this->atomic(function () use ($score, $validIds, $scoreBookInfo): int {
+			$created = $this->scoreMapper->insert($score);
+			if ($validIds !== null) {
+				$this->scoreTagLinkMapper->setTagsForScore($created->getId(), $validIds);
 			}
-			$this->scoreTagLinkMapper->setTagsForScore($created->getId(), $validIds);
-		}
 
-		// Handle score book info
-		if ($scoreBookInfo !== null && isset($scoreBookInfo['scoreBookId'])) {
-			$this->updateScoreBookInfoInternal($created->getId(), $scoreBookInfo);
-		}
+			// Handle score book info
+			if ($scoreBookInfo !== null && isset($scoreBookInfo['scoreBookId'])) {
+				$this->updateScoreBookInfoInternal($created->getId(), $scoreBookInfo);
+			}
+			return $created->getId();
+		}, $this->db);
 
 		// Reload to get all transient properties
-		return $this->scoreMapper->find($created->getId());
+		return $this->scoreMapper->find($createdId);
 	}
 
 	/**
@@ -169,34 +179,49 @@ class ScoreService {
 		$this->authorizationService->authorizePolicy($this->scorePolicy, PolicyInterface::ACTION_UPDATE, $score);
 		$this->validateRightsStatus($score);
 
-		if ($tagIds !== null) {
-			$validIds = array_map('intval', $tagIds);
-			foreach ($validIds as $tid) {
-				try {
-					$this->tagMapper->find($tid);
-				} catch (DoesNotExistException|MultipleObjectsReturnedException|\RuntimeException $e) {
-					throw new Exception($this->l->t('Tag not found: %s', [$tid]));
-				}
+		$validIds = $tagIds !== null ? $this->validateTagIds($tagIds) : null;
+
+		$this->atomic(function () use ($score, $validIds, $scoreBookInfo): void {
+			if ($validIds !== null) {
+				$this->scoreTagLinkMapper->setTagsForScore($score->getId(), $validIds);
 			}
-			$this->scoreTagLinkMapper->setTagsForScore($score->getId(), $validIds);
-		}
 
-		// Handle score book info update
-		if ($scoreBookInfo !== null) {
-			$this->updateScoreBookInfoInternal($score->getId(), $scoreBookInfo);
-		}
+			// Handle score book info update
+			if ($scoreBookInfo !== null) {
+				$this->updateScoreBookInfoInternal($score->getId(), $scoreBookInfo);
+			}
 
-		// This check here is needed in case only transient properties (like tags) were updated
-		// Unfortunately, NC's QBMapper has a bug in handling for this
-		// See also https://github.com/nextcloud/server/pull/56337
-		$updatedProperties = $score->getUpdatedFields();
-		unset($updatedProperties['id']);
-		if (\count($updatedProperties) > 0) {
-			$this->scoreMapper->update($score);
-		}
+			// This check here is needed in case only transient properties (like tags) were updated
+			// Unfortunately, NC's QBMapper has a bug in handling for this
+			// See also https://github.com/nextcloud/server/pull/56337
+			$updatedProperties = $score->getUpdatedFields();
+			unset($updatedProperties['id']);
+			if (\count($updatedProperties) > 0) {
+				$this->scoreMapper->update($score);
+			}
+		}, $this->db);
 
 		// Reload to get all transient properties
 		return $this->scoreMapper->find($score->getId());
+	}
+
+	/**
+	 * Make sure all given tag ids exist.
+	 *
+	 * @param array $tagIds
+	 * @return list<int> The tag ids as integers
+	 * @throws \InvalidArgumentException If a tag does not exist
+	 */
+	private function validateTagIds(array $tagIds): array {
+		$validIds = array_values(array_map('intval', $tagIds));
+		foreach ($validIds as $tid) {
+			try {
+				$this->tagMapper->find($tid);
+			} catch (DoesNotExistException|MultipleObjectsReturnedException|\RuntimeException $e) {
+				throw new \InvalidArgumentException($this->l->t('Tag not found: %s', [$tid]));
+			}
+		}
+		return $validIds;
 	}
 
 	/**
@@ -265,14 +290,17 @@ class ScoreService {
 	}
 
 	/**
-	 * Ensure the rights status of a score is one of the allowed values.
+	 * Ensure the rights and publication status of a score are allowed values.
 	 *
 	 * @param Score $score
 	 * @throws \InvalidArgumentException
 	 */
 	private function validateRightsStatus(Score $score): void {
 		if (RightsStatus::tryFrom($score->getRightsStatus()) === null) {
-			throw new \InvalidArgumentException($this->l->t('Invalid rights status. Must be "free", "unclear" or "restricted".'));
+			throw new \InvalidArgumentException($this->l->t('Invalid rights status. Must be "public_domain", "licensed", "protected" or "open".'));
+		}
+		if (PublicationStatus::tryFrom($score->getPublicationStatus()) === null) {
+			throw new \InvalidArgumentException($this->l->t('Invalid publication status. Must be "free", "to_clarify", "blocked" or "internal_copy".'));
 		}
 	}
 }

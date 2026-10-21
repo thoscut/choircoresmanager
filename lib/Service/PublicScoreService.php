@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace OCA\OrchestraScoresManager\Service;
 
-use OCA\OrchestraScoresManager\Db\Enum\RightsStatus;
 use OCA\OrchestraScoresManager\Db\Score;
 use OCA\OrchestraScoresManager\Db\ScoreMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
@@ -15,9 +14,9 @@ use OCP\DB\Exception;
  * Read-only access to scores for anonymous visitors.
  *
  * This service deliberately does not reuse the other services or policies, which
- * allow reading for everyone. It only ever exposes scores whose rights status is
- * "free" (filtered in SQL), only while the public page is enabled, and only a
- * whitelisted set of fields.
+ * require a login. It only ever exposes scores that are released for publication
+ * and whose rights allow it (filtered in SQL), only while the public page is
+ * enabled, and only a whitelisted set of fields.
  *
  * @psalm-type OrchestraScoresManagerPublicScore = array{
  *     id: int,
@@ -43,7 +42,7 @@ class PublicScoreService {
 	}
 
 	/**
-	 * Get all freely available scores.
+	 * Get all scores that may be shown publicly.
 	 *
 	 * @return list<OrchestraScoresManagerPublicScore>
 	 * @throws \InvalidArgumentException if the public page is disabled
@@ -53,21 +52,21 @@ class PublicScoreService {
 		$this->assertEnabled();
 		return array_values(array_map(
 			fn (Score $score) => self::toPublicArray($score),
-			$this->scoreMapper->findByRightsStatus(RightsStatus::FREE->value),
+			$this->scoreMapper->findPublic(),
 		));
 	}
 
 	/**
-	 * Get the MusicXML file of a freely available score.
+	 * Get the MusicXML file of a score that may be shown publicly.
 	 *
 	 * @param int $id
 	 * @return array{content: string, mimeType: string, fileName: string}
-	 * @throws \InvalidArgumentException if the public page is disabled, the score is not free or has no file
+	 * @throws \InvalidArgumentException if the public page is disabled, the score is not public or has no file
 	 */
 	public function getPublicMusicXml(int $id): array {
 		$this->assertEnabled();
 		try {
-			$score = $this->scoreMapper->findByIdAndRightsStatus($id, RightsStatus::FREE->value);
+			$score = $this->scoreMapper->findPublicById($id);
 		} catch (DoesNotExistException|MultipleObjectsReturnedException|Exception) {
 			throw new \InvalidArgumentException('Score not found');
 		}

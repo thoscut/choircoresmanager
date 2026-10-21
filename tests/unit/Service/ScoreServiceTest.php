@@ -21,7 +21,7 @@ use OCA\OrchestraScoresManager\Service\MusicXmlService;
 use OCA\OrchestraScoresManager\Service\PdfService;
 use OCA\OrchestraScoresManager\Service\ScoreService;
 use OCP\AppFramework\Db\DoesNotExistException;
-use OCP\DB\Exception;
+use OCP\IDBConnection;
 use OCP\IL10N;
 use PHPUnit\Framework\TestCase;
 
@@ -71,6 +71,7 @@ final class ScoreServiceTest extends TestCase {
 			$this->authorizationService,
 			$this->scorePolicy,
 			$this->l10n,
+			$this->createMock(IDBConnection::class),
 			$this->musicXmlService,
 			$this->pdfService,
 			$this->shareMapper,
@@ -296,15 +297,40 @@ final class ScoreServiceTest extends TestCase {
 		$this->service->createScore($score);
 	}
 
-	public function testUpdateScoreAcceptsFreeRightsStatus(): void {
+	public function testCreateScoreRejectsOldRightsStatus(): void {
+		$score = new Score();
+		$score->setTitle('Test Score');
+		$score->setRightsStatus('free');
+
+		$this->scoreMapper->expects($this->never())->method('insert');
+
+		$this->expectException(\InvalidArgumentException::class);
+		$this->service->createScore($score);
+	}
+
+	public function testCreateScoreRejectsInvalidPublicationStatus(): void {
+		$score = new Score();
+		$score->setTitle('Test Score');
+		$score->setPublicationStatus('public');
+
+		$this->scoreMapper->expects($this->never())->method('insert');
+
+		$this->expectException(\InvalidArgumentException::class);
+		$this->service->createScore($score);
+	}
+
+	public function testUpdateScoreAcceptsRightsAndPublicationStatus(): void {
 		$score = new Score();
 		$score->setId(1);
-		$score->setRightsStatus('free');
+		$score->setRightsStatus('public_domain');
+		$score->setPublicationStatus('internal_copy');
 
 		$this->scoreMapper->expects($this->once())->method('update')->with($score);
 		$this->scoreMapper->method('find')->willReturn($score);
 
-		$this->assertSame('free', $this->service->updateScore($score)->getRightsStatus());
+		$updated = $this->service->updateScore($score);
+		$this->assertSame('public_domain', $updated->getRightsStatus());
+		$this->assertSame('internal_copy', $updated->getPublicationStatus());
 	}
 
 	public function testCreateScoreWithTags(): void {
@@ -344,24 +370,55 @@ final class ScoreServiceTest extends TestCase {
 		$this->assertSame($createdScore, $result);
 	}
 
+	public function testCreateScoreRollsBackWhenLinkingFails(): void {
+		$db = $this->createMock(IDBConnection::class);
+		$db->expects($this->once())->method('beginTransaction');
+		$db->expects($this->never())->method('commit');
+		$db->expects($this->once())->method('rollBack');
+		$service = new ScoreService(
+			$this->commentMapper,
+			$this->scoreMapper,
+			$this->tagMapper,
+			$this->scoreBookScoreLinkMapper,
+			$this->scoreFolderCollectionLinkMapper,
+			$this->scoreTagLinkMapper,
+			$this->authorizationService,
+			$this->scorePolicy,
+			$this->l10n,
+			$db,
+			$this->musicXmlService,
+			$this->pdfService,
+			$this->shareMapper,
+		);
+
+		$created = new Score();
+		$created->setId(1);
+		$this->scoreMapper->method('insert')->willReturn($created);
+		$this->tagMapper->method('find')->willReturn(new Tag());
+		$this->scoreTagLinkMapper->method('setTagsForScore')
+			->willThrowException(new \RuntimeException('DB error'));
+
+		$this->expectException(\RuntimeException::class);
+
+		$service->createScore(new Score(), [10]);
+	}
+
 	public function testCreateScoreThrowsWhenTagNotFound(): void {
 		$score = new Score();
-		$createdScore = clone $score;
-		$createdScore->setId(1);
 
 		$this->authorizationService->expects($this->once())
 			->method('authorizePolicy');
 
-		$this->scoreMapper->expects($this->once())
-			->method('insert')
-			->willReturn($createdScore);
+		// tags are validated before anything is written
+		$this->scoreMapper->expects($this->never())
+			->method('insert');
 
 		$this->tagMapper->expects($this->once())
 			->method('find')
 			->with(999)
 			->willThrowException(new DoesNotExistException('Not found'));
 
-		$this->expectException(\Exception::class);
+		$this->expectException(\InvalidArgumentException::class);
 		$this->expectExceptionMessage('Tag not found: 999');
 
 		$this->service->createScore($score, [999]);
@@ -483,7 +540,7 @@ final class ScoreServiceTest extends TestCase {
 			->method('find')
 			->willThrowException(new DoesNotExistException('Not found'));
 
-		$this->expectException(Exception::class);
+		$this->expectException(\InvalidArgumentException::class);
 		$this->expectExceptionMessage('Tag not found: 999');
 
 		$this->service->updateScore($score, [999]);

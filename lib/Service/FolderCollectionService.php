@@ -18,13 +18,18 @@ use OCA\OrchestraScoresManager\Db\ShareMapper;
 use OCA\OrchestraScoresManager\Policy\FolderCollectionPolicy;
 use OCA\OrchestraScoresManager\Policy\FolderCollectionVersionPolicy;
 use OCA\OrchestraScoresManager\Policy\PolicyInterface;
+use OCA\OrchestraScoresManager\Service\Exceptions\NotFoundException;
 use OCA\OrchestraScoresManager\Utility\DateTimeHelper;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
+use OCP\AppFramework\Db\TTransactional;
 use OCP\DB\Exception;
+use OCP\IDBConnection;
 use OCP\IL10N;
 
 class FolderCollectionService {
+	use TTransactional;
+
 	/** @psalm-suppress PossiblyUnusedMethod - Constructor used by DI container */
 	public function __construct(
 		private readonly FolderCollectionMapper $folderCollectionMapper,
@@ -37,6 +42,7 @@ class FolderCollectionService {
 		private readonly FolderCollectionPolicy $folderCollectionPolicy,
 		private readonly FolderCollectionVersionPolicy $versionPolicy,
 		private IL10N $l,
+		private readonly IDBConnection $db,
 		private readonly ShareMapper $shareMapper,
 	) {
 	}
@@ -188,9 +194,7 @@ class FolderCollectionService {
 			throw new \InvalidArgumentException($this->l->t('Invalid collection type. Must be "alphabetical" or "indexed".'));
 		}
 
-		$created = $this->folderCollectionMapper->insert($folderCollection);
-
-		// Create initial active version
+		// Parse the date before writing anything, so an invalid date doesn't leave a collection without version
 		if ($validFrom !== null) {
 			// Validate and parse the provided date using helper
 			$versionDate = DateTimeHelper::parseDate($validFrom);
@@ -199,15 +203,20 @@ class FolderCollectionService {
 			$versionDate = DateTimeHelper::today();
 		}
 
-		$version = new FolderCollectionVersion();
-		$version->setFolderCollectionId($created->getId());
-		$version->setValidFrom($versionDate);
-		$version->setValidTo(null);
-		$insertedVersion = $this->versionMapper->insert($version);
+		$updated = $this->atomic(function () use ($folderCollection, $versionDate) {
+			$created = $this->folderCollectionMapper->insert($folderCollection);
 
-		// Update folder collection with active version
-		$created->setActiveVersionId($insertedVersion->getId());
-		$updated = $this->folderCollectionMapper->update($created);
+			// Create initial active version
+			$version = new FolderCollectionVersion();
+			$version->setFolderCollectionId($created->getId());
+			$version->setValidFrom($versionDate);
+			$version->setValidTo(null);
+			$insertedVersion = $this->versionMapper->insert($version);
+
+			// Update folder collection with active version
+			$created->setActiveVersionId($insertedVersion->getId());
+			return $this->folderCollectionMapper->update($created);
+		}, $this->db);
 
 		$fcData = method_exists($updated, 'jsonSerialize') ? $updated->jsonSerialize() : (array)$updated;
 		$fcData['scoreCount'] = 0; // New folder collection has no scores
@@ -362,7 +371,7 @@ class FolderCollectionService {
 		try {
 			$this->scoreMapper->find($scoreId);
 		} catch (DoesNotExistException|MultipleObjectsReturnedException|Exception $e) {
-			throw new \Exception($this->l->t('Score not found'));
+			throw new NotFoundException($this->l->t('Score not found'), 0, $e);
 		}
 
 		$folderCollections = [];
@@ -451,15 +460,14 @@ class FolderCollectionService {
 			$this->linkMapper->addScoreToVersion($scoreId, $activeVersionId, $index);
 		} catch (Exception $e) {
 			// Check if this is a unique constraint violation for the index
-			$lowerMessage = strtolower($e->getMessage());
-			if (str_contains($lowerMessage, 'duplicate entry')) {
+			if ($e->getReason() === Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
 				if ($isIndexed) {
 					throw new \InvalidArgumentException($this->l->t('Index %d or score %d is already used in this folder collection', [$index, $scoreId]));
 				}
 				// For alphabetical collections, re-adding the same score doesn't change anything
 				return;
 			}
-			throw new \Exception($this->l->t('Failed to add score to folder collection: %1$s', [$e->getMessage()]));
+			throw new \Exception($this->l->t('Failed to add score to folder collection'), 0, $e);
 		}
 	}
 
@@ -490,7 +498,7 @@ class FolderCollectionService {
 		try {
 			$this->linkMapper->removeScoreFromVersion($scoreId, $activeVersionId);
 		} catch (Exception $e) {
-			throw new \Exception($this->l->t('Failed to remove score from folder collection'));
+			throw new \Exception($this->l->t('Failed to remove score from folder collection'), 0, $e);
 		}
 	}
 
@@ -540,14 +548,13 @@ class FolderCollectionService {
 		try {
 			$this->linkMapper->addScoreBookToVersion($scoreBookId, $activeVersionId, $index);
 		} catch (Exception $e) {
-			$lowerMessage = strtolower($e->getMessage());
-			if (str_contains($lowerMessage, 'duplicate entry')) {
+			if ($e->getReason() === Exception::REASON_UNIQUE_CONSTRAINT_VIOLATION) {
 				if ($isIndexed) {
 					throw new \InvalidArgumentException($this->l->t('Index %d or score book %d is already used in this folder collection', [$index, $scoreBookId]));
 				}
 				return;
 			}
-			throw new \Exception($this->l->t('Failed to add score book to folder collection: %1$s', [$e->getMessage()]));
+			throw new \Exception($this->l->t('Failed to add score book to folder collection'), 0, $e);
 		}
 	}
 
@@ -617,7 +624,7 @@ class FolderCollectionService {
 		try {
 			$this->linkMapper->removeScoreBookFromVersion($scoreBookId, $activeVersionId);
 		} catch (Exception $e) {
-			throw new \Exception($this->l->t('Failed to remove score book from folder collection: %1$s', [$e->getMessage()]));
+			throw new \Exception($this->l->t('Failed to remove score book from folder collection'), 0, $e);
 		}
 	}
 

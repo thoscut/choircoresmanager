@@ -3,7 +3,7 @@
 		<header class="public-scores__header">
 			<h2>{{ t('Freely available scores') }}</h2>
 			<p class="public-scores__intro">
-				{{ t('These scores are in the public domain. Select a score to view the notes and listen to the individual voices.') }}
+				{{ t('These scores are in the public domain or licensed for publication. Select a score to view the notes and listen to the individual voices.') }}
 			</p>
 			<NcTextField
 				v-model="search"

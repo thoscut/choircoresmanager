@@ -52,7 +52,7 @@ import { parseArrayValue } from '@/utils/arrayUtils'
 import { createDurationColumn } from '@/utils/durationColumnUtils'
 import { tryShowError } from '@/utils/errorHandling'
 import { t } from '@/utils/l10n'
-import { RIGHTS_STATUS_VALUES, rightsStatusLabels } from '@/utils/rightsStatus'
+import { PUBLICATION_STATUS_VALUES, publicationStatusLabels, RIGHTS_STATUS_VALUES, rightsStatusLabels } from '@/utils/rightsStatus'
 import { parseDurationHHMMSS } from '@/utils/timeFormatUtils'
 
 const props = defineProps<Props>()
@@ -301,6 +301,9 @@ const columnEditHandlers: Record<string, ColumnEditHandler> = {
 	difficulty: inheritableFieldHandlerFactory('difficulty'),
 	defects: inheritableFieldHandlerFactory('defects'),
 	physicalCopiesStatus: inheritableFieldHandlerFactory('physicalCopiesStatus'),
+	publicationBlockedUntil: async (id, newValue) => {
+		await scoresStore.updateScoreFieldApi(id, 'publicationBlockedUntil', newValue || null)
+	},
 	rightsNote: async (id, newValue) => {
 		await scoresStore.updateScoreFieldApi(id, 'rightsNote', newValue === '' ? null : newValue)
 	},
@@ -600,13 +603,28 @@ const columnDefs = computed<ColDef[]>(() => {
 		{ field: 'tags', headerName: t('Tags'), valueParser: (params) => parseArrayValue(params.newValue) },
 		{
 			field: 'rightsStatus',
-			headerName: t('Publication'),
+			headerName: t('Rights'),
 			cellEditor: 'agSelectCellEditor',
 			cellEditorParams: { values: RIGHTS_STATUS_VALUES },
 			refData: rightsStatusLabels(),
-			width: 190,
+			width: 150,
 		},
-		{ field: 'rightsNote', headerName: t('Publication Note') },
+		{
+			field: 'publicationStatus',
+			headerName: t('Publication'),
+			cellEditor: 'agSelectCellEditor',
+			cellEditorParams: { values: PUBLICATION_STATUS_VALUES },
+			refData: publicationStatusLabels(),
+			width: 210,
+		},
+		{
+			field: 'publicationBlockedUntil',
+			headerName: t('Blocked until'),
+			cellDataType: 'dateString',
+			cellEditor: 'agDateStringCellEditor',
+			width: 150,
+		},
+		{ field: 'rightsNote', headerName: t('Rights Note') },
 		{
 			field: 'musicxmlFile',
 			headerName: t('MusicXML'),

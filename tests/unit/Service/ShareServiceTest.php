@@ -81,11 +81,12 @@ final class ShareServiceTest extends TestCase {
 		);
 	}
 
-	private function makeScore(int $id, string $title, string $rightsStatus = 'free'): Score {
+	private function makeScore(int $id, string $title, string $rightsStatus = 'public_domain', string $publicationStatus = 'free'): Score {
 		$score = new Score();
 		$score->setId($id);
 		$score->setTitle($title);
 		$score->setRightsStatus($rightsStatus);
+		$score->setPublicationStatus($publicationStatus);
 		$score->setDefects('internal');
 		return $score;
 	}
@@ -113,7 +114,7 @@ final class ShareServiceTest extends TestCase {
 
 	public function testCreateLinkShareGeneratesRandomToken(): void {
 		$this->permissionService->method('canCurrentUserEdit')->willReturn(true);
-		$this->scoreMapper->method('findMultipleByRightsStatus')->with([1], null)->willReturn([$this->makeScore(1, 'Ave')]);
+		$this->scoreMapper->method('findMultipleWithoutTransients')->with([1], false)->willReturn([$this->makeScore(1, 'Ave')]);
 		$this->secureRandom->expects($this->once())
 			->method('generate')
 			->with(32, ISecureRandom::CHAR_ALPHANUMERIC)
@@ -136,7 +137,7 @@ final class ShareServiceTest extends TestCase {
 
 	public function testCreateGroupShareRejectsUnknownGroup(): void {
 		$this->permissionService->method('canCurrentUserEdit')->willReturn(true);
-		$this->scoreMapper->method('findMultipleByRightsStatus')->willReturn([$this->makeScore(1, 'Ave')]);
+		$this->scoreMapper->method('findMultipleWithoutTransients')->willReturn([$this->makeScore(1, 'Ave')]);
 		$this->groupManager->method('groupExists')->with('nope')->willReturn(false);
 		$this->shareMapper->expects($this->never())->method('insert');
 
@@ -147,7 +148,7 @@ final class ShareServiceTest extends TestCase {
 
 	public function testCreateGroupShareRejectsDuplicate(): void {
 		$this->permissionService->method('canCurrentUserEdit')->willReturn(true);
-		$this->scoreMapper->method('findMultipleByRightsStatus')->willReturn([$this->makeScore(1, 'Ave')]);
+		$this->scoreMapper->method('findMultipleWithoutTransients')->willReturn([$this->makeScore(1, 'Ave')]);
 		$this->groupManager->method('groupExists')->willReturn(true);
 		$this->shareMapper->method('findForTarget')->willReturn([$this->makeShare('group', 'score', 1, 'tenors')]);
 		$this->shareMapper->expects($this->never())->method('insert');
@@ -174,16 +175,16 @@ final class ShareServiceTest extends TestCase {
 	public function testGetLinkShareOnlyQueriesFreeScoresAndWhitelistsFields(): void {
 		$this->shareMapper->method('findLinkShareByToken')->with(self::TOKEN)->willReturn($this->makeShare('link', 'score', 1));
 		$statuses = [];
-		$this->scoreMapper->method('findMultipleByRightsStatus')
-			->willReturnCallback(function (array $ids, ?string $status) use (&$statuses): array {
-				$statuses[] = $status;
+		$this->scoreMapper->method('findMultipleWithoutTransients')
+			->willReturnCallback(function (array $ids, bool $publicOnly) use (&$statuses): array {
+				$statuses[] = $publicOnly;
 				return [$this->makeScore(1, 'Ave')];
 			});
 
 		$result = $this->service->getLinkShare(self::TOKEN);
 
-		// The score list itself must be filtered by rights status in the query
-		$this->assertContains('free', $statuses);
+		// The score list itself must be filtered to public scores in the query
+		$this->assertContains(true, $statuses);
 		$this->assertSame('Ave', $result['title']);
 		$this->assertSame([[
 			'id' => 1,
@@ -213,8 +214,8 @@ final class ShareServiceTest extends TestCase {
 		$this->scoreBookScoreLinkMapper->method('findScoresForScoreBook')->with(9)->willReturn([['score_id' => 4, 'index' => 1]]);
 
 		$this->scoreMapper->expects($this->once())
-			->method('findMultipleByRightsStatus')
-			->with([1, 2, 4], 'free')
+			->method('findMultipleWithoutTransients')
+			->with([1, 2, 4], true)
 			->willReturn([$this->makeScore(4, 'Stille Nacht'), $this->makeScore(1, 'O du fröhliche')]);
 
 		$result = $this->service->getLinkShare(self::TOKEN);
@@ -240,7 +241,7 @@ final class ShareServiceTest extends TestCase {
 
 	public function testGetLinkShareFileRejectsScoreOutsideShare(): void {
 		$this->shareMapper->method('findLinkShareByToken')->willReturn($this->makeShare('link', 'score', 1));
-		$this->scoreMapper->expects($this->never())->method('findMultipleByRightsStatus');
+		$this->scoreMapper->expects($this->never())->method('findMultipleWithoutTransients');
 		$this->pdfService->expects($this->never())->method('readFile');
 
 		$this->expectException(\InvalidArgumentException::class);
@@ -249,7 +250,7 @@ final class ShareServiceTest extends TestCase {
 
 	public function testGetLinkShareFileRejectsNonFreeScore(): void {
 		$this->shareMapper->method('findLinkShareByToken')->willReturn($this->makeShare('link', 'score', 1));
-		$this->scoreMapper->method('findMultipleByRightsStatus')->with([1], 'free')->willReturn([]);
+		$this->scoreMapper->method('findMultipleWithoutTransients')->with([1], true)->willReturn([]);
 		$this->pdfService->expects($this->never())->method('readFile');
 
 		$this->expectException(\InvalidArgumentException::class);
@@ -260,7 +261,7 @@ final class ShareServiceTest extends TestCase {
 		$score = $this->makeScore(1, 'Ave');
 		$file = ['content' => '%PDF-1.4', 'mimeType' => 'application/pdf', 'fileName' => 'score-1.pdf'];
 		$this->shareMapper->method('findLinkShareByToken')->willReturn($this->makeShare('link', 'score', 1));
-		$this->scoreMapper->method('findMultipleByRightsStatus')->with([1], 'free')->willReturn([$score]);
+		$this->scoreMapper->method('findMultipleWithoutTransients')->with([1], true)->willReturn([$score]);
 		$this->pdfService->expects($this->once())->method('readFile')->with($score)->willReturn($file);
 
 		$this->assertSame($file, $this->service->getLinkShareFile(self::TOKEN, 1, 'pdf'));
@@ -277,16 +278,33 @@ final class ShareServiceTest extends TestCase {
 				$this->makeShare('group', 'score', 1, 'tenors'),
 				$this->makeShare('group', 'score', 1, 'basses'),
 			]);
-		$this->scoreMapper->method('findMultipleByRightsStatus')
-			->willReturnCallback(function (array $ids, ?string $status): array {
-				$this->assertNull($status);
-				return [$this->makeScore(1, 'Geschützt', 'restricted')];
+		$this->scoreMapper->method('findMultipleWithoutTransients')
+			->willReturnCallback(function (array $ids, bool $publicOnly): array {
+				$this->assertFalse($publicOnly);
+				return [$this->makeScore(1, 'Geschützt', 'protected', 'blocked')];
 			});
 
 		$result = $this->service->getSharedWithCurrentUser();
 
 		$this->assertCount(1, $result);
 		$this->assertSame('Geschützt', $result[0]['scores'][0]['title']);
+	}
+
+	public function testGetSharedWithCurrentUserHidesFilesOfInternalCopiesWithoutAccess(): void {
+		$user = $this->createMock(IUser::class);
+		$this->userSession->method('getUser')->willReturn($user);
+		$this->groupManager->method('getUserGroupIds')->willReturn(['tenors']);
+		$this->shareMapper->method('findGroupSharesForGroups')->willReturn([$this->makeShare('group', 'score', 1, 'tenors')]);
+		$copy = $this->makeScore(1, 'Erhaltungskopie', 'protected', 'internal_copy');
+		$copy->setMusicxmlFile('copy.musicxml');
+		$copy->setPdfFile('copy.pdf');
+		$this->scoreMapper->method('findMultipleWithoutTransients')->willReturn([$copy]);
+		$this->permissionService->method('canAccessFiles')->with($copy)->willReturn(false);
+
+		$score = $this->service->getSharedWithCurrentUser()[0]['scores'][0];
+
+		$this->assertFalse($score['hasMusicXml']);
+		$this->assertFalse($score['hasPdf']);
 	}
 
 	public function testGetSharedWithCurrentUserRequiresLogin(): void {

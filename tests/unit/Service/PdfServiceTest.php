@@ -11,6 +11,7 @@ use OCA\OrchestraScoresManager\Policy\ScorePolicy;
 use OCA\OrchestraScoresManager\Service\AuthorizationService;
 use OCA\OrchestraScoresManager\Service\Exceptions\PermissionDeniedException;
 use OCA\OrchestraScoresManager\Service\PdfService;
+use OCA\OrchestraScoresManager\Service\PermissionService;
 use OCP\Files\IAppData;
 use OCP\Files\NotFoundException;
 use OCP\Files\SimpleFS\ISimpleFile;
@@ -29,6 +30,7 @@ final class PdfServiceTest extends TestCase {
 	private ScoreMapper $scoreMapper;
 	private AuthorizationService $authorizationService;
 	private ScorePolicy $scorePolicy;
+	private PermissionService $permissionService;
 	private PdfService $service;
 	/** @var list<string> */
 	private array $tmpFiles = [];
@@ -42,10 +44,11 @@ final class PdfServiceTest extends TestCase {
 		$this->scoreMapper = $this->createMock(ScoreMapper::class);
 		$this->authorizationService = $this->createMock(AuthorizationService::class);
 		$this->scorePolicy = $this->createMock(ScorePolicy::class);
+		$this->permissionService = $this->createMock(PermissionService::class);
 		$l10n = $this->createMock(IL10N::class);
 		$l10n->method('t')->willReturnCallback(fn ($text, $params = []) => vsprintf($text, $params));
 
-		$this->service = new PdfService($appData, $this->scoreMapper, $this->authorizationService, $this->scorePolicy, $l10n);
+		$this->service = new PdfService($appData, $this->scoreMapper, $this->authorizationService, $this->scorePolicy, $this->permissionService, $l10n);
 	}
 
 	protected function tearDown(): void {
@@ -142,5 +145,27 @@ final class PdfServiceTest extends TestCase {
 			->with($this->callback(fn (Score $s) => $s->getPdfFile() === null));
 
 		$this->service->deleteForScore(4);
+	}
+
+	public function testGetForScoreRefusesFilesWithoutFileAccess(): void {
+		$score = $this->createScore(6, 'copy.pdf');
+		$score->setPublicationStatus('internal_copy');
+		$this->scoreMapper->method('find')->willReturn($score);
+		$this->permissionService->method('canAccessFiles')->with($score)->willReturn(false);
+		$this->folder->expects($this->never())->method('getFile');
+
+		$this->expectException(PermissionDeniedException::class);
+		$this->service->getForScore(6);
+	}
+
+	public function testGetForScoreReadsFileWithFileAccess(): void {
+		$score = $this->createScore(6, 'copy.pdf');
+		$this->scoreMapper->method('find')->willReturn($score);
+		$this->permissionService->method('canAccessFiles')->willReturn(true);
+		$file = $this->createMock(ISimpleFile::class);
+		$file->method('getContent')->willReturn(self::VALID_PDF);
+		$this->folder->method('getFile')->with('score-6')->willReturn($file);
+
+		$this->assertSame(self::VALID_PDF, $this->service->getForScore(6)['content']);
 	}
 }

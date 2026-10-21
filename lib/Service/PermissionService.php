@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace OCA\OrchestraScoresManager\Service;
 
+use OCA\OrchestraScoresManager\Db\Enum\PublicationStatus;
+use OCA\OrchestraScoresManager\Db\Score;
 use OCP\IGroupManager;
 use OCP\IUserSession;
 
@@ -20,6 +22,16 @@ class PermissionService {
 	) {
 		$this->groupManager = $groupManager;
 		$this->userSession = $userSession;
+	}
+
+	/**
+	 * Check if a user is logged in.
+	 * Read access to the app's data requires an authenticated user.
+	 *
+	 * @return bool True if a user is logged in
+	 */
+	public function isCurrentUserLoggedIn(): bool {
+		return $this->userSession->getUser() !== null;
 	}
 
 	/**
@@ -52,5 +64,21 @@ class PermissionService {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Check if the current user may view or play the files (MusicXML, PDF) of a score.
+	 *
+	 * Internal preservation copies of protected works stay with the editors:
+	 * nobody else gets the player, a viewer or a download.
+	 *
+	 * @param Score $score
+	 * @return bool
+	 */
+	public function canAccessFiles(Score $score): bool {
+		if ($score->getPublicationStatus() === PublicationStatus::INTERNAL_COPY->value) {
+			return $this->canCurrentUserEdit();
+		}
+		return $this->userSession->getUser() !== null;
 	}
 }

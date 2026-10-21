@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace OCA\OrchestraScoresManager\Service;
 
-use OCA\OrchestraScoresManager\Db\Enum\RightsStatus;
 use OCA\OrchestraScoresManager\Db\Enum\ShareTargetType;
 use OCA\OrchestraScoresManager\Db\Enum\ShareType;
 use OCA\OrchestraScoresManager\Db\FolderCollectionMapper;
@@ -28,12 +27,13 @@ use OCP\Security\ISecureRandom;
 /**
  * Shares of scores and folder collections.
  *
- * Link shares work without login and only ever expose scores whose rights status
- * is "free" (filtered in SQL) with a whitelisted set of fields. Group shares are
- * shown to members of the group and include all scores.
+ * Link shares work without login and only ever expose scores that may be shown
+ * publicly (filtered in SQL) with a whitelisted set of fields. Group shares are
+ * shown to members of the group and include all scores, but files of internal
+ * preservation copies stay with the editors.
  *
  * Like PublicScoreService, this service does not reuse the other services or
- * policies, which allow reading for everyone.
+ * policies, which require a login.
  *
  * @psalm-import-type OrchestraScoresManagerShare from ResponseDefinitions
  * @psalm-import-type OrchestraScoresManagerShareGroup from ResponseDefinitions
@@ -186,7 +186,7 @@ class ShareService {
 			}
 			$seen[$key] = true;
 			try {
-				$targets[] = $this->resolveShare($share, null);
+				$targets[] = $this->resolveShare($share, false);
 			} catch (\InvalidArgumentException) {
 				// The target was deleted in the meantime
 			}
@@ -195,13 +195,13 @@ class ShareService {
 	}
 
 	/**
-	 * Get a link share for anonymous visitors, with freely available scores only.
+	 * Get a link share for anonymous visitors, with public scores only.
 	 *
 	 * @return OrchestraScoresManagerSharedTarget
 	 * @throws \InvalidArgumentException if the token is unknown or the target does not exist
 	 */
 	public function getLinkShare(string $token): array {
-		return $this->resolveShare($this->findLinkShare($token), RightsStatus::FREE->value);
+		return $this->resolveShare($this->findLinkShare($token), true);
 	}
 
 	/**
@@ -209,7 +209,7 @@ class ShareService {
 	 *
 	 * @param string $kind 'musicxml' or 'pdf'
 	 * @return array{content: string, mimeType: string, fileName: string}
-	 * @throws \InvalidArgumentException if the token is unknown, the score is not part of the share or not free, or there is no such file
+	 * @throws \InvalidArgumentException if the token is unknown, the score is not part of the share or not public, or there is no such file
 	 */
 	public function getLinkShareFile(string $token, int $scoreId, string $kind): array {
 		$share = $this->findLinkShare($token);
@@ -217,7 +217,7 @@ class ShareService {
 			throw new \InvalidArgumentException('Score not found');
 		}
 		try {
-			$scores = $this->scoreMapper->findMultipleByRightsStatus([$scoreId], RightsStatus::FREE->value);
+			$scores = $this->scoreMapper->findMultipleWithoutTransients([$scoreId], true);
 		} catch (Exception) {
 			throw new \InvalidArgumentException('Score not found');
 		}
@@ -249,21 +249,22 @@ class ShareService {
 	/**
 	 * Resolve a share to its title and scores.
 	 *
-	 * @param string|null $rightsStatus Only include scores with this rights status
+	 * @param bool $publicOnly Only include scores that may be shown publicly (for link shares)
 	 * @return OrchestraScoresManagerSharedTarget
 	 * @throws \InvalidArgumentException if the target does not exist
 	 */
-	private function resolveShare(Share $share, ?string $rightsStatus): array {
+	private function resolveShare(Share $share, bool $publicOnly): array {
 		$target = $this->parseTargetType($share->getTargetType());
 		[$title, $description] = $this->getTargetTitle($target, $share->getTargetId());
 
 		$indexes = $this->getScoreIndexesForShare($share);
 		try {
-			$scores = $this->scoreMapper->findMultipleByRightsStatus(array_keys($indexes), $rightsStatus);
+			$scores = $this->scoreMapper->findMultipleWithoutTransients(array_keys($indexes), $publicOnly);
 		} catch (Exception) {
 			$scores = [];
 		}
 
+		// Public scores are never internal copies; for group shares the viewer's permissions decide
 		$items = array_map(fn (Score $score) => [
 			'id' => $score->getId(),
 			'title' => $score->getTitle(),
@@ -272,8 +273,8 @@ class ShareService {
 			'year' => $score->getYear(),
 			'duration' => $score->getDuration(),
 			'index' => $indexes[$score->getId()] ?? null,
-			'hasMusicXml' => $score->getMusicxmlFile() !== null,
-			'hasPdf' => $score->getPdfFile() !== null,
+			'hasMusicXml' => $score->getMusicxmlFile() !== null && ($publicOnly || $this->permissionService->canAccessFiles($score)),
+			'hasPdf' => $score->getPdfFile() !== null && ($publicOnly || $this->permissionService->canAccessFiles($score)),
 		], $scores);
 
 		usort($items, function (array $a, array $b): int {
@@ -343,7 +344,7 @@ class ShareService {
 	private function getTargetTitle(ShareTargetType $target, int $targetId): array {
 		try {
 			if ($target === ShareTargetType::SCORE) {
-				$scores = $this->scoreMapper->findMultipleByRightsStatus([$targetId], null);
+				$scores = $this->scoreMapper->findMultipleWithoutTransients([$targetId], false);
 				if ($scores === []) {
 					throw new DoesNotExistException('Score not found');
 				}

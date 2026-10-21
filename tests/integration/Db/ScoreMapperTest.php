@@ -200,58 +200,72 @@ final class ScoreMapperTest extends MapperTestCase {
 		$this->assertCount(2, $found);
 	}
 
-	public function testRightsStatusDefaultsToUnclear(): void {
+	public function testRightsAndPublicationStatusDefaults(): void {
 		$score = new Score();
-		$score->setTitle('Test Score');
+		$score->setTitle('Defaults');
 		$inserted = $this->mapper->insert($score);
 
 		$found = $this->mapper->find($inserted->getId());
-
-		$this->assertSame('unclear', $found->getRightsStatus());
+		$this->assertSame('open', $found->getRightsStatus());
+		$this->assertSame('to_clarify', $found->getPublicationStatus());
+		$this->assertNull($found->getPublicationBlockedUntil());
 		$this->assertNull($found->getRightsNote());
-		$this->assertNull($found->getMusicxmlFile());
 	}
 
-	public function testFindByRightsStatusOnlyReturnsMatchingScores(): void {
-		foreach (['B free' => 'free', 'Restricted' => 'restricted', 'Unclear' => 'unclear', 'A free' => 'free'] as $title => $status) {
-			$score = new Score();
-			$score->setTitle($title);
-			$score->setRightsStatus($status);
-			$this->mapper->insert($score);
-		}
-
-		$free = $this->mapper->findByRightsStatus('free');
-
-		$this->assertSame(['A free', 'B free'], array_map(fn (Score $s) => $s->getTitle(), $free));
-	}
-
-	public function testFindByIdAndRightsStatus(): void {
+	public function testBlockedUntilDateRoundTrips(): void {
 		$score = new Score();
-		$score->setTitle('Restricted');
-		$score->setRightsStatus('restricted');
+		$score->setTitle('Blocked');
+		$score->setPublicationStatus('blocked');
+		$score->setPublicationBlockedUntil('2027-03-31');
 		$inserted = $this->mapper->insert($score);
 
-		$this->assertSame($inserted->getId(), $this->mapper->findByIdAndRightsStatus($inserted->getId(), 'restricted')->getId());
-
-		$this->expectException(DoesNotExistException::class);
-		$this->mapper->findByIdAndRightsStatus($inserted->getId(), 'free');
+		$this->assertSame('2027-03-31', $this->mapper->find($inserted->getId())->jsonSerialize()['publicationBlockedUntil']);
 	}
 
-	public function testFindMultipleByRightsStatusFiltersInQuery(): void {
+	public function testFindPublicRequiresReleaseAndPublishableRights(): void {
+		$cases = [
+			'B public domain' => ['public_domain', 'free'],
+			'A licensed' => ['licensed', 'free'],
+			'Protected but free' => ['protected', 'free'],
+			'Open but free' => ['open', 'free'],
+			'Public domain to clarify' => ['public_domain', 'to_clarify'],
+			'Public domain blocked' => ['public_domain', 'blocked'],
+			'Internal copy' => ['public_domain', 'internal_copy'],
+		];
 		$ids = [];
-		foreach (['free', 'restricted', 'unclear'] as $status) {
+		foreach ($cases as $title => [$rights, $publication]) {
 			$score = new Score();
-			$score->setTitle('Score ' . $status);
-			$score->setRightsStatus($status);
-			$ids[$status] = $this->mapper->insert($score)->getId();
+			$score->setTitle($title);
+			$score->setRightsStatus($rights);
+			$score->setPublicationStatus($publication);
+			$ids[$title] = $this->mapper->insert($score)->getId();
 		}
 
-		$free = $this->mapper->findMultipleByRightsStatus(array_values($ids), 'free');
-		$this->assertSame([$ids['free']], array_map(fn (Score $s) => $s->getId(), $free));
+		$public = array_values(array_filter(
+			$this->mapper->findPublic(),
+			fn (Score $s) => in_array($s->getId(), $ids, true),
+		));
+		$this->assertSame(['A licensed', 'B public domain'], array_map(fn (Score $s) => $s->getTitle(), $public));
 
-		$all = $this->mapper->findMultipleByRightsStatus(array_values($ids), null);
-		$this->assertCount(3, $all);
+		$this->assertSame($ids['A licensed'], $this->mapper->findPublicById($ids['A licensed'])->getId());
+		$this->expectException(DoesNotExistException::class);
+		$this->mapper->findPublicById($ids['Internal copy']);
+	}
 
-		$this->assertSame([], $this->mapper->findMultipleByRightsStatus([], null));
+	public function testFindMultipleWithoutTransientsCanFilterToPublicScores(): void {
+		$ids = [];
+		foreach ([['public_domain', 'free'], ['protected', 'free'], ['public_domain', 'internal_copy']] as [$rights, $publication]) {
+			$score = new Score();
+			$score->setTitle("Score $rights $publication");
+			$score->setRightsStatus($rights);
+			$score->setPublicationStatus($publication);
+			$ids[] = $this->mapper->insert($score)->getId();
+		}
+
+		$public = $this->mapper->findMultipleWithoutTransients($ids, true);
+		$this->assertSame([$ids[0]], array_map(fn (Score $s) => $s->getId(), $public));
+
+		$this->assertCount(3, $this->mapper->findMultipleWithoutTransients($ids, false));
+		$this->assertSame([], $this->mapper->findMultipleWithoutTransients([], false));
 	}
 }
