@@ -221,6 +221,12 @@
                     "digitalStatus",
                     "gemaIds",
                     "duration",
+                    "signature",
+                    "lyricist",
+                    "voicing",
+                    "language",
+                    "repertoireStatus",
+                    "lastPerformed",
                     "tags",
                     "scoreBook"
                 ],
@@ -287,6 +293,35 @@
                     "duration": {
                         "type": "integer",
                         "format": "int64",
+                        "nullable": true
+                    },
+                    "signature": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "lyricist": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "voicing": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "language": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "repertoireStatus": {
+                        "type": "string",
+                        "nullable": true,
+                        "enum": [
+                            "active",
+                            "dormant",
+                            "archived"
+                        ]
+                    },
+                    "lastPerformed": {
+                        "type": "string",
                         "nullable": true
                     },
                     "tags": {
@@ -503,6 +538,12 @@
                     "digitalStatus",
                     "gemaIds",
                     "duration",
+                    "signature",
+                    "lyricist",
+                    "voicing",
+                    "language",
+                    "repertoireStatus",
+                    "lastPerformed",
                     "tags",
                     "scoreBook",
                     "index"
@@ -570,6 +611,35 @@
                     "duration": {
                         "type": "integer",
                         "format": "int64",
+                        "nullable": true
+                    },
+                    "signature": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "lyricist": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "voicing": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "language": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "repertoireStatus": {
+                        "type": "string",
+                        "nullable": true,
+                        "enum": [
+                            "active",
+                            "dormant",
+                            "archived"
+                        ]
+                    },
+                    "lastPerformed": {
+                        "type": "string",
                         "nullable": true
                     },
                     "tags": {
@@ -4038,6 +4108,41 @@
                                         "default": null,
                                         "description": "The duration of the score in seconds"
                                     },
+                                    "signature": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "The catalogue number (signature) of the score, e.g. \"5-22\""
+                                    },
+                                    "lyricist": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "The author of the lyrics"
+                                    },
+                                    "voicing": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "The voicing of the score, e.g. \"TTBB\""
+                                    },
+                                    "language": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "The language of the lyrics"
+                                    },
+                                    "repertoireStatus": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "enum": [
+                                            "active",
+                                            "dormant",
+                                            "archived"
+                                        ],
+                                        "description": "The repertoire status of the score"
+                                    },
                                     "tagIds": {
                                         "type": "array",
                                         "nullable": true,
@@ -4266,6 +4371,41 @@
                                         "nullable": true,
                                         "default": null,
                                         "description": "The duration of the score in seconds"
+                                    },
+                                    "signature": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "The catalogue number (signature) of the score, e.g. \"5-22\""
+                                    },
+                                    "lyricist": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "The author of the lyrics"
+                                    },
+                                    "voicing": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "The voicing of the score, e.g. \"TTBB\""
+                                    },
+                                    "language": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "The language of the lyrics"
+                                    },
+                                    "repertoireStatus": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "enum": [
+                                            "active",
+                                            "dormant",
+                                            "archived"
+                                        ],
+                                        "description": "The repertoire status of the score"
                                     },
                                     "tagIds": {
                                         "type": "array",

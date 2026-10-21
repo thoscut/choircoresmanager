@@ -11,6 +11,10 @@ use OCA\OrchestraScoresManager\Db\ScoreBookScoreLinkMapper;
 use OCA\OrchestraScoresManager\Db\ScoreBookTagLinkMapper;
 use OCA\OrchestraScoresManager\Db\ScoreMapper;
 use OCA\OrchestraScoresManager\Db\ScoreTagLinkMapper;
+use OCA\OrchestraScoresManager\Db\Setlist;
+use OCA\OrchestraScoresManager\Db\SetlistEntry;
+use OCA\OrchestraScoresManager\Db\SetlistEntryMapper;
+use OCA\OrchestraScoresManager\Db\SetlistMapper;
 use OCA\OrchestraScoresManager\Db\Tag;
 use OCA\OrchestraScoresManager\Db\TagMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
@@ -198,5 +202,50 @@ final class ScoreMapperTest extends MapperTestCase {
 		]);
 
 		$this->assertCount(2, $found);
+	}
+
+	private function createPerformance(int $scoreId, ?\DateTimeImmutable $start, bool $isDraft = false): void {
+		$setlistMapper = new SetlistMapper($this->db);
+		$entryMapper = new SetlistEntryMapper($this->db);
+
+		$setlist = new Setlist();
+		$setlist->setTitle('Concert');
+		$setlist->setStartDateTime($start);
+		$setlist->setIsDraft($isDraft);
+		$setlist = $setlistMapper->insert($setlist);
+
+		$entry = new SetlistEntry();
+		$entry->setSetlistId($setlist->getId());
+		$entry->setIndex(0);
+		$entry->setScoreId($scoreId);
+		$entryMapper->insert($entry);
+	}
+
+	public function testLastPerformedUsesMostRecentPastNonDraftSetlist(): void {
+		$score = new Score();
+		$score->setTitle('Das Morgenrot');
+		$score = $this->mapper->insert($score);
+
+		$this->createPerformance($score->getId(), new \DateTimeImmutable('2024-06-22 18:00:00'));
+		$this->createPerformance($score->getId(), new \DateTimeImmutable('2025-12-05 19:00:00'));
+		// drafts, future setlists and setlists without date are ignored
+		$this->createPerformance($score->getId(), new \DateTimeImmutable('2025-12-20 19:00:00'), true);
+		$this->createPerformance($score->getId(), new \DateTimeImmutable('+1 year'));
+		$this->createPerformance($score->getId(), null);
+
+		$found = $this->mapper->find($score->getId());
+		$this->assertNotNull($found->getLastPerformed());
+		$this->assertSame('2025-12-05', substr((string)$found->getLastPerformed(), 0, 10));
+
+		$all = $this->mapper->findAll();
+		$this->assertSame($found->getLastPerformed(), $all[0]->getLastPerformed());
+	}
+
+	public function testLastPerformedIsNullWithoutSetlists(): void {
+		$score = new Score();
+		$score->setTitle('Memory');
+		$score = $this->mapper->insert($score);
+
+		$this->assertNull($this->mapper->find($score->getId())->getLastPerformed());
 	}
 }

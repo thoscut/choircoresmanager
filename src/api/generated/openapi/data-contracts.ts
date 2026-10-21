@@ -90,6 +90,12 @@ export interface Score {
   gemaIds: string[] | null;
   /** @format int64 */
   duration: number | null;
+  signature: string | null;
+  lyricist: string | null;
+  voicing: string | null;
+  language: string | null;
+  repertoireStatus: "active" | "dormant" | "archived" | null;
+  lastPerformed: string | null;
   tags: string[] | null;
   scoreBook: ScoreBookInfo | null;
   viaScoreBook?: true;
@@ -163,6 +169,12 @@ export interface ScoreIndexed {
   gemaIds: string[] | null;
   /** @format int64 */
   duration: number | null;
+  signature: string | null;
+  lyricist: string | null;
+  voicing: string | null;
+  language: string | null;
+  repertoireStatus: "active" | "dormant" | "archived" | null;
+  lastPerformed: string | null;
   tags: string[] | null;
   scoreBook: ScoreBookInfo | null;
   viaScoreBook?: true;
@@ -505,6 +517,31 @@ export interface ScoreApiPostScorePayload {
    */
   duration?: number | null;
   /**
+   * The catalogue number (signature) of the score, e.g. "5-22"
+   * @default null
+   */
+  signature?: string | null;
+  /**
+   * The author of the lyrics
+   * @default null
+   */
+  lyricist?: string | null;
+  /**
+   * The voicing of the score, e.g. "TTBB"
+   * @default null
+   */
+  voicing?: string | null;
+  /**
+   * The language of the lyrics
+   * @default null
+   */
+  language?: string | null;
+  /**
+   * The repertoire status of the score
+   * @default null
+   */
+  repertoireStatus?: "active" | "dormant" | "archived" | null;
+  /**
    * optional list of tag ids to link
    * @default null
    */
@@ -597,6 +634,31 @@ export interface ScoreApiPatchScorePayload {
    * @default null
    */
   duration?: number | null;
+  /**
+   * The catalogue number (signature) of the score, e.g. "5-22"
+   * @default null
+   */
+  signature?: string | null;
+  /**
+   * The author of the lyrics
+   * @default null
+   */
+  lyricist?: string | null;
+  /**
+   * The voicing of the score, e.g. "TTBB"
+   * @default null
+   */
+  voicing?: string | null;
+  /**
+   * The language of the lyrics
+   * @default null
+   */
+  language?: string | null;
+  /**
+   * The repertoire status of the score
+   * @default null
+   */
+  repertoireStatus?: "active" | "dormant" | "archived" | null;
   /**
    * optional list of tag ids to link
    * @default null

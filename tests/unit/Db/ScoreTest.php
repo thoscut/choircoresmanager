@@ -224,4 +224,52 @@ final class ScoreTest extends TestCase {
 		$this->assertSame([], $json['tags']);
 		$this->assertNull($json['scoreBook']);
 	}
+
+	public static function validRepertoireStatusProvider(): array {
+		return [
+			'active' => ['active', 'active'],
+			'dormant' => ['dormant', 'dormant'],
+			'archived' => ['archived', 'archived'],
+			'null' => [null, null],
+			'empty string becomes null' => ['', null],
+		];
+	}
+
+	#[DataProvider('validRepertoireStatusProvider')]
+	public function testSetRepertoireStatus(?string $input, ?string $expected): void {
+		$score = new Score();
+		$score->setRepertoireStatus($input);
+
+		$this->assertSame($expected, $score->getRepertoireStatus());
+		$this->assertSame($expected, $score->jsonSerialize()['repertoireStatus']);
+	}
+
+	public function testSetRepertoireStatusRejectsUnknownValue(): void {
+		$this->expectException(\InvalidArgumentException::class);
+
+		$score = new Score();
+		$score->setRepertoireStatus('sometimes');
+	}
+
+	public function testRepertoireFieldsInJson(): void {
+		$score = new Score();
+		$score->setSignature('5-22');
+		$score->setLyricist('Matthias Claudius');
+		$score->setVoicing('TTBB');
+		$score->setLanguage('Deutsch');
+		$score->setLastPerformed('2025-12-05T19:00:00+00:00');
+
+		$json = $score->jsonSerialize();
+		$this->assertSame('5-22', $json['signature']);
+		$this->assertSame('Matthias Claudius', $json['lyricist']);
+		$this->assertSame('TTBB', $json['voicing']);
+		$this->assertSame('Deutsch', $json['language']);
+		$this->assertSame('2025-12-05T19:00:00+00:00', $json['lastPerformed']);
+	}
+
+	public function testLastPerformedIsNullByDefault(): void {
+		$score = new Score();
+		$this->assertNull($score->getLastPerformed());
+		$this->assertNull($score->jsonSerialize()['lastPerformed']);
+	}
 }
