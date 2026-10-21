@@ -4727,23 +4727,12 @@
                             "schema": {
                                 "type": "object",
                                 "required": [
-                                    "content",
-                                    "userId",
-                                    "creationDate"
+                                    "content"
                                 ],
                                 "properties": {
                                     "content": {
                                         "type": "string",
                                         "description": "The content of the comment"
-                                    },
-                                    "userId": {
-                                        "type": "string",
-                                        "description": "The user ID of the commenter"
-                                    },
-                                    "creationDate": {
-                                        "type": "integer",
-                                        "format": "int64",
-                                        "description": "The creation date timestamp"
                                     }
                                 }
                             }

@@ -8,10 +8,13 @@ use OCA\OrchestraScoresManager\Db\Comment;
 use OCA\OrchestraScoresManager\Db\CommentMapper;
 use OCA\OrchestraScoresManager\Policy\CommentPolicy;
 use OCA\OrchestraScoresManager\Policy\PolicyInterface;
+use OCA\OrchestraScoresManager\Service\Exceptions\PermissionDeniedException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\Exception;
 use OCP\IUserManager;
+use OCP\IUserSession;
 
 class CommentService {
 	/** @psalm-suppress PossiblyUnusedMethod - Constructor used by DI container */
@@ -20,6 +23,8 @@ class CommentService {
 		private readonly AuthorizationService $authorizationService,
 		private readonly CommentPolicy $commentPolicy,
 		private readonly IUserManager $userManager,
+		private readonly IUserSession $userSession,
+		private readonly ITimeFactory $timeFactory,
 	) {
 	}
 
@@ -63,11 +68,27 @@ class CommentService {
 	/**
 	 * Create a new comment if authorized.
 	 * Default-deny: if authorization fails, an exception is thrown.
+	 * Author and creation date are always taken from the current session and server time,
+	 * never from the client.
 	 *
 	 * @throws Exception
+	 * @throws \InvalidArgumentException If the content is empty
 	 */
 	public function createComment(Comment $comment): Comment {
 		$this->authorizationService->authorizePolicy($this->commentPolicy, PolicyInterface::ACTION_CREATE);
+
+		$user = $this->userSession->getUser();
+		if ($user === null) {
+			throw new PermissionDeniedException('Not authenticated');
+		}
+		if (trim($comment->getContent()) === '') {
+			throw new \InvalidArgumentException('Comment content must not be empty');
+		}
+
+		$comment->setUserId($user->getUID());
+		// milliseconds, matching what the frontend displays
+		$comment->setCreationDate($this->timeFactory->getTime() * 1000);
+
 		$created = $this->commentMapper->insert($comment);
 
 		// Enrich with display name before returning

@@ -633,13 +633,6 @@ export interface ScoreApiGetScoreCommentsData {
 export interface ScoreApiPostScoreCommentPayload {
   /** The content of the comment */
   content: string;
-  /** The user ID of the commenter */
-  userId: string;
-  /**
-   * The creation date timestamp
-   * @format int64
-   */
-  creationDate: number;
 }
 
 export interface ScoreApiPostScoreCommentData {

@@ -282,8 +282,6 @@ final class ScoreApiControllerTest extends TestCase {
 		$response = $this->controller->postScoreComment(
 			id: 1,
 			content: 'New comment',
-			userId: 'user1',
-			creationDate: 1234567890
 		);
 
 		$this->assertInstanceOf(DataResponse::class, $response);
@@ -302,8 +300,6 @@ final class ScoreApiControllerTest extends TestCase {
 		$this->controller->postScoreComment(
 			id: 1,
 			content: 'Test',
-			userId: 'user1',
-			creationDate: 1234567890
 		);
 	}
 

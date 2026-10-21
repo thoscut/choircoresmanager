@@ -283,8 +283,6 @@ class ScoreApiController extends OCSController {
 	 *
 	 * @param int $id The ID of the score
 	 * @param string $content The content of the comment
-	 * @param string $userId The user ID of the commenter
-	 * @param int $creationDate The creation date timestamp
 	 *
 	 * @return DataResponse<Http::STATUS_CREATED, OrchestraScoresManagerComment, array{}> the created comment
 	 *
@@ -296,11 +294,10 @@ class ScoreApiController extends OCSController {
 	 */
 	#[NoAdminRequired]
 	#[ApiRoute(verb: 'POST', url: '/scores/{id}/comments')]
-	public function postScoreComment(int $id, string $content, string $userId, int $creationDate): DataResponse {
+	public function postScoreComment(int $id, string $content): DataResponse {
+		// author and creation date are set by the service from the session
 		$comment = Comment::fromParams([
 			'content' => $content,
-			'userId' => $userId,
-			'creationDate' => $creationDate,
 			'scoreId' => $id,
 		]);
 
