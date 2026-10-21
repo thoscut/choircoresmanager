@@ -192,4 +192,42 @@ class ScoreMapper extends QBMapper {
 			]);
 		}
 	}
+
+	/**
+	 * Find all scores with the given rights status, without transient properties.
+	 *
+	 * The filter is applied in SQL so that callers serving anonymous requests
+	 * never load scores they must not expose.
+	 *
+	 * @param string $rightsStatus
+	 * @return array<Score>
+	 * @throws Exception
+	 */
+	public function findByRightsStatus(string $rightsStatus): array {
+		$qb = $this->db->getQueryBuilder();
+		$qb->select('*')
+			->from($this->getTableName())
+			->where($qb->expr()->eq('rights_status', $qb->createNamedParameter($rightsStatus, IQueryBuilder::PARAM_STR)))
+			->orderBy('title', 'ASC');
+		return $this->findEntities($qb);
+	}
+
+	/**
+	 * Find a single score by ID and rights status, without transient properties.
+	 *
+	 * @param int $id
+	 * @param string $rightsStatus
+	 * @return Score
+	 * @throws MultipleObjectsReturnedException
+	 * @throws DoesNotExistException
+	 * @throws Exception
+	 */
+	public function findByIdAndRightsStatus(int $id, string $rightsStatus): Score {
+		$qb = $this->db->getQueryBuilder();
+		$qb->select('*')
+			->from($this->getTableName())
+			->where($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)))
+			->andWhere($qb->expr()->eq('rights_status', $qb->createNamedParameter($rightsStatus, IQueryBuilder::PARAM_STR)));
+		return $this->findEntity($qb);
+	}
 }

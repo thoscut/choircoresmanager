@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OCA\OrchestraScoresManager\Service;
 
 use OCA\OrchestraScoresManager\Db\CommentMapper;
+use OCA\OrchestraScoresManager\Db\Enum\RightsStatus;
 use OCA\OrchestraScoresManager\Db\Score;
 use OCA\OrchestraScoresManager\Db\ScoreBookScoreLinkMapper;
 use OCA\OrchestraScoresManager\Db\ScoreFolderCollectionLinkMapper;
@@ -31,6 +32,7 @@ class ScoreService {
 		private readonly AuthorizationService $authorizationService,
 		private readonly ScorePolicy $scorePolicy,
 		private IL10N $l,
+		private readonly MusicXmlService $musicXmlService,
 	) {
 	}
 
@@ -82,6 +84,9 @@ class ScoreService {
 		$this->commentMapper->deleteByScoreId($id);
 
 		$this->scoreMapper->delete($score);
+
+		// Remove the attached MusicXML file, if any
+		$this->musicXmlService->removeFile($id);
 	}
 
 	/**
@@ -119,6 +124,7 @@ class ScoreService {
 	 */
 	public function createScore(Score $score, ?array $tagIds = null, ?array $scoreBookInfo = null): Score {
 		$this->authorizationService->authorizePolicy($this->scorePolicy, PolicyInterface::ACTION_CREATE);
+		$this->validateRightsStatus($score);
 
 		$created = $this->scoreMapper->insert($score);
 		if ($tagIds !== null) {
@@ -154,6 +160,7 @@ class ScoreService {
 	 */
 	public function updateScore(Score $score, ?array $tagIds = null, ?array $scoreBookInfo = null): Score {
 		$this->authorizationService->authorizePolicy($this->scorePolicy, PolicyInterface::ACTION_UPDATE, $score);
+		$this->validateRightsStatus($score);
 
 		if ($tagIds !== null) {
 			$validIds = array_map('intval', $tagIds);
@@ -247,6 +254,18 @@ class ScoreService {
 			}
 
 			$this->scoreBookScoreLinkMapper->addScoreToScoreBook($scoreBookId, $scoreId, $index);
+		}
+	}
+
+	/**
+	 * Ensure the rights status of a score is one of the allowed values.
+	 *
+	 * @param Score $score
+	 * @throws \InvalidArgumentException
+	 */
+	private function validateRightsStatus(Score $score): void {
+		if (RightsStatus::tryFrom($score->getRightsStatus()) === null) {
+			throw new \InvalidArgumentException($this->l->t('Invalid rights status. Must be "free", "unclear" or "restricted".'));
 		}
 	}
 }

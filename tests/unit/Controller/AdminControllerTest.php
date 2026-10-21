@@ -64,4 +64,27 @@ final class AdminControllerTest extends TestCase {
 		$this->assertEquals(['editGroups' => $groups], $response->getData());
 		$this->assertEquals(Http::STATUS_OK, $response->getStatus());
 	}
+
+	#[TestWith([true])]
+	#[TestWith([false])]
+	public function testGetPublicPageReturnsSetting(bool $enabled): void {
+		$this->configService->method('isPublicPageEnabled')->willReturn($enabled);
+
+		$response = $this->controller->getPublicPage();
+
+		$this->assertEquals(['publicPageEnabled' => $enabled], $response->getData());
+	}
+
+	#[TestWith([true])]
+	#[TestWith([false])]
+	public function testPostPublicPageUpdatesSetting(bool $enabled): void {
+		$this->configService->expects($this->once())
+			->method('setPublicPageEnabled')
+			->with($enabled);
+		$this->configService->method('isPublicPageEnabled')->willReturn($enabled);
+
+		$response = $this->controller->postPublicPage($enabled);
+
+		$this->assertEquals(['publicPageEnabled' => $enabled], $response->getData());
+	}
 }

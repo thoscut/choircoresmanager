@@ -43,3 +43,26 @@ export interface AdminPostEditGroupsData {
     };
   };
 }
+
+export interface AdminGetPublicPageData {
+  ocs: {
+    meta: OCSMeta;
+    data: {
+      publicPageEnabled: boolean;
+    };
+  };
+}
+
+export interface AdminPostPublicPagePayload {
+  /** Whether the public page is enabled */
+  publicPageEnabled: boolean;
+}
+
+export interface AdminPostPublicPageData {
+  ocs: {
+    meta: OCSMeta;
+    data: {
+      publicPageEnabled: boolean;
+    };
+  };
+}

@@ -90,6 +90,9 @@ export interface Score {
   gemaIds: string[] | null;
   /** @format int64 */
   duration: number | null;
+  rightsStatus: "free" | "unclear" | "restricted";
+  rightsNote: string | null;
+  musicxmlFile: string | null;
   tags: string[] | null;
   scoreBook: ScoreBookInfo | null;
   viaScoreBook?: true;
@@ -163,6 +166,9 @@ export interface ScoreIndexed {
   gemaIds: string[] | null;
   /** @format int64 */
   duration: number | null;
+  rightsStatus: "free" | "unclear" | "restricted";
+  rightsNote: string | null;
+  musicxmlFile: string | null;
   tags: string[] | null;
   scoreBook: ScoreBookInfo | null;
   viaScoreBook?: true;
@@ -431,6 +437,23 @@ export interface FolderCollectionVersionApiPatchFolderCollectionVersionData {
   };
 }
 
+/** @format binary */
+export type MusicXmlApiGetMusicXmlData = File;
+
+export interface MusicXmlApiPostMusicXmlData {
+  ocs: {
+    meta: OCSMeta;
+    data: Score;
+  };
+}
+
+export interface MusicXmlApiDeleteMusicXmlData {
+  ocs: {
+    meta: OCSMeta;
+    data: Score;
+  };
+}
+
 export interface ScoreApiGetScoresData {
   ocs: {
     meta: OCSMeta;
@@ -504,6 +527,16 @@ export interface ScoreApiPostScorePayload {
    * @default null
    */
   duration?: number | null;
+  /**
+   * The publication rights status of the score
+   * @default null
+   */
+  rightsStatus?: "free" | "unclear" | "restricted" | null;
+  /**
+   * A note explaining the rights status
+   * @default null
+   */
+  rightsNote?: string | null;
   /**
    * optional list of tag ids to link
    * @default null
@@ -597,6 +630,16 @@ export interface ScoreApiPatchScorePayload {
    * @default null
    */
   duration?: number | null;
+  /**
+   * The publication rights status of the score
+   * @default null
+   */
+  rightsStatus?: "free" | "unclear" | "restricted" | null;
+  /**
+   * A note explaining the rights status
+   * @default null
+   */
+  rightsNote?: string | null;
   /**
    * optional list of tag ids to link
    * @default null

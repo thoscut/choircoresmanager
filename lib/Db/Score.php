@@ -38,6 +38,12 @@ use OCP\DB\Types;
  * @method string|null getMedleyContents()
  * @method int|null getDuration()
  * @method void setDuration(?int $value)
+ * @method string getRightsStatus()
+ * @method void setRightsStatus(string $value)
+ * @method string|null getRightsNote()
+ * @method void setRightsNote(?string $value)
+ * @method string|null getMusicxmlFile()
+ * @method void setMusicxmlFile(?string $value)
  */
 class Score extends Entity implements JsonSerializable {
 	protected string $title = '';
@@ -53,6 +59,9 @@ class Score extends Entity implements JsonSerializable {
 	protected ?string $digitalStatus = null;
 	protected ?string $gemaIds = null;
 	protected ?int $duration = null;
+	protected string $rightsStatus = 'unclear';
+	protected ?string $rightsNote = null;
+	protected ?string $musicxmlFile = null;
 
 	// transient properties, not stored in DB
 	// ensure to add setters & getters for these
@@ -74,6 +83,9 @@ class Score extends Entity implements JsonSerializable {
 		$this->addType('digitalStatus', Types::STRING);
 		$this->addType('gemaIds', Types::STRING);
 		$this->addType('duration', Types::INTEGER);
+		$this->addType('rightsStatus', Types::STRING);
+		$this->addType('rightsNote', Types::TEXT);
+		$this->addType('musicxmlFile', Types::STRING);
 	}
 
 	public function jsonSerialize(): array {
@@ -94,6 +106,9 @@ class Score extends Entity implements JsonSerializable {
 			'tags' => $this->tags ?? [],
 			'scoreBook' => $this->scoreBook,
 			'duration' => $this->duration,
+			'rightsStatus' => $this->rightsStatus,
+			'rightsNote' => $this->rightsNote,
+			'musicxmlFile' => $this->musicxmlFile,
 		];
 	}
 

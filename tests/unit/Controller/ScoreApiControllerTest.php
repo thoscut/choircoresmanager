@@ -199,6 +199,45 @@ final class ScoreApiControllerTest extends TestCase {
 		$this->assertEquals(1791, $response->getData()->getYear());
 	}
 
+	public function testPatchScoreIgnoresMusicXmlFileAndSetsRights(): void {
+		$score = new Score();
+		$score->setId(1);
+		$score->setTitle('Title');
+		$score->resetUpdatedFields();
+
+		$this->scoreService->method('getScoreById')->willReturn($score);
+		$this->request->method('getParams')->willReturn([
+			'id' => 1,
+			'rightsStatus' => 'free',
+			'rightsNote' => 'Composer died 1791',
+			'musicxmlFile' => '../../evil.xml',
+		]);
+
+		$this->scoreService->expects($this->once())
+			->method('updateScore')
+			->with($this->callback(fn (Score $s) => $s->getRightsStatus() === 'free'
+				&& $s->getRightsNote() === 'Composer died 1791'
+				&& $s->getMusicxmlFile() === null))
+			->willReturnArgument(0);
+
+		$this->controller->patchScore(id: 1, rightsStatus: 'free', rightsNote: 'Composer died 1791');
+	}
+
+	public function testPatchScoreTurnsNullRightsStatusIntoInvalidValue(): void {
+		$score = new Score();
+		$score->setId(1);
+
+		$this->scoreService->method('getScoreById')->willReturn($score);
+		$this->request->method('getParams')->willReturn(['id' => 1, 'rightsStatus' => null]);
+
+		$this->scoreService->expects($this->once())
+			->method('updateScore')
+			->with($this->callback(fn (Score $s) => $s->getRightsStatus() === ''))
+			->willReturnArgument(0);
+
+		$this->controller->patchScore(id: 1);
+	}
+
 	#[TestWith([PermissionDeniedException::class, OCSForbiddenException::class, 'Cannot update score'])]
 	#[TestWith([\InvalidArgumentException::class, OCSBadRequestException::class, 'Score not found'])]
 	public function testPatchScoreThrowsExceptions(string $serviceException, string $expectedOCSException, string $message): void {
