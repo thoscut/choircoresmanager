@@ -953,19 +953,16 @@ msgstr ""
 msgid "Overall Duration"
 msgstr ""
 
-msgid "Invalid duration format"
+msgid "Dormant"
+msgstr ""
+
+msgid "Archived"
 msgstr ""
 
 msgid "Signature"
 msgstr ""
 
 msgid "Repertoire"
-msgstr ""
-
-msgid "Dormant"
-msgstr ""
-
-msgid "Archived"
 msgstr ""
 
 msgid "Last performed"
@@ -978,4 +975,7 @@ msgid "Voicing"
 msgstr ""
 
 msgid "Language"
+msgstr ""
+
+msgid "Invalid duration format"
 msgstr ""

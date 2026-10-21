@@ -941,6 +941,30 @@ msgstr "Moderation & Pausen"
 msgid "Overall Duration"
 msgstr "Gesamtdauer"
 
+msgid "Dormant"
+msgstr "Ruhend"
+
+msgid "Archived"
+msgstr "Archiv"
+
+msgid "Signature"
+msgstr "Signatur"
+
+msgid "Repertoire"
+msgstr "Repertoire"
+
+msgid "Last performed"
+msgstr "Zuletzt gesungen"
+
+msgid "Lyricist"
+msgstr "Textdichter"
+
+msgid "Voicing"
+msgstr "Besetzung"
+
+msgid "Language"
+msgstr "Sprache"
+
 msgid "Invalid duration format"
 msgstr "Ungültiges Spieldauerformat"
 
@@ -1074,27 +1098,3 @@ msgstr "Ungültiges Spieldauerformat"
 
 #~ msgid "Score Book Version History"
 #~ msgstr "Notenbuch-Versionshistorie"
-
-msgid "Signature"
-msgstr "Signatur"
-
-msgid "Repertoire"
-msgstr "Repertoire"
-
-msgid "Dormant"
-msgstr "Ruhend"
-
-msgid "Archived"
-msgstr "Archiv"
-
-msgid "Last performed"
-msgstr "Zuletzt gesungen"
-
-msgid "Lyricist"
-msgstr "Textdichter"
-
-msgid "Voicing"
-msgstr "Besetzung"
-
-msgid "Language"
-msgstr "Sprache"
