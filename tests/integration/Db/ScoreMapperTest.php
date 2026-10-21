@@ -199,4 +199,41 @@ final class ScoreMapperTest extends MapperTestCase {
 
 		$this->assertCount(2, $found);
 	}
+
+	public function testRightsStatusDefaultsToUnclear(): void {
+		$score = new Score();
+		$score->setTitle('Test Score');
+		$inserted = $this->mapper->insert($score);
+
+		$found = $this->mapper->find($inserted->getId());
+
+		$this->assertSame('unclear', $found->getRightsStatus());
+		$this->assertNull($found->getRightsNote());
+		$this->assertNull($found->getMusicxmlFile());
+	}
+
+	public function testFindByRightsStatusOnlyReturnsMatchingScores(): void {
+		foreach (['B free' => 'free', 'Restricted' => 'restricted', 'Unclear' => 'unclear', 'A free' => 'free'] as $title => $status) {
+			$score = new Score();
+			$score->setTitle($title);
+			$score->setRightsStatus($status);
+			$this->mapper->insert($score);
+		}
+
+		$free = $this->mapper->findByRightsStatus('free');
+
+		$this->assertSame(['A free', 'B free'], array_map(fn (Score $s) => $s->getTitle(), $free));
+	}
+
+	public function testFindByIdAndRightsStatus(): void {
+		$score = new Score();
+		$score->setTitle('Restricted');
+		$score->setRightsStatus('restricted');
+		$inserted = $this->mapper->insert($score);
+
+		$this->assertSame($inserted->getId(), $this->mapper->findByIdAndRightsStatus($inserted->getId(), 'restricted')->getId());
+
+		$this->expectException(DoesNotExistException::class);
+		$this->mapper->findByIdAndRightsStatus($inserted->getId(), 'free');
+	}
 }

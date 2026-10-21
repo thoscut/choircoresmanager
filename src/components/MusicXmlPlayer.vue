@@ -248,8 +248,11 @@ onBeforeUnmount(() => {
 	}
 
 	&__voice {
+		flex: 1 1 280px;
 		display: flex;
+		flex-wrap: wrap;
 		align-items: center;
+		min-width: 0;
 		gap: calc(2 * var(--default-grid-baseline));
 		padding: var(--default-grid-baseline) calc(2 * var(--default-grid-baseline));
 		border: 1px solid var(--color-border);
@@ -259,6 +262,11 @@ onBeforeUnmount(() => {
 	&__voice-label {
 		font-weight: bold;
 		min-width: 5em;
+	}
+
+	&__voice input[type='range'] {
+		flex: 1 1 80px;
+		min-width: 80px;
 	}
 
 	&__state {

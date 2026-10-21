@@ -80,7 +80,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import MusicXmlPlayer from '@/components/MusicXmlPlayer.vue'
-import { CancelIcon as CloseIcon, DownloadIcon, PlayIcon, ScoreIcon } from '@/icons/vue-material'
+import { CloseIcon, DownloadIcon, PlayIcon, ScoreIcon } from '@/icons/vue-material'
 import { t } from '@/utils/l10n'
 import { formatDurationHHMMSS } from '@/utils/timeFormatUtils'
 

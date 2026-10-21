@@ -604,7 +604,7 @@ const columnDefs = computed<ColDef[]>(() => {
 			cellEditor: 'agSelectCellEditor',
 			cellEditorParams: { values: RIGHTS_STATUS_VALUES },
 			refData: rightsStatusLabels(),
-			width: 140,
+			width: 190,
 		},
 		{ field: 'rightsNote', headerName: t('Publication Note') },
 		{
