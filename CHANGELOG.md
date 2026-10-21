@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add French, Spanish, Italian, Dutch and Polish Translations
+
+### Changed
+
+- Complete and Polish the German Translation
+
 ## [1.2.2] - 2026-08-28
 
 ### Fixed

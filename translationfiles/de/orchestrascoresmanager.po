@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
 "POT-Creation-Date: 2026-10-12 07:36+0000\n"
-"PO-Revision-Date: 2025-11-28 22:37+0000\n"
+"PO-Revision-Date: 2026-10-21 20:30+0000\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
 "Language: de\n"
@@ -142,20 +142,20 @@ msgid "Score is already part of another score book. Remove it first."
 msgstr "Partitur ist bereits Teil eines anderen Notenbuchs. Entfernen Sie sie zuerst."
 
 msgid "Setlist entry not found"
-msgstr "Setlist-Eintrag nicht gefunden"
+msgstr "Setlisten-Eintrag nicht gefunden"
 
 msgid "Each entry must have an id field"
 msgstr "Jeder Eintrag muss ein ID-Feld haben"
 
 #, php-format
 msgid "Setlist entry with id %d not found"
-msgstr "Setlist-Eintrag mit ID %d nicht gefunden"
+msgstr "Setlisten-Eintrag mit ID %d nicht gefunden"
 
 msgid "Invalid filter parameter. Must be \"all\", \"future\", or \"past\"."
 msgstr "Ungültiger Filter-Parameter. Muss \"all\", \"future\" oder \"past\" sein."
 
 msgid "Setlist not found"
-msgstr "Setlist nicht gefunden"
+msgstr "Setliste nicht gefunden"
 
 msgid "Either scoreId or breakDuration must be set"
 msgstr "Entweder scoreId oder breakDuration muss gesetzt sein"
@@ -164,16 +164,16 @@ msgid "Only one of scoreId or breakDuration can be set"
 msgstr "Nur eines von scoreId oder breakDuration kann gesetzt sein"
 
 msgid "An entry with this index already exists in the setlist"
-msgstr "Ein Eintrag mit diesem Index existiert bereits in der Setlist"
+msgstr "Ein Eintrag mit diesem Index existiert bereits in der Setliste"
 
 msgid "Orchestra Scores Manager"
 msgstr "Orchester-Noten-Verwaltung"
 
 msgid "Score must belong to the folder collection version specified in the setlist"
-msgstr "Partitur muss zur im Setlist angegebenen Ordnersammlung-Version gehören"
+msgstr "Partitur muss zu der in der Setliste angegebenen Version der Ordnersammlung gehören"
 
 msgid "Manage your orchestra's sheet music database directly within Nextcloud"
-msgstr "Verwalte die Notendatenbank Deines Orchesters direkt in Nextcloud"
+msgstr "Verwalten Sie die Notendatenbank Ihres Orchesters direkt in Nextcloud"
 
 msgid ""
 "⚠️ Early development phase – expect rough edges and breaking changes.\n"
@@ -190,15 +190,15 @@ msgid ""
 msgstr ""
 "⚠️ Frühe Entwicklungsphase – Bugs und Breaking Changes möglich.\n"
 "\n"
-"Orchestra Scores Manager ermöglicht es Dir, eine strukturierte Datenbank der Noten Deines Orchesters innerhalb von Nextcloud zu pflegen.\n"
+"Orchestra Scores Manager ermöglicht es Ihnen, eine strukturierte Datenbank der Noten Ihres Orchesters innerhalb von Nextcloud zu pflegen.\n"
 "\n"
 "Schlüsselfunktionen:\n"
-"- Verwalte einzelne Partituren mit umfangreichen Metadaten (Komponist, Arrangeur, Verlag, Jahr, Schwierigkeit und mehr)\n"
-"- Organisiere Partituren in Notenbüchern und Ordnersammlungen\n"
-"- Verfolge die Versionshistorie von Ordnersammlungen\n"
-"- Erstelle und verwalte Setlisten\n"
-"- Kategorisiere Partituren mit Tags\n"
-"- Füge Partituren Kommentare hinzu"
+"- Verwalten Sie einzelne Partituren mit umfangreichen Metadaten (Komponist, Arrangeur, Verlag, Jahr, Schwierigkeit und mehr)\n"
+"- Organisieren Sie Partituren in Notenbüchern und Ordnersammlungen\n"
+"- Verfolgen Sie die Versionshistorie von Ordnersammlungen\n"
+"- Erstellen und verwalten Sie Setlisten\n"
+"- Kategorisieren Sie Partituren mit Tags\n"
+"- Fügen Sie Partituren Kommentare hinzu"
 
 msgid "Cancel"
 msgstr "Abbrechen"
@@ -222,13 +222,13 @@ msgid "Allowed Groups"
 msgstr "Erlaubte Gruppen"
 
 msgid "Select groups…"
-msgstr ""
+msgstr "Gruppen auswählen…"
 
 msgid "Invalid default moderation time format. Use (HH:)MM:SS"
 msgstr "Ungültiges Format für Standard-Moderationszeit. Verwenden Sie (HH:)MM:SS"
 
 msgid "Failed to save settings"
-msgstr "Einstellungen speichern fehlgeschlagen"
+msgstr "Einstellungen konnten nicht gespeichert werden"
 
 msgid "Settings"
 msgstr "Einstellungen"
@@ -249,7 +249,7 @@ msgid "Select folder collection"
 msgstr "Ordnersammlung auswählen"
 
 msgid "Saving …"
-msgstr ""
+msgstr "Speichern …"
 
 msgid "Save"
 msgstr "Speichern"
@@ -297,7 +297,7 @@ msgid "Confirm"
 msgstr "Bestätigen"
 
 msgid "Loading…"
-msgstr ""
+msgstr "Wird geladen…"
 
 msgid "An error occurred"
 msgstr "Ein Fehler ist aufgetreten"
@@ -324,13 +324,13 @@ msgid "Export CSV"
 msgstr "CSV exportieren"
 
 msgid "Main app navigation"
-msgstr "Haupt App-Navigation"
+msgstr "Haupt-App-Navigation"
 
 msgid "No folder collections yet"
 msgstr "Noch keine Ordnersammlungen"
 
 msgid "Operation failed: "
-msgstr "Operation fehlgeschlagen: "
+msgstr "Vorgang fehlgeschlagen: "
 
 msgid "Delete Score Book"
 msgstr "Notenbuch löschen"
@@ -363,7 +363,7 @@ msgid "Folder Collections"
 msgstr "Ordnersammlungen"
 
 msgid "Invalid duration format. Use (HH:)MM:SS"
-msgstr "Ungültiges Spieldauerformat. Verwenden Sie (HH:)MM:SS"
+msgstr "Ungültiges Dauerformat. Verwenden Sie (HH:)MM:SS"
 
 msgid "Book Index"
 msgstr "Notenbuch-Index"
@@ -516,7 +516,7 @@ msgid "New version started successfully"
 msgstr "Neue Version erfolgreich gestartet"
 
 msgid "Failed to start new version: "
-msgstr "Neue Version konnte nicht gestartet werden"
+msgstr "Neue Version konnte nicht gestartet werden: "
 
 msgid "Start new version"
 msgstr "Neue Version starten"
@@ -696,7 +696,7 @@ msgid "No comments yet"
 msgstr "Noch keine Kommentare"
 
 msgid "Write a new comment …"
-msgstr ""
+msgstr "Neuen Kommentar schreiben …"
 
 msgid "GitHub flavored markdown is supported."
 msgstr "GitHub Markdown wird unterstützt."
@@ -711,7 +711,7 @@ msgid "Scores in this book"
 msgstr "Partituren in diesem Notenbuch"
 
 msgid "Failed to load setlist"
-msgstr "Setlist konnte nicht geladen werden"
+msgstr "Setliste konnte nicht geladen werden"
 
 msgid "Break"
 msgstr "Pause"
@@ -726,7 +726,7 @@ msgid "Add Entry"
 msgstr "Eintrag hinzufügen"
 
 msgid "Add Setlist Entry"
-msgstr "Setlist-Eintrag hinzufügen"
+msgstr "Setlisten-Eintrag hinzufügen"
 
 msgid "Entry Type"
 msgstr "Eintragsart"
@@ -756,16 +756,16 @@ msgid "Select and reorder the columns to include in the PDF export."
 msgstr "Spalten für den PDF-Export auswählen und sortieren."
 
 msgid "Delete Setlist Entry"
-msgstr "Setlist-Eintrag löschen"
+msgstr "Setlisten-Eintrag löschen"
 
 msgid "Are you sure you want to delete this setlist entry?"
-msgstr "Sind Sie sicher, dass Sie diesen Setlist-Eintrag löschen möchten?"
+msgstr "Sind Sie sicher, dass Sie diesen Setlisten-Eintrag löschen möchten?"
 
 msgid "Failed to delete setlist entry: "
-msgstr "Setlist-Eintrag konnte nicht gelöscht werden: "
+msgstr "Setlisten-Eintrag konnte nicht gelöscht werden: "
 
 msgid "Failed to reorder entries: "
-msgstr "Setlist-Einträge konnten nicht umgeordnet werden: "
+msgstr "Setlisten-Einträge konnten nicht umgeordnet werden: "
 
 msgid "Start Time"
 msgstr "Startzeit"
@@ -807,7 +807,7 @@ msgid "Is Published"
 msgstr "Ist veröffentlicht"
 
 msgid "Saving…"
-msgstr ""
+msgstr "Wird gespeichert…"
 
 msgid "Saved"
 msgstr "Gespeichert"
@@ -828,7 +828,7 @@ msgid "No drafts"
 msgstr "Keine Entwürfe"
 
 msgid "Create your first setlist draft"
-msgstr "Erstellen Sie Ihre erste Setlist"
+msgstr "Erstellen Sie Ihren ersten Setlisten-Entwurf"
 
 msgid "Future"
 msgstr "Zukünftig"
@@ -903,7 +903,7 @@ msgid "This index is already occupied"
 msgstr "Dieser Index ist bereits belegt"
 
 msgid "Loading occupied indices…"
-msgstr ""
+msgstr "Belegte Indizes werden geladen…"
 
 msgid "Index is unchanged"
 msgstr "Index unverändert"
@@ -915,7 +915,7 @@ msgid "Enter the position index in the collection"
 msgstr "Geben Sie den Positionsindex in der Sammlung ein"
 
 msgid "Setlist"
-msgstr "Setlist"
+msgstr "Setliste"
 
 msgid "Value must not be empty"
 msgstr "Wert darf nicht leer sein"
@@ -942,7 +942,7 @@ msgid "Overall Duration"
 msgstr "Gesamtdauer"
 
 msgid "Invalid duration format"
-msgstr "Ungültiges Spieldauerformat"
+msgstr "Ungültiges Dauerformat"
 
 #~ msgid "Select groups..."
 #~ msgstr "Gruppen auswählen..."

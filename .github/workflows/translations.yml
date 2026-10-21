@@ -303,6 +303,11 @@ jobs:
           echo "---" >> $GITHUB_STEP_SUMMARY
           echo "### 📚 Supported Languages" >> $GITHUB_STEP_SUMMARY
           echo "- 🇩🇪 German (de)" >> $GITHUB_STEP_SUMMARY
+          echo "- 🇪🇸 Spanish (es)" >> $GITHUB_STEP_SUMMARY
+          echo "- 🇫🇷 French (fr)" >> $GITHUB_STEP_SUMMARY
+          echo "- 🇮🇹 Italian (it)" >> $GITHUB_STEP_SUMMARY
+          echo "- 🇳🇱 Dutch (nl)" >> $GITHUB_STEP_SUMMARY
+          echo "- 🇵🇱 Polish (pl)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "_To add more languages, create a new PO file in \`translationfiles/<lang>/\` directory._" >> $GITHUB_STEP_SUMMARY
 

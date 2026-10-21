@@ -1,0 +1,942 @@
+# Spanish translations for Nextcloud package.
+# This file is distributed under the same license as the Nextcloud package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Nextcloud 3.14159\n"
+"Report-Msgid-Bugs-To: translations\\@example.com\n"
+"POT-Creation-Date: 2026-10-12 07:36+0000\n"
+"PO-Revision-Date: 2026-10-21 20:30+0000\n"
+"Last-Translator: Claude Code\n"
+"Language-Team: none\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Insufficient permissions"
+msgstr "Permisos insuficientes"
+
+msgid "Folder collection not found"
+msgstr "No se encontró la colección de carpetas"
+
+msgid "No active version exists for this folder collection"
+msgstr "No existe ninguna versión activa para esta colección de carpetas"
+
+msgid "Version does not belong to this folder collection"
+msgstr "La versión no pertenece a esta colección de carpetas"
+
+msgid "Folder collection version not found"
+msgstr "No se encontró la versión de la colección de carpetas"
+
+msgid "Invalid collection type. Must be \"alphabetical\" or \"indexed\"."
+msgstr "Tipo de colección no válido. Debe ser \"alphabetical\" o \"indexed\"."
+
+msgid "Collection type cannot be changed after creation."
+msgstr "El tipo de colección no se puede cambiar después de crearla."
+
+msgid "Score not found"
+msgstr "No se encontró la partitura"
+
+msgid "Cannot add score individually when its score book is already in the collection"
+msgstr "No se puede añadir la partitura individualmente cuando su libro de partituras ya está en la colección"
+
+msgid "Index is required for indexed folder collections"
+msgstr "El índice es obligatorio para las colecciones de carpetas indexadas"
+
+msgid "Index should not be provided for alphabetical folder collections"
+msgstr "No se debe indicar un índice para las colecciones de carpetas alfabéticas"
+
+#, php-format
+msgid "Index %d or score %d is already used in this folder collection"
+msgstr "El índice %d o la partitura %d ya se usa en esta colección de carpetas"
+
+#, php-format
+msgid "Failed to add score to folder collection: %1$s"
+msgstr "No se pudo añadir la partitura a la colección de carpetas: %1$s"
+
+msgid "Cannot remove score that is part of a score book in this collection. Remove the score book instead."
+msgstr "No se puede quitar una partitura que forma parte de un libro de partituras de esta colección. Quite el libro de partituras en su lugar."
+
+msgid "Score is not directly in this folder collection"
+msgstr "La partitura no está directamente en esta colección de carpetas"
+
+msgid "Failed to remove score from folder collection"
+msgstr "No se pudo quitar la partitura de la colección de carpetas"
+
+msgid "Score book not found"
+msgstr "No se encontró el libro de partituras"
+
+msgid "Cannot add score book when one of its scores is already in the collection"
+msgstr "No se puede añadir el libro de partituras cuando una de sus partituras ya está en la colección"
+
+#, php-format
+msgid "Index %d or score book %d is already used in this folder collection"
+msgstr "El índice %d o el libro de partituras %d ya se usa en esta colección de carpetas"
+
+#, php-format
+msgid "Failed to add score book to folder collection: %1$s"
+msgstr "No se pudo añadir el libro de partituras a la colección de carpetas: %1$s"
+
+#, php-format
+msgid "Failed to remove score book from folder collection: %1$s"
+msgstr "No se pudo quitar el libro de partituras de la colección de carpetas: %1$s"
+
+msgid "Version date range overlaps with an existing version"
+msgstr "El rango de fechas de la versión se solapa con una versión existente"
+
+msgid "An active version already exists. Deactivate it first by setting valid_to."
+msgstr "Ya existe una versión activa. Desactívela primero estableciendo valid_to."
+
+msgid "New version must start at least one day after the current version"
+msgstr "La nueva versión debe comenzar al menos un día después de la versión actual"
+
+msgid "Cannot delete score book with linked scores. Remove all scores first."
+msgstr "No se puede eliminar un libro de partituras con partituras vinculadas. Quite primero todas las partituras."
+
+msgid "Score is already part of a score book"
+msgstr "La partitura ya forma parte de un libro de partituras"
+
+#, php-format
+msgid "Index %d is already occupied in this score book"
+msgstr "El índice %d ya está ocupado en este libro de partituras"
+
+#, php-format
+msgid "Failed to add score to score book: %1$s"
+msgstr "No se pudo añadir la partitura al libro de partituras: %1$s"
+
+#, php-format
+msgid "Score %d not found"
+msgstr "No se encontró la partitura %d"
+
+#, php-format
+msgid "Score %d is already part of a score book"
+msgstr "La partitura %d ya forma parte de un libro de partituras"
+
+#, php-format
+msgid "Duplicate index %d in request"
+msgstr "Índice %d duplicado en la solicitud"
+
+#, php-format
+msgid "Failed to add scores to score book: %1$s"
+msgstr "No se pudieron añadir las partituras al libro de partituras: %1$s"
+
+#, php-format
+msgid "Failed to remove score from score book: %1$s"
+msgstr "No se pudo quitar la partitura del libro de partituras: %1$s"
+
+msgid "Index is required when adding score to a score book"
+msgstr "El índice es obligatorio al añadir una partitura a un libro de partituras"
+
+#, php-format
+msgid "Tag not found: %s"
+msgstr "No se encontró la etiqueta: %s"
+
+msgid "Cannot delete score because it is part of a folder collection"
+msgstr "No se puede eliminar la partitura porque forma parte de una colección de carpetas"
+
+msgid "Score is already part of another score book. Remove it first."
+msgstr "La partitura ya forma parte de otro libro de partituras. Quítela primero."
+
+msgid "Setlist entry not found"
+msgstr "No se encontró la entrada de la setlist"
+
+msgid "Each entry must have an id field"
+msgstr "Cada entrada debe tener un campo id"
+
+#, php-format
+msgid "Setlist entry with id %d not found"
+msgstr "No se encontró la entrada de la setlist con id %d"
+
+msgid "Invalid filter parameter. Must be \"all\", \"future\", or \"past\"."
+msgstr "Parámetro de filtro no válido. Debe ser \"all\", \"future\" o \"past\"."
+
+msgid "Setlist not found"
+msgstr "No se encontró la setlist"
+
+msgid "Either scoreId or breakDuration must be set"
+msgstr "Debe establecerse scoreId o breakDuration"
+
+msgid "Only one of scoreId or breakDuration can be set"
+msgstr "Solo se puede establecer scoreId o breakDuration, no ambos"
+
+msgid "An entry with this index already exists in the setlist"
+msgstr "Ya existe una entrada con este índice en la setlist"
+
+msgid "Orchestra Scores Manager"
+msgstr "Gestor de partituras de orquesta"
+
+msgid "Score must belong to the folder collection version specified in the setlist"
+msgstr "La partitura debe pertenecer a la versión de la colección de carpetas indicada en la setlist"
+
+msgid "Manage your orchestra's sheet music database directly within Nextcloud"
+msgstr "Gestione la base de datos de partituras de su orquesta directamente en Nextcloud"
+
+msgid ""
+"⚠️ Early development phase – expect rough edges and breaking changes.\n"
+"\n"
+"Orchestra Scores Manager lets you maintain a structured database of your orchestra's sheet music (scores) inside Nextcloud.\n"
+"\n"
+"Key features:\n"
+"- Manage individual scores with rich metadata (composer, arranger, publisher, year, difficulty, and more)\n"
+"- Organize scores into score books and folder collections\n"
+"- Track version history of folder collections\n"
+"- Build and manage setlists\n"
+"- Categorize scores with tags\n"
+"- Add comments to scores"
+msgstr ""
+"⚠️ Fase temprana de desarrollo: pueden aparecer fallos y cambios incompatibles.\n"
+"\n"
+"Orchestra Scores Manager le permite mantener una base de datos estructurada de las partituras de su orquesta dentro de Nextcloud.\n"
+"\n"
+"Funciones principales:\n"
+"- Gestionar partituras individuales con metadatos completos (compositor, arreglista, editorial, año, dificultad y más)\n"
+"- Organizar partituras en libros de partituras y colecciones de carpetas\n"
+"- Seguir el historial de versiones de las colecciones de carpetas\n"
+"- Crear y gestionar setlists\n"
+"- Clasificar partituras con etiquetas\n"
+"- Añadir comentarios a las partituras"
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "Create"
+msgstr "Crear"
+
+msgid "Settings updated successfully."
+msgstr "Ajustes actualizados correctamente."
+
+msgid "Failed to update settings."
+msgstr "No se pudieron actualizar los ajustes."
+
+msgid "Group Permissions"
+msgstr "Permisos de grupo"
+
+msgid "Select the groups that are allowed to edit the orchestra scores table."
+msgstr "Seleccione los grupos que pueden editar la tabla de partituras de la orquesta."
+
+msgid "Allowed Groups"
+msgstr "Grupos permitidos"
+
+msgid "Select groups…"
+msgstr "Seleccionar grupos…"
+
+msgid "Invalid default moderation time format. Use (HH:)MM:SS"
+msgstr "Formato no válido para el tiempo de presentación predeterminado. Use (HH:)MM:SS"
+
+msgid "Failed to save settings"
+msgstr "No se pudieron guardar los ajustes"
+
+msgid "Settings"
+msgstr "Ajustes"
+
+msgid "Setlists"
+msgstr "Setlists"
+
+msgid "Default Moderation Time (HH:MM:SS)"
+msgstr "Tiempo de presentación predeterminado (HH:MM:SS)"
+
+msgid "e.g., 0:30 or 1:30:00"
+msgstr "p. ej., 0:30 o 1:30:00"
+
+msgid "Default Folder Collection"
+msgstr "Colección de carpetas predeterminada"
+
+msgid "Select folder collection"
+msgstr "Seleccionar colección de carpetas"
+
+msgid "Saving …"
+msgstr "Guardando …"
+
+msgid "Save"
+msgstr "Guardar"
+
+msgid "Score book assignment updated"
+msgstr "Asignación al libro de partituras actualizada"
+
+msgid "Failed to update score book assignment: "
+msgstr "No se pudo actualizar la asignación al libro de partituras: "
+
+msgid "Assign to Score Book"
+msgstr "Asignar a un libro de partituras"
+
+msgid "Score Book"
+msgstr "Libro de partituras"
+
+msgid "Select a score book"
+msgstr "Seleccionar un libro de partituras"
+
+msgid "Index"
+msgstr "Índice"
+
+msgid "Enter index position"
+msgstr "Introduzca la posición del índice"
+
+msgid "This will remove the score from its current book."
+msgstr "Esto quitará la partitura de su libro actual."
+
+msgid "Clone"
+msgstr "Duplicar"
+
+msgid "Setlist cloned"
+msgstr "Setlist duplicada"
+
+msgid "Cloning setlist failed: "
+msgstr "Error al duplicar la setlist: "
+
+msgid "Clone setlist"
+msgstr "Duplicar setlist"
+
+msgid "Title"
+msgstr "Título"
+
+msgid "Confirm"
+msgstr "Confirmar"
+
+msgid "Loading…"
+msgstr "Cargando…"
+
+msgid "An error occurred"
+msgstr "Se ha producido un error"
+
+msgid "No content"
+msgstr "Sin contenido"
+
+msgid "This score is not part of any folder collection"
+msgstr "Esta partitura no forma parte de ninguna colección de carpetas"
+
+msgid "This score book is not part of any folder collection"
+msgstr "Este libro de partituras no forma parte de ninguna colección de carpetas"
+
+msgid "Failed to fetch folder collections. Please reload the page."
+msgstr "No se pudieron cargar las colecciones de carpetas. Vuelva a cargar la página."
+
+msgid "Not in any folder collection"
+msgstr "En ninguna colección de carpetas"
+
+msgid "Export failed: "
+msgstr "Error en la exportación: "
+
+msgid "Export CSV"
+msgstr "Exportar CSV"
+
+msgid "Main app navigation"
+msgstr "Navegación principal de la aplicación"
+
+msgid "No folder collections yet"
+msgstr "Todavía no hay colecciones de carpetas"
+
+msgid "Operation failed: "
+msgstr "Error en la operación: "
+
+msgid "Delete Score Book"
+msgstr "Eliminar libro de partituras"
+
+msgid "Delete Score"
+msgstr "Eliminar partitura"
+
+msgid "Are you sure you want to delete this score book? This action cannot be undone."
+msgstr "¿Seguro que desea eliminar este libro de partituras? Esta acción no se puede deshacer."
+
+msgid "Are you sure you want to delete this score? This action cannot be undone."
+msgstr "¿Seguro que desea eliminar esta partitura? Esta acción no se puede deshacer."
+
+msgid "Failed to delete score book: "
+msgstr "No se pudo eliminar el libro de partituras: "
+
+msgid "Failed to delete score: "
+msgstr "No se pudo eliminar la partitura: "
+
+msgid "Details"
+msgstr "Detalles"
+
+msgid "Delete"
+msgstr "Eliminar"
+
+msgid "Comments"
+msgstr "Comentarios"
+
+msgid "Folder Collections"
+msgstr "Colecciones de carpetas"
+
+msgid "Invalid duration format. Use (HH:)MM:SS"
+msgstr "Formato de duración no válido. Use (HH:)MM:SS"
+
+msgid "Book Index"
+msgstr "Índice en el libro"
+
+msgid "Remove score from book"
+msgstr "Quitar partitura del libro"
+
+msgid "Are you sure you want to remove this score from the book?"
+msgstr "¿Seguro que desea quitar esta partitura del libro?"
+
+msgid "Score removed from book"
+msgstr "Partitura quitada del libro"
+
+msgid "Failed to remove score from book: "
+msgstr "No se pudo quitar la partitura del libro: "
+
+msgid "Changes saved"
+msgstr "Cambios guardados"
+
+msgid "Saving changes failed: "
+msgstr "Error al guardar los cambios: "
+
+msgid "Remove from collection"
+msgstr "Quitar de la colección"
+
+msgid "Remove from book"
+msgstr "Quitar del libro"
+
+msgid "Included in folder collection via score book »{name}«"
+msgstr "Incluida en la colección de carpetas a través del libro de partituras »{name}«"
+
+msgid "Short Title"
+msgstr "Título corto"
+
+msgid "Composer"
+msgstr "Compositor"
+
+msgid "Arranger"
+msgstr "Arreglista"
+
+msgid "Publisher"
+msgstr "Editorial"
+
+msgid "Year"
+msgstr "Año"
+
+msgid "Difficulty"
+msgstr "Dificultad"
+
+msgid "Duration"
+msgstr "Duración"
+
+msgid "Medley Contents"
+msgstr "Contenido del popurrí"
+
+msgid "GEMA IDs"
+msgstr "ID de GEMA"
+
+msgid "Defects"
+msgstr "Defectos"
+
+msgid "Digital Status"
+msgstr "Estado digital"
+
+msgid "Physical Copies"
+msgstr "Copias físicas"
+
+msgid "Tags"
+msgstr "Etiquetas"
+
+msgid "Active"
+msgstr "Activa"
+
+msgid "History"
+msgstr "Historial"
+
+msgid "Remove score book from collection"
+msgstr "Quitar libro de partituras de la colección"
+
+msgid "This score is part of score book \"{title}\". Removing it will remove the entire score book and all {count} of its scores from the collection. Do you want to continue?"
+msgstr "Esta partitura forma parte del libro de partituras \"{title}\". Al quitarla se quitará de la colección el libro completo con sus {count} partituras. ¿Desea continuar?"
+
+msgid "Remove score from collection"
+msgstr "Quitar partitura de la colección"
+
+msgid "Are you sure you want to remove this score from the collection?"
+msgstr "¿Seguro que desea quitar esta partitura de la colección?"
+
+msgid "Failed to remove score from collection: "
+msgstr "No se pudo quitar la partitura de la colección: "
+
+msgid "Failed to remove score book from collection: "
+msgstr "No se pudo quitar el libro de partituras de la colección: "
+
+msgid "Failed to load folder collection"
+msgstr "No se pudo cargar la colección de carpetas"
+
+msgid "Please check if the folder collection exists and try again."
+msgstr "Compruebe que la colección de carpetas existe e inténtelo de nuevo."
+
+msgid "No entries in this collection"
+msgstr "No hay entradas en esta colección"
+
+msgid "Add scores or score books to this folder collection to see them here."
+msgstr "Añada partituras o libros de partituras a esta colección de carpetas para verlos aquí."
+
+msgid "You are viewing an inactive version. Scores and score books cannot be added or removed."
+msgstr "Está viendo una versión inactiva. No se pueden añadir ni quitar partituras ni libros de partituras."
+
+msgid "Select version"
+msgstr "Seleccionar versión"
+
+msgid "Score"
+msgstr "Partitura"
+
+msgid "Score added to collection"
+msgstr "Partitura añadida a la colección"
+
+msgid "Score book added to collection"
+msgstr "Libro de partituras añadido a la colección"
+
+msgid "Failed to add to collection: "
+msgstr "Error al añadir a la colección: "
+
+msgid "Add"
+msgstr "Añadir"
+
+msgid "Add to collection"
+msgstr "Añadir a la colección"
+
+msgid "Failed to load data. Please try again."
+msgstr "No se pudieron cargar los datos. Inténtelo de nuevo."
+
+msgid "Type"
+msgstr "Tipo"
+
+msgid "Select what to add"
+msgstr "Seleccione qué desea añadir"
+
+msgid "Select a score"
+msgstr "Seleccionar una partitura"
+
+msgid "Export ToC & Index"
+msgstr "Exportar índice y tabla de contenidos"
+
+msgid "Could not determine current version information"
+msgstr "No se pudo determinar la información de la versión actual"
+
+msgid "New version started successfully"
+msgstr "Nueva versión iniciada correctamente"
+
+msgid "Failed to start new version: "
+msgstr "No se pudo iniciar la nueva versión: "
+
+msgid "Start new version"
+msgstr "Iniciar nueva versión"
+
+msgid "New Version"
+msgstr "Nueva versión"
+
+msgid "This will create a new version starting on the selected date. The current active version will be marked as ended one day before. All scores and score books will be copied to the new version."
+msgstr "Se creará una nueva versión a partir de la fecha seleccionada. La versión activa actual se marcará como finalizada el día anterior. Todas las partituras y libros de partituras se copiarán a la nueva versión."
+
+msgid "Start date for new version"
+msgstr "Fecha de inicio de la nueva versión"
+
+msgid "Start Version"
+msgstr "Iniciar versión"
+
+msgid "Delete Folder Collection"
+msgstr "Eliminar colección de carpetas"
+
+msgid "Are you sure you want to delete this folder collection? This action cannot be undone."
+msgstr "¿Seguro que desea eliminar esta colección de carpetas? Esta acción no se puede deshacer."
+
+msgid "Failed to delete folder collection: "
+msgstr "No se pudo eliminar la colección de carpetas: "
+
+msgid "Create your first folder collection to organize your scores"
+msgstr "Cree su primera colección de carpetas para organizar sus partituras"
+
+msgid "Indexed"
+msgstr "Indexada"
+
+msgid "Alphabetical"
+msgstr "Alfabética"
+
+msgid "Delete folder collection"
+msgstr "Eliminar colección de carpetas"
+
+msgid "Please enter a name"
+msgstr "Introduzca un nombre"
+
+msgid "Please select a collection type"
+msgstr "Seleccione un tipo de colección"
+
+msgid "Folder collection created"
+msgstr "Colección de carpetas creada"
+
+msgid "Creating folder collection failed: "
+msgstr "Error al crear la colección de carpetas: "
+
+msgid "Create folder collection"
+msgstr "Crear colección de carpetas"
+
+msgid "Name"
+msgstr "Nombre"
+
+msgid "Enter a name"
+msgstr "Introduzca un nombre"
+
+msgid "Name is required"
+msgstr "El nombre es obligatorio"
+
+msgid "Description"
+msgstr "Descripción"
+
+msgid "Enter a description (optional)"
+msgstr "Introduzca una descripción (opcional)"
+
+msgid "Collection type"
+msgstr "Tipo de colección"
+
+msgid "Select collection type"
+msgstr "Seleccionar tipo de colección"
+
+msgid "Failed to load score book"
+msgstr "No se pudo cargar el libro de partituras"
+
+msgid "Please check if the score book exists and try again."
+msgstr "Compruebe que el libro de partituras existe e inténtelo de nuevo."
+
+msgid "No scores in this book"
+msgstr "No hay partituras en este libro"
+
+msgid "Add scores to this score book to see them here."
+msgstr "Añada partituras a este libro de partituras para verlas aquí."
+
+msgid "Score added to book"
+msgstr "Partitura añadida al libro"
+
+msgid "Failed to add score to book: "
+msgstr "No se pudo añadir la partitura al libro: "
+
+msgid "Add score to book"
+msgstr "Añadir partitura al libro"
+
+msgid "Failed to load scores. Please try again."
+msgstr "No se pudieron cargar las partituras. Inténtelo de nuevo."
+
+msgid "Score Books"
+msgstr "Libros de partituras"
+
+msgid "No score books yet"
+msgstr "Todavía no hay libros de partituras"
+
+msgid "Create your first score book to organize your scores"
+msgstr "Cree su primer libro de partituras para organizar sus partituras"
+
+msgid "Please enter a title"
+msgstr "Introduzca un título"
+
+msgid "Score book created"
+msgstr "Libro de partituras creado"
+
+msgid "Creating score book failed: "
+msgstr "Error al crear el libro de partituras: "
+
+msgid "Create score book"
+msgstr "Crear libro de partituras"
+
+msgid "Failed to load scores"
+msgstr "No se pudieron cargar las partituras"
+
+msgid "Show detailed list"
+msgstr "Mostrar lista detallada"
+
+msgid "Go to score book"
+msgstr "Ir al libro de partituras"
+
+msgid "Scores"
+msgstr "Partituras"
+
+msgid "Open"
+msgstr "Abrir"
+
+msgid "Editor"
+msgstr "Editor"
+
+msgid "No scores yet"
+msgstr "Todavía no hay partituras"
+
+msgid "Create your first score to get started"
+msgstr "Cree su primera partitura para empezar"
+
+msgid "Score created"
+msgstr "Partitura creada"
+
+msgid "Creating score failed: "
+msgstr "Error al crear la partitura: "
+
+msgid "Create score"
+msgstr "Crear partitura"
+
+msgid "Delete Comment"
+msgstr "Eliminar comentario"
+
+msgid "Are you sure you want to delete this comment? This action cannot be undone."
+msgstr "¿Seguro que desea eliminar este comentario? Esta acción no se puede deshacer."
+
+msgid "Failed to delete comment: "
+msgstr "No se pudo eliminar el comentario: "
+
+msgid "Unknown user"
+msgstr "Usuario desconocido"
+
+msgid "Delete comment"
+msgstr "Eliminar comentario"
+
+msgid "Unable to determine current user"
+msgstr "No se pudo determinar el usuario actual"
+
+msgid "Failed to submit comment: "
+msgstr "No se pudo enviar el comentario: "
+
+msgid "Failed to fetch comments. Please reload the page."
+msgstr "No se pudieron cargar los comentarios. Vuelva a cargar la página."
+
+msgid "No comments yet"
+msgstr "Todavía no hay comentarios"
+
+msgid "Write a new comment …"
+msgstr "Escribir un nuevo comentario …"
+
+msgid "GitHub flavored markdown is supported."
+msgstr "Se admite Markdown con formato de GitHub."
+
+msgid "Learn more"
+msgstr "Más información"
+
+msgid "Submit comment"
+msgstr "Enviar comentario"
+
+msgid "Scores in this book"
+msgstr "Partituras de este libro"
+
+msgid "Failed to load setlist"
+msgstr "No se pudo cargar la setlist"
+
+msgid "Break"
+msgstr "Pausa"
+
+msgid "Failed to load available scores"
+msgstr "No se pudieron cargar las partituras disponibles"
+
+msgid "Failed to add entry"
+msgstr "No se pudo añadir la entrada"
+
+msgid "Add Entry"
+msgstr "Añadir entrada"
+
+msgid "Add Setlist Entry"
+msgstr "Añadir entrada a la setlist"
+
+msgid "Entry Type"
+msgstr "Tipo de entrada"
+
+msgid "Select entry type"
+msgstr "Seleccionar tipo de entrada"
+
+msgid "Select score"
+msgstr "Seleccionar partitura"
+
+msgid "Break Duration (HH:MM:SS)"
+msgstr "Duración de la pausa (HH:MM:SS)"
+
+msgid "Export"
+msgstr "Exportar"
+
+msgid "PDF Export"
+msgstr "Exportación a PDF"
+
+msgid "GEMA Report"
+msgstr "Informe GEMA"
+
+msgid "Export PDF"
+msgstr "Exportar PDF"
+
+msgid "Select and reorder the columns to include in the PDF export."
+msgstr "Seleccione y ordene las columnas que se incluirán en la exportación a PDF."
+
+msgid "Delete Setlist Entry"
+msgstr "Eliminar entrada de la setlist"
+
+msgid "Are you sure you want to delete this setlist entry?"
+msgstr "¿Seguro que desea eliminar esta entrada de la setlist?"
+
+msgid "Failed to delete setlist entry: "
+msgstr "No se pudo eliminar la entrada de la setlist: "
+
+msgid "Failed to reorder entries: "
+msgstr "No se pudieron reordenar las entradas: "
+
+msgid "Start Time"
+msgstr "Hora de inicio"
+
+msgid "End Time"
+msgstr "Hora de fin"
+
+msgid "Moderation"
+msgstr "Presentación"
+
+msgid "Comment"
+msgstr "Comentario"
+
+msgid "Invalid duration format. Use (HH:)MM"
+msgstr "Formato de duración no válido. Use (HH:)MM"
+
+msgid "Failed to update setlist: "
+msgstr "No se pudo actualizar la setlist: "
+
+msgid "Start Date & Time"
+msgstr "Fecha y hora de inicio"
+
+msgid "Enter description"
+msgstr "Introduzca una descripción"
+
+msgid "Folder Collection"
+msgstr "Colección de carpetas"
+
+msgid "Duration (HH:MM)"
+msgstr "Duración (HH:MM)"
+
+msgid "e.g., 90 or 1:30"
+msgstr "p. ej., 90 o 1:30"
+
+msgid "Is Draft"
+msgstr "Es borrador"
+
+msgid "Is Published"
+msgstr "Está publicada"
+
+msgid "Saving…"
+msgstr "Guardando…"
+
+msgid "Saved"
+msgstr "Guardado"
+
+msgid "View Mode"
+msgstr "Modo de vista"
+
+msgid "Full View"
+msgstr "Vista completa"
+
+msgid "Compact View"
+msgstr "Vista compacta"
+
+msgid "Drafts"
+msgstr "Borradores"
+
+msgid "No drafts"
+msgstr "No hay borradores"
+
+msgid "Create your first setlist draft"
+msgstr "Cree su primer borrador de setlist"
+
+msgid "Future"
+msgstr "Próximas"
+
+msgid "No future setlists"
+msgstr "No hay próximas setlists"
+
+msgid "Schedule your next performances"
+msgstr "Planifique sus próximas actuaciones"
+
+msgid "Unscheduled"
+msgstr "Sin programar"
+
+msgid "No unscheduled setlists"
+msgstr "No hay setlists sin programar"
+
+msgid "Setlists without a start date will appear here"
+msgstr "Las setlists sin fecha de inicio aparecerán aquí"
+
+msgid "Past"
+msgstr "Pasadas"
+
+msgid "No past setlists"
+msgstr "No hay setlists pasadas"
+
+msgid "Past performances will appear here"
+msgstr "Las actuaciones pasadas aparecerán aquí"
+
+msgid "Setlist created"
+msgstr "Setlist creada"
+
+msgid "Creating setlist failed: "
+msgstr "Error al crear la setlist: "
+
+msgid "Create setlist"
+msgstr "Crear setlist"
+
+msgid "Optional description"
+msgstr "Descripción opcional"
+
+msgid "Start date and time"
+msgstr "Fecha y hora de inicio"
+
+msgid "Draft"
+msgstr "Borrador"
+
+msgid "Published"
+msgstr "Publicada"
+
+msgid "Setlist deleted"
+msgstr "Setlist eliminada"
+
+msgid "Deleting setlist failed: "
+msgstr "Error al eliminar la setlist: "
+
+msgid "Delete setlist"
+msgstr "Eliminar setlist"
+
+msgid "Are you sure you want to delete this setlist?"
+msgstr "¿Seguro que desea eliminar esta setlist?"
+
+msgid "Starting"
+msgstr "Desde"
+
+msgid "Present"
+msgstr "Actualidad"
+
+msgid "Index must be a non-negative integer"
+msgstr "El índice debe ser un número entero no negativo"
+
+msgid "This index is already occupied"
+msgstr "Este índice ya está ocupado"
+
+msgid "Loading occupied indices…"
+msgstr "Cargando índices ocupados…"
+
+msgid "Index is unchanged"
+msgstr "El índice no ha cambiado"
+
+msgid "Index is valid"
+msgstr "El índice es válido"
+
+msgid "Enter the position index in the collection"
+msgstr "Introduzca la posición del índice en la colección"
+
+msgid "Setlist"
+msgstr "Setlist"
+
+msgid "Value must not be empty"
+msgstr "El valor no puede estar vacío"
+
+msgid "Contents"
+msgstr "Contenido"
+
+msgid "h"
+msgstr "h"
+
+msgid "Info"
+msgstr "Información"
+
+msgid "Date"
+msgstr "Fecha"
+
+msgid "Playtime"
+msgstr "Tiempo de interpretación"
+
+msgid "Moderation & Breaks"
+msgstr "Presentaciones y pausas"
+
+msgid "Overall Duration"
+msgstr "Duración total"
+
+msgid "Invalid duration format"
+msgstr "Formato de duración no válido"
