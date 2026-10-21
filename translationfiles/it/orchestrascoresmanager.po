@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2026-10-12 07:36+0000\n"
+"POT-Creation-Date: 2026-10-21 23:53+0000\n"
 "PO-Revision-Date: 2026-10-21 20:30+0000\n"
 "Last-Translator: Claude Code\n"
 "Language-Team: none\n"
@@ -51,9 +51,8 @@ msgstr "L'indice non deve essere specificato per le raccolte di cartelle alfabet
 msgid "Index %d or score %d is already used in this folder collection"
 msgstr "L'indice %d o lo spartito %d è già utilizzato in questa raccolta di cartelle"
 
-#, php-format
-msgid "Failed to add score to folder collection: %1$s"
-msgstr "Impossibile aggiungere lo spartito alla raccolta di cartelle: %1$s"
+msgid "Failed to add score to folder collection"
+msgstr "Impossibile aggiungere lo spartito alla raccolta di cartelle"
 
 msgid "Cannot remove score that is part of a score book in this collection. Remove the score book instead."
 msgstr "Impossibile rimuovere uno spartito che fa parte di un libro di spartiti di questa raccolta. Rimuovi invece il libro di spartiti."
@@ -74,13 +73,11 @@ msgstr "Impossibile aggiungere il libro di spartiti quando uno dei suoi spartiti
 msgid "Index %d or score book %d is already used in this folder collection"
 msgstr "L'indice %d o il libro di spartiti %d è già utilizzato in questa raccolta di cartelle"
 
-#, php-format
-msgid "Failed to add score book to folder collection: %1$s"
-msgstr "Impossibile aggiungere il libro di spartiti alla raccolta di cartelle: %1$s"
+msgid "Failed to add score book to folder collection"
+msgstr "Impossibile aggiungere il libro di spartiti alla raccolta di cartelle"
 
-#, php-format
-msgid "Failed to remove score book from folder collection: %1$s"
-msgstr "Impossibile rimuovere il libro di spartiti dalla raccolta di cartelle: %1$s"
+msgid "Failed to remove score book from folder collection"
+msgstr "Impossibile rimuovere il libro di spartiti dalla raccolta di cartelle"
 
 msgid "Version date range overlaps with an existing version"
 msgstr "L'intervallo di date della versione si sovrappone a una versione esistente"
@@ -101,9 +98,8 @@ msgstr "Lo spartito fa già parte di un libro di spartiti"
 msgid "Index %d is already occupied in this score book"
 msgstr "L'indice %d è già occupato in questo libro di spartiti"
 
-#, php-format
-msgid "Failed to add score to score book: %1$s"
-msgstr "Impossibile aggiungere lo spartito al libro di spartiti: %1$s"
+msgid "Failed to add score to score book"
+msgstr "Impossibile aggiungere lo spartito al libro di spartiti"
 
 #, php-format
 msgid "Score %d not found"
@@ -117,13 +113,11 @@ msgstr "Lo spartito %d fa già parte di un libro di spartiti"
 msgid "Duplicate index %d in request"
 msgstr "Indice %d duplicato nella richiesta"
 
-#, php-format
-msgid "Failed to add scores to score book: %1$s"
-msgstr "Impossibile aggiungere gli spartiti al libro di spartiti: %1$s"
+msgid "Failed to add scores to score book"
+msgstr "Impossibile aggiungere gli spartiti al libro di spartiti"
 
-#, php-format
-msgid "Failed to remove score from score book: %1$s"
-msgstr "Impossibile rimuovere lo spartito dal libro di spartiti: %1$s"
+msgid "Failed to remove score from score book"
+msgstr "Impossibile rimuovere lo spartito dal libro di spartiti"
 
 msgid "Index is required when adding score to a score book"
 msgstr "L'indice è obbligatorio quando si aggiunge uno spartito a un libro di spartiti"
@@ -680,9 +674,6 @@ msgstr "Utente sconosciuto"
 msgid "Delete comment"
 msgstr "Elimina commento"
 
-msgid "Unable to determine current user"
-msgstr "Impossibile determinare l'utente attuale"
-
 msgid "Failed to submit comment: "
 msgstr "Impossibile inviare il commento: "
 
@@ -941,20 +932,80 @@ msgstr "Durata complessiva"
 msgid "Invalid duration format"
 msgstr "Formato della durata non valido"
 
-msgid "Dormant"
-msgstr "In pausa"
+#, php-format
+msgid "Failed to add score to folder collection: %1$s"
+msgstr "Impossibile aggiungere lo spartito alla raccolta di cartelle: %1$s"
 
-msgid "Archived"
-msgstr "Archiviata"
+#, php-format
+msgid "Failed to add score book to folder collection: %1$s"
+msgstr "Impossibile aggiungere il libro di spartiti alla raccolta di cartelle: %1$s"
 
-msgid "Signature"
-msgstr "Segnatura"
+#, php-format
+msgid "Failed to remove score book from folder collection: %1$s"
+msgstr "Impossibile rimuovere il libro di spartiti dalla raccolta di cartelle: %1$s"
+
+#, php-format
+msgid "Failed to add score to score book: %1$s"
+msgstr "Impossibile aggiungere lo spartito al libro di spartiti: %1$s"
+
+#, php-format
+msgid "Failed to add scores to score book: %1$s"
+msgstr "Impossibile aggiungere gli spartiti al libro di spartiti: %1$s"
+
+#, php-format
+msgid "Failed to remove score from score book: %1$s"
+msgstr "Impossibile rimuovere lo spartito dal libro di spartiti: %1$s"
+
+msgid "The dormant threshold must not be smaller than the current threshold."
+msgstr "La soglia per «in pausa» non può essere inferiore a quella per «attuale»."
 
 msgid "Repertoire"
 msgstr "Repertorio"
 
+msgid "A score counts as current or dormant repertoire if it was performed within the given number of years. Performances are taken from setlists that are not drafts."
+msgstr "Uno spartito fa parte del repertorio attuale o in pausa se è stato eseguito entro il numero di anni indicato. Le esecuzioni vengono ricavate dalle setlist che non sono bozze."
+
+msgid "Current repertoire (years)"
+msgstr "Repertorio attuale (anni)"
+
+msgid "Dormant repertoire (years)"
+msgstr "Repertorio in pausa (anni)"
+
+msgid "Unable to determine current user"
+msgstr "Impossibile determinare l'utente attuale"
+
+msgid "Retired"
+msgstr "Dismessa"
+
+msgid "Missing"
+msgstr "Mancante"
+
+msgid "Lent"
+msgstr "In prestito"
+
+msgid "Current"
+msgstr "Attuale"
+
+msgid "Dormant"
+msgstr "In pausa"
+
+msgid "Former"
+msgstr "Passato"
+
+msgid "Not performed"
+msgstr "Mai eseguito"
+
+msgid "Signature"
+msgstr "Segnatura"
+
+msgid "Derived from the performances in setlists"
+msgstr "Calcolato dalle esecuzioni nelle setlist"
+
 msgid "Last performed"
 msgstr "Ultima esecuzione"
+
+msgid "Inventory"
+msgstr "Inventario"
 
 msgid "Lyricist"
 msgstr "Paroliere"
@@ -984,6 +1035,9 @@ msgstr "Il file caricato è troppo grande (massimo %d MB)"
 msgid "The uploaded file could not be read"
 msgstr "Impossibile leggere il file caricato"
 
+msgid "This score is an internal preservation copy"
+msgstr "Questo spartito è una copia interna di conservazione"
+
 msgid "No MusicXML file available for this score"
 msgstr "Nessun file MusicXML disponibile per questo spartito"
 
@@ -999,14 +1053,17 @@ msgstr "Il file caricato non è un file MusicXML compresso valido"
 msgid "The uploaded file is too large when uncompressed"
 msgstr "Il file caricato è troppo grande una volta decompresso"
 
-msgid "Invalid rights status. Must be \"free\", \"unclear\" or \"restricted\"."
-msgstr "Stato dei diritti non valido. Deve essere \"free\", \"unclear\" o \"restricted\"."
+msgid "Invalid rights status. Must be \"public_domain\", \"licensed\", \"protected\" or \"open\"."
+msgstr "Stato dei diritti non valido. Deve essere \"public_domain\", \"licensed\", \"protected\" o \"open\"."
+
+msgid "Invalid publication status. Must be \"free\", \"to_clarify\", \"blocked\" or \"internal_copy\"."
+msgstr "Stato di pubblicazione non valido. Deve essere \"free\", \"to_clarify\", \"blocked\" o \"internal_copy\"."
 
 msgid "Public page"
 msgstr "Pagina pubblica"
 
-msgid "Show all scores marked as free (public domain) on a page that can be opened without logging in. Visitors can view and play the MusicXML files of these scores. No other scores or internal details are shown."
-msgstr "Mostra tutti gli spartiti contrassegnati come liberi (pubblico dominio) in una pagina accessibile senza effettuare l'accesso. I visitatori possono visualizzare e riprodurre i file MusicXML di questi spartiti. Non vengono mostrati altri spartiti né dettagli interni."
+msgid "Show all scores that are released for publication and whose rights allow it (public domain or licensed) on a page that can be opened without logging in. Visitors can view and play the MusicXML files of these scores. No other scores or internal details are shown."
+msgstr "Mostra tutti gli spartiti approvati per la pubblicazione e i cui diritti lo consentono (pubblico dominio o con licenza) in una pagina accessibile senza effettuare l'accesso. I visitatori possono visualizzare e riprodurre i file MusicXML di questi spartiti. Non vengono mostrati altri spartiti né dettagli interni."
 
 msgid "Enable public page"
 msgstr "Attiva la pagina pubblica"
@@ -1053,11 +1110,17 @@ msgstr "Caricamento dello spartito…"
 msgid "Notes & Playback"
 msgstr "Spartito e riproduzione"
 
+msgid "Rights"
+msgstr "Diritti"
+
 msgid "Publication"
 msgstr "Pubblicazione"
 
-msgid "Publication Note"
-msgstr "Nota sulla pubblicazione"
+msgid "Blocked until"
+msgstr "Bloccato fino al"
+
+msgid "Rights Note"
+msgstr "Nota sui diritti"
 
 msgid "MusicXML"
 msgstr "MusicXML"
@@ -1095,8 +1158,14 @@ msgstr "Carica MusicXML"
 msgid "Remove file"
 msgstr "Rimuovi file"
 
-msgid "This score is marked as free, so it is shown on the public page if that page is enabled."
-msgstr "Questo spartito è contrassegnato come libero, quindi viene mostrato nella pagina pubblica se questa è attiva."
+msgid "This score is released for publication and its rights allow it, so it is shown on the public page if that page is enabled."
+msgstr "Questo spartito è approvato per la pubblicazione e i suoi diritti lo consentono, quindi viene mostrato nella pagina pubblica se questa è attiva."
+
+msgid "This score is an internal preservation copy. Only editors can view and play it."
+msgstr "Questo spartito è una copia interna di conservazione. Solo i redattori possono visualizzarlo e riprodurlo."
+
+msgid "This score is an internal preservation copy. It can only be viewed by the music librarians."
+msgstr "Questo spartito è una copia interna di conservazione. Può essere visualizzato solo dagli archivisti musicali."
 
 msgid "arr. {arranger}"
 msgstr "arr. {arranger}"
@@ -1104,8 +1173,8 @@ msgstr "arr. {arranger}"
 msgid "Freely available scores"
 msgstr "Spartiti liberamente disponibili"
 
-msgid "These scores are in the public domain. Select a score to view the notes and listen to the individual voices."
-msgstr "Questi spartiti sono di pubblico dominio. Seleziona uno spartito per vedere le note e ascoltare le singole voci."
+msgid "These scores are in the public domain or licensed for publication. Select a score to view the notes and listen to the individual voices."
+msgstr "Questi spartiti sono di pubblico dominio o concessi in licenza per la pubblicazione. Seleziona uno spartito per vedere le note e ascoltare le singole voci."
 
 msgid "Search by title or composer"
 msgstr "Cerca per titolo o compositore"
@@ -1134,11 +1203,211 @@ msgstr "Voce {number}"
 msgid "The score could not be displayed"
 msgstr "Impossibile visualizzare lo spartito"
 
-msgid "Free (public domain)"
-msgstr "Libero (pubblico dominio)"
+msgid "Public domain"
+msgstr "Pubblico dominio"
 
-msgid "Unclear"
+msgid "Licensed"
+msgstr "Con licenza"
+
+msgid "Protected"
+msgstr "Protetto"
+
+msgid "Undetermined"
+msgstr "Da determinare"
+
+msgid "Free"
+msgstr "Libero"
+
+msgid "To clarify"
 msgstr "Da chiarire"
 
-msgid "Restricted"
-msgstr "Limitato"
+msgid "Blocked"
+msgstr "Bloccato"
+
+msgid "Internal preservation copy"
+msgstr "Copia interna di conservazione"
+
+msgid "Only PDF files are allowed"
+msgstr "Sono consentiti solo file PDF"
+
+msgid "The uploaded file is not a valid PDF file"
+msgstr "Il file caricato non è un file PDF valido"
+
+msgid "No PDF file available for this score"
+msgstr "Nessun file PDF disponibile per questo spartito"
+
+msgid "Invalid share type"
+msgstr "Tipo di condivisione non valido"
+
+msgid "Group not found"
+msgstr "Gruppo non trovato"
+
+msgid "Already shared with this group"
+msgstr "Già condiviso con questo gruppo"
+
+msgid "Share not found"
+msgstr "Condivisione non trovata"
+
+msgid "Invalid share target"
+msgstr "Destinazione di condivisione non valida"
+
+msgid "Zoom out"
+msgstr "Riduci"
+
+msgid "Zoom in"
+msgstr "Ingrandisci"
+
+msgid "Loading PDF…"
+msgstr "Caricamento del PDF…"
+
+msgid "The PDF could not be displayed"
+msgstr "Impossibile visualizzare il PDF"
+
+msgid "%n page"
+msgid_plural "%n pages"
+msgstr[0] "%n pagina"
+msgstr[1] "%n pagine"
+
+msgid "PDF"
+msgstr "PDF"
+
+msgid "Shares"
+msgstr "Condivisioni"
+
+msgid "Share {title}"
+msgstr "Condividi {title}"
+
+msgid "Failed to load shares: "
+msgstr "Impossibile caricare le condivisioni: "
+
+msgid "Failed to share: "
+msgstr "Condivisione non riuscita: "
+
+msgid "Failed to remove share: "
+msgstr "Impossibile rimuovere la condivisione: "
+
+msgid "Link copied to the clipboard"
+msgstr "Link copiato negli appunti"
+
+msgid "Public links work without login and only show scores that are released for publication and whose rights allow it. Group shares show all scores, including PDFs, to the members of the group, except the files of internal preservation copies. Files cannot be downloaded from shares."
+msgstr "I link pubblici funzionano senza accesso e mostrano solo gli spartiti approvati per la pubblicazione e i cui diritti lo consentono. Le condivisioni di gruppo mostrano ai membri del gruppo tutti gli spartiti, PDF compresi, tranne i file delle copie interne di conservazione. Dalle condivisioni non è possibile scaricare file."
+
+msgid "Public link"
+msgstr "Link pubblico"
+
+msgid "Copy link"
+msgstr "Copia link"
+
+msgid "Open link"
+msgstr "Apri link"
+
+msgid "Remove share"
+msgstr "Rimuovi condivisione"
+
+msgid "Not shared yet"
+msgstr "Non ancora condiviso"
+
+msgid "Title shown on the share (optional)"
+msgstr "Titolo mostrato nella condivisione (facoltativo)"
+
+msgid "Share with group"
+msgstr "Condividi con un gruppo"
+
+msgid "Select group"
+msgstr "Seleziona gruppo"
+
+msgid "Share"
+msgstr "Condividi"
+
+msgid "Create public link"
+msgstr "Crea link pubblico"
+
+msgid "No scores shared"
+msgstr "Nessuno spartito condiviso"
+
+msgid "No PDF file uploaded yet."
+msgstr "Nessun file PDF ancora caricato."
+
+msgid "Upload PDF"
+msgstr "Carica PDF"
+
+msgid "File uploaded"
+msgstr "File caricato"
+
+msgid "File removed"
+msgstr "File rimosso"
+
+msgid "Shared with me"
+msgstr "Condiviso con me"
+
+msgid "Failed to load shared items"
+msgstr "Impossibile caricare gli elementi condivisi"
+
+msgid "Please try again later."
+msgstr "Riprova più tardi."
+
+msgid "Nothing shared with you yet"
+msgstr "Ancora nulla condiviso con te"
+
+msgid "Scores and folder collections shared with one of your groups appear here."
+msgstr "Qui compaiono gli spartiti e le raccolte di cartelle condivisi con uno dei tuoi gruppi."
+
+msgid "Manage shares"
+msgstr "Gestisci condivisioni"
+
+msgid "What do you want to share?"
+msgstr "Cosa vuoi condividere?"
+
+msgid "Folder collection"
+msgstr "Raccolta di cartelle"
+
+msgid "All shares"
+msgstr "Tutte le condivisioni"
+
+msgid "Nothing has been shared yet"
+msgstr "Ancora nulla è stato condiviso"
+
+msgid "Deleted item"
+msgstr "Elemento eliminato"
+
+msgid "Public link (only published scores)"
+msgstr "Link pubblico (solo spartiti pubblicati)"
+
+msgid "Group: {group}"
+msgstr "Gruppo: {group}"
+
+msgid "Edit shares of this item"
+msgstr "Modifica le condivisioni di questo elemento"
+
+msgid "Only scores released for publication are shown. Select a score to view the notes and listen to the individual voices."
+msgstr "Vengono mostrati solo gli spartiti approvati per la pubblicazione. Seleziona uno spartito per vedere le note e ascoltare le singole voci."
+
+msgid "No published scores in this share"
+msgstr "Nessuno spartito pubblicato in questa condivisione"
+
+#~ msgid "Archived"
+#~ msgstr "Archiviata"
+
+#~ msgid "Invalid rights status. Must be \"free\", \"unclear\" or \"restricted\"."
+#~ msgstr "Stato dei diritti non valido. Deve essere \"free\", \"unclear\" o \"restricted\"."
+
+#~ msgid "Show all scores marked as free (public domain) on a page that can be opened without logging in. Visitors can view and play the MusicXML files of these scores. No other scores or internal details are shown."
+#~ msgstr "Mostra tutti gli spartiti contrassegnati come liberi (pubblico dominio) in una pagina accessibile senza effettuare l'accesso. I visitatori possono visualizzare e riprodurre i file MusicXML di questi spartiti. Non vengono mostrati altri spartiti né dettagli interni."
+
+#~ msgid "Publication Note"
+#~ msgstr "Nota sulla pubblicazione"
+
+#~ msgid "This score is marked as free, so it is shown on the public page if that page is enabled."
+#~ msgstr "Questo spartito è contrassegnato come libero, quindi viene mostrato nella pagina pubblica se questa è attiva."
+
+#~ msgid "These scores are in the public domain. Select a score to view the notes and listen to the individual voices."
+#~ msgstr "Questi spartiti sono di pubblico dominio. Seleziona uno spartito per vedere le note e ascoltare le singole voci."
+
+#~ msgid "Free (public domain)"
+#~ msgstr "Libero (pubblico dominio)"
+
+#~ msgid "Unclear"
+#~ msgstr "Da chiarire"
+
+#~ msgid "Restricted"
+#~ msgstr "Limitato"
