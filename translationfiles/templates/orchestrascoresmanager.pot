@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2026-10-21 23:37+0000\n"
+"POT-Creation-Date: 2026-10-21 23:42+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -62,8 +62,7 @@ msgstr ""
 msgid "Index %d or score %d is already used in this folder collection"
 msgstr ""
 
-#, php-format
-msgid "Failed to add score to folder collection: %1$s"
+msgid "Failed to add score to folder collection"
 msgstr ""
 
 msgid ""
@@ -88,12 +87,10 @@ msgstr ""
 msgid "Index %d or score book %d is already used in this folder collection"
 msgstr ""
 
-#, php-format
-msgid "Failed to add score book to folder collection: %1$s"
+msgid "Failed to add score book to folder collection"
 msgstr ""
 
-#, php-format
-msgid "Failed to remove score book from folder collection: %1$s"
+msgid "Failed to remove score book from folder collection"
 msgstr ""
 
 msgid "Version date range overlaps with an existing version"
@@ -147,8 +144,7 @@ msgstr ""
 msgid "Index %d is already occupied in this score book"
 msgstr ""
 
-#, php-format
-msgid "Failed to add score to score book: %1$s"
+msgid "Failed to add score to score book"
 msgstr ""
 
 #, php-format
@@ -163,12 +159,10 @@ msgstr ""
 msgid "Duplicate index %d in request"
 msgstr ""
 
-#, php-format
-msgid "Failed to add scores to score book: %1$s"
+msgid "Failed to add scores to score book"
 msgstr ""
 
-#, php-format
-msgid "Failed to remove score from score book: %1$s"
+msgid "Failed to remove score from score book"
 msgstr ""
 
 msgid "Index is required when adding score to a score book"
@@ -810,9 +804,6 @@ msgid "Unknown user"
 msgstr ""
 
 msgid "Delete comment"
-msgstr ""
-
-msgid "Unable to determine current user"
 msgstr ""
 
 msgid "Failed to submit comment: "

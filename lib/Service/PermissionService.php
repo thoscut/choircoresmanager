@@ -25,6 +25,16 @@ class PermissionService {
 	}
 
 	/**
+	 * Check if a user is logged in.
+	 * Read access to the app's data requires an authenticated user.
+	 *
+	 * @return bool True if a user is logged in
+	 */
+	public function isCurrentUserLoggedIn(): bool {
+		return $this->userSession->getUser() !== null;
+	}
+
+	/**
 	 * Check if the current user is allowed to edit the table
 	 *
 	 * @return bool True if the current user can edit

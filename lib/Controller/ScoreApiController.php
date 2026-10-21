@@ -22,6 +22,7 @@ use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCS\OCSBadRequestException;
 use OCP\AppFramework\OCS\OCSForbiddenException;
+use OCP\AppFramework\OCS\OCSNotFoundException;
 use OCP\AppFramework\OCSController;
 use OCP\DB\Exception;
 use OCP\IRequest;
@@ -184,7 +185,8 @@ class ScoreApiController extends OCSController {
 	 *
 	 * @return DataResponse<Http::STATUS_OK, OrchestraScoresManagerScore, array{}> the updated score
 	 *
-	 * @throws OCSBadRequestException If the score is not found
+	 * @throws OCSBadRequestException If the input is invalid
+	 * @throws OCSNotFoundException If the score is not found
 	 * @throws Exception
 	 * @throws \Throwable If adding/removing tags fails
 	 *
@@ -220,17 +222,6 @@ class ScoreApiController extends OCSController {
 		$score = $this->callService(fn () => $this->scoreService->getScoreById($id));
 		$params = $this->request->getParams();
 
-		// drop NC-added "_route" param if exists
-		unset($params['_route']);
-		// the MusicXML file is managed via its own endpoints
-		unset($params['musicxmlFile']);
-		// the rights and publication status are not nullable, let the service reject a null value
-		foreach (['rightsStatus', 'publicationStatus'] as $statusField) {
-			if (array_key_exists($statusField, $params) && $params[$statusField] === null) {
-				$params[$statusField] = '';
-			}
-		}
-
 		// Handle score book info separately
 		$scoreBookInfo = null;
 		$hasScoreBook = array_key_exists('scoreBook', $params);
@@ -252,17 +243,38 @@ class ScoreApiController extends OCSController {
 			}
 		}
 
-		// Remove score book param from regular field updates
-		unset($params['scoreBook']);
-		/** @var string $field
-		 * @psalm-suppress MixedAssignment
-		 * @psalm-suppress MixedArgumentTypeCoercion
-		 */
-		$this->callService(function () use ($params, $score): void {
-			foreach ($params as $field => $value) {
-				if ($field === 'tagIds') {
+		if (array_key_exists('title', $params) && ($title === null || trim($title) === '')) {
+			throw new OCSBadRequestException('Title cannot be empty');
+		}
+
+		// Only these fields may be changed. Values come from the typed method arguments,
+		// presence in the request decides whether a field is updated (so fields can be set to null).
+		$updatableFields = [
+			'title' => $title,
+			'titleShort' => $titleShort,
+			'composer' => $composer,
+			'arranger' => $arranger,
+			'publisher' => $publisher,
+			'year' => $year,
+			'difficulty' => $difficulty,
+			'medleyContents' => $medleyContents,
+			'defects' => $defects,
+			'physicalCopiesStatus' => $physicalCopiesStatus,
+			'digitalStatus' => $digitalStatus,
+			'gemaIds' => $gemaIds,
+			'duration' => $duration,
+			// the rights and publication status are not nullable, let the service reject a null value
+			'rightsStatus' => $rightsStatus ?? '',
+			'publicationStatus' => $publicationStatus ?? '',
+			'publicationBlockedUntil' => $publicationBlockedUntil,
+			'rightsNote' => $rightsNote,
+		];
+		$this->callService(function () use ($updatableFields, $params, $score): void {
+			/** @psalm-suppress MixedAssignment */
+			foreach ($updatableFields as $field => $value) {
+				if (!array_key_exists($field, $params)) {
 					continue;
-				} // handled separately in service
+				}
 				$score->{'set' . ucfirst($field)}($value);
 			}
 		});
@@ -315,8 +327,6 @@ class ScoreApiController extends OCSController {
 	 *
 	 * @param int $id The ID of the score
 	 * @param string $content The content of the comment
-	 * @param string $userId The user ID of the commenter
-	 * @param int $creationDate The creation date timestamp
 	 *
 	 * @return DataResponse<Http::STATUS_CREATED, OrchestraScoresManagerComment, array{}> the created comment
 	 *
@@ -328,11 +338,10 @@ class ScoreApiController extends OCSController {
 	 */
 	#[NoAdminRequired]
 	#[ApiRoute(verb: 'POST', url: '/scores/{id}/comments')]
-	public function postScoreComment(int $id, string $content, string $userId, int $creationDate): DataResponse {
+	public function postScoreComment(int $id, string $content): DataResponse {
+		// author and creation date are set by the service from the session
 		$comment = Comment::fromParams([
 			'content' => $content,
-			'userId' => $userId,
-			'creationDate' => $creationDate,
 			'scoreId' => $id,
 		]);
 
@@ -350,6 +359,8 @@ class ScoreApiController extends OCSController {
 	 * 200: Successful response with the list of folder collections
 	 * 400: Bad request
 	 * 403: Forbidden
+	 * 404: Score not found
+	 * @throws OCSNotFoundException if the score does not exist
 	 * @throws OCSBadRequestException if the request is invalid
 	 * @throws OCSForbiddenException if the user does not have permission
 	 */

@@ -17,6 +17,7 @@ use OCA\OrchestraScoresManager\Service\SetlistService;
 use OCA\OrchestraScoresManager\Service\UserSettingsService;
 use OCA\OrchestraScoresManager\Utility\SetlistValidationHelper;
 use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\IUser;
 use OCP\IUserSession;
@@ -62,7 +63,8 @@ final class SetlistServiceTest extends TestCase {
 			$this->userSettingsService,
 			$this->folderCollectionService,
 			$this->userSession,
-			$this->l10n
+			$this->l10n,
+			$this->createMock(IDBConnection::class)
 		);
 	}
 

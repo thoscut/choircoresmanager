@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Unit tests for SetlistPolicy.
  *
- * Published setlists are readable by all users.
+ * Published setlists are readable by all logged-in users.
  * Drafts and other operations require edit permissions.
  */
 final class SetlistPolicyTest extends TestCase {
@@ -25,6 +25,7 @@ final class SetlistPolicyTest extends TestCase {
 		parent::setUp();
 
 		$this->permissionService = $this->createMock(PermissionService::class);
+		$this->permissionService->method('isCurrentUserLoggedIn')->willReturn(true);
 		$this->policy = new SetlistPolicy($this->permissionService);
 	}
 
@@ -86,5 +87,15 @@ final class SetlistPolicyTest extends TestCase {
 			// Unknown action - always denied
 			'Unknown action is always denied' => ['UNKNOWN_ACTION', null, null, false],
 		];
+	}
+
+	public function testReadDeniedForAnonymousUser(): void {
+		$permissionService = $this->createMock(PermissionService::class);
+		$permissionService->method('isCurrentUserLoggedIn')->willReturn(false);
+		$setlist = new Setlist();
+		$setlist->setIsPublished(true);
+		$policy = new SetlistPolicy($permissionService);
+
+		$this->assertFalse($policy->allows(PolicyInterface::ACTION_READ, $setlist));
 	}
 }

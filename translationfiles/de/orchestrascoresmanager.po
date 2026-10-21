@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2026-10-21 23:37+0000\n"
+"POT-Creation-Date: 2026-10-21 23:42+0000\n"
 "PO-Revision-Date: 2025-11-28 22:37+0000\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -60,9 +60,8 @@ msgstr "Index sollte für alphabetische Ordnersammlungen nicht angegeben werden"
 msgid "Index %d or score %d is already used in this folder collection"
 msgstr "Index %d oder Partitur %d wird bereits in dieser Ordnersammlung verwendet"
 
-#, php-format
-msgid "Failed to add score to folder collection: %1$s"
-msgstr "Partitur konnte nicht zur Ordnersammlung hinzugefügt werden: %1$s"
+msgid "Failed to add score to folder collection"
+msgstr "Partitur konnte nicht zur Ordnersammlung hinzugefügt werden"
 
 msgid "Cannot remove score that is part of a score book in this collection. Remove the score book instead."
 msgstr "Partitur, die Teil eines Notenbuchs in dieser Sammlung ist, kann nicht entfernt werden. Entfernen Sie stattdessen das Notenbuch."
@@ -83,13 +82,11 @@ msgstr "Notenbuch kann nicht hinzugefügt werden, wenn eine seiner Partituren be
 msgid "Index %d or score book %d is already used in this folder collection"
 msgstr "Index %d oder Notenbuch %d wird bereits in dieser Ordnersammlung verwendet"
 
-#, php-format
-msgid "Failed to add score book to folder collection: %1$s"
-msgstr "Notenbuch konnte nicht zur Ordnersammlung hinzugefügt werden: %1$s"
+msgid "Failed to add score book to folder collection"
+msgstr "Notenbuch konnte nicht zur Ordnersammlung hinzugefügt werden"
 
-#, php-format
-msgid "Failed to remove score book from folder collection: %1$s"
-msgstr "Notenbuch konnte nicht aus der Ordnersammlung entfernt werden: %1$s"
+msgid "Failed to remove score book from folder collection"
+msgstr "Notenbuch konnte nicht aus der Ordnersammlung entfernt werden"
 
 msgid "Version date range overlaps with an existing version"
 msgstr "Versionsdatumsbereich überschneidet sich mit einer bestehenden Version"
@@ -141,9 +138,8 @@ msgstr "Partitur ist bereits Teil eines Notenbuchs"
 msgid "Index %d is already occupied in this score book"
 msgstr "Index %d ist in diesem Notenbuch bereits belegt"
 
-#, php-format
-msgid "Failed to add score to score book: %1$s"
-msgstr "Partitur konnte nicht zum Notenbuch hinzugefügt werden: %1$s"
+msgid "Failed to add score to score book"
+msgstr "Partitur konnte nicht zum Notenbuch hinzugefügt werden"
 
 #, php-format
 msgid "Score %d not found"
@@ -157,13 +153,11 @@ msgstr "Partitur %d ist bereits Teil eines Notenbuchs"
 msgid "Duplicate index %d in request"
 msgstr "Doppelter Index %d in der Anfrage"
 
-#, php-format
-msgid "Failed to add scores to score book: %1$s"
-msgstr "Partituren konnten nicht zum Notenbuch hinzugefügt werden: %1$s"
+msgid "Failed to add scores to score book"
+msgstr "Partituren konnten nicht zum Notenbuch hinzugefügt werden"
 
-#, php-format
-msgid "Failed to remove score from score book: %1$s"
-msgstr "Partitur konnte nicht aus dem Notenbuch entfernt werden: %1$s"
+msgid "Failed to remove score from score book"
+msgstr "Partitur konnte nicht aus dem Notenbuch entfernt werden"
 
 msgid "Index is required when adding score to a score book"
 msgstr "Index ist erforderlich, wenn eine Partitur zu einem Notenbuch hinzugefügt wird"
@@ -792,9 +786,6 @@ msgstr "Unbekannter Benutzer"
 msgid "Delete comment"
 msgstr "Kommentar löschen"
 
-msgid "Unable to determine current user"
-msgstr "Aktueller Benutzer konnte nicht ermittelt werden"
-
 msgid "Failed to submit comment: "
 msgstr "Kommentar konnte nicht gesendet werden: "
 
@@ -1154,6 +1145,33 @@ msgstr "Interne Erhaltungskopie"
 
 msgid "Invalid duration format"
 msgstr "Ungültiges Spieldauerformat"
+
+#, php-format
+#~ msgid "Failed to add score to folder collection: %1$s"
+#~ msgstr "Partitur konnte nicht zur Ordnersammlung hinzugefügt werden: %1$s"
+
+#, php-format
+#~ msgid "Failed to add score book to folder collection: %1$s"
+#~ msgstr "Notenbuch konnte nicht zur Ordnersammlung hinzugefügt werden: %1$s"
+
+#, php-format
+#~ msgid "Failed to remove score book from folder collection: %1$s"
+#~ msgstr "Notenbuch konnte nicht aus der Ordnersammlung entfernt werden: %1$s"
+
+#, php-format
+#~ msgid "Failed to add score to score book: %1$s"
+#~ msgstr "Partitur konnte nicht zum Notenbuch hinzugefügt werden: %1$s"
+
+#, php-format
+#~ msgid "Failed to add scores to score book: %1$s"
+#~ msgstr "Partituren konnten nicht zum Notenbuch hinzugefügt werden: %1$s"
+
+#, php-format
+#~ msgid "Failed to remove score from score book: %1$s"
+#~ msgstr "Partitur konnte nicht aus dem Notenbuch entfernt werden: %1$s"
+
+#~ msgid "Unable to determine current user"
+#~ msgstr "Aktueller Benutzer konnte nicht ermittelt werden"
 
 #~ msgid "Select groups..."
 #~ msgstr "Gruppen auswählen..."

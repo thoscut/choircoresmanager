@@ -21,6 +21,7 @@ final class ScoreBookPolicyTest extends TestCase {
 		parent::setUp();
 
 		$this->permissionService = $this->createMock(PermissionService::class);
+		$this->permissionService->method('isCurrentUserLoggedIn')->willReturn(true);
 		$this->policy = new ScoreBookPolicy($this->permissionService);
 	}
 
@@ -49,7 +50,7 @@ final class ScoreBookPolicyTest extends TestCase {
 
 	public static function allowsProvider(): array {
 		return [
-			'READ action is always allowed' => [PolicyInterface::ACTION_READ, null, true],
+			'READ action allowed for logged-in user' => [PolicyInterface::ACTION_READ, null, true],
 			'CREATE action allowed when user can edit' => [PolicyInterface::ACTION_CREATE, true, true],
 			'CREATE action denied when user cannot edit' => [PolicyInterface::ACTION_CREATE, false, false],
 			'UPDATE action allowed when user can edit' => [PolicyInterface::ACTION_UPDATE, true, true],
@@ -60,5 +61,13 @@ final class ScoreBookPolicyTest extends TestCase {
 			'SHARE action denied when user cannot edit' => [PolicyInterface::ACTION_SHARE, false, false],
 			'Unknown action is always denied' => ['UNKNOWN_ACTION', null, false],
 		];
+	}
+
+	public function testReadDeniedForAnonymousUser(): void {
+		$permissionService = $this->createMock(PermissionService::class);
+		$permissionService->method('isCurrentUserLoggedIn')->willReturn(false);
+		$policy = new ScoreBookPolicy($permissionService);
+
+		$this->assertFalse($policy->allows(PolicyInterface::ACTION_READ));
 	}
 }

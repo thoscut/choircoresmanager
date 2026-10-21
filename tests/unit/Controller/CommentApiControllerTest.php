@@ -7,11 +7,13 @@ namespace OCA\OrchestraScoresManager\Tests\unit\Controller;
 use OCA\OrchestraScoresManager\Controller\CommentApiController;
 use OCA\OrchestraScoresManager\Db\Comment;
 use OCA\OrchestraScoresManager\Service\CommentService;
+use OCA\OrchestraScoresManager\Service\Exceptions\NotFoundException;
 use OCA\OrchestraScoresManager\Service\Exceptions\PermissionDeniedException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCS\OCSBadRequestException;
 use OCP\AppFramework\OCS\OCSForbiddenException;
+use OCP\AppFramework\OCS\OCSNotFoundException;
 use OCP\IRequest;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
@@ -58,6 +60,7 @@ final class CommentApiControllerTest extends TestCase {
 
 	#[TestWith([PermissionDeniedException::class, OCSForbiddenException::class, 'Not authorized'])]
 	#[TestWith([\InvalidArgumentException::class, OCSBadRequestException::class, 'Comment not found'])]
+	#[TestWith([NotFoundException::class, OCSNotFoundException::class, 'Comment not found'])]
 	public function testGetCommentThrowsExceptions(string $serviceException, string $expectedOCSException, string $message): void {
 		$this->commentService->expects($this->once())
 			->method('getCommentById')

@@ -873,6 +873,34 @@
                             }
                         }
                     },
+                    "404": {
+                        "description": "if the comment does not exist",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
                     "400": {
                         "description": "if the request is invalid",
                         "content": {
@@ -1020,6 +1048,34 @@
                                                 "data": {
                                                     "type": "object"
                                                 }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "if the comment does not exist",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
                                             }
                                         }
                                     }
@@ -4945,6 +5001,34 @@
                         }
                     },
                     "400": {
+                        "description": "If the input is invalid",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
                         "description": "If the score is not found",
                         "content": {
                             "application/json": {
@@ -5320,23 +5404,12 @@
                             "schema": {
                                 "type": "object",
                                 "required": [
-                                    "content",
-                                    "userId",
-                                    "creationDate"
+                                    "content"
                                 ],
                                 "properties": {
                                     "content": {
                                         "type": "string",
                                         "description": "The content of the comment"
-                                    },
-                                    "userId": {
-                                        "type": "string",
-                                        "description": "The user ID of the commenter"
-                                    },
-                                    "creationDate": {
-                                        "type": "integer",
-                                        "format": "int64",
-                                        "description": "The creation date timestamp"
                                     }
                                 }
                             }
@@ -5548,6 +5621,34 @@
                                                         "$ref": "#/components/schemas/FolderCollectionScore"
                                                     }
                                                 }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "if the score does not exist",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
                                             }
                                         }
                                     }
