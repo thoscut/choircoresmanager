@@ -20,7 +20,15 @@
 			<template #icon>
 				<MusicXmlIcon :size="20" />
 			</template>
-			<MusicXmlTab :score="scoreSidebarStore.selectedScore" :editable="editable" />
+			<ScoreFileTab kind="musicxml" :score="scoreSidebarStore.selectedScore" :editable="editable" />
+		</NcAppSidebarTab>
+		<NcAppSidebarTab
+			id="pdf"
+			:name="t('PDF')">
+			<template #icon>
+				<PDFIcon :size="20" />
+			</template>
+			<ScoreFileTab kind="pdf" :score="scoreSidebarStore.selectedScore" :editable="editable" />
 		</NcAppSidebarTab>
 		<NcAppSidebarTab
 			id="foldercollections"
@@ -49,9 +57,9 @@ import NcAppSidebar from '@nextcloud/vue/components/NcAppSidebar'
 import NcAppSidebarTab from '@nextcloud/vue/components/NcAppSidebarTab'
 import EntityFolderCollectionsList from '@/components/EntityFolderCollectionsList.vue'
 import CommentsList from '@/pages/scores/components/CommentsList.vue'
-import MusicXmlTab from '@/pages/scores/components/MusicXmlTab.vue'
 import ScoreBookInfo from '@/pages/scores/components/ScoreBookInfo.vue'
-import { CommentIcon, FolderCollectionIcon, MusicXmlIcon, ScoreBookIcon } from '@/icons/vue-material'
+import ScoreFileTab from '@/pages/scores/components/ScoreFileTab.vue'
+import { CommentIcon, FolderCollectionIcon, MusicXmlIcon, PDFIcon, ScoreBookIcon } from '@/icons/vue-material'
 import { useScoreSidebarStore } from '@/stores/scoreSidebarStore'
 import { t } from '@/utils/l10n.ts'
 

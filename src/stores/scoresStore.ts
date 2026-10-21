@@ -9,6 +9,11 @@ import { apiClients } from '@/api/client'
 import { useScoreBooksStore } from '@/stores/scoreBooksStore'
 
 /**
+ * Files that can be attached to a score
+ */
+export type ScoreFileKind = 'musicxml' | 'pdf'
+
+/**
  * Pinia store for managing scores state.
  *
  * All CRUD operations are centralized here. Components should use store
@@ -163,18 +168,19 @@ export const useScoresStore = defineStore('scores', () => {
 	}
 
 	/**
-	 * Upload a MusicXML file for a score and update local state
+	 * Upload a file attached to a score and update local state
 	 *
 	 * @param id - The score ID
-	 * @param file - The MusicXML file (.musicxml, .xml or .mxl)
+	 * @param kind - Which file to upload
+	 * @param file - The file
 	 * @return The updated score
 	 * @throws { Error } if API call fails
 	 */
-	async function uploadMusicXml(id: number, file: File): Promise<Score> {
+	async function uploadScoreFile(id: number, kind: ScoreFileKind, file: File): Promise<Score> {
 		const formData = new FormData()
 		formData.append('file', file)
 		const response = await ncAxios.post(
-			generateOcsUrl('/apps/orchestrascoresmanager/scores/{id}/musicxml', { id }),
+			generateOcsUrl('/apps/orchestrascoresmanager/scores/{id}/{kind}', { id, kind }),
 			formData,
 			{ headers: { 'OCS-APIRequest': 'true', Accept: 'application/json' } },
 		)
@@ -184,28 +190,32 @@ export const useScoresStore = defineStore('scores', () => {
 	}
 
 	/**
-	 * Remove the MusicXML file of a score and update local state
+	 * Remove a file attached to a score and update local state
 	 *
 	 * @param id - The score ID
+	 * @param kind - Which file to remove
 	 * @return The updated score
 	 * @throws { Error } if API call fails
 	 */
-	async function deleteMusicXml(id: number): Promise<Score> {
-		const response = await apiClients.default.musicXmlApiDeleteMusicXml(id)
+	async function deleteScoreFile(id: number, kind: ScoreFileKind): Promise<Score> {
+		const response = kind === 'musicxml'
+			? await apiClients.default.musicXmlApiDeleteMusicXml(id)
+			: await apiClients.default.pdfApiDeletePdf(id)
 		const updated = response.data.ocs.data as Score
 		replaceScore(updated)
 		return updated
 	}
 
 	/**
-	 * Download the MusicXML file of a score
+	 * Fetch a file attached to a score
 	 *
 	 * @param id - The score ID
+	 * @param kind - Which file to fetch
 	 * @return The file content
 	 */
-	async function fetchMusicXml(id: number): Promise<ArrayBuffer> {
+	async function fetchScoreFile(id: number, kind: ScoreFileKind): Promise<ArrayBuffer> {
 		const response = await ncAxios.get(
-			generateOcsUrl('/apps/orchestrascoresmanager/scores/{id}/musicxml', { id }),
+			generateOcsUrl('/apps/orchestrascoresmanager/scores/{id}/{kind}', { id, kind }),
 			{ headers: { 'OCS-APIRequest': 'true' }, responseType: 'arraybuffer' },
 		)
 		return response.data as ArrayBuffer
@@ -235,9 +245,9 @@ export const useScoresStore = defineStore('scores', () => {
 		updateScoreBookAssignmentApi,
 		updateScoreTags,
 		replaceScore,
-		uploadMusicXml,
-		deleteMusicXml,
-		fetchMusicXml,
+		uploadScoreFile,
+		deleteScoreFile,
+		fetchScoreFile,
 		deleteScore,
 	}
 })

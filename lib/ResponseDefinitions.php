@@ -25,6 +25,7 @@ namespace OCA\OrchestraScoresManager;
  *     rightsStatus: 'free'|'unclear'|'restricted',
  *     rightsNote: string|null,
  *     musicxmlFile: string|null,
+ *     pdfFile: string|null,
  *     tags: list<string>|null,
  *     scoreBook: OrchestraScoresManagerScoreBookInfo|null,
  *     viaScoreBook?: true
@@ -47,6 +48,7 @@ namespace OCA\OrchestraScoresManager;
  *     rightsStatus: 'free'|'unclear'|'restricted',
  *     rightsNote: string|null,
  *     musicxmlFile: string|null,
+ *     pdfFile: string|null,
  *     tags: list<string>|null,
  *     scoreBook: OrchestraScoresManagerScoreBookInfo|null,
  *     viaScoreBook?: true,

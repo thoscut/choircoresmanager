@@ -8,6 +8,7 @@ use OCA\OrchestraScoresManager\Db\Score;
 use OCA\OrchestraScoresManager\Db\ScoreMapper;
 use OCA\OrchestraScoresManager\Policy\PolicyInterface;
 use OCA\OrchestraScoresManager\Policy\ScorePolicy;
+use OCA\OrchestraScoresManager\Utility\FileNameHelper;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\DB\Exception;
@@ -93,7 +94,7 @@ class MusicXmlService {
 			$folder->newFile($fileName, $content);
 		}
 
-		$score->setMusicxmlFile($this->sanitizeDisplayName($originalName));
+		$score->setMusicxmlFile(FileNameHelper::sanitizeDisplayName($originalName, 'score.musicxml'));
 		$this->scoreMapper->update($score);
 		return $this->scoreMapper->find($scoreId);
 	}
@@ -230,16 +231,6 @@ class MusicXmlService {
 		} finally {
 			$zip->close();
 		}
-	}
-
-	/**
-	 * Turn an uploaded file name into a safe name for display.
-	 */
-	private function sanitizeDisplayName(string $name): string {
-		$name = basename(str_replace('\\', '/', $name));
-		$name = preg_replace('/[\x00-\x1F\x7F]/u', '', $name) ?? '';
-		$name = mb_substr(trim($name), 0, 255);
-		return $name === '' ? 'score.musicxml' : $name;
 	}
 
 	private function getFileName(int $scoreId): string {

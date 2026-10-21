@@ -44,6 +44,8 @@ use OCP\DB\Types;
  * @method void setRightsNote(?string $value)
  * @method string|null getMusicxmlFile()
  * @method void setMusicxmlFile(?string $value)
+ * @method string|null getPdfFile()
+ * @method void setPdfFile(?string $value)
  */
 class Score extends Entity implements JsonSerializable {
 	protected string $title = '';
@@ -62,6 +64,7 @@ class Score extends Entity implements JsonSerializable {
 	protected string $rightsStatus = 'unclear';
 	protected ?string $rightsNote = null;
 	protected ?string $musicxmlFile = null;
+	protected ?string $pdfFile = null;
 
 	// transient properties, not stored in DB
 	// ensure to add setters & getters for these
@@ -86,6 +89,7 @@ class Score extends Entity implements JsonSerializable {
 		$this->addType('rightsStatus', Types::STRING);
 		$this->addType('rightsNote', Types::TEXT);
 		$this->addType('musicxmlFile', Types::STRING);
+		$this->addType('pdfFile', Types::STRING);
 	}
 
 	public function jsonSerialize(): array {
@@ -109,6 +113,7 @@ class Score extends Entity implements JsonSerializable {
 			'rightsStatus' => $this->rightsStatus,
 			'rightsNote' => $this->rightsNote,
 			'musicxmlFile' => $this->musicxmlFile,
+			'pdfFile' => $this->pdfFile,
 		];
 	}
 

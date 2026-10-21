@@ -35,6 +35,8 @@ export { default as PreviousIcon } from 'vue-material-design-icons/ChevronLeft.v
 export { default as NextIcon } from 'vue-material-design-icons/ChevronRight.vue'
 export { default as MusicXmlIcon } from 'vue-material-design-icons/MusicNote.vue'
 export { default as PublicIcon } from 'vue-material-design-icons/Earth.vue'
+export { default as ZoomInIcon } from 'vue-material-design-icons/MagnifyPlusOutline.vue'
+export { default as ZoomOutIcon } from 'vue-material-design-icons/MagnifyMinusOutline.vue'
 
 // State icons
 export { default as ErrorIcon } from 'vue-material-design-icons/AlertCircle.vue'

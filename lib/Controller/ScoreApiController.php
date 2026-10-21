@@ -211,8 +211,8 @@ class ScoreApiController extends OCSController {
 
 		// drop NC-added "_route" param if exists
 		unset($params['_route']);
-		// the MusicXML file is managed via its own endpoints
-		unset($params['musicxmlFile']);
+		// attached files are managed via their own endpoints
+		unset($params['musicxmlFile'], $params['pdfFile']);
 		// the rights status is not nullable, let the service reject a null value
 		if (array_key_exists('rightsStatus', $params) && $params['rightsStatus'] === null) {
 			$params['rightsStatus'] = '';

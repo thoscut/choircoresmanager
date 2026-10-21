@@ -1,26 +1,27 @@
 <template>
-	<div class="musicxml-tab">
-		<div class="musicxml-tab__file">
-			<template v-if="score.musicxmlFile">
-				<span class="musicxml-tab__file-name" :title="score.musicxmlFile">{{ score.musicxmlFile }}</span>
+	<div class="score-file-tab">
+		<div class="score-file-tab__file">
+			<template v-if="fileName">
+				<span class="score-file-tab__file-name" :title="fileName">{{ fileName }}</span>
 				<NcButton
+					v-if="config.downloadable"
 					variant="tertiary"
-					:aria-label="t('Download MusicXML')"
-					:title="t('Download MusicXML')"
+					:aria-label="config.downloadLabel"
+					:title="config.downloadLabel"
 					@click="onDownload">
 					<template #icon>
 						<DownloadIcon :size="20" />
 					</template>
 				</NcButton>
 			</template>
-			<span v-else class="musicxml-tab__empty">{{ t('No MusicXML file uploaded yet.') }}</span>
+			<span v-else class="score-file-tab__empty">{{ config.emptyText }}</span>
 		</div>
 
-		<div v-if="editable" class="musicxml-tab__actions">
+		<div v-if="editable" class="score-file-tab__actions">
 			<input
 				ref="fileInput"
 				type="file"
-				accept=".musicxml,.xml,.mxl"
+				:accept="config.accept"
 				class="hidden-visually"
 				@change="onFileSelected">
 			<NcButton :disabled="busy" @click="fileInput?.click()">
@@ -28,10 +29,10 @@
 					<NcLoadingIcon v-if="busy" :size="20" />
 					<UploadIcon v-else :size="20" />
 				</template>
-				{{ score.musicxmlFile ? t('Replace file') : t('Upload MusicXML') }}
+				{{ fileName ? t('Replace file') : config.uploadLabel }}
 			</NcButton>
 			<NcButton
-				v-if="score.musicxmlFile"
+				v-if="fileName"
 				variant="error"
 				:disabled="busy"
 				@click="onDelete">
@@ -42,26 +43,34 @@
 			</NcButton>
 		</div>
 
-		<NcNoteCard v-if="score.musicxmlFile && score.rightsStatus === 'free'" type="info">
+		<NcNoteCard v-if="kind === 'musicxml' && fileName && score.rightsStatus === 'free'" type="info">
 			{{ t('This score is marked as free, so it is shown on the public page if that page is enabled.') }}
 		</NcNoteCard>
 
-		<MusicXmlPlayer
-			v-if="score.musicxmlFile"
-			:key="`${score.id}-${score.musicxmlFile}-${uploadCount}`"
-			:loadFile="loadFile" />
+		<template v-if="fileName">
+			<MusicXmlPlayer
+				v-if="kind === 'musicxml'"
+				:key="`${score.id}-${fileName}-${uploadCount}`"
+				:loadFile="loadFile" />
+			<PdfViewer
+				v-else
+				:key="`${score.id}-${fileName}-${uploadCount}`"
+				:loadFile="loadFile" />
+		</template>
 	</div>
 </template>
 
 <script setup lang="ts">
 import type { Score } from '@/api/generated/openapi/data-contracts'
+import type { ScoreFileKind } from '@/stores/scoresStore'
 
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import MusicXmlPlayer from '@/components/MusicXmlPlayer.vue'
+import PdfViewer from '@/components/PdfViewer.vue'
 import { DeleteIcon, DownloadIcon, UploadIcon } from '@/icons/vue-material'
 import { useScoreSidebarStore } from '@/stores/scoreSidebarStore'
 import { useScoresStore } from '@/stores/scoresStore'
@@ -71,6 +80,7 @@ import { t } from '@/utils/l10n'
 interface Props {
 	score: Score
 	editable: boolean
+	kind: ScoreFileKind
 }
 
 const props = defineProps<Props>()
@@ -82,24 +92,43 @@ const fileInput = ref<HTMLInputElement | null>(null)
 const busy = ref(false)
 const uploadCount = ref(0)
 
-const MAX_SIZE = 20 * 1024 * 1024
+const config = computed(() => props.kind === 'musicxml'
+	? {
+			accept: '.musicxml,.xml,.mxl',
+			maxSizeMb: 20,
+			downloadable: true,
+			downloadLabel: t('Download MusicXML'),
+			emptyText: t('No MusicXML file uploaded yet.'),
+			uploadLabel: t('Upload MusicXML'),
+		}
+	: {
+			accept: '.pdf,application/pdf',
+			maxSizeMb: 50,
+			// PDFs are only shown, not offered for download
+			downloadable: false,
+			downloadLabel: '',
+			emptyText: t('No PDF file uploaded yet.'),
+			uploadLabel: t('Upload PDF'),
+		})
+
+const fileName = computed(() => (props.kind === 'musicxml' ? props.score.musicxmlFile : props.score.pdfFile) ?? null)
 
 /**
- * Load the score's MusicXML file for the player
+ * Load the file for the player or viewer
  */
-const loadFile = () => scoresStore.fetchMusicXml(props.score.id)
+const loadFile = () => scoresStore.fetchScoreFile(props.score.id, props.kind)
 
 /**
- * Download the MusicXML file under its original name
+ * Download the file under its original name
  */
 async function onDownload(): Promise<void> {
 	await tryShowError(
 		async () => {
-			const data = await scoresStore.fetchMusicXml(props.score.id)
+			const data = await scoresStore.fetchScoreFile(props.score.id, props.kind)
 			const url = URL.createObjectURL(new Blob([data], { type: 'application/octet-stream' }))
 			const link = document.createElement('a')
 			link.href = url
-			link.download = props.score.musicxmlFile ?? `score-${props.score.id}.musicxml`
+			link.download = fileName.value ?? `score-${props.score.id}`
 			link.click()
 			URL.revokeObjectURL(url)
 		},
@@ -119,18 +148,18 @@ async function onFileSelected(event: Event): Promise<void> {
 	if (!file) {
 		return
 	}
-	if (file.size > MAX_SIZE) {
-		showError(t('The file is too large (maximum {size} MB)', { size: 20 }))
+	if (file.size > config.value.maxSizeMb * 1024 * 1024) {
+		showError(t('The file is too large (maximum {size} MB)', { size: config.value.maxSizeMb }))
 		return
 	}
 
 	busy.value = true
 	await tryShowError(
 		async () => {
-			const updated = await scoresStore.uploadMusicXml(props.score.id, file)
+			const updated = await scoresStore.uploadScoreFile(props.score.id, props.kind, file)
 			scoreSidebarStore.updateSelectedScore(updated)
 			uploadCount.value++
-			showSuccess(t('MusicXML file uploaded'))
+			showSuccess(t('File uploaded'))
 		},
 		t('Uploading the file failed: '),
 	)
@@ -138,15 +167,15 @@ async function onFileSelected(event: Event): Promise<void> {
 }
 
 /**
- * Remove the MusicXML file
+ * Remove the file
  */
 async function onDelete(): Promise<void> {
 	busy.value = true
 	await tryShowError(
 		async () => {
-			const updated = await scoresStore.deleteMusicXml(props.score.id)
+			const updated = await scoresStore.deleteScoreFile(props.score.id, props.kind)
 			scoreSidebarStore.updateSelectedScore(updated)
-			showSuccess(t('MusicXML file removed'))
+			showSuccess(t('File removed'))
 		},
 		t('Removing the file failed: '),
 	)
@@ -155,7 +184,7 @@ async function onDelete(): Promise<void> {
 </script>
 
 <style lang="scss" scoped>
-.musicxml-tab {
+.score-file-tab {
 	display: flex;
 	flex-direction: column;
 	gap: calc(2 * var(--default-grid-baseline));

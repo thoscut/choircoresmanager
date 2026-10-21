@@ -33,6 +33,7 @@ class ScoreService {
 		private readonly ScorePolicy $scorePolicy,
 		private IL10N $l,
 		private readonly MusicXmlService $musicXmlService,
+		private readonly PdfService $pdfService,
 	) {
 	}
 
@@ -85,8 +86,9 @@ class ScoreService {
 
 		$this->scoreMapper->delete($score);
 
-		// Remove the attached MusicXML file, if any
+		// Remove attached files, if any
 		$this->musicXmlService->removeFile($id);
+		$this->pdfService->removeFile($id);
 	}
 
 	/**

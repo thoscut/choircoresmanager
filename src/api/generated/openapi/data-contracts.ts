@@ -93,6 +93,7 @@ export interface Score {
   rightsStatus: "free" | "unclear" | "restricted";
   rightsNote: string | null;
   musicxmlFile: string | null;
+  pdfFile: string | null;
   tags: string[] | null;
   scoreBook: ScoreBookInfo | null;
   viaScoreBook?: true;
@@ -169,6 +170,7 @@ export interface ScoreIndexed {
   rightsStatus: "free" | "unclear" | "restricted";
   rightsNote: string | null;
   musicxmlFile: string | null;
+  pdfFile: string | null;
   tags: string[] | null;
   scoreBook: ScoreBookInfo | null;
   viaScoreBook?: true;
@@ -448,6 +450,23 @@ export interface MusicXmlApiPostMusicXmlData {
 }
 
 export interface MusicXmlApiDeleteMusicXmlData {
+  ocs: {
+    meta: OCSMeta;
+    data: Score;
+  };
+}
+
+/** @format binary */
+export type PdfApiGetPdfData = File;
+
+export interface PdfApiPostPdfData {
+  ocs: {
+    meta: OCSMeta;
+    data: Score;
+  };
+}
+
+export interface PdfApiDeletePdfData {
   ocs: {
     meta: OCSMeta;
     data: Score;

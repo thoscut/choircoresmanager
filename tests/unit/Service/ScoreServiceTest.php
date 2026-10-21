@@ -17,6 +17,7 @@ use OCA\OrchestraScoresManager\Policy\ScorePolicy;
 use OCA\OrchestraScoresManager\Service\AuthorizationService;
 use OCA\OrchestraScoresManager\Service\Exceptions\PermissionDeniedException;
 use OCA\OrchestraScoresManager\Service\MusicXmlService;
+use OCA\OrchestraScoresManager\Service\PdfService;
 use OCA\OrchestraScoresManager\Service\ScoreService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\DB\Exception;
@@ -37,6 +38,7 @@ final class ScoreServiceTest extends TestCase {
 	private ScorePolicy $scorePolicy;
 	private IL10N $l10n;
 	private MusicXmlService $musicXmlService;
+	private PdfService $pdfService;
 	private ScoreService $service;
 
 	protected function setUp(): void {
@@ -52,6 +54,7 @@ final class ScoreServiceTest extends TestCase {
 		$this->scorePolicy = $this->createMock(ScorePolicy::class);
 		$this->l10n = $this->createMock(IL10N::class);
 		$this->musicXmlService = $this->createMock(MusicXmlService::class);
+		$this->pdfService = $this->createMock(PdfService::class);
 
 		$this->l10n->method('t')->willReturnCallback(fn ($text, $params = []) => vsprintf($text, $params));
 
@@ -66,6 +69,7 @@ final class ScoreServiceTest extends TestCase {
 			$this->scorePolicy,
 			$this->l10n,
 			$this->musicXmlService,
+			$this->pdfService,
 		);
 	}
 
@@ -214,6 +218,10 @@ final class ScoreServiceTest extends TestCase {
 			->with($score);
 
 		$this->musicXmlService->expects($this->once())
+			->method('removeFile')
+			->with(1);
+
+		$this->pdfService->expects($this->once())
 			->method('removeFile')
 			->with(1);
 

@@ -40,6 +40,9 @@ import {
   MusicXmlApiGetMusicXmlData,
   MusicXmlApiPostMusicXmlData,
   OCSMeta,
+  PdfApiDeletePdfData,
+  PdfApiGetPdfData,
+  PdfApiPostPdfData,
   ScoreApiDeleteScoreData,
   ScoreApiGetScoreCommentsData,
   ScoreApiGetScoreFolderCollectionsData,
@@ -698,6 +701,80 @@ export class Ocs<
       }
     >({
       path: `/ocs/v2.php/apps/orchestrascoresmanager/scores/${id}/musicxml`,
+      method: "DELETE",
+      secure: true,
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description the PDF file
+   *
+   * @tags pdf_api
+   * @name PdfApiGetPdf
+   * @summary Download the PDF file of a score
+   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/scores/{id}/pdf
+   * @secure
+   */
+  pdfApiGetPdf = (id: number, params: RequestParams = {}) =>
+    this.request<
+      PdfApiGetPdfData,
+      {
+        ocs: {
+          meta: OCSMeta;
+          data: any;
+        };
+      }
+    >({
+      path: `/ocs/v2.php/apps/orchestrascoresmanager/scores/${id}/pdf`,
+      method: "GET",
+      secure: true,
+      ...params,
+    });
+  /**
+   * @description The file must be sent as multipart form data in the field "file". the updated score
+   *
+   * @tags pdf_api
+   * @name PdfApiPostPdf
+   * @summary Upload a PDF file for a score, replacing an existing one
+   * @request POST:/ocs/v2.php/apps/orchestrascoresmanager/scores/{id}/pdf
+   * @secure
+   */
+  pdfApiPostPdf = (id: number, params: RequestParams = {}) =>
+    this.request<
+      PdfApiPostPdfData,
+      {
+        ocs: {
+          meta: OCSMeta;
+          data: any;
+        };
+      }
+    >({
+      path: `/ocs/v2.php/apps/orchestrascoresmanager/scores/${id}/pdf`,
+      method: "POST",
+      secure: true,
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description the updated score
+   *
+   * @tags pdf_api
+   * @name PdfApiDeletePdf
+   * @summary Remove the PDF file of a score
+   * @request DELETE:/ocs/v2.php/apps/orchestrascoresmanager/scores/{id}/pdf
+   * @secure
+   */
+  pdfApiDeletePdf = (id: number, params: RequestParams = {}) =>
+    this.request<
+      PdfApiDeletePdfData,
+      {
+        ocs: {
+          meta: OCSMeta;
+          data: any;
+        };
+      }
+    >({
+      path: `/ocs/v2.php/apps/orchestrascoresmanager/scores/${id}/pdf`,
       method: "DELETE",
       secure: true,
       format: "json",
