@@ -38,8 +38,26 @@ use OCP\DB\Types;
  * @method string|null getMedleyContents()
  * @method int|null getDuration()
  * @method void setDuration(?int $value)
+ * @method string|null getSignature()
+ * @method void setSignature(?string $value)
+ * @method string|null getLyricist()
+ * @method void setLyricist(?string $value)
+ * @method string|null getVoicing()
+ * @method void setVoicing(?string $value)
+ * @method string|null getLanguage()
+ * @method void setLanguage(?string $value)
+ * @method string|null getRepertoireStatus()
  */
 class Score extends Entity implements JsonSerializable {
+	public const REPERTOIRE_STATUS_ACTIVE = 'active';
+	public const REPERTOIRE_STATUS_DORMANT = 'dormant';
+	public const REPERTOIRE_STATUS_ARCHIVED = 'archived';
+	public const REPERTOIRE_STATUSES = [
+		self::REPERTOIRE_STATUS_ACTIVE,
+		self::REPERTOIRE_STATUS_DORMANT,
+		self::REPERTOIRE_STATUS_ARCHIVED,
+	];
+
 	protected string $title = '';
 	protected ?string $titleShort = null;
 	protected ?string $composer = null;
@@ -53,12 +71,19 @@ class Score extends Entity implements JsonSerializable {
 	protected ?string $digitalStatus = null;
 	protected ?string $gemaIds = null;
 	protected ?int $duration = null;
+	protected ?string $signature = null;
+	protected ?string $lyricist = null;
+	protected ?string $voicing = null;
+	protected ?string $language = null;
+	protected ?string $repertoireStatus = null;
 
 	// transient properties, not stored in DB
 	// ensure to add setters & getters for these
 	protected ?array $tags = null;
 	/** @var array{id: int, index: int}|null */
 	protected ?array $scoreBook = null;
+	/** Start of the most recent non-draft setlist containing this score (ATOM) */
+	protected ?string $lastPerformed = null;
 
 	public function __construct() {
 		$this->addType('title', Types::STRING);
@@ -74,6 +99,11 @@ class Score extends Entity implements JsonSerializable {
 		$this->addType('digitalStatus', Types::STRING);
 		$this->addType('gemaIds', Types::STRING);
 		$this->addType('duration', Types::INTEGER);
+		$this->addType('signature', Types::STRING);
+		$this->addType('lyricist', Types::STRING);
+		$this->addType('voicing', Types::STRING);
+		$this->addType('language', Types::STRING);
+		$this->addType('repertoireStatus', Types::STRING);
 	}
 
 	public function jsonSerialize(): array {
@@ -94,6 +124,12 @@ class Score extends Entity implements JsonSerializable {
 			'tags' => $this->tags ?? [],
 			'scoreBook' => $this->scoreBook,
 			'duration' => $this->duration,
+			'signature' => $this->signature,
+			'lyricist' => $this->lyricist,
+			'voicing' => $this->voicing,
+			'language' => $this->language,
+			'repertoireStatus' => $this->repertoireStatus,
+			'lastPerformed' => $this->lastPerformed,
 		];
 	}
 
@@ -108,6 +144,44 @@ class Score extends Entity implements JsonSerializable {
 	public function setMedleyContents(array|string|null $medleyContents): void {
 		$content = is_string($medleyContents) ? $medleyContents : $this->encodeJsonArray($medleyContents, 'medleyContents');
 		$this->setter('medleyContents', [$content]);
+	}
+
+	/**
+	 * Set repertoire status.
+	 *
+	 * Empty strings are stored as null; any other value must be one of REPERTOIRE_STATUSES.
+	 *
+	 * @param string|null $repertoireStatus
+	 * @throws \InvalidArgumentException if the value is not an allowed status
+	 * @psalm-suppress PossiblyUnusedMethod - Called by Entity framework and API
+	 */
+	public function setRepertoireStatus(?string $repertoireStatus): void {
+		if ($repertoireStatus === '') {
+			$repertoireStatus = null;
+		}
+		if ($repertoireStatus !== null && !\in_array($repertoireStatus, self::REPERTOIRE_STATUSES, true)) {
+			throw new \InvalidArgumentException('Invalid repertoire status: ' . $repertoireStatus);
+		}
+		$this->setter('repertoireStatus', [$repertoireStatus]);
+	}
+
+	/**
+	 * Get transient last performed date.
+	 *
+	 * @return string|null
+	 * @psalm-suppress PossiblyUnusedMethod - Called via jsonSerialize
+	 */
+	public function getLastPerformed(): ?string {
+		return $this->lastPerformed;
+	}
+
+	/**
+	 * Set transient last performed date (ATOM formatted).
+	 *
+	 * @param string|null $lastPerformed
+	 */
+	public function setLastPerformed(?string $lastPerformed): void {
+		$this->lastPerformed = $lastPerformed;
 	}
 
 	/**

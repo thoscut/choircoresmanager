@@ -52,6 +52,7 @@ import { parseArrayValue } from '@/utils/arrayUtils'
 import { createDurationColumn } from '@/utils/durationColumnUtils'
 import { tryShowError } from '@/utils/errorHandling'
 import { t } from '@/utils/l10n'
+import { createRepertoireColumns } from '@/utils/repertoireColumnUtils'
 import { parseDurationHHMMSS } from '@/utils/timeFormatUtils'
 
 const props = defineProps<Props>()
@@ -281,6 +282,9 @@ const columnEditHandlers: Record<string, ColumnEditHandler> = {
 	gemaIds: async (id, newValue) => {
 		const gemaIds = parseArrayValue(newValue)
 		await scoresStore.updateScoreFieldApi(id, 'gemaIds', gemaIds)
+	},
+	repertoireStatus: async (id, newValue) => {
+		await scoresStore.updateScoreFieldApi(id, 'repertoireStatus', newValue === '' ? null : newValue)
 	},
 	duration: async (id, newValue) => {
 		let parsedDuration: number | null
@@ -548,6 +552,7 @@ const columnDefs = computed<ColDef[]>(() => {
 			editable: false,
 			valueGetter: scoreBookIndexValueGetter,
 		},
+		...createRepertoireColumns(),
 		{ field: 'titleShort', headerName: t('Short Title') },
 		{
 			field: 'composer',

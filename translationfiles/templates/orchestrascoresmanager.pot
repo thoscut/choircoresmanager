@@ -955,3 +955,27 @@ msgstr ""
 
 msgid "Invalid duration format"
 msgstr ""
+
+msgid "Signature"
+msgstr ""
+
+msgid "Repertoire"
+msgstr ""
+
+msgid "Dormant"
+msgstr ""
+
+msgid "Archived"
+msgstr ""
+
+msgid "Last performed"
+msgstr ""
+
+msgid "Lyricist"
+msgstr ""
+
+msgid "Voicing"
+msgstr ""
+
+msgid "Language"
+msgstr ""
