@@ -49,6 +49,24 @@ only accepts signed releases from a public repository.
    echo -n "notenarchiv" | openssl dgst -sha512 -sign notenarchiv.key | openssl base64
    ```
 
+## Version numbers
+
+The app uses [semantic versioning](https://semver.org/), aligned with the
+milestones of the [roadmap](../ROADMAP.md):
+
+- **Minor version** (0.6.0, 0.7.0, …): a round with new functions,
+  normally one milestone. Until 1.0.0, a minor version may also change
+  behaviour.
+- **Pre-release** (`0.7.0-dev.1`, `0.7.0-dev.2`, …): internal test builds
+  within a round. They are deployed to test instances only and never
+  uploaded to the app store. Nextcloud orders them before the final version
+  (`0.6.0` < `0.7.0-dev.1` < `0.7.0-dev.2` < `0.7.0`), so every build still
+  runs its migrations and reloads its routes.
+- **Patch version** (0.6.1): fixes without new functions.
+- **1.0.0**: the stable version (milestone 1.0).
+
+The internal builds before 0.6.0 were numbered 0.1.x.
+
 ## Every release
 
 1. Raise `<version>` in `appinfo/info.xml` (semantic versioning; a schema

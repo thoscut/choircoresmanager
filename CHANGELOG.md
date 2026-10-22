@@ -10,8 +10,12 @@ All notable changes to this app are documented in this file. The format follows
 
 ## [Unreleased]
 
-First public release candidate. Developed and tested against Nextcloud 33.0.9
-and 35.0.2 with MariaDB; the app requires MySQL or MariaDB.
+## [0.6.0] - 2026-10-22
+
+Milestones 0.1 to 0.6 of the roadmap; not yet published in the app store.
+Developed and tested against Nextcloud 33.0.9 and 35.0.2 with MariaDB; the
+app requires MySQL or MariaDB. The internal builds before this version were
+numbered 0.1.x.
 
 ### Added
 

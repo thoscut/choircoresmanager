@@ -103,6 +103,9 @@ Meilensteinen.
 
 ## Meilensteine
 
+Jeder Meilenstein ergibt eine Minor-Version (0.6 → 0.6.0, 0.7 → 0.7.0);
+interne Zwischenstände heißen `0.7.0-dev.1` usw. (siehe `docs/release.md`).
+
 ### 0.1 Fundament
 
 - **Datenmodell** in vier Ebenen:
@@ -224,7 +227,7 @@ Beschreibung im Admin-Guide, Abschnitt „Modules and presets“, und in
 
 ### 0.6 Agenten und Prüfung der Übertragungen
 
-*Umgesetzt: die Schnittstelle für Agenten (Beschreibung in
+*Umgesetzt mit Version 0.6.0: die Schnittstelle für Agenten (Beschreibung in
 `docs/api-v1.md`, Einrichtung im Admin-Guide, Abschnitt „Agents and the
 API“, MCP-Server in `tools/mcp`) mit Prüfstand, Prüfpunkten,
 Korrekturaufträgen und dem Einreichen von Berichten, sowie Übertragung
