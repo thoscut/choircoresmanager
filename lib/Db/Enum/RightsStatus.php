@@ -20,4 +20,13 @@ enum RightsStatus: string {
 	case PROTECTED = 'protected';
 	/** Not yet assessed or unresolved; treated like a protected work */
 	case OPEN = 'open';
+
+	/**
+	 * Values of the rights statuses that allow a publication.
+	 *
+	 * @return list<string>
+	 */
+	public static function publishableValues(): array {
+		return [self::PUBLIC_DOMAIN->value, self::LICENSED->value];
+	}
 }

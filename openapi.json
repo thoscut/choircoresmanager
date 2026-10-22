@@ -229,6 +229,7 @@
                     "publicationNote",
                     "publicationBlockedUntil",
                     "musicxmlFile",
+                    "updatedAt",
                     "tags",
                     "scoreBook"
                 ],
@@ -336,6 +337,10 @@
                         "nullable": true
                     },
                     "musicxmlFile": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "updatedAt": {
                         "type": "string",
                         "nullable": true
                     },
@@ -561,6 +566,7 @@
                     "publicationNote",
                     "publicationBlockedUntil",
                     "musicxmlFile",
+                    "updatedAt",
                     "tags",
                     "scoreBook",
                     "index"
@@ -669,6 +675,10 @@
                         "nullable": true
                     },
                     "musicxmlFile": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "updatedAt": {
                         "type": "string",
                         "nullable": true
                     },

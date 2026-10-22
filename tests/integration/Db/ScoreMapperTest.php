@@ -240,28 +240,92 @@ final class ScoreMapperTest extends MapperTestCase {
 		$this->assertSame('2027-01-31', $serialized['publicationBlockedUntil']);
 	}
 
-	public function testFindByRightsStatusOnlyReturnsMatchingScores(): void {
-		foreach (['B free' => 'public_domain', 'Protected' => 'protected', 'Open' => 'open', 'A free' => 'public_domain'] as $title => $status) {
-			$score = new Score();
-			$score->setTitle($title);
-			$score->setRightsStatus($status);
-			$this->mapper->insert($score);
-		}
-
-		$free = $this->mapper->findByRightsStatus('public_domain');
-
-		$this->assertSame(['A free', 'B free'], array_map(fn (Score $s) => $s->getTitle(), $free));
-	}
-
-	public function testFindByIdAndRightsStatus(): void {
+	public function testInsertAndUpdateSetUpdatedAt(): void {
 		$score = new Score();
-		$score->setTitle('Protected');
-		$score->setRightsStatus('protected');
+		$score->setTitle('Test Score');
 		$inserted = $this->mapper->insert($score);
 
-		$this->assertSame($inserted->getId(), $this->mapper->findByIdAndRightsStatus($inserted->getId(), 'protected')->getId());
+		$created = $this->mapper->find($inserted->getId())->getUpdatedAt();
+		$this->assertNotNull($created);
+		$this->assertEqualsWithDelta(time(), $created->getTimestamp(), 60);
 
-		$this->expectException(DoesNotExistException::class);
-		$this->mapper->findByIdAndRightsStatus($inserted->getId(), 'public_domain');
+		$found = $this->mapper->find($inserted->getId());
+		$found->setTitle('Changed');
+		$found->setUpdatedAt(new \DateTimeImmutable('2020-01-01 00:00:00', new \DateTimeZone('UTC')));
+		$this->mapper->update($found);
+
+		$updated = $this->mapper->find($inserted->getId())->getUpdatedAt();
+		$this->assertNotNull($updated);
+		$this->assertEqualsWithDelta(time(), $updated->getTimestamp(), 60);
+	}
+
+	/**
+	 * @param array<string, mixed> $fields
+	 */
+	private function insertScoreWith(string $title, array $fields): Score {
+		$score = new Score();
+		$score->setTitle($title);
+		foreach ($fields as $field => $value) {
+			$score->{'set' . ucfirst($field)}($value);
+		}
+		return $this->mapper->insert($score);
+	}
+
+	/**
+	 * Scores covering each condition of the public page, keyed by title.
+	 *
+	 * @return array<string, Score>
+	 */
+	private function insertScoresForPublicPage(): array {
+		$confirmed = new \DateTimeImmutable('2026-10-01 00:00:00', new \DateTimeZone('UTC'));
+		$cases = [
+			'B public domain' => ['rightsStatus' => 'public_domain', 'rightsConfirmedAt' => $confirmed, 'publicationStatus' => 'approved'],
+			'A licensed' => ['rightsStatus' => 'licensed', 'rightsConfirmedAt' => $confirmed, 'publicationStatus' => 'approved'],
+			'Unconfirmed' => ['rightsStatus' => 'public_domain', 'publicationStatus' => 'approved'],
+			'Protected' => ['rightsStatus' => 'protected', 'rightsConfirmedAt' => $confirmed, 'publicationStatus' => 'approved'],
+			'Open' => ['rightsStatus' => 'open', 'rightsConfirmedAt' => $confirmed, 'publicationStatus' => 'approved'],
+			'To clarify' => ['rightsStatus' => 'public_domain', 'rightsConfirmedAt' => $confirmed, 'publicationStatus' => 'to_clarify'],
+			'Blocked' => [
+				'rightsStatus' => 'public_domain',
+				'rightsConfirmedAt' => $confirmed,
+				'publicationStatus' => 'blocked',
+				'publicationBlockedUntil' => new \DateTimeImmutable('2020-01-01 00:00:00', new \DateTimeZone('UTC')),
+			],
+			'Preservation copy' => ['rightsStatus' => 'public_domain', 'rightsConfirmedAt' => $confirmed, 'publicationStatus' => 'internal_preservation_copy'],
+			'Defaults' => [],
+		];
+		$scores = [];
+		foreach ($cases as $title => $fields) {
+			$scores[$title] = $this->insertScoreWith($title, $fields);
+		}
+		return $scores;
+	}
+
+	public function testFindPublishableOnlyReturnsApprovedAndConfirmedFreeOrLicensedScores(): void {
+		$scores = $this->insertScoresForPublicPage();
+		$insertedIds = array_map(fn (Score $s) => $s->getId(), $scores);
+
+		$publishable = array_filter(
+			$this->mapper->findPublishable(),
+			fn (Score $s) => in_array($s->getId(), $insertedIds, true),
+		);
+
+		$this->assertSame(['A licensed', 'B public domain'], array_values(array_map(fn (Score $s) => $s->getTitle(), $publishable)));
+	}
+
+	public function testFindPublishableById(): void {
+		$scores = $this->insertScoresForPublicPage();
+
+		$this->assertSame('A licensed', $this->mapper->findPublishableById($scores['A licensed']->getId())->getTitle());
+		$this->assertSame('B public domain', $this->mapper->findPublishableById($scores['B public domain']->getId())->getTitle());
+
+		foreach (['Unconfirmed', 'Protected', 'Open', 'To clarify', 'Blocked', 'Preservation copy', 'Defaults'] as $title) {
+			try {
+				$this->mapper->findPublishableById($scores[$title]->getId());
+				$this->fail("Score '$title' must not be publishable");
+			} catch (DoesNotExistException) {
+				$this->addToAssertionCount(1);
+			}
+		}
 	}
 }

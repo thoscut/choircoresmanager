@@ -30,6 +30,7 @@ namespace OCA\OrchestraScoresManager;
  *     publicationNote: string|null,
  *     publicationBlockedUntil: string|null,
  *     musicxmlFile: string|null,
+ *     updatedAt: string|null,
  *     tags: list<string>|null,
  *     scoreBook: OrchestraScoresManagerScoreBookInfo|null,
  *     viaScoreBook?: true
@@ -57,6 +58,7 @@ namespace OCA\OrchestraScoresManager;
  *     publicationNote: string|null,
  *     publicationBlockedUntil: string|null,
  *     musicxmlFile: string|null,
+ *     updatedAt: string|null,
  *     tags: list<string>|null,
  *     scoreBook: OrchestraScoresManagerScoreBookInfo|null,
  *     viaScoreBook?: true,

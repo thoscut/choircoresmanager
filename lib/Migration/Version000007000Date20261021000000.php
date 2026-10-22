@@ -22,6 +22,7 @@ use OCP\Migration\SimpleMigrationStep;
  * - publication_note: free text explaining the publication status
  * - publication_blocked_until: date until which a blocked score stays blocked (null if open-ended)
  * - musicxml_file: original file name of the uploaded MusicXML file (null if none)
+ * - updated_at: when the score was last created or changed (null for scores not changed since this migration)
  *
  * @psalm-suppress UnusedClass - Migration class discovered by Nextcloud framework
  */
@@ -93,6 +94,13 @@ class Version000007000Date20261021000000 extends SimpleMigrationStep {
 			$table->addColumn('musicxml_file', Types::STRING, [
 				'notnull' => false,
 				'length' => 255,
+			]);
+			$changed = true;
+		}
+
+		if (!$table->hasColumn('updated_at')) {
+			$table->addColumn('updated_at', Types::DATETIME_IMMUTABLE, [
+				'notnull' => false,
 			]);
 			$changed = true;
 		}

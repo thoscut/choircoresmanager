@@ -59,7 +59,7 @@ final class PublicControllerTest extends TestCase {
 
 	public function testIndexProvidesPublicScores(): void {
 		$this->requireServer();
-		$scores = [['id' => 1, 'title' => 'A', 'composer' => null, 'arranger' => null, 'year' => null, 'duration' => null, 'hasMusicXml' => false]];
+		$scores = [['id' => 1, 'title' => 'A', 'composer' => null, 'arranger' => null, 'year' => null, 'duration' => null, 'hasMusicXml' => false, 'lastUpdated' => null]];
 		$this->publicScoreService->method('isEnabled')->willReturn(true);
 		$this->publicScoreService->method('getPublicScores')->willReturn($scores);
 		$this->initialState->expects($this->once())

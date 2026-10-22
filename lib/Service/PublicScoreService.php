@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace OCA\OrchestraScoresManager\Service;
 
-use OCA\OrchestraScoresManager\Db\Enum\RightsStatus;
+use DateTimeImmutable;
+use DateTimeZone;
 use OCA\OrchestraScoresManager\Db\Score;
 use OCA\OrchestraScoresManager\Db\ScoreMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
@@ -15,9 +16,10 @@ use OCP\DB\Exception;
  * Read-only access to scores for anonymous visitors.
  *
  * This service deliberately does not reuse the other services or policies, which
- * allow reading for everyone. It only ever exposes scores whose rights status is
- * "free" (filtered in SQL), only while the public page is enabled, and only a
- * whitelisted set of fields.
+ * allow reading for everyone. It only ever exposes scores that are approved for
+ * publication, in the public domain or licensed, and whose rights status a person
+ * has confirmed (filtered in SQL), only while the public page is enabled, and only
+ * a whitelisted set of fields.
  *
  * @psalm-type OrchestraScoresManagerPublicScore = array{
  *     id: int,
@@ -26,7 +28,8 @@ use OCP\DB\Exception;
  *     arranger: string|null,
  *     year: int|null,
  *     duration: int|null,
- *     hasMusicXml: bool
+ *     hasMusicXml: bool,
+ *     lastUpdated: string|null
  * }
  */
 class PublicScoreService {
@@ -43,7 +46,7 @@ class PublicScoreService {
 	}
 
 	/**
-	 * Get all freely available scores.
+	 * Get all scores that may be shown publicly.
 	 *
 	 * @return list<OrchestraScoresManagerPublicScore>
 	 * @throws \InvalidArgumentException if the public page is disabled
@@ -52,22 +55,22 @@ class PublicScoreService {
 	public function getPublicScores(): array {
 		$this->assertEnabled();
 		return array_values(array_map(
-			fn (Score $score) => self::toPublicArray($score),
-			$this->scoreMapper->findByRightsStatus(RightsStatus::PUBLIC_DOMAIN->value),
+			fn (Score $score) => $this->toPublicArray($score),
+			$this->scoreMapper->findPublishable(),
 		));
 	}
 
 	/**
-	 * Get the MusicXML file of a freely available score.
+	 * Get the MusicXML file of a score that may be shown publicly.
 	 *
 	 * @param int $id
 	 * @return array{content: string, mimeType: string, fileName: string}
-	 * @throws \InvalidArgumentException if the public page is disabled, the score is not free or has no file
+	 * @throws \InvalidArgumentException if the public page is disabled, the score may not be shown or has no file
 	 */
 	public function getPublicMusicXml(int $id): array {
 		$this->assertEnabled();
 		try {
-			$score = $this->scoreMapper->findByIdAndRightsStatus($id, RightsStatus::PUBLIC_DOMAIN->value);
+			$score = $this->scoreMapper->findPublishableById($id);
 		} catch (DoesNotExistException|MultipleObjectsReturnedException|Exception) {
 			throw new \InvalidArgumentException('Score not found');
 		}
@@ -77,9 +80,18 @@ class PublicScoreService {
 	/**
 	 * Convert a score to the fields that may be shown publicly.
 	 *
+	 * The date of the last update is the later one of the last change of the score
+	 * and the last modification of its MusicXML file, as a Y-m-d date in UTC.
+	 *
 	 * @return OrchestraScoresManagerPublicScore
 	 */
-	public static function toPublicArray(Score $score): array {
+	private function toPublicArray(Score $score): array {
+		$fileMTime = $this->musicXmlService->getFileMTime($score);
+		$timestamps = array_filter([$score->getUpdatedAt()?->getTimestamp(), $fileMTime], fn (?int $value) => $value !== null);
+		$lastUpdated = $timestamps === []
+			? null
+			: (new DateTimeImmutable('@' . max($timestamps)))->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d');
+
 		return [
 			'id' => $score->getId(),
 			'title' => $score->getTitle(),
@@ -87,7 +99,8 @@ class PublicScoreService {
 			'arranger' => $score->getArranger(),
 			'year' => $score->getYear(),
 			'duration' => $score->getDuration(),
-			'hasMusicXml' => $score->getMusicxmlFile() !== null,
+			'hasMusicXml' => $fileMTime !== null,
+			'lastUpdated' => $lastUpdated,
 		];
 	}
 

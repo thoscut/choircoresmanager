@@ -55,6 +55,8 @@ use OCP\DB\Types;
  * @method void setPublicationBlockedUntil(?DateTimeImmutable $value)
  * @method string|null getMusicxmlFile()
  * @method void setMusicxmlFile(?string $value)
+ * @method DateTimeImmutable|null getUpdatedAt()
+ * @method void setUpdatedAt(?DateTimeImmutable $value)
  */
 class Score extends Entity implements JsonSerializable {
 	protected string $title = '';
@@ -80,6 +82,8 @@ class Score extends Entity implements JsonSerializable {
 	/** DATE field, normalized to midnight UTC and serialized as Y-m-d */
 	protected ?DateTimeImmutable $publicationBlockedUntil = null;
 	protected ?string $musicxmlFile = null;
+	/** Set by the mapper on every insert and update */
+	protected ?DateTimeImmutable $updatedAt = null;
 
 	// transient properties, not stored in DB
 	// ensure to add setters & getters for these
@@ -109,6 +113,7 @@ class Score extends Entity implements JsonSerializable {
 		$this->addType('publicationNote', Types::TEXT);
 		$this->addType('publicationBlockedUntil', Types::DATE_IMMUTABLE);
 		$this->addType('musicxmlFile', Types::STRING);
+		$this->addType('updatedAt', Types::DATETIME_IMMUTABLE);
 	}
 
 	public function jsonSerialize(): array {
@@ -137,6 +142,7 @@ class Score extends Entity implements JsonSerializable {
 			'publicationNote' => $this->publicationNote,
 			'publicationBlockedUntil' => $this->publicationBlockedUntil?->format('Y-m-d'),
 			'musicxmlFile' => $this->musicxmlFile,
+			'updatedAt' => $this->updatedAt?->format(DATE_ATOM),
 		];
 	}
 

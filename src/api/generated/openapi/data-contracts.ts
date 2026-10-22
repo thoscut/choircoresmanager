@@ -102,6 +102,7 @@ export interface Score {
   publicationNote: string | null;
   publicationBlockedUntil: string | null;
   musicxmlFile: string | null;
+  updatedAt: string | null;
   tags: string[] | null;
   scoreBook: ScoreBookInfo | null;
   viaScoreBook?: true;
@@ -187,6 +188,7 @@ export interface ScoreIndexed {
   publicationNote: string | null;
   publicationBlockedUntil: string | null;
   musicxmlFile: string | null;
+  updatedAt: string | null;
   tags: string[] | null;
   scoreBook: ScoreBookInfo | null;
   viaScoreBook?: true;

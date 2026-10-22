@@ -13,6 +13,7 @@ use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\DB\Exception;
 use OCP\Files\IAppData;
 use OCP\Files\NotFoundException;
+use OCP\Files\NotPermittedException;
 use OCP\Files\SimpleFS\ISimpleFolder;
 use OCP\IL10N;
 use ZipArchive;
@@ -155,6 +156,23 @@ class MusicXmlService {
 			'mimeType' => $compressed ? self::MIME_TYPE_COMPRESSED : self::MIME_TYPE_XML,
 			'fileName' => 'score-' . $score->getId() . ($compressed ? '.mxl' : '.musicxml'),
 		];
+	}
+
+	/**
+	 * Get the time the MusicXML file of a score was last modified, without any authorization check.
+	 *
+	 * @param Score $score
+	 * @return int|null Unix timestamp, or null if the score has no readable file
+	 */
+	public function getFileMTime(Score $score): ?int {
+		if ($score->getMusicxmlFile() === null) {
+			return null;
+		}
+		try {
+			return $this->getFolder()->getFile($this->getFileName($score->getId()))->getMTime();
+		} catch (NotFoundException|NotPermittedException) {
+			return null;
+		}
 	}
 
 	/**
