@@ -78,8 +78,18 @@ creates an account and refuses to run when the catalog is not empty.
   `l10n/`.
 - The German interface uses neutral, simple and inclusive language, e.g.
   *Archivverwaltung*, *Chorleitung*, *Chormitglieder*, *Chorportal*.
-- More languages are planned. If you would like to translate the app into
-  another language, please open an issue first.
+- French, Spanish, Italian, Dutch and Polish live in
+  `tools/l10n/translations.<lang>.mjs` (key: the English source; plurals: one
+  text per plural form, see `tools/l10n/languages.mjs`). A missing
+  translation falls back to English; `npm run l10n` lists it. Only German is
+  required. The terms of each language are in
+  [tools/l10n/glossary.md](tools/l10n/glossary.md); `npm test` checks
+  placeholders and plural forms.
+- Translations: fr, es, it, nl, pl were made with the help of AI and need a
+  review by native speakers; please open an issue or pull request.
+- To add a language, add it to `tools/l10n/languages.mjs` with the plural
+  rule of `@nextcloud/l10n`, create `tools/l10n/translations.<lang>.mjs` and
+  extend the glossary. Please open an issue first.
 
 ## Style
 

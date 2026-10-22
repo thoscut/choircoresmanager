@@ -5,7 +5,9 @@ librarians, the conductor, the board and the auditors. Choir members find
 their part in [Shared with me](#shared-with-me). It first explains a few
 terms and how to find your way around, then what each role does, task by
 task, and at the end what to do about common problems. The interface is
-available in English and German (informal and formal address).
+available in English and German (informal and formal address), and in
+French, Spanish, Italian, Dutch and Polish (made with the help of AI, not yet
+reviewed by native speakers).
 
 What you see depends on your roles. Roles are bound to Nextcloud groups; an
 administrator assigns them (see the [administration guide](admin-guide.md)).

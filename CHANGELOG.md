@@ -150,6 +150,13 @@ All notable changes to this app are documented in this file. The format follows
     pass in a repeat), with one handler on the score container; the cleaned
     SVG carries no handlers. Keyboard alternative: the arrow keys left and
     right in the score go to the previous or next measure in playing order.
+- The interface in French, Spanish, Italian, Dutch and Polish (`fr`, `es`,
+  `it`, `nl`, `pl`), with plural rules that agree between server and
+  browser (three forms in Polish) and a glossary of the terms per language
+  (`tools/l10n/glossary.md`). These translations were made with the help of
+  AI and need a review by native speakers; please open an issue or pull
+  request. A missing translation of these languages falls back to English;
+  German stays complete. `npm test` checks placeholders and plural forms.
 
 ### Fixed
 

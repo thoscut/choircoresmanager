@@ -232,7 +232,9 @@ not a formal audit. Please report barriers as issues.
 English is the source language. The German translation comes in an informal
 ("du") and a formal ("Sie") variant, with neutral, inclusive wording. The
 texts live in `tools/l10n/translations.mjs`; `npm run l10n` writes `l10n/` and
-fails when a text has no translation. More languages are planned; see
+fails when a German text has no translation. French, Spanish, Italian, Dutch
+and Polish were made with the help of AI and need a review by native
+speakers; a missing text falls back to English. See
 [CONTRIBUTING.md](CONTRIBUTING.md#translations) if you would like to help.
 
 ## Documentation

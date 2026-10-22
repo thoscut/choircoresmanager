@@ -6,10 +6,11 @@
 import { createAppConfig } from '@nextcloud/vite-config'
 import { join, resolve } from 'path'
 
-// Unit tests (npm test) run the pure logic in Node, without the build plugins
+// Unit tests (npm test) run the pure logic in Node, without the build plugins;
+// tools/l10n checks the translations
 const testConfig = {
 	test: {
-		include: ['src/**/*.test.ts'],
+		include: ['src/**/*.test.ts', 'tools/l10n/*.test.mjs'],
 		environment: 'node',
 	},
 }

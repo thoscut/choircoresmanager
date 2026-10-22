@@ -359,7 +359,9 @@ dieselben Anforderungen auf einem anderen Weg umgesetzt hat):
 Nextcloud-Suche, Lückenbericht, Jahresstand, Lizenzvermerk, Vorlagen für
 Infomaterial; Beschreibung in `docs/api.md`, im Benutzerhandbuch und im
 Admin-Guide), das Abspielen (Einzähler, Schleife, Startpunkt, Abspielfolge)
-und die Stände einer Fassung. Offen: weitere Sprachen.*
+und die Stände einer Fassung sowie weitere Sprachen (Französisch, Spanisch,
+Italienisch, Niederländisch, Polnisch; KI-erstellt, muttersprachliche
+Prüfung offen).*
 
 - **Schutzfrist-Sonderfälle** als Schalter: wissenschaftliche Ausgaben
   (§ 70 UrhG) und nachgelassene Werke (§ 71 UrhG). – *umgesetzt im Modul
@@ -393,7 +395,9 @@ und die Stände einer Fassung. Offen: weitere Sprachen.*
   – *umgesetzt als Werkzeug `tools/outreach` (Flyer DIN lang, Visitenkarte,
   zwei Banner), nicht Teil der App.*
 - **Weitere Sprachen** (z. B. Französisch, Spanisch, Italienisch,
-  Niederländisch, Polnisch), zuletzt, wenn die Texte stehen.
+  Niederländisch, Polnisch), zuletzt, wenn die Texte stehen. – *umgesetzt:
+  je Sprache `tools/l10n/translations.<lang>.mjs` mit Glossar
+  (`tools/l10n/glossary.md`); fehlende Texte fallen auf Englisch zurück.*
 
 ### 0.9 Benutzerführung
 
