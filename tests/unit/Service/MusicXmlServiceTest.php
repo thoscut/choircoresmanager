@@ -53,7 +53,7 @@ final class MusicXmlServiceTest extends TestCase {
 		parent::setUp();
 
 		$this->rootFolder = $this->createMock(IRootFolder::class);
-		$this->rootFolder->method('getUserFolder')->willReturnCallback(function (string $userId): Folder {
+		$this->rootFolder->method('getUserFolder')->willReturnCallback(function (string $userId) {
 			if (!isset($this->userFolders[$userId])) {
 				// Like the real root folder for an unknown user
 				throw new \Exception("User $userId does not exist");
@@ -108,9 +108,20 @@ final class MusicXmlServiceTest extends TestCase {
 	 * @param list<File|Folder> $nodes
 	 */
 	private function giveAccess(string $userId, int $fileId, array $nodes): void {
-		$folder = $this->userFolders[$userId] ?? $this->createMock(Folder::class);
+		$folder = $this->userFolders[$userId] ?? $this->createMock(self::userFolderClass());
 		$folder->method('getById')->willReturnCallback(fn (int $id) => $id === $fileId ? $nodes : []);
 		$this->userFolders[$userId] = $folder;
+	}
+
+	/**
+	 * Nextcloud 36+ returns OCP\Files\IUserFolder (a Folder subtype) from IRootFolder::getUserFolder(), older versions a plain Folder.
+	 *
+	 * @return class-string<Folder>
+	 */
+	private static function userFolderClass(): string {
+		/** @var class-string<Folder> $class */
+		$class = 'OCP\Files\IUserFolder';
+		return interface_exists($class) ? $class : Folder::class;
 	}
 
 	private function createFile(string $name, string $content, bool $readable = true, int $mtime = 1760000000): File&MockObject {
