@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2026-10-22 00:17+0000\n"
+"POT-Creation-Date: 2026-10-22 00:26+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -767,6 +767,99 @@ msgid "Creating score failed: "
 msgstr ""
 
 msgid "Create score"
+msgstr ""
+
+msgid "Last performed according to the catalogue"
+msgstr ""
+
+msgid "Further catalogue data"
+msgstr ""
+
+msgid "No further catalogue data for this score."
+msgstr ""
+
+msgid "New"
+msgstr ""
+
+msgid "Changed"
+msgstr ""
+
+msgid "Error"
+msgstr ""
+
+msgid "Catalogue imported: {new} new, {changed} changed"
+msgstr ""
+
+msgid "Import catalogue"
+msgstr ""
+
+msgid ""
+"Select the catalogue as a CSV file (semicolon-separated, UTF-8). A dry run "
+"first shows what would change. Nothing is saved until you click Apply."
+msgstr ""
+
+msgid ""
+"Rows are matched to scores by their signature. Scores that are not in the "
+"file stay unchanged, nothing is deleted."
+msgstr ""
+
+msgid "Choose CSV file"
+msgstr ""
+
+msgid "The catalogue has been imported."
+msgstr ""
+
+msgid "Result"
+msgstr ""
+
+msgid "Dry run"
+msgstr ""
+
+msgid "New: {count}"
+msgstr ""
+
+msgid "Changed: {count}"
+msgstr ""
+
+msgid "Unchanged: {count}"
+msgstr ""
+
+msgid "With errors: {count}"
+msgstr ""
+
+msgid ""
+"Rows with errors are not applied. Correct them in the file and choose it "
+"again."
+msgstr ""
+
+msgid "How the columns are stored"
+msgstr ""
+
+msgid "In score fields:"
+msgstr ""
+
+msgid "Verbatim as further catalogue data:"
+msgstr ""
+
+msgid "Line {line}"
+msgstr ""
+
+msgid "Column"
+msgstr ""
+
+msgid "Before"
+msgstr ""
+
+msgid "After"
+msgstr ""
+
+msgid "Close"
+msgstr ""
+
+msgid "Apply"
+msgstr ""
+
+msgid "Export catalogue"
 msgstr ""
 
 msgid "Delete Comment"
