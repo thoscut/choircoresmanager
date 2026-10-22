@@ -68,6 +68,7 @@ const LicensesView = defineAsyncComponent(() => import('./components/LicensesVie
 const AccessionView = defineAsyncComponent(() => import('./components/AccessionView.vue'))
 const PersonsView = defineAsyncComponent(() => import('./components/PersonsView.vue'))
 const ProtectionView = defineAsyncComponent(() => import('./components/ProtectionView.vue'))
+const StatisticsView = defineAsyncComponent(() => import('./components/StatisticsView.vue'))
 const MergesView = defineAsyncComponent(() => import('./components/MergesView.vue'))
 const InventoryView = defineAsyncComponent(() => import('./components/InventoryView.vue'))
 const ChecksumsView = defineAsyncComponent(() => import('./components/ChecksumsView.vue'))
@@ -353,6 +354,7 @@ function openSettings(): void {
 					<AccessionView v-else-if="currentView === 'accession'" />
 					<PersonsView v-else-if="currentView === 'persons'" />
 					<ProtectionView v-else-if="currentView === 'protection'" />
+					<StatisticsView v-else-if="currentView === 'statistics'" />
 					<MergesView v-else-if="currentView === 'merges'" />
 					<InventoryView v-else-if="currentView === 'inventory'" />
 					<ChecksumsView v-else-if="currentView === 'checksums'" />

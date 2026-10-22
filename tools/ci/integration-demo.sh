@@ -18,7 +18,8 @@
 # The person and performance lists are imported only by the tests, inside
 # transactions that are rolled back. events_test expects no concert at all
 # ("dry run leaves no events") and maintenance_test expects its dry run to
-# create persons, so both must run before any real import of these lists.
+# create persons, so both must run before any real import of these lists;
+# statistics_test imports the performance list itself, also rolled back.
 #
 # Environment (all optional):
 #   CI_USER   test account, created by the script (default: demo-librarian)
@@ -206,6 +207,9 @@ run_test maintenance_test "$IMPORT/persons.csv" 2-4 3-2 2-1
 # 2-6 is protected without a license for practice audio, 3-1 an internal
 # preservation copy, 2-2 public domain but not confirmed.
 run_test practice_audio_test 2-6 3-1 2-2
+# Consistency of the statistics and the annual report with the performance
+# records imported inside the test (rolled back); no fixed figures.
+run_test statistics_test "$IMPORT/performances.csv"
 run_test backup_test
 
 echo

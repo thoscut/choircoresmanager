@@ -53,6 +53,8 @@ What is covered:
 | `Service/OdsWriterTest` | the written .ods: package structure, sheets, escaping |
 | `Service/PerformanceImportServiceTest` | counting rule for documented performances, detection of the own choir |
 | `Service/CatalogServiceTest` | repertoire figures (documented or imported), works after merges |
+| `Service/StatisticsServiceTest` | aggregation of the statistics without a database: period, copies per binder, new copies per year (audit log or creation date, time zone of the user), rights states, valid versions, license groups, concerts and pieces per year, most performed works and composers, repertoire classes, works not sung for a long time, tasks by age, protection terms, open rights questions, licenses and accessions of the annual report; 2,000 copies aggregated in well under a second |
+| `Service/StatisticsCsvTest` | CSV of the statistics and the annual report: every table under its heading, translated labels, formula cells neutralized |
 | `Service/InputTest`, `Service/SortTest`, `Db/MergeTest` | request data checks, typed sorting, what a merge recorded |
 | `Controller/ControllerSecurityTest` | route attributes of every controller (no public page, CSRF skipped only for plain downloads, admin-only settings, brute-force and rate limits), headers of the score file response, the app page's content security policy |
 | `Service/ScoreServiceTest` | only real MusicXML reaches the browser (root element, document type declarations, `.mxl` contents, size limit) |
@@ -86,8 +88,16 @@ sudo -u www-data php tests/Integration/tasks_links_test.php   /var/www/nextcloud
 sudo -u www-data php tests/Integration/events_test.php        /var/www/nextcloud <uid> <programme-csv> <song-list-csv> <shelfmark-a> <shelfmark-b>
 sudo -u www-data php tests/Integration/maintenance_test.php   /var/www/nextcloud <uid> <persons-csv> <shelfmark-a> <shelfmark-b> <shelfmark-free>
 sudo -u www-data php tests/Integration/practice_audio_test.php /var/www/nextcloud <uid> <shelfmark-protected> <shelfmark-preservation-copy> <shelfmark-public-domain>
+sudo -u www-data php tests/Integration/statistics_test.php    /var/www/nextcloud <uid> [<programme-csv>]
 sudo -u www-data php tests/Integration/backup_test.php        /var/www/nextcloud <uid>
 ```
+
+`statistics_test.php` fixes no figures of a catalog, so it runs on any
+imported catalog: it checks that sums and states add up, compares the
+statistics with the catalog list, the release lists, the resubmission list
+and the checksums, books a concert, an accession and a license and checks
+the difference, and finally fills the catalog up to 2,000 copies to measure
+the time of the whole call (rolled back like everything else).
 
 `<uid>` must hold the role `librarian`; each script's header lists further
 requirements (CSV paths are relative to the user's files). `backup_test.php`
@@ -133,6 +143,7 @@ these shelf marks of the demo catalog:
 | `events_test.php` | `_Import/performances.csv _Import/song-lists.csv 2-1 3-1` | 2-1 is current repertoire; the first ambiguous programme line (1-1 or 3-1) is resolved to 3-1 |
 | `maintenance_test.php` | `_Import/persons.csv 2-4 3-2 2-1` | 2-4 and 3-2 are two copies of the same print with an uncertainly identified editor; all persons of 2-1 died more than 70 years ago |
 | `practice_audio_test.php` | `2-6 3-1 2-2` | 2-6 is protected without a license for practice audio, 3-1 an internal preservation copy, 2-2 public domain but not confirmed |
+| `statistics_test.php` | `_Import/performances.csv` | the performance list gives the statistics concerts to count; no fixed figures |
 | `backup_test.php` | – | |
 
 The person and performance lists are imported only inside the tests'

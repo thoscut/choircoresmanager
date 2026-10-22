@@ -135,11 +135,50 @@ wait in the **inbox** until a music librarian accepts or rejects them.
 - **Licenses ending or ended:** the start page card leads to the licenses that
   end within 30 days or have ended.
 
+## Statistics and annual report
+
+**Statistics** (under *Archive*) is open to every archive role. Choose the
+period (default: the last ten years); figures without a year are those of
+today. Each figure is a number in a table; the bars beside them are only for
+a quick comparison. The links at the top lead to the sections:
+
+- **Stock:** works, versions and copies; active copies with a file and with
+  MusicXML; internal preservation copies; copies per binder (active,
+  retired, missing, lent); new copies per year, split into new accessions
+  and copies taken over from the catalog import.
+- **Rights:** rights status of the versions, confirmed and not confirmed;
+  works with and without a valid version (and how many of them have several
+  versions to choose from); licenses valid, ending within 30 days, ended and
+  not valid yet; the states of the singers' portal and print station lists;
+  publication status.
+- **Repertoire and performances:** concerts and pieces sung per year, the
+  ten most performed works and composers of the period (performance days),
+  the repertoire classes (current, dormant, earlier, not documented) and the
+  works sung before but not lately that can be sung from the archive. Pieces
+  sung are the documented performances: lines of concerts confirmed as sung.
+- **Maintenance:** open tasks per role and age, proposals in the inbox,
+  checksums, and the protection terms that end in the period (a proposal by
+  the life dates, no legal advice).
+
+The statistics contain no personal data of choir members and no account
+names; internal preservation copies are counted but never listed by title or
+shelf mark. **Print** prints the overview, **Statistics as CSV** downloads
+all tables.
+
+The **annual report** at the end of the page summarises one year for the
+board and the general meeting: concerts with their dates and pieces, new
+accessions, licenses that started or ended, open rights questions and the
+stock. In the first half of the year it proposes the past year. **Print
+annual report** prints only the report on A4, in black and white and on
+request in large print; **Annual report as CSV** downloads its tables.
+Open rights questions and the stock are always those of today, because the
+archive keeps no earlier states of them.
+
 ## Paper
 
 Every list can be printed in A4 black and white, also in large print:
 song list, concert binder list with columns to tick, inventory per binder,
-open tasks sorted by binder, shelf labels.
+open tasks sorted by binder, shelf labels, statistics and annual report.
 
 ## Backups
 

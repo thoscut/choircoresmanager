@@ -56,17 +56,24 @@ final class ControllerSecurityTest extends TestCase {
 		'ApiController::settings', 'ApiController::updateSettings', 'EventController::setThresholds',
 	];
 
-	/** Plain GET downloads (links, no CSRF token) that change nothing */
+	/**
+	 * Plain GET downloads (links, no CSRF token) that change nothing. The CSV
+	 * files of the statistics and the annual report are such downloads: they
+	 * only read, like the song order.
+	 */
 	private const WITHOUT_CSRF = [
 		'PageController::index', 'ApiController::export', 'WorkflowController::fullBackup', 'EventController::songOrder',
+		'StatisticsController::csv', 'StatisticsController::reportCsv',
 	];
 
-	/** Expensive endpoints: limited per user */
+	/** Expensive endpoints: limited per user (the statistics aggregate the whole archive) */
 	private const RATE_LIMITED = [
 		'ApiController::import', 'ApiController::fileSync', 'ApiController::export', 'ApiController::exportStore',
 		'WorkflowController::backup', 'WorkflowController::fullBackup', 'WorkflowController::restore',
 		'EventController::songOrder', 'EventController::importPerformances', 'PersonController::import',
 		'PracticeAudioController::authorize',
+		'StatisticsController::overview', 'StatisticsController::report', 'StatisticsController::csv',
+		'StatisticsController::reportCsv',
 	];
 
 	/**

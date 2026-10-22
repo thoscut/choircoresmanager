@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace OCA\Notenarchiv\Service;
 
 use OCA\Notenarchiv\Db\CopyMapper;
+use OCA\Notenarchiv\Db\License;
 use OCA\Notenarchiv\Db\LicenseMapper;
 use OCA\Notenarchiv\Db\WorkMapper;
+use OCA\Notenarchiv\Db\WorkVersion;
 use OCA\Notenarchiv\Db\WorkVersionMapper;
 
 /**
@@ -93,6 +95,32 @@ class ReleaseListService {
 	}
 
 	/**
+	 * Status of a version in the list of the singers' portal (`portal`) or
+	 * the print station (`print_station`), see the class comment, and why it
+	 * is not released (null when it is). The print station has no "present"
+	 * state, so it knows no `ok` and no `remove`.
+	 *
+	 * @param list<License> $licenses licenses of the version
+	 * @param ?int $validVersionId the valid version of the work, if one is chosen
+	 * @return array{0: string, 1: ?string} status and reason (English source string)
+	 */
+	public function status(WorkVersion $version, array $licenses, string $day, string $target, ?int $validVersionId): array {
+		$denial = $target === 'portal'
+			? $this->rights->portalDenial($version, $licenses, $day)
+			: $this->rights->printStationDenial($version, $licenses, $day);
+		$present = $target === 'portal' && $this->rights->isOnPortal($version);
+		$status = match (true) {
+			$present && $denial === null => 'ok',
+			$present => 'remove',
+			$denial !== null => 'blocked',
+			$validVersionId === null => 'not_decided',
+			$validVersionId === $version->getId() => 'add',
+			default => 'other_version_valid',
+		};
+		return [$status, $denial];
+	}
+
+	/**
 	 * @return array<int, list<array{id: int, shelfmark: string}>> version id => active copies
 	 */
 	private function activeShelfmarks(): array {
@@ -125,21 +153,8 @@ class ReleaseListService {
 		$rows = [];
 		$keys = [];
 		foreach ($allVersions as $version) {
-			$versionLicenses = $licenses[$version->getId()] ?? [];
-			$denial = $target === 'portal'
-				? $this->rights->portalDenial($version, $versionLicenses, $day)
-				: $this->rights->printStationDenial($version, $versionLicenses, $day);
-			$present = $target === 'portal' && $this->rights->isOnPortal($version);
-			$validVersionId = $validPerWork[$version->getWorkId()] ?? null;
-
-			$status = match (true) {
-				$present && $denial === null => 'ok',
-				$present => 'remove',
-				$denial !== null => 'blocked',
-				$validVersionId === null => 'not_decided',
-				$validVersionId === $version->getId() => 'add',
-				default => 'other_version_valid',
-			};
+			[$status, $denial] = $this->status($version, $licenses[$version->getId()] ?? [], $day, $target,
+				$validPerWork[$version->getWorkId()] ?? null);
 			if (!$includeBlocked && in_array($status, ['blocked', 'other_version_valid'], true)) {
 				continue;
 			}

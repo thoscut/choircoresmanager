@@ -43,6 +43,8 @@ export function viewTitle(view: ViewName, librarian: boolean): string {
 		return t('notenarchiv', 'Persons')
 	case 'protection':
 		return t('notenarchiv', 'Protection terms')
+	case 'statistics':
+		return t('notenarchiv', 'Statistics')
 	case 'accession':
 		return librarian ? t('notenarchiv', 'New accession') : t('notenarchiv', 'Shelf labels')
 	case 'merges':
