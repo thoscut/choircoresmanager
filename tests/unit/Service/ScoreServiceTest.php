@@ -17,8 +17,6 @@ use OCA\OrchestraScoresManager\Policy\PolicyInterface;
 use OCA\OrchestraScoresManager\Policy\ScorePolicy;
 use OCA\OrchestraScoresManager\Service\AuthorizationService;
 use OCA\OrchestraScoresManager\Service\Exceptions\PermissionDeniedException;
-use OCA\OrchestraScoresManager\Service\MusicXmlService;
-use OCA\OrchestraScoresManager\Service\PdfService;
 use OCA\OrchestraScoresManager\Service\ScoreService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\IDBConnection;
@@ -39,8 +37,6 @@ final class ScoreServiceTest extends TestCase {
 	private AuthorizationService $authorizationService;
 	private ScorePolicy $scorePolicy;
 	private IL10N $l10n;
-	private MusicXmlService $musicXmlService;
-	private PdfService $pdfService;
 	private ShareMapper $shareMapper;
 	private ScoreService $service;
 
@@ -56,8 +52,6 @@ final class ScoreServiceTest extends TestCase {
 		$this->authorizationService = $this->createMock(AuthorizationService::class);
 		$this->scorePolicy = $this->createMock(ScorePolicy::class);
 		$this->l10n = $this->createMock(IL10N::class);
-		$this->musicXmlService = $this->createMock(MusicXmlService::class);
-		$this->pdfService = $this->createMock(PdfService::class);
 		$this->shareMapper = $this->createMock(ShareMapper::class);
 
 		$this->l10n->method('t')->willReturnCallback(fn ($text, $params = []) => vsprintf($text, $params));
@@ -73,8 +67,6 @@ final class ScoreServiceTest extends TestCase {
 			$this->scorePolicy,
 			$this->l10n,
 			$this->createMock(IDBConnection::class),
-			$this->musicXmlService,
-			$this->pdfService,
 			$this->shareMapper,
 		);
 	}
@@ -222,14 +214,6 @@ final class ScoreServiceTest extends TestCase {
 		$this->scoreMapper->expects($this->once())
 			->method('delete')
 			->with($score);
-
-		$this->musicXmlService->expects($this->once())
-			->method('removeFile')
-			->with(1);
-
-		$this->pdfService->expects($this->once())
-			->method('removeFile')
-			->with(1);
 
 		$this->shareMapper->expects($this->once())
 			->method('deleteForTarget')
@@ -524,8 +508,6 @@ final class ScoreServiceTest extends TestCase {
 			$this->scorePolicy,
 			$this->l10n,
 			$db,
-			$this->musicXmlService,
-			$this->pdfService,
 			$this->shareMapper,
 		);
 

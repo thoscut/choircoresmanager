@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2026-10-22 00:23+0000\n"
+"POT-Creation-Date: 2026-10-22 00:44+0000\n"
 "PO-Revision-Date: 2025-11-28 22:37+0000\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -16,9 +16,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-
-msgid "No file uploaded"
-msgstr "Keine Datei hochgeladen"
 
 msgid "Public scores"
 msgstr "Öffentliche Noten"
@@ -97,42 +94,51 @@ msgstr "Eine aktive Version existiert bereits. Deaktivieren Sie sie zuerst, inde
 msgid "New version must start at least one day after the current version"
 msgstr "Neue Version muss mindestens einen Tag nach der aktuellen Version beginnen"
 
+msgid "The selected file does not exist or you are not allowed to read it"
+msgstr "Die ausgewählte Datei existiert nicht oder Sie dürfen sie nicht lesen"
+
+msgid "No MusicXML file is linked to this score"
+msgstr "Mit dieser Partitur ist keine MusicXML-Datei verknüpft"
+
+msgid "The linked MusicXML file is missing or no longer accessible."
+msgstr "Die verknüpfte MusicXML-Datei fehlt oder ist nicht mehr zugänglich."
+
 msgid "Only MusicXML files (.musicxml, .xml, .mxl) are allowed"
 msgstr "Nur MusicXML-Dateien (.musicxml, .xml, .mxl) sind erlaubt"
 
-msgid "The uploaded file is empty"
-msgstr "Die hochgeladene Datei ist leer"
+msgid "The file could not be read"
+msgstr "Die Datei konnte nicht gelesen werden"
 
 #, php-format
-msgid "The uploaded file is too large (maximum %d MB)"
-msgstr "Die hochgeladene Datei ist zu groß (höchstens %d MB)"
+msgid "The file is too large (maximum %d MB)"
+msgstr "Die Datei ist zu groß (höchstens %d MB)"
 
-msgid "The uploaded file could not be read"
-msgstr "Die hochgeladene Datei konnte nicht gelesen werden"
+msgid "The file is empty"
+msgstr "Die Datei ist leer"
 
-msgid "No MusicXML file available for this score"
-msgstr "Für diese Partitur gibt es keine MusicXML-Datei"
-
-msgid "The uploaded file is not a valid MusicXML file"
-msgstr "Die hochgeladene Datei ist keine gültige MusicXML-Datei"
+msgid "The file is not a valid MusicXML file"
+msgstr "Die Datei ist keine gültige MusicXML-Datei"
 
 msgid "MusicXML files with entity declarations are not supported"
 msgstr "MusicXML-Dateien mit Entity-Deklarationen werden nicht unterstützt"
 
-msgid "The uploaded file is not a valid compressed MusicXML file"
-msgstr "Die hochgeladene Datei ist keine gültige komprimierte MusicXML-Datei"
+msgid "The file is not a valid compressed MusicXML file"
+msgstr "Die Datei ist keine gültige komprimierte MusicXML-Datei"
 
-msgid "The uploaded file is too large when uncompressed"
-msgstr "Die hochgeladene Datei ist entpackt zu groß"
+msgid "The file is too large when uncompressed"
+msgstr "Die Datei ist entpackt zu groß"
+
+msgid "No PDF file is linked to this score"
+msgstr "Mit dieser Partitur ist keine PDF-Datei verknüpft"
+
+msgid "The linked PDF file is missing or no longer accessible."
+msgstr "Die verknüpfte PDF-Datei fehlt oder ist nicht mehr zugänglich."
 
 msgid "Only PDF files are allowed"
 msgstr "Nur PDF-Dateien sind erlaubt"
 
-msgid "The uploaded file is not a valid PDF file"
-msgstr "Die hochgeladene Datei ist keine gültige PDF-Datei"
-
-msgid "No PDF file available for this score"
-msgstr "Für diese Partitur gibt es keine PDF-Datei"
+msgid "The file is not a valid PDF file"
+msgstr "Die Datei ist keine gültige PDF-Datei"
 
 msgid "Cannot delete score book with linked scores. Remove all scores first."
 msgstr "Notenbuch mit verknüpften Partituren kann nicht gelöscht werden. Entfernen Sie zuerst alle Partituren."
@@ -182,17 +188,17 @@ msgid "Invalid date. Use the format YYYY-MM-DD."
 msgstr "Ungültiges Datum. Bitte das Format JJJJ-MM-TT verwenden."
 
 msgid "Invalid rights status. Must be \"public_domain\", \"licensed\", \"protected\" or \"open\"."
-msgstr "Ungültiger Rechtestatus. Erlaubt sind \"public_domain\", \"licensed\", \"protected\" und \"open\"."
+msgstr "Ungültiger Rechtestatus. Erlaubt sind \"public_domain\", \"licensed\", \"protected\" oder \"open\"."
 
 msgid "Invalid publication status. Must be \"approved\", \"to_clarify\", \"blocked\" or \"internal_preservation_copy\"."
 msgstr "Ungültiger Veröffentlichungsstatus. Erlaubt sind \"approved\", \"to_clarify\", \"blocked\" oder \"internal_preservation_copy\"."
 
 #, php-format
 msgid "Use at most %d characters for the person who confirmed the rights, e.g. their initials."
-msgstr "Bitte höchstens %d Zeichen für die Person verwenden, die die Rechte bestätigt hat, z. B. ihr Kürzel."
+msgstr "Für die Person, die die Rechte bestätigt hat, höchstens %d Zeichen verwenden, z. B. ihr Kürzel."
 
 msgid "A \"blocked until\" date can only be set if the publication is blocked."
-msgstr "Ein Datum für \"Gesperrt bis\" kann nur gesetzt werden, wenn die Veröffentlichung gesperrt ist."
+msgstr "Ein Datum für „Gesperrt bis“ kann nur gesetzt werden, wenn die Veröffentlichung gesperrt ist."
 
 msgid "Setlist entry not found"
 msgstr "Setlist-Eintrag nicht gefunden"
@@ -296,7 +302,7 @@ msgid "Public page"
 msgstr "Öffentliche Seite"
 
 msgid "Show all scores that are approved for publication and whose rights status (public domain or licensed) has been confirmed on a page that can be opened without logging in. Visitors can view and play the MusicXML files of these scores. No other scores or internal details are shown."
-msgstr "Alle Partituren, die zur Veröffentlichung freigegeben sind und deren Rechtestatus (gemeinfrei oder lizenziert) bestätigt wurde, auf einer Seite anzeigen, die ohne Anmeldung geöffnet werden kann. Besucher können die MusicXML-Dateien dieser Partituren ansehen und abspielen. Andere Partituren oder interne Angaben werden nicht angezeigt."
+msgstr "Alle Partituren, die zur Veröffentlichung frei sind und deren Rechtestatus (gemeinfrei oder lizenziert) bestätigt wurde, auf einer Seite anzeigen, die ohne Anmeldung geöffnet werden kann. Besucher können die MusicXML-Dateien dieser Partituren ansehen und abspielen. Andere Partituren oder interne Angaben werden nicht angezeigt."
 
 msgid "Enable public page"
 msgstr "Öffentliche Seite aktivieren"
@@ -580,7 +586,7 @@ msgid "Rights Status"
 msgstr "Rechtestatus"
 
 msgid "Rights Reasoning"
-msgstr "Begründung Rechte"
+msgstr "Begründung (Rechte)"
 
 msgid "Rights Confirmed On"
 msgstr "Rechte bestätigt am"
@@ -589,7 +595,7 @@ msgid "Rights Confirmed By"
 msgstr "Rechte bestätigt von"
 
 msgid "Who confirmed the rights status, e.g. initials. Changing the rights status removes the confirmation."
-msgstr "Wer den Rechtestatus bestätigt hat, z. B. Kürzel. Eine Änderung des Rechtestatus hebt die Bestätigung auf."
+msgstr "Wer den Rechtestatus bestätigt hat, z. B. Kürzel. Wird der Rechtestatus geändert, entfällt die Bestätigung."
 
 msgid "Publication"
 msgstr "Veröffentlichung"
@@ -598,7 +604,7 @@ msgid "Blocked Until"
 msgstr "Gesperrt bis"
 
 msgid "Publication Reasoning"
-msgstr "Begründung Veröffentlichung"
+msgstr "Begründung (Veröffentlichung)"
 
 msgid "MusicXML"
 msgstr "MusicXML"
@@ -936,53 +942,77 @@ msgstr "Mehr erfahren"
 msgid "Submit comment"
 msgstr "Kommentar senden"
 
-msgid "Scores in this book"
-msgstr "Partituren in diesem Notenbuch"
+msgid "Downloading the file failed: "
+msgstr "Herunterladen der Datei fehlgeschlagen: "
+
+msgid "Choose a MusicXML file"
+msgstr "MusicXML-Datei auswählen"
+
+msgid "Link file"
+msgstr "Datei verknüpfen"
+
+msgid "MusicXML file linked"
+msgstr "MusicXML-Datei verknüpft"
+
+msgid "Linking the file failed: "
+msgstr "Verknüpfen der Datei fehlgeschlagen: "
+
+msgid "MusicXML file unlinked"
+msgstr "Verknüpfung mit der MusicXML-Datei gelöst"
+
+msgid "Unlinking the file failed: "
+msgstr "Lösen der Verknüpfung fehlgeschlagen: "
 
 msgid "Download MusicXML"
 msgstr "MusicXML herunterladen"
 
-msgid "No MusicXML file uploaded yet."
-msgstr "Noch keine MusicXML-Datei hochgeladen."
+msgid "Show in Files"
+msgstr "In Dateien anzeigen"
 
-msgid "Upload MusicXML"
-msgstr "MusicXML hochladen"
+msgid "No MusicXML file linked yet."
+msgstr "Noch keine MusicXML-Datei verknüpft."
 
-msgid "No PDF file uploaded yet."
-msgstr "Noch keine PDF-Datei hochgeladen."
+msgid "Link another file"
+msgstr "Andere Datei verknüpfen"
 
-msgid "Upload PDF"
-msgstr "PDF hochladen"
+msgid "Link MusicXML file"
+msgstr "MusicXML-Datei verknüpfen"
 
-msgid "Downloading the file failed: "
-msgstr "Herunterladen der Datei fehlgeschlagen: "
+msgid "Unlink file"
+msgstr "Verknüpfung lösen"
 
-msgid "The file is too large (maximum {size} MB)"
-msgstr "Die Datei ist zu groß (höchstens {size} MB)"
+msgid "The file stays in Files, where it is uploaded, replaced and backed up. Unlinking does not delete it."
+msgstr "Die Datei bleibt in Dateien und wird dort hochgeladen, ersetzt und gesichert. Beim Lösen der Verknüpfung wird sie nicht gelöscht."
 
-msgid "File uploaded"
-msgstr "Datei hochgeladen"
-
-msgid "Uploading the file failed: "
-msgstr "Hochladen der Datei fehlgeschlagen: "
-
-msgid "File removed"
-msgstr "Datei entfernt"
-
-msgid "Removing the file failed: "
-msgstr "Entfernen der Datei fehlgeschlagen: "
-
-msgid "Replace file"
-msgstr "Datei ersetzen"
-
-msgid "Remove file"
-msgstr "Datei entfernen"
+msgid "Check the file in Files or link it again."
+msgstr "Bitte die Datei in Dateien prüfen oder erneut verknüpfen."
 
 msgid "This score is an internal preservation copy. Its notes are neither displayed nor played back, and only members of the editing groups can download the file."
-msgstr "Diese Partitur ist eine interne Erhaltungskopie. Die Noten werden weder angezeigt noch abgespielt, und nur Mitglieder der Bearbeitergruppen können die Datei herunterladen."
+msgstr "Diese Partitur ist eine interne Erhaltungskopie. Die Noten werden weder angezeigt noch abgespielt, und nur Mitglieder der Bearbeitungsgruppen können die Datei herunterladen."
 
 msgid "This score is approved for publication and its rights are confirmed, so it is shown on the public page if that page is enabled."
-msgstr "Diese Partitur ist zur Veröffentlichung freigegeben und ihre Rechte sind bestätigt. Sie erscheint daher auf der öffentlichen Seite, sofern diese aktiviert ist."
+msgstr "Diese Partitur ist zur Veröffentlichung frei und ihre Rechte sind bestätigt. Sie erscheint daher auf der öffentlichen Seite, sofern diese aktiviert ist."
+
+msgid "Choose a PDF file"
+msgstr "PDF-Datei auswählen"
+
+msgid "PDF file linked"
+msgstr "PDF-Datei verknüpft"
+
+msgid "PDF file unlinked"
+msgstr "Verknüpfung mit der PDF-Datei gelöst"
+
+msgid "No PDF file linked yet."
+msgstr "Noch keine PDF-Datei verknüpft."
+
+msgid "Link PDF file"
+msgstr "PDF-Datei verknüpfen"
+
+msgid "This score is an internal preservation copy. Its notes are neither displayed nor played back."
+msgstr "Diese Partitur ist eine interne Erhaltungskopie. Die Noten werden weder angezeigt noch abgespielt."
+
+msgid "Scores in this book"
+msgstr "Partituren in diesem Notenbuch"
 
 msgid "Failed to load setlist"
 msgstr "Setlist konnte nicht geladen werden"
@@ -1207,16 +1237,16 @@ msgid "Edit shares of this item"
 msgstr "Freigaben dieses Eintrags bearbeiten"
 
 msgid "Last updated: {date}"
-msgstr "Zuletzt aktualisiert: {date}"
+msgstr "Stand: {date}"
 
 msgid "Freely available scores"
 msgstr "Frei verfügbare Noten"
 
 msgid "These scores are in the public domain or may be provided digitally under a licence. Select a score to view the notes and listen to the individual voices."
-msgstr "Diese Partituren sind gemeinfrei oder dürfen mit Lizenz digital bereitgestellt werden. Wählen Sie eine Partitur, um die Noten anzusehen und die einzelnen Stimmen anzuhören."
+msgstr "Diese Partituren sind gemeinfrei oder dürfen mit einer Lizenz digital bereitgestellt werden. Wählen Sie eine Partitur, um die Noten anzusehen und die einzelnen Stimmen anzuhören."
 
 msgid "All content is provided as is, dated with its last update, without warranty and without any obligation to keep earlier versions available."
-msgstr "Alle Inhalte werden ohne Gewähr im jeweils angegebenen Stand bereitgestellt, ohne Verpflichtung, frühere Fassungen verfügbar zu halten."
+msgstr "Alle Inhalte werden „wie besehen“ mit dem Datum ihrer letzten Änderung bereitgestellt, ohne Gewähr und ohne Pflicht, ältere Stände bereitzuhalten."
 
 msgid "Search by title or composer"
 msgstr "Nach Titel oder Komponist suchen"
@@ -1303,10 +1333,10 @@ msgid "Protected"
 msgstr "Geschützt"
 
 msgid "Unresolved"
-msgstr "Ungeklärt"
+msgstr "Offen"
 
 msgid "Approved"
-msgstr "Freigegeben"
+msgstr "Frei"
 
 msgid "To clarify"
 msgstr "Zu klären"
@@ -1320,11 +1350,57 @@ msgstr "Interne Erhaltungskopie"
 msgid "Invalid duration format"
 msgstr "Ungültiges Spieldauerformat"
 
+#~ msgid "No file uploaded"
+#~ msgstr "Keine Datei hochgeladen"
+
+#~ msgid "The uploaded file is empty"
+#~ msgstr "Die hochgeladene Datei ist leer"
+
+#, php-format
+#~ msgid "The uploaded file is too large (maximum %d MB)"
+#~ msgstr "Die hochgeladene Datei ist zu groß (höchstens %d MB)"
+
+#~ msgid "The uploaded file could not be read"
+#~ msgstr "Die hochgeladene Datei konnte nicht gelesen werden"
+
+#~ msgid "No MusicXML file available for this score"
+#~ msgstr "Für diese Partitur gibt es keine MusicXML-Datei"
+
+#~ msgid "The uploaded file is not a valid MusicXML file"
+#~ msgstr "Die hochgeladene Datei ist keine gültige MusicXML-Datei"
+
+#~ msgid "The uploaded file is not a valid compressed MusicXML file"
+#~ msgstr "Die hochgeladene Datei ist keine gültige komprimierte MusicXML-Datei"
+
+#~ msgid "The uploaded file is too large when uncompressed"
+#~ msgstr "Die hochgeladene Datei ist entpackt zu groß"
+
+#~ msgid "The file is too large (maximum {size} MB)"
+#~ msgstr "Die Datei ist zu groß (höchstens {size} MB)"
+
 #~ msgid "MusicXML file uploaded"
 #~ msgstr "MusicXML-Datei hochgeladen"
 
+#~ msgid "Uploading the file failed: "
+#~ msgstr "Hochladen der Datei fehlgeschlagen: "
+
 #~ msgid "MusicXML file removed"
 #~ msgstr "MusicXML-Datei entfernt"
+
+#~ msgid "Removing the file failed: "
+#~ msgstr "Entfernen der Datei fehlgeschlagen: "
+
+#~ msgid "No MusicXML file uploaded yet."
+#~ msgstr "Noch keine MusicXML-Datei hochgeladen."
+
+#~ msgid "Replace file"
+#~ msgstr "Datei ersetzen"
+
+#~ msgid "Upload MusicXML"
+#~ msgstr "MusicXML hochladen"
+
+#~ msgid "Remove file"
+#~ msgstr "Datei entfernen"
 
 #~ msgid "This score is an internal preservation copy"
 #~ msgstr "Diese Partitur ist eine interne Erhaltungskopie"

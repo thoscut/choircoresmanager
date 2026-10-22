@@ -10,7 +10,7 @@ import { useScoreBooksStore } from '@/stores/scoreBooksStore'
 import { useScoreSidebarStore } from '@/stores/scoreSidebarStore'
 
 /**
- * Files that can be attached to a score
+ * Files that can be linked to a score
  */
 export type ScoreFileKind = 'musicxml' | 'pdf'
 
@@ -173,57 +173,121 @@ export const useScoresStore = defineStore('scores', () => {
 	}
 
 	/**
-	 * Upload a file attached to a score and update local state
+	 * Link a MusicXML file from Nextcloud Files to a score and update local state
 	 *
 	 * @param id - The score ID
-	 * @param kind - Which file to upload
-	 * @param file - The file
+	 * @param fileId - The Nextcloud file id of the MusicXML file (.musicxml, .xml or .mxl)
 	 * @return The updated score
 	 * @throws { Error } if API call fails
 	 */
-	async function uploadScoreFile(id: number, kind: ScoreFileKind, file: File): Promise<Score> {
-		const formData = new FormData()
-		formData.append('file', file)
-		const response = await ncAxios.post(
-			generateOcsUrl('/apps/orchestrascoresmanager/scores/{id}/{kind}', { id, kind }),
-			formData,
-			{ headers: { 'OCS-APIRequest': 'true', Accept: 'application/json' } },
-		)
+	async function linkMusicXml(id: number, fileId: number): Promise<Score> {
+		const response = await apiClients.default.musicXmlApiPostMusicXml(id, { fileId })
 		const updated = response.data.ocs.data as Score
 		replaceScore(updated)
 		return updated
 	}
 
 	/**
-	 * Remove a file attached to a score and update local state
+	 * Remove the link to the MusicXML file of a score and update local state. The file stays in Files.
 	 *
 	 * @param id - The score ID
-	 * @param kind - Which file to remove
 	 * @return The updated score
 	 * @throws { Error } if API call fails
 	 */
-	async function deleteScoreFile(id: number, kind: ScoreFileKind): Promise<Score> {
-		const response = kind === 'musicxml'
-			? await apiClients.default.musicXmlApiDeleteMusicXml(id)
-			: await apiClients.default.pdfApiDeletePdf(id)
+	async function unlinkMusicXml(id: number): Promise<Score> {
+		const response = await apiClients.default.musicXmlApiDeleteMusicXml(id)
 		const updated = response.data.ocs.data as Score
 		replaceScore(updated)
 		return updated
 	}
 
 	/**
-	 * Fetch a file attached to a score
+	 * Link a PDF file from Nextcloud Files to a score and update local state
+	 *
+	 * @param id - The score ID
+	 * @param fileId - The Nextcloud file id of the PDF file
+	 * @return The updated score
+	 * @throws { Error } if API call fails
+	 */
+	async function linkPdf(id: number, fileId: number): Promise<Score> {
+		const response = await apiClients.default.pdfApiPostPdf(id, { fileId })
+		const updated = response.data.ocs.data as Score
+		replaceScore(updated)
+		return updated
+	}
+
+	/**
+	 * Remove the link to the PDF file of a score and update local state. The file stays in Files.
+	 *
+	 * @param id - The score ID
+	 * @return The updated score
+	 * @throws { Error } if API call fails
+	 */
+	async function unlinkPdf(id: number): Promise<Score> {
+		const response = await apiClients.default.pdfApiDeletePdf(id)
+		const updated = response.data.ocs.data as Score
+		replaceScore(updated)
+		return updated
+	}
+
+	/**
+	 * Download the content of the MusicXML file of a score
+	 *
+	 * @param id - The score ID
+	 * @return The file content
+	 * @throws { Error } if API call fails; an OCS error body is decoded so that its message can be shown
+	 */
+	async function fetchMusicXml(id: number): Promise<ArrayBuffer> {
+		return fetchScoreFile(id, 'musicxml')
+	}
+
+	/**
+	 * Download the content of the PDF file of a score
+	 *
+	 * @param id - The score ID
+	 * @return The file content
+	 * @throws { Error } if API call fails; an OCS error body is decoded so that its message can be shown
+	 */
+	async function fetchPdf(id: number): Promise<ArrayBuffer> {
+		return fetchScoreFile(id, 'pdf')
+	}
+
+	/**
+	 * Download the content of a file linked to a score
 	 *
 	 * @param id - The score ID
 	 * @param kind - Which file to fetch
 	 * @return The file content
+	 * @throws { Error } if API call fails; an OCS error body is decoded so that its message can be shown
 	 */
 	async function fetchScoreFile(id: number, kind: ScoreFileKind): Promise<ArrayBuffer> {
-		const response = await ncAxios.get(
-			generateOcsUrl('/apps/orchestrascoresmanager/scores/{id}/{kind}', { id, kind }),
-			{ headers: { 'OCS-APIRequest': 'true' }, responseType: 'arraybuffer' },
-		)
-		return response.data as ArrayBuffer
+		try {
+			const response = await ncAxios.get(
+				generateOcsUrl('/apps/orchestrascoresmanager/scores/{id}/{kind}', { id, kind }),
+				{ headers: { 'OCS-APIRequest': 'true', Accept: 'application/json' }, responseType: 'arraybuffer' },
+			)
+			return response.data as ArrayBuffer
+		} catch (error) {
+			decodeArrayBufferErrorBody(error)
+			throw error
+		}
+	}
+
+	/**
+	 * Replace the binary body of a failed request by the parsed JSON, if it is JSON
+	 *
+	 * @param error - The error thrown by axios
+	 */
+	function decodeArrayBufferErrorBody(error: unknown): void {
+		const response = (error as { response?: { data?: unknown } }).response
+		if (!response || !(response.data instanceof ArrayBuffer)) {
+			return
+		}
+		try {
+			response.data = JSON.parse(new TextDecoder().decode(response.data))
+		} catch {
+			// not JSON, keep the body as it is
+		}
 	}
 
 	/**
@@ -250,8 +314,12 @@ export const useScoresStore = defineStore('scores', () => {
 		updateScoreBookAssignmentApi,
 		updateScoreTags,
 		replaceScore,
-		uploadScoreFile,
-		deleteScoreFile,
+		linkMusicXml,
+		unlinkMusicXml,
+		fetchMusicXml,
+		linkPdf,
+		unlinkPdf,
+		fetchPdf,
 		fetchScoreFile,
 		deleteScore,
 	}

@@ -5,16 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.4.0] - Unreleased
 
 ### Added
 
-- Rights status per score (public domain / licensed / protected / unresolved) with reasoning and a confirmation (date and initials), and, separately, a publication status (approved / to clarify / blocked until a date / internal preservation copy) with reasoning
-- Internal preservation copies are never displayed or played back; only editors can download their files
-- Upload of MusicXML files (.musicxml, .xml, .mxl) per score, with notation view and playback (per-voice solo, mute and volume, tempo control)
-- PDF file per score with an in-browser viewer (no download or print button)
+- PDF file per score, linked from Nextcloud Files like the MusicXML file, with an in-browser viewer (no download or print button)
 - Sharing of scores and folder collections: group shares appear in "Shared with me" for the group's members, public links work without login and only show scores that may be published; editors manage shares on "Manage shares", in the folder collection header and in the score sidebar
-- Optional public page listing all scores approved for publication whose rights (public domain or licensed) have been confirmed, with notation view, playback and MusicXML download (disabled by default, enabled in the admin settings)
+
+## [1.3.0] - Unreleased
+
+### Added
+
+- Rights status per score (public domain / licensed / protected / unresolved) with reasoning, and a separate confirmation by a person (date and initials); changing the rights status removes the confirmation
+- Publication status per score, independent of the rights status (approved / to clarify / blocked, optionally until a date / internal preservation copy), with reasoning
+- Internal preservation copies are never displayed or played back; only editors can download their MusicXML file
+- MusicXML files (.musicxml, .xml, .mxl) are linked from Nextcloud Files with the file picker, so they stay in their folder and its backups and checksums cover them; notation view and playback (per-voice solo, mute and volume, tempo control)
+- Optional public page listing all scores approved for publication whose rights (public domain or licensed) have been confirmed, with notation view, playback, MusicXML download and the date of the last update; everything is provided as is and without warranty (disabled by default, enabled in the admin settings)
 
 ## [1.2.2] - 2026-08-28
 

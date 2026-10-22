@@ -39,10 +39,12 @@ import {
   MusicXmlApiDeleteMusicXmlData,
   MusicXmlApiGetMusicXmlData,
   MusicXmlApiPostMusicXmlData,
+  MusicXmlApiPostMusicXmlPayload,
   OCSMeta,
   PdfApiDeletePdfData,
   PdfApiGetPdfData,
   PdfApiPostPdfData,
+  PdfApiPostPdfPayload,
   ScoreApiDeleteScoreData,
   ScoreApiGetScoreCommentsData,
   ScoreApiGetScoreFolderCollectionsData,
@@ -640,7 +642,7 @@ export class Ocs<
       ...params,
     });
   /**
-   * @description The file of an internal preservation copy is only available to editors. the MusicXML file
+   * @description The content of the linked file is returned. The file of an internal preservation copy is only available to editors. the MusicXML file
    *
    * @tags music_xml_api
    * @name MusicXmlApiGetMusicXml
@@ -664,15 +666,19 @@ export class Ocs<
       ...params,
     });
   /**
-   * @description The file must be sent as multipart form data in the field "file". the updated score
+   * @description The file stays in Nextcloud Files. The current user must be able to read it; later reads use the access of the user who linked the file. the updated score
    *
    * @tags music_xml_api
    * @name MusicXmlApiPostMusicXml
-   * @summary Upload a MusicXML file (.musicxml, .xml or .mxl) for a score, replacing an existing one
+   * @summary Link a MusicXML file (.musicxml, .xml or .mxl) from the user's files to a score, replacing an existing link
    * @request POST:/ocs/v2.php/apps/orchestrascoresmanager/scores/{id}/musicxml
    * @secure
    */
-  musicXmlApiPostMusicXml = (id: number, params: RequestParams = {}) =>
+  musicXmlApiPostMusicXml = (
+    id: number,
+    data: MusicXmlApiPostMusicXmlPayload,
+    params: RequestParams = {},
+  ) =>
     this.request<
       MusicXmlApiPostMusicXmlData,
       {
@@ -684,16 +690,18 @@ export class Ocs<
     >({
       path: `/ocs/v2.php/apps/orchestrascoresmanager/scores/${id}/musicxml`,
       method: "POST",
+      body: data,
       secure: true,
+      type: "application/json",
       format: "json",
       ...params,
     });
   /**
-   * @description the updated score
+   * @description The file itself stays in Nextcloud Files. the updated score
    *
    * @tags music_xml_api
    * @name MusicXmlApiDeleteMusicXml
-   * @summary Remove the MusicXML file of a score
+   * @summary Remove the link to the MusicXML file of a score
    * @request DELETE:/ocs/v2.php/apps/orchestrascoresmanager/scores/{id}/musicxml
    * @secure
    */
@@ -714,11 +722,11 @@ export class Ocs<
       ...params,
     });
   /**
-   * @description the PDF file
+   * @description The content of the linked file is returned. The file of an internal preservation copy is only available to editors. the PDF file
    *
    * @tags pdf_api
    * @name PdfApiGetPdf
-   * @summary Download the PDF file of a score
+   * @summary Get the PDF file of a score for display
    * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/scores/{id}/pdf
    * @secure
    */
@@ -738,15 +746,19 @@ export class Ocs<
       ...params,
     });
   /**
-   * @description The file must be sent as multipart form data in the field "file". the updated score
+   * @description The file stays in Nextcloud Files. The current user must be able to read it; later reads use the access of the user who linked the file. the updated score
    *
    * @tags pdf_api
    * @name PdfApiPostPdf
-   * @summary Upload a PDF file for a score, replacing an existing one
+   * @summary Link a PDF file from the user's files to a score, replacing an existing link
    * @request POST:/ocs/v2.php/apps/orchestrascoresmanager/scores/{id}/pdf
    * @secure
    */
-  pdfApiPostPdf = (id: number, params: RequestParams = {}) =>
+  pdfApiPostPdf = (
+    id: number,
+    data: PdfApiPostPdfPayload,
+    params: RequestParams = {},
+  ) =>
     this.request<
       PdfApiPostPdfData,
       {
@@ -758,16 +770,18 @@ export class Ocs<
     >({
       path: `/ocs/v2.php/apps/orchestrascoresmanager/scores/${id}/pdf`,
       method: "POST",
+      body: data,
       secure: true,
+      type: "application/json",
       format: "json",
       ...params,
     });
   /**
-   * @description the updated score
+   * @description The file itself stays in Nextcloud Files. the updated score
    *
    * @tags pdf_api
    * @name PdfApiDeletePdf
-   * @summary Remove the PDF file of a score
+   * @summary Remove the link to the PDF file of a score
    * @request DELETE:/ocs/v2.php/apps/orchestrascoresmanager/scores/{id}/pdf
    * @secure
    */

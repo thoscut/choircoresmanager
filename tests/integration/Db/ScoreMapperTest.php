@@ -215,6 +215,24 @@ final class ScoreMapperTest extends MapperTestCase {
 		$this->assertNull($found->getPublicationNote());
 		$this->assertNull($found->getPublicationBlockedUntil());
 		$this->assertNull($found->getMusicxmlFile());
+		$this->assertNull($found->getMusicxmlFileId());
+		$this->assertNull($found->getMusicxmlLinkedBy());
+	}
+
+	public function testMusicXmlLinkIsStored(): void {
+		$score = new Score();
+		$score->setTitle('Test Score');
+		$score->setMusicxmlFile('Ave verum corpus.mxl');
+		$score->setMusicxmlFileId(4294967296);
+		$score->setMusicxmlLinkedBy('librarian');
+		$inserted = $this->mapper->insert($score);
+
+		$found = $this->mapper->find($inserted->getId());
+
+		$this->assertSame('Ave verum corpus.mxl', $found->getMusicxmlFile());
+		$this->assertSame(4294967296, $found->getMusicxmlFileId());
+		$this->assertSame('librarian', $found->getMusicxmlLinkedBy());
+		$this->assertArrayNotHasKey('musicxmlLinkedBy', $found->jsonSerialize());
 	}
 
 	public function testRightsAndPublicationFieldsAreStored(): void {

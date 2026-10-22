@@ -11,6 +11,10 @@ declare module 'verovio/esm' {
 		tempo?: number
 		on?: string[]
 		off?: string[]
+		restsOn?: string[]
+		restsOff?: string[]
+		/** Id of the measure starting at this time, with the timemap option includeMeasures */
+		measureOn?: string
 	}
 
 	export interface VerovioElementsAtTime {

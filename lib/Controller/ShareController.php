@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OCA\OrchestraScoresManager\Controller;
 
 use OCA\OrchestraScoresManager\AppInfo\Application;
+use OCA\OrchestraScoresManager\Service\Exceptions\NotFoundException;
 use OCA\OrchestraScoresManager\Service\ShareService;
 use OCA\OrchestraScoresManager\Utility\ResponseHelper;
 use OCP\AppFramework\Controller;
@@ -84,6 +85,9 @@ class ShareController extends Controller {
 			$response = new NotFoundResponse();
 			$response->throttle(['token' => $token]);
 			return $response;
+		} catch (NotFoundException) {
+			// The share is valid, only the linked file is missing or invalid
+			return new NotFoundResponse();
 		}
 		return ResponseHelper::fileDownload($file);
 	}

@@ -3,10 +3,22 @@
 import type * as ToneNamespace from 'tone'
 import type { VerovioToolkit } from 'verovio/esm'
 import type { Ref } from 'vue'
-import type { NoteEvent } from './scoreModel.ts'
+import type { PlaybackTimeline } from './playbackTimeline.ts'
+import type { MeasureSpan, MeiMeasure, NoteEvent } from './scoreModel.ts'
 
 import { ref, shallowRef } from 'vue'
-import { buildNoteEvents, extractVoices, sanitizeSvg } from './scoreModel.ts'
+import { extractMusicXml } from './mxl.ts'
+import { getPlaybackOrder } from './playbackOrder.ts'
+import { buildLinearTimeline, buildPlaybackTimeline, findPlaybackTime, toScoreTime } from './playbackTimeline.ts'
+import {
+	buildNoteEvents,
+	extractMeasures,
+	extractVoices,
+	matchMeasureNumbers,
+	measureSpansFromTimemap,
+	parseMei,
+	sanitizeSvg,
+} from './scoreModel.ts'
 import { t } from '@/utils/l10n'
 
 type ToneModule = typeof ToneNamespace
@@ -69,6 +81,41 @@ function isZip(data: ArrayBuffer): boolean {
 }
 
 /**
+ * Lay the notes out along the score's repeats, voltas and jumps.
+ *
+ * The playback order is computed from the MusicXML document, as Verovio's own expansion
+ * does not follow MuseScore's rules (e.g. for "1. :‖ 2. :‖ 3."). If the document cannot be
+ * read, every measure is played once in score order.
+ *
+ * @param musicXml - The MusicXML document as text, or a function unpacking it
+ * @param meiMeasures - The measures of Verovio's MEI output
+ * @param spans - Time span of every MEI measure
+ * @param events - Notes on the score time axis
+ */
+async function buildTimeline(
+	musicXml: string | (() => Promise<string>),
+	meiMeasures: MeiMeasure[],
+	spans: MeasureSpan[],
+	events: NoteEvent[],
+): Promise<PlaybackTimeline> {
+	try {
+		const text = typeof musicXml === 'string' ? musicXml : await musicXml()
+		const { measures, order } = getPlaybackOrder(text)
+		for (const warning of order.warnings) {
+			console.warn('Score playback:', warning)
+		}
+		const meiIndices = matchMeasureNumbers(measures.map((measure) => measure.number), meiMeasures)
+		const meiOrder = order.measures
+			.map((index) => meiIndices[index])
+			.filter((index): index is number => index !== null && index !== undefined)
+		return buildPlaybackTimeline(spans, meiOrder, events)
+	} catch (error) {
+		console.warn('Repeats and jumps are not played, the playback order could not be computed:', error)
+		return buildLinearTimeline(spans, events)
+	}
+}
+
+/**
  * Score player state and controls.
  *
  * @param container - Element the score is rendered into
@@ -87,6 +134,7 @@ export function useScorePlayer(container: Ref<HTMLElement | null>) {
 	const toolkit = shallowRef<VerovioToolkit | null>(null)
 	let tone: ToneModule | null = null
 	let events: NoteEvent[] = []
+	let timeline: PlaybackTimeline | null = null
 	let scheduled = false
 	let highlighted: Element[] = []
 	let animationFrame: number | null = null
@@ -101,6 +149,7 @@ export function useScorePlayer(container: Ref<HTMLElement | null>) {
 	 */
 	async function load(data: ArrayBuffer): Promise<void> {
 		stop()
+		timeline = null
 		status.value = 'loading'
 		errorMessage.value = ''
 		try {
@@ -113,20 +162,31 @@ export function useScorePlayer(container: Ref<HTMLElement | null>) {
 				breaks: 'auto',
 				footer: 'none',
 				svgViewBox: true,
+				// Timemap, MIDI values and highlighting stay on the score's own time axis,
+				// repeats and jumps are laid out by the player (see buildTimeline)
+				expandNever: true,
 			})
-			const loaded = isZip(data) ? tk.loadZipDataBuffer(data) : tk.loadData(new TextDecoder().decode(data))
+			const text = isZip(data) ? null : new TextDecoder().decode(data)
+			const loaded = text === null ? tk.loadZipDataBuffer(data) : tk.loadData(text)
 			if (!loaded || tk.getPageCount() === 0) {
 				throw new Error(t('The file could not be read as MusicXML'))
 			}
 			toolkit.value = tk
 
-			const { voices: scoreVoices, noteVoices } = extractVoices(tk.getMEI(), (n) => t('Voice {number}', { number: n }))
-			const timemap = tk.renderToTimemap({ includeRests: false })
-			events = buildNoteEvents(timemap, noteVoices, (id) => {
+			const mei = parseMei(tk.getMEI())
+			const { voices: scoreVoices, noteVoices } = extractVoices(mei, (n) => t('Voice {number}', { number: n }))
+			const timemap = tk.renderToTimemap({ includeRests: true, includeMeasures: true })
+			const scoreEvents = buildNoteEvents(timemap, noteVoices, (id) => {
 				const values = tk.getMIDIValuesForElement(id)
 				return values && typeof values.pitch === 'number' ? values : null
 			})
-			duration.value = events.reduce((max, e) => Math.max(max, e.start + e.duration), 0)
+			const meiMeasures = extractMeasures(mei)
+			const spans = measureSpansFromTimemap(meiMeasures, timemap)
+			timeline = spans
+				? await buildTimeline(text ?? (() => extractMusicXml(data)), meiMeasures, spans, scoreEvents)
+				: buildLinearTimeline([{ start: 0, end: scoreEvents.reduce((max, e) => Math.max(max, e.start + e.duration), 0) }], scoreEvents)
+			events = timeline.events
+			duration.value = timeline.duration
 			voices.value = scoreVoices.map((voice) => ({ ...voice, muted: false, solo: false, volume: 0 }))
 			scheduled = false
 			position.value = 0
@@ -308,7 +368,9 @@ export function useScorePlayer(container: Ref<HTMLElement | null>) {
 	}
 
 	/**
-	 * Jump to a note of the rendered score, e.g. after it was clicked
+	 * Jump to a note of the rendered score, e.g. after it was clicked.
+	 * A note inside a repeat is played several times; the next time it is played from the
+	 * current position on is chosen, or its first time if it is not played again.
 	 *
 	 * @param id - The note's element id
 	 */
@@ -317,8 +379,12 @@ export function useScorePlayer(container: Ref<HTMLElement | null>) {
 		if (!tk) {
 			return
 		}
-		const time = tk.getTimeForElement(id)
-		if (typeof time === 'number' && time >= 0) {
+		const scoreTime = tk.getTimeForElement(id)
+		if (typeof scoreTime !== 'number' || scoreTime < 0) {
+			return
+		}
+		const time = timeline ? findPlaybackTime(timeline, scoreTime, position.value) : scoreTime
+		if (time !== null) {
 			seek(time)
 		}
 	}
@@ -387,14 +453,14 @@ export function useScorePlayer(container: Ref<HTMLElement | null>) {
 	/**
 	 * Highlight the notes sounding at a given time, turning pages as needed
 	 *
-	 * @param ms - Time in milliseconds at the original tempo
+	 * @param ms - Playback time in milliseconds at the original tempo
 	 */
 	function updateHighlight(ms: number): void {
 		const tk = toolkit.value
 		if (!tk || !container.value) {
 			return
 		}
-		const elements = tk.getElementsAtTime(Math.round(ms))
+		const elements = tk.getElementsAtTime(Math.round(timeline ? toScoreTime(timeline, ms) : ms))
 		if (elements.page > 0 && elements.page !== currentPage.value) {
 			renderPage(elements.page)
 		}

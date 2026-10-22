@@ -12,27 +12,34 @@ use OCA\OrchestraScoresManager\Utility\FileNameHelper;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\DB\Exception;
-use OCP\Files\IAppData;
-use OCP\Files\NotFoundException;
-use OCP\Files\SimpleFS\ISimpleFolder;
+use OCP\Files\File;
+use OCP\Files\GenericFileException;
+use OCP\Files\InvalidPathException;
+use OCP\Files\IRootFolder;
+use OCP\Files\NotFoundException as FileNotFoundException;
+use OCP\Files\NotPermittedException;
 use OCP\IL10N;
+use OCP\IUserSession;
+use OCP\Lock\LockedException;
 
 /**
- * Stores and serves PDF files (e.g. scanned sheet music) attached to scores.
+ * Links PDF files (e.g. scanned sheet music) from Nextcloud Files to scores and serves their content.
  *
- * Files are kept in the app data folder under a name derived from the score ID,
- * never under the uploaded file name.
+ * Works like MusicXmlService: the files stay where the club keeps them, a score only
+ * stores the file id and the user id of the person who linked the file, and the file
+ * is always read with that user's access. The content is checked when linking and
+ * again whenever it is served, because the file can change in Files at any time.
  */
 class PdfService {
-	public const MAX_UPLOAD_SIZE = 50 * 1024 * 1024;
+	public const MAX_FILE_SIZE = 50 * 1024 * 1024;
 	public const MIME_TYPE = 'application/pdf';
 
-	private const FOLDER_NAME = 'pdf';
 	private const PDF_MAGIC = '%PDF-';
 
 	/** @psalm-suppress PossiblyUnusedMethod - Constructor used by DI container */
 	public function __construct(
-		private readonly IAppData $appData,
+		private readonly IRootFolder $rootFolder,
+		private readonly IUserSession $userSession,
 		private readonly ScoreMapper $scoreMapper,
 		private readonly AuthorizationService $authorizationService,
 		private readonly ScorePolicy $scorePolicy,
@@ -41,57 +48,39 @@ class PdfService {
 	}
 
 	/**
-	 * Attach a PDF file to a score, replacing an existing one.
+	 * Link a PDF file from the current user's files to a score, replacing an existing link.
 	 *
 	 * @param int $scoreId
-	 * @param string $originalName The name of the uploaded file, only used for display
-	 * @param string $tmpPath Path to the uploaded temporary file
+	 * @param int $fileId The Nextcloud file id of the PDF file
 	 * @return Score The updated score
-	 * @throws \InvalidArgumentException if the score does not exist or the file is invalid
+	 * @throws \InvalidArgumentException if the score does not exist, the file cannot be read or is invalid
 	 * @throws Exceptions\PermissionDeniedException
 	 * @throws Exception
 	 */
-	public function uploadForScore(int $scoreId, string $originalName, string $tmpPath): Score {
+	public function linkForScore(int $scoreId, int $fileId): Score {
 		$score = $this->findScore($scoreId);
 		$this->authorizationService->authorizePolicy($this->scorePolicy, PolicyInterface::ACTION_UPDATE, $score);
 
-		if (strtolower(pathinfo($originalName, PATHINFO_EXTENSION)) !== 'pdf') {
-			throw new \InvalidArgumentException($this->l->t('Only PDF files are allowed'));
+		$user = $this->userSession->getUser();
+		if ($user === null) {
+			throw new Exceptions\PermissionDeniedException($this->l->t('Insufficient permissions'));
 		}
 
-		$size = @filesize($tmpPath);
-		if ($size === false || $size === 0) {
-			throw new \InvalidArgumentException($this->l->t('The uploaded file is empty'));
+		$file = $this->findReadableFile($user->getUID(), $fileId);
+		if ($file === null) {
+			throw new \InvalidArgumentException($this->l->t('The selected file does not exist or you are not allowed to read it'));
 		}
-		if ($size > self::MAX_UPLOAD_SIZE) {
-			throw new \InvalidArgumentException($this->l->t('The uploaded file is too large (maximum %d MB)', [self::MAX_UPLOAD_SIZE / 1024 / 1024]));
-		}
+		$this->readValidatedContent($file);
 
-		$content = file_get_contents($tmpPath);
-		if ($content === false) {
-			throw new \InvalidArgumentException($this->l->t('The uploaded file could not be read'));
-		}
-		// The PDF header may be preceded by a few bytes of garbage, which readers accept
-		$headerPosition = strpos(substr($content, 0, 1024), self::PDF_MAGIC);
-		if ($headerPosition === false) {
-			throw new \InvalidArgumentException($this->l->t('The uploaded file is not a valid PDF file'));
-		}
-
-		$folder = $this->getFolder();
-		$fileName = $this->getFileName($scoreId);
-		try {
-			$folder->getFile($fileName)->putContent($content);
-		} catch (NotFoundException) {
-			$folder->newFile($fileName, $content);
-		}
-
-		$score->setPdfFile(FileNameHelper::sanitizeDisplayName($originalName, 'score.pdf'));
+		$score->setPdfFile(FileNameHelper::sanitizeDisplayName($file->getName(), 'score.pdf'));
+		$score->setPdfFileId($fileId);
+		$score->setPdfLinkedBy($user->getUID());
 		$this->scoreMapper->update($score);
 		return $this->scoreMapper->find($scoreId);
 	}
 
 	/**
-	 * Remove the PDF file of a score.
+	 * Remove the link to the PDF file of a score. The file itself is not touched.
 	 *
 	 * @param int $scoreId
 	 * @return Score The updated score
@@ -99,12 +88,13 @@ class PdfService {
 	 * @throws Exceptions\PermissionDeniedException
 	 * @throws Exception
 	 */
-	public function deleteForScore(int $scoreId): Score {
+	public function unlinkForScore(int $scoreId): Score {
 		$score = $this->findScore($scoreId);
 		$this->authorizationService->authorizePolicy($this->scorePolicy, PolicyInterface::ACTION_UPDATE, $score);
 
-		$this->removeFile($scoreId);
 		$score->setPdfFile(null);
+		$score->setPdfFileId(null);
+		$score->setPdfLinkedBy(null);
 		$this->scoreMapper->update($score);
 		return $this->scoreMapper->find($scoreId);
 	}
@@ -112,11 +102,12 @@ class PdfService {
 	/**
 	 * Get the PDF file of a score for an authenticated user.
 	 *
-	 * Files of internal preservation copies are only served to editors.
+	 * The file of an internal preservation copy is only served to editors.
 	 *
 	 * @param int $scoreId
 	 * @return array{content: string, mimeType: string, fileName: string}
-	 * @throws \InvalidArgumentException if the score or file does not exist
+	 * @throws \InvalidArgumentException if the score does not exist
+	 * @throws Exceptions\NotFoundException if no file is linked or the linked file is missing, not accessible or invalid
 	 * @throws Exceptions\PermissionDeniedException
 	 */
 	public function getForScore(int $scoreId): array {
@@ -127,22 +118,28 @@ class PdfService {
 	}
 
 	/**
-	 * Read the PDF file of a score without any authorization check.
+	 * Read the linked PDF file of a score without any authorization check.
 	 *
 	 * Callers are responsible for making sure the score may be served.
 	 *
 	 * @param Score $score
 	 * @return array{content: string, mimeType: string, fileName: string}
-	 * @throws \InvalidArgumentException if the file does not exist
+	 * @throws Exceptions\NotFoundException if no file is linked or the linked file is missing, not accessible or invalid
 	 */
 	public function readFile(Score $score): array {
-		if ($score->getPdfFile() === null) {
-			throw new \InvalidArgumentException($this->l->t('No PDF file available for this score'));
+		$fileId = $score->getPdfFileId();
+		$userId = $score->getPdfLinkedBy();
+		$file = $fileId === null || $userId === null || $userId === '' ? null : $this->findReadableFile($userId, $fileId);
+		if ($file === null) {
+			throw new Exceptions\NotFoundException($fileId === null
+				? $this->l->t('No PDF file is linked to this score')
+				: $this->l->t('The linked PDF file is missing or no longer accessible.'));
 		}
+
 		try {
-			$content = $this->getFolder()->getFile($this->getFileName($score->getId()))->getContent();
-		} catch (NotFoundException) {
-			throw new \InvalidArgumentException($this->l->t('No PDF file available for this score'));
+			$content = $this->readValidatedContent($file);
+		} catch (\InvalidArgumentException $e) {
+			throw new Exceptions\NotFoundException($e->getMessage(), 0, $e);
 		}
 
 		return [
@@ -153,28 +150,72 @@ class PdfService {
 	}
 
 	/**
-	 * Remove the stored file of a score, if any. Does not touch the score itself.
+	 * Find a file by id that the given user can read.
 	 *
-	 * @param int $scoreId
+	 * @param string $userId
+	 * @param int $fileId
+	 * @return File|null The file, or null if the user cannot reach a readable file with this id
 	 */
-	public function removeFile(int $scoreId): void {
+	private function findReadableFile(string $userId, int $fileId): ?File {
 		try {
-			$this->getFolder()->getFile($this->getFileName($scoreId))->delete();
-		} catch (NotFoundException) {
-			// nothing to delete
+			$userFolder = $this->rootFolder->getUserFolder($userId);
+		} catch (\Exception) {
+			// The user does not exist (anymore) or has no files
+			return null;
 		}
+
+		// A file can be reachable several times (e.g. shared and in a group folder) with different permissions
+		foreach ($userFolder->getById($fileId) as $node) {
+			try {
+				if ($node instanceof File && $node->isReadable()) {
+					return $node;
+				}
+			} catch (InvalidPathException|FileNotFoundException) {
+				continue;
+			}
+		}
+		return null;
 	}
 
-	private function getFileName(int $scoreId): string {
-		return 'score-' . $scoreId;
-	}
-
-	private function getFolder(): ISimpleFolder {
-		try {
-			return $this->appData->getFolder(self::FOLDER_NAME);
-		} catch (NotFoundException) {
-			return $this->appData->newFolder(self::FOLDER_NAME);
+	/**
+	 * Read a file and check that it is a PDF file.
+	 *
+	 * @param File $file
+	 * @return string The content
+	 * @throws \InvalidArgumentException if the file cannot be read or is not a valid PDF file
+	 */
+	private function readValidatedContent(File $file): string {
+		if (strtolower(pathinfo($file->getName(), PATHINFO_EXTENSION)) !== 'pdf') {
+			throw new \InvalidArgumentException($this->l->t('Only PDF files are allowed'));
 		}
+
+		try {
+			$size = $file->getSize();
+		} catch (InvalidPathException|FileNotFoundException) {
+			throw new \InvalidArgumentException($this->l->t('The file could not be read'));
+		}
+		if ($size > self::MAX_FILE_SIZE) {
+			throw new \InvalidArgumentException($this->l->t('The file is too large (maximum %d MB)', [self::MAX_FILE_SIZE / 1024 / 1024]));
+		}
+
+		try {
+			$content = $file->getContent();
+		} catch (NotPermittedException|GenericFileException|LockedException|FileNotFoundException) {
+			throw new \InvalidArgumentException($this->l->t('The file could not be read'));
+		}
+
+		if ($content === '') {
+			throw new \InvalidArgumentException($this->l->t('The file is empty'));
+		}
+		// the size in the file cache may be outdated
+		if (strlen($content) > self::MAX_FILE_SIZE) {
+			throw new \InvalidArgumentException($this->l->t('The file is too large (maximum %d MB)', [self::MAX_FILE_SIZE / 1024 / 1024]));
+		}
+		// The PDF header may be preceded by a few bytes of garbage, which readers accept
+		if (!str_contains(substr($content, 0, 1024), self::PDF_MAGIC)) {
+			throw new \InvalidArgumentException($this->l->t('The file is not a valid PDF file'));
+		}
+		return $content;
 	}
 
 	/**

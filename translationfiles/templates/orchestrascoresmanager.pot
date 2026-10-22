@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2026-10-22 00:23+0000\n"
+"POT-Creation-Date: 2026-10-22 00:44+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,9 +17,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
-
-msgid "No file uploaded"
-msgstr ""
 
 msgid "Public scores"
 msgstr ""
@@ -104,41 +101,50 @@ msgstr ""
 msgid "New version must start at least one day after the current version"
 msgstr ""
 
+msgid "The selected file does not exist or you are not allowed to read it"
+msgstr ""
+
+msgid "No MusicXML file is linked to this score"
+msgstr ""
+
+msgid "The linked MusicXML file is missing or no longer accessible."
+msgstr ""
+
 msgid "Only MusicXML files (.musicxml, .xml, .mxl) are allowed"
 msgstr ""
 
-msgid "The uploaded file is empty"
+msgid "The file could not be read"
 msgstr ""
 
 #, php-format
-msgid "The uploaded file is too large (maximum %d MB)"
+msgid "The file is too large (maximum %d MB)"
 msgstr ""
 
-msgid "The uploaded file could not be read"
+msgid "The file is empty"
 msgstr ""
 
-msgid "No MusicXML file available for this score"
-msgstr ""
-
-msgid "The uploaded file is not a valid MusicXML file"
+msgid "The file is not a valid MusicXML file"
 msgstr ""
 
 msgid "MusicXML files with entity declarations are not supported"
 msgstr ""
 
-msgid "The uploaded file is not a valid compressed MusicXML file"
+msgid "The file is not a valid compressed MusicXML file"
 msgstr ""
 
-msgid "The uploaded file is too large when uncompressed"
+msgid "The file is too large when uncompressed"
+msgstr ""
+
+msgid "No PDF file is linked to this score"
+msgstr ""
+
+msgid "The linked PDF file is missing or no longer accessible."
 msgstr ""
 
 msgid "Only PDF files are allowed"
 msgstr ""
 
-msgid "The uploaded file is not a valid PDF file"
-msgstr ""
-
-msgid "No PDF file available for this score"
+msgid "The file is not a valid PDF file"
 msgstr ""
 
 msgid "Cannot delete score book with linked scores. Remove all scores first."
@@ -965,46 +971,51 @@ msgstr ""
 msgid "Submit comment"
 msgstr ""
 
-msgid "Scores in this book"
+msgid "Downloading the file failed: "
+msgstr ""
+
+msgid "Choose a MusicXML file"
+msgstr ""
+
+msgid "Link file"
+msgstr ""
+
+msgid "MusicXML file linked"
+msgstr ""
+
+msgid "Linking the file failed: "
+msgstr ""
+
+msgid "MusicXML file unlinked"
+msgstr ""
+
+msgid "Unlinking the file failed: "
 msgstr ""
 
 msgid "Download MusicXML"
 msgstr ""
 
-msgid "No MusicXML file uploaded yet."
+msgid "Show in Files"
 msgstr ""
 
-msgid "Upload MusicXML"
+msgid "No MusicXML file linked yet."
 msgstr ""
 
-msgid "No PDF file uploaded yet."
+msgid "Link another file"
 msgstr ""
 
-msgid "Upload PDF"
+msgid "Link MusicXML file"
 msgstr ""
 
-msgid "Downloading the file failed: "
+msgid "Unlink file"
 msgstr ""
 
-msgid "The file is too large (maximum {size} MB)"
+msgid ""
+"The file stays in Files, where it is uploaded, replaced and backed up. "
+"Unlinking does not delete it."
 msgstr ""
 
-msgid "File uploaded"
-msgstr ""
-
-msgid "Uploading the file failed: "
-msgstr ""
-
-msgid "File removed"
-msgstr ""
-
-msgid "Removing the file failed: "
-msgstr ""
-
-msgid "Replace file"
-msgstr ""
-
-msgid "Remove file"
+msgid "Check the file in Files or link it again."
 msgstr ""
 
 msgid ""
@@ -1016,6 +1027,29 @@ msgstr ""
 msgid ""
 "This score is approved for publication and its rights are confirmed, so it "
 "is shown on the public page if that page is enabled."
+msgstr ""
+
+msgid "Choose a PDF file"
+msgstr ""
+
+msgid "PDF file linked"
+msgstr ""
+
+msgid "PDF file unlinked"
+msgstr ""
+
+msgid "No PDF file linked yet."
+msgstr ""
+
+msgid "Link PDF file"
+msgstr ""
+
+msgid ""
+"This score is an internal preservation copy. Its notes are neither displayed "
+"nor played back."
+msgstr ""
+
+msgid "Scores in this book"
 msgstr ""
 
 msgid "Failed to load setlist"

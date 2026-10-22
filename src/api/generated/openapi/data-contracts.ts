@@ -102,7 +102,11 @@ export interface Score {
   publicationNote: string | null;
   publicationBlockedUntil: string | null;
   musicxmlFile: string | null;
+  /** @format int64 */
+  musicxmlFileId: number | null;
   pdfFile: string | null;
+  /** @format int64 */
+  pdfFileId: number | null;
   updatedAt: string | null;
   tags: string[] | null;
   scoreBook: ScoreBookInfo | null;
@@ -189,7 +193,11 @@ export interface ScoreIndexed {
   publicationNote: string | null;
   publicationBlockedUntil: string | null;
   musicxmlFile: string | null;
+  /** @format int64 */
+  musicxmlFileId: number | null;
   pdfFile: string | null;
+  /** @format int64 */
+  pdfFileId: number | null;
   updatedAt: string | null;
   tags: string[] | null;
   scoreBook: ScoreBookInfo | null;
@@ -510,6 +518,14 @@ export interface FolderCollectionVersionApiPatchFolderCollectionVersionData {
 /** @format binary */
 export type MusicXmlApiGetMusicXmlData = File;
 
+export interface MusicXmlApiPostMusicXmlPayload {
+  /**
+   * The Nextcloud file id of the MusicXML file
+   * @format int64
+   */
+  fileId: number;
+}
+
 export interface MusicXmlApiPostMusicXmlData {
   ocs: {
     meta: OCSMeta;
@@ -526,6 +542,14 @@ export interface MusicXmlApiDeleteMusicXmlData {
 
 /** @format binary */
 export type PdfApiGetPdfData = File;
+
+export interface PdfApiPostPdfPayload {
+  /**
+   * The Nextcloud file id of the PDF file
+   * @format int64
+   */
+  fileId: number;
+}
 
 export interface PdfApiPostPdfData {
   ocs: {

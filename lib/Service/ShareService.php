@@ -210,7 +210,8 @@ class ShareService {
 	 *
 	 * @param string $kind 'musicxml' or 'pdf'
 	 * @return array{content: string, mimeType: string, fileName: string}
-	 * @throws \InvalidArgumentException if the token is unknown, the score is not part of the share or not public, or there is no such file
+	 * @throws \InvalidArgumentException if the token is unknown or the score is not part of the share or not public
+	 * @throws Exceptions\NotFoundException if the score has no readable, valid file of this kind
 	 */
 	public function getLinkShareFile(string $token, int $scoreId, string $kind): array {
 		$share = $this->findLinkShare($token);
