@@ -15,8 +15,27 @@ name: CI
 on:
   push:
     branches: [main]
+    paths-ignore:
+      # Documentation alone needs no build and no tests (same list below)
+      - 'docs/**'
+      - '**/*.md'
+      - 'tools/screenshots/**'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/pull_request_template.md'
   pull_request:
+    paths-ignore:
+      - 'docs/**'
+      - '**/*.md'
+      - 'tools/screenshots/**'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/pull_request_template.md'
   workflow_dispatch:
+
+# A newer push to the same branch or pull request cancels the older run, so
+# runner minutes are spent on the current state only.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -134,6 +153,11 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Trust the workspace for git
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          # npm's download cache; npm ci still installs exactly the lock file
+          path: ~/.npm
+          key: npm-${{ hashFiles('package-lock.json') }}
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
       - name: Lint
@@ -206,22 +230,36 @@ jobs:
         with:
           # As required by "engines" in package.json; the demo build needs 22 or newer
           node-version: '24'
+          cache: npm
       - name: Build the frontend
         run: |
           npm ci --no-audit --no-fund
           npm run build
       - name: Build the demo data
         run: node tools/demo/build.mjs
-      - name: Download Nextcloud ${{ matrix.nextcloud }} and check its checksum
+      - name: Look up the checksum of Nextcloud ${{ matrix.nextcloud }}
+        # The small checksum file names the current release; its hash is the
+        # cache key, so a new point release is downloaded once and then cached.
+        id: nextcloud
         env:
           TARBALL: latest-${{ matrix.nextcloud }}.tar.bz2
         run: |
-          cd "$RUNNER_TEMP"
-          curl -fsSLO "https://download.nextcloud.com/server/releases/$TARBALL"
-          curl -fsSLO "https://download.nextcloud.com/server/releases/$TARBALL.sha512"
+          mkdir -p ~/.cache/nextcloud
+          cd ~/.cache/nextcloud
+          curl -fsSL -o "$TARBALL.sha512" "https://download.nextcloud.com/server/releases/$TARBALL.sha512"
+          echo "sha512=$(cut -d' ' -f1 "$TARBALL.sha512")" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/nextcloud/latest-${{ matrix.nextcloud }}.tar.bz2
+          key: nextcloud-${{ matrix.nextcloud }}-${{ steps.nextcloud.outputs.sha512 }}
+      - name: Download Nextcloud ${{ matrix.nextcloud }} (unless cached) and check its checksum
+        env:
+          TARBALL: latest-${{ matrix.nextcloud }}.tar.bz2
+        run: |
+          cd ~/.cache/nextcloud
+          [ -f "$TARBALL" ] || curl -fsSLO "https://download.nextcloud.com/server/releases/$TARBALL"
           grep " $TARBALL\$" "$TARBALL.sha512" | sha512sum -c -
           tar -xjf "$TARBALL" -C "$(dirname "$NEXTCLOUD_ROOT")"
-          rm "$TARBALL"
       - name: Install Nextcloud
         run: |
           admin_pass="$(head -c 32 /dev/urandom | base64 | tr -dc 'A-Za-z0-9')"
