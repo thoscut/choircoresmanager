@@ -1,0 +1,20 @@
+{
+  "name": "Beispielchor e.V.",
+  "tagline": "",
+  "logo": "logo.svg",
+  "logo_on_dark": "",
+  "web": "beispielchor.example",
+  "mail": "kontakt@beispielchor.example",
+  "colors": {
+    "paper": "#f6f4ef",
+    "ink": "#1d2433",
+    "accent": "#23395b",
+    "deep": "#141b29",
+    "light": "#e3c77d",
+    "muted": "#5d6577"
+  },
+  "fonts": {
+    "heading": { "family": "Georgia", "fallback": "\"DejaVu Serif\", serif", "files": [] },
+    "body": { "family": "Arial", "fallback": "\"Liberation Sans\", \"DejaVu Sans\", sans-serif", "files": [] }
+  }
+}

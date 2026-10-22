@@ -1,0 +1,81 @@
+{
+  "lang": "de",
+  "as_of": "Stand Oktober 2026",
+  "title": "Noten frei verwalten.",
+  "subtitle": "Open-Source-Notenverwaltung für Chöre – in der eigenen Nextcloud. Im Aufbau und offen für alle.",
+  "short": "Open-Source-Notenverwaltung für Chöre in der Nextcloud",
+  "pillars": [
+    {
+      "chip": "Werkverzeichnis",
+      "title": "Das Werkverzeichnis an einem Ort",
+      "text": "Titel, Komponist, Bearbeiter, Signatur, Fassungen und Programme. Die Daten bleiben beim Verein – in seiner eigenen Nextcloud."
+    },
+    {
+      "chip": "Rechte im Blick",
+      "title": "Rechte im Blick",
+      "text": "Die GEMA erlaubt das Singen, nicht das Kopieren. Rechtestatus, Lizenzen und Schutzfristen stehen bei jedem Satz – entscheiden tut ein Mensch."
+    },
+    {
+      "chip": "Hören & üben",
+      "title": "Hören und üben",
+      "text": "MusicXML direkt im Browser: Noten mitlesen, Tempo wählen, jede Stimme einzeln hören."
+    },
+    {
+      "chip": "Gemeinfreies teilen",
+      "title": "Gemeinfreies teilen",
+      "text": "Gemeinfreie Sätze kann ein Chor öffentlich zeigen, als CC0 – damit kein Chor die Arbeit zweimal macht."
+    }
+  ],
+  "status_title": "Wo wir stehen",
+  "status": [
+    {
+      "label": "Vorhanden",
+      "note": "aus Orchestra Scores Manager",
+      "items": [
+        "Werkverzeichnis mit Schlagwörtern und Sammelbänden",
+        "Notenmappen mit Versionsverlauf",
+        "Setlists mit PDF- und GEMA-Export",
+        "Kommentare je Stück"
+      ]
+    },
+    {
+      "label": "In Arbeit",
+      "note": "",
+      "items": [
+        "Rechte- und Veröffentlichungsstatus",
+        "Signatur, Besetzung, Repertoire aus Aufführungen",
+        "MusicXML-Player mit Einzelstimmen",
+        "Öffentliche Seite für gemeinfreie Noten"
+      ]
+    },
+    {
+      "label": "Geplant",
+      "note": "",
+      "items": [
+        "Import eines bestehenden Werkverzeichnisses",
+        "Wiedervorlage, wenn eine Schutzfrist endet",
+        "Mappenbuch für Ausgabe und Rücknahme",
+        "Gültiger Stand auf jedem Blatt, Stände vergleichbar"
+      ]
+    }
+  ],
+  "contribute_title": "Machen Sie mit",
+  "contribute_note": "Programmieren ist keine Voraussetzung.",
+  "contribute": [
+    "Ausprobieren und sagen, was fehlt",
+    "Erzählen, wie Ihr Chor seine Noten verwaltet",
+    "Übersetzen – in Ihre Sprache",
+    "Code, Tests und Ideen beitragen"
+  ],
+  "call": "Ausprobieren. Mitmachen. Weitersagen.",
+  "closing": "Frei. Offen. Von einem Chor für alle Chöre.",
+  "contact_label": "Kontakt",
+  "free_software": "Freie Software",
+  "project": {
+    "name": "choircoresmanager",
+    "url": "https://github.com/thoscut/choircoresmanager",
+    "url_short": "github.com/thoscut/choircoresmanager",
+    "license": "AGPL-3.0"
+  },
+  "fineprint": "Freie Software unter AGPL-3.0 · basiert auf Orchestra Scores Manager von Hinrich Mahler · Die App rechnet und erinnert, sie ersetzt keine Rechtsberatung."
+}

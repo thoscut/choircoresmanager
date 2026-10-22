@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 112">
+  <!-- SPDX-FileCopyrightText: 2026 choircoresmanager contributors -->
+  <!-- SPDX-License-Identifier: CC0-1.0 -->
+  <!-- Placeholder logo for the example sender. Replace with your own. -->
+  <path d="M8 6 H92 V66 C92 92 70 104 50 108 C30 104 8 92 8 66 Z" fill="#23395b"/>
+  <path d="M14 12 H86 V66 C86 88 68 98 50 102 C32 98 14 88 14 66 Z" fill="none" stroke="#e3c77d" stroke-width="1.6"/>
+  <g stroke="#f6f4ef" stroke-width="1.4">
+    <line x1="20" y1="38" x2="80" y2="38"/>
+    <line x1="20" y1="45" x2="80" y2="45"/>
+    <line x1="20" y1="52" x2="80" y2="52"/>
+    <line x1="20" y1="59" x2="80" y2="59"/>
+    <line x1="20" y1="66" x2="80" y2="66"/>
+  </g>
+  <ellipse cx="50" cy="48.5" rx="7.2" ry="5" transform="rotate(-22 50 48.5)" fill="none" stroke="#e3c77d" stroke-width="3.2"/>
+</svg>

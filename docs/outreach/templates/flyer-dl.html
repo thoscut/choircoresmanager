@@ -1,0 +1,88 @@
+{# SPDX-FileCopyrightText: 2026 choircoresmanager contributors #}
+{# SPDX-License-Identifier: AGPL-3.0-or-later #}
+{# Flyer DIN lang (99 x 210 mm), front and back. #}
+{% extends "base.html" %}
+{% import "macros.html" as m %}
+{% block style %}
+.sender { left: 33mm; top: 11mm; right: 7mm; font-size: 6.4pt; letter-spacing: 0.12em; text-transform: uppercase; color: {{ k.muted }}; line-height: 1.5; }
+.head { left: 7mm; right: 7mm; top: 37mm; }
+.title { font-size: 31pt; font-weight: 700; line-height: 0.98; color: {{ k.accent }}; }
+.subtitle { margin-top: 2.2mm; margin-right: 2mm; font-size: 9pt; line-height: 1.4; color: {{ k.muted }}; }
+.pillars { left: 7mm; right: 7mm; top: 92mm; }
+.pillar { display: flex; margin-bottom: 6.4mm; }
+.num { flex: none; width: 7mm; height: 7mm; margin-right: 3.6mm; background: {{ k.accent }}; color: {{ k.paper }};
+  font-size: 11pt; font-weight: 700; text-align: center; line-height: 7mm; }
+.pillar h3 { font-size: 10pt; line-height: 1.2; margin-bottom: 1mm; }
+.pillar p { font-size: 8.1pt; line-height: 1.4; }
+.band { background: {{ k.deep }}; color: {{ k.light }}; }
+.closing { left: 7mm; right: 7mm; top: 192.5mm; font-size: 13.5pt; font-style: italic; text-align: center; line-height: 1.25; color: {{ k.light }}; }
+.back-title { left: 7mm; top: 9mm; font-size: 18pt; font-weight: 700; color: {{ k.accent }}; }
+.as-of { right: 7mm; top: 13.2mm; font-size: 6.2pt; color: {{ k.muted }}; }
+.status { left: 7mm; right: 7mm; top: 20.5mm; }
+.group { margin-bottom: 3.2mm; }
+.chip { display: inline-block; font-size: 6pt; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 0.5mm 1.8mm; border-radius: 0.8mm; margin-bottom: 1mm; }
+.chip-0 { background: {{ k.accent }}; color: {{ k.paper }}; }
+.chip-1 { background: {{ k.light }}; color: {{ k.ink }}; }
+.chip-2 { border: 0.25mm solid {{ k.muted }}; color: {{ k.muted }}; padding: 0.25mm 1.55mm; }
+.chip-note { font-size: 6.2pt; color: {{ k.muted }}; margin-left: 1.5mm; }
+ul { list-style: none; }
+.status li, .contrib li { font-size: 7.6pt; line-height: 1.42; padding-left: 3.2mm; position: relative; }
+.status li::before { content: "–"; position: absolute; left: 0; color: {{ k.muted }}; }
+.contrib-title { left: 7mm; top: 94mm; font-size: 18pt; font-weight: 700; color: {{ k.accent }}; }
+.contrib-note { left: 7mm; top: 103.5mm; font-size: 7.6pt; font-style: italic; color: {{ k.muted }}; }
+.contrib { left: 7mm; right: 7mm; top: 108.5mm; }
+.contrib li { font-size: 8.2pt; line-height: 1.55; }
+.contrib li::before { content: ""; position: absolute; left: 0; top: 1.25mm; width: 1.4mm; height: 1.4mm; background: {{ k.accent }}; }
+.qr { left: 7mm; top: 149mm; width: 33mm; height: 33mm; background: #fff; }
+.call { left: 44mm; right: 7mm; top: 148mm; font-size: 13pt; line-height: 1.15; font-weight: 700; color: {{ k.light }}; }
+.links { left: 44mm; right: 6mm; top: 167mm; font-size: 6.9pt; line-height: 1.5; color: {{ k.paper }}; }
+.links b { color: {{ k.light }}; font-weight: 700; }
+.fine { left: 7mm; right: 7mm; top: 192mm; font-size: 5.6pt; line-height: 1.45; color: {{ k.paper }}; opacity: 0.72; }
+{% endblock %}
+{% block body %}
+<section class="page">
+  <div class="abs" style="left: 7mm; top: 8mm;">{{ m.logo(s, 23, 'mm') }}</div>
+  <div class="abs sender">{{ s.name }}{% if s.tagline %}<br>{{ s.tagline }}{% endif %}</div>
+  <div class="abs head">
+    <h1 class="title serif">{{ c.title }}</h1>
+    <p class="subtitle">{{ c.subtitle }}</p>
+  </div>
+  {{ m.staff(76, 7, 0.3, k.light, 'mm', -bleed, -bleed) }}
+  {{ m.note(70, 77.1, 2.6, k.accent, 'mm') }}
+  <div class="abs pillars">
+  {% for p in c.pillars %}
+    <div class="pillar">
+      <div class="num serif">{{ loop.index }}</div>
+      <div><h3>{{ p.title }}</h3><p>{{ p.text }}</p></div>
+    </div>
+  {% endfor %}
+  </div>
+  <div class="abs band" style="left: -{{ bleed }}mm; right: -{{ bleed }}mm; top: 184mm; bottom: -{{ bleed }}mm;"></div>
+  <p class="abs closing serif">{{ c.closing }}</p>
+</section>
+<section class="page">
+  <h2 class="abs back-title serif">{{ c.status_title }}</h2>
+  <p class="abs as-of">{{ c.as_of }}</p>
+  <div class="abs status">
+  {% for g in c.status %}
+    <div class="group">
+      <span class="chip chip-{{ loop.index0 }}">{{ g.label }}</span>{% if g.note %}<span class="chip-note">{{ g.note }}</span>{% endif %}
+      <ul>{% for item in g['items'] %}<li>{{ item }}</li>{% endfor %}</ul>
+    </div>
+  {% endfor %}
+  </div>
+  <h2 class="abs contrib-title serif">{{ c.contribute_title }}</h2>
+  <p class="abs contrib-note">{{ c.contribute_note }}</p>
+  <ul class="abs contrib">{% for item in c.contribute %}<li>{{ item }}</li>{% endfor %}</ul>
+  <div class="abs band" style="left: -{{ bleed }}mm; right: -{{ bleed }}mm; top: 139mm; bottom: -{{ bleed }}mm;"></div>
+  <div class="abs qr">{{ qr }}</div>
+  <p class="abs call serif">{{ c.call }}</p>
+  <p class="abs links">
+    <b>{{ c.project.url_short }}</b><br><br>
+    {{ c.contact_label }}: {{ s.name }}<br>
+    {{ s.mail }}{% if s.web %} · {{ s.web }}{% endif %}
+  </p>
+  <p class="abs fine">{{ c.fineprint }}</p>
+</section>
+{% endblock %}

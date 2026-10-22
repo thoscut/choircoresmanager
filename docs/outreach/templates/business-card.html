@@ -1,0 +1,36 @@
+{# SPDX-FileCopyrightText: 2026 choircoresmanager contributors #}
+{# SPDX-License-Identifier: AGPL-3.0-or-later #}
+{# Business card (85 x 55 mm), front and back. #}
+{% extends "base.html" %}
+{% import "macros.html" as m %}
+{% block style %}
+.head { left: 36mm; right: 3mm; top: 9mm; }
+.title { font-size: 16pt; font-weight: 700; line-height: 0.98; color: {{ k.accent }}; }
+.short { margin-top: 2.6mm; margin-right: 1mm; font-size: 6.5pt; line-height: 1.35; color: {{ k.muted }}; }
+.sender { left: 36mm; right: 3mm; top: 45.5mm; font-size: 5.1pt; letter-spacing: 0.1em; text-transform: uppercase; color: {{ k.muted }}; }
+.back { background: {{ k.deep }}; }
+.qr { left: 5mm; top: 11.5mm; width: 32mm; height: 32mm; background: #fff; }
+.call { left: 41mm; right: 4mm; top: 10.5mm; font-size: 12.5pt; line-height: 1.08; font-weight: 700; color: {{ k.light }}; }
+.links { left: 41mm; right: 3mm; top: 30.5mm; font-size: 5.6pt; line-height: 1.55; color: {{ k.paper }}; }
+.links b { color: {{ k.light }}; }
+.fine { left: 41mm; right: 3mm; top: 46mm; font-size: 4.6pt; color: {{ k.paper }}; opacity: 0.72; }
+{% endblock %}
+{% block body %}
+<section class="page">
+  <div class="abs" style="left: 5mm; top: 12.5mm;">{{ m.logo(s, 30, 'mm') }}</div>
+  <div class="abs head">
+    <h1 class="title serif">{{ c.title }}</h1>
+    <p class="short">{{ c.short }}</p>
+  </div>
+  {{ m.staff(35.5, 4.6, 0.22, k.light, 'mm', 36, -bleed) }}
+  {{ m.note(66, 36.15, 1.7, k.accent, 'mm') }}
+  <p class="abs sender">{{ s.name }}</p>
+</section>
+<section class="page">
+  <div class="abs back" style="left: -{{ bleed }}mm; right: -{{ bleed }}mm; top: -{{ bleed }}mm; bottom: -{{ bleed }}mm;"></div>
+  <div class="abs qr">{{ qr }}</div>
+  <p class="abs call serif">{{ c.call }}</p>
+  <p class="abs links"><b>{{ c.project.url_short }}</b><br>{{ s.mail }}{% if s.web %}<br>{{ s.web }}{% endif %}</p>
+  <p class="abs fine">{{ c.free_software }} · {{ c.project.license }}</p>
+</section>
+{% endblock %}

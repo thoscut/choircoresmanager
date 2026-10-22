@@ -1,0 +1,30 @@
+{# SPDX-FileCopyrightText: 2026 choircoresmanager contributors #}
+{# SPDX-License-Identifier: AGPL-3.0-or-later #}
+
+{# Five staff lines. Numbers are in the page unit (mm or px). #}
+{% macro staff(top, height, thickness, colour, unit, left=0, right=0) %}
+<div class="abs staff" style="top: {{ top }}{{ unit }}; height: {{ height }}{{ unit }}; left: {{ left }}{{ unit }}; right: {{ right }}{{ unit }};">
+{% for i in range(5) %}
+  <div style="top: {{ '%.3f' % (i * (height - thickness) / 4) }}{{ unit }}; height: {{ thickness }}{{ unit }}; background: {{ colour }};"></div>
+{% endfor %}
+</div>
+{% endmacro %}
+
+{# A whole note sitting on the staff, as a tilted oval ring. #}
+{% macro note(left, top, size, colour, unit) %}
+<div class="abs" style="left: {{ left }}{{ unit }}; top: {{ top }}{{ unit }}; width: {{ size * 1.45 }}{{ unit }}; height: {{ size }}{{ unit }};
+  border: {{ size * 0.24 }}{{ unit }} solid {{ colour }}; border-radius: 50%; transform: rotate(-22deg);"></div>
+{% endmacro %}
+
+{# Logo, optionally on a paper-coloured plate for dark backgrounds. #}
+{% macro logo(s, height, unit, dark=false) %}
+{% if dark and s.logo_on_dark %}
+<img src="{{ s.logo_on_dark }}" style="height: {{ height }}{{ unit }};" alt="">
+{% elif dark %}
+<div style="display: inline-block; background: {{ s.colors.paper }}; padding: {{ height * 0.08 }}{{ unit }}; border-radius: {{ height * 0.1 }}{{ unit }};">
+<img src="{{ s.logo }}" style="height: {{ height * 0.84 }}{{ unit }}; display: block;" alt="">
+</div>
+{% else %}
+<img src="{{ s.logo }}" style="height: {{ height }}{{ unit }};" alt="">
+{% endif %}
+{% endmacro %}
