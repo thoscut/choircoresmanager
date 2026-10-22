@@ -33,6 +33,9 @@ Request bodies are checked strictly: unknown fields are refused with 400
 | `POST /api/events/{id}/calendar`, `POST /api/events/upcoming/calendar` | 30 in 10 minutes |
 | `GET /api/nextcloud-files/{fileId}/copy` | 120 in 10 minutes |
 | `GET /api/settings/access` | 20 in 10 minutes |
+| `GET /api/member/links/{token}/score` | 120 in 10 minutes |
+| `POST /api/member/links/{token}/practice-audio` | 30 in 10 minutes |
+| `GET /p/{token}`, `GET /repertoire` (public pages) | 60 in 10 minutes per address, 120 per account |
 
 Files chosen by `fileId` for an import may be at most 20 MB, a backup for a
 restore at most 64 MB; larger files are refused with 400
@@ -56,7 +59,12 @@ texts are English source strings translated via Nextcloud l10n (German first).
 
 Roles: `librarian` (Notenwart Bestand), `operations` (Notenwart Betrieb),
 `conductor` (Chorleitung), `contributor` (Vorschläge/Werkzeuge), `reader`
-(Vorstand, Revision). Admins may read and change settings; they may only write
+(Vorstand, Revision). `member` (Chormitglieder, milestone 0.7) is no archive
+role: it is given to groups like the others (`GET/PUT /api/settings`,
+`occ notenarchiv:setup --role member=…`), but `meta.roles` never contains it
+and every route of the archive answers a choir member as an account without a
+role (403). Choir members only reach the routes of "Sharing beyond the
+archive roles" below. Admins may read and change settings; they may only write
 catalog data if they also hold a role. Without a role they get 403 for the
 proposals (`GET /api/proposals`) and cannot view preservation copies; the UI
 hides the inbox for them. The administration can give the settings (not a
@@ -65,6 +73,9 @@ role) to further groups, see "Settings" below.
 ## Page
 
 `GET /` returns the app page with initial state `meta` (same as `GET /api/meta`).
+For a choir member without an archive role it returns the page "Shared with
+me" instead (template `member`, initial state `member`, see "Sharing beyond
+the archive roles"), while `member_links` is active; otherwise 403.
 
 ## Meta
 
@@ -347,8 +358,9 @@ New version fields (see `meta.fields`): `publication_status`, `review_status`,
 `confirmed_by_name`, `confirmed_at`, `confirmed_reason`, `confirmed_evidence`,
 `portal_removed_at`, `portal_removed_reason`, `valid_reason`, `key_signature`,
 `scoring`, `language`, `duration`. License uses: `binder`, `portal`,
-`self_print`, `print_station`, `practice_audio`, `recording`, `publication`
-(keys and English labels in `meta.licenseUses`).
+`self_print`, `print_station`, `practice_audio`, `recording`, `publication`,
+`online_publication` (milestone 0.7: making an excerpt available online
+through a public link; keys and English labels in `meta.licenseUses`).
 
 Rules the UI should reflect (the server enforces them):
 
@@ -422,7 +434,7 @@ when resolved. Links open the app with `?copy={copyId}` or
 ## Tasks, excerpt links and start page (milestone 0.3)
 
 The entry additionally contains `tasks` (all tasks of the copy, newest first)
-and `links` (active internal excerpt links of the copy).
+and `links` (active excerpt links of the copy, of every circle).
 
 **Task**
 
@@ -440,7 +452,9 @@ Lists (`/api/tasks`, `/api/due`) add `shelfmark`, `binder`, `number`, `title`,
 `repertoire` and are sorted by binder and number, so that a printed list
 follows the shelf.
 
-**Excerpt link** (internal circle: logged-in holders of an archive role)
+**Excerpt link** (`circle`: `internal` for logged-in holders of an archive
+role; `members` for the choir members and `public` for everyone, see
+"Sharing beyond the archive roles")
 
 ```json
 { "id": 9, "token": "32 alphanumeric characters", "copy_id": 35, "file_id": 78, "file_etag": "…",
@@ -468,8 +482,9 @@ Creating a task or a link refuses fields other than the ones listed below
 | `POST /api/copies/{id}/tasks` | `{ task: { kind, addressee, question, page?, measure_from?, measure_to?, voice?, verse?, category?, origin?, due? } }` | librarian, conductor, operations, contributor |
 | `POST /api/tasks/{id}/answer` | `{ answer }` | the addressed role |
 | `POST /api/tasks/{id}/close` | `{ status: "applied"\|"discarded", note? }` | librarian (operations for checks addressed to operations) |
-| `POST /api/copies/{id}/links` | `{ link: { measure_from?, measure_to?, voice?, verse?, tempo?, note?, task_id?, expires? } }` | librarian, conductor, operations |
-| `GET /api/links` | – | any role: all active links (board/auditors can review them) |
+| `POST /api/copies/{id}/links` | `{ link: { measure_from?, measure_to?, voice?, verse?, tempo?, note?, task_id?, expires?, circle? } }` | librarian, conductor, operations |
+| `GET /api/copies/{id}/link-options` | – | librarian, conductor, operations: what a link for choir members or the public would allow (milestone 0.7) |
+| `GET /api/links` | – | any role: all active links of every circle (board/auditors can review them) |
 | `GET /api/links/{token}` | – | any role (rights checked on every call) |
 | `POST /api/links/{id}/revoke` | – | creator or librarian |
 
@@ -519,7 +534,9 @@ and key signature, then one track per voice with its name; the mode is in
 the channel volume of each track). "Every voice" gives a ZIP archive (stored
 entries) with one file per voice plus a tutti. File names:
 `<shelf mark>_<title>_<voice>_T<from>-<to>.<ext>`, ASCII only. The files never
-pass through the server, and the app gives nothing to choir members.
+pass through the server. Choir members make practice files of a shared
+excerpt through their own route (module `member_practice_audio`, see
+"Sharing beyond the archive roles").
 
 Before every export the UI asks the server, which checks the rights and
 records the export:
@@ -1124,6 +1141,10 @@ audio and preservation copies applies whatever is switched on.
 | `dashboard_widget` | – | on |
 | `notifications` | – | on |
 | `notify_{subject}` | `notifications` and the module of the subject | on |
+| `member_links` | `excerpt_links`, `playback`, `releases` | off, and part of no preset |
+| `member_practice_audio` | `member_links`, `practice_audio` | off, and part of no preset |
+| `public_links` | `excerpt_links`, `playback`, `publication` | off, and part of no preset |
+| `public_repertoire` | `rights` | off, and part of no preset |
 | `agent_api` | – | off, and part of no preset (the API for agents, [api-v1.md](api-v1.md)) |
 
 `notify_{subject}` exists for every notification subject:
@@ -1143,8 +1164,9 @@ question from a singer). Points are only set to `corrected` while
 
 Presets: `simple` (core, `score_viewer`, `playback`, `notifications` with all
 `notify_*` switches), `standard` (the column above), `complete` (everything
-except `agent_api`). A preset sets every switch except `agent_api`
-(`Modules::OUTSIDE_PRESETS`), which only its own switch changes.
+except `agent_api` and the four modules of the group `sharing`). A preset
+sets every switch except these five (`Modules::OUTSIDE_PRESETS`), which only
+their own switch changes.
 
 ### Switched-off routes
 
@@ -1162,7 +1184,11 @@ other check of the app. The routes and their modules:
 | `transcription_review` | `GET /api/versions/{id}/review`, `POST /api/versions/{id}/transcription-reports`, `POST /api/review-points/{id}/decision`, `GET /api/review/orders` (and `score_viewer`) |
 | `corrections` | `POST /api/versions/{id}/corrections` (and `score_viewer`) |
 | `practice_audio` | `POST /api/versions/{id}/practice-audio` |
-| `excerpt_links` | `POST /api/copies/{id}/links`, `GET /api/links`, `GET /api/links/{token}`, `POST /api/links/{id}/revoke` |
+| `excerpt_links` | `POST /api/copies/{id}/links`, `GET /api/copies/{id}/link-options`, `GET /api/links`, `GET /api/links/{token}`, `POST /api/links/{id}/revoke` |
+| `member_links` | `GET /api/member/links/{token}/score`; `POST /api/copies/{id}/links` with `circle: "members"`; the page "Shared with me" (`GET /` answers 403 for choir members) |
+| `member_practice_audio` | `POST /api/member/links/{token}/practice-audio` (and `member_links`) |
+| `public_links` | `GET /p/{token}` (the 404 page of the public pages instead of the JSON message); `POST /api/copies/{id}/links` with `circle: "public"` |
+| `public_repertoire` | `GET /repertoire` (the 404 page of the public pages); setting `work.public_repertoire` to `true` |
 | `files_integration` | `GET /api/nextcloud-files/{fileId}/copy` (and the script of the Files app is not loaded) |
 | `tasks` | `GET /api/tasks`, `POST /api/copies/{id}/tasks`, `POST /api/tasks/{id}/answer`, `…/close` |
 | `proposals` | `GET /api/proposals`, `POST /api/proposals`, `…/accept`, `…/reject` |
@@ -1240,8 +1266,9 @@ Like the other settings: admins and the groups given the settings page
 `enabled` is the module's own switch, `active` whether it works (its switch
 and everything it requires is on). `requires` lists the direct
 requirements. Planned modules (none at the moment) are not listed.
-`agent_api` is in the group `interfaces` and missing from the `modules` of
-every preset (no preset changes it).
+`agent_api` is in the group `interfaces`, the four sharing modules in the
+group `sharing` ("Sharing beyond the archive roles"); all five are missing
+from the `modules` of every preset (no preset changes them).
 
 `PUT /api/settings/modules` with either `{ "modules": { "concerts": false } }`
 (one or more switches) or `{ "preset": "standard" }` returns the same plus
@@ -1665,3 +1692,159 @@ unless the copy has several. It checks the rights itself as always
 (preservation copies, playback). `?score=1` without `copy` is ignored, and without an
 active `score_viewer` the app only opens the copy and says that the function
 is switched off. After opening, the app writes `?copy={copyId}` into the URL.
+
+## Sharing beyond the archive roles (milestone 0.7)
+
+Four modules, all off and part of no preset: links for choir members
+(`member_links`), their practice audio (`member_practice_audio`), public
+links (`public_links`) and the public repertoire page (`public_repertoire`).
+Choir members and the public never get a file of the archive: the server
+reads the current score file of the copy (`score` of the entry) through the
+account of the archive folder, only inside that folder, unpacks `.mxl` and
+cuts the measures of the link (`lib/Service/MusicXmlExcerpt.php`). The
+excerpt keeps title, credits, rights notice and part list; its first measure
+gets the attributes (divisions, key, time, clef, transposition, staves) and
+the tempo valid there; repeats, endings and jumps that lead out of the
+excerpt are removed, so that the excerpt plays from its first to its last
+measure.
+
+### Making links for choir members and the public
+
+`POST /api/copies/{id}/links` takes the field `circle`: `internal` (default),
+`members` or `public`. For `members` and `public`:
+
+- The module of the circle must be active, else 404 `This function is
+  switched off.`.
+- `measure_from` and `measure_to` are required and must exist in the score
+  (400 `Please give the first and the last measure: choir members and the
+  public only see these measures.`, `There is no measure %s in this score.`,
+  `Measure %s does not come after measure %s.`); the copy needs a MusicXML
+  file (400 `This copy has no MusicXML file. …`); only partwise MusicXML can
+  be cut (400 `Links for choir members and public links need a score in the
+  partwise MusicXML format.`).
+- The rights (403 with the reason and the next step): `members` needs the
+  release for the singers' portal (`RightsPolicy::memberViewDenial`:
+  confirmed public domain or a license with use `portal`); `public` needs
+  `publication_status` `free` and confirmed public domain or a license with
+  use `online_publication` (`RightsPolicy::publicViewDenial`). Never an
+  internal preservation copy.
+- `public` takes no `note` (400 `A public link has no note, because everyone
+  could read it. Please leave the note empty.`); `task_id` is only kept for
+  `internal`.
+- The audit log records the circle (`field` `circle`).
+
+Expiry (at most 183 days), revocation and the call count are the same as for
+internal links. The UI's URL of a link for choir members is
+`/apps/notenarchiv/?link={token}` (as for internal links), of a public link
+`/apps/notenarchiv/p/{token}`.
+
+`GET /api/copies/{id}/link-options` (module `excerpt_links`; roles
+librarian, conductor, operations; the account must be allowed to view the
+version) tells the dialog what a link would allow, before it is made:
+
+```json
+{ "members": { "available": true, "allowed": true, "reason": null, "playback": true, "practiceAudio": true },
+  "public": { "available": true, "allowed": false,
+              "reason": "Not released for publication. The catalog librarian sets the publication status of the version to \"Released for publication\".",
+              "playback": false, "practiceAudio": false } }
+```
+
+`available`: the module of the circle is active (else `reason` is `This kind
+of link is switched off. An administrator can switch it on in the settings
+of the music archive under "Modules".`). `allowed`: the rights allow the
+link. `reason` (translated) says why it is not allowed, or else why the
+recipients cannot play it. `playback`: the recipients can play it;
+`practiceAudio`: choir members can make practice files (always `false` for
+`public`).
+
+### The page of the choir members
+
+`GET /` for an account in a group of the role `member` without an archive
+role (module `member_links`) returns the page "Shared with me" (template
+`member`, script `js/notenarchiv-member.mjs`) with the initial state
+`member`:
+
+```json
+{ "links": [{ "token": "…", "title": "Abendlied", "composer": "J. Rheinberger", "measure_from": "2", "measure_to": "3",
+              "voice": "Alto", "verse": null, "tempo": null, "note": "Please practise until Thursday.",
+              "expires": "2027-04-23", "canPlay": true, "canExportAudio": false, "reason": null }] }
+```
+
+Only active links of the circle `members` whose version is still released,
+newest first; no shelf marks and no account names. `reason` (translated)
+says why an excerpt cannot be played; `canExportAudio` needs the module
+`member_practice_audio` and the rights for practice audio.
+
+| Method and path | Body | Who |
+|---|---|---|
+| `GET /api/member/links/{token}/score` | – | choir members; module `member_links` |
+| `POST /api/member/links/{token}/practice-audio` | `{ export: { voice, mode, format, tempo?, repeats? } }` | choir members; modules `member_links` and `member_practice_audio` |
+
+`…/score` returns the measures of the link as MusicXML
+(`application/vnd.recordare.musicxml+xml`, attachment `excerpt.musicxml`,
+`nosniff`, the strict policy of data responses) and counts the call.
+Errors: 403 `This page is only for choir members. …` (no choir member) or
+`This excerpt is no longer shared with choir members.` (the release is
+gone); 400 `This link has expired.`, `This link has been revoked.`, `This
+link does not exist.` (unknown token or a link of another circle: counts as
+a failed attempt for the brute-force protection); 404 `The score of this
+excerpt is not available at the moment.` (no file, or the account of the
+archive folder cannot read it).
+
+`…/practice-audio` allows one file of one voice and records it like every
+export (`practice_audio`, see "Practice audio files"; the entry has the role
+`member`). Only `voice`, `mode` (`all`, `focus`, `solo`), `format` (`wav`,
+`midi`), `tempo` (25–200) and `repeats` are accepted (400 `Unknown field:
+%s` for others, also for `measure_from` or `copy_id`): copy and measures are
+those of the link. 403 with the reason when the rights refuse it
+(`RightsPolicy::memberPracticeAudioDenial`: the release for the singers'
+portal, playback, and a confirmed status or a license for practice audio).
+Answer `{ "ok": true }`.
+
+### Public pages
+
+The only routes without login (`#[PublicPage]`), each the only route of its
+controller, plain GET pages in Nextcloud's public layout, limited per
+address and per account and protected by the brute-force protection:
+
+| Path | Module | Shows |
+|---|---|---|
+| `GET /p/{token}` | `public_links` | one excerpt to view and play (template `public`, script `js/notenarchiv-public.mjs`) |
+| `GET /repertoire` | `public_repertoire` | the public repertoire page, rendered on the server without script |
+
+`GET /p/{token}` carries everything in the initial state `excerpt`; there
+is no further request, no download and no practice audio:
+
+```json
+{ "title": "Abendlied", "composer": "J. Rheinberger", "measureFrom": "9", "measureTo": "12",
+  "voice": "Alto", "verse": null, "tempo": null, "canPlay": true, "xml": "<?xml …?><score-partwise …>…</score-partwise>" }
+```
+
+No note, no shelf mark, no account name. Policy: as the app page
+(`'wasm-unsafe-eval'` only), no frames; `X-Robots-Tag: noindex, nofollow`.
+An unknown, malformed, expired or revoked token, a link of another circle, a
+version no longer released (`RightsPolicy::publicViewDenial`) and a
+switched-off module all answer with the same 404 page of Nextcloud, without
+a reason, marked as a failed attempt for the brute-force protection. Each
+shown page counts a call.
+
+`GET /repertoire` lists the works with `public_repertoire` set that have a
+version confirmed public domain (no preservation copy), checked on every
+call: title, composer as written, composer and lyricist from the register of
+persons with life dates (while `persons` is active), scoring of those
+versions, and the links in `cpdl_url` and `imslp_url` when they are https
+links to `cpdl.org` or `imslp.org`. Nothing is loaded from there. A
+switched-off module or an internal error gives the same 404 page.
+
+New work fields (in `meta.fields`, maintained by the librarian; the UI shows
+them while `public_repertoire` is active):
+
+| Field | Type | Rule |
+|---|---|---|
+| `public_repertoire` | boolean | Setting it to `true` needs a version of the work confirmed public domain (400 `Only works with a version confirmed as public domain can be shown on the public repertoire page. …`) and the module (404). |
+| `cpdl_url` | text (500) | An https link to `cpdl.org` or `www.cpdl.org` (400 `"%s" must be an https link to the page of the work on cpdl.org or imslp.org.`). |
+| `imslp_url` | text (500) | An https link to `imslp.org` or `www.imslp.org`. |
+
+Migration `Version000710Date20261025100000` adds these three columns to
+`notarch_works`; links for choir members and public links use the existing
+column `circle` of `notarch_links`.

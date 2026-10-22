@@ -42,7 +42,7 @@ class Setup extends Command {
 			->addArgument('user', InputArgument::REQUIRED, 'account whose view of the archive folder is used')
 			->addArgument('folder', InputArgument::OPTIONAL, 'archive folder, relative to the account\'s files')
 			->addOption('role', 'r', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-				'role=group1,group2 (roles: ' . implode(', ', Roles::ALL) . ')');
+				'role=group1,group2 (roles: ' . implode(', ', Roles::GROUP_ROLES) . ')');
 	}
 
 	#[\Override]

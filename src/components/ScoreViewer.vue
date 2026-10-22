@@ -82,7 +82,7 @@ import { canonicalVoice, matchVoice, pointPlace, pointRange } from '../review.ts
 import { parsePage, scanFiles, storedScanPage, storeScanPage } from '../scan.ts'
 import { SETTINGS_SECTIONS } from '../settings.ts'
 import { ADMIN_GUIDE, adminGuideUrl, USER_GUIDE, userGuideUrl } from '../docs.ts'
-import { canChangeSettings, canCreateLinks, canCreateTasks, fieldInfo, fieldLabel, hasAnyRole, isModuleActive } from '../store.ts'
+import { canChangeSettings, canCreateLinks, canCreateTasks, canShareOutside, fieldInfo, fieldLabel, hasAnyRole, isModuleActive } from '../store.ts'
 
 /** Practice audio files: own chunk, loaded when the dialog is opened */
 const PracticeAudioDialog = defineAsyncComponent(() => import('./PracticeAudioDialog.vue'))
@@ -1360,7 +1360,7 @@ onBeforeUnmount(() => {
 								<template #icon>
 									<NcIconSvgWrapper :path="mdiLinkVariantPlus" />
 								</template>
-								{{ t('notenarchiv', 'Create internal link') }}
+								{{ canShareOutside ? t('notenarchiv', 'Share excerpt …') : t('notenarchiv', 'Create internal link') }}
 							</NcButton>
 							<NcButton v-if="canCreateTasks" variant="tertiary" @click="taskDialogOpen = true">
 								<template #icon>

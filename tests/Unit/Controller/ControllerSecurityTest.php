@@ -13,8 +13,11 @@ use OCA\Notenarchiv\Controller\ApiController;
 use OCA\Notenarchiv\Controller\ApiV1StatusController;
 use OCA\Notenarchiv\Controller\CalendarController;
 use OCA\Notenarchiv\Controller\FilesIntegrationController;
+use OCA\Notenarchiv\Controller\MemberController;
 use OCA\Notenarchiv\Controller\PageController;
 use OCA\Notenarchiv\Controller\PracticeAudioController;
+use OCA\Notenarchiv\Controller\PublicLinkController;
+use OCA\Notenarchiv\Controller\PublicRepertoireController;
 use OCA\Notenarchiv\Controller\ReviewController;
 use OCA\Notenarchiv\Controller\SettingsController;
 use OCA\Notenarchiv\Controller\TaskController;
@@ -41,18 +44,21 @@ use OCA\Notenarchiv\Service\LinkService;
 use OCA\Notenarchiv\Service\MetaService;
 use OCA\Notenarchiv\Service\Modules;
 use OCA\Notenarchiv\Service\PracticeAudioService;
+use OCA\Notenarchiv\Service\PublicRepertoireService;
 use OCA\Notenarchiv\Service\RepertoireService;
 use OCA\Notenarchiv\Service\ReviewService;
 use OCA\Notenarchiv\Service\RightsPolicy;
 use OCA\Notenarchiv\Service\Roles;
 use OCA\Notenarchiv\Service\ScanService;
 use OCA\Notenarchiv\Service\ScoreService;
+use OCA\Notenarchiv\Service\SharedLinkService;
 use OCA\Notenarchiv\Service\TaskService;
 use OCA\Notenarchiv\Service\UserFiles;
 use OCA\Notenarchiv\Settings\Admin;
 use OCA\Notenarchiv\Tests\Unit\Support\ModuleSwitches;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\AnonRateLimit;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
@@ -64,6 +70,7 @@ use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\Attribute\SubAdminRequired;
 use OCP\AppFramework\Http\Attribute\UserRateLimit;
 use OCP\AppFramework\Http\JSONResponse;
+use OCP\AppFramework\Http\NotFoundResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\OCS\OCSNotFoundException;
@@ -71,11 +78,14 @@ use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Files\File;
+use OCP\IAppConfig;
 use OCP\IDateTimeZone;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IRequest;
+use OCP\IUserManager;
+use OCP\Settings\IManager as ISettingsManager;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
@@ -95,6 +105,9 @@ use Psr\Log\LoggerInterface;
 #[CoversClass(ApiV1StatusController::class)]
 #[CoversClass(ModuleMiddleware::class)]
 #[CoversClass(ReviewController::class)]
+#[CoversClass(MemberController::class)]
+#[CoversClass(PublicLinkController::class)]
+#[CoversClass(PublicRepertoireController::class)]
 final class ControllerSecurityTest extends TestCase {
 	use ModuleSwitches;
 
@@ -140,6 +153,8 @@ final class ControllerSecurityTest extends TestCase {
 		'CalendarController::concertFile', 'CalendarController::upcomingFile',
 		// The scan beside the score is opened by the browser itself (frame or window).
 		'ReviewController::scan',
+		// The public pages (milestone 0.7) are opened by the browser, without login.
+		'PublicLinkController::show', 'PublicRepertoireController::index',
 	];
 
 	/** Expensive endpoints: limited per user (the statistics aggregate the whole archive) */
@@ -155,6 +170,33 @@ final class ControllerSecurityTest extends TestCase {
 		'ReviewController::ingest', 'ReviewController::correct', 'ReviewController::scan',
 		// answers only for files the account sees; limited against trying file ids all the same
 		'FilesIntegrationController::copyOfFile',
+		// the routes of the choir members and the public pages (milestone 0.7)
+		'MemberController::score', 'MemberController::practiceAudio',
+		'PublicLinkController::show', 'PublicRepertoireController::index',
+	];
+
+	/**
+	 * The only public routes (#[PublicPage], milestone 0.7) and their module:
+	 * the page of a public link and the public repertoire page. Each is the
+	 * only route of its controller, so that the exception cannot grow by a
+	 * method added later.
+	 */
+	private const PUBLIC_ROUTES = [
+		'PublicLinkController::show' => 'public_links',
+		'PublicRepertoireController::index' => 'public_repertoire',
+	];
+
+	/**
+	 * The routes a choir member without an archive role reaches (milestone
+	 * 0.7): the app page, which shows them only "Shared with me", and the
+	 * routes of MemberController. Every other route checks for an archive
+	 * role: Roles::hasAccess() and Roles::rolesOf() leave the choir members
+	 * out (testChoirMembersHoldNoArchiveRole).
+	 */
+	private const MEMBER_ROUTES = [
+		'PageController::index' => [],
+		'MemberController::score' => ['member_links'],
+		'MemberController::practiceAudio' => ['member_links', 'member_practice_audio'],
 	];
 
 	/**
@@ -313,11 +355,200 @@ final class ControllerSecurityTest extends TestCase {
 		}
 	}
 
+	/**
+	 * Every route needs a login, except the two public pages: each needs its
+	 * module, is a plain GET, limited per address and per account, protected
+	 * against guessing (brute force) and never an OCS or CORS route.
+	 */
 	#[CoversNothing]
-	public function testNoRouteIsPublic(): void {
-		foreach (self::routes() as $name => $route) {
-			self::assertNotContains(PublicPage::class, $route['attributes'], $name);
+	public function testOnlyTheSharingPagesArePublic(): void {
+		$routes = self::routes();
+		$public = array_keys(array_filter($routes, fn (array $route): bool => in_array(PublicPage::class, $route['attributes'], true)));
+		sort($public);
+		$expected = array_keys(self::PUBLIC_ROUTES);
+		sort($expected);
+		self::assertSame($expected, $public, 'the only public routes');
+		foreach (self::PUBLIC_ROUTES as $name => $module) {
+			$route = $routes[$name];
+			[$class, $method] = explode('::', $name);
+			self::assertSame('GET', $route['verb'], $name);
+			self::assertFalse($route['ocs'], $name);
+			self::assertSame([$module], ModuleMiddleware::required('OCA\\Notenarchiv\\Controller\\' . $class, $method), $name . ' needs its module');
+			self::assertContains(AnonRateLimit::class, $route['attributes'], $name . ' is limited per address');
+			self::assertContains(UserRateLimit::class, $route['attributes'], $name . ' is limited per account');
+			self::assertContains(BruteForceProtection::class, $route['attributes'], $name);
+			self::assertNotContains(CORS::class, $route['attributes'], $name);
+			$others = array_filter(array_keys($routes), fn (string $other): bool => str_starts_with($other, $class . '::') && $other !== $name);
+			self::assertSame([], array_values($others), $class . ' has no other route');
 		}
+	}
+
+	/**
+	 * Choir members are no archive role: an account that is only in a group
+	 * of the choir members has no access to the archive, so every route that
+	 * checks Roles::hasAccess(), requireAccess() or requireRole() refuses it.
+	 */
+	public function testChoirMembersHoldNoArchiveRole(): void {
+		$config = $this->createStub(IAppConfig::class);
+		$config->method('getValueArray')->willReturnCallback(fn (string $app, string $key): array => $key === 'groups_member' ? ['choir'] : []);
+		$groups = $this->createStub(IGroupManager::class);
+		$groups->method('isAdmin')->willReturn(false);
+		$groups->method('isInGroup')->willReturnCallback(fn (string $uid, string $group): bool => $uid === 'singer' && $group === 'choir');
+		$roles = new Roles($config, $groups, $this->createStub(IUserManager::class), $this->createStub(ISettingsManager::class), $this->createStub(LoggerInterface::class));
+		self::assertTrue($roles->isMember('singer'));
+		self::assertSame([], $roles->rolesOf('singer'));
+		self::assertFalse($roles->hasAccess('singer'));
+		self::assertNotContains(Roles::MEMBER, Roles::ALL);
+		self::assertContains(Roles::MEMBER, Roles::GROUP_ROLES);
+		$this->expectException(AccessDeniedException::class);
+		$roles->requireAccess('singer');
+	}
+
+	/**
+	 * The routes a choir member reaches are exactly MEMBER_ROUTES: the routes
+	 * of MemberController (with their modules, rate limits, CSRF check, never
+	 * public) and the app page; no other controller asks Roles::isMember().
+	 */
+	#[CoversNothing]
+	public function testOnlyTheMemberRoutesLetChoirMembersIn(): void {
+		$routes = self::routes();
+		$memberController = array_values(array_filter(array_keys($routes), fn (string $name): bool => str_starts_with($name, 'MemberController::')));
+		sort($memberController);
+		$expected = array_values(array_filter(array_keys(self::MEMBER_ROUTES), fn (string $name): bool => str_starts_with($name, 'MemberController::')));
+		sort($expected);
+		self::assertSame($expected, $memberController);
+		foreach (self::MEMBER_ROUTES as $name => $modules) {
+			self::assertArrayHasKey($name, $routes);
+			[$class, $method] = explode('::', $name);
+			$required = ModuleMiddleware::required('OCA\\Notenarchiv\\Controller\\' . $class, $method);
+			sort($required);
+			self::assertSame($modules, $required, $name);
+			self::assertNotContains(PublicPage::class, $routes[$name]['attributes'], $name);
+			if ($class === 'MemberController') {
+				self::assertContains(UserRateLimit::class, $routes[$name]['attributes'], $name);
+				self::assertNotContains(NoCSRFRequired::class, $routes[$name]['attributes'], $name . ' keeps the CSRF check');
+			}
+		}
+		foreach (glob(__DIR__ . '/../../../lib/Controller/*.php') ?: [] as $file) {
+			$asksForMembers = str_contains((string)file_get_contents($file), 'isMember(')
+				|| str_contains((string)file_get_contents($file), '->forMember(') || str_contains((string)file_get_contents($file), '->memberScore(');
+			self::assertSame(in_array(basename($file, '.php'), ['PageController', 'MemberController'], true), $asksForMembers,
+				basename($file) . ': only the app page and MemberController serve choir members');
+		}
+	}
+
+	private function pageController(bool $access, bool $member, bool $moduleOn, ?SharedLinkService $shared = null): PageController {
+		$roles = $this->createStub(Roles::class);
+		$roles->method('hasAccess')->willReturn($access);
+		$roles->method('isMember')->willReturn($member);
+		$meta = $this->createStub(MetaService::class);
+		$meta->method('forUser')->willReturn([]);
+		return new PageController($this->createStub(IRequest::class), 'singer', $roles, $meta, $this->createStub(IInitialState::class),
+			$this->l10n(), $moduleOn ? $this->modulesWithout() : $this->modulesWithout([Modules::MEMBER_LINKS]),
+			$shared ?? $this->createStub(SharedLinkService::class));
+	}
+
+	public function testChoirMembersGetOnlyTheirPage(): void {
+		$shared = $this->createMock(SharedLinkService::class);
+		$shared->expects(self::once())->method('forMember')->with('singer')->willReturn([]);
+		$response = $this->pageController(false, true, true, $shared)->index();
+		self::assertSame('member', $response->getTemplateName(), 'the page "Shared with me", not the archive');
+		$policy = $response->getContentSecurityPolicy()->buildPolicy();
+		self::assertStringContainsString("'wasm-unsafe-eval'", $policy);
+		self::assertStringNotContainsString("'unsafe-eval'", $policy);
+		self::assertStringNotContainsString('frame-src', $policy, 'no scan beside the score for choir members');
+
+		$off = $this->pageController(false, true, false)->index();
+		self::assertSame(Http::STATUS_FORBIDDEN, $off->getStatus(), 'module switched off: no page');
+		$stranger = $this->pageController(false, false, true)->index();
+		self::assertSame(Http::STATUS_FORBIDDEN, $stranger->getStatus());
+		$both = $this->pageController(true, true, true)->index();
+		self::assertSame('index', $both->getTemplateName(), 'an archive role gets the archive');
+	}
+
+	private function publicLinkController(?array $excerpt): PublicLinkController {
+		$shared = $this->createStub(SharedLinkService::class);
+		$shared->method('publicExcerpt')->willReturn($excerpt);
+		return new PublicLinkController($this->createStub(IRequest::class), $shared, $this->createStub(IInitialState::class), $this->l10n(),
+			$this->createStub(LoggerInterface::class));
+	}
+
+	/**
+	 * Unknown, expired, revoked or withdrawn links, a malformed token and a
+	 * switched-off module get the same 404 page, marked for the brute-force
+	 * protection, without a reason.
+	 */
+	public function testPublicLinksAnswerTheSame404ForEveryFailure(): void {
+		$excerpt = ['title' => 'Der Mond ist aufgegangen', 'composer' => 'J. A. P. Schulz', 'measureFrom' => '1', 'measureTo' => '4',
+			'voice' => 'Alto', 'verse' => 1, 'tempo' => null, 'canPlay' => true, 'xml' => '<score-partwise/>'];
+		// The page itself needs the running server (PublicTemplateResponse);
+		// the integration test opens it. Its policy: as the app page, without frames.
+		$policy = PublicLinkController::policy()->buildPolicy();
+		self::assertStringContainsString("'wasm-unsafe-eval'", $policy);
+		self::assertStringNotContainsString("'unsafe-eval'", $policy);
+		self::assertStringNotContainsString('http', $policy, 'no external sources');
+		self::assertStringNotContainsString('frame-src', $policy);
+
+		$failures = [
+			'unknown or refused' => $this->publicLinkController(null)->show(str_repeat('a', 32)),
+			'malformed' => $this->publicLinkController($excerpt)->show('../../etc'),
+		];
+		$controller = $this->publicLinkController($excerpt);
+		$middleware = new ModuleMiddleware($this->modulesWithout([Modules::PUBLIC_LINKS]), $this->l10n());
+		try {
+			$middleware->beforeController($controller, 'show');
+			self::fail('the module is off');
+		} catch (ModuleDisabledException $e) {
+			$failures['module off'] = $middleware->afterException($controller, 'show', $e);
+		}
+		foreach ($failures as $case => $response) {
+			self::assertInstanceOf(NotFoundResponse::class, $response, $case);
+			self::assertSame(Http::STATUS_NOT_FOUND, $response->getStatus(), $case);
+			self::assertTrue($response->isThrottled(), $case . ' counts as a failed attempt');
+			self::assertSame([], $response instanceof TemplateResponse ? $response->getParams() : null, $case . ': no reason given');
+		}
+
+		$repertoire = new PublicRepertoireController($this->createStub(IRequest::class), $this->createStub(PublicRepertoireService::class),
+			$this->l10n(), $this->createStub(LoggerInterface::class));
+		$middleware = new ModuleMiddleware($this->modulesWithout([Modules::PUBLIC_REPERTOIRE]), $this->l10n());
+		try {
+			$middleware->beforeController($repertoire, 'index');
+			self::fail('the module is off');
+		} catch (ModuleDisabledException $e) {
+			self::assertInstanceOf(NotFoundResponse::class, $middleware->afterException($repertoire, 'index', $e));
+		}
+		$service = $this->createStub(PublicRepertoireService::class);
+		$service->method('entries')->willThrowException(new \RuntimeException('database gone'));
+		$broken = new PublicRepertoireController($this->createStub(IRequest::class), $service, $this->l10n(), $this->createStub(LoggerInterface::class));
+		self::assertInstanceOf(NotFoundResponse::class, $broken->index(), 'an error tells nothing either');
+	}
+
+	public function testMemberRoutesRefuseOthersAndThrottleUnknownTokens(): void {
+		$shared = $this->createStub(SharedLinkService::class);
+		$shared->method('memberScore')->willReturnCallback(function (string $token, string $uid): string {
+			if ($uid !== 'singer') {
+				throw new AccessDeniedException('This page is only for choir members. Roles are linked to groups; please ask an administrator.');
+			}
+			if ($token === str_repeat('u', 32)) {
+				throw new UnknownLinkException('This link does not exist.');
+			}
+			return '<score-partwise/>';
+		});
+		$controller = fn (?string $uid): MemberController => new MemberController($this->createStub(IRequest::class), $uid, $shared,
+			$this->createStub(PracticeAudioService::class), $this->l10n(), $this->createStub(LoggerInterface::class));
+
+		$response = $controller('singer')->score(str_repeat('a', 32));
+		$headers = self::headers($response);
+		self::assertSame(Http::STATUS_OK, $response->getStatus());
+		self::assertSame('attachment; filename="excerpt.musicxml"', $headers['Content-Disposition'] ?? null);
+		self::assertSame('nosniff', $headers['X-Content-Type-Options'] ?? null);
+		self::assertStringContainsString("default-src 'none'", $response->getContentSecurityPolicy()->buildPolicy());
+
+		self::assertSame(Http::STATUS_FORBIDDEN, $controller('librarian')->score(str_repeat('a', 32))->getStatus(), 'no choir member');
+		$unknown = $controller('singer')->score(str_repeat('u', 32));
+		self::assertSame(Http::STATUS_BAD_REQUEST, $unknown->getStatus());
+		self::assertTrue($unknown->isThrottled());
+		self::assertSame(Http::STATUS_UNAUTHORIZED, $controller(null)->score(str_repeat('a', 32))->getStatus());
 	}
 
 	#[CoversNothing]
@@ -667,14 +898,7 @@ final class ControllerSecurityTest extends TestCase {
 	}
 
 	public function testTheAppPageAllowsWebAssemblyButNoScriptEval(): void {
-		$roles = $this->createStub(Roles::class);
-		$roles->method('hasAccess')->willReturn(true);
-		$meta = $this->createStub(MetaService::class);
-		$meta->method('forUser')->willReturn([]);
-		$controller = new PageController($this->createStub(IRequest::class), 'reader', $roles, $meta,
-			$this->createStub(IInitialState::class), $this->l10n());
-
-		$response = $controller->index();
+		$response = $this->pageController(true, false, true)->index();
 		self::assertInstanceOf(TemplateResponse::class, $response);
 		$policy = $response->getContentSecurityPolicy()->buildPolicy();
 		self::assertStringContainsString("'wasm-unsafe-eval'", $policy);

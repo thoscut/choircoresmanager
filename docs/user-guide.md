@@ -1,7 +1,8 @@
 # User guide
 
 This guide is for the people who look after a choir's sheet music: music
-librarians, the conductor, the board and the auditors. It first shows how to
+librarians, the conductor, the board and the auditors. Choir members find
+their part in [Shared with me](#for-choir-members-shared-with-me). It first shows how to
 find your way around, then the features everybody uses, and then what each
 role does. The interface is available in English and German (informal and
 formal address).
@@ -15,6 +16,7 @@ role does not include.
 
 - [Getting around](#getting-around)
 - [Scores, practice files and questions](#scores-practice-files-and-questions)
+- [Sharing with choir members and the public](#sharing-with-choir-members-and-the-public)
 - [Reviewing transcriptions](#reviewing-transcriptions)
 - [Concerts and song lists](#concerts-and-song-lists)
 - [Statistics and annual report](#statistics-and-annual-report)
@@ -36,7 +38,7 @@ The navigation on the left lists the views of the app in groups:
 - **Archive:** **Catalog** with its filters, **Persons**, **Protection
   terms** and **Statistics**
 - **Releases:** **Singers' portal**, **Print station**, **Ending licenses**
-  and **Internal links**
+  and **Links**
 - **Programmes:** **Concerts**, **Song lists** and **Unclear programme
   lines**
 - **Maintaining the catalog:** **New accession** (for the other roles
@@ -129,7 +131,7 @@ The tabs:
 - **Rights:** confirmation, releases, the valid version, licenses, open
   proposals, the persons involved with the protection-term suggestion, and
   the rights and MusicXML fields.
-- **Tasks:** questions and tasks of the copy and its internal links.
+- **Tasks:** questions and tasks of the copy and its excerpt links.
 - **Files:** the files linked from the archive folder, each opening in
   Nextcloud in a new tab (see [Files you cannot open](#files-you-cannot-open)).
 - **Audit log:** every change with who, when, old and new value and reason.
@@ -278,8 +280,10 @@ warning.
 
 The sound is synthetic and no substitute for a recording. The files are only
 for practising in the choir, as far as the rights or the license allow.
-Upload them to the practice system yourself: the app gives nothing to choir
-members.
+Upload them to the practice system yourself. Where the administration has
+switched on practice audio for choir members, they can also make a file of
+their voice of an excerpt shared with them (see
+[Sharing with choir members and the public](#sharing-with-choir-members-and-the-public)).
 
 ### Questions, tasks and sharing
 
@@ -313,8 +317,138 @@ Share a place in two ways, both under **This passage** in the score viewer:
   with all voices and highlights the chosen voice. A link is valid for at
   most six months, can be revoked at any time by its creator or a music
   librarian, and says so when the score has changed since. The server checks
-  the rights on every call; calls are counted without names. **Internal
-  links** in the navigation lists all active links.
+  the rights on every call; calls are counted without names. **Links** in
+  the navigation lists all active links and says for each who can open it.
+  Where links for choir members or public links are switched on, the button
+  is called **Share excerpt …** and the same dialog asks who can open the
+  link (see the next chapter).
+
+## Sharing with choir members and the public
+
+Where the administration has switched them on, an excerpt can be shared
+beyond the archive roles: with the **choir members** (they sign in and see
+it under "Shared with me") or with **everyone** through a public link
+without signing in. Both get only the measures of the excerpt, never the
+file; the server cuts the score and checks the rights on every call.
+
+### Sharing an excerpt with the choir
+
+Music librarians, operations and the conductor share an excerpt from the
+score viewer:
+
+1. Open the score, choose the measures (**From measure**, **To measure**)
+   and the **Focus voice**, and set the tempo if needed.
+2. Choose **Share excerpt …**.
+3. Under **Who can open the link?** choose **Choir members**
+   (or **Archive roles (internal)**, **Public (without signing in)**).
+4. Check the measures, voice, verse and tempo, and the **Valid until** date
+   (at most six months). **Note (optional)**: the choir members see this
+   note, for example "Please practise until Thursday".
+5. **What the recipients see** lists the measures, the focus voice, verse,
+   tempo, how long the link is valid, whether they can play the excerpt and
+   whether they can make practice files.
+6. **Create link**, then **Copy link** if you want to send it. Choir members
+   find the excerpt under "Shared with me" anyway, until it expires.
+
+A link for choir members needs both measures, and they must exist in the
+score. It is only possible for a version **released for the singers'
+portal**: confirmed public domain, or a valid license with the use
+"Singers' portal"; never for an internal preservation copy. If it is not
+possible, the dialog says why and what to do instead of offering
+**Create link**, for example *Public domain is not confirmed yet. The catalog
+librarian confirms it on the tab "Rights"; then the version can be shared
+with choir members.*
+
+Playback follows the same rules as in the archive (public domain, or a
+license for practice audio). Practice files for choir members additionally
+need the module "Practice audio for choir members" and a confirmed status
+or a license for practice audio.
+
+**Links** in the navigation lists every active link with its circle
+(**Internal**, **For choir members**, **Public**), validity and number of
+calls; **Revoke link** stops a link at once for everyone.
+
+> [!NOTE]
+> Repeats and jumps that lead out of the excerpt are left out, so that the
+> excerpt plays from its first to its last measure. A repeat back to a
+> measure before the excerpt, its first and second endings, and a D.C. of
+> an excerpt that does not start at the beginning are therefore not played.
+> The score viewer of the archive plays a range as part of the whole piece;
+> for example measures 1 to 7 of "Der Mond ist aufgegangen" (1-1) sound
+> there as 1–6, 1–5, 7, in a shared excerpt as 1–7.
+
+### Public links
+
+A public link shows and plays an excerpt to anyone who has the link, without
+signing in: only its measures, without download, without names and without
+a note. Choose **Public (without signing in)** in the same dialog. It is
+only possible when
+
+- the version is **released for publication**: the catalog librarian sets
+  the publication status of the version to "Released for publication", and
+- it is confirmed public domain, or has a valid license with the use
+  "Online publication (public links)" (a license for "Publication" alone is
+  not enough),
+- and it is no internal preservation copy.
+
+The page shows title, composer, measures, the focus voice and a text
+description of the excerpt, and plays it with the voice emphasised. When the
+link expires, is revoked or the version is no longer released, the page
+shows "not found" without a reason.
+
+### The public repertoire page
+
+The catalog librarian can list works on a public page of the choir
+(`/apps/notenarchiv/repertoire`) with title, composer and lyricist, life
+dates, scoring and links to CPDL and IMSLP:
+
+1. Confirm a version of the work as public domain (tab **Rights**).
+2. In the fields of the work tick **On the public repertoire page**.
+3. Optionally enter **Link to CPDL** and **Link to IMSLP**: the https
+   address of the page of the work there, for example
+   `https://www.cpdl.org/wiki/index.php/…` or `https://imslp.org/wiki/…`.
+
+The page loads nothing from CPDL or IMSLP; it only links to them. Life dates
+come from the register of persons. A work leaves the page as soon as no
+version is confirmed public domain any more.
+
+### For choir members: Shared with me
+
+Choir members sign in to Nextcloud and open **Music archive**. They see
+**Shared with me**: the excerpts shared with the choir, with title,
+composer, measures, voice, the note and how long each is valid, and
+whether it can be played (**Playback: yes** or **Playback: no**).
+
+1. Choose an excerpt in the list (a link sent to you opens it directly).
+   The notes appear above the list.
+2. **Play**, **Pause** and **Stop**; under **Voices during playback**
+   choose **All equal**, **Focus voice louder** or **Focus voice only**, and
+   set the tempo. **Focus voice** chooses another voice; **Smaller** and
+   **Larger** change the size. Space plays and pauses.
+3. **Text reference** and **Description of the excerpt** describe the
+   excerpt in words.
+4. Where practice files are offered (**Practice files: yes**): choose the
+   voice and "Focus voice louder" or "Focus voice only", then under
+   **Practice file** the format **WAV (audio)** or **MIDI** and **Make
+   practice file**. The file is made in your browser; every practice file
+   is recorded in the audit log of the music archive.
+
+### Common problems
+
+| Message or problem | What to do |
+|---|---|
+| The button says **Create internal link**, there is no choice of circle | Links for choir members and public links are switched off; an administrator switches them on (Settings → Modules). |
+| *This kind of link is switched off. …* | The same, for one circle. |
+| *Public domain is not confirmed yet. …* | The catalog librarian confirms the rights on the tab **Rights**. |
+| *Not released for choir members: …* | Confirm public domain or record a license with the use "Singers' portal". |
+| *Not released for publication. …* | Set the publication status of the version to "Released for publication". |
+| *A public link needs confirmed public domain or a valid license for online publication. …* | Record a license with the use "Online publication (public links)", or confirm public domain. |
+| *Internal preservation copy: …* | Preservation copies are never shared; share another version. |
+| *This copy has no MusicXML file. …* | Link a MusicXML file to the copy (tab **Files**). |
+| *Please give the first and the last measure: …* / *There is no measure … in this score.* | Enter both measures as printed in the score. |
+| *A public link has no note, …* | Leave the note empty. |
+| A choir member does not see the excerpt | It has expired or was revoked, or the version is no longer released; make a new link. If they see no app at all, see the [administration guide](admin-guide.md#14-sharing-with-choir-members-and-the-public). |
+| *Only works with a version confirmed as public domain can be shown on the public repertoire page. …* | Confirm the rights of a version of the work first (tab **Rights**). |
 
 ## Reviewing transcriptions
 
@@ -571,7 +705,8 @@ confirmation.
 **Add license** on the rights tab records holder or publisher, the uses
 (at least one), number of copies, validity, evidence and notes. Each use is
 separate: copies for the binders, singers' portal, self-printing by singers,
-print station, practice audio, recording and publication. A license for
+print station, practice audio, recording, publication and online
+publication (public links). A license for
 printing does not allow the singers' portal. Licenses are never deleted; an
 ended license stays as a record. **Ending licenses** lists the licenses that
 end within the chosen period or have ended.
@@ -771,7 +906,134 @@ notification.
 
 The music librarian then applies the answer to the catalog or discards it.
 
-### Reviewing transcriptions
+### Sharing with choir members and the public
+
+Where the administration has switched them on, an excerpt can be shared
+beyond the archive roles: with the **choir members** (they sign in and see
+it under "Shared with me") or with **everyone** through a public link
+without signing in. Both get only the measures of the excerpt, never the
+file; the server cuts the score and checks the rights on every call.
+
+### Sharing an excerpt with the choir
+
+Music librarians, operations and the conductor share an excerpt from the
+score viewer:
+
+1. Open the score, choose the measures (**From measure**, **To measure**)
+   and the **Focus voice**, and set the tempo if needed.
+2. Choose **Share excerpt …**.
+3. Under **Who can open the link?** choose **Choir members**
+   (or **Archive roles (internal)**, **Public (without signing in)**).
+4. Check the measures, voice, verse and tempo, and the **Valid until** date
+   (at most six months). **Note (optional)**: the choir members see this
+   note, for example "Please practise until Thursday".
+5. **What the recipients see** lists the measures, the focus voice, verse,
+   tempo, how long the link is valid, whether they can play the excerpt and
+   whether they can make practice files.
+6. **Create link**, then **Copy link** if you want to send it. Choir members
+   find the excerpt under "Shared with me" anyway, until it expires.
+
+A link for choir members needs both measures, and they must exist in the
+score. It is only possible for a version **released for the singers'
+portal**: confirmed public domain, or a valid license with the use
+"Singers' portal"; never for an internal preservation copy. If it is not
+possible, the dialog says why and what to do instead of offering
+**Create link**, for example *Public domain is not confirmed yet. The catalog
+librarian confirms it on the tab "Rights"; then the version can be shared
+with choir members.*
+
+Playback follows the same rules as in the archive (public domain, or a
+license for practice audio). Practice files for choir members additionally
+need the module "Practice audio for choir members" and a confirmed status
+or a license for practice audio.
+
+**Links** in the navigation lists every active link with its circle
+(**Internal**, **For choir members**, **Public**), validity and number of
+calls; **Revoke link** stops a link at once for everyone.
+
+> [!NOTE]
+> Repeats and jumps that lead out of the excerpt are left out, so that the
+> excerpt plays from its first to its last measure. A repeat back to a
+> measure before the excerpt, its first and second endings, and a D.C. of
+> an excerpt that does not start at the beginning are therefore not played.
+> The score viewer of the archive plays a range as part of the whole piece;
+> for example measures 1 to 7 of "Der Mond ist aufgegangen" (1-1) sound
+> there as 1–6, 1–5, 7, in a shared excerpt as 1–7.
+
+### Public links
+
+A public link shows and plays an excerpt to anyone who has the link, without
+signing in: only its measures, without download, without names and without
+a note. Choose **Public (without signing in)** in the same dialog. It is
+only possible when
+
+- the version is **released for publication**: the catalog librarian sets
+  the publication status of the version to "Released for publication", and
+- it is confirmed public domain, or has a valid license with the use
+  "Online publication (public links)" (a license for "Publication" alone is
+  not enough),
+- and it is no internal preservation copy.
+
+The page shows title, composer, measures, the focus voice and a text
+description of the excerpt, and plays it with the voice emphasised. When the
+link expires, is revoked or the version is no longer released, the page
+shows "not found" without a reason.
+
+### The public repertoire page
+
+The catalog librarian can list works on a public page of the choir
+(`/apps/notenarchiv/repertoire`) with title, composer and lyricist, life
+dates, scoring and links to CPDL and IMSLP:
+
+1. Confirm a version of the work as public domain (tab **Rights**).
+2. In the fields of the work tick **On the public repertoire page**.
+3. Optionally enter **Link to CPDL** and **Link to IMSLP**: the https
+   address of the page of the work there, for example
+   `https://www.cpdl.org/wiki/index.php/…` or `https://imslp.org/wiki/…`.
+
+The page loads nothing from CPDL or IMSLP; it only links to them. Life dates
+come from the register of persons. A work leaves the page as soon as no
+version is confirmed public domain any more.
+
+### For choir members: Shared with me
+
+Choir members sign in to Nextcloud and open **Music archive**. They see
+**Shared with me**: the excerpts shared with the choir, with title,
+composer, measures, voice, the note and how long each is valid, and
+whether it can be played (**Playback: yes** or **Playback: no**).
+
+1. Choose an excerpt in the list (a link sent to you opens it directly).
+   The notes appear above the list.
+2. **Play**, **Pause** and **Stop**; under **Voices during playback**
+   choose **All equal**, **Focus voice louder** or **Focus voice only**, and
+   set the tempo. **Focus voice** chooses another voice; **Smaller** and
+   **Larger** change the size. Space plays and pauses.
+3. **Text reference** and **Description of the excerpt** describe the
+   excerpt in words.
+4. Where practice files are offered (**Practice files: yes**): choose the
+   voice and "Focus voice louder" or "Focus voice only", then under
+   **Practice file** the format **WAV (audio)** or **MIDI** and **Make
+   practice file**. The file is made in your browser; every practice file
+   is recorded in the audit log of the music archive.
+
+### Common problems
+
+| Message or problem | What to do |
+|---|---|
+| The button says **Create internal link**, there is no choice of circle | Links for choir members and public links are switched off; an administrator switches them on (Settings → Modules). |
+| *This kind of link is switched off. …* | The same, for one circle. |
+| *Public domain is not confirmed yet. …* | The catalog librarian confirms the rights on the tab **Rights**. |
+| *Not released for choir members: …* | Confirm public domain or record a license with the use "Singers' portal". |
+| *Not released for publication. …* | Set the publication status of the version to "Released for publication". |
+| *A public link needs confirmed public domain or a valid license for online publication. …* | Record a license with the use "Online publication (public links)", or confirm public domain. |
+| *Internal preservation copy: …* | Preservation copies are never shared; share another version. |
+| *This copy has no MusicXML file. …* | Link a MusicXML file to the copy (tab **Files**). |
+| *Please give the first and the last measure: …* / *There is no measure … in this score.* | Enter both measures as printed in the score. |
+| *A public link has no note, …* | Leave the note empty. |
+| A choir member does not see the excerpt | It has expired or was revoked, or the version is no longer released; make a new link. If they see no app at all, see the [administration guide](admin-guide.md#14-sharing-with-choir-members-and-the-public). |
+| *Only works with a version confirmed as public domain can be shown on the public repertoire page. …* | Confirm the rights of a version of the work first (tab **Rights**). |
+
+## Reviewing transcriptions
 
 The musical review points of a transcription report are yours: uncertain
 readings, marks that were not transcribed and questions about a measure. You
@@ -791,13 +1053,13 @@ a wrong note or syllable in the app yourself (see
 ## For the board and auditors
 
 The role **Read only (board, auditors)** reads everything, including the
-audit log of every copy, the inbox, the internal links and the statistics,
+audit log of every copy, the inbox, the excerpt links and the statistics,
 and answers the tasks addressed to it. It changes nothing.
 
 - The [annual report](#statistics-and-annual-report) summarises a year for the
   general meeting.
-- **Internal links** shows every active excerpt link with its creator, expiry
-  and number of calls.
+- **Links** shows every active excerpt link with its circle, expiry and
+  number of calls.
 - The tab **Audit log** of a copy shows who changed what, when and why.
 
 ## For contributors and tools
@@ -814,7 +1076,7 @@ the correction orders; the next report of a round closes them (see
 
 Paper stays the fallback. The views with a **Print** button print on A4 in
 black and white: the start page, tasks, inbox, release lists, ending
-licenses, internal links, concerts and song lists, unclear programme lines,
+licenses, links, concerts and song lists, unclear programme lines,
 persons, protection terms, the inventory of a binder, and the statistics. A
 programme prints as programme, concert binder list with columns to tick or
 song list; programmes, statistics and the annual report also in large print.

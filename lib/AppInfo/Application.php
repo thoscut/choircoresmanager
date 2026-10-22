@@ -14,6 +14,7 @@ use OCA\Notenarchiv\Dashboard\DueWidget;
 use OCA\Notenarchiv\Listener\FilesScriptListener;
 use OCA\Notenarchiv\Middleware\ModuleMiddleware;
 use OCA\Notenarchiv\Notification\Notifier;
+use OCA\Notenarchiv\Service\Modules;
 use OCA\Notenarchiv\Service\Roles;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
@@ -51,13 +52,19 @@ class Application extends App implements IBootstrap {
 	}
 
 	/**
-	 * The app menu entry is only shown to accounts with a role or admin rights.
-	 * Independently of that, the server checks every request.
+	 * The app menu entry is only shown to accounts with a role or admin rights,
+	 * and to choir members while the module member_links is on (they see only
+	 * the page "Shared with me"). Independently of that, the server checks
+	 * every request.
 	 */
 	private function registerNavigation(INavigationManager $navigation, IUserSession $session, Roles $roles,
-		IURLGenerator $url, IFactory $l10nFactory): void {
+		IURLGenerator $url, IFactory $l10nFactory, Modules $modules): void {
 		$user = $session->getUser();
-		if ($user === null || !$roles->hasAccess($user->getUID())) {
+		if ($user === null) {
+			return;
+		}
+		$uid = $user->getUID();
+		if (!$roles->hasAccess($uid) && !($roles->isMember($uid) && $modules->isEnabled(Modules::MEMBER_LINKS))) {
 			return;
 		}
 		$navigation->add(function () use ($url, $l10nFactory): array {

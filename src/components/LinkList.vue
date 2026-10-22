@@ -4,9 +4,10 @@
 -->
 <script setup lang="ts">
 /**
- * Active internal excerpt links: where they point, until when they are
- * valid, how often they were opened (a count only, no names). The creator
- * and the catalog role can revoke a link.
+ * Active excerpt links: who can open them (archive roles, choir members or
+ * the public), where they point, until when they are valid, how often they
+ * were opened (a count only, no names). The creator and the catalog role
+ * can revoke a link.
  */
 import type { ExcerptLink } from '../types.ts'
 
@@ -51,6 +52,22 @@ function place(link: ExcerptLink): string {
 }
 
 /**
+ * Who can open the link, as text (not only as a color).
+ *
+ * @param link - excerpt link
+ */
+function circleLabel(link: ExcerptLink): string {
+	switch (link.circle) {
+	case 'members':
+		return t('notenarchiv', 'For choir members')
+	case 'public':
+		return t('notenarchiv', 'Public')
+	default:
+		return t('notenarchiv', 'Internal')
+	}
+}
+
+/**
  * @param link - excerpt link
  */
 function canRevoke(link: ExcerptLink): boolean {
@@ -61,7 +78,7 @@ function canRevoke(link: ExcerptLink): boolean {
  * @param link - excerpt link
  */
 async function copy(link: ExcerptLink): Promise<void> {
-	if (await copyText(linkUrl(link.token))) {
+	if (await copyText(linkUrl(link.token, link.circle))) {
 		showSuccess(t('notenarchiv', 'The link has been copied.'))
 	} else {
 		showError(t('notenarchiv', 'The link could not be copied. Please select and copy it by hand.'))
@@ -112,7 +129,8 @@ async function revoke(): Promise<void> {
 						{{ link.note }}
 					</p>
 					<p class="link-list__meta">
-						{{ t('notenarchiv', 'Valid until {date}', { date: formatDate(link.expires ?? '') }) }}
+						<span class="link-list__circle">{{ circleLabel(link) }}</span>
+						· {{ t('notenarchiv', 'Valid until {date}', { date: formatDate(link.expires ?? '') }) }}
 						· {{ t('notenarchiv', 'created {date}', { date: formatDateTime(link.created) }) }}
 						· {{ n('notenarchiv', 'opened %n time', 'opened %n times', link.hits) }}
 						<template v-if="link.tempo">
@@ -210,6 +228,10 @@ async function revoke(): Promise<void> {
 .link-list__empty {
 	color: var(--color-text-maxcontrast);
 	font-size: var(--font-size-small, 13px);
+}
+
+.link-list__circle {
+	font-weight: bold;
 }
 
 .link-list__actions {

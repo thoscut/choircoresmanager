@@ -70,6 +70,10 @@ export const CARD_MODULES: Readonly<Record<string, string>> = {
 export const FIELD_MODULES: Readonly<Record<string, string>> = {
 	publication_status: 'publication',
 	publication_reason: 'publication',
+	// Work fields of the public repertoire page (milestone 0.7)
+	public_repertoire: 'public_repertoire',
+	cpdl_url: 'public_repertoire',
+	imslp_url: 'public_repertoire',
 }
 
 /** Views that cannot be hidden in the personal view. */

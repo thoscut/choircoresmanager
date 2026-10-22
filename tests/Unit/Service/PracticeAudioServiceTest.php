@@ -19,7 +19,9 @@ use OCA\Notenarchiv\Service\AuditLog;
 use OCA\Notenarchiv\Service\Input;
 use OCA\Notenarchiv\Service\PracticeAudioService;
 use OCA\Notenarchiv\Service\RightsPolicy;
+use OCA\Notenarchiv\Service\RightsService;
 use OCA\Notenarchiv\Service\Roles;
+use OCA\Notenarchiv\Service\SharedLinkService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -66,7 +68,8 @@ final class PracticeAudioServiceTest extends TestCase {
 		});
 		$policy = $this->createStub(RightsPolicy::class);
 		$policy->method('practiceAudioDenial')->willReturnCallback(fn (): ?string => $this->denial);
-		return new PracticeAudioService($versions, $copies, $policy, $this->audit, $this->createStub(Roles::class));
+		return new PracticeAudioService($versions, $copies, $policy, $this->audit, $this->createStub(Roles::class),
+			$this->createStub(SharedLinkService::class), $this->createStub(RightsService::class));
 	}
 
 	/**

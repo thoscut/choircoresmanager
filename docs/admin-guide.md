@@ -20,6 +20,7 @@ Daily work with the app is described in the [user guide](user-guide.md).
 11. [Accessibility](#11-accessibility)
 12. [Modules and presets](#12-modules-and-presets)
 13. [Agents and the API](#13-agents-and-the-api)
+14. [Sharing with choir members and the public](#14-sharing-with-choir-members-and-the-public)
 - [Common problems](#common-problems) – a message, its cause and what to do
 
 ## Setting up in five steps
@@ -127,6 +128,7 @@ repertoire and, for admins, the complete backup and restore
 | Conductor – *Chorleitung* | conductor and deputy | choose the valid version; key, scoring, language, duration and review of a transcription; answer questions; plan concerts and song lists |
 | Proposals (tools) – *Vorschläge (Werkzeuge)* | transcription rounds, scripts | only propose changes, which a music librarian accepts; ask questions |
 | Read only (board, auditors) – *Lesen (Vorstand, Revision)* | board, auditors | read everything including the audit log |
+| Choir members (shared excerpts only) – *Chormitglieder (nur geteilte Ausschnitte)* | the singers | no archive role: only the page "Shared with me" with the excerpts shared with choir members, and only while the module "Links for choir members" is on (see [section 14](#14-sharing-with-choir-members-and-the-public)) |
 
 Concerts and song lists are planned by the conductor and the catalog role
 together. Practice files are made by the catalog role and the conductor; only
@@ -167,7 +169,8 @@ management of the app); the page does not show them to the group.
 
 On self-hosted instances the roles can also be set with
 `occ notenarchiv:setup <account> --role librarian=<group>,<group> --role conductor=<group> …`
-(roles: `librarian`, `operations`, `conductor`, `contributor`, `reader`).
+(roles: `librarian`, `operations`, `conductor`, `contributor`, `reader`,
+`member` for the choir members).
 
 ## 3. Archive folder
 
@@ -528,7 +531,7 @@ Every change of a switch is recorded in the audit log (object type
 |---|---|
 | **Simple** | the core, the score view with playback and the notifications (of the core only the one about a failed weekly backup is left) |
 | **Standard** | everything except practice audio files, the print station, the proposals inbox, checksums and statistics |
-| **Complete** | everything except the interface for agents |
+| **Complete** | everything except the interface for agents and the four sharing modules |
 
 A preset sets every switch at once; the settings ask first and list what
 changes.
@@ -563,7 +566,10 @@ its default. The **interface for agents** starts off everywhere and is
 part of no preset: no preset switches it on or off, not even "Complete". It
 is an access path for tools rather than a function for people, so the
 administration switches it on on purpose (see section 13), and choosing a
-preset later neither opens nor closes it.
+preset later neither opens nor closes it. The same holds for the four
+modules of the group **Sharing beyond the archive roles**: they open the
+archive to choir members or the public, which the choir decides (see
+section 14).
 
 ### The modules
 
@@ -598,6 +604,10 @@ preset later neither opens nor closes it.
 | Dashboard widget | – | on | Nextcloud does not offer the widget. |
 | Notifications | – | on | The app sends no notifications; notifications sent before disappear when they are shown. |
 | One switch per occasion | Notifications and the module of the occasion | on | That notification is not sent; the daily checks withdraw it. Occasions: proposals waiting, remove from the singers' portal, license ends soon, license has ended, weekly backup failed, new question or task, question answered, concert deadlines, confirm what was sung, protection term ended, file changed unnoticed, new review points, correction received. |
+| Links for choir members | Excerpt links, Playback, Releases | off (in no preset) | Choir members see neither the app nor "Shared with me"; their routes answer 404; no links for choir members can be made. Existing links are kept and expire as before. |
+| Practice audio for choir members | Links for choir members, Practice audio files | off (in no preset) | Choir members make no practice files; the server refuses every request. |
+| Public links | Excerpt links, Playback, Publication | off (in no preset) | Every public link answers the same 404 page; no new public links. Existing links are kept and expire as before. |
+| Public repertoire page | Rights confirmation and licenses | off (in no preset) | `/apps/notenarchiv/repertoire` answers 404; the work fields for the page are hidden. |
 | Interface for agents | – | off (in no preset) | The API for agents (`/ocs/v2.php/apps/notenarchiv/api/v1/…`) answers 404; the MCP server reports the interface as switched off. Nothing else changes. |
 
 ### Command line
@@ -672,6 +682,72 @@ Note: Nextcloud lets every client with an app password also call the
 internal interface of the app's user interface (with the same role checks).
 The module does not open more than the roles allow; it offers a stable,
 documented contract that stays the same across updates of the app.
+
+## 14. Sharing with choir members and the public
+
+Four modules in the group **Sharing beyond the archive roles** open parts of
+the archive to people without an archive role. They are off on every
+installation and part of no preset, not even "Complete": switch them on
+one by one, after the choir has decided.
+
+| Module | What it opens |
+|---|---|
+| **Links for choir members** | The role **Choir members** sees the page "Shared with me": the excerpts that the music librarians or the conductor share with the choir, to view and play with a voice emphasised. Only for versions released for the singers' portal. |
+| **Practice audio for choir members** | Choir members make a WAV or MIDI file of one voice of such an excerpt, where the rights allow practice audio files. Every file is recorded in the audit log. |
+| **Public links** | A link that shows and plays an excerpt without login (`/apps/notenarchiv/p/<token>`). Only for versions released for publication that are confirmed public domain or have a license for online publication. |
+| **Public repertoire page** | `/apps/notenarchiv/repertoire`: the works the catalog librarian chooses among those with a version confirmed as public domain, with life dates, scoring and links to CPDL and IMSLP. |
+
+Whatever the switches say, choir members and the public only ever get the
+measures of an excerpt, never a file of the archive; internal preservation
+copies are never shared; the rights are checked again on every call; links
+expire after at most six months and can be revoked. [SECURITY.md](../SECURITY.md)
+describes the threat model.
+
+**Setting up the choir members:**
+
+1. Create a group for the singers, for example "Choir", and add their
+   accounts. Do not use a group that also holds an archive role: an account
+   with an archive role always gets the archive, not "Shared with me".
+2. Settings → **Roles and groups** → **Choir members (shared excerpts
+   only)**: choose the group and **Save roles** (or
+   `occ notenarchiv:setup <account> --role member=Choir`).
+3. Switch on **Links for choir members** (Settings → Modules, or
+   `occ notenarchiv:modules enable member_links`). It also switches on what
+   it needs: excerpt links, playback and the releases.
+
+**Recommended order:**
+
+1. Keep the rights first: confirm public domain or record licenses with the
+   use "Singers' portal". Without them no link for choir members is
+   possible.
+2. Then switch on **Links for choir members** and try it with one test
+   account in the group.
+3. **Practice audio for choir members** only when the licenses of the
+   versions you share cover practice audio, or the versions are confirmed
+   public domain.
+4. **Public links** and the **Public repertoire page** last, after a
+   decision of the board: they are reachable by everyone on the internet.
+   Public links additionally need the publication status "Released for
+   publication" on the version and confirmed public domain or a license with
+   the use "Online publication (public links)".
+
+**Risks to weigh:** an excerpt that reaches a browser can be saved; legally
+it counts as much as the whole sheet, which is why only released versions
+can be shared. Links can be passed on until they expire or are revoked. The
+note of a link for choir members is read by all choir members. Calls are
+counted, but without names.
+
+**Common problems:**
+
+| Problem | What to do |
+|---|---|
+| A choir member does not see the app | Check that **Links for choir members** is on and active (all its requirements on) and that the account is in the group of the role **Choir members**. |
+| A choir member sees the archive instead of "Shared with me" | The account is also in a group with an archive role; remove it there. |
+| The dialog says a link is not possible | It names the reason and the next step: usually the rights of the version are not confirmed, a license for the singers' portal or for online publication is missing, or the publication status is not "Released for publication". |
+| The dialog says "This kind of link is switched off" | Switch on the module in the settings (Modules). |
+| "The score of this excerpt is not available at the moment." | The account that chose the archive folder (Settings → Archive folder) must still exist and see the folder, and the MusicXML file must still be in it. |
+| A public link shows "not found" | It has expired, was revoked, the version is no longer released, or the module is off; the page does not tell which. Make a new link if needed. |
+
 ## Common problems
 
 Each entry gives the message (in the German interface in brackets), its

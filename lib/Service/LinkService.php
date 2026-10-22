@@ -13,6 +13,7 @@ use OCA\Notenarchiv\Db\ArchiveFileMapper;
 use OCA\Notenarchiv\Db\CopyMapper;
 use OCA\Notenarchiv\Db\ExcerptLink;
 use OCA\Notenarchiv\Db\ExcerptLinkMapper;
+use OCA\Notenarchiv\Db\WorkVersion;
 use OCA\Notenarchiv\Db\WorkVersionMapper;
 use OCA\Notenarchiv\Exception\AccessDeniedException;
 use OCA\Notenarchiv\Exception\InvalidInputException;
@@ -24,19 +25,36 @@ use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
 
 /**
- * Internal excerpt links: a shelf mark, printed measures, a voice as focus,
- * verse, tempo and a note. Only logged-in holders of an archive role can open
- * them; the rights policy is checked again on every call, so a downgraded
- * version or an expired or revoked link shows nothing.
+ * Excerpt links: a shelf mark, printed measures, a voice as focus, verse,
+ * tempo and a note, for one circle:
  *
- * Links for singers or the public are a later stage and need a decision of
- * the board (see the roadmap).
+ * - `internal`: logged-in holders of an archive role (milestone 0.3);
+ * - `members`: the choir members (module member_links, milestone 0.7), for
+ *   versions released for the singers' portal;
+ * - `public`: everyone, without login (module public_links), for versions
+ *   released for publication, without a note.
+ *
+ * The rights policy is checked when a link is made and again on every call,
+ * so a downgraded version or an expired or revoked link shows nothing.
+ * Choir members and the public get only the measures of the excerpt (see
+ * SharedLinkService); a link for them therefore needs both measures, and
+ * they must exist in the score.
+ *
+ * @psalm-type CircleOption = array{available: bool, allowed: bool, reason: ?string, playback: bool, practiceAudio: bool}
  */
 class LinkService {
 	public const MAX_DAYS = 183;
 	private const CREATORS = [Roles::LIBRARIAN, Roles::CONDUCTOR, Roles::OPERATIONS];
 	/** Fields a request may set when creating a link */
-	private const FIELDS = ['measure_from', 'measure_to', 'voice', 'verse', 'tempo', 'note', 'task_id', 'expires'];
+	private const FIELDS = ['measure_from', 'measure_to', 'voice', 'verse', 'tempo', 'note', 'task_id', 'expires', 'circle'];
+	/** The module of each circle beyond the archive roles */
+	public const CIRCLE_MODULES = [
+		ExcerptLink::CIRCLE_MEMBERS => Modules::MEMBER_LINKS,
+		ExcerptLink::CIRCLE_PUBLIC => Modules::PUBLIC_LINKS,
+	];
+	/** Reasons for the dialog (English source strings, translated by the controller) */
+	public const SWITCHED_OFF = 'This kind of link is switched off. An administrator can switch it on in the settings of the music archive under "Modules".';
+	public const NO_SCORE = 'This copy has no MusicXML file. Links for choir members and public links show the notes of a MusicXML file; the catalog librarian links one on the tab "Files".';
 
 	public function __construct(
 		private ExcerptLinkMapper $links,
@@ -51,6 +69,7 @@ class LinkService {
 		private IUserManager $userManager,
 		private ISecureRandom $random,
 		private ITimeFactory $time,
+		private Modules $modules,
 	) {
 	}
 
@@ -58,26 +77,43 @@ class LinkService {
 	 * @param array<array-key, mixed> $data field => value (request data)
 	 */
 	public function create(int $copyId, array $data, string $uid): ExcerptLink {
-		$this->roles->requireRole($uid, self::CREATORS);
 		$values = Input::values($data);
+		$circle = $values['circle'] ?? ExcerptLink::CIRCLE_INTERNAL;
+		if (!is_string($circle) || !in_array($circle, ExcerptLink::CIRCLES, true)) {
+			throw new InvalidInputException('"%s": value not allowed.', ['Circle']);
+		}
+		$module = self::CIRCLE_MODULES[$circle] ?? null;
+		if ($module !== null) {
+			$this->modules->requireEnabled($module);
+		}
+		$this->roles->requireRole($uid, self::CREATORS);
 		foreach (array_keys($values) as $field) {
 			if (!in_array($field, self::FIELDS, true)) {
 				throw new InvalidInputException('Unknown field: %s', [$field]);
 			}
 		}
-		try {
-			$copy = $this->copies->find($copyId);
-			$version = $this->versions->find($copy->getVersionId());
-		} catch (DoesNotExistException) {
-			throw new NotFoundException('Not found.');
-		}
-		$denial = $this->policy->viewDenial($version, $uid);
-		if ($denial !== null) {
-			throw new AccessDeniedException($denial);
-		}
-		$score = $this->scores->describe($version, $this->files->findByCopy($copyId), $uid);
+		[$version, $score] = $this->load($copyId, $uid);
 
 		$today = $this->rights->today($uid);
+		$shared = $module !== null;
+		if ($shared) {
+			$denial = $this->shareDenial($circle, $version, $today);
+			if ($denial !== null) {
+				throw new AccessDeniedException($denial);
+			}
+			if ($score === null) {
+				throw new InvalidInputException(self::NO_SCORE);
+			}
+			foreach (['measure_from', 'measure_to'] as $field) {
+				$measure = $values[$field] ?? null;
+				if ($measure === null || trim((string)$measure) === '') {
+					throw new InvalidInputException('Please give the first and the last measure: choir members and the public only see these measures.');
+				}
+			}
+			if ($circle === ExcerptLink::CIRCLE_PUBLIC && self::text($values['note'] ?? null, 2000) !== null) {
+				throw new InvalidInputException('A public link has no note, because everyone could read it. Please leave the note empty.');
+			}
+		}
 		$latest = (new \DateTimeImmutable($today))->modify('+' . self::MAX_DAYS . ' days')->format('Y-m-d');
 		$expires = $values['expires'] ?? null;
 		if ($expires === null || $expires === '') {
@@ -120,14 +156,94 @@ class LinkService {
 				throw new InvalidInputException('"%s": value not allowed.', ['Task']);
 			}
 		}
-		$link->setValue('task_id', $taskId === '' ? null : $taskId);
-		$link->setCircle(ExcerptLink::CIRCLE_INTERNAL);
+		$link->setValue('task_id', $taskId === '' || $shared ? null : $taskId);
+		if ($shared && $score !== null) {
+			// The measures must exist: choir members and the public get only them.
+			$content = $this->scores->content($score['fileId'], $uid)['content'];
+			MusicXmlExcerpt::cut($this->scores->scoreText($content)['xml'], (string)$link->getMeasureFrom(), (string)$link->getMeasureTo());
+		}
+		$link->setCircle($circle);
 		$link->setCreatedBy($uid);
 		$link->setCreated($this->time->getTime());
 		$link->setExpires($expires);
 		$link = $this->links->insert($link);
-		$this->audit->record($this->audit->newOperation(), $uid, 'link', $link->getId(), 'created', 'copy_id', null, $copyId);
+		$operation = $this->audit->newOperation();
+		$this->audit->record($operation, $uid, 'link', $link->getId(), 'created', 'copy_id', null, $copyId);
+		if ($shared) {
+			$this->audit->record($operation, $uid, 'link', $link->getId(), 'created', 'circle', null, $circle);
+		}
 		return $link;
+	}
+
+	/**
+	 * What the dialog shows before a link for choir members or the public is
+	 * made: whether the module is on, whether the rights allow it (if not,
+	 * why and what to do), and whether the recipients can play the excerpt
+	 * and make practice audio files.
+	 *
+	 * `reason` explains why the link is not possible, or else why it plays
+	 * nothing; English source strings, translated by the controller.
+	 *
+	 * @return array{members: CircleOption, public: CircleOption}
+	 */
+	public function circleOptions(int $copyId, string $uid): array {
+		$this->roles->requireRole($uid, self::CREATORS);
+		[$version, $score] = $this->load($copyId, $uid);
+		$today = $this->rights->today($uid);
+		return [
+			'members' => $this->circleOption(ExcerptLink::CIRCLE_MEMBERS, $version, $score !== null, $today),
+			'public' => $this->circleOption(ExcerptLink::CIRCLE_PUBLIC, $version, $score !== null, $today),
+		];
+	}
+
+	/**
+	 * @return CircleOption
+	 */
+	private function circleOption(string $circle, WorkVersion $version, bool $hasScore, string $today): array {
+		if (!$this->modules->isEnabled(self::CIRCLE_MODULES[$circle] ?? '')) {
+			return ['available' => false, 'allowed' => false, 'reason' => self::SWITCHED_OFF, 'playback' => false, 'practiceAudio' => false];
+		}
+		$members = $circle === ExcerptLink::CIRCLE_MEMBERS;
+		$denial = $this->shareDenial($circle, $version, $today) ?? ($hasScore ? null : self::NO_SCORE);
+		$playDenial = $members ? $this->policy->memberPlayDenial($version, $today) : $this->policy->publicPlayDenial($version, $today);
+		return [
+			'available' => true,
+			'allowed' => $denial === null,
+			'reason' => $denial ?? $playDenial,
+			'playback' => $denial === null && $playDenial === null,
+			'practiceAudio' => $members && $denial === null && $playDenial === null && $this->modules->isEnabled(Modules::MEMBER_PRACTICE_AUDIO)
+				&& $this->policy->memberPracticeAudioDenial($version, $today) === null,
+		];
+	}
+
+	/**
+	 * Why a version may not be shared with a circle beyond the archive roles,
+	 * with the next step; null when it may.
+	 */
+	private function shareDenial(string $circle, WorkVersion $version, string $day): ?string {
+		return $circle === ExcerptLink::CIRCLE_PUBLIC
+			? $this->policy->publicViewDenial($version, $day)
+			: $this->policy->memberViewDenial($version, $day);
+	}
+
+	/**
+	 * The version of a copy and its score, after checking that the account
+	 * may view it.
+	 *
+	 * @return array{0: WorkVersion, 1: array{fileId: int, fileName: string, canView: bool, canPlay: bool, reason: ?string, canExportAudio: bool, exportReason: ?string}|null}
+	 */
+	private function load(int $copyId, string $uid): array {
+		try {
+			$copy = $this->copies->find($copyId);
+			$version = $this->versions->find($copy->getVersionId());
+		} catch (DoesNotExistException) {
+			throw new NotFoundException('Not found.');
+		}
+		$denial = $this->policy->viewDenial($version, $uid);
+		if ($denial !== null) {
+			throw new AccessDeniedException($denial);
+		}
+		return [$version, $this->scores->describe($version, $this->files->findByCopy($copyId), $uid)];
 	}
 
 	/**

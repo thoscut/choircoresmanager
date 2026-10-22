@@ -83,6 +83,10 @@ for (const f of files(join(root, 'lib'), ['.php'])) {
 		const block = src.match(/public const LABELS = \[([\s\S]*?)\];/)
 		for (const m of block[1].matchAll(new RegExp('=>\\s*(' + STR + ')', 'g'))) add(unq(m[1]), 'concert deadline')
 	}
+	// Reasons of the dialog for links beyond the archive roles (translated by the controller)
+	if (base.endsWith('Service/LinkService.php')) {
+		for (const m of src.matchAll(new RegExp('public const [A-Z_]+ = (' + STR + ');', 'g'))) add(unq(m[1]), 'link reason')
+	}
 	if (base.endsWith('RightsPolicy.php')) {
 		// Reasons why viewing or playback is denied (shown in the UI, also thrown)
 		for (const m of src.matchAll(new RegExp('(?:return|[?:])\\s*(' + STR + ')', 'g'))) add(unq(m[1]), base + ' reason')

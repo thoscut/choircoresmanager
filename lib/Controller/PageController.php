@@ -11,7 +11,9 @@ namespace OCA\Notenarchiv\Controller;
 
 use OCA\Notenarchiv\AppInfo\Application;
 use OCA\Notenarchiv\Service\MetaService;
+use OCA\Notenarchiv\Service\Modules;
 use OCA\Notenarchiv\Service\Roles;
+use OCA\Notenarchiv\Service\SharedLinkService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\FrontpageRoute;
@@ -25,6 +27,11 @@ use OCP\IL10N;
 use OCP\IRequest;
 
 /**
+ * The app page. Accounts with an archive role (or admin rights) get the
+ * music archive. Choir members without an archive role get only the page
+ * "Shared with me" (milestone 0.7), while the module member_links is on;
+ * everyone else is refused.
+ *
  * @psalm-suppress UnusedClass
  */
 class PageController extends Controller {
@@ -35,6 +42,8 @@ class PageController extends Controller {
 		private MetaService $meta,
 		private IInitialState $initialState,
 		private IL10N $l,
+		private Modules $modules,
+		private SharedLinkService $shared,
 	) {
 		parent::__construct(Application::APP_ID, $request);
 	}
@@ -44,21 +53,43 @@ class PageController extends Controller {
 	#[OpenAPI(OpenAPI::SCOPE_IGNORE)]
 	#[FrontpageRoute(verb: 'GET', url: '/')]
 	public function index(): TemplateResponse {
+		if ($this->userId !== null && !$this->roles->hasAccess($this->userId)
+			&& $this->roles->isMember($this->userId) && $this->modules->isEnabled(Modules::MEMBER_LINKS)) {
+			return $this->memberPage($this->userId);
+		}
 		if ($this->userId === null || !$this->roles->hasAccess($this->userId)) {
 			$response = new TemplateResponse('core', '403', ['message' => $this->l->t('You have no access to the music archive.')], TemplateResponse::RENDER_AS_ERROR);
 			$response->setStatus(Http::STATUS_FORBIDDEN);
 			return $response;
 		}
 		$this->initialState->provideInitialState('meta', $this->meta->forUser($this->userId));
-		$response = new TemplateResponse(Application::APP_ID, 'index');
-		// The score viewer compiles the bundled notation engine (WebAssembly,
-		// no external source). This needs 'wasm-unsafe-eval' only; JavaScript
-		// eval stays forbidden and no other source is allowed.
+		return self::withScorePolicy(new TemplateResponse(Application::APP_ID, 'index'), true);
+	}
+
+	/**
+	 * The page of the choir members: the links shared with them, nothing of
+	 * the catalog. Reasons are translated here.
+	 */
+	private function memberPage(string $uid): TemplateResponse {
+		$links = array_map(fn (array $link): array => ['reason' => $link['reason'] === null ? null : $this->l->t($link['reason'])] + $link,
+			$this->shared->forMember($uid));
+		$this->initialState->provideInitialState('member', ['links' => $links]);
+		return self::withScorePolicy(new TemplateResponse(Application::APP_ID, 'member'), false);
+	}
+
+	/**
+	 * The score viewer compiles the bundled notation engine (WebAssembly, no
+	 * external source). This needs 'wasm-unsafe-eval' only; JavaScript eval
+	 * stays forbidden and no other source is allowed. The archive also shows
+	 * the scan beside the score: a PDF from the app's own route, shown by the
+	 * browser's PDF viewer in a frame. Nothing from other origins.
+	 */
+	private static function withScorePolicy(TemplateResponse $response, bool $scanFrames): TemplateResponse {
 		$policy = new ContentSecurityPolicy();
 		$policy->allowEvalWasm(true);
-		// The scan beside the score: a PDF from the app's own route, shown by
-		// the browser's PDF viewer in a frame. Nothing from other origins.
-		$policy->addAllowedFrameDomain('\'self\'');
+		if ($scanFrames) {
+			$policy->addAllowedFrameDomain('\'self\'');
+		}
 		$response->setContentSecurityPolicy($policy);
 		return $response;
 	}

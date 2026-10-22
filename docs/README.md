@@ -19,6 +19,7 @@ and requirements are in the [README](../README.md) of the repository.
 |---|---|
 | a Nextcloud administrator who installs and sets up the app | [Administration guide](admin-guide.md) |
 | responsible for backups and data protection | [Administration guide](admin-guide.md) and [SECURITY.md](../SECURITY.md) |
+| deciding whether to share excerpts with choir members or the public | [Administration guide, section 14](admin-guide.md#14-sharing-with-choir-members-and-the-public) and [SECURITY.md](../SECURITY.md) |
 | setting up an agent or a tool that works with the archive | [Administration guide, section 13](admin-guide.md#13-agents-and-the-api), [API for agents](api-v1.md) and the [MCP server](../tools/mcp/README.md) |
 
 ## Trying it out

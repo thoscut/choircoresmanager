@@ -86,7 +86,7 @@ class SettingsController extends Controller {
 			$roles ??= [];
 			foreach (array_keys($roles) as $role) {
 				$role = (string)$role;
-				if (!in_array($role, Roles::ALL, true)) {
+				if (!in_array($role, Roles::GROUP_ROLES, true)) {
 					throw new InvalidInputException('Unknown role: %s', [$role]);
 				}
 				$this->roles->setGroups($role, Input::stringList($roles[$role], 'Groups'));
@@ -140,7 +140,7 @@ class SettingsController extends Controller {
 		$roles = [];
 		$groupNames = [];
 		$groupsMissing = [];
-		foreach (Roles::ALL as $role) {
+		foreach (Roles::GROUP_ROLES as $role) {
 			$roles[$role] = $this->roles->groups($role);
 			foreach ($roles[$role] as $groupId) {
 				if (array_key_exists($groupId, $groupNames)) {

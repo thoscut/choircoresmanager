@@ -4,9 +4,9 @@
 -->
 <script setup lang="ts">
 /**
- * All active internal excerpt links, for review by the board and the
- * auditors: where they point, until when they are valid, how often they
- * were opened (a count only, never who).
+ * All active excerpt links, for review by the board and the auditors: who
+ * can open them, where they point, until when they are valid, how often
+ * they were opened (a count only, never who).
  */
 import type { ExcerptLink } from '../types.ts'
 
@@ -21,7 +21,7 @@ import LinkList from './LinkList.vue'
 import ViewHeader from './ViewHeader.vue'
 import { errorMessage, fetchLinks } from '../api.ts'
 import { canonicalShelfmark } from '../catalog.ts'
-import { entriesById } from '../store.ts'
+import { entriesById, isModuleActive } from '../store.ts'
 
 const links = ref<ExcerptLink[]>([])
 const loaded = ref(false)
@@ -43,6 +43,9 @@ async function load(): Promise<void> {
 
 onMounted(load)
 
+/** Links for choir members or the public can exist (modules of milestone 0.7). */
+const sharingOn = computed(() => isModuleActive('member_links') || isModuleActive('public_links'))
+
 const collator = new Intl.Collator(undefined, { numeric: true })
 
 const sorted = computed(() => [...links.value].sort((a, b) => collator.compare(
@@ -53,8 +56,10 @@ const sorted = computed(() => [...links.value].sort((a, b) => collator.compare(
 
 <template>
 	<div class="links-view">
-		<ViewHeader :title="t('notenarchiv', 'Internal links')"
-			:description="t('notenarchiv', 'All active excerpt links. They are only opened by people with a role in the music archive; the server checks the rights on every call. Calls are counted without names.')"
+		<ViewHeader :title="t('notenarchiv', 'Links')"
+			:description="sharingOn
+				? t('notenarchiv', 'All active excerpt links: internal links for the archive roles, links for choir members and public links. Each entry says who can open it. The server checks the rights on every call. Calls are counted without names.')
+				: t('notenarchiv', 'All active excerpt links. They are only opened by people with a role in the music archive; the server checks the rights on every call. Calls are counted without names.')"
 			printable
 			reloadable
 			:loading="loading"

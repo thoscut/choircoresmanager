@@ -53,6 +53,10 @@ The App Store shows the files marked with a number, in this order
 | `annual-report.png` | The annual report 2026: the year in figures, concerts and new accessions. |
 | `calendar-dialog.png` | The dialog "Add to my calendar" of a concert. |
 | `files-action.png` | Planned: the Files app in the demo archive folder with the actions menu of a MusicXML file of copy 2-1 and the action "Open in music archive". |
+| `share-dialog.png` | Planned: the dialog "Share excerpt of 1-3" over the score viewer: "Who can open the link?" with "Choir members" chosen, measures, voice and validity, and the box "What the recipients see" (playback yes, practice files yes). |
+| `shared-with-me.png` | Planned: the page "Shared with me" of a choir member: the chosen excerpt of 1-3 with the alto emphasised above, the list of shared excerpts below. |
+| `public-link.png` | Planned: the page of a public link in Nextcloud's public layout: title, measures, the excerpt and the playback controls, without signing in. |
+| `public-repertoire.png` | Planned: the public repertoire page with the demo works confirmed as public domain, their life dates, scoring and links to CPDL and IMSLP. |
 
 ## German interface (informal)
 

@@ -43,6 +43,45 @@ All notable changes to this app are documented in this file. The format follows
   `reason: "not_shared"`), with a link to the access check for those who may
   change the settings. The meta data tell the UI `archiveAccessible` and
   `canChangeSettings`.
+- Sharing beyond the archive roles (milestone 0.7), four modules that are
+  off and part of no preset, not even Complete:
+  - **Links for choir members**: a new role "Choir members" (groups as for
+    the other roles, also `occ notenarchiv:setup --role member=…`) that is
+    no archive role and only sees the page "Shared with me": the excerpts
+    shared with the choir, to view and play with a voice emphasised. Only
+    for versions released for the singers' portal.
+  - **Practice audio for choir members**: a WAV or MIDI file of one voice of
+    a shared excerpt, where the rights allow practice audio; recorded in the
+    audit log like every export.
+  - **Public links**: an excerpt to view and play without login at
+    `/apps/notenarchiv/p/{token}`, for versions released for publication
+    that are confirmed public domain or licensed with the new use "Online
+    publication (public links)"; it expires, can be revoked and counts its
+    calls; no downloads, no names, no note.
+  - **Public repertoire page** at `/apps/notenarchiv/repertoire`: works
+    chosen by the catalog librarian (new work field "On the public
+    repertoire page", only with a version confirmed as public domain) with
+    life dates, scoring and the new fields "Link to CPDL" and "Link to
+    IMSLP"; nothing is loaded from there.
+  - Links of all circles are made in the score view with **Share excerpt …**:
+    the dialog asks who can open the link and shows beforehand what the
+    recipients see and, if a link is not possible, why and what to do
+    (`GET /api/copies/{id}/link-options`). The view **Internal links** is now
+    **Links** and names the circle of each link.
+  - The server sends choir members and the public only the measures of the
+    excerpt, cut from the score with the attributes and tempo valid at its
+    start; repeats and jumps that lead out of it are left out.
+  - Integration test `sharing_test.php`; migration
+    `Version000710Date20261025100000` (three work columns).
+
+### Security
+
+- The public pages of the sharing modules (a public link, the public
+  repertoire page) are the only routes without a login; a unit test lists
+  them and the routes choir members reach. They are limited per address,
+  protected against guessing tokens and answer every failure with the same
+  404 page; choir members and the public never receive a file of the archive
+  (see `SECURITY.md`).
 
 ## [0.6.0] - 2026-10-22
 

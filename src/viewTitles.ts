@@ -35,7 +35,8 @@ export function viewTitle(view: ViewName, librarian: boolean): string {
 	case 'licenses':
 		return t('notenarchiv', 'Ending licenses')
 	case 'links':
-		return t('notenarchiv', 'Internal links')
+		// internal links and, with milestone 0.7, links for choir members and the public
+		return t('notenarchiv', 'Links')
 	case 'concerts':
 		return t('notenarchiv', 'Concerts')
 	case 'event':

@@ -335,6 +335,13 @@ export interface ExcerptLink {
 	hits: number
 }
 
+/**
+ * Who can open an excerpt link (milestone 0.7): the archive roles, the
+ * choir members (role "member", module "member_links") or anyone without
+ * signing in (module "public_links").
+ */
+export type LinkCircle = 'internal' | 'members' | 'public'
+
 /** Fields of a new excerpt link. */
 export interface LinkInput {
 	measure_from?: string | null
@@ -342,9 +349,81 @@ export interface LinkInput {
 	voice?: string | null
 	verse?: number | null
 	tempo?: number | null
+	/** not allowed for public links */
 	note?: string | null
+	/** stored for internal links only */
 	task_id?: number | null
 	expires?: string | null
+	/** default 'internal' */
+	circle?: LinkCircle
+}
+
+/** Whether a link for a circle can be created for a copy (GET /api/copies/{id}/link-options). */
+export interface CircleOption {
+	/** the module of the circle is switched on */
+	available: boolean
+	/** the rights of the version allow such a link */
+	allowed: boolean
+	/** translated reason with the next step when not available or not allowed */
+	reason: string | null
+	/** the recipients can play the excerpt */
+	playback: boolean
+	/** choir members can make practice files of it */
+	practiceAudio: boolean
+}
+
+export interface LinkOptions {
+	members: CircleOption
+	public: CircleOption
+}
+
+/** A link for choir members, as the page "Shared with me" receives it. */
+export interface MemberLink {
+	token: string
+	title: string
+	composer: string
+	measure_from: string
+	measure_to: string
+	voice: string | null
+	verse: number | null
+	/** tempo in percent of the score's tempo */
+	tempo: number | null
+	note: string | null
+	expires: string | null
+	canPlay: boolean
+	canExportAudio: boolean
+	/** translated reason why the excerpt cannot be played */
+	reason: string | null
+}
+
+/** Initial state `member` of the page for choir members. */
+export interface MemberPageState {
+	links: MemberLink[]
+}
+
+/** Initial state `excerpt` of a public link: the excerpt, already cut by the server. */
+export interface PublicExcerpt {
+	title: string
+	composer: string
+	measureFrom: string
+	measureTo: string
+	voice: string | null
+	verse: number | null
+	tempo: number | null
+	canPlay: boolean
+	/** MusicXML with only the measures of the excerpt */
+	xml: string
+}
+
+/** Body of POST /api/member/links/{token}/practice-audio (inside `export`). */
+export interface MemberPracticeAudioInput {
+	/** name of the emphasised voice; null for all voices equal */
+	voice: string | null
+	mode: 'all' | 'focus' | 'solo'
+	format: 'wav' | 'midi'
+	/** tempo in percent of the score's tempo */
+	tempo: number
+	repeats: boolean
 }
 
 /** Body of POST /api/versions/{id}/practice-audio (inside `export`). */

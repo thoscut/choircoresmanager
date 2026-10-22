@@ -119,6 +119,11 @@ export function isFieldActive(key: string): boolean {
 export const canCreateTasks = computed(() => isModuleActive('tasks') && hasAnyRole(['librarian', 'conductor', 'operations', 'contributor']))
 /** Roles that may create internal excerpt links (module "excerpt_links"). */
 export const canCreateLinks = computed(() => isModuleActive('excerpt_links') && hasAnyRole(['librarian', 'conductor', 'operations']))
+/**
+ * Whether links can also be made for choir members or the public (modules
+ * "member_links", "public_links"); the link dialog then asks for the circle.
+ */
+export const canShareOutside = computed(() => canCreateLinks.value && (isModuleActive('member_links') || isModuleActive('public_links')))
 /** Roles that plan concerts and song lists. */
 export const canPlanEvents = computed(() => hasAnyRole(['conductor', 'librarian']))
 /** Roles that see the proposals inbox (module "proposals"). */

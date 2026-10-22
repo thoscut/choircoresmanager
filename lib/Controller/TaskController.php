@@ -116,6 +116,24 @@ class TaskController extends Controller {
 		return $this->run(fn (string $uid) => $this->links->create($id, $link, $uid));
 	}
 
+	/**
+	 * What a link for choir members or the public would show and whether it
+	 * is possible (milestone 0.7), for the dialog before a link is made.
+	 */
+	#[NoAdminRequired]
+	#[RequiresModule('excerpt_links')]
+	#[FrontpageRoute(verb: 'GET', url: '/api/copies/{id}/link-options', requirements: ['id' => '\d+'])]
+	public function linkOptions(int $id): JSONResponse {
+		return $this->run(function (string $uid) use ($id) {
+			$options = $this->links->circleOptions($id, $uid);
+			foreach ($options as &$option) {
+				$option['reason'] = $option['reason'] === null ? null : $this->l->t($option['reason']);
+			}
+			unset($option);
+			return $options;
+		});
+	}
+
 	#[NoAdminRequired]
 	#[RequiresModule('excerpt_links')]
 	#[FrontpageRoute(verb: 'GET', url: '/api/links')]

@@ -21,6 +21,11 @@ use OCP\AppFramework\Db\Entity;
  * `file_etag` remembers the state of the MusicXML when the link was created,
  * so a later correction of the transcription can be shown as "changed".
  *
+ * `circle` says who opens the link: the archive roles (`internal`), the
+ * choir members (`members`, module member_links) or everyone (`public`,
+ * module public_links). Choir members and the public only ever get the
+ * measures of the excerpt, cut on the server.
+ *
  * @method string getToken()
  * @method void setToken(string $token)
  * @method int getCopyId()
@@ -60,6 +65,9 @@ class ExcerptLink extends Entity implements JsonSerializable {
 	use FieldAccess;
 
 	public const CIRCLE_INTERNAL = 'internal';
+	public const CIRCLE_MEMBERS = 'members';
+	public const CIRCLE_PUBLIC = 'public';
+	public const CIRCLES = [self::CIRCLE_INTERNAL, self::CIRCLE_MEMBERS, self::CIRCLE_PUBLIC];
 
 	protected string $token = '';
 	protected int $copyId = 0;

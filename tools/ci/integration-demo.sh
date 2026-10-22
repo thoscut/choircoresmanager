@@ -287,6 +287,12 @@ run_test review_test 1-2
 # file (LIESMICH.txt), a file of a second account that the test creates and
 # deletes, and the module switched off (rolled back, switches restored).
 run_test files_integration_test
+# Sharing beyond the archive roles (milestone 0.7): 1-3 is public domain with
+# MusicXML (16 measures) and not confirmed yet, 3-1 the internal
+# preservation copy. The test creates a group and an account "member" and
+# deletes them; role groups and module switches restored, the rest rolled
+# back.
+run_test sharing_test 1-3 3-1
 run_test backup_test
 # Creates two accounts in two groups of its own (role "reader"), shares the
 # archive folder with the first group and gives the settings page to the

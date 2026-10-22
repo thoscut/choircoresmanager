@@ -34,6 +34,12 @@ use OCP\AppFramework\Db\Entity;
  * @method void setLastPerformedImport(?string $lastPerformedImport)
  * @method string|null getSongListsImport()
  * @method void setSongListsImport(?string $songListsImport)
+ * @method bool|null getPublicRepertoire()
+ * @method void setPublicRepertoire(?bool $publicRepertoire)
+ * @method string|null getCpdlUrl()
+ * @method void setCpdlUrl(?string $cpdlUrl)
+ * @method string|null getImslpUrl()
+ * @method void setImslpUrl(?string $imslpUrl)
  * @method int|null getMergedInto()
  * @method void setMergedInto(?int $mergedInto)
  * @method int getCreated()
@@ -52,15 +58,19 @@ class Work extends Entity implements JsonSerializable {
 	protected ?string $performancesImport = null;
 	protected ?string $lastPerformedImport = null;
 	protected ?string $songListsImport = null;
+	protected ?bool $publicRepertoire = false;
+	protected ?string $cpdlUrl = null;
+	protected ?string $imslpUrl = null;
 	protected ?int $mergedInto = null;
 	protected int $created = 0;
 	protected int $modified = 0;
 
 	public function __construct() {
 		foreach (['workNo', 'title', 'composer', 'notes', 'repertoireImport', 'performancesImport',
-			'lastPerformedImport', 'songListsImport'] as $field) {
+			'lastPerformedImport', 'songListsImport', 'cpdlUrl', 'imslpUrl'] as $field) {
 			$this->addType($field, 'string');
 		}
+		$this->addType('publicRepertoire', 'boolean');
 		$this->addType('mergedInto', 'integer');
 		$this->addType('created', 'integer');
 		$this->addType('modified', 'integer');

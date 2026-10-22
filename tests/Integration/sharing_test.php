@@ -1,0 +1,317 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
+ * Integration test of sharing beyond the archive roles (milestone 0.7)
+ * against a real Nextcloud instance with an imported catalog and a file
+ * sync: the role "Choir members" and its routes, links for choir members
+ * (allowed, refused without release, preservation copy, only the measures
+ * of the excerpt, practice audio), public links (page, unknown, expired,
+ * revoked, module off: the same 404) and the public repertoire page.
+ *
+ * Usage (as the web server user):
+ *   php tests/Integration/sharing_test.php <nextcloud-root> <uid> <shelfmark-public-domain> <shelfmark-preservation-copy>
+ *
+ * <uid> must hold the role "librarian" and be the account of the archive
+ * folder (as after tools/ci/integration-demo.sh). The first shelf mark is a
+ * public domain copy with a MusicXML file of at least twelve measures whose
+ * rights are not confirmed yet (demo: 1-3), the second an internal
+ * preservation copy (demo: 3-1). The test creates a group and an account
+ * "member" (random password, never printed) and deletes both at the end;
+ * the role groups of the choir members and the module switches are
+ * restored exactly; database changes are rolled back.
+ */
+
+require __DIR__ . '/harness.php';
+[$root, $uid, $publicMark, $preservationMark] = IntegrationTest::start($argv,
+	['nextcloud-root', 'uid', 'shelfmark-public-domain', 'shelfmark-preservation-copy']);
+
+use OCA\Notenarchiv\AppInfo\Application;
+use OCA\Notenarchiv\Controller\PageController;
+use OCA\Notenarchiv\Controller\PublicLinkController;
+use OCA\Notenarchiv\Controller\PublicRepertoireController;
+use OCA\Notenarchiv\Db\ArchiveFileMapper;
+use OCA\Notenarchiv\Db\AuditEntry;
+use OCA\Notenarchiv\Db\AuditEntryMapper;
+use OCA\Notenarchiv\Db\CopyMapper;
+use OCA\Notenarchiv\Db\ExcerptLink;
+use OCA\Notenarchiv\Db\ExcerptLinkMapper;
+use OCA\Notenarchiv\Db\WorkMapper;
+use OCA\Notenarchiv\Db\WorkVersionMapper;
+use OCA\Notenarchiv\Exception\ModuleDisabledException;
+use OCA\Notenarchiv\Middleware\ModuleMiddleware;
+use OCA\Notenarchiv\Service\CatalogService;
+use OCA\Notenarchiv\Service\LicenseService;
+use OCA\Notenarchiv\Service\LinkService;
+use OCA\Notenarchiv\Service\MetaService;
+use OCA\Notenarchiv\Service\Modules;
+use OCA\Notenarchiv\Service\PracticeAudioService;
+use OCA\Notenarchiv\Service\PublicRepertoireService;
+use OCA\Notenarchiv\Service\RightsService;
+use OCA\Notenarchiv\Service\Roles;
+use OCA\Notenarchiv\Service\ScoreService;
+use OCA\Notenarchiv\Service\SharedLinkService;
+use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\NotFoundResponse;
+use OCP\AppFramework\Http\Response;
+use OCP\AppFramework\Http\Template\PublicTemplateResponse;
+use OCP\AppFramework\Http\TemplateResponse;
+use OCP\AppFramework\Services\IInitialState;
+use OCP\IAppConfig;
+use OCP\IDBConnection;
+use OCP\IGroup;
+use OCP\IGroupManager;
+use OCP\IRequest;
+use OCP\IUser;
+use OCP\IUserManager;
+use OCP\L10N\IFactory;
+use OCP\Server;
+use Psr\Log\LoggerInterface;
+
+$check = IntegrationTest::check(...);
+$throws = IntegrationTest::throws(...);
+
+const NO_ACCESS = 'You have no access to the music archive.';
+
+$db = Server::get(IDBConnection::class);
+$appConfig = Server::get(IAppConfig::class);
+$modules = Server::get(Modules::class);
+$roles = Server::get(Roles::class);
+$links = Server::get(LinkService::class);
+$shared = Server::get(SharedLinkService::class);
+$linkMapper = Server::get(ExcerptLinkMapper::class);
+$rights = Server::get(RightsService::class);
+$catalog = Server::get(CatalogService::class);
+$versions = Server::get(WorkVersionMapper::class);
+$copies = Server::get(CopyMapper::class)->findAllByShelfmark();
+$l = Server::get(IFactory::class)->get(Application::APP_ID, 'en');
+$appContainer = (new Application())->getContainer();
+$initialState = $appContainer->get(IInitialState::class);
+
+$public = $copies[$publicMark];
+$preservation = $copies[$preservationMark];
+$publicVersion = $versions->find($public->getVersionId());
+$check('the first copy is public domain and not confirmed yet', $publicVersion->getRightsStatus() === 'public_domain' && !$publicVersion->isConfirmed());
+$check('the second copy is an internal preservation copy', $versions->find($preservation->getVersionId())->getPreservationCopy() === true);
+$check('the test account is a catalog librarian', $roles->hasAnyRole($uid, [Roles::LIBRARIAN]));
+
+/** The module switches this test changes: key => stored value, or null when not stored. */
+$switchKeys = [Modules::MEMBER_LINKS, Modules::MEMBER_PRACTICE_AUDIO, Modules::PUBLIC_LINKS, Modules::PUBLIC_REPERTOIRE,
+	'excerpt_links', 'score_viewer', 'playback', 'practice_audio', 'releases', 'publication', 'rights', 'persons'];
+$switches = function () use ($appConfig, $switchKeys): array {
+	$values = [];
+	foreach ($switchKeys as $key) {
+		$configKey = Modules::CONFIG_PREFIX . $key;
+		$values[$key] = $appConfig->hasKey(Application::APP_ID, $configKey, null)
+			? $appConfig->getValueBool(Application::APP_ID, $configKey)
+			: null;
+	}
+	return $values;
+};
+$original = $switches();
+$memberGroups = $roles->groups(Roles::MEMBER);
+
+// A group and an account of the choir members, outside the transaction, so
+// that deleting them removes everything that belongs to them.
+$suffix = bin2hex(random_bytes(4));
+$group = Server::get(IGroupManager::class)->createGroup('notenarchiv-test-members-' . $suffix);
+$member = Server::get(IUserManager::class)->createUser('member-' . $suffix, bin2hex(random_bytes(24)) . 'aA1!');
+$check('test group and account "member" created', $group instanceof IGroup && $member instanceof IUser);
+
+/**
+ * The measures of the first part of an excerpt, by printed number.
+ *
+ * @return list<string>
+ */
+$measures = function (string $xml): array {
+	$document = new DOMDocument();
+	if (!$document->loadXML($xml, LIBXML_NONET)) {
+		return [];
+	}
+	$numbers = [];
+	foreach ((new DOMXPath($document))->query('/score-partwise/part[1]/measure') ?: [] as $measure) {
+		if ($measure instanceof DOMElement) {
+			$numbers[] = $measure->getAttribute('number');
+		}
+	}
+	return $numbers;
+};
+
+/** Whether a response is the one 404 page of the public pages. */
+$isNotFoundPage = fn (Response $response): bool => $response instanceof NotFoundResponse && $response->getStatus() === Http::STATUS_NOT_FOUND
+	&& $response->isThrottled() && $response->getParams() === [];
+
+$publicController = new PublicLinkController(Server::get(IRequest::class), $shared, $initialState, $l, Server::get(LoggerInterface::class));
+$middleware = new ModuleMiddleware($modules, $l);
+/** The answer of the public route: the middleware first, then the method. */
+$publicPage = function (string $token) use ($middleware, $publicController): Response {
+	try {
+		$middleware->beforeController($publicController, 'show');
+	} catch (ModuleDisabledException $e) {
+		return $middleware->afterException($publicController, 'show', $e);
+	}
+	return $publicController->show($token);
+};
+
+$db->beginTransaction();
+try {
+	if (!$group instanceof IGroup || !$member instanceof IUser) {
+		throw new RuntimeException('test account missing');
+	}
+	$group->addUser($member);
+	$memberUid = $member->getUID();
+	$roles->setGroups(Roles::MEMBER, [...$memberGroups, $group->getGID()]);
+	$modules->change([Modules::MEMBER_PRACTICE_AUDIO => true, Modules::PUBLIC_LINKS => true, Modules::PUBLIC_REPERTOIRE => true, 'persons' => true]);
+
+	// ---- the role: no access to the archive ----
+	$check('the account is a choir member', $roles->isMember($memberUid));
+	$check('a choir member holds no archive role', $roles->rolesOf($memberUid) === [] && !$roles->hasAccess($memberUid));
+	$check('archive services refuse a choir member', $throws(fn () => $roles->requireAccess($memberUid)) === NO_ACCESS);
+	$scoreFile = ScoreService::pick(Server::get(ArchiveFileMapper::class)->findByCopy($public->getId()));
+	$check('the public domain copy has a MusicXML file', $scoreFile !== null);
+	if ($scoreFile !== null) {
+		$check('a choir member gets no score file of the archive', $throws(fn () => Server::get(ScoreService::class)->content($scoreFile->getId(), $memberUid)) === NO_ACCESS);
+	}
+	$pageController = fn (string $account): PageController => new PageController(Server::get(IRequest::class), $account, $roles,
+		Server::get(MetaService::class), $initialState, $l, $modules, $shared);
+	$check('a choir member gets the page "Shared with me"', $pageController($memberUid)->index()->getTemplateName() === 'member');
+	$check('the archive roles get the archive', $pageController($uid)->index()->getTemplateName() === 'index');
+
+	// ---- links for choir members ----
+	$memberLink = ['circle' => 'members', 'measure_from' => '2', 'measure_to' => '4', 'voice' => 'Alto', 'note' => 'Please practise until Thursday.'];
+	$reason = $throws(fn () => $links->create($public->getId(), $memberLink, $uid));
+	$check('refused without release (public domain not confirmed)', $reason !== null && str_starts_with($reason, 'Public domain is not confirmed yet.'), (string)$reason);
+	$rights->confirm($public->getVersionId(), $uid, 'public_domain', 'All persons involved died more than 70 years ago', 'integration test');
+	$check('a measure that is not in the score is refused', $throws(fn () => $links->create($public->getId(), ['measure_to' => '999'] + $memberLink, $uid))
+		=== 'There is no measure 999 in this score.');
+	$link = $links->create($public->getId(), $memberLink, $uid);
+	$check('a link for choir members is made', $link->getCircle() === ExcerptLink::CIRCLE_MEMBERS);
+
+	Server::get(LicenseService::class)->create($preservation->getVersionId(), ['holder' => 'Publisher', 'uses' => ['portal', 'practice_audio'],
+		'valid_until' => '2099-12-31', 'evidence' => 'integration test'], $uid);
+	$reason = $throws(fn () => $links->create($preservation->getId(), $memberLink, $uid));
+	$check('an internal preservation copy is never shared, not even with a license',
+		in_array($reason, ['Internal preservation copy: it is never shared with choir members.',
+			'Internal preservation copy: only the catalog librarian and the conductor may view it.'], true), (string)$reason);
+
+	$listed = $shared->forMember($memberUid);
+	$check('the choir member sees the link', in_array($link->getToken(), array_column($listed, 'token'), true));
+	$entry = array_values(array_filter($listed, fn (array $row): bool => $row['token'] === $link->getToken()))[0] ?? [];
+	$check('without shelf mark or account name', !array_key_exists('shelfmark', $entry) && !array_key_exists('created_by', $entry), json_encode($entry) ?: '');
+	$check('a non-member sees nothing', $throws(fn () => $shared->forMember($uid)) !== null);
+
+	$hitsBefore = $linkMapper->findByToken($link->getToken())->getHits();
+	$xml = $shared->memberScore($link->getToken(), $memberUid);
+	$check('the server sends only the measures of the excerpt', $measures($xml) === ['2', '3', '4'], implode(',', $measures($xml)));
+	$check('with its attributes', str_contains($xml, '<divisions>') && str_contains($xml, '<clef'));
+	$check('the call is counted', $linkMapper->findByToken($link->getToken())->getHits() === $hitsBefore + 1);
+
+	$practiceAudio = Server::get(PracticeAudioService::class);
+	$practiceAudio->authorizeForMember($link->getToken(), ['voice' => 'Alto', 'mode' => 'solo', 'format' => 'wav', 'tempo' => 80], $memberUid);
+	$exports = array_values(array_filter(Server::get(AuditEntryMapper::class)->findForObjects([['version', $public->getVersionId()]], 50),
+		fn (AuditEntry $e): bool => $e->getAction() === PracticeAudioService::ACTION));
+	$details = json_decode((string)(($exports[0] ?? null)?->getNewValue() ?? ''), true);
+	$check('practice audio of a choir member is recorded with the measures of the link', is_array($details) && $details['measures'] === '2-4'
+		&& ($exports[0] ?? null)?->getRoles() === Roles::MEMBER && ($exports[0] ?? null)?->getUserId() === $memberUid, (string)(($exports[0] ?? null)?->getNewValue() ?? ''));
+	$modules->change([Modules::MEMBER_PRACTICE_AUDIO => false]);
+	$check('practice audio for choir members switched off: not offered', ($shared->forMember($memberUid)[0]['canExportAudio'] ?? true) === false);
+
+	$links->revoke($link->getId(), $uid);
+	$check('a revoked link is dead for choir members', $throws(fn () => $shared->memberScore($link->getToken(), $memberUid)) === 'This link has been revoked.');
+
+	// ---- public links ----
+	$publicLink = ['circle' => 'public', 'measure_from' => '9', 'measure_to' => '12', 'voice' => 'Alto'];
+	$reason = $throws(fn () => $links->create($public->getId(), $publicLink, $uid));
+	$check('refused without the release for publication', $reason !== null && str_starts_with($reason, 'Not released for publication.'), (string)$reason);
+	$catalog->update('version', $public->getVersionId(), ['publication_status' => 'free'], $uid, 'integration test');
+	$check('a public link has no note', $throws(fn () => $links->create($public->getId(), $publicLink + ['note' => 'internal'], $uid)) !== null);
+	$link = $links->create($public->getId(), $publicLink, $uid);
+	$check('a public link is made', $link->getCircle() === ExcerptLink::CIRCLE_PUBLIC);
+
+	$excerpt = $shared->publicExcerpt($link->getToken());
+	$check('the public excerpt has only the measures', $excerpt !== null && $measures($excerpt['xml']) === ['9', '10', '11', '12']);
+	$check('and nothing internal', $excerpt !== null && array_keys($excerpt) === ['title', 'composer', 'measureFrom', 'measureTo', 'voice', 'verse',
+		'tempo', 'canPlay', 'xml']);
+	$page = $publicPage($link->getToken());
+	$check('the public page answers with the public layout', $page instanceof PublicTemplateResponse && $page->getStatus() === Http::STATUS_OK
+		&& !$page->isThrottled());
+	$check('its policy allows WebAssembly only', str_contains($page->getContentSecurityPolicy()->buildPolicy(), "'wasm-unsafe-eval'")
+		&& !str_contains($page->getContentSecurityPolicy()->buildPolicy(), "'unsafe-eval'"));
+	$check('a public link does not open for choir members', $throws(fn () => $shared->memberScore($link->getToken(), $memberUid)) === 'This link does not exist.');
+
+	$check('an unknown token: the 404 page', $isNotFoundPage($publicPage(str_repeat('x', 32))));
+	$check('a malformed token: the same 404 page', $isNotFoundPage($publicPage('not-a-token')));
+	$expired = $linkMapper->findByToken($link->getToken());
+	$expired->setExpires((new DateTimeImmutable($rights->today(null)))->modify('-1 day')->format('Y-m-d'));
+	$linkMapper->update($expired);
+	$check('an expired link: the same 404 page', $isNotFoundPage($publicPage($link->getToken())));
+	$expired->setExpires((new DateTimeImmutable($rights->today(null)))->modify('+1 day')->format('Y-m-d'));
+	$linkMapper->update($expired);
+	$check('valid again: the page', $publicPage($link->getToken()) instanceof PublicTemplateResponse);
+	$modules->change([Modules::PUBLIC_LINKS => false]);
+	$check('the module switched off: the same 404 page', $isNotFoundPage($publicPage($link->getToken())));
+	$modules->change([Modules::PUBLIC_LINKS => true]);
+	$links->revoke($link->getId(), $uid);
+	$check('a revoked link: the same 404 page', $isNotFoundPage($publicPage($link->getToken())));
+
+	// ---- the public repertoire page ----
+	$repertoire = Server::get(PublicRepertoireService::class);
+	$workId = $publicVersion->getWorkId();
+	$catalog->update('work', $workId, ['public_repertoire' => true, 'cpdl_url' => 'https://www.cpdl.org/wiki/index.php/Main_Page'], $uid, 'integration test');
+	$titles = array_column($repertoire->entries(), 'title');
+	$check('a chosen public domain work is on the page', in_array(trim((string)Server::get(WorkMapper::class)->find($workId)->getTitle()), $titles, true),
+		implode(', ', $titles));
+	$check('a link that is not to CPDL is refused', $throws(fn () => $catalog->update('work', $workId, ['cpdl_url' => 'https://example.com/'], $uid, 'test')) !== null);
+	$preservationWork = $versions->find($preservation->getVersionId())->getWorkId();
+	$eligible = array_filter($versions->findByWork($preservationWork), PublicRepertoireService::eligible(...));
+	if ($eligible === []) {
+		$check('a work without a confirmed public domain version cannot be chosen',
+			$throws(fn () => $catalog->update('work', $preservationWork, ['public_repertoire' => true], $uid, 'test')) !== null);
+	}
+	$repertoirePage = new PublicRepertoireController(Server::get(IRequest::class), $repertoire, $l, Server::get(LoggerInterface::class));
+	$response = $repertoirePage->index();
+	$check('the repertoire page answers with the public layout', $response instanceof TemplateResponse && $response->getStatus() === Http::STATUS_OK
+		&& count($response->getParams()['entries'] ?? []) === count($titles));
+	$rights->setOpen($public->getVersionId(), $uid, 'integration test');
+	$check('when the rights change, the work leaves the page at once', count($repertoire->entries()) === count($titles) - 1);
+	$modules->change([Modules::PUBLIC_REPERTOIRE => false]);
+	try {
+		$middleware->beforeController($repertoirePage, 'index');
+		$check('the repertoire page is off with its module', false);
+	} catch (ModuleDisabledException $e) {
+		$check('the repertoire page is off with its module: the 404 page', $isNotFoundPage($middleware->afterException($repertoirePage, 'index', $e)));
+	}
+} catch (Throwable $e) {
+	IntegrationTest::unexpected($e);
+} finally {
+	$db->rollBack();
+	$roles->setGroups(Roles::MEMBER, $memberGroups);
+	// Exactly the switches of before, also when the rollback did not cover
+	// them (the app config caches its values).
+	$appConfig->clearCache(true);
+	foreach ($original as $key => $value) {
+		$configKey = Modules::CONFIG_PREFIX . $key;
+		if ($value === null) {
+			$appConfig->deleteKey(Application::APP_ID, $configKey);
+		} elseif (!$appConfig->hasKey(Application::APP_ID, $configKey, null) || $appConfig->getValueBool(Application::APP_ID, $configKey) !== $value) {
+			$appConfig->setValueBool(Application::APP_ID, $configKey, $value);
+		}
+	}
+	$appConfig->clearCache(true);
+	$check('module configuration restored exactly', $switches() === $original);
+	$check('role groups of the choir members restored', $roles->groups(Roles::MEMBER) === $memberGroups);
+	if ($member instanceof IUser) {
+		$check('test account "member" deleted', $member->delete());
+	}
+	if ($group instanceof IGroup) {
+		$check('test group deleted', $group->delete());
+	}
+}
+
+IntegrationTest::finish();

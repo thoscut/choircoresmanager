@@ -24,6 +24,7 @@ use OCA\Notenarchiv\Service\AuditLog;
 use OCA\Notenarchiv\Service\CatalogService;
 use OCA\Notenarchiv\Service\InventoryService;
 use OCA\Notenarchiv\Service\LinkService;
+use OCA\Notenarchiv\Service\Modules;
 use OCA\Notenarchiv\Service\NotificationService;
 use OCA\Notenarchiv\Service\RightsPolicy;
 use OCA\Notenarchiv\Service\RightsService;
@@ -67,7 +68,8 @@ final class RequestBoundaryTest extends TestCase {
 		$mapper ??= $this->createStub(ExcerptLinkMapper::class);
 		return new LinkService($mapper, $copies, $versions, $this->createStub(ArchiveFileMapper::class),
 			$this->createStub(ScoreService::class), $this->createStub(RightsPolicy::class), $this->rights(), $this->createStub(AuditLog::class),
-			$this->createStub(Roles::class), $this->createStub(IUserManager::class), $random, $this->createStub(ITimeFactory::class));
+			$this->createStub(Roles::class), $this->createStub(IUserManager::class), $random, $this->createStub(ITimeFactory::class),
+			$this->createStub(Modules::class));
 	}
 
 	public function testLinkRefusesUnknownFields(): void {
@@ -114,7 +116,7 @@ final class RequestBoundaryTest extends TestCase {
 		$service = new LinkService($mapper, $copies, $this->createStub(WorkVersionMapper::class), $this->createStub(ArchiveFileMapper::class),
 			$this->createStub(ScoreService::class), $this->createStub(RightsPolicy::class), $this->rights(), $this->createStub(AuditLog::class),
 			$this->createStub(Roles::class), $this->createStub(IUserManager::class), $this->createStub(ISecureRandom::class),
-			$this->createStub(ITimeFactory::class));
+			$this->createStub(ITimeFactory::class), $this->createStub(Modules::class));
 		try {
 			$service->resolve(str_repeat('b', 32), 'reader');
 			self::fail('no exception');

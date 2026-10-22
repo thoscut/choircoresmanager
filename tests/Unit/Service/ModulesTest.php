@@ -48,7 +48,7 @@ final class ModulesTest extends TestCase {
 	}
 
 	public function testTheInterfaceForAgentsIsSwitchedOnlyByItself(): void {
-		self::assertSame([Modules::AGENT_API], Modules::OUTSIDE_PRESETS);
+		self::assertContains(Modules::AGENT_API, Modules::OUTSIDE_PRESETS);
 		self::assertContains(Modules::AGENT_API, Modules::switchable());
 		self::assertSame('interfaces', Modules::MODULES[Modules::AGENT_API]['group']);
 		self::assertSame([], Modules::requirements(Modules::AGENT_API));
@@ -65,6 +65,58 @@ final class ModulesTest extends TestCase {
 		$modules->change([Modules::AGENT_API => false]);
 		self::assertFalse($modules->isEnabled(Modules::AGENT_API));
 		self::assertFalse($this->moduleConfig['module_agent_api']);
+	}
+
+	/**
+	 * Everything that opens the archive beyond its roles (milestone 0.7) is
+	 * off on new and updated installations and part of no preset, not even
+	 * "complete": the choir decides, then the administration switches it on.
+	 */
+	public function testSharingBeyondTheRolesIsSwitchedOnlyByItself(): void {
+		$sharing = [Modules::MEMBER_LINKS, Modules::MEMBER_PRACTICE_AUDIO, Modules::PUBLIC_LINKS, Modules::PUBLIC_REPERTOIRE];
+		self::assertSame([Modules::AGENT_API, ...$sharing], Modules::OUTSIDE_PRESETS);
+		foreach ($sharing as $key) {
+			self::assertSame('sharing', Modules::MODULES[$key]['group'], $key);
+			self::assertFalse(Modules::MODULES[$key]['simple'], $key);
+			self::assertFalse(Modules::MODULES[$key]['standard'], $key);
+			foreach (Modules::PRESETS as $preset) {
+				self::assertArrayNotHasKey($key, Modules::presetValues($preset), $key . ' is part of no preset');
+			}
+		}
+		self::assertSame(['excerpt_links', 'playback', 'releases', 'score_viewer', 'rights'], Modules::requirements(Modules::MEMBER_LINKS));
+		self::assertSame([Modules::MEMBER_LINKS, 'practice_audio', 'excerpt_links', 'playback', 'releases', 'score_viewer', 'rights'],
+			Modules::requirements(Modules::MEMBER_PRACTICE_AUDIO));
+		self::assertSame(['excerpt_links', 'playback', 'publication', 'score_viewer', 'releases', 'rights'], Modules::requirements(Modules::PUBLIC_LINKS));
+		self::assertSame(['rights'], Modules::requirements(Modules::PUBLIC_REPERTOIRE));
+
+		// A new installation: everything off; "complete" opens nothing of it
+		$modules = $this->modules();
+		$modules->writeBaseline(false);
+		foreach ($sharing as $key) {
+			self::assertFalse($modules->isEnabled($key), $key . ' is off on a new installation');
+		}
+		$modules->applyPreset(Modules::COMPLETE);
+		foreach ($sharing as $key) {
+			self::assertFalse($modules->isEnabled($key), $key . ' stays off with "complete"');
+		}
+		// An installation from before the modules keeps its functions, but gets nothing new that opens the archive
+		$this->moduleConfig = [];
+		$old = $this->modules();
+		$old->writeBaseline(true);
+		foreach ($sharing as $key) {
+			self::assertFalse($old->isEnabled($key), $key . ' stays off on an update');
+		}
+
+		// Switching on practice audio for choir members also switches on what it needs
+		$modules = $this->modulesWithout([...$sharing, 'practice_audio']);
+		$changes = $modules->change([Modules::MEMBER_PRACTICE_AUDIO => true]);
+		self::assertSame([Modules::MEMBER_PRACTICE_AUDIO], $changes['enabled']);
+		self::assertSame(['practice_audio', Modules::MEMBER_LINKS], $changes['alsoEnabled']);
+		self::assertTrue($modules->isEnabled(Modules::MEMBER_PRACTICE_AUDIO));
+		self::assertFalse($modules->isEnabled(Modules::PUBLIC_LINKS), 'the public stays closed');
+		$modules->applyPreset(Modules::SIMPLE);
+		self::assertTrue($modules->isSwitchedOn(Modules::MEMBER_LINKS), 'a preset does not touch the switch');
+		self::assertFalse($modules->isEnabled(Modules::MEMBER_LINKS), 'but "simple" switches off the excerpt links it needs');
 	}
 
 	public function testEveryNotificationHasASwitch(): void {
@@ -127,7 +179,8 @@ final class ModulesTest extends TestCase {
 		self::assertSame(['practice_audio'], $changes['enabled']);
 		self::assertSame(['score_viewer', 'playback'], $changes['alsoEnabled']);
 		self::assertSame([], $changes['disabled']);
-		self::assertSame(['excerpt_links', 'transcription_review', 'corrections', 'notify_review_points', 'notify_correction_received'], $changes['activated'],
+		self::assertSame(['excerpt_links', 'transcription_review', 'corrections', 'notify_review_points', 'notify_correction_received',
+			Modules::MEMBER_LINKS, Modules::MEMBER_PRACTICE_AUDIO, Modules::PUBLIC_LINKS], $changes['activated'],
 			'their switches were on');
 		self::assertTrue($modules->isEnabled('practice_audio'));
 		self::assertTrue($this->moduleConfig['module_score_viewer']);
@@ -206,7 +259,7 @@ final class ModulesTest extends TestCase {
 			self::assertTrue($modules->isEnabled($key), $key);
 		}
 		self::assertSame(array_values(array_diff(Modules::switchable(), Modules::OUTSIDE_PRESETS)),
-			array_keys(Modules::presetValues(Modules::COMPLETE)), '"complete" is everything but the interface for agents');
+			array_keys(Modules::presetValues(Modules::COMPLETE)), '"complete" is everything but the interface for agents and the sharing beyond the roles');
 	}
 
 	public function testOpeningFromTheFilesAppIsPartOfStandardAndComplete(): void {

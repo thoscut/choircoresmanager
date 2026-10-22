@@ -39,8 +39,10 @@ possible and mentioned in the changelog.
 ### Access
 
 - Every API request checks the caller's role on the server; the user
-  interface only hides what the server would refuse anyway. There are no
-  public pages: every route needs a logged-in Nextcloud account.
+  interface only hides what the server would refuse anyway. Every route
+  needs a logged-in Nextcloud account, except the two public pages of the
+  sharing modules (a public link and the public repertoire page, see below),
+  which are off unless switched on.
 - Only instance settings (role groups, archive folder, modules, repertoire
   thresholds, the access check of the archive folder) are restricted by
   Nextcloud itself: to admins and to the groups the administration has given
@@ -62,7 +64,102 @@ possible and mentioned in the changelog.
 - A unit test (`tests/Unit/Controller/ControllerSecurityTest`) checks these
   route attributes, so that a new route cannot silently become public, skip
   the CSRF check or lose its restriction to the settings; for the API for agents also
-  its modules and rate limit.
+  its modules and rate limit; for the sharing modules the list of public
+  routes and the list of routes a choir member reaches.
+
+### Sharing beyond the archive roles (milestone 0.7)
+
+Four modules open parts of the archive to people without an archive role:
+links for choir members (`member_links`), their practice audio
+(`member_practice_audio`), public links (`public_links`) and the public
+repertoire page (`public_repertoire`). They are off on new and updated
+installations and part of no preset, not even "complete"; only their own
+switch turns them on. Switched off, their routes answer 404 and the
+navigation leaves them out.
+
+**The role "Choir members" (`member`).**
+
+- It is no archive role: `Roles::rolesOf()` and `Roles::hasAccess()` leave
+  it out, so every route that checks access (`requireAccess`,
+  `requireRole`, the rights policy) refuses a choir member as it refuses any
+  account without a role. The navigation entry and the app page appear for
+  choir members only while `member_links` is on, and show only "Shared with
+  me".
+- A choir member reaches exactly the app page and the two routes of
+  `MemberController` (the measures of a link, permission for a practice
+  file); the unit test keeps that list and checks that no other controller
+  serves choir members. An account with an archive role always gets the
+  archive.
+- They see title and composer of the work, the measures, voice, verse,
+  tempo, note and expiry of each link; no shelf marks, no account names, no
+  catalog. Every link for choir members is visible to every choir member,
+  and so is its note.
+
+**Only the excerpt leaves the server.**
+
+- Choir members and the public never get the score file. The server reads
+  it through the account that configured the archive folder, only inside
+  that folder (as the background jobs do), checks that it is real MusicXML
+  as for the score viewer, unpacks `.mxl`, cuts the measures of the link
+  (`MusicXmlExcerpt`, parsed without entity expansion or network access,
+  document type declaration dropped) and sends only them.
+- For choir members the excerpt is an attachment with `nosniff` and the
+  strict policy of data responses; on a public page it is part of the page
+  itself, so that there is no second public route.
+
+**Rights on every call.** A link carries no rights of its own. When it is
+made and on every call the server checks:
+
+- for choir members the release for the digital provision to members (the
+  singers' portal: confirmed public domain or a valid license for the
+  portal);
+- for the public the release for publication (publication status "free",
+  set by the catalog librarian) and confirmed public domain or a valid
+  license with the use "online publication";
+- never an internal preservation copy;
+- playback and practice audio as in the archive (public domain or a license
+  for practice audio; practice audio files additionally a confirmed status
+  or that license). Every practice file of a choir member is recorded in the
+  audit log with account, role `member`, measures, voice, mode and format.
+
+A version that loses its release disappears from "Shared with me" and its
+public links stop working at once.
+
+**The public pages.**
+
+- Exactly two routes are public (`#[PublicPage]`), each the only route of
+  its own controller: `GET /apps/notenarchiv/p/{token}` and
+  `GET /apps/notenarchiv/repertoire`. Both are plain GET pages, limited per
+  address (60 in 10 minutes) and per account, protected by Nextcloud's
+  brute-force protection and need their module; the unit test checks this.
+- Tokens are 32 alphanumeric characters from Nextcloud's secure random
+  generator. An unknown, malformed, expired or revoked token, a version no
+  longer released and a switched-off module all get the same 404 page
+  without a reason, and each counts as a failed attempt.
+- A public link shows no account names, no note, no download and no
+  practice audio; the page is marked `noindex` for search engines and has
+  the policy of the app page (WebAssembly for the bundled notation engine,
+  no JavaScript `eval`, no external sources, no frames).
+- The repertoire page has no script of its own and Nextcloud's default
+  policy. It shows title, composer and lyricist with their life dates,
+  scoring and links to CPDL and IMSLP: only https links to `cpdl.org` and
+  `imslp.org`, checked when they are saved and again when the page is
+  rendered; nothing is loaded from there. Works are listed only while a
+  version is confirmed public domain, checked on every call. No shelf marks,
+  no copies, no accounts.
+
+**What remains.**
+
+- Whatever reaches a browser can be saved: the measures of an excerpt are
+  in the page or the response. Legally an excerpt counts as much as the
+  whole sheet, which is why only released versions are shared.
+- Links can be passed on. They expire after at most 183 days and can be
+  revoked at any time by their creator or the catalog librarian; calls are
+  counted without recording who made them.
+- The time a 404 takes may tell whether the module is on; which works are
+  public is no secret.
+- A note on a link for choir members is read by all choir members: it is
+  no place for internal remarks.
 
 ### Interface for agents
 
@@ -162,8 +259,8 @@ account can do; it offers a stable, documented and limited contract.
 
 ### Links, limits and errors
 
-- Excerpt links carry no rights of their own: rights, expiry and revocation
-  are checked on every call; calls are counted without recording who made
+- Excerpt links (of every circle) carry no rights of their own: rights,
+  expiry and revocation are checked on every call; calls are counted without recording who made
   them. Tokens are 32 alphanumeric characters from Nextcloud's secure random
   generator. Unknown tokens count as failed attempts for Nextcloud's
   brute-force protection.
@@ -177,8 +274,9 @@ account can do; it offers a stable, documented and limited contract.
 
 ### Browser
 
-- The app page allows WebAssembly compilation (`'wasm-unsafe-eval'`) for the
-  bundled notation engine and nothing else beyond Nextcloud's default policy:
-  no JavaScript `eval`, no external sources.
+- The app page, the page "Shared with me" and the page of a public link
+  allow WebAssembly compilation (`'wasm-unsafe-eval'`) for the bundled
+  notation engine and nothing else beyond Nextcloud's default policy: no
+  JavaScript `eval`, no external sources.
 - No external requests: notation, fonts and sounds are bundled.
 - The audit log is append-only; there is no API to change or delete entries.

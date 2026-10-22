@@ -37,6 +37,9 @@ und nutzerfreundlich** (Leitlinien 11, 13, 14 und 15).
    - Rollen werden Nextcloud-Gruppen zugeordnet.
    - Jede Rolle schreibt nur ihre Felder.
    - Wer keine Rolle hat, sieht die App nicht.
+   - Chormitglieder sind eine eigene Rolle, aber keine Archivrolle: Sie sehen
+     nur „Für mich freigegeben“ mit den Ausschnitten, die für sie geteilt
+     sind, und das nur, solange das Modul eingeschaltet ist.
 6. **Werkzeuge schlagen vor, Menschen übernehmen.** Massenänderungen aus
    Skripten landen in einem Eingang.
 7. **Es gibt immer einen Rückweg.** Ein datierter Export (CSV/ODS) liegt
@@ -283,7 +286,16 @@ gebaut: als Module, die anfangs aus sind. Was etwas nach außen öffnet, steht i
 keiner Voreinstellung. Ob eine Funktion genutzt wird, entscheidet der Verein
 mit dem Schalter.
 
-- **Links für Chormitglieder** mit Abspielen:
+*Umgesetzt: das Teilen über die Archivrollen hinaus, als Module
+`member_links`, `member_practice_audio`, `public_links` und
+`public_repertoire` in der Gruppe „Teilen über die Archivrollen hinaus“, alle
+in keiner Voreinstellung (Beschreibung in `docs/api.md`, Abschnitt „Sharing
+beyond the archive roles“, im Benutzerhandbuch, Abschnitt „Sharing with choir
+members and the public“, im Admin-Guide, Abschnitt „Sharing with choir members
+and the public“, und in `SECURITY.md`). Offen sind Mappenbuch und
+Spiegelordner.*
+
+- **Links für Chormitglieder** mit Abspielen – *umgesetzt:*
   - eine eigene Rolle „Chormitglieder“ (Gruppen wie bei den anderen Rollen),
     die nur die für sie freigegebenen Ausschnitte sieht, nicht das
     Werkverzeichnis
@@ -292,10 +304,13 @@ mit dem Schalter.
     der Server schneidet den Taktbereich zu
 - **Öffentliche Links** für Fassungen mit Veröffentlichungsfreigabe: Ausschnitt
   ansehen und abspielen ohne Anmeldung, mit Ablaufdatum, Abrufzähler und
-  Begrenzung der Aufrufe; keine Downloads, keine Kontonamen.
+  Begrenzung der Aufrufe; keine Downloads, keine Kontonamen. – *umgesetzt;
+  dazu braucht es die bestätigte Gemeinfreiheit oder eine Lizenz mit der neuen
+  Nutzungsart „Online-Veröffentlichung“.*
 - **Öffentliche Repertoireseite** mit gemeinfreien Werken und Links zu CPDL
-  und IMSLP (nur Links, nichts wird von dort geladen).
+  und IMSLP (nur Links, nichts wird von dort geladen). – *umgesetzt.*
 - **Übe-Audio je Stimme für Chormitglieder** bei freigegebenen Fassungen.
+  – *umgesetzt.*
 - **Mappenbuch:** Ausgabe und Rücknahme von Sängermappen, mit Löschfristen für
   die Personenangaben.
 - **Spiegelordner für die Druckstation:** freigegebene PDFs in einem eigenen

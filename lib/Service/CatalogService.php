@@ -297,6 +297,14 @@ class CatalogService {
 			$new['rule1_checked'] = $this->rights->today($uid) . ' ' . ($this->userManager->getDisplayName($uid) ?? $uid);
 		}
 
+		if ($entity instanceof Work && ($new['public_repertoire'] ?? null) === true && $entity->getPublicRepertoire() !== true) {
+			// The public repertoire page (milestone 0.7) shows public domain works only; it checks again when it is shown.
+			$this->modules->requireEnabled(Modules::PUBLIC_REPERTOIRE);
+			if (array_filter($this->versions->findByWork($entity->getId()), PublicRepertoireService::eligible(...)) === []) {
+				throw new InvalidInputException('Only works with a version confirmed as public domain can be shown on the public repertoire page. The catalog librarian confirms the rights of a version on the tab "Rights" first.');
+			}
+		}
+
 		if ($entity instanceof Copy && array_key_exists('status', $new) && $new['status'] !== $entity->getStatus()) {
 			if ($new['status'] === null) {
 				throw new InvalidInputException('The status must not be empty.');

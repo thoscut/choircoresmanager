@@ -40,6 +40,7 @@ import type {
 	License,
 	LicenseInput,
 	LinkInput,
+	LinkOptions,
 	Merge,
 	MergeCandidateGroup,
 	Meta,
@@ -596,11 +597,27 @@ export async function revokeLink(id: number): Promise<void> {
 }
 
 /**
- * Absolute URL that opens an excerpt link in the app.
+ * Which circles a link for this copy can be made for, and what the
+ * recipients may do (milestone 0.7).
+ *
+ * @param copyId - copy id
+ */
+export async function fetchLinkOptions(copyId: number): Promise<LinkOptions> {
+	const { data } = await axios.get<LinkOptions>(apiUrl('/copies/{id}/link-options', { id: copyId }))
+	return data
+}
+
+/**
+ * Absolute URL of an excerpt link: links for the archive roles and for
+ * choir members open in the app, public links on their own page.
  *
  * @param token - link token
+ * @param circle - who can open the link
  */
-export function linkUrl(token: string): string {
+export function linkUrl(token: string, circle: string = 'internal'): string {
+	if (circle === 'public') {
+		return window.location.origin + generateUrl('/apps/{app}/p/{token}', { app: APP, token })
+	}
 	return window.location.origin + generateUrl('/apps/{app}/', { app: APP }) + '?link=' + encodeURIComponent(token)
 }
 

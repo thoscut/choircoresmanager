@@ -87,7 +87,7 @@ final class ModuleSettingsTest extends TestCase {
 		self::assertSame(['key' => 'playback', 'group' => 'scores', 'label' => '[Playback]',
 			'description' => '[' . Modules::MODULES['playback']['description'] . ']', 'requires' => ['score_viewer'],
 			'enabled' => true, 'active' => false], $byKey['playback']);
-		self::assertSame(['rights', 'releases', 'scores', 'collaboration', 'concerts', 'maintenance', 'overview', 'notifications', 'interfaces'],
+		self::assertSame(['rights', 'releases', 'scores', 'collaboration', 'concerts', 'maintenance', 'overview', 'notifications', 'sharing', 'interfaces'],
 			array_column($described['groups'], 'key'));
 		self::assertSame(Modules::PRESETS, array_column($described['presets'], 'key'));
 		foreach ($described['presets'] as $preset) {

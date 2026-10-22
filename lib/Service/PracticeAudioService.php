@@ -21,9 +21,10 @@ use OCP\AppFramework\Db\DoesNotExistException;
  * files in the browser; before it does, it asks here. The server checks the
  * rights policy (see RightsPolicy::practiceAudioDenial) and records the
  * export in the audit log: measures, voice, mode and format. The files
- * themselves never pass through the server, and the app gives nothing to
- * choir members: the librarian or conductor uploads the files to the
- * choir's practice system.
+ * themselves never pass through the server. The librarian or conductor
+ * uploads them to the choir's practice system; with the module
+ * member_practice_audio (milestone 0.7) choir members also make files of
+ * one voice of an excerpt shared with them (authorizeForMember).
  */
 class PracticeAudioService {
 	public const ACTION = 'practice_audio';
@@ -35,6 +36,8 @@ class PracticeAudioService {
 	public const TEMPO_MAX = 200;
 	/** Fields a request may contain */
 	private const FIELDS = ['copy_id', 'measure_from', 'measure_to', 'voice', 'mode', 'format', 'all_voices', 'tempo', 'repeats'];
+	/** Fields a request of a choir member may contain: copy and measures come from the link */
+	private const MEMBER_FIELDS = ['voice', 'mode', 'format', 'tempo', 'repeats'];
 
 	public function __construct(
 		private WorkVersionMapper $versions,
@@ -42,6 +45,8 @@ class PracticeAudioService {
 		private RightsPolicy $policy,
 		private AuditLog $audit,
 		private Roles $roles,
+		private SharedLinkService $shared,
+		private RightsService $rights,
 	) {
 	}
 
@@ -74,8 +79,46 @@ class PracticeAudioService {
 		if ($copy->getVersionId() !== $versionId) {
 			throw new InvalidInputException('The copy does not belong to this version.');
 		}
+		$this->record($versionId, $copy->getShelfmark(), $request, $uid);
+		return ['ok' => true];
+	}
+
+	/**
+	 * Allows a choir member one file of one voice of an excerpt shared with
+	 * the choir members, and records it like every export: the copy and the
+	 * measures are those of the link, whatever the request says.
+	 *
+	 * @param array<array-key, mixed> $data voice, mode, format, tempo, repeats (see docs/api.md)
+	 * @return array{ok: true}
+	 * @throws AccessDeniedException when the account is no choir member or the rights refuse the export
+	 * @throws InvalidInputException for an unknown, revoked or expired link or invalid request data
+	 */
+	public function authorizeForMember(string $token, array $data, string $uid): array {
+		['link' => $link, 'copy' => $copy, 'version' => $version] = $this->shared->memberLink($token, $uid);
+		$denial = $this->policy->memberPracticeAudioDenial($version, $this->rights->today($uid));
+		if ($denial !== null) {
+			throw new AccessDeniedException($denial);
+		}
+		$values = Input::values($data);
+		foreach (array_keys($values) as $field) {
+			if (!in_array($field, self::MEMBER_FIELDS, true)) {
+				throw new InvalidInputException('Unknown field: %s', [$field]);
+			}
+		}
+		$request = self::request(['copy_id' => $copy->getId(), 'measure_from' => (string)$link->getMeasureFrom(),
+			'measure_to' => (string)$link->getMeasureTo(), 'all_voices' => false] + $values);
+		$this->record($version->getId(), $copy->getShelfmark(), $request, $uid);
+		return ['ok' => true];
+	}
+
+	/**
+	 * Records an allowed export in the audit log.
+	 *
+	 * @param array{copy_id: int, measure_from: string, measure_to: string, voice: ?string, mode: string, format: string, all_voices: bool, tempo: int, repeats: bool} $request
+	 */
+	private function record(int $versionId, string $shelfmark, array $request, string $uid): void {
 		$this->audit->record($this->audit->newOperation(), $uid, Fields::VERSION, $versionId, self::ACTION, null, null, [
-			'copy' => $copy->getShelfmark(),
+			'copy' => $shelfmark,
 			'measures' => $request['measure_from'] . '-' . $request['measure_to'],
 			'voice' => $request['all_voices'] ? '*' : $request['voice'],
 			'mode' => $request['mode'],
@@ -83,7 +126,6 @@ class PracticeAudioService {
 			'tempo' => $request['tempo'],
 			'repeats' => $request['repeats'],
 		]);
-		return ['ok' => true];
 	}
 
 	/**

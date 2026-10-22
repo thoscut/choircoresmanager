@@ -23,7 +23,10 @@ namespace OCA\Notenarchiv\Service;
  * taken by a person: an import may fill them while empty but never
  * overwrites them.
  *
- * @psalm-type FieldInfo = array{type: string, label: string, write: list<string>, options?: array<string, string>, max?: int, decision?: bool}
+ * `hosts` limits a text field to an https link to one of these hosts (the
+ * links to CPDL and IMSLP shown on the public repertoire page).
+ *
+ * @psalm-type FieldInfo = array{type: string, label: string, write: list<string>, options?: array<string, string>, max?: int, decision?: bool, hosts?: list<string>}
  */
 final class Fields {
 	public const WORK = 'work';
@@ -90,6 +93,7 @@ final class Fields {
 		'practice_audio' => 'Practice audio',
 		'recording' => 'Recording',
 		'publication' => 'Publication',
+		'online_publication' => 'Online publication (public links)',
 	];
 
 	public const COPY_KIND = [
@@ -159,6 +163,7 @@ final class Fields {
 		self::WORK => [
 			'work_no' => 20, 'title' => 500, 'composer' => 500, 'repertoire_import' => 40,
 			'performances_import' => 20, 'last_performed_import' => 20, 'song_lists_import' => 1000,
+			'cpdl_url' => 500, 'imslp_url' => 500,
 		],
 		self::VERSION => [
 			'kind' => 32, 'arranger_text' => 1000, 'relation' => 1000, 'rights_status_import' => 32,
@@ -235,6 +240,12 @@ final class Fields {
 				'performances_import' => self::field(self::TYPE_TEXT, 'Documented performances', $readOnly),
 				'last_performed_import' => self::field(self::TYPE_TEXT, 'Last performed', $readOnly),
 				'song_lists_import' => self::field(self::TYPE_TEXT, 'Song lists', $readOnly),
+				// Public repertoire page (milestone 0.7): shown there only while a
+				// version of the work is confirmed public domain (CatalogService
+				// refuses it otherwise); links only, nothing is loaded from there
+				'public_repertoire' => self::field(self::TYPE_BOOLEAN, 'On the public repertoire page', $librarian),
+				'cpdl_url' => self::field(self::TYPE_TEXT, 'Link to CPDL', $librarian) + ['hosts' => ['cpdl.org', 'www.cpdl.org']],
+				'imslp_url' => self::field(self::TYPE_TEXT, 'Link to IMSLP', $librarian) + ['hosts' => ['imslp.org', 'www.imslp.org']],
 			],
 			self::VERSION => [
 				'kind' => self::field(self::TYPE_CHOICE, 'Kind of version', $librarian, self::VERSION_KIND),

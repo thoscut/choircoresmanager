@@ -47,7 +47,12 @@ class AuditLog {
 		$entry->setTime($this->time->getTime());
 		$entry->setUserId($uid);
 		$entry->setUserName($uid === null ? null : $this->userManager->getDisplayName($uid));
-		$entry->setRoles($uid === null ? null : implode(',', $this->roles->rolesOf($uid)));
+		$roles = $uid === null ? [] : $this->roles->rolesOf($uid);
+		if ($uid !== null && $roles === [] && $this->roles->isMember($uid)) {
+			// A choir member (practice audio of a shared excerpt)
+			$roles = [Roles::MEMBER];
+		}
+		$entry->setRoles($uid === null ? null : implode(',', $roles));
 		$entry->setObjectType($objectType);
 		$entry->setObjectId($objectId);
 		$entry->setAction($action);

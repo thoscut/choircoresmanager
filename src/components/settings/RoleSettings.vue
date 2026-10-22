@@ -57,6 +57,8 @@ function roleDescription(role: string): string {
 		return t('notenarchiv', 'Tools and transcription rounds: proposals only.')
 	case 'reader':
 		return t('notenarchiv', 'Reads everything, including the audit log.')
+	case 'member':
+		return t('notenarchiv', 'Sees only the excerpts shared with choir members, while the module "Links for choir members" is on; no access to the catalog.')
 	default:
 		return ''
 	}

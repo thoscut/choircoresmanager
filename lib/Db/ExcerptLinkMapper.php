@@ -48,6 +48,21 @@ class ExcerptLinkMapper extends QBMapper {
 	}
 
 	/**
+	 * Links of one circle that are not revoked, newest first; expired ones
+	 * are left to the caller (the day depends on the time zone).
+	 *
+	 * @return list<ExcerptLink>
+	 */
+	public function findUnrevokedByCircle(string $circle): array {
+		$qb = $this->db->getQueryBuilder();
+		$qb->select('*')->from($this->getTableName())
+			->where($qb->expr()->eq('circle', $qb->createNamedParameter($circle)))
+			->andWhere($qb->expr()->isNull('revoked'))
+			->orderBy('id', 'DESC');
+		return $this->findEntities($qb);
+	}
+
+	/**
 	 * Counts a call without recording who made it.
 	 */
 	public function countHit(int $id): void {

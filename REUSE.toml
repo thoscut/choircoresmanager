@@ -60,3 +60,11 @@ path = ["tools/demo/catalog.json", "tools/demo/scores/**", "tools/demo/reports/*
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2026 Thomas Scheel and Notenarchiv contributors"
 SPDX-License-Identifier = "CC0-1.0"
+
+# Demo scores built from tools/demo (node tools/demo/build.mjs) as fixtures of
+# the unit tests, dedicated to the public domain like the demo data
+[[annotations]]
+path = ["tests/fixtures/demo/**"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Thomas Scheel and Notenarchiv contributors"
+SPDX-License-Identifier = "CC0-1.0"

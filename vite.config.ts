@@ -24,6 +24,10 @@ export default process.env.VITEST
 			// Administration → Music archive: only the settings, without the
 			// catalog and the score viewer
 			'admin-settings': resolve(join('src', 'adminSettings.ts')),
+			// Page "Shared with me" for choir members (milestone 0.7: excerpts only, no catalog)
+			member: resolve(join('src', 'member.ts')),
+			// Page of a public link (milestone 0.7: one excerpt, no further requests)
+			public: resolve(join('src', 'public.ts')),
 		},
 		{
 			createEmptyCSSEntryPoints: true,

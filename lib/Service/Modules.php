@@ -46,13 +46,22 @@ class Modules {
 	/** The interface for agents (OCS API v1, milestone 0.6; see docs/api-v1.md) */
 	public const AGENT_API = 'agent_api';
 
+	/** Links for choir members and their practice audio, public links and the public repertoire page (milestone 0.7) */
+	public const MEMBER_LINKS = 'member_links';
+	public const MEMBER_PRACTICE_AUDIO = 'member_practice_audio';
+	public const PUBLIC_LINKS = 'public_links';
+	public const PUBLIC_REPERTOIRE = 'public_repertoire';
+
 	/**
 	 * Modules that no preset switches on or off; only their own switch
 	 * changes them. The interface for agents is an access path for tools,
 	 * not a function for people: the administration switches it on on
-	 * purpose, and a preset chosen later neither opens nor closes it.
+	 * purpose, and a preset chosen later neither opens nor closes it. The
+	 * same holds for every function that opens the archive beyond its roles
+	 * (choir members, the public): the choir decides on it, then the
+	 * administration switches it on.
 	 */
-	public const OUTSIDE_PRESETS = [self::AGENT_API];
+	public const OUTSIDE_PRESETS = [self::AGENT_API, self::MEMBER_LINKS, self::MEMBER_PRACTICE_AUDIO, self::PUBLIC_LINKS, self::PUBLIC_REPERTOIRE];
 	/** The action "Open in music archive" in the Files app */
 	public const FILES_INTEGRATION = 'files_integration';
 
@@ -75,6 +84,7 @@ class Modules {
 		'maintenance' => 'Maintaining the catalog',
 		'overview' => 'Overview',
 		'notifications' => 'Notifications',
+		'sharing' => 'Sharing beyond the archive roles',
 		'interfaces' => 'Interfaces',
 		'planned' => 'Planned',
 	];
@@ -95,7 +105,7 @@ class Modules {
 	public const PRESET_LABELS = [
 		self::SIMPLE => ['label' => 'Simple', 'description' => 'Catalog, files and the score view with playback.'],
 		self::STANDARD => ['label' => 'Standard', 'description' => 'For most choirs: everything except practice audio files, the print station, the proposals inbox, checksums and statistics.'],
-		self::COMPLETE => ['label' => 'Complete', 'description' => 'All functions. The interface for agents is switched on separately.'],
+		self::COMPLETE => ['label' => 'Complete', 'description' => 'All functions. The interface for agents and the sharing with choir members and the public are switched on separately.'],
 	];
 
 	/**
@@ -229,6 +239,18 @@ class Modules {
 		'notify_correction_received' => ['group' => 'notifications', 'requires' => ['notifications', 'score_viewer'], 'simple' => true, 'standard' => true, 'planned' => false,
 			'label' => 'Correction received',
 			'description' => 'To the catalog librarian: a corrected MusicXML file was saved in the app, or a new transcription has done review points.'],
+		self::MEMBER_LINKS => ['group' => 'sharing', 'requires' => ['excerpt_links', 'playback', 'releases'], 'simple' => false, 'standard' => false, 'planned' => false,
+			'label' => 'Links for choir members',
+			'description' => 'The role "Choir members" sees only the excerpts shared with it: measures with the voice emphasised, to view and play. Only for versions released for the singers\' portal; the server sends only the measures of the excerpt. Not part of any preset.'],
+		self::MEMBER_PRACTICE_AUDIO => ['group' => 'sharing', 'requires' => [self::MEMBER_LINKS, 'practice_audio'], 'simple' => false, 'standard' => false, 'planned' => false,
+			'label' => 'Practice audio for choir members',
+			'description' => 'Choir members make a WAV or MIDI file of one voice of a shared excerpt, where the rights allow practice audio files. Every export is recorded. Not part of any preset.'],
+		self::PUBLIC_LINKS => ['group' => 'sharing', 'requires' => ['excerpt_links', 'playback', 'publication'], 'simple' => false, 'standard' => false, 'planned' => false,
+			'label' => 'Public links',
+			'description' => 'Links that show and play an excerpt without login, for versions released for publication that are confirmed public domain or licensed for online publication. They expire, can be revoked and count their calls; no downloads, no account names. Not part of any preset.'],
+		self::PUBLIC_REPERTOIRE => ['group' => 'sharing', 'requires' => ['rights'], 'simple' => false, 'standard' => false, 'planned' => false,
+			'label' => 'Public repertoire page',
+			'description' => 'A public page with the works the catalog librarian chooses among those with a version confirmed as public domain: title, composer and lyricist, life dates, scoring and links to CPDL and IMSLP. Not part of any preset.'],
 		self::AGENT_API => ['group' => 'interfaces', 'requires' => [], 'simple' => false, 'standard' => false, 'planned' => false,
 			'label' => 'Interface for agents',
 			'description' => 'A fixed, versioned interface (OCS API v1) for agents and tools that sign in with an app password of an account of their own. They can do only what the roles of that account allow and never take decisions: they read, propose changes and ask or answer questions. Not part of any preset.'],

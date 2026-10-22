@@ -225,4 +225,86 @@ final class RightsPolicyTest extends TestCase {
 		self::assertNull($policy->playDenial($version, self::UID));
 		self::assertSame(self::UNCONFIRMED_EXPORT, $policy->practiceAudioDenial($version, self::UID));
 	}
+
+	// ---- links for choir members and public links (milestone 0.7) ----
+
+	private const MEMBER_PRESERVATION = 'Internal preservation copy: it is never shared with choir members.';
+	private const MEMBER_UNCONFIRMED = 'Public domain is not confirmed yet. The catalog librarian confirms it on the tab "Rights"; then the version can be shared with choir members.';
+	private const MEMBER_NOT_RELEASED = 'Not released for choir members: the version needs confirmed public domain or a valid license for the singers\' portal. The catalog librarian records it on the tab "Rights".';
+	private const PUBLIC_PRESERVATION = 'Internal preservation copy: it is never published.';
+	private const PUBLIC_NOT_RELEASED = 'Not released for publication. The catalog librarian sets the publication status of the version to "Released for publication".';
+	private const PUBLIC_UNCONFIRMED = 'Public domain is not confirmed yet. The catalog librarian confirms it on the tab "Rights"; then a public link can be made.';
+	private const PUBLIC_NO_LICENSE = 'A public link needs confirmed public domain or a valid license for online publication. The catalog librarian records it on the tab "Rights".';
+
+	/**
+	 * @return iterable<string, array{0: array<string, mixed>, 1: list<array{0: string, 1?: ?string, 2?: ?string}>, 2: ?string, 3: ?string, 4: ?string}>
+	 */
+	public static function memberCases(): iterable {
+		$confirmed = ['rights_status' => 'public_domain', 'confirmed_at' => '2026-01-01'];
+		// version values, licenses [uses, from, until], expected denial of viewing, playback, practice audio
+		yield 'confirmed public domain' => [$confirmed, [], null, null, null];
+		yield 'unconfirmed public domain' => [['rights_status' => 'public_domain'], [], self::MEMBER_UNCONFIRMED, self::MEMBER_UNCONFIRMED, self::MEMBER_UNCONFIRMED];
+		yield 'unconfirmed public domain, portal license' => [['rights_status' => 'public_domain'], [['portal']], null, null, self::UNCONFIRMED_EXPORT];
+		yield 'unconfirmed public domain, portal and practice audio' => [['rights_status' => 'public_domain'], [['portal,practice_audio']], null, null, null];
+		yield 'protected, portal license' => [['rights_status' => 'protected'], [['portal']], null, self::PROTECTED_PLAY, self::PROTECTED_PLAY];
+		yield 'protected, portal and practice audio' => [['rights_status' => 'protected'], [['portal'], ['practice_audio']], null, null, null];
+		yield 'protected, practice audio only' => [['rights_status' => 'protected'], [['practice_audio']], self::MEMBER_NOT_RELEASED, self::MEMBER_NOT_RELEASED, self::MEMBER_NOT_RELEASED];
+		yield 'protected, portal license ended' => [['rights_status' => 'protected'], [['portal', null, '2026-10-21']], self::MEMBER_NOT_RELEASED, self::MEMBER_NOT_RELEASED, self::MEMBER_NOT_RELEASED];
+		yield 'open without license' => [['rights_status' => 'open'], [], self::MEMBER_NOT_RELEASED, self::MEMBER_NOT_RELEASED, self::MEMBER_NOT_RELEASED];
+		yield 'preservation copy' => [$confirmed + ['preservation_copy' => true], [['portal,practice_audio']], self::MEMBER_PRESERVATION, self::MEMBER_PRESERVATION, self::MEMBER_PRESERVATION];
+	}
+
+	/**
+	 * Links for choir members need the release for the singers' portal;
+	 * playback and practice audio follow the rules of the archive. The
+	 * account plays no part: the link is for the circle.
+	 *
+	 * @param array<string, mixed> $values
+	 * @param list<array{0: string, 1?: ?string, 2?: ?string}> $licenseSpecs
+	 */
+	#[DataProvider('memberCases')]
+	public function testLinksForChoirMembers(array $values, array $licenseSpecs, ?string $view, ?string $play, ?string $practiceAudio): void {
+		$licenses = array_map(fn (array $spec): License => self::license(...$spec), $licenseSpecs);
+		$policy = $this->practicePolicy([], $licenses);
+		$version = self::version($values);
+		self::assertSame($view, $policy->memberViewDenial($version, self::TODAY));
+		self::assertSame($play, $policy->memberPlayDenial($version, self::TODAY));
+		self::assertSame($practiceAudio, $policy->memberPracticeAudioDenial($version, self::TODAY));
+	}
+
+	/**
+	 * @return iterable<string, array{0: array<string, mixed>, 1: list<array{0: string, 1?: ?string, 2?: ?string}>, 2: ?string, 3: ?string}>
+	 */
+	public static function publicCases(): iterable {
+		$free = ['publication_status' => 'free'];
+		$confirmed = ['rights_status' => 'public_domain', 'confirmed_at' => '2026-01-01'];
+		// version values, licenses, expected denial of viewing and playback
+		yield 'confirmed public domain, released' => [$confirmed + $free, [], null, null];
+		yield 'confirmed public domain, not released' => [$confirmed, [], self::PUBLIC_NOT_RELEASED, self::PUBLIC_NOT_RELEASED];
+		yield 'confirmed public domain, blocked' => [$confirmed + ['publication_status' => 'blocked'], [], self::PUBLIC_NOT_RELEASED, self::PUBLIC_NOT_RELEASED];
+		yield 'unconfirmed public domain, released' => [['rights_status' => 'public_domain'] + $free, [], self::PUBLIC_UNCONFIRMED, self::PUBLIC_UNCONFIRMED];
+		yield 'unconfirmed public domain, online license' => [['rights_status' => 'public_domain'] + $free, [['online_publication']], null, null];
+		yield 'protected, online license' => [['rights_status' => 'protected'] + $free, [['online_publication']], null, self::PROTECTED_PLAY];
+		yield 'protected, online and practice audio' => [['rights_status' => 'protected'] + $free, [['online_publication,practice_audio']], null, null];
+		yield 'protected, license for publication only' => [['rights_status' => 'protected'] + $free, [['publication']], self::PUBLIC_NO_LICENSE, self::PUBLIC_NO_LICENSE];
+		yield 'protected, online license ended' => [['rights_status' => 'protected'] + $free, [['online_publication', null, '2026-10-21']], self::PUBLIC_NO_LICENSE, self::PUBLIC_NO_LICENSE];
+		yield 'preservation copy' => [$confirmed + $free + ['preservation_copy' => true], [], self::PUBLIC_PRESERVATION, self::PUBLIC_PRESERVATION];
+	}
+
+	/**
+	 * Public links need the release for publication and confirmed public
+	 * domain or a license for online publication (a license for
+	 * "publication" alone is not enough).
+	 *
+	 * @param array<string, mixed> $values
+	 * @param list<array{0: string, 1?: ?string, 2?: ?string}> $licenseSpecs
+	 */
+	#[DataProvider('publicCases')]
+	public function testPublicLinks(array $values, array $licenseSpecs, ?string $view, ?string $play): void {
+		$licenses = array_map(fn (array $spec): License => self::license(...$spec), $licenseSpecs);
+		$policy = $this->practicePolicy([], $licenses);
+		$version = self::version($values);
+		self::assertSame($view, $policy->publicViewDenial($version, self::TODAY));
+		self::assertSame($play, $policy->publicPlayDenial($version, self::TODAY));
+	}
 }

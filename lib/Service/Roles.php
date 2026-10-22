@@ -27,6 +27,12 @@ use Psr\Log\LoggerInterface;
  * only write catalog data if they also hold a role. The administration can
  * give the settings (not a role) to further groups under Administration
  * privileges.
+ *
+ * The archive roles (ALL) open the music archive. Choir members (MEMBER, milestone
+ * 0.7) are no archive role: rolesOf() and hasAccess() leave them out, so every
+ * route that checks access refuses them. They only reach the page "Shared with
+ * me" and its routes (MemberController), and only while the module
+ * "member_links" is on.
  */
 class Roles {
 	/** Music librarian (catalog): works, versions, rights, import, file sync */
@@ -39,8 +45,13 @@ class Roles {
 	public const CONTRIBUTOR = 'contributor';
 	/** Board, auditors: read everything */
 	public const READER = 'reader';
+	/** Choir members: only the excerpts shared with them (module member_links); no archive role */
+	public const MEMBER = 'member';
 
+	/** The archive roles */
 	public const ALL = [self::LIBRARIAN, self::OPERATIONS, self::CONDUCTOR, self::CONTRIBUTOR, self::READER];
+	/** Roles that are given to groups in the settings: the archive roles and the choir members */
+	public const GROUP_ROLES = [...self::ALL, self::MEMBER];
 
 	public const LABELS = [
 		self::LIBRARIAN => 'Catalog (music librarian)',
@@ -48,6 +59,7 @@ class Roles {
 		self::CONDUCTOR => 'Conductor',
 		self::CONTRIBUTOR => 'Proposals (tools)',
 		self::READER => 'Read only (board, auditors)',
+		self::MEMBER => 'Choir members (shared excerpts only)',
 	];
 
 	/** @var array<string, list<string>> */
@@ -76,7 +88,7 @@ class Roles {
 	 * @param list<string> $groups
 	 */
 	public function setGroups(string $role, array $groups): void {
-		if (!in_array($role, self::ALL, true)) {
+		if (!in_array($role, self::GROUP_ROLES, true)) {
 			throw new \InvalidArgumentException('Unknown role: ' . $role);
 		}
 		$this->appConfig->setValueArray(Application::APP_ID, 'groups_' . $role, array_values(array_unique($groups)));
@@ -84,6 +96,8 @@ class Roles {
 	}
 
 	/**
+	 * The archive roles of an account (never MEMBER).
+	 *
 	 * @return list<string>
 	 */
 	public function rolesOf(string $uid): array {
@@ -102,10 +116,27 @@ class Roles {
 		return $this->cache[$uid];
 	}
 
+	/**
+	 * Whether the account belongs to a group of the choir members. This
+	 * opens nothing of the archive (see hasAccess()).
+	 */
+	public function isMember(string $uid): bool {
+		foreach ($this->groups(self::MEMBER) as $group) {
+			if ($this->groupManager->isInGroup($uid, $group)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public function isAdmin(string $uid): bool {
 		return $this->groupManager->isAdmin($uid);
 	}
 
+	/**
+	 * Whether the account may use the music archive: an archive role or admin
+	 * rights. Choir members without an archive role have no access.
+	 */
 	public function hasAccess(string $uid): bool {
 		return $this->rolesOf($uid) !== [] || $this->isAdmin($uid);
 	}

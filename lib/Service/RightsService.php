@@ -133,7 +133,11 @@ class RightsService {
 		return false;
 	}
 
-	public function today(string $uid): string {
+	/**
+	 * Today in the time zone of the account; without an account (public
+	 * pages) in the time zone of the server.
+	 */
+	public function today(?string $uid): string {
 		return $this->time->getDateTime('now', $this->timeZone->getTimeZone(false, $uid))->format('Y-m-d');
 	}
 

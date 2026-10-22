@@ -45,8 +45,24 @@ final class FieldValue {
 				if (isset($info['max']) && mb_strlen($value) > $info['max']) {
 					return '"%s" is too long.';
 				}
+				if (isset($info['hosts']) && !self::isLinkTo($value, $info['hosts'])) {
+					return '"%s" must be an https link to the page of the work on cpdl.org or imslp.org.';
+				}
 				return null;
 		}
+	}
+
+	/**
+	 * Whether a text is an https link to one of the hosts: no user name, no
+	 * port, nothing but printable characters (it ends up in a public page).
+	 *
+	 * @param list<string> $hosts
+	 */
+	public static function isLinkTo(string $value, array $hosts): bool {
+		if (preg_match('/^https:\/\/([a-z0-9.-]+)(\/[!-~]*)?$/iD', $value, $match) !== 1) {
+			return false;
+		}
+		return in_array(strtolower($match[1]), $hosts, true);
 	}
 
 	/**
