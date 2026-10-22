@@ -72,9 +72,47 @@ revoked and show when the score has changed since.
 Create a concert, add copies, order them, enter durations. Warnings show
 preservation copies, unclear rights, missing valid versions and protected
 pieces without enough originals or a license. Deadlines are reminded 10, 8
-and 6 weeks before. After the concert, **confirm what was sung** (strike what
-was left out); the repertoire figures update by themselves. The **song order**
-export contains title, composer, arranger/lyrics, publisher and duration.
+and 6 weeks before; the start page lists the concerts with a deadline now.
+After the concert, **confirm what was sung** (strike what was left out); the
+repertoire figures update by themselves. The **song order** export contains
+title, composer, arranger/lyrics, publisher and duration.
+
+A concert may have a **start and end time** (local time at the venue). If it
+does not take place, **cancel** it: it stays in the list with its programme,
+the deadline notifications stop, and the cancellation can be taken back.
+
+### Concerts in your calendar
+
+In a concert, and for all upcoming concerts in the concert list:
+
+- **Add to my calendar** puts the concert into one of your Nextcloud
+  calendars. Choose the calendar in the dialog; a message tells you what was
+  added. If the concert is already in one of your calendars (also after a
+  change or a cancellation), the entry there is updated instead of added a
+  second time; changes you made to it in the calendar are replaced. A
+  cancelled concert is marked as cancelled, but not added anew.
+- **Calendar file (.ics)** downloads the concert for any calendar program
+  (Thunderbird, Outlook, Apple, Google). Every concert keeps its identifier,
+  so most programs update the entry when you import the file again.
+- **With the preparation deadlines** adds three all-day entries 10, 8 and 6
+  weeks before (programme and valid versions, rights, concert binders). They
+  are marked "free", so they block no time. Useful for the conductor and the
+  music librarian; singers usually leave it off.
+
+A concert without a time is an all-day entry. The entries contain title,
+date, time, location, status and a link back to the concert, nothing else
+(no notes).
+
+There is no subscription link that updates by itself: a feed reachable
+without logging in would make concert data public. Add the concerts again
+after changes.
+
+## Dashboard
+
+The Nextcloud dashboard can show the widget **Music archive – due**: the same
+as the start page (concert deadlines, numbers of things to do, tasks for your
+roles), each with a link into the app. Only accounts with an archive role can
+add it.
 
 Imported performance records whose title fits several works appear under
 **Unclear programme lines**; assign each to the right copy or leave it out.

@@ -5,6 +5,8 @@ import type {
 	AccessionInput,
 	AccessionProposal,
 	AccessionResult,
+	CalendarAddResult,
+	CalendarUpdate,
 	ChecksumStatus,
 	EndingLicense,
 	ChoirEvent,
@@ -44,11 +46,13 @@ import type {
 	ShelfLabel,
 	Task,
 	TaskInput,
+	UserCalendar,
 } from './types.ts'
 
 import axios, { isAxiosError } from '@nextcloud/axios'
 import { t } from './l10n.ts'
-import { generateUrl } from '@nextcloud/router'
+import { generateRemoteUrl, generateUrl } from '@nextcloud/router'
+import { davUrl } from './calendar.ts'
 import { LEVELS } from './types.ts'
 
 const APP = 'notenarchiv'
@@ -462,6 +466,73 @@ export async function resolveEventItem(id: number, copyId: number | null): Promi
  */
 export function songOrderUrl(id: number): string {
 	return apiUrl('/events/{id}/song-order', { id })
+}
+
+/**
+ * Cancel a planned concert.
+ *
+ * @param id - event id
+ */
+export async function cancelEvent(id: number): Promise<void> {
+	await axios.post(apiUrl('/events/{id}/cancel', { id }))
+}
+
+/**
+ * Take back the cancellation of a concert (it becomes a draft again).
+ *
+ * @param id - event id
+ */
+export async function reopenEvent(id: number): Promise<void> {
+	await axios.post(apiUrl('/events/{id}/reopen', { id }))
+}
+
+// ---- concerts in the calendar ------------------------------------------------
+
+/**
+ * Download URL of the calendar file (iCalendar) of a concert, or of all
+ * upcoming concerts.
+ *
+ * @param id - event id, or null for all upcoming concerts
+ * @param deadlines - add the preparation deadlines as all-day entries
+ */
+export function calendarFileUrl(id: number | null, deadlines: boolean): string {
+	const url = id === null ? apiUrl('/events/upcoming/ics') : apiUrl('/events/{id}/ics', { id })
+	return deadlines ? url + '?deadlines=1' : url
+}
+
+/** The account's calendars that can take new entries. */
+export async function fetchCalendars(): Promise<UserCalendar[]> {
+	const { data } = await axios.get<UserCalendar[]>(apiUrl('/calendars'))
+	return list(data)
+}
+
+/**
+ * Add a concert, or all upcoming concerts, to one of the account's
+ * calendars. Entries that are already in a calendar come back as updates
+ * for writeCalendarObject().
+ *
+ * @param id - event id, or null for all upcoming concerts
+ * @param calendar - URI of the calendar
+ * @param deadlines - add the preparation deadlines as all-day entries
+ */
+export async function addToCalendar(id: number | null, calendar: string, deadlines: boolean): Promise<CalendarAddResult> {
+	const url = id === null ? apiUrl('/events/upcoming/calendar') : apiUrl('/events/{id}/calendar', { id })
+	const { data } = await axios.post<CalendarAddResult>(url, { calendar, deadlines })
+	return { ...data, updates: list<CalendarUpdate>(data.updates) }
+}
+
+/**
+ * Update an entry in the account's own calendar (CalDAV PUT, with the
+ * session of the logged-in account). Nextcloud's calendar interface for
+ * apps can only create entries, so the server leaves updates to this call.
+ *
+ * @param path - CalDAV path below remote.php/dav, as sent by the server
+ * @param ics - new content
+ */
+export async function writeCalendarObject(path: string, ics: string): Promise<void> {
+	await axios.put(davUrl(generateRemoteUrl('dav'), path), ics, {
+		headers: { 'Content-Type': 'text/calendar; charset=utf-8' },
+	})
 }
 
 export async function fetchRepertoireThresholds(): Promise<RepertoireThresholds> {

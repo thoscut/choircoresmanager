@@ -3,8 +3,8 @@
 # installed Nextcloud with the app and the public demo data (tools/demo):
 #   bash tools/ci/integration-demo.sh <nextcloud-root>
 #
-# Requirements: Nextcloud installed, the app and the notifications app
-# enabled, the catalog empty (the script refuses to run otherwise), the demo
+# Requirements: Nextcloud installed, the app, the notifications app and the
+# dav app (calendars) enabled, the catalog empty (the script refuses to run otherwise), the demo
 # data built with `node tools/demo/build.mjs`. Run it as the user that owns
 # the Nextcloud files. The script
 #   1. creates a test account and its group,
@@ -98,7 +98,7 @@ fi
 step "0. Preconditions"
 occ status
 occ app:list --enabled > "$WORK/apps.txt"
-for app in notenarchiv notifications; do
+for app in notenarchiv notifications dav; do
 	if ! grep -q "^  - $app:" "$WORK/apps.txt"; then
 		echo "The app $app is not enabled." >&2
 		exit 2
@@ -195,6 +195,9 @@ run_test tasks_links_test 1-2
 # ambiguous programme line ("Der Mond ist aufgegangen", 1-1 or 3-1) is
 # resolved to B = 3-1.
 run_test events_test "$IMPORT/performances.csv" "$IMPORT/song-lists.csv" 2-1 3-1
+# Creates its own calendar for the test account (dav app) and a concert;
+# both are gone afterwards (rolled back).
+run_test calendar_test
 # 2-4 and 3-2 are two copies of the same print (Tischlied, edition by the
 # uncertainly identified B. Beispiel, so no "free" proposal); all persons of
 # 2-1 (Silcher, Dach, Herder) died more than 70 years ago.

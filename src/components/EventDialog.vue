@@ -2,7 +2,8 @@
 /**
  * Create or edit a concert or a song list. Song lists have a period
  * ("2025/1", "2018-Advent") instead of a date and are no proof of
- * performance.
+ * performance. A concert may have a start and an end time (local time at
+ * the venue) for calendar entries.
  */
 import type { ChoirEvent, EventInput, EventKind } from '../types.ts'
 
@@ -29,6 +30,8 @@ const emit = defineEmits<{
 const draft = reactive({
 	title: props.event?.title ?? '',
 	date: props.event?.event_date ?? '',
+	startTime: props.event?.start_time ?? '',
+	endTime: props.event?.end_time ?? '',
 	location: props.event?.location ?? '',
 	period: props.event?.period ?? '',
 	isPublic: props.event?.is_public ?? true,
@@ -52,6 +55,10 @@ async function save(): Promise<void> {
 		is_public: draft.isPublic,
 		board_agreed: draft.boardAgreed,
 		notes: draft.notes.trim() || null,
+	}
+	if (props.kind === 'concert') {
+		input.start_time = draft.startTime || null
+		input.end_time = draft.endTime || null
 	}
 	busy.value = true
 	error.value = ''
@@ -84,6 +91,13 @@ async function save(): Promise<void> {
 			<NcTextField v-else v-model="draft.location" :label="t('notenarchiv', 'Location')" />
 		</div>
 		<template v-if="kind === 'concert'">
+			<div class="event-dialog__row">
+				<DateField v-model="draft.startTime" type="time" :label="t('notenarchiv', 'Start time (optional)')" />
+				<DateField v-model="draft.endTime" type="time" :label="t('notenarchiv', 'End time (optional)')" />
+			</div>
+			<p class="action-dialog__hint">
+				{{ t('notenarchiv', 'Local time at the venue. Without a time, the concert is an all-day entry in calendars.') }}
+			</p>
 			<NcCheckboxRadioSwitch v-model="draft.isPublic" type="switch">
 				{{ t('notenarchiv', 'Public concert') }}
 			</NcCheckboxRadioSwitch>

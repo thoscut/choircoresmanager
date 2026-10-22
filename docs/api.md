@@ -20,6 +20,8 @@ Request bodies are checked strictly: unknown fields are refused with 400
 | `GET /api/backup/full` | 10 in 10 minutes |
 | `POST /api/backup/restore` | 5 in 10 minutes |
 | `GET /api/events/{id}/song-order` | 60 in 10 minutes |
+| `GET /api/events/{id}/ics`, `GET /api/events/upcoming/ics` | 60 in 10 minutes |
+| `POST /api/events/{id}/calendar`, `POST /api/events/upcoming/calendar` | 30 in 10 minutes |
 
 Files chosen by `fileId` for an import may be at most 20 MB, a backup for a
 restore at most 64 MB; larger files are refused with 400
@@ -346,7 +348,7 @@ Creating a task or a link refuses fields other than the ones listed below
 
 | Method and path | Body | Role |
 |---|---|---|
-| `GET /api/due` | – | any role; returns `{ cards: [{ key, count, label }], tasks: [...] }` |
+| `GET /api/due` | – | any role; returns `{ cards: [{ key, count, label }], tasks: [...], concerts: [{ id, title, date, stage, label }] }` |
 | `GET /api/tasks?closed=0\|1` | – | any role |
 | `POST /api/copies/{id}/tasks` | `{ task: { kind, addressee, question, page?, measure_from?, measure_to?, voice?, verse?, category?, origin?, due? } }` | librarian, conductor, operations, contributor |
 | `POST /api/tasks/{id}/answer` | `{ answer }` | the addressed role |
@@ -361,6 +363,28 @@ Start page card keys: `tasks_open`, `tasks_answered`, `ambiguous_items`,
 `licenses_expiring`, `valid_missing`. The `label` is translated, always in the
 plural; the UI shows its own label in singular or plural for the keys it knows
 (`src/dueLabels.ts`) and the server's label for new keys.
+
+`concerts` lists the concerts with a deadline now (conductor and librarian,
+like the notifications; `confirm` only for the conductor), the earliest
+first: `stage` is `10`, `8` or `6` (weeks before, the stage starts on that
+day) or `confirm` (after the date, until confirmed as sung); `label` is the
+translated task (`Fix the programme and the valid versions`, `Clarify the
+rights of all pieces`, `Prepare the concert binders`, `Confirm what was
+sung`). Planned concerts only: no imported, sung or cancelled ones.
+
+**Start parameter `?due={cardKey}`** opens the view of a start page card with
+its filters, as clicking the card does (used by the dashboard widget). Unknown
+keys open the catalog; a card of a view the roles do not include opens the
+start page.
+
+**Dashboard widget** `notenarchiv-due` (Nextcloud dashboard, API widget
+version 2, `OCA\Notenarchiv\Dashboard\DueWidget`): registered only for
+accounts with an archive role (not for admins without one). Items in the order
+of the start page: concerts (`title`, subtitle `date: label`, link
+`?event={id}`), cards (`label`, subtitle number of entries, link
+`?due={key}`), tasks (shelf mark and title, subtitle open/answered, link
+`?copy={id}&task={id}`); at most the requested number (7 by default). Button
+"more" opens the app. No personal data (no question texts, no names).
 
 Notifications: `task_new` (to the addressed role, link `?copy={id}&task={id}`)
 and `task_answered` (to the librarian).
@@ -381,8 +405,9 @@ e.g. `["2018-Advent", "2025/1"]`; empty list when none).
 **Event** (`kind`: `concert` or `song_list`)
 
 ```json
-{ "id": 3, "kind": "concert", "title": "Advent concert", "event_date": "2026-12-06", "location": "…",
-  "period": null, "status": "draft|fixed|sung", "is_public": true, "board_agreed": false,
+{ "id": 3, "kind": "concert", "title": "Advent concert", "event_date": "2026-12-06",
+  "start_time": "19:30", "end_time": "21:15", "time_zone": "Europe/Berlin", "location": "…",
+  "period": null, "status": "draft|fixed|sung|cancelled", "is_public": true, "board_agreed": false,
   "imported": false, "source": null, "notes": null, "created": 1761150000, "modified": 1761150000 }
 ```
 
@@ -391,6 +416,19 @@ performance. Imported events (`imported: true`) and sung concerts are history:
 they cannot be changed. A planned event needs a `title`: creating one without
 it, or changing it to an empty title, is refused with 400
 `Please enter a title.`.
+
+`start_time` and `end_time` (`HH:MM`, both optional, local time at the venue)
+are for concerts only and need a full `event_date`; the end must be after the
+start, an end needs a start (400 otherwise: `"%s" needs a valid time (HH:MM).`,
+`The end time must be after the start time.`, `Please enter the start time,
+too.`, `A time needs the date of the concert.`, `Only concerts have a time.`).
+`time_zone` is read-only: the server records the Nextcloud time zone of the
+account that enters or changes the time.
+
+A planned concert (draft or fixed) can be **cancelled**: status `cancelled`,
+it stays with its programme, deadline notifications are withdrawn, it cannot
+be changed (400 `This concert is cancelled. Reopen it to change it.`) until it
+is **reopened** (status `draft` again). Both are audited.
 
 **Event item**
 
@@ -411,7 +449,7 @@ valid version).
 |---|---|---|
 | `GET /api/events?kind=concert\|song_list` | – | any role (with `items` count) |
 | `GET /api/events/{id}` | – | any role |
-| `POST /api/events` | `{ kind, event: { title, event_date, location, period, is_public, board_agreed, notes } }` | conductor, librarian |
+| `POST /api/events` | `{ kind, event: { title, event_date, start_time, end_time, location, period, is_public, board_agreed, notes } }` | conductor, librarian |
 | `PATCH /api/events/{id}` | `{ event: { …changed fields } }` | conductor, librarian |
 | `POST /api/events/{id}/items` | `{ copyId }` | conductor, librarian |
 | `PATCH /api/event-items/{id}` | `{ item: { duration?, note?, encore?, struck? } }` | conductor, librarian |
@@ -419,6 +457,8 @@ valid version).
 | `POST /api/events/{id}/order` | `{ order: [itemId, …] }` | conductor, librarian |
 | `POST /api/events/{id}/fix` | – | conductor, librarian |
 | `POST /api/events/{id}/sung` | `{ struck: [itemId, …] }` | conductor, librarian; only on or after the date |
+| `POST /api/events/{id}/cancel` | – | conductor, librarian; planned concerts (draft, fixed); returns the event |
+| `POST /api/events/{id}/reopen` | – | conductor, librarian; cancelled concerts; returns the event (status `draft`) |
 | `GET /api/event-items/ambiguous` | – | any role |
 | `POST /api/event-items/{id}/resolve` | `{ copyId }` or `{ copyId: null }` (= not in the catalog) | conductor, librarian |
 | `GET /api/events/{id}/song-order` | – | download CSV (position, shelf mark, title, composer, arranger/lyrics, publisher, duration); cells starting with `=`, `+`, `-`, `@`, tab or carriage return get a leading `'` so that spreadsheet programs do not evaluate them |
@@ -433,9 +473,64 @@ imported events of the same kind; planned events are never touched.
 
 Start page card: `ambiguous_items`. Notifications: `concert_deadline` (10, 8
 and 6 weeks before, to conductor and librarian; link `?event={id}`) and
-`concert_confirm` (after the date, to the conductor). A weekly summary instead
-of single notifications is Nextcloud's own setting (personal settings →
-notifications → email).
+`concert_confirm` (after the date, to the conductor); both are withdrawn when
+the concert is cancelled. A weekly summary instead of single notifications is
+Nextcloud's own setting (personal settings → notifications → email).
+
+### Concerts in the calendar
+
+Calendar files (iCalendar, RFC 5545: CRLF, lines folded after 75 octets
+without splitting a character, TEXT escaped) and entries in the account's own
+Nextcloud calendars. Only concerts with a full date; "upcoming" means planned
+in the app (not imported), from today on (in the account's time zone),
+cancelled ones included.
+
+Each concert is one entry with a stable UID
+`notenarchiv-concert-{id}-{hash of the instance id}`: `SUMMARY` (title),
+`LOCATION`, `DESCRIPTION` (status and a link to the app), `URL`
+(`/apps/notenarchiv/?event={id}`), `STATUS` (`TENTATIVE` for drafts,
+`CONFIRMED`, `CANCELLED`), `SEQUENCE` (grows with every change), `CREATED`,
+`LAST-MODIFIED`, `DTSTAMP`. With `start_time` the times have `TZID` = the
+recorded time zone (or the account's Nextcloud time zone) and a `VTIMEZONE`
+definition, `TRANSP:OPAQUE`; without a time the entry is all-day
+(`VALUE=DATE`, end = next day, `TRANSP:TRANSPARENT`). No notes, no persons, no
+alarms, no `METHOD`.
+
+With `deadlines` the three preparation deadlines come as separate all-day
+entries (UID `notenarchiv-concert-{id}-deadline-{10|8|6}-{hash}`, summary
+"{title}: {task}", `TRANSP:TRANSPARENT`, cancelled with the concert), not as
+alarms: they stay visible in the calendar weeks ahead, work in every program
+and do not repeat the app's notifications. Imported concerts get no deadlines.
+
+| Method and path | Body | Role |
+|---|---|---|
+| `GET /api/events/{id}/ics?deadlines=0\|1` | – | any access; download `concert-{id}.ics` (`text/calendar`); 400 for song lists (`Only concerts can be added to a calendar.`) and concerts without a full date (`This concert has no date yet.`) |
+| `GET /api/events/upcoming/ics?deadlines=0\|1` | – | any access; download `concerts.ics` with `X-WR-CALNAME`; 400 `There are no upcoming concerts.` |
+| `GET /api/calendars` | – | any role; `[{ uri, name, color }]`: the account's enabled calendars that accept new entries (`OCP\Calendar\IManager`, `ICreateFromString`, writable) |
+| `POST /api/events/{id}/calendar` | `{ calendar: uri, deadlines: bool }` | any role; adds the concert to the account's calendar |
+| `POST /api/events/upcoming/calendar` | `{ calendar: uri, deadlines: bool }` | any role; adds all upcoming concerts |
+
+The two downloads are plain links (no CSRF token), read only and rate
+limited. Adding answers
+
+```json
+{ "calendar": "Personal", "concerts": 1, "created": 3, "skipped": 0, "failed": 0,
+  "updates": [{ "calendar": "Choir", "path": "calendars/anna/choir/notenarchiv-concert-3-1a2b3c4d5e6f.ics", "ics": "BEGIN:VCALENDAR…" }] }
+```
+
+An entry whose UID is not in any writable calendar of the account is created
+in the chosen one (object name `{uid}.ics`). An entry that is already in one
+of them (the chosen first) is **not created again**: Nextcloud's calendar
+interface for apps cannot change entries, so it is listed in `updates` with
+its CalDAV path below `remote.php/dav` (segments URL-encoded) and the new
+content; the UI writes it with `PUT {remote.php/dav}/{path}` (`Content-Type:
+text/calendar; charset=utf-8`) in the user's session. Entries of a cancelled
+concert that are in no calendar are not created (`skipped`); entries that
+could not be created are counted in `failed` (logged). 400 `The selected
+calendar does not exist or you cannot add entries to it.` for an unknown or
+read-only calendar; 403 without a role.
+
+There is deliberately no public subscription feed (webcal with a token).
 
 ## Maintaining the catalog (milestone 0.5)
 

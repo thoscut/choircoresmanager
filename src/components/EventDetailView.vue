@@ -3,9 +3,12 @@
  * One concert or song list: the items with version, duration, encore and
  * note, warnings per item (rights, preservation copy, valid version), the
  * total duration. Planned events can be edited and fixed; a concert is
- * confirmed as sung on or after its date. Print views: concert binder list
- * (with columns to tick off) and song list (singers' portal or paper only).
+ * confirmed as sung on or after its date, or cancelled (and reopened).
+ * A concert with a date can be added to the user's Nextcloud calendar or
+ * downloaded as calendar file. Print views: concert binder list (with
+ * columns to tick off) and song list (singers' portal or paper only).
  */
+import type { CalendarMessage } from '../calendar.ts'
 import type { EventDetail, EventItem, Entry } from '../types.ts'
 
 import {
@@ -14,6 +17,9 @@ import {
 	mdiArrowDown,
 	mdiArrowLeft,
 	mdiArrowUp,
+	mdiCalendarExportOutline,
+	mdiCalendarPlusOutline,
+	mdiCalendarRemoveOutline,
 	mdiCheckAll,
 	mdiDeleteOutline,
 	mdiDownload,
@@ -34,24 +40,29 @@ import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextArea from '@nextcloud/vue/components/NcTextArea'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import ActionDialog from './ActionDialog.vue'
+import CalendarDialog from './CalendarDialog.vue'
 import EventDialog from './EventDialog.vue'
 import {
 	addEventItem,
+	calendarFileUrl,
+	cancelEvent,
 	confirmSung,
 	errorMessage,
 	fetchEvent,
 	fixEvent,
 	removeEventItem,
+	reopenEvent,
 	reorderEventItems,
 	songOrderUrl,
 	updateEventItem,
 } from '../api.ts'
+import { isCalendarConcert, timeText } from '../calendar.ts'
 import { formatDuration, parseDuration } from '../durations.ts'
 import { focusAfterDialog, focusAfterUpdate } from '../focus.ts'
 import { formatDate, toIsoDate } from '../format.ts'
-import { eventStatusLabel } from '../labels.ts'
+import { eventStatusLabel, ROLES } from '../labels.ts'
 import { navigate } from '../navigation.ts'
-import { canPlanEvents, entries, loadEntries, loadPortalRows, openEntry, versionsOnPortal } from '../store.ts'
+import { canPlanEvents, entries, hasAnyRole, loadEntries, loadPortalRows, openEntry, versionsOnPortal } from '../store.ts'
 
 const props = defineProps<{
 	eventId: number
@@ -88,8 +99,11 @@ const items = computed(() => data.value?.items ?? [])
 const isConcert = computed(() => event.value?.kind === 'concert')
 const today = toIsoDate(new Date())
 
-/** Planned events can be changed; imported and sung ones are history. */
-const editable = computed(() => canPlanEvents.value && event.value !== null && !event.value.imported && event.value.status !== 'sung')
+/** Planned events can be changed; imported and sung ones are history, cancelled ones are reopened first. */
+const editable = computed(() => canPlanEvents.value && event.value !== null && !event.value.imported
+	&& event.value.status !== 'sung' && event.value.status !== 'cancelled')
+
+const isCancelled = computed(() => event.value?.status === 'cancelled')
 
 const canConfirmSung = computed(() => editable.value && isConcert.value
 	&& event.value?.event_date !== null && event.value?.event_date !== undefined && event.value.event_date <= today)
@@ -270,6 +284,48 @@ async function onEventSaved(): Promise<void> {
 	focusTitle()
 }
 
+const cancelling = ref(false)
+
+/** A planned concert (draft or fixed) can be cancelled. */
+const canCancel = computed(() => editable.value && isConcert.value)
+
+async function submitCancel(): Promise<void> {
+	if (await act(() => cancelEvent(props.eventId), t('notenarchiv', 'The concert has been cancelled.'))) {
+		cancelling.value = false
+		focusTitle()
+	}
+}
+
+async function reopen(): Promise<void> {
+	if (await act(() => reopenEvent(props.eventId), t('notenarchiv', 'The concert has been reopened as a draft.'))) {
+		focusTitle()
+	}
+}
+
+// ---- calendar ----
+
+/** Accounts with a role may add entries to their own calendar. */
+const canAddToCalendar = computed(() => hasAnyRole(ROLES))
+const showCalendar = computed(() => event.value !== null && isCalendarConcert(event.value))
+/** Deadlines are work of the planners; for them they are added by default. */
+const withDeadlines = ref(canPlanEvents.value)
+const calendarDialogOpen = ref(false)
+const calendarResult = ref<CalendarMessage | null>(null)
+
+/**
+ * @param message - result of adding the entries
+ */
+function onCalendarDone(message: CalendarMessage): void {
+	calendarDialogOpen.value = false
+	calendarResult.value = message
+	focusAfterDialog(() => document.getElementById('event-detail-add-to-calendar'))
+}
+
+function closeCalendarDialog(): void {
+	calendarDialogOpen.value = false
+	focusAfterDialog(() => document.getElementById('event-detail-add-to-calendar'))
+}
+
 /**
  * Focus the title of the programme: after fixing, confirming or editing the
  * button that was used is gone or the dialog has closed (WCAG 2.4.3).
@@ -349,6 +405,7 @@ const printedItems = computed(() => items.value.filter((item) => item.struck !==
 					<p class="event-detail__meta">
 						<span>{{ isConcert ? t('notenarchiv', 'Concert') : t('notenarchiv', 'Song list') }}</span>
 						<span v-if="event.event_date">{{ formatDate(event.event_date) }}</span>
+						<span v-if="timeText(event)">{{ t('notenarchiv', '{time} (local time)', { time: timeText(event) }) }}</span>
 						<span v-if="event.period">{{ event.period }}</span>
 						<span v-if="event.location">{{ event.location }}</span>
 						<span class="event-detail__status">{{ eventStatusLabel(event.status) }}</span>
@@ -362,6 +419,12 @@ const printedItems = computed(() => items.value.filter((item) => item.struck !==
 							<NcIconSvgWrapper :path="mdiLockOutline" />
 						</template>
 						{{ t('notenarchiv', 'This programme is history (performed or imported) and cannot be changed.') }}
+					</NcNoteCard>
+					<NcNoteCard v-if="isCancelled" type="warning">
+						<template #icon>
+							<NcIconSvgWrapper :path="mdiCalendarRemoveOutline" />
+						</template>
+						{{ t('notenarchiv', 'This concert is cancelled. It stays in the list with its programme; there are no more deadline notifications. Add it to your calendar again to mark the entry there as cancelled.') }}
 					</NcNoteCard>
 					<NcNoteCard v-if="error" type="error" role="alert">
 						{{ error }}
@@ -391,6 +454,15 @@ const printedItems = computed(() => items.value.filter((item) => item.struck !==
 								<NcIconSvgWrapper :path="mdiDownload" />
 							</template>
 							{{ t('notenarchiv', 'Song order (CSV)') }}
+						</NcButton>
+						<NcButton v-if="canCancel" :disabled="busy" @click="cancelling = true">
+							<template #icon>
+								<NcIconSvgWrapper :path="mdiCalendarRemoveOutline" />
+							</template>
+							{{ t('notenarchiv', 'Cancel concert') }}
+						</NcButton>
+						<NcButton v-if="isCancelled && canPlanEvents" :disabled="busy" @click="reopen">
+							{{ t('notenarchiv', 'Reopen concert') }}
 						</NcButton>
 					</div>
 					<p v-if="sungTooEarly" class="event-detail__hint">
@@ -496,6 +568,35 @@ const printedItems = computed(() => items.value.filter((item) => item.struck !==
 							– {{ n('notenarchiv', '%n piece has no duration yet', '%n pieces have no duration yet', data.missingDurations) }}
 						</template>
 					</p>
+				</section>
+
+				<section v-if="showCalendar" class="event-detail__calendar" aria-labelledby="event-detail-calendar">
+					<h3 id="event-detail-calendar">
+						{{ t('notenarchiv', 'Calendar') }}
+					</h3>
+					<NcCheckboxRadioSwitch v-if="!event.imported" v-model="withDeadlines" type="switch">
+						{{ t('notenarchiv', 'With the preparation deadlines (10, 8 and 6 weeks before)') }}
+					</NcCheckboxRadioSwitch>
+					<div class="event-detail__actions">
+						<NcButton v-if="canAddToCalendar" id="event-detail-add-to-calendar" @click="calendarDialogOpen = true">
+							<template #icon>
+								<NcIconSvgWrapper :path="mdiCalendarPlusOutline" />
+							</template>
+							{{ t('notenarchiv', 'Add to my calendar') }}
+						</NcButton>
+						<NcButton :href="calendarFileUrl(event.id, withDeadlines && !event.imported)" download>
+							<template #icon>
+								<NcIconSvgWrapper :path="mdiCalendarExportOutline" />
+							</template>
+							{{ t('notenarchiv', 'Calendar file (.ics)') }}
+						</NcButton>
+					</div>
+					<!-- Always present, so that screen readers announce the result -->
+					<div role="status" class="event-detail__calendar-status">
+						<NcNoteCard v-if="calendarResult" :type="calendarResult.type">
+							{{ calendarResult.text }}
+						</NcNoteCard>
+					</div>
 				</section>
 
 				<section class="event-detail__print-options" aria-labelledby="event-detail-print">
@@ -643,6 +744,23 @@ const printedItems = computed(() => items.value.filter((item) => item.struck !==
 			<p>{{ t('notenarchiv', 'Remove {piece} from this programme?', { piece: itemTitle(removing) }) }}</p>
 		</ActionDialog>
 
+		<CalendarDialog v-if="calendarDialogOpen && event"
+			:event-id="event.id"
+			:deadlines="withDeadlines && !event.imported"
+			@done="onCalendarDone"
+			@close="closeCalendarDialog" />
+
+		<ActionDialog v-if="cancelling"
+			:name="t('notenarchiv', 'Cancel concert')"
+			:submit-label="t('notenarchiv', 'Cancel concert')"
+			variant="error"
+			:busy="busy"
+			:error="error"
+			@submit="submitCancel"
+			@close="cancelling = false">
+			<p>{{ t('notenarchiv', 'The concert is marked as cancelled. It stays in the list with its programme, and the notifications about its deadlines stop. It can be reopened later.') }}</p>
+		</ActionDialog>
+
 		<ActionDialog v-if="fixing"
 			:name="t('notenarchiv', 'Fix programme')"
 			:submit-label="t('notenarchiv', 'Fix')"
@@ -692,6 +810,7 @@ const printedItems = computed(() => items.value.filter((item) => item.struck !==
 
 .event-detail__summary,
 .event-detail__items,
+.event-detail__calendar,
 .event-detail__print-options {
 	display: flex;
 	flex-direction: column;
@@ -734,6 +853,7 @@ const printedItems = computed(() => items.value.filter((item) => item.struck !==
 }
 
 .event-detail__items h3,
+.event-detail__calendar h3,
 .event-detail__print-options h3 {
 	margin: 0;
 	font-size: 1.2em;

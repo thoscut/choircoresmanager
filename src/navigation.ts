@@ -7,6 +7,7 @@ import type { ViewName } from './startParams.ts'
 import type { ReleaseStatus } from './types.ts'
 
 import { reactive, ref, watch } from 'vue'
+import { dueTarget } from './dueTargets.ts'
 import { buildQuery, DEFAULT_VIEW, parseStartParams } from './startParams.ts'
 import { closeEntry, filters, openEntry, resetFilters, selectedId } from './store.ts'
 
@@ -90,9 +91,35 @@ export function startNavigation(): void {
  * Open the catalog with filters, e.g. from a card of the start page.
  *
  * @param preset - filters to set after resetting all others
+ * @param options - replace: no new history entry
+ * @param options.replace - replace the history entry
  */
-export function showCatalog(preset: Partial<typeof filters> = {}): void {
+export function showCatalog(preset: Partial<typeof filters> = {}, options: { replace?: boolean } = {}): void {
 	resetFilters()
 	Object.assign(filters, preset)
-	navigate('catalog')
+	navigate('catalog', options)
+}
+
+/**
+ * Open the view a card of the start page stands for, with its filters:
+ * from the start page and from a link of the dashboard widget (`?due=`).
+ *
+ * @param key - card key from GET /api/due
+ * @param options - replace: no new history entry
+ * @param options.replace - replace the history entry
+ */
+export function openDueTarget(key: string, options: { replace?: boolean } = {}): void {
+	const target = dueTarget(key)
+	if (target.view === 'catalog') {
+		showCatalog(target.catalog ?? {}, options)
+		return
+	}
+	if (target.view === 'tasks') {
+		taskFilters.scope = 'mine'
+		taskFilters.status = target.taskStatus ?? ''
+	}
+	if (target.view === 'portal') {
+		releaseFilter.value = target.releaseStatus ?? ''
+	}
+	navigate(target.view, options)
 }

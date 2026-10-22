@@ -323,21 +323,40 @@ export interface DueCard {
 	label: string
 }
 
+/** A concert with a deadline now (start page "due"). */
+export interface DueConcert {
+	id: number
+	title: string
+	/** YYYY-MM-DD */
+	date: string
+	/** '10', '8', '6' (weeks before) or 'confirm' (after the concert) */
+	stage: string
+	/** what is due, translated by the server */
+	label: string
+}
+
 export interface DueResult {
 	cards: DueCard[]
 	tasks: Task[]
+	/** missing in answers of older app versions */
+	concerts?: DueConcert[]
 }
 
 // ---- milestone 0.4: concerts, song lists, repertoire -----------------------
 
 export type EventKind = 'concert' | 'song_list'
-export type EventStatus = 'draft' | 'fixed' | 'sung'
+export type EventStatus = 'draft' | 'fixed' | 'sung' | 'cancelled'
 
 export interface ChoirEvent {
 	id: number
 	kind: EventKind
 	title: string | null
 	event_date: string | null
+	/** HH:MM, local time at the venue (concerts only) */
+	start_time: string | null
+	end_time: string | null
+	/** time zone of the times, recorded by the server */
+	time_zone: string | null
 	location: string | null
 	period: string | null
 	status: EventStatus
@@ -356,6 +375,8 @@ export interface ChoirEvent {
 export interface EventInput {
 	title?: string | null
 	event_date?: string | null
+	start_time?: string | null
+	end_time?: string | null
 	location?: string | null
 	period?: string | null
 	is_public?: boolean
@@ -400,6 +421,41 @@ export interface EventDetail {
 	/** seconds */
 	totalDuration: number
 	missingDurations: number
+}
+
+// ---- concerts in the calendar ------------------------------------------------
+
+/** A calendar of the account that can take new entries (GET /api/calendars). */
+export interface UserCalendar {
+	uri: string
+	name: string
+	color: string | null
+}
+
+/** An entry that is already in one of the account's calendars. */
+export interface CalendarUpdate {
+	/** name of the calendar it is in */
+	calendar: string
+	/** CalDAV path below remote.php/dav, segments URL-encoded */
+	path: string
+	/** new content (iCalendar) */
+	ics: string
+}
+
+/** Answer of POST /api/events/{id}/calendar and /api/events/upcoming/calendar. */
+export interface CalendarAddResult {
+	/** name of the chosen calendar */
+	calendar: string
+	/** number of concerts considered */
+	concerts: number
+	/** entries created in the chosen calendar */
+	created: number
+	/** entries to update with a CalDAV PUT by the browser */
+	updates: CalendarUpdate[]
+	/** entries of cancelled concerts that are in no calendar (not added) */
+	skipped: number
+	/** entries that could not be created */
+	failed: number
 }
 
 export interface RepertoireThresholds {

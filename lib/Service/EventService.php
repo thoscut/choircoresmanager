@@ -18,6 +18,7 @@ use OCA\Notenarchiv\Db\WorkVersionMapper;
 use OCA\Notenarchiv\Exception\InvalidInputException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\IDateTimeZone;
 use OCP\IDBConnection;
 
 /**
@@ -27,6 +28,11 @@ use OCP\IDBConnection;
  * concert goes draft → fixed → sung. Confirming "sung" (with struck pieces
  * and encores) creates the documented performances; the repertoire figures are
  * derived from them. Imported programmes are history and cannot be edited.
+ * A planned concert can be cancelled and reopened; nothing is deleted.
+ *
+ * A concert may have a start and an end time (local time at the venue). The
+ * Nextcloud time zone of the account that enters or changes the time is
+ * recorded with it, so that calendar entries show the right hour everywhere.
  *
  * For each item the rights situation is checked and shown as warnings; the
  * app warns, people decide.
@@ -35,7 +41,7 @@ use OCP\IDBConnection;
  */
 class EventService {
 	private const PLANNERS = [Roles::CONDUCTOR, Roles::LIBRARIAN];
-	private const EVENT_FIELDS = ['title', 'event_date', 'location', 'period', 'is_public', 'board_agreed', 'notes'];
+	private const EVENT_FIELDS = ['title', 'event_date', 'start_time', 'end_time', 'location', 'period', 'is_public', 'board_agreed', 'notes'];
 	private const ITEM_FIELDS = ['duration', 'note', 'encore', 'struck'];
 
 	public function __construct(
@@ -50,6 +56,7 @@ class EventService {
 		private AuditLog $audit,
 		private Roles $roles,
 		private ITimeFactory $time,
+		private IDateTimeZone $timeZone,
 	) {
 	}
 
@@ -70,6 +77,7 @@ class EventService {
 		$event->setModified($this->time->getTime());
 		$this->assign($event, $data);
 		self::requireTitle($event);
+		$this->checkTime($event, true, $uid);
 		$event = $this->events->insert($event);
 		$this->audit->record($this->audit->newOperation(), $uid, 'event', $event->getId(), 'created', 'title', null, $event->getTitle());
 		return $event;
@@ -83,6 +91,7 @@ class EventService {
 		$before = $event->jsonSerialize();
 		$this->assign($event, $data);
 		self::requireTitle($event);
+		$this->checkTime($event, $before['start_time'] !== $event->getStartTime() || $before['end_time'] !== $event->getEndTime(), $uid);
 		$operation = $this->audit->newOperation();
 		foreach (self::EVENT_FIELDS as $field) {
 			if ($before[$field] !== $event->getValue($field)) {
@@ -171,6 +180,44 @@ class EventService {
 		$event->setModified($this->time->getTime());
 		$this->events->update($event);
 		$this->audit->record($this->audit->newOperation(), $uid, 'event', $eventId, 'fixed', 'status', 'draft', 'fixed');
+	}
+
+	/**
+	 * Cancels a planned concert. It stays in the list with its programme;
+	 * notifications about its deadlines are withdrawn and calendar entries
+	 * can be updated to "cancelled".
+	 */
+	public function cancel(int $eventId, string $uid): Event {
+		$event = $this->editable($eventId, $uid);
+		if ($event->getKind() !== Event::CONCERT) {
+			throw new InvalidInputException('Only concerts can be cancelled.');
+		}
+		$previous = $event->getStatus();
+		$event->setStatus(Event::CANCELLED);
+		$event->setModified($this->time->getTime());
+		$event = $this->events->update($event);
+		$this->audit->record($this->audit->newOperation(), $uid, 'event', $eventId, 'cancelled', 'status', $previous, Event::CANCELLED);
+		return $event;
+	}
+
+	/**
+	 * Takes back the cancellation: the concert becomes a draft again.
+	 */
+	public function reopen(int $eventId, string $uid): Event {
+		$this->roles->requireRole($uid, self::PLANNERS);
+		try {
+			$event = $this->events->find($eventId);
+		} catch (DoesNotExistException) {
+			throw new InvalidInputException('Not found.');
+		}
+		if ($event->getStatus() !== Event::CANCELLED) {
+			throw new InvalidInputException('Only a cancelled concert can be reopened.');
+		}
+		$event->setStatus('draft');
+		$event->setModified($this->time->getTime());
+		$event = $this->events->update($event);
+		$this->audit->record($this->audit->newOperation(), $uid, 'event', $eventId, 'reopened', 'status', Event::CANCELLED, 'draft');
+		return $event;
 	}
 
 	/**
@@ -371,6 +418,9 @@ class EventService {
 		if ($event->getImported() === true || $event->getStatus() === 'sung') {
 			throw new InvalidInputException('Performed or imported programmes are history and cannot be changed.');
 		}
+		if ($event->getStatus() === Event::CANCELLED) {
+			throw new InvalidInputException('This concert is cancelled. Reopen it to change it.');
+		}
 		return $event;
 	}
 
@@ -390,6 +440,9 @@ class EventService {
 			if ($field === 'event_date' && $text !== null && !FieldValue::isDate($text)) {
 				throw new InvalidInputException('"%s" needs a valid date (YYYY-MM-DD).', ['Date']);
 			}
+			if (($field === 'start_time' || $field === 'end_time') && $text !== null && preg_match('/^([01]\d|2[0-3]):[0-5]\d$/', $text) !== 1) {
+				throw new InvalidInputException('"%s" needs a valid time (HH:MM).', [$field === 'start_time' ? 'Start time' : 'End time']);
+			}
 			if (in_array($field, ['title', 'location', 'period'], true) && $text !== null && mb_strlen($text) > ($field === 'period' ? 32 : 500)) {
 				throw new InvalidInputException('"%s" is too long.', [$field]);
 			}
@@ -403,6 +456,36 @@ class EventService {
 	private static function requireTitle(Event $event): void {
 		if (trim($event->getTitle() ?? '') === '') {
 			throw new InvalidInputException('Please enter a title.');
+		}
+	}
+
+	/**
+	 * Checks start and end time and records the time zone they refer to:
+	 * the Nextcloud time zone of the account that entered or changed them.
+	 *
+	 * @param bool $changed whether the time was entered or changed now
+	 */
+	private function checkTime(Event $event, bool $changed, string $uid): void {
+		$start = $event->getStartTime();
+		$end = $event->getEndTime();
+		if ($start === null && $end === null) {
+			$event->setTimeZone(null);
+			return;
+		}
+		if ($event->getKind() !== Event::CONCERT) {
+			throw new InvalidInputException('Only concerts have a time.');
+		}
+		if ($start === null) {
+			throw new InvalidInputException('Please enter the start time, too.');
+		}
+		if ($end !== null && $end <= $start) {
+			throw new InvalidInputException('The end time must be after the start time.');
+		}
+		if (!FieldValue::isDate((string)$event->getEventDate())) {
+			throw new InvalidInputException('A time needs the date of the concert.');
+		}
+		if ($changed || $event->getTimeZone() === null) {
+			$event->setTimeZone($this->timeZone->getTimeZone(false, $uid)->getName());
 		}
 	}
 

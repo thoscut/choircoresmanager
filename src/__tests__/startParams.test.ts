@@ -5,7 +5,7 @@ const TOKEN = 'abcdefghijklmnopqrstuvwxyz012345'
 
 describe('parseStartParams', () => {
 	it('reads copy and task of a task notification', () => {
-		expect(parseStartParams('?copy=35&task=4')).toEqual({ view: null, copyId: 35, taskId: 4, eventId: null, linkToken: null })
+		expect(parseStartParams('?copy=35&task=4')).toEqual({ view: null, copyId: 35, taskId: 4, eventId: null, linkToken: null, dueKey: null })
 	})
 
 	it('reads the proposals view', () => {
@@ -36,12 +36,24 @@ describe('parseStartParams', () => {
 
 	it('ignores invalid numbers and unknown views', () => {
 		expect(parseStartParams('?copy=abc&task=-1&event=0&view=nonsense')).toEqual({
-			view: null, copyId: null, taskId: null, eventId: null, linkToken: null,
+			view: null, copyId: null, taskId: null, eventId: null, linkToken: null, dueKey: null,
 		})
 	})
 
+	it('opens the view of a start page card for ?due= (dashboard widget)', () => {
+		expect(parseStartParams('?due=tasks_open')).toMatchObject({ view: 'tasks', dueKey: 'tasks_open' })
+		expect(parseStartParams('?due=confirm_current')).toMatchObject({ view: 'catalog', dueKey: 'confirm_current' })
+		expect(parseStartParams('?due=proposals&view=tasks')).toMatchObject({ view: 'proposals', dueKey: 'proposals' })
+	})
+
+	it('ignores invalid card keys and lets ?event= win', () => {
+		expect(parseStartParams('?due=Tasks-Open')).toMatchObject({ view: null, dueKey: null })
+		expect(parseStartParams(`?due=${'a'.repeat(41)}`).dueKey).toBeNull()
+		expect(parseStartParams('?due=tasks_open&event=4')).toMatchObject({ view: 'event', eventId: 4, dueKey: null })
+	})
+
 	it('treats an empty query as nothing', () => {
-		expect(parseStartParams('')).toEqual({ view: null, copyId: null, taskId: null, eventId: null, linkToken: null })
+		expect(parseStartParams('')).toEqual({ view: null, copyId: null, taskId: null, eventId: null, linkToken: null, dueKey: null })
 	})
 })
 

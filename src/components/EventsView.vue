@@ -2,11 +2,13 @@
 /**
  * List of concerts or song lists. Imported and sung concerts are history;
  * planned events can be created and edited by the conductor and the
- * catalog role.
+ * catalog role. The upcoming concerts can be added to the user's Nextcloud
+ * calendar or downloaded as calendar file.
  */
+import type { CalendarMessage } from '../calendar.ts'
 import type { ChoirEvent, EventKind } from '../types.ts'
 
-import { mdiAlertCircleOutline, mdiCalendarBlankOutline, mdiPlus } from '@mdi/js'
+import { mdiAlertCircleOutline, mdiCalendarBlankOutline, mdiCalendarExportOutline, mdiCalendarPlusOutline, mdiPlus } from '@mdi/js'
 import { n, t } from '../l10n.ts'
 import { computed, onMounted, ref, watch } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -14,14 +16,17 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwit
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
+import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
+import CalendarDialog from './CalendarDialog.vue'
 import EventDialog from './EventDialog.vue'
 import ViewHeader from './ViewHeader.vue'
-import { errorMessage, fetchEvents } from '../api.ts'
-import { focusWhenPresent } from '../focus.ts'
-import { formatDate } from '../format.ts'
-import { eventStatusLabel } from '../labels.ts'
+import { calendarFileUrl, errorMessage, fetchEvents } from '../api.ts'
+import { timeText, upcomingConcerts } from '../calendar.ts'
+import { focusAfterDialog, focusWhenPresent } from '../focus.ts'
+import { formatDate, toIsoDate } from '../format.ts'
+import { eventStatusLabel, ROLES } from '../labels.ts'
 import { navigate } from '../navigation.ts'
-import { canPlanEvents } from '../store.ts'
+import { canPlanEvents, hasAnyRole } from '../store.ts'
 
 const props = defineProps<{
 	kind: EventKind
@@ -67,9 +72,35 @@ const shown = computed(() => [...events.value]
  */
 function when(event: ChoirEvent): string {
 	if (event.event_date) {
-		return formatDate(event.event_date)
+		const time = timeText(event)
+		return time ? `${formatDate(event.event_date)}, ${time}` : formatDate(event.event_date)
 	}
 	return event.period ?? '–'
+}
+
+// ---- calendar ----
+
+/** Concerts from today on that are planned in the app. */
+const upcoming = computed(() => upcomingConcerts(events.value, toIsoDate(new Date())))
+/** Accounts with a role may add entries to their own calendar. */
+const canAddToCalendar = computed(() => hasAnyRole(ROLES))
+/** Deadlines are work of the planners; for them they are added by default. */
+const withDeadlines = ref(canPlanEvents.value)
+const calendarDialogOpen = ref(false)
+const calendarResult = ref<CalendarMessage | null>(null)
+
+/**
+ * @param message - result of adding the entries
+ */
+function onCalendarDone(message: CalendarMessage): void {
+	calendarDialogOpen.value = false
+	calendarResult.value = message
+	focusAfterDialog(() => document.getElementById('events-add-to-calendar'))
+}
+
+function closeCalendarDialog(): void {
+	calendarDialogOpen.value = false
+	focusAfterDialog(() => document.getElementById('events-add-to-calendar'))
 }
 
 /**
@@ -108,6 +139,37 @@ function onCreated(event: ChoirEvent): void {
 				{{ t('notenarchiv', 'Show imported history') }}
 			</NcCheckboxRadioSwitch>
 		</div>
+
+		<section v-if="isConcert && upcoming.length > 0"
+			class="events-view__calendar no-print"
+			aria-labelledby="events-calendar-heading">
+			<h3 id="events-calendar-heading">
+				{{ n('notenarchiv', 'Calendar: %n upcoming concert', 'Calendar: %n upcoming concerts', upcoming.length) }}
+			</h3>
+			<NcCheckboxRadioSwitch v-model="withDeadlines" type="switch">
+				{{ t('notenarchiv', 'With the preparation deadlines (10, 8 and 6 weeks before)') }}
+			</NcCheckboxRadioSwitch>
+			<div class="events-view__calendar-actions">
+				<NcButton v-if="canAddToCalendar" id="events-add-to-calendar" @click="calendarDialogOpen = true">
+					<template #icon>
+						<NcIconSvgWrapper :path="mdiCalendarPlusOutline" />
+					</template>
+					{{ t('notenarchiv', 'Add upcoming concerts to my calendar') }}
+				</NcButton>
+				<NcButton :href="calendarFileUrl(null, withDeadlines)" download>
+					<template #icon>
+						<NcIconSvgWrapper :path="mdiCalendarExportOutline" />
+					</template>
+					{{ t('notenarchiv', 'Calendar file of the upcoming concerts (.ics)') }}
+				</NcButton>
+			</div>
+			<!-- Always present, so that screen readers announce the result -->
+			<div role="status">
+				<NcNoteCard v-if="calendarResult" :type="calendarResult.type">
+					{{ calendarResult.text }}
+				</NcNoteCard>
+			</div>
+		</section>
 
 		<div class="events-view__content">
 			<NcEmptyContent v-if="!loaded && loading" :name="t('notenarchiv', 'Loading …')">
@@ -184,6 +246,12 @@ function onCreated(event: ChoirEvent): void {
 			:kind="kind"
 			@saved="onCreated"
 			@close="creating = false" />
+
+		<CalendarDialog v-if="calendarDialogOpen"
+			:event-id="null"
+			:deadlines="withDeadlines"
+			@done="onCalendarDone"
+			@close="closeCalendarDialog" />
 	</div>
 </template>
 
@@ -194,6 +262,25 @@ function onCreated(event: ChoirEvent): void {
 
 .events-view__content {
 	padding: calc(3 * var(--default-grid-baseline));
+}
+
+.events-view__calendar {
+	display: flex;
+	flex-direction: column;
+	gap: calc(2 * var(--default-grid-baseline));
+	padding: 0 calc(3 * var(--default-grid-baseline));
+}
+
+.events-view__calendar h3 {
+	margin: 0;
+	font-size: 1.1em;
+	font-weight: bold;
+}
+
+.events-view__calendar-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--default-grid-baseline);
 }
 
 .events-view__table {
