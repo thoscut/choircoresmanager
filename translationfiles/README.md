@@ -5,7 +5,7 @@ This directory contains translation files in gettext format.
 ## Directory Structure
 
 - `templates/` - Contains the `.pot` template file with all translatable strings
-- `de/` - Contains German translations (`.po` file)
+- `de/`, `es/`, `fr/`, `it/`, `nl/`, `pl/` - Contain the German, Spanish, French, Italian, Dutch and Polish translations (`.po` files)
 
 ## Workflow
 

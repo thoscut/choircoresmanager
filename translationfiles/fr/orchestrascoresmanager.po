@@ -1,0 +1,1413 @@
+# French translations for Nextcloud package.
+# This file is distributed under the same license as the Nextcloud package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Nextcloud 3.14159\n"
+"Report-Msgid-Bugs-To: translations\\@example.com\n"
+"POT-Creation-Date: 2026-10-21 23:53+0000\n"
+"PO-Revision-Date: 2026-10-21 20:30+0000\n"
+"Last-Translator: Claude Code\n"
+"Language-Team: none\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "Insufficient permissions"
+msgstr "Autorisations insuffisantes"
+
+msgid "Folder collection not found"
+msgstr "Collection de classeurs introuvable"
+
+msgid "No active version exists for this folder collection"
+msgstr "Aucune version active n'existe pour cette collection de classeurs"
+
+msgid "Version does not belong to this folder collection"
+msgstr "La version n'appartient pas à cette collection de classeurs"
+
+msgid "Folder collection version not found"
+msgstr "Version de la collection de classeurs introuvable"
+
+msgid "Invalid collection type. Must be \"alphabetical\" or \"indexed\"."
+msgstr "Type de collection non valide. Doit être \"alphabetical\" ou \"indexed\"."
+
+msgid "Collection type cannot be changed after creation."
+msgstr "Le type de collection ne peut plus être modifié après la création."
+
+msgid "Score not found"
+msgstr "Partition introuvable"
+
+msgid "Cannot add score individually when its score book is already in the collection"
+msgstr "Impossible d'ajouter la partition individuellement lorsque son recueil fait déjà partie de la collection"
+
+msgid "Index is required for indexed folder collections"
+msgstr "L'index est obligatoire pour les collections de classeurs indexées"
+
+msgid "Index should not be provided for alphabetical folder collections"
+msgstr "Aucun index ne doit être indiqué pour les collections de classeurs alphabétiques"
+
+#, php-format
+msgid "Index %d or score %d is already used in this folder collection"
+msgstr "L'index %d ou la partition %d est déjà utilisé dans cette collection de classeurs"
+
+msgid "Failed to add score to folder collection"
+msgstr "Impossible d'ajouter la partition à la collection de classeurs"
+
+msgid "Cannot remove score that is part of a score book in this collection. Remove the score book instead."
+msgstr "Impossible de retirer une partition qui fait partie d'un recueil de cette collection. Retirez plutôt le recueil."
+
+msgid "Score is not directly in this folder collection"
+msgstr "La partition ne fait pas directement partie de cette collection de classeurs"
+
+msgid "Failed to remove score from folder collection"
+msgstr "Impossible de retirer la partition de la collection de classeurs"
+
+msgid "Score book not found"
+msgstr "Recueil introuvable"
+
+msgid "Cannot add score book when one of its scores is already in the collection"
+msgstr "Impossible d'ajouter le recueil lorsqu'une de ses partitions fait déjà partie de la collection"
+
+#, php-format
+msgid "Index %d or score book %d is already used in this folder collection"
+msgstr "L'index %d ou le recueil %d est déjà utilisé dans cette collection de classeurs"
+
+msgid "Failed to add score book to folder collection"
+msgstr "Impossible d'ajouter le recueil à la collection de classeurs"
+
+msgid "Failed to remove score book from folder collection"
+msgstr "Impossible de retirer le recueil de la collection de classeurs"
+
+msgid "Version date range overlaps with an existing version"
+msgstr "La période de la version chevauche une version existante"
+
+msgid "An active version already exists. Deactivate it first by setting valid_to."
+msgstr "Une version active existe déjà. Désactivez-la d'abord en définissant valid_to."
+
+msgid "New version must start at least one day after the current version"
+msgstr "La nouvelle version doit commencer au moins un jour après la version actuelle"
+
+msgid "Cannot delete score book with linked scores. Remove all scores first."
+msgstr "Impossible de supprimer un recueil contenant des partitions. Retirez d'abord toutes les partitions."
+
+msgid "Score is already part of a score book"
+msgstr "La partition fait déjà partie d'un recueil"
+
+#, php-format
+msgid "Index %d is already occupied in this score book"
+msgstr "L'index %d est déjà occupé dans ce recueil"
+
+msgid "Failed to add score to score book"
+msgstr "Impossible d'ajouter la partition au recueil"
+
+#, php-format
+msgid "Score %d not found"
+msgstr "Partition %d introuvable"
+
+#, php-format
+msgid "Score %d is already part of a score book"
+msgstr "La partition %d fait déjà partie d'un recueil"
+
+#, php-format
+msgid "Duplicate index %d in request"
+msgstr "Index %d en double dans la requête"
+
+msgid "Failed to add scores to score book"
+msgstr "Impossible d'ajouter les partitions au recueil"
+
+msgid "Failed to remove score from score book"
+msgstr "Impossible de retirer la partition du recueil"
+
+msgid "Index is required when adding score to a score book"
+msgstr "L'index est obligatoire pour ajouter une partition à un recueil"
+
+#, php-format
+msgid "Tag not found: %s"
+msgstr "Étiquette introuvable : %s"
+
+msgid "Cannot delete score because it is part of a folder collection"
+msgstr "Impossible de supprimer la partition car elle fait partie d'une collection de classeurs"
+
+msgid "Score is already part of another score book. Remove it first."
+msgstr "La partition fait déjà partie d'un autre recueil. Retirez-la d'abord."
+
+msgid "Setlist entry not found"
+msgstr "Entrée de setlist introuvable"
+
+msgid "Each entry must have an id field"
+msgstr "Chaque entrée doit avoir un champ id"
+
+#, php-format
+msgid "Setlist entry with id %d not found"
+msgstr "Entrée de setlist avec l'id %d introuvable"
+
+msgid "Invalid filter parameter. Must be \"all\", \"future\", or \"past\"."
+msgstr "Paramètre de filtre non valide. Doit être \"all\", \"future\" ou \"past\"."
+
+msgid "Setlist not found"
+msgstr "Setlist introuvable"
+
+msgid "Either scoreId or breakDuration must be set"
+msgstr "scoreId ou breakDuration doit être défini"
+
+msgid "Only one of scoreId or breakDuration can be set"
+msgstr "Seul scoreId ou breakDuration peut être défini, pas les deux"
+
+msgid "An entry with this index already exists in the setlist"
+msgstr "Une entrée avec cet index existe déjà dans la setlist"
+
+msgid "Orchestra Scores Manager"
+msgstr "Gestionnaire de partitions d'orchestre"
+
+msgid "Score must belong to the folder collection version specified in the setlist"
+msgstr "La partition doit appartenir à la version de la collection de classeurs indiquée dans la setlist"
+
+msgid "Manage your orchestra's sheet music database directly within Nextcloud"
+msgstr "Gérez la base de données des partitions de votre orchestre directement dans Nextcloud"
+
+msgid ""
+"⚠️ Early development phase – expect rough edges and breaking changes.\n"
+"\n"
+"Orchestra Scores Manager lets you maintain a structured database of your orchestra's sheet music (scores) inside Nextcloud.\n"
+"\n"
+"Key features:\n"
+"- Manage individual scores with rich metadata (composer, arranger, publisher, year, difficulty, and more)\n"
+"- Organize scores into score books and folder collections\n"
+"- Track version history of folder collections\n"
+"- Build and manage setlists\n"
+"- Categorize scores with tags\n"
+"- Add comments to scores"
+msgstr ""
+"⚠️ Phase de développement précoce – attendez-vous à des imperfections et à des changements incompatibles.\n"
+"\n"
+"Orchestra Scores Manager vous permet de tenir une base de données structurée des partitions de votre orchestre dans Nextcloud.\n"
+"\n"
+"Fonctionnalités principales :\n"
+"- Gérer chaque partition avec des métadonnées détaillées (compositeur, arrangeur, éditeur, année, difficulté, etc.)\n"
+"- Organiser les partitions en recueils et en collections de classeurs\n"
+"- Suivre l'historique des versions des collections de classeurs\n"
+"- Créer et gérer des setlists\n"
+"- Classer les partitions à l'aide d'étiquettes\n"
+"- Ajouter des commentaires aux partitions"
+
+msgid "Cancel"
+msgstr "Annuler"
+
+msgid "Create"
+msgstr "Créer"
+
+msgid "Settings updated successfully."
+msgstr "Paramètres mis à jour avec succès."
+
+msgid "Failed to update settings."
+msgstr "Impossible de mettre à jour les paramètres."
+
+msgid "Group Permissions"
+msgstr "Autorisations des groupes"
+
+msgid "Select the groups that are allowed to edit the orchestra scores table."
+msgstr "Sélectionnez les groupes autorisés à modifier le tableau des partitions de l'orchestre."
+
+msgid "Allowed Groups"
+msgstr "Groupes autorisés"
+
+msgid "Select groups…"
+msgstr "Sélectionner des groupes…"
+
+msgid "Invalid default moderation time format. Use (HH:)MM:SS"
+msgstr "Format de durée de présentation par défaut non valide. Utilisez (HH:)MM:SS"
+
+msgid "Failed to save settings"
+msgstr "Impossible d'enregistrer les paramètres"
+
+msgid "Settings"
+msgstr "Paramètres"
+
+msgid "Setlists"
+msgstr "Setlists"
+
+msgid "Default Moderation Time (HH:MM:SS)"
+msgstr "Durée de présentation par défaut (HH:MM:SS)"
+
+msgid "e.g., 0:30 or 1:30:00"
+msgstr "p. ex. 0:30 ou 1:30:00"
+
+msgid "Default Folder Collection"
+msgstr "Collection de classeurs par défaut"
+
+msgid "Select folder collection"
+msgstr "Sélectionner une collection de classeurs"
+
+msgid "Saving …"
+msgstr "Enregistrement …"
+
+msgid "Save"
+msgstr "Enregistrer"
+
+msgid "Score book assignment updated"
+msgstr "Attribution au recueil mise à jour"
+
+msgid "Failed to update score book assignment: "
+msgstr "Impossible de mettre à jour l'attribution au recueil : "
+
+msgid "Assign to Score Book"
+msgstr "Attribuer à un recueil"
+
+msgid "Score Book"
+msgstr "Recueil"
+
+msgid "Select a score book"
+msgstr "Sélectionner un recueil"
+
+msgid "Index"
+msgstr "Index"
+
+msgid "Enter index position"
+msgstr "Saisir la position d'index"
+
+msgid "This will remove the score from its current book."
+msgstr "La partition sera retirée de son recueil actuel."
+
+msgid "Clone"
+msgstr "Dupliquer"
+
+msgid "Setlist cloned"
+msgstr "Setlist dupliquée"
+
+msgid "Cloning setlist failed: "
+msgstr "Échec de la duplication de la setlist : "
+
+msgid "Clone setlist"
+msgstr "Dupliquer la setlist"
+
+msgid "Title"
+msgstr "Titre"
+
+msgid "Confirm"
+msgstr "Confirmer"
+
+msgid "Loading…"
+msgstr "Chargement…"
+
+msgid "An error occurred"
+msgstr "Une erreur s'est produite"
+
+msgid "No content"
+msgstr "Aucun contenu"
+
+msgid "This score is not part of any folder collection"
+msgstr "Cette partition ne fait partie d'aucune collection de classeurs"
+
+msgid "This score book is not part of any folder collection"
+msgstr "Ce recueil ne fait partie d'aucune collection de classeurs"
+
+msgid "Failed to fetch folder collections. Please reload the page."
+msgstr "Impossible de charger les collections de classeurs. Veuillez recharger la page."
+
+msgid "Not in any folder collection"
+msgstr "Dans aucune collection de classeurs"
+
+msgid "Export failed: "
+msgstr "Échec de l'export : "
+
+msgid "Export CSV"
+msgstr "Exporter en CSV"
+
+msgid "Main app navigation"
+msgstr "Navigation principale de l'application"
+
+msgid "No folder collections yet"
+msgstr "Aucune collection de classeurs pour le moment"
+
+msgid "Operation failed: "
+msgstr "Échec de l'opération : "
+
+msgid "Delete Score Book"
+msgstr "Supprimer le recueil"
+
+msgid "Delete Score"
+msgstr "Supprimer la partition"
+
+msgid "Are you sure you want to delete this score book? This action cannot be undone."
+msgstr "Voulez-vous vraiment supprimer ce recueil ? Cette action est irréversible."
+
+msgid "Are you sure you want to delete this score? This action cannot be undone."
+msgstr "Voulez-vous vraiment supprimer cette partition ? Cette action est irréversible."
+
+msgid "Failed to delete score book: "
+msgstr "Impossible de supprimer le recueil : "
+
+msgid "Failed to delete score: "
+msgstr "Impossible de supprimer la partition : "
+
+msgid "Details"
+msgstr "Détails"
+
+msgid "Delete"
+msgstr "Supprimer"
+
+msgid "Comments"
+msgstr "Commentaires"
+
+msgid "Folder Collections"
+msgstr "Collections de classeurs"
+
+msgid "Invalid duration format. Use (HH:)MM:SS"
+msgstr "Format de durée non valide. Utilisez (HH:)MM:SS"
+
+msgid "Book Index"
+msgstr "Index dans le recueil"
+
+msgid "Remove score from book"
+msgstr "Retirer la partition du recueil"
+
+msgid "Are you sure you want to remove this score from the book?"
+msgstr "Voulez-vous vraiment retirer cette partition du recueil ?"
+
+msgid "Score removed from book"
+msgstr "Partition retirée du recueil"
+
+msgid "Failed to remove score from book: "
+msgstr "Impossible de retirer la partition du recueil : "
+
+msgid "Changes saved"
+msgstr "Modifications enregistrées"
+
+msgid "Saving changes failed: "
+msgstr "Échec de l'enregistrement des modifications : "
+
+msgid "Remove from collection"
+msgstr "Retirer de la collection"
+
+msgid "Remove from book"
+msgstr "Retirer du recueil"
+
+msgid "Included in folder collection via score book »{name}«"
+msgstr "Inclus dans la collection de classeurs via le recueil »{name}«"
+
+msgid "Short Title"
+msgstr "Titre court"
+
+msgid "Composer"
+msgstr "Compositeur"
+
+msgid "Arranger"
+msgstr "Arrangeur"
+
+msgid "Publisher"
+msgstr "Éditeur"
+
+msgid "Year"
+msgstr "Année"
+
+msgid "Difficulty"
+msgstr "Difficulté"
+
+msgid "Duration"
+msgstr "Durée"
+
+msgid "Medley Contents"
+msgstr "Contenu du medley"
+
+msgid "GEMA IDs"
+msgstr "Identifiants GEMA"
+
+msgid "Defects"
+msgstr "Défauts"
+
+msgid "Digital Status"
+msgstr "Statut numérique"
+
+msgid "Physical Copies"
+msgstr "Exemplaires physiques"
+
+msgid "Tags"
+msgstr "Étiquettes"
+
+msgid "Active"
+msgstr "Active"
+
+msgid "History"
+msgstr "Historique"
+
+msgid "Remove score book from collection"
+msgstr "Retirer le recueil de la collection"
+
+msgid "This score is part of score book \"{title}\". Removing it will remove the entire score book and all {count} of its scores from the collection. Do you want to continue?"
+msgstr "Cette partition fait partie du recueil \"{title}\". La retirer retirera de la collection l'ensemble du recueil et ses {count} partitions. Voulez-vous continuer ?"
+
+msgid "Remove score from collection"
+msgstr "Retirer la partition de la collection"
+
+msgid "Are you sure you want to remove this score from the collection?"
+msgstr "Voulez-vous vraiment retirer cette partition de la collection ?"
+
+msgid "Failed to remove score from collection: "
+msgstr "Impossible de retirer la partition de la collection : "
+
+msgid "Failed to remove score book from collection: "
+msgstr "Impossible de retirer le recueil de la collection : "
+
+msgid "Failed to load folder collection"
+msgstr "Impossible de charger la collection de classeurs"
+
+msgid "Please check if the folder collection exists and try again."
+msgstr "Vérifiez que la collection de classeurs existe et réessayez."
+
+msgid "No entries in this collection"
+msgstr "Aucune entrée dans cette collection"
+
+msgid "Add scores or score books to this folder collection to see them here."
+msgstr "Ajoutez des partitions ou des recueils à cette collection de classeurs pour les voir ici."
+
+msgid "You are viewing an inactive version. Scores and score books cannot be added or removed."
+msgstr "Vous consultez une version inactive. Il n'est pas possible d'ajouter ou de retirer des partitions et des recueils."
+
+msgid "Select version"
+msgstr "Sélectionner une version"
+
+msgid "Score"
+msgstr "Partition"
+
+msgid "Score added to collection"
+msgstr "Partition ajoutée à la collection"
+
+msgid "Score book added to collection"
+msgstr "Recueil ajouté à la collection"
+
+msgid "Failed to add to collection: "
+msgstr "Échec de l'ajout à la collection : "
+
+msgid "Add"
+msgstr "Ajouter"
+
+msgid "Add to collection"
+msgstr "Ajouter à la collection"
+
+msgid "Failed to load data. Please try again."
+msgstr "Impossible de charger les données. Veuillez réessayer."
+
+msgid "Type"
+msgstr "Type"
+
+msgid "Select what to add"
+msgstr "Sélectionnez ce que vous voulez ajouter"
+
+msgid "Select a score"
+msgstr "Sélectionner une partition"
+
+msgid "Export ToC & Index"
+msgstr "Exporter la table des matières et l'index"
+
+msgid "Could not determine current version information"
+msgstr "Impossible de déterminer les informations de la version actuelle"
+
+msgid "New version started successfully"
+msgstr "Nouvelle version démarrée avec succès"
+
+msgid "Failed to start new version: "
+msgstr "Impossible de démarrer la nouvelle version : "
+
+msgid "Start new version"
+msgstr "Démarrer une nouvelle version"
+
+msgid "New Version"
+msgstr "Nouvelle version"
+
+msgid "This will create a new version starting on the selected date. The current active version will be marked as ended one day before. All scores and score books will be copied to the new version."
+msgstr "Une nouvelle version sera créée à partir de la date sélectionnée. La version active actuelle sera marquée comme terminée la veille. Toutes les partitions et tous les recueils seront copiés dans la nouvelle version."
+
+msgid "Start date for new version"
+msgstr "Date de début de la nouvelle version"
+
+msgid "Start Version"
+msgstr "Démarrer la version"
+
+msgid "Delete Folder Collection"
+msgstr "Supprimer la collection de classeurs"
+
+msgid "Are you sure you want to delete this folder collection? This action cannot be undone."
+msgstr "Voulez-vous vraiment supprimer cette collection de classeurs ? Cette action est irréversible."
+
+msgid "Failed to delete folder collection: "
+msgstr "Impossible de supprimer la collection de classeurs : "
+
+msgid "Create your first folder collection to organize your scores"
+msgstr "Créez votre première collection de classeurs pour organiser vos partitions"
+
+msgid "Indexed"
+msgstr "Indexée"
+
+msgid "Alphabetical"
+msgstr "Alphabétique"
+
+msgid "Delete folder collection"
+msgstr "Supprimer la collection de classeurs"
+
+msgid "Please enter a name"
+msgstr "Veuillez saisir un nom"
+
+msgid "Please select a collection type"
+msgstr "Veuillez sélectionner un type de collection"
+
+msgid "Folder collection created"
+msgstr "Collection de classeurs créée"
+
+msgid "Creating folder collection failed: "
+msgstr "Échec de la création de la collection de classeurs : "
+
+msgid "Create folder collection"
+msgstr "Créer une collection de classeurs"
+
+msgid "Name"
+msgstr "Nom"
+
+msgid "Enter a name"
+msgstr "Saisir un nom"
+
+msgid "Name is required"
+msgstr "Le nom est obligatoire"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "Enter a description (optional)"
+msgstr "Saisir une description (facultatif)"
+
+msgid "Collection type"
+msgstr "Type de collection"
+
+msgid "Select collection type"
+msgstr "Sélectionner le type de collection"
+
+msgid "Failed to load score book"
+msgstr "Impossible de charger le recueil"
+
+msgid "Please check if the score book exists and try again."
+msgstr "Vérifiez que le recueil existe et réessayez."
+
+msgid "No scores in this book"
+msgstr "Aucune partition dans ce recueil"
+
+msgid "Add scores to this score book to see them here."
+msgstr "Ajoutez des partitions à ce recueil pour les voir ici."
+
+msgid "Score added to book"
+msgstr "Partition ajoutée au recueil"
+
+msgid "Failed to add score to book: "
+msgstr "Impossible d'ajouter la partition au recueil : "
+
+msgid "Add score to book"
+msgstr "Ajouter une partition au recueil"
+
+msgid "Failed to load scores. Please try again."
+msgstr "Impossible de charger les partitions. Veuillez réessayer."
+
+msgid "Score Books"
+msgstr "Recueils"
+
+msgid "No score books yet"
+msgstr "Aucun recueil pour le moment"
+
+msgid "Create your first score book to organize your scores"
+msgstr "Créez votre premier recueil pour organiser vos partitions"
+
+msgid "Please enter a title"
+msgstr "Veuillez saisir un titre"
+
+msgid "Score book created"
+msgstr "Recueil créé"
+
+msgid "Creating score book failed: "
+msgstr "Échec de la création du recueil : "
+
+msgid "Create score book"
+msgstr "Créer un recueil"
+
+msgid "Failed to load scores"
+msgstr "Impossible de charger les partitions"
+
+msgid "Show detailed list"
+msgstr "Afficher la liste détaillée"
+
+msgid "Go to score book"
+msgstr "Aller au recueil"
+
+msgid "Scores"
+msgstr "Partitions"
+
+msgid "Open"
+msgstr "Ouvrir"
+
+msgid "Editor"
+msgstr "Éditeur scientifique"
+
+msgid "No scores yet"
+msgstr "Aucune partition pour le moment"
+
+msgid "Create your first score to get started"
+msgstr "Créez votre première partition pour commencer"
+
+msgid "Score created"
+msgstr "Partition créée"
+
+msgid "Creating score failed: "
+msgstr "Échec de la création de la partition : "
+
+msgid "Create score"
+msgstr "Créer une partition"
+
+msgid "Delete Comment"
+msgstr "Supprimer le commentaire"
+
+msgid "Are you sure you want to delete this comment? This action cannot be undone."
+msgstr "Voulez-vous vraiment supprimer ce commentaire ? Cette action est irréversible."
+
+msgid "Failed to delete comment: "
+msgstr "Impossible de supprimer le commentaire : "
+
+msgid "Unknown user"
+msgstr "Utilisateur inconnu"
+
+msgid "Delete comment"
+msgstr "Supprimer le commentaire"
+
+msgid "Failed to submit comment: "
+msgstr "Impossible d'envoyer le commentaire : "
+
+msgid "Failed to fetch comments. Please reload the page."
+msgstr "Impossible de charger les commentaires. Veuillez recharger la page."
+
+msgid "No comments yet"
+msgstr "Aucun commentaire pour le moment"
+
+msgid "Write a new comment …"
+msgstr "Écrire un nouveau commentaire …"
+
+msgid "GitHub flavored markdown is supported."
+msgstr "Le Markdown de type GitHub est pris en charge."
+
+msgid "Learn more"
+msgstr "En savoir plus"
+
+msgid "Submit comment"
+msgstr "Envoyer le commentaire"
+
+msgid "Scores in this book"
+msgstr "Partitions de ce recueil"
+
+msgid "Failed to load setlist"
+msgstr "Impossible de charger la setlist"
+
+msgid "Break"
+msgstr "Pause"
+
+msgid "Failed to load available scores"
+msgstr "Impossible de charger les partitions disponibles"
+
+msgid "Failed to add entry"
+msgstr "Impossible d'ajouter l'entrée"
+
+msgid "Add Entry"
+msgstr "Ajouter une entrée"
+
+msgid "Add Setlist Entry"
+msgstr "Ajouter une entrée à la setlist"
+
+msgid "Entry Type"
+msgstr "Type d'entrée"
+
+msgid "Select entry type"
+msgstr "Sélectionner le type d'entrée"
+
+msgid "Select score"
+msgstr "Sélectionner une partition"
+
+msgid "Break Duration (HH:MM:SS)"
+msgstr "Durée de la pause (HH:MM:SS)"
+
+msgid "Export"
+msgstr "Exporter"
+
+msgid "PDF Export"
+msgstr "Export PDF"
+
+msgid "GEMA Report"
+msgstr "Rapport GEMA"
+
+msgid "Export PDF"
+msgstr "Exporter en PDF"
+
+msgid "Select and reorder the columns to include in the PDF export."
+msgstr "Sélectionnez et ordonnez les colonnes à inclure dans l'export PDF."
+
+msgid "Delete Setlist Entry"
+msgstr "Supprimer l'entrée de la setlist"
+
+msgid "Are you sure you want to delete this setlist entry?"
+msgstr "Voulez-vous vraiment supprimer cette entrée de la setlist ?"
+
+msgid "Failed to delete setlist entry: "
+msgstr "Impossible de supprimer l'entrée de la setlist : "
+
+msgid "Failed to reorder entries: "
+msgstr "Impossible de réordonner les entrées : "
+
+msgid "Start Time"
+msgstr "Heure de début"
+
+msgid "End Time"
+msgstr "Heure de fin"
+
+msgid "Moderation"
+msgstr "Présentation"
+
+msgid "Comment"
+msgstr "Commentaire"
+
+msgid "Invalid duration format. Use (HH:)MM"
+msgstr "Format de durée non valide. Utilisez (HH:)MM"
+
+msgid "Failed to update setlist: "
+msgstr "Impossible de mettre à jour la setlist : "
+
+msgid "Start Date & Time"
+msgstr "Date et heure de début"
+
+msgid "Enter description"
+msgstr "Saisir une description"
+
+msgid "Folder Collection"
+msgstr "Collection de classeurs"
+
+msgid "Duration (HH:MM)"
+msgstr "Durée (HH:MM)"
+
+msgid "e.g., 90 or 1:30"
+msgstr "p. ex. 90 ou 1:30"
+
+msgid "Is Draft"
+msgstr "Brouillon"
+
+msgid "Is Published"
+msgstr "Publiée"
+
+msgid "Saving…"
+msgstr "Enregistrement…"
+
+msgid "Saved"
+msgstr "Enregistré"
+
+msgid "View Mode"
+msgstr "Mode d'affichage"
+
+msgid "Full View"
+msgstr "Vue complète"
+
+msgid "Compact View"
+msgstr "Vue compacte"
+
+msgid "Drafts"
+msgstr "Brouillons"
+
+msgid "No drafts"
+msgstr "Aucun brouillon"
+
+msgid "Create your first setlist draft"
+msgstr "Créez votre premier brouillon de setlist"
+
+msgid "Future"
+msgstr "À venir"
+
+msgid "No future setlists"
+msgstr "Aucune setlist à venir"
+
+msgid "Schedule your next performances"
+msgstr "Planifiez vos prochaines représentations"
+
+msgid "Unscheduled"
+msgstr "Non planifiées"
+
+msgid "No unscheduled setlists"
+msgstr "Aucune setlist non planifiée"
+
+msgid "Setlists without a start date will appear here"
+msgstr "Les setlists sans date de début apparaîtront ici"
+
+msgid "Past"
+msgstr "Passées"
+
+msgid "No past setlists"
+msgstr "Aucune setlist passée"
+
+msgid "Past performances will appear here"
+msgstr "Les représentations passées apparaîtront ici"
+
+msgid "Setlist created"
+msgstr "Setlist créée"
+
+msgid "Creating setlist failed: "
+msgstr "Échec de la création de la setlist : "
+
+msgid "Create setlist"
+msgstr "Créer une setlist"
+
+msgid "Optional description"
+msgstr "Description facultative"
+
+msgid "Start date and time"
+msgstr "Date et heure de début"
+
+msgid "Draft"
+msgstr "Brouillon"
+
+msgid "Published"
+msgstr "Publiée"
+
+msgid "Setlist deleted"
+msgstr "Setlist supprimée"
+
+msgid "Deleting setlist failed: "
+msgstr "Échec de la suppression de la setlist : "
+
+msgid "Delete setlist"
+msgstr "Supprimer la setlist"
+
+msgid "Are you sure you want to delete this setlist?"
+msgstr "Voulez-vous vraiment supprimer cette setlist ?"
+
+msgid "Starting"
+msgstr "Depuis le"
+
+msgid "Present"
+msgstr "Aujourd'hui"
+
+msgid "Index must be a non-negative integer"
+msgstr "L'index doit être un entier positif ou nul"
+
+msgid "This index is already occupied"
+msgstr "Cet index est déjà occupé"
+
+msgid "Loading occupied indices…"
+msgstr "Chargement des index occupés…"
+
+msgid "Index is unchanged"
+msgstr "L'index n'a pas changé"
+
+msgid "Index is valid"
+msgstr "L'index est valide"
+
+msgid "Enter the position index in the collection"
+msgstr "Saisissez la position d'index dans la collection"
+
+msgid "Setlist"
+msgstr "Setlist"
+
+msgid "Value must not be empty"
+msgstr "La valeur ne doit pas être vide"
+
+msgid "Contents"
+msgstr "Contenu"
+
+msgid "h"
+msgstr "h"
+
+msgid "Info"
+msgstr "Infos"
+
+msgid "Date"
+msgstr "Date"
+
+msgid "Playtime"
+msgstr "Temps de jeu"
+
+msgid "Moderation & Breaks"
+msgstr "Présentations et pauses"
+
+msgid "Overall Duration"
+msgstr "Durée totale"
+
+msgid "Invalid duration format"
+msgstr "Format de durée non valide"
+
+#, php-format
+msgid "Failed to add score to folder collection: %1$s"
+msgstr "Impossible d'ajouter la partition à la collection de classeurs : %1$s"
+
+#, php-format
+msgid "Failed to add score book to folder collection: %1$s"
+msgstr "Impossible d'ajouter le recueil à la collection de classeurs : %1$s"
+
+#, php-format
+msgid "Failed to remove score book from folder collection: %1$s"
+msgstr "Impossible de retirer le recueil de la collection de classeurs : %1$s"
+
+#, php-format
+msgid "Failed to add score to score book: %1$s"
+msgstr "Impossible d'ajouter la partition au recueil : %1$s"
+
+#, php-format
+msgid "Failed to add scores to score book: %1$s"
+msgstr "Impossible d'ajouter les partitions au recueil : %1$s"
+
+#, php-format
+msgid "Failed to remove score from score book: %1$s"
+msgstr "Impossible de retirer la partition du recueil : %1$s"
+
+msgid "The dormant threshold must not be smaller than the current threshold."
+msgstr "Le seuil « en sommeil » ne doit pas être inférieur au seuil « actuel »."
+
+msgid "Repertoire"
+msgstr "Répertoire"
+
+msgid "A score counts as current or dormant repertoire if it was performed within the given number of years. Performances are taken from setlists that are not drafts."
+msgstr "Une partition fait partie du répertoire actuel ou en sommeil si elle a été interprétée au cours du nombre d'années indiqué. Les interprétations sont tirées des setlists qui ne sont pas des brouillons."
+
+msgid "Current repertoire (years)"
+msgstr "Répertoire actuel (années)"
+
+msgid "Dormant repertoire (years)"
+msgstr "Répertoire en sommeil (années)"
+
+msgid "Unable to determine current user"
+msgstr "Impossible de déterminer l'utilisateur actuel"
+
+msgid "Retired"
+msgstr "Retirée"
+
+msgid "Missing"
+msgstr "Manquante"
+
+msgid "Lent"
+msgstr "Prêtée"
+
+msgid "Current"
+msgstr "Actuel"
+
+msgid "Dormant"
+msgstr "En sommeil"
+
+msgid "Former"
+msgstr "Ancien"
+
+msgid "Not performed"
+msgstr "Jamais interprétée"
+
+msgid "Signature"
+msgstr "Cote"
+
+msgid "Derived from the performances in setlists"
+msgstr "Calculé à partir des interprétations dans les setlists"
+
+msgid "Last performed"
+msgstr "Dernière interprétation"
+
+msgid "Inventory"
+msgstr "Inventaire"
+
+msgid "Lyricist"
+msgstr "Parolier"
+
+msgid "Voicing"
+msgstr "Effectif vocal"
+
+msgid "Language"
+msgstr "Langue"
+
+msgid "No file uploaded"
+msgstr "Aucun fichier envoyé"
+
+msgid "Public scores"
+msgstr "Partitions publiques"
+
+msgid "Only MusicXML files (.musicxml, .xml, .mxl) are allowed"
+msgstr "Seuls les fichiers MusicXML (.musicxml, .xml, .mxl) sont autorisés"
+
+msgid "The uploaded file is empty"
+msgstr "Le fichier envoyé est vide"
+
+#, php-format
+msgid "The uploaded file is too large (maximum %d MB)"
+msgstr "Le fichier envoyé est trop volumineux (maximum %d Mo)"
+
+msgid "The uploaded file could not be read"
+msgstr "Le fichier envoyé n'a pas pu être lu"
+
+msgid "This score is an internal preservation copy"
+msgstr "Cette partition est une copie de conservation interne"
+
+msgid "No MusicXML file available for this score"
+msgstr "Aucun fichier MusicXML disponible pour cette partition"
+
+msgid "The uploaded file is not a valid MusicXML file"
+msgstr "Le fichier envoyé n'est pas un fichier MusicXML valide"
+
+msgid "MusicXML files with entity declarations are not supported"
+msgstr "Les fichiers MusicXML contenant des déclarations d'entités ne sont pas pris en charge"
+
+msgid "The uploaded file is not a valid compressed MusicXML file"
+msgstr "Le fichier envoyé n'est pas un fichier MusicXML compressé valide"
+
+msgid "The uploaded file is too large when uncompressed"
+msgstr "Le fichier envoyé est trop volumineux une fois décompressé"
+
+msgid "Invalid rights status. Must be \"public_domain\", \"licensed\", \"protected\" or \"open\"."
+msgstr "Statut des droits non valide. Doit être \"public_domain\", \"licensed\", \"protected\" ou \"open\"."
+
+msgid "Invalid publication status. Must be \"free\", \"to_clarify\", \"blocked\" or \"internal_copy\"."
+msgstr "Statut de publication non valide. Doit être \"free\", \"to_clarify\", \"blocked\" ou \"internal_copy\"."
+
+msgid "Public page"
+msgstr "Page publique"
+
+msgid "Show all scores that are released for publication and whose rights allow it (public domain or licensed) on a page that can be opened without logging in. Visitors can view and play the MusicXML files of these scores. No other scores or internal details are shown."
+msgstr "Afficher toutes les partitions validées pour publication et dont les droits le permettent (domaine public ou sous licence) sur une page accessible sans connexion. Les visiteurs peuvent consulter et écouter les fichiers MusicXML de ces partitions. Aucune autre partition ni aucun détail interne n'est affiché."
+
+msgid "Enable public page"
+msgstr "Activer la page publique"
+
+msgid "Public address:"
+msgstr "Adresse publique :"
+
+msgid "The score could not be loaded"
+msgstr "La partition n'a pas pu être chargée"
+
+msgid "Pause"
+msgstr "Pause"
+
+msgid "Play"
+msgstr "Lecture"
+
+msgid "Stop"
+msgstr "Arrêter"
+
+msgid "Tempo"
+msgstr "Tempo"
+
+msgid "Previous page"
+msgstr "Page précédente"
+
+msgid "Page {page} of {count}"
+msgstr "Page {page} sur {count}"
+
+msgid "Next page"
+msgstr "Page suivante"
+
+msgid "Solo"
+msgstr "Solo"
+
+msgid "Mute"
+msgstr "Muet"
+
+msgid "Volume of {voice}"
+msgstr "Volume de {voice}"
+
+msgid "Loading score…"
+msgstr "Chargement de la partition…"
+
+msgid "Notes & Playback"
+msgstr "Partition et lecture"
+
+msgid "Rights"
+msgstr "Droits"
+
+msgid "Publication"
+msgstr "Publication"
+
+msgid "Blocked until"
+msgstr "Bloquée jusqu'au"
+
+msgid "Rights Note"
+msgstr "Note sur les droits"
+
+msgid "MusicXML"
+msgstr "MusicXML"
+
+msgid "Downloading the file failed: "
+msgstr "Échec du téléchargement du fichier : "
+
+msgid "The file is too large (maximum {size} MB)"
+msgstr "Le fichier est trop volumineux (maximum {size} Mo)"
+
+msgid "MusicXML file uploaded"
+msgstr "Fichier MusicXML envoyé"
+
+msgid "Uploading the file failed: "
+msgstr "Échec de l'envoi du fichier : "
+
+msgid "MusicXML file removed"
+msgstr "Fichier MusicXML supprimé"
+
+msgid "Removing the file failed: "
+msgstr "Échec de la suppression du fichier : "
+
+msgid "Download MusicXML"
+msgstr "Télécharger le MusicXML"
+
+msgid "No MusicXML file uploaded yet."
+msgstr "Aucun fichier MusicXML envoyé pour le moment."
+
+msgid "Replace file"
+msgstr "Remplacer le fichier"
+
+msgid "Upload MusicXML"
+msgstr "Envoyer un MusicXML"
+
+msgid "Remove file"
+msgstr "Supprimer le fichier"
+
+msgid "This score is released for publication and its rights allow it, so it is shown on the public page if that page is enabled."
+msgstr "Cette partition est validée pour publication et ses droits le permettent : elle apparaît donc sur la page publique si celle-ci est activée."
+
+msgid "This score is an internal preservation copy. Only editors can view and play it."
+msgstr "Cette partition est une copie de conservation interne. Seuls les éditeurs peuvent la consulter et l'écouter."
+
+msgid "This score is an internal preservation copy. It can only be viewed by the music librarians."
+msgstr "Cette partition est une copie de conservation interne. Seuls les bibliothécaires musicaux peuvent la consulter."
+
+msgid "arr. {arranger}"
+msgstr "arr. {arranger}"
+
+msgid "Freely available scores"
+msgstr "Partitions librement disponibles"
+
+msgid "These scores are in the public domain or licensed for publication. Select a score to view the notes and listen to the individual voices."
+msgstr "Ces partitions appartiennent au domaine public ou sont sous licence de publication. Sélectionnez une partition pour afficher les notes et écouter chaque voix séparément."
+
+msgid "Search by title or composer"
+msgstr "Rechercher par titre ou compositeur"
+
+msgid "Close"
+msgstr "Fermer"
+
+msgid "No freely available scores yet"
+msgstr "Aucune partition librement disponible pour le moment"
+
+msgid "No scores match your search"
+msgstr "Aucune partition ne correspond à votre recherche"
+
+msgid "Show & play"
+msgstr "Afficher et écouter"
+
+msgid "No digital notes"
+msgstr "Pas de partition numérique"
+
+msgid "The file could not be read as MusicXML"
+msgstr "Le fichier n'a pas pu être lu comme MusicXML"
+
+msgid "Voice {number}"
+msgstr "Voix {number}"
+
+msgid "The score could not be displayed"
+msgstr "La partition n'a pas pu être affichée"
+
+msgid "Public domain"
+msgstr "Domaine public"
+
+msgid "Licensed"
+msgstr "Sous licence"
+
+msgid "Protected"
+msgstr "Protégée"
+
+msgid "Undetermined"
+msgstr "Indéterminé"
+
+msgid "Free"
+msgstr "Libre"
+
+msgid "To clarify"
+msgstr "À clarifier"
+
+msgid "Blocked"
+msgstr "Bloquée"
+
+msgid "Internal preservation copy"
+msgstr "Copie de conservation interne"
+
+msgid "Only PDF files are allowed"
+msgstr "Seuls les fichiers PDF sont autorisés"
+
+msgid "The uploaded file is not a valid PDF file"
+msgstr "Le fichier envoyé n'est pas un fichier PDF valide"
+
+msgid "No PDF file available for this score"
+msgstr "Aucun fichier PDF disponible pour cette partition"
+
+msgid "Invalid share type"
+msgstr "Type de partage non valide"
+
+msgid "Group not found"
+msgstr "Groupe introuvable"
+
+msgid "Already shared with this group"
+msgstr "Déjà partagé avec ce groupe"
+
+msgid "Share not found"
+msgstr "Partage introuvable"
+
+msgid "Invalid share target"
+msgstr "Cible de partage non valide"
+
+msgid "Zoom out"
+msgstr "Zoom arrière"
+
+msgid "Zoom in"
+msgstr "Zoom avant"
+
+msgid "Loading PDF…"
+msgstr "Chargement du PDF…"
+
+msgid "The PDF could not be displayed"
+msgstr "Le PDF n'a pas pu être affiché"
+
+msgid "%n page"
+msgid_plural "%n pages"
+msgstr[0] "%n page"
+msgstr[1] "%n pages"
+
+msgid "PDF"
+msgstr "PDF"
+
+msgid "Shares"
+msgstr "Partages"
+
+msgid "Share {title}"
+msgstr "Partager {title}"
+
+msgid "Failed to load shares: "
+msgstr "Impossible de charger les partages : "
+
+msgid "Failed to share: "
+msgstr "Échec du partage : "
+
+msgid "Failed to remove share: "
+msgstr "Impossible de supprimer le partage : "
+
+msgid "Link copied to the clipboard"
+msgstr "Lien copié dans le presse-papiers"
+
+msgid "Public links work without login and only show scores that are released for publication and whose rights allow it. Group shares show all scores, including PDFs, to the members of the group, except the files of internal preservation copies. Files cannot be downloaded from shares."
+msgstr "Les liens publics fonctionnent sans connexion et n'affichent que les partitions validées pour publication et dont les droits le permettent. Les partages de groupe montrent toutes les partitions aux membres du groupe, PDF compris, à l'exception des fichiers des copies de conservation internes. Aucun fichier ne peut être téléchargé depuis un partage."
+
+msgid "Public link"
+msgstr "Lien public"
+
+msgid "Copy link"
+msgstr "Copier le lien"
+
+msgid "Open link"
+msgstr "Ouvrir le lien"
+
+msgid "Remove share"
+msgstr "Supprimer le partage"
+
+msgid "Not shared yet"
+msgstr "Pas encore partagé"
+
+msgid "Title shown on the share (optional)"
+msgstr "Titre affiché sur le partage (facultatif)"
+
+msgid "Share with group"
+msgstr "Partager avec un groupe"
+
+msgid "Select group"
+msgstr "Sélectionner un groupe"
+
+msgid "Share"
+msgstr "Partager"
+
+msgid "Create public link"
+msgstr "Créer un lien public"
+
+msgid "No scores shared"
+msgstr "Aucune partition partagée"
+
+msgid "No PDF file uploaded yet."
+msgstr "Aucun fichier PDF envoyé pour le moment."
+
+msgid "Upload PDF"
+msgstr "Envoyer un PDF"
+
+msgid "File uploaded"
+msgstr "Fichier envoyé"
+
+msgid "File removed"
+msgstr "Fichier supprimé"
+
+msgid "Shared with me"
+msgstr "Partagé avec moi"
+
+msgid "Failed to load shared items"
+msgstr "Impossible de charger les éléments partagés"
+
+msgid "Please try again later."
+msgstr "Veuillez réessayer plus tard."
+
+msgid "Nothing shared with you yet"
+msgstr "Rien n'a encore été partagé avec vous"
+
+msgid "Scores and folder collections shared with one of your groups appear here."
+msgstr "Les partitions et collections de classeurs partagées avec l'un de vos groupes apparaissent ici."
+
+msgid "Manage shares"
+msgstr "Gérer les partages"
+
+msgid "What do you want to share?"
+msgstr "Que voulez-vous partager ?"
+
+msgid "Folder collection"
+msgstr "Collection de classeurs"
+
+msgid "All shares"
+msgstr "Tous les partages"
+
+msgid "Nothing has been shared yet"
+msgstr "Rien n'a encore été partagé"
+
+msgid "Deleted item"
+msgstr "Élément supprimé"
+
+msgid "Public link (only published scores)"
+msgstr "Lien public (partitions publiées uniquement)"
+
+msgid "Group: {group}"
+msgstr "Groupe : {group}"
+
+msgid "Edit shares of this item"
+msgstr "Modifier les partages de cet élément"
+
+msgid "Only scores released for publication are shown. Select a score to view the notes and listen to the individual voices."
+msgstr "Seules les partitions validées pour publication sont affichées. Sélectionnez une partition pour afficher les notes et écouter chaque voix séparément."
+
+msgid "No published scores in this share"
+msgstr "Aucune partition publiée dans ce partage"
+
+#~ msgid "Archived"
+#~ msgstr "Archivée"
+
+#~ msgid "Invalid rights status. Must be \"free\", \"unclear\" or \"restricted\"."
+#~ msgstr "Statut des droits non valide. Doit être \"free\", \"unclear\" ou \"restricted\"."
+
+#~ msgid "Show all scores marked as free (public domain) on a page that can be opened without logging in. Visitors can view and play the MusicXML files of these scores. No other scores or internal details are shown."
+#~ msgstr "Afficher toutes les partitions marquées comme libres (domaine public) sur une page accessible sans connexion. Les visiteurs peuvent consulter et écouter les fichiers MusicXML de ces partitions. Aucune autre partition ni aucun détail interne n'est affiché."
+
+#~ msgid "Publication Note"
+#~ msgstr "Note de publication"
+
+#~ msgid "This score is marked as free, so it is shown on the public page if that page is enabled."
+#~ msgstr "Cette partition est marquée comme libre : elle apparaît donc sur la page publique si celle-ci est activée."
+
+#~ msgid "These scores are in the public domain. Select a score to view the notes and listen to the individual voices."
+#~ msgstr "Ces partitions appartiennent au domaine public. Sélectionnez une partition pour afficher les notes et écouter chaque voix séparément."
+
+#~ msgid "Free (public domain)"
+#~ msgstr "Libre (domaine public)"
+
+#~ msgid "Unclear"
+#~ msgstr "Incertain"
+
+#~ msgid "Restricted"
+#~ msgstr "Restreint"
