@@ -20,8 +20,8 @@ declare(strict_types=1);
  * (license, proposal, task, link, concert with an item, person with a
  * contribution, transcription report with a review point, merge, a folder
  * of the folder book issued to a name; the modules transcription_review and
- * folder_book must be active), so that the round trip covers every table with
- * content. It then exports the complete backup, empties all app tables,
+ * folder_book are switched on inside the transaction if needed), so that the
+ * round trip covers every table with content. It then exports the complete backup, empties all app tables,
  * restores the backup and compares every table row by row; then everything
  * is rolled back.
  */
@@ -98,7 +98,12 @@ try {
 			'lernen' => [], 'scores' => '| backup test |',
 		], JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR), $uid);
 		// A folder of the folder book, issued to a name (module folder_book)
-		$check('the folder book is active', Server::get(Modules::class)->isEnabled(Modules::FOLDER_BOOK));
+		// The folder book starts off in "standard"; switched on inside the transaction
+		$folderBookModules = Server::get(Modules::class);
+		if (!$folderBookModules->isEnabled(Modules::FOLDER_BOOK)) {
+			$folderBookModules->change([Modules::FOLDER_BOOK => true]);
+		}
+		$check('the folder book is active', $folderBookModules->isEnabled(Modules::FOLDER_BOOK));
 		$folderBook = Server::get(FolderBookService::class);
 		$folder = $folderBook->createFolder(['label' => 'Backup test folder', 'voice' => 'Tenor 1',
 			'contents' => [['copyId' => $first->getId(), 'count' => 2]]], $uid);

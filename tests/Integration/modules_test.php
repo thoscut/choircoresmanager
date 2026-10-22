@@ -126,8 +126,11 @@ $route = function (string $method) use ($middleware, $eventController): ?JSONRes
 $db->beginTransaction();
 try {
 	$modules->applyPreset(Modules::COMPLETE);
-	// "complete" leaves the interface for agents as it is (Modules::OUTSIDE_PRESETS).
-	$check('all modules on', !in_array(false, array_intersect_key($modules->states(), Modules::presetValues(Modules::COMPLETE)), true));
+	// "complete" leaves the modules of Modules::OUTSIDE_PRESETS as they are, so
+	// its own switches are checked: a module that needs one of those (e.g. the
+	// notification about the print station) is switched on but not active.
+	$notOn = array_values(array_filter(array_keys(Modules::presetValues(Modules::COMPLETE)), fn (string $key): bool => !$modules->isSwitchedOn($key)));
+	$check('all modules of the preset switched on', $notOn === [], implode(', ', $notOn));
 
 	// ---- concerts ----
 	$today = Server::get(RightsService::class)->today($uid);

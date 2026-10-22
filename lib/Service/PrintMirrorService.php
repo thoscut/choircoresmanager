@@ -423,7 +423,10 @@ class PrintMirrorService {
 		try {
 			$file = $target->newFile($name, $handle);
 		} finally {
-			fclose($handle);
+			// newFile() may close the stream itself
+			if (is_resource($handle)) {
+				fclose($handle);
+			}
 		}
 		$row = new MirrorFile();
 		$row->setName($name);
@@ -452,7 +455,10 @@ class PrintMirrorService {
 		try {
 			$existing->putContent($handle);
 		} finally {
-			fclose($handle);
+			// putContent() may close the stream itself
+			if (is_resource($handle)) {
+				fclose($handle);
+			}
 		}
 		$row->setSha256(self::sha256($existing));
 		$row->setCopyId($entry['copyId']);
@@ -596,7 +602,9 @@ class PrintMirrorService {
 			hash_update_stream($context, $handle);
 			return hash_final($context);
 		} finally {
-			fclose($handle);
+			if (is_resource($handle)) {
+				fclose($handle);
+			}
 		}
 	}
 
