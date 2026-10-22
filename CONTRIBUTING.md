@@ -17,9 +17,11 @@ Please report security issues privately as described in
   (German): the app suggests and people decide, rights belong to the version,
   nothing is deleted, files are only read, roles are bound to groups, there is
   always a way back, paper stays the fallback, no external servers, no legal
-  advice, accessible and inclusive. The roadmap also lists what the app
-  deliberately does not do, such as the functions of a choir's practice
-  system.
+  advice, accessible and inclusive, only what is needed, simple and
+  error-free to use, simply built (KISS), secure from the start. The lasting
+  goals of every change are simplicity, accessibility, security and
+  usability. The roadmap also lists what the app deliberately does not do,
+  such as the functions of a choir's practice system.
 
 ## Development setup
 
