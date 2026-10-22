@@ -200,6 +200,11 @@ function dateText(value: string | null, precision: string | null): string {
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiAlertCircleOutline" />
 					</template>
+					<template #action>
+						<NcButton @click="load">
+							{{ t('notenarchiv', 'Try again') }}
+						</NcButton>
+					</template>
 				</NcEmptyContent>
 				<NcEmptyContent v-else-if="shown.length === 0"
 					:name="t('notenarchiv', 'No persons')"

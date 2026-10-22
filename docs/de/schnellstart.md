@@ -17,6 +17,59 @@ Schritte im Notenarchiv. Ausführlich beschreiben es der
 > ist“, bitte die Archivverwaltung, den Archivordner für dich oder deine
 > Gruppe freizugeben; Leserechte genügen.
 
+**Inhalt**
+
+- [Begriffe](#begriffe)
+- [Zurechtfinden](#zurechtfinden)
+- [Für die Archivverwaltung](#für-die-archivverwaltung)
+- [Für die Chorleitung](#für-die-chorleitung)
+- [Häufige Probleme](#häufige-probleme)
+- [Mehr](#mehr)
+
+## Begriffe
+
+Neben diesen Begriffen zeigt die App ein kleines **?**. Es öffnet eine kurze
+Erklärung mit einem Link hierher; Escape schließt sie wieder.
+
+### Werk, Fassung und Exemplar
+
+Das **Werk** ist das Stück selbst mit Titel und Komposition. Eine **Fassung**
+ist eine Ausgabe oder Bearbeitung des Werks; die Rechte gehören zur Fassung,
+nicht zum Werk. Ein **Exemplar** ist ein gedrucktes oder digitales Exemplar
+einer Fassung mit eigener Signatur.
+
+### Signatur
+
+Die Signatur besteht aus der Nummer der Archivmappe und der Nummer in der
+Mappe, zum Beispiel `5-12`. Die Dateinamen im Archivordner beginnen mit der
+Signatur; daran ordnet der Dateiabgleich jede Datei ihrem Exemplar zu.
+
+### Rechtestatus und Bestätigung
+
+Der Rechtestatus einer Fassung ist „gemeinfrei“, „geschützt“ oder „offen“.
+Die App schlägt einen Status aus den Daten vor (etwa aus den Lebensdaten),
+die Archivverwaltung bestätigt ihn mit Begründung und Beleg. Nur ein
+bestätigter Status zählt für Freigaben; die App ist keine Rechtsberatung.
+
+### Freigabe
+
+Eine Freigabe sagt, ob eine Fassung auf einem bestimmten Weg weitergegeben
+werden darf: im Chorportal, an der Druckstation oder als Veröffentlichung.
+Sie folgt aus den bestätigten Rechten oder einer gültigen Lizenz und gilt nie
+für interne Erhaltungskopien.
+
+### Geltende Fassung
+
+Die geltende Fassung ist die Fassung, die der Chor singt. Je Werk gibt es
+höchstens eine, und nur die Chorleitung legt sie fest. Über die Rechte sagt
+sie nichts aus.
+
+### Interne Erhaltungskopie
+
+Eine interne Erhaltungskopie wird nur für das Archiv aufbewahrt, zum Beispiel
+der Scan eines geschützten Drucks. Sie wird nie weitergegeben, abgespielt
+oder exportiert; nur Archivverwaltung und Chorleitung sehen sie.
+
 ## Zurechtfinden
 
 ### Startseite „Fällig“
@@ -36,14 +89,20 @@ Rollen, sortiert nach Archivmappe.
 1. Öffne **Werkverzeichnis**.
 2. Tippe in **Signatur, Titel oder Komposition** eine Signatur wie `2-1`
    oder ein Wort aus Titel oder Komposition.
-3. Grenze die Liste mit den Filtern ein, zum Beispiel nach **Archivmappe**,
-   **Rechtestatus** oder **Mit MusicXML**.
-4. Klicke auf eine Zeile. Die Seitenleiste zeigt die Reiter **Übersicht**,
-   **Rechte**, **Aufgaben**, **Dateien** und **Protokoll**.
+3. Grenze die Liste mit **Rechtestatus** oder **Repertoire** ein. Die übrigen
+   Filter, zum Beispiel **Archivmappe**, **Mit MusicXML** oder **Keine
+   Fassung gilt für den Chor**, öffnest du mit **Weitere Filter**. Die App
+   merkt sich, ob sie offen sind; sind dort Filter aktiv, zeigt die
+   Schaltfläche, wie viele.
+4. Klicke auf eine Zeile. Die Seitenleiste zeigt die Reiter **Details**,
+   **Rechte**, **Fragen**, **Dateien** (jede Datei mit ihrem Ordner und
+   einem Symbol für die Dateiart) und **Verlauf** (das Protokoll aller
+   Änderungen).
 
 Das Rechte-Kennzeichen zeigt immer Text und Symbol: „gemeinfrei“,
 „gemeinfrei (Empfehlung, unbestätigt)“, „geschützt“, „offen“ oder „Interne
-Erhaltungskopie – keine Weitergabe“.
+Erhaltungskopie – keine Weitergabe“. Ein **?** neben einem Begriff erklärt
+ihn kurz (siehe [Begriffe](#begriffe)).
 
 ## Für die Archivverwaltung
 
@@ -55,10 +114,15 @@ Ein importierter Rechtestatus bleibt eine Empfehlung, bis du ihn bestätigst.
 
 1. Öffne das Exemplar, Reiter **Rechte**, und wähle **Bestätigen**.
 2. Wähle den bestätigten Status: gemeinfrei oder geschützt.
-3. Trage die **Begründung** und den **Beleg** ein, zum Beispiel „Alle Beteiligten sind
-   vor mehr als 70 Jahren gestorben“ und „Lebensdaten aus dem
-   Personenregister“. Beides ist Pflicht.
-4. Wähle **Bestätigen**. Dein Name und das Datum werden festgehalten.
+3. Trage die **Begründung** und den **Beleg** ein, zum Beispiel „Alle
+   Beteiligten sind vor mehr als 70 Jahren gestorben“ und „Lebensdaten aus
+   dem Personenregister“. Beides ist Pflicht.
+4. Vor dem Speichern sagt der Dialog, was danach möglich wird, je nach
+   eingeschalteten Modulen: Chorportal und Druckstation, Übe-Dateien, Teilen
+   mit Chormitgliedern und, sobald die Fassung zur Veröffentlichung
+   freigegeben ist, öffentliche Links. Bei „geschützt“ sagt er, dass
+   Freigaben dann eine gültige Lizenz brauchen.
+5. Wähle **Bestätigen**. Dein Name und das Datum werden festgehalten.
 
 Wenn du unsicher bist: **Im Zweifel: auf offen setzen**.
 
@@ -73,13 +137,19 @@ Wenn du unsicher bist: **Im Zweifel: auf offen setzen**.
 3. Wähle bei der Aufgabe **Schließen** und dann **Übernommen** oder
    **Verworfen**, danach **Aufgabe abschließen**.
 
+Sind **Aufgaben** oder **Eingang** leer, zeigen sie dir den nächsten Schritt:
+Aufgaben legst du in der Seitenleiste eines Exemplars an (Reiter
+**Fragen**); der Eingang erklärt, woher Vorschläge kommen, und führt zur
+Startseite.
+
 ### Neuzugang erfassen
 
 1. Öffne **Neuzugang** und dort **Neues Stück erfassen**.
 2. Wähle die **Archivmappe**. Die App schlägt die nächste freie Nummer vor;
    Nummern werden nie wieder vergeben.
 3. Trage Titel, Komposition, Titelquelle, Zugangsdatum und Herkunft ein.
-4. Wähle **Zugang erfassen**. Das Etikett kommt auf den Etikettenbogen darunter.
+4. Wähle **Zugang erfassen**. Das Etikett kommt auf den Etikettenbogen
+   darunter.
 
 ### Sicherung
 
@@ -93,14 +163,27 @@ dort **Vollständige Sicherung jetzt ablegen**.
 
 ![Der Dialog „Als geltend für den Chor festlegen“ mit dem Feld „Begründung (optional)“ und der Schaltfläche „Als geltend festlegen“.](../screenshots/de/valid-version.png)
 
-Nur die Chorleitung legt fest, welche Fassung der Chor singt.
+Nur die Chorleitung legt fest, welche Fassung der Chor singt. Je Werk gilt
+höchstens eine Fassung. Die Rechte ändern sich dadurch nicht.
+
+**Mehrere Werke auf einmal:** Öffne in der Navigation **Geltende Fassungen
+festlegen** (nur für die Chorleitung und nur, solange das Modul „Geltende
+Fassung“ eingeschaltet ist). Dort stehen die Werke mit mehreren Fassungen,
+von denen noch keine für den Chor gilt, jede Fassung mit ihren Exemplaren
+(Signaturen), deren Art und dem Rechtestatus. Mit dem Schalter für das
+aktuelle Repertoire siehst du nur die Stücke, die ihr gerade singt. Trag auf
+Wunsch eine Begründung ein und wähle bei der passenden Fassung **Als geltend
+festlegen**, direkt in der Liste.
+
+**Ein einzelnes Werk:**
 
 1. Öffne ein Exemplar dieser Fassung, Reiter **Rechte**, Abschnitt **Gilt für
    den Chor**.
 2. Wähle **Als geltend für den Chor festlegen**, auf Wunsch mit Begründung,
    und dann **Als geltend festlegen**.
 
-Je Werk gilt höchstens eine Fassung. Die Rechte ändern sich dadurch nicht.
+Die Karte **Aktuelles Repertoire: keine geltende Fassung gewählt** auf der
+Startseite öffnet das Werkverzeichnis mit dem passenden Filter.
 
 ### Noten ansehen und anhören
 
@@ -148,9 +231,9 @@ nächsten Takt und spielst mit der Leertaste ab.
 > [!IMPORTANT]
 > Übe-Dateien gibt es nur für bestätigt gemeinfreie Fassungen und für
 > Fassungen mit einer gültigen Lizenz für Übe-Audio, nie für interne
-> Erhaltungskopien. Jede Ausgabe steht im Protokoll der Fassung. Ins
-> Chorsystem lädst du die Dateien selbst hoch; die App gibt nichts an
-> Chormitglieder weiter.
+> Erhaltungskopien. Jede Ausgabe steht im Protokoll der Fassung (Reiter
+> **Verlauf**). Ins Chorsystem lädst du die Dateien selbst hoch; die App gibt
+> nichts an Chormitglieder weiter.
 
 ### Rückfrage beantworten
 
@@ -187,17 +270,58 @@ Die App erinnert dich 10, 8 und 6 Wochen vor dem Konzert an die Fristen.
   Kalenderprogramm herunter. Mit **Mit den Vorbereitungsfristen (10, 8 und 6
   Wochen vorher)** kommen die Fristen als ganztägige Einträge dazu.
 - Das Widget **Notenarchiv – fällig** zeigt im Nextcloud-Dashboard dasselbe
-  wie die Startseite „Fällig“, mit Links ins Notenarchiv.
+  wie die Startseite „Fällig“, mit Links ins Notenarchiv: jeder Eintrag mit
+  kurzem Titel, Einzelheiten in der zweiten Zeile und einem Symbol für
+  Konzert, Karte oder Aufgabe.
 - In der **Dateien**-App öffnet ein Klick auf eine MusicXML-Datei im
   Archivordner die Notenansicht ihres Exemplars. Bei Scans und anderen
   Dateien steht **Im Notenarchiv öffnen** im Aktionsmenü.
+
+## Häufige Probleme
+
+### Kein Zugang zum Notenarchiv
+
+„Du hast keinen Zugang zum Notenarchiv.“ Dein Konto hat keine Rolle im
+Notenarchiv; die App oder die Seite „Zugriff verboten“ sagt dir das. Rollen
+hängen an Nextcloud-Gruppen. Bitte die Administration, dein Konto in die
+Gruppe deiner Rolle aufzunehmen (siehe
+[Administration guide](../admin-guide.md#2-roles-and-groups)). Chormitglieder
+sehen nur **Für mich freigegeben**, und das nur, wenn es eingeschaltet ist.
+
+### Datei lässt sich nicht öffnen
+
+Der Archivordner ist nicht für dein Konto freigegeben; mit der Datei und
+deiner Rolle ist alles in Ordnung. Bitte die Archivverwaltung, den
+Archivordner für dich oder deine Gruppe freizugeben; Leserechte genügen.
+Lade danach die Seite neu.
+
+### Ein Exemplar fehlt im Werkverzeichnis
+
+Prüfe die Schreibweise; eine Signatur muss vollständig sein (`2-1`, nicht
+`2-`). Schau, ob unter **Weitere Filter** noch ein Filter aktiv ist, zum
+Beispiel der Status: Ausgeschiedene, fehlende und verliehene Exemplare
+erscheinen erst mit ihrem Status oder **Jeder Status**. **Suche und Filter
+zurücksetzen** hebt alle Filter auf.
+
+### Abspielen oder Übe-Dateien werden nicht angeboten
+
+Die Gemeinfreiheit ist noch nicht bestätigt, es fehlt eine Lizenz für
+Übe-Audio, oder es ist eine interne Erhaltungskopie. Die Archivverwaltung
+bestätigt die Rechte im Reiter **Rechte** oder trägt die Lizenz ein.
+
+### „Keine Schreibberechtigung für Exporte im Archivordner.“
+
+Das Konto, das den Archivordner gewählt hat, braucht Schreibrechte darauf.
+Bitte die Administration darum.
 
 ## Mehr
 
 - **Auswertungen** zeigt Bestand, Rechte, Repertoire und Pflege in Zahlen;
   der **Jahresbericht** fasst ein Jahr für Vorstand und Mitgliederversammlung
   zusammen.
-- [User guide](../user-guide.md): alle Funktionen, nach Rollen geordnet
+- [User guide](../user-guide.md): alle Funktionen, nach Rollen und Aufgaben
+  geordnet, mit dem Abschnitt
+  [Common problems](../user-guide.md#common-problems)
 - [Administration guide](../admin-guide.md): Installation, Rollen,
   Archivordner, Import, Sicherung
 - [Demo-Bestand](../../tools/demo/README.md): ein erfundenes Notenarchiv zum

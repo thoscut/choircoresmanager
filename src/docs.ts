@@ -34,7 +34,30 @@ export const ADMIN_GUIDE = {
 export const USER_GUIDE = {
 	filesNotShared: 'files-you-cannot-open',
 	revisions: 'revisions-of-a-version',
+	validVersion: 'choosing-the-valid-version',
 } as const
+
+/**
+ * A section in both guides: the English user guide and the German quick
+ * start (docs/de/schnellstart.md). German readers get the quick start.
+ */
+export interface GuideSection {
+	/** anchor in docs/user-guide.md */
+	en: string
+	/** anchor in docs/de/schnellstart.md */
+	de: string
+}
+
+/** Sections that exist in both guides. */
+export const BOTH_GUIDES = {
+	noAccess: { en: 'no-access-to-the-music-archive', de: 'kein-zugang-zum-notenarchiv' },
+	termVersion: { en: 'work-version-and-copy', de: 'werk-fassung-und-exemplar' },
+	termShelfmark: { en: 'shelf-mark', de: 'signatur' },
+	termRightsStatus: { en: 'rights-status-and-confirmation', de: 'rechtestatus-und-bestätigung' },
+	termRelease: { en: 'release', de: 'freigabe' },
+	termValidVersion: { en: 'valid-version', de: 'geltende-fassung' },
+	termPreservationCopy: { en: 'internal-preservation-copy', de: 'interne-erhaltungskopie' },
+} as const satisfies Record<string, GuideSection>
 
 /**
  * Link to a section of the administration guide.
@@ -55,6 +78,23 @@ export function userGuideUrl(section: typeof USER_GUIDE[keyof typeof USER_GUIDE]
 }
 
 /**
+ * Link to a section that exists in both guides, in the language of the
+ * user: the German quick start or the English user guide.
+ *
+ * @param section - anchors of the section, a value of BOTH_GUIDES
+ */
+export function guideUrl(section: GuideSection): string {
+	return isGerman()
+		? `${DOCS}de/schnellstart.md#${encodeURIComponent(section.de)}`
+		: `${DOCS}user-guide.md#${section.en}`
+}
+
+/** Whether the user reads German (the quick start is German). */
+function isGerman(): boolean {
+	return getLanguage().toLowerCase().startsWith('de')
+}
+
+/**
  * The anchor GitHub gives a heading: lower case, without punctuation, spaces
  * as hyphens.
  *
@@ -69,5 +109,5 @@ export function headingAnchor(heading: string): string {
  * guide (the full guides are in English).
  */
 export function helpUrl(): string {
-	return getLanguage().toLowerCase().startsWith('de') ? DOCS + 'de/schnellstart.md' : DOCS + 'user-guide.md'
+	return isGerman() ? DOCS + 'de/schnellstart.md' : DOCS + 'user-guide.md'
 }

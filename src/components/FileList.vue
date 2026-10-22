@@ -11,7 +11,21 @@
  */
 import type { FileRef } from '../types.ts'
 
-import { mdiFileAlertOutline, mdiFileDocumentOutline, mdiFileLinkOutline, mdiFileQuestionOutline, mdiLinkOff, mdiOpenInNew } from '@mdi/js'
+import {
+	mdiFileAlertOutline,
+	mdiFileCodeOutline,
+	mdiFileDocumentOutline,
+	mdiFileImageOutline,
+	mdiFileLinkOutline,
+	mdiFileMusicOutline,
+	mdiFileOutline,
+	mdiFilePdfBox,
+	mdiFileQuestionOutline,
+	mdiFolderOutline,
+	mdiHeadphones,
+	mdiLinkOff,
+	mdiOpenInNew,
+} from '@mdi/js'
 import { FilePickerClosed, FilePickerType, getFilePickerBuilder, showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '../l10n.ts'
 import { generateUrl } from '@nextcloud/router'
@@ -22,6 +36,7 @@ import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import ActionDialog from './ActionDialog.vue'
+import HelpTerm from './HelpTerm.vue'
 import { adminSettingsUrl, errorMessage, linkFile, unlinkFile } from '../api.ts'
 import { focusAfterDialog, focusAfterUpdate } from '../focus.ts'
 import { formatSize } from '../format.ts'
@@ -74,6 +89,48 @@ function roleLabel(role: string | null): string {
 	default:
 		return role
 	}
+}
+
+/**
+ * Icon of a file: its kind, or that it is missing or changed.
+ *
+ * @param file - linked file
+ */
+function fileIcon(file: FileRef): string {
+	if (file.found === false) {
+		return mdiFileQuestionOutline
+	}
+	if (file.sha256_mismatch) {
+		return mdiFileAlertOutline
+	}
+	switch (file.role) {
+	case 'score_pdf':
+		return mdiFilePdfBox
+	case 'musicxml':
+	case 'musescore':
+		return mdiFileMusicOutline
+	case 'audio':
+		return mdiHeadphones
+	case 'image':
+		return mdiFileImageOutline
+	case 'source':
+		return mdiFileCodeOutline
+	case 'analysis':
+		return mdiFileDocumentOutline
+	default:
+		return mdiFileOutline
+	}
+}
+
+/**
+ * The folder of a file in the archive folder, without the file name (the
+ * name stands above it); '' for a file directly in the archive folder.
+ *
+ * @param file - linked file
+ */
+function folderOf(file: FileRef): string {
+	const slash = file.path.lastIndexOf('/')
+	return slash > 0 ? file.path.slice(0, slash) : ''
 }
 
 /**
@@ -175,6 +232,7 @@ function details(file: FileRef): string {
 	<div class="file-list">
 		<NcNoteCard v-if="preservationCopy" type="error">
 			{{ t('notenarchiv', 'Internal preservation copy – do not share. Do not pass these files on.') }}
+			<HelpTerm term="preservationCopy" />
 		</NcNoteCard>
 
 		<NcNoteCard v-if="archiveNotShared && files.length > 0" type="warning">
@@ -214,7 +272,7 @@ function details(file: FileRef): string {
 				:key="file.id"
 				class="file-list__item"
 				:class="{ 'file-list__item--missing': file.found === false }">
-				<NcIconSvgWrapper class="file-list__icon" :path="file.found === false ? mdiFileQuestionOutline : (file.sha256_mismatch ? mdiFileAlertOutline : mdiFileDocumentOutline)" />
+				<NcIconSvgWrapper class="file-list__icon" :path="fileIcon(file)" />
 				<div class="file-list__body">
 					<a v-if="file.found !== false"
 						class="file-list__name"
@@ -247,7 +305,13 @@ function details(file: FileRef): string {
 							{{ t('notenarchiv', 'Changed without modification') }}
 						</span>
 					</span>
-					<span class="file-list__path">{{ file.path }}</span>
+					<span v-if="folderOf(file) !== ''" class="file-list__path">
+						<NcIconSvgWrapper :path="mdiFolderOutline"
+							:size="16"
+							inline
+							:name="t('notenarchiv', 'In the folder')" />
+						{{ folderOf(file) }}
+					</span>
 					<!-- Rights notice of a MusicXML file (milestone 0.8): information, never a rights status -->
 					<span v-if="file.rights_notice && isModuleActive('rights')" class="file-list__notice">
 						<span class="file-flag">{{ t('notenarchiv', 'Not checked') }}</span>

@@ -20,6 +20,7 @@ import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
+import AppNotices from './AppNotices.vue'
 import RightsBadge from './RightsBadge.vue'
 import { isEntryConfirmed, songListCount } from '../catalog.ts'
 import { formatDate } from '../format.ts'
@@ -200,6 +201,17 @@ function reviewText(entry: Entry): string {
 }
 
 /**
+ * Open a copy in the sidebar. While the list is filtered for something to
+ * do in the tab "Rights" (rights to confirm, no valid version; e.g. from a
+ * card of the start page), that tab opens right away.
+ *
+ * @param id - id of the copy
+ */
+function openRow(id: number): void {
+	openEntry(id, filters.unconfirmed || filters.noValidVersion ? 'rights' : undefined)
+}
+
+/**
  * Status shown next to the shelf mark if the copy is not active.
  *
  * @param entry - catalog entry
@@ -238,6 +250,7 @@ function statusText(entry: Entry): string {
 					:searchable="false" />
 			</div>
 		</div>
+		<AppNotices />
 
 		<NcEmptyContent v-if="visibleEntries.length === 0"
 			:name="t('notenarchiv', 'No matches')"
@@ -262,7 +275,7 @@ function statusText(entry: Entry): string {
 					class="catalog-card"
 					:class="{ 'catalog-card--selected': entry.id === selectedId }"
 					:aria-current="entry.id === selectedId ? 'true' : undefined"
-					@click="openEntry(entry.id)">
+					@click="openRow(entry.id)">
 					<span class="catalog-card__head">
 						<span class="shelfmark">{{ entry.shelfmark }}</span>
 						<span class="catalog-card__title">{{ entry.title || t('notenarchiv', '(no title)') }}</span>
@@ -317,13 +330,13 @@ function statusText(entry: Entry): string {
 				<tr v-for="entry in renderedEntries"
 					:key="entry.id"
 					:class="{ 'catalog-table__row--selected': entry.id === selectedId }"
-					@click="openEntry(entry.id)">
+					@click="openRow(entry.id)">
 					<td>
 						<button type="button"
 							class="catalog-table__open shelfmark"
 							:aria-current="entry.id === selectedId ? 'true' : undefined"
 							:aria-label="t('notenarchiv', 'Open {shelfmark}', { shelfmark: entry.shelfmark })"
-							@click.stop="openEntry(entry.id)">
+							@click.stop="openRow(entry.id)">
 							{{ entry.shelfmark }}
 						</button>
 						<span v-if="statusText(entry)" class="status-tag">{{ statusText(entry) }}</span>

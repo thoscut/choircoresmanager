@@ -20,9 +20,11 @@ import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import FieldInput from './FieldInput.vue'
+import HelpTerm from './HelpTerm.vue'
 import { errorMessage, updateFields } from '../api.ts'
 import { displayValue, isEmpty, translateLabel } from '../format.ts'
 import { focusAfterUpdate } from '../focus.ts'
+import { FIELD_HELP, SECTION_HELP } from '../helpTerms.ts'
 import { canWrite, fieldInfo } from '../store.ts'
 
 const props = defineProps<{
@@ -37,6 +39,9 @@ const props = defineProps<{
 const emit = defineEmits<{
 	saved: []
 }>()
+
+/** The term the heading of this section explains, if any. */
+const sectionHelp = computed(() => SECTION_HELP[props.sectionId])
 
 const editing = ref(false)
 const saving = ref(false)
@@ -236,9 +241,12 @@ function hintFor(key: string): string {
 <template>
 	<section class="field-section" :aria-labelledby="`field-section-${sectionId}`">
 		<div class="field-section__head">
-			<h3 :id="`field-section-${sectionId}`" class="field-section__heading">
-				{{ heading }}
-			</h3>
+			<div class="field-section__title">
+				<h3 :id="`field-section-${sectionId}`" class="field-section__heading">
+					{{ heading }}
+				</h3>
+				<HelpTerm v-if="sectionHelp" :term="sectionHelp" />
+			</div>
 			<NcButton v-if="editableKeys.length > 0 && !editing"
 				ref="editButton"
 				variant="tertiary"
@@ -256,7 +264,10 @@ function hintFor(key: string): string {
 		<!-- Display -->
 		<dl v-if="!editing" class="field-section__list">
 			<div v-for="{ key, info } in shownFields" :key="key" class="field-section__item">
-				<dt>{{ translateLabel(info.label) }}</dt>
+				<dt>
+					{{ translateLabel(info.label) }}
+					<HelpTerm v-if="FIELD_HELP[key]" :term="FIELD_HELP[key]" />
+				</dt>
 				<dd :class="{ 'field-section__value--long': info.type === 'longtext', 'field-section__value--empty': isEmpty(record[key]) }">
 					{{ isEmpty(record[key]) ? '–' : displayValue(info, record[key]) }}
 				</dd>
@@ -326,6 +337,12 @@ function hintFor(key: string): string {
 	align-items: center;
 	justify-content: space-between;
 	gap: var(--default-grid-baseline);
+}
+
+.field-section__title {
+	display: flex;
+	align-items: center;
+	gap: 2px;
 }
 
 .field-section__heading {

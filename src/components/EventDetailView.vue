@@ -44,6 +44,7 @@ import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextArea from '@nextcloud/vue/components/NcTextArea'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import ActionDialog from './ActionDialog.vue'
+import AppNotices from './AppNotices.vue'
 import CalendarDialog from './CalendarDialog.vue'
 import EventDialog from './EventDialog.vue'
 import {
@@ -405,6 +406,7 @@ function revisionText(item: EventItem): string {
 				{{ isConcert ? t('notenarchiv', 'All concerts') : t('notenarchiv', 'All song lists') }}
 			</NcButton>
 		</header>
+		<AppNotices />
 
 		<NcEmptyContent v-if="!data && loading" :name="t('notenarchiv', 'Loading …')">
 			<template #icon>

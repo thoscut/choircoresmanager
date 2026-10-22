@@ -51,6 +51,7 @@ export const VIEW_MODULES: Readonly<Record<ViewName, string | null>> = {
 	checksums: 'checksums',
 	folderBook: 'folder_book',
 	snapshots: 'annual_snapshot',
+	validVersions: 'valid_version',
 }
 
 /** The module of each card and list of the start page. */

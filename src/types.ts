@@ -247,6 +247,8 @@ export interface Proposal {
 	source: string | null
 	status: string
 	created_by: string | null
+	/** display name of the proposer (inbox list only) */
+	created_by_name?: string | null
 	created: number
 }
 

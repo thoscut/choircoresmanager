@@ -6,7 +6,7 @@
 /**
  * Header of a view: heading, optional description, actions and a print
  * button. Sticky on screen; in print only the heading and the description
- * remain.
+ * remain. The notices about the whole app follow below it (not sticky).
  */
 import { mdiPrinterOutline, mdiRefresh } from '@mdi/js'
 import { t } from '../l10n.ts'
@@ -14,6 +14,7 @@ import { useTemplateRef } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
+import AppNotices from './AppNotices.vue'
 import { useStickyHeader } from '../stickyHeader.ts'
 
 withDefaults(defineProps<{
@@ -72,6 +73,7 @@ function print(): void {
 			</NcButton>
 		</div>
 	</header>
+	<AppNotices />
 </template>
 
 <style scoped>

@@ -10,7 +10,7 @@
  */
 import type { ExcerptLink } from '../types.ts'
 
-import { mdiAlertCircleOutline, mdiLinkVariantOff } from '@mdi/js'
+import { mdiAlertCircleOutline, mdiBookOpenPageVariantOutline, mdiLinkVariantOff } from '@mdi/js'
 import { n, t } from '../l10n.ts'
 import { computed, onMounted, ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -21,6 +21,7 @@ import LinkList from './LinkList.vue'
 import ViewHeader from './ViewHeader.vue'
 import { errorMessage, fetchLinks } from '../api.ts'
 import { canonicalShelfmark } from '../catalog.ts'
+import { navigate } from '../navigation.ts'
 import { entriesById, isModuleActive } from '../store.ts'
 
 const links = ref<ExcerptLink[]>([])
@@ -84,9 +85,17 @@ const sorted = computed(() => [...links.value].sort((a, b) => collator.compare(
 			</NcEmptyContent>
 			<NcEmptyContent v-else-if="links.length === 0"
 				:name="t('notenarchiv', 'No active links')"
-				:description="t('notenarchiv', 'Links are created in the score view.')">
+				:description="t('notenarchiv', 'Links are created in the score view: open a copy in the catalog, then “Score”.')">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiLinkVariantOff" />
+				</template>
+				<template #action>
+					<NcButton @click="navigate('catalog')">
+						<template #icon>
+							<NcIconSvgWrapper :path="mdiBookOpenPageVariantOutline" />
+						</template>
+						{{ t('notenarchiv', 'Open the catalog') }}
+					</NcButton>
 				</template>
 			</NcEmptyContent>
 			<template v-else>

@@ -11,7 +11,7 @@
  */
 import type { Detail, Entry, Proposal } from '../types.ts'
 
-import { mdiAlertCircleOutline, mdiCheck, mdiClose, mdiInboxOutline } from '@mdi/js'
+import { mdiAlertCircleOutline, mdiCheck, mdiClose, mdiHomeOutline, mdiInboxOutline } from '@mdi/js'
 import { showSuccess } from '@nextcloud/dialogs'
 import { n, t } from '../l10n.ts'
 import { computed, onMounted, reactive, ref } from 'vue'
@@ -24,6 +24,7 @@ import ActionDialog from './ActionDialog.vue'
 import ViewHeader from './ViewHeader.vue'
 import { acceptProposal, errorMessage, fetchEntry, fetchProposals, rejectProposal } from '../api.ts'
 import { displayValue, formatDateTime } from '../format.ts'
+import { navigate } from '../navigation.ts'
 import { entries, fieldInfo, fieldLabel, isLibrarian, loadDetail, loadEntries, openEntry } from '../store.ts'
 
 const proposals = ref<Proposal[]>([])
@@ -221,9 +222,17 @@ async function decide(): Promise<void> {
 			</NcEmptyContent>
 			<NcEmptyContent v-else-if="proposals.length === 0"
 				:name="t('notenarchiv', 'The inbox is empty')"
-				:description="t('notenarchiv', 'There are no open proposals.')">
+				:description="t('notenarchiv', 'There are no open proposals. Tools and transcription rounds put their proposals here; nothing else to do now.')">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiInboxOutline" />
+				</template>
+				<template #action>
+					<NcButton @click="navigate('due')">
+						<template #icon>
+							<NcIconSvgWrapper :path="mdiHomeOutline" />
+						</template>
+						{{ t('notenarchiv', 'Open the start page') }}
+					</NcButton>
 				</template>
 			</NcEmptyContent>
 			<template v-else>
@@ -282,7 +291,7 @@ async function decide(): Promise<void> {
 								<td>
 									<span v-if="proposal.source">{{ proposal.source }}</span>
 									<span v-if="proposal.reason" class="proposals-view__reason">{{ proposal.reason }}</span>
-									<span class="proposals-view__meta">{{ formatDateTime(proposal.created) }}<template v-if="proposal.created_by">, {{ proposal.created_by }}</template></span>
+									<span class="proposals-view__meta">{{ formatDateTime(proposal.created) }}<template v-if="proposal.created_by_name || proposal.created_by">, {{ proposal.created_by_name || proposal.created_by }}</template></span>
 								</td>
 								<td v-if="isLibrarian" class="proposals-view__actions no-print">
 									<NcButton variant="primary"

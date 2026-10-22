@@ -10,7 +10,7 @@
  */
 import type { Task } from '../types.ts'
 
-import { mdiAlertCircleOutline, mdiClipboardCheckOutline } from '@mdi/js'
+import { mdiAlertCircleOutline, mdiBookOpenPageVariantOutline, mdiClipboardCheckOutline } from '@mdi/js'
 import { n, t } from '../l10n.ts'
 import { computed, onMounted, ref, watch } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -23,7 +23,7 @@ import NcRadioGroupButton from '@nextcloud/vue/components/NcRadioGroupButton'
 import TaskList from './TaskList.vue'
 import ViewHeader from './ViewHeader.vue'
 import { errorMessage, fetchTasks } from '../api.ts'
-import { taskFilters } from '../navigation.ts'
+import { navigate, taskFilters } from '../navigation.ts'
 import { hasRole, isLibrarian } from '../store.ts'
 
 const tasks = ref<Task[]>([])
@@ -80,6 +80,15 @@ const shown = computed(() => tasks.value.filter((task) => {
 	}
 	return true
 }))
+
+/** Tasks exist, but the filters hide them all. */
+const hiddenByFilters = computed(() => shown.value.length === 0 && tasks.value.length > 0)
+
+/** Show the tasks of all roles, open and answered. */
+function showAll(): void {
+	taskFilters.scope = 'all'
+	taskFilters.status = ''
+}
 </script>
 
 <template>
@@ -126,9 +135,22 @@ const shown = computed(() => tasks.value.filter((task) => {
 			</NcEmptyContent>
 			<NcEmptyContent v-else-if="shown.length === 0"
 				:name="t('notenarchiv', 'No tasks')"
-				:description="t('notenarchiv', 'New questions and tasks are created in the sidebar of a copy or in the score view.')">
+				:description="hiddenByFilters
+					? t('notenarchiv', 'No task matches the filters.')
+					: t('notenarchiv', 'New questions and tasks are created in the sidebar of a copy (tab Queries) or in the score view.')">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiClipboardCheckOutline" />
+				</template>
+				<template #action>
+					<NcButton v-if="hiddenByFilters" @click="showAll">
+						{{ t('notenarchiv', 'Show all tasks') }}
+					</NcButton>
+					<NcButton v-else @click="navigate('catalog')">
+						<template #icon>
+							<NcIconSvgWrapper :path="mdiBookOpenPageVariantOutline" />
+						</template>
+						{{ t('notenarchiv', 'Open the catalog') }}
+					</NcButton>
 				</template>
 			</NcEmptyContent>
 			<TaskList v-else :tasks="shown" @changed="load" />

@@ -37,6 +37,7 @@ export type ViewName =
 	| 'checksums'
 	| 'folderBook'
 	| 'snapshots'
+	| 'validVersions'
 
 /** Value of `?view=` for each view (the event view is `?event={id}`). */
 const VIEW_PARAMS: Record<Exclude<ViewName, 'event'>, string> = {
@@ -61,6 +62,7 @@ const VIEW_PARAMS: Record<Exclude<ViewName, 'event'>, string> = {
 	checksums: 'checksums',
 	folderBook: 'folder-book',
 	snapshots: 'annual-snapshots',
+	validVersions: 'valid-versions',
 }
 
 export const DEFAULT_VIEW: ViewName = 'due'

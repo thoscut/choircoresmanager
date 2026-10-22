@@ -67,6 +67,25 @@ export const DEFAULT_FILTERS: Readonly<Filters> = Object.freeze({
 	reviewOpen: false,
 })
 
+/**
+ * Number of active filters among those under "More filters" (all but the
+ * search, the rights status and the repertoire), so that the collapsed
+ * section still says that it filters.
+ *
+ * @param filters - current filters
+ */
+export function moreFiltersActive(filters: Filters): number {
+	return [
+		filters.binder !== null,
+		filters.status !== DEFAULT_FILTERS.status,
+		filters.musicxml,
+		filters.preservationCopy,
+		filters.unconfirmed,
+		filters.noValidVersion,
+		filters.reviewOpen,
+	].filter(Boolean).length
+}
+
 /** Repertoire classes in display order. */
 export const REPERTOIRE_CLASSES = ['current', 'dormant', 'earlier', 'none'] as const
 
@@ -92,6 +111,49 @@ export function worksWithValidVersion(entries: Entry[]): Set<number> {
 		}
 	}
 	return works
+}
+
+/** A work with several versions and none valid for the choir. */
+export interface OpenChoice {
+	workId: number
+	title: string
+	composer: string
+	repertoireClass: string
+	/** the versions with their copies, ordered by the first shelf mark */
+	versions: { versionId: number, copies: Entry[] }[]
+}
+
+/**
+ * The works the conductor still has to choose a valid version for: more
+ * than one version, none valid. The works of the current repertoire come
+ * first, then by title.
+ *
+ * @param entries - all entries
+ */
+export function openChoices(entries: Entry[]): OpenChoice[] {
+	const valid = worksWithValidVersion(entries)
+	const works = new Map<number, OpenChoice>()
+	const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' })
+	for (const entry of [...entries].sort((a, b) => collator.compare(a.shelfmark, b.shelfmark))) {
+		if (entry.work_id === null || entry.work_id === undefined || entry.version_id === null || entry.version_id === undefined || valid.has(entry.work_id)) {
+			continue
+		}
+		let work = works.get(entry.work_id)
+		if (!work) {
+			work = { workId: entry.work_id, title: entry.title ?? '', composer: entry.composer ?? '', repertoireClass: repertoireClass(entry), versions: [] }
+			works.set(entry.work_id, work)
+		}
+		const versionId = entry.version_id
+		let version = work.versions.find((candidate) => candidate.versionId === versionId)
+		if (!version) {
+			version = { versionId, copies: [] }
+			work.versions.push(version)
+		}
+		version.copies.push(entry)
+	}
+	return [...works.values()]
+		.filter((work) => work.versions.length > 1)
+		.sort((a, b) => Number(b.repertoireClass === 'current') - Number(a.repertoireClass === 'current') || collator.compare(a.title, b.title))
 }
 
 /** Context without any knowledge, e.g. for tests. */

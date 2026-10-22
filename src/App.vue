@@ -18,42 +18,40 @@ import {
 	mdiArchiveOutline,
 	mdiBookshelf,
 	mdiCogOutline,
-	mdiFolderAccountOutline,
 } from '@mdi/js'
 import { t } from './l10n.ts'
-import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue'
+import { computed, defineAsyncComponent, onMounted, watch } from 'vue'
 import NcAppContent from '@nextcloud/vue/components/NcAppContent'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcContent from '@nextcloud/vue/components/NcContent'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
-import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
+import AppNotices from './components/AppNotices.vue'
 import ArchiveManagement from './components/ArchiveManagement.vue'
 import CatalogList from './components/CatalogList.vue'
 import CatalogNavigation from './components/CatalogNavigation.vue'
 import CopySidebar from './components/CopySidebar.vue'
 import DueView from './components/DueView.vue'
 import GuideLink from './components/GuideLink.vue'
-import { USER_GUIDE, userGuideUrl } from './docs.ts'
+import { BOTH_GUIDES, guideUrl } from './docs.ts'
 import { adminSettingsUrl, errorMessage, fetchTasks, resolveLink } from './api.ts'
 import { formatDate } from './format.ts'
 import { applyModules } from './modules.ts'
 import { currentEventId, currentView, navigate, openDueTarget, startNavigation, switchedOffNotice } from './navigation.ts'
-import { SETTINGS_SECTIONS } from './settings.ts'
+import { startNotice } from './notices.ts'
 import { DEFAULT_VIEW, isMissingCopy, parseStartParams } from './startParams.ts'
 import {
 	archiveDialogOpen,
-	archiveNotShared,
 	canChangeSettings,
 	canSeeFolderBook,
 	canSeeProposals,
 	entries,
 	entriesError,
 	entriesStatus,
-	hasArchiveFolder,
 	initMeta,
 	isAdmin,
+	isConductor,
 	isLibrarian,
 	highlightedTaskId,
 	loadEntries,
@@ -87,13 +85,8 @@ const ChecksumsView = defineAsyncComponent(() => import('./components/ChecksumsV
 const FolderBookView = defineAsyncComponent(() => import('./components/FolderBookView.vue'))
 const ShelfmarkGapsView = defineAsyncComponent(() => import('./components/ShelfmarkGapsView.vue'))
 const AnnualSnapshotsView = defineAsyncComponent(() => import('./components/AnnualSnapshotsView.vue'))
+const ValidVersionsView = defineAsyncComponent(() => import('./components/ValidVersionsView.vue'))
 const PersonalViewDialog = defineAsyncComponent(() => import('./components/PersonalViewDialog.vue'))
-
-/**
- * Message about a link or copy from the URL that could not be opened: an
- * error (role "alert") or a warning (role "status").
- */
-const startNotice = ref<{ text: string, type: 'error' | 'warning' } | null>(null)
 
 /** Tell that a link or the back button led to a function that is switched off. */
 function noticeSwitchedOff(): void {
@@ -109,8 +102,6 @@ watch(switchedOffNotice, (value) => {
 
 /** The server hides the app from users without a role; this is a fallback. */
 const hasAccess = computed(() => meta.value !== null && (meta.value.admin || meta.value.roles.length > 0))
-
-const hasNoRoleAsAdmin = computed(() => isAdmin.value && (meta.value?.roles.length ?? 0) === 0)
 
 const catalogEmpty = computed(() => entriesStatus.value === 'ready' && entries.value.length === 0)
 
@@ -140,7 +131,8 @@ const pageTitle = computed(() => {
  * @param params - parsed query parameters
  */
 function allowedView(params: StartParams): ViewName {
-	if ((params.view === 'proposals' && !canSeeProposals.value) || (params.view === 'folderBook' && !canSeeFolderBook.value)) {
+	if ((params.view === 'proposals' && !canSeeProposals.value) || (params.view === 'folderBook' && !canSeeFolderBook.value)
+		|| (params.view === 'validVersions' && !isConductor.value)) {
 		return DEFAULT_VIEW
 	}
 	return params.view ?? DEFAULT_VIEW
@@ -263,8 +255,6 @@ function openArchive(): void {
 
 /** The settings are a page under Administration → Music archive. */
 const settingsUrl = adminSettingsUrl()
-/** The access check on that page, opened right away. */
-const accessCheckUrl = adminSettingsUrl(SETTINGS_SECTIONS.access)
 </script>
 
 <template>
@@ -296,48 +286,19 @@ const accessCheckUrl = adminSettingsUrl(SETTINGS_SECTIONS.access)
 			<!-- No role -->
 			<NcEmptyContent v-else-if="!hasAccess"
 				:name="t('notenarchiv', 'No access to the music archive')"
-				:description="t('notenarchiv', 'Your account has no role in the music archive. Roles are linked to groups; please ask an administrator.')">
+				:description="t('notenarchiv', 'Your account has no role in the music archive. Please ask the administration to add your account to the group of your role.')">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiAccountLockOutline" />
+				</template>
+				<template #action>
+					<GuideLink :href="guideUrl(BOTH_GUIDES.noAccess)" :label="t('notenarchiv', 'No access to the music archive (guide)')" />
 				</template>
 			</NcEmptyContent>
 
 			<template v-else>
-				<div v-if="hasNoRoleAsAdmin || !hasArchiveFolder || archiveNotShared || startNotice !== null" class="app-notices">
-					<NcNoteCard v-if="startNotice !== null" :type="startNotice.type" :role="startNotice.type === 'error' ? 'alert' : 'status'">
-						<p>{{ startNotice.text }}</p>
-						<NcButton @click="startNotice = null">
-							{{ t('notenarchiv', 'Close') }}
-						</NcButton>
-					</NcNoteCard>
-					<NcNoteCard v-if="canChangeSettings && !hasArchiveFolder" type="warning">
-						<p>{{ t('notenarchiv', 'No archive folder has been chosen yet. Without it files cannot be linked and exports cannot be stored.') }}</p>
-						<NcButton :href="settingsUrl">
-							<template #icon>
-								<NcIconSvgWrapper :path="mdiCogOutline" />
-							</template>
-							{{ t('notenarchiv', 'Open settings') }}
-						</NcButton>
-					</NcNoteCard>
-					<NcNoteCard v-else-if="!hasArchiveFolder" type="info">
-						{{ t('notenarchiv', 'No archive folder has been chosen yet. An administrator sets it in the settings of the music archive.') }}
-					</NcNoteCard>
-					<NcNoteCard v-if="archiveNotShared" type="warning">
-						<p>{{ t('notenarchiv', 'The archive folder is not shared with your account, so its files (scores, scans, practice files) do not open for you. Please ask the music librarians to share the archive folder with you or your group.') }}</p>
-						<NcButton v-if="canChangeSettings" :href="accessCheckUrl">
-							<template #icon>
-								<NcIconSvgWrapper :path="mdiFolderAccountOutline" />
-							</template>
-							{{ t('notenarchiv', 'Check access to the archive folder') }}
-						</NcButton>
-						<p>
-							<GuideLink :href="userGuideUrl(USER_GUIDE.filesNotShared)" :label="t('notenarchiv', 'Files you cannot open (user guide)')" />
-						</p>
-					</NcNoteCard>
-					<NcNoteCard v-if="hasNoRoleAsAdmin" type="info">
-						{{ t('notenarchiv', 'You are an administrator without a role: you can read the music archive and change the settings. The proposals inbox and internal preservation copies are only open to the roles concerned. To edit the catalog, add yourself to a group with a role.') }}
-					</NcNoteCard>
-				</div>
+				<!-- Without a view (loading, no catalog) the notices stand here;
+					 otherwise under the heading of the view -->
+				<AppNotices v-if="entriesStatus !== 'ready' || catalogEmpty" />
 
 				<!-- Loading the catalog -->
 				<NcEmptyContent v-if="entriesStatus === 'loading' || entriesStatus === 'idle'"
@@ -419,6 +380,7 @@ const accessCheckUrl = adminSettingsUrl(SETTINGS_SECTIONS.access)
 					<FolderBookView v-else-if="currentView === 'folderBook' && canSeeFolderBook" />
 					<ShelfmarkGapsView v-else-if="currentView === 'gaps'" />
 					<AnnualSnapshotsView v-else-if="currentView === 'snapshots'" />
+					<ValidVersionsView v-else-if="currentView === 'validVersions' && isConductor" />
 					<DueView v-else />
 				</template>
 			</template>
@@ -432,18 +394,6 @@ const accessCheckUrl = adminSettingsUrl(SETTINGS_SECTIONS.access)
 </template>
 
 <style scoped>
-.app-notices {
-	display: flex;
-	flex-direction: column;
-	gap: var(--default-grid-baseline);
-	padding: calc(2 * var(--default-grid-baseline));
-	padding-inline-start: calc(var(--default-clickable-area) + 3 * var(--default-grid-baseline));
-}
-
-.app-notices p {
-	margin-bottom: var(--default-grid-baseline);
-}
-
 .app-actions {
 	display: flex;
 	flex-wrap: wrap;

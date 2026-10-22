@@ -13,3 +13,8 @@ declare module '*.xml?raw' {
 	const text: string
 	export default text
 }
+
+declare module '*.php?raw' {
+	const text: string
+	export default text
+}

@@ -397,6 +397,12 @@ und die Stände einer Fassung. Offen: weitere Sprachen.*
 
 ### 0.9 Benutzerführung
 
+*Umgesetzt (Stand `0.7.0-dev.5`): Hilfe am Ort an den Fachbegriffen,
+Meldungen und leere Ansichten mit nächstem Schritt, Folgen vor dem Bestätigen
+der Rechte, Sammelliste „Geltende Fassungen festlegen“, gefaltete Filter,
+Doku nach Aufgaben je Rolle mit „Häufige Probleme“, Durchgang ohne Vorwissen
+im Testaufbau. Die geführte Einrichtung kam schon mit den Einstellungen.*
+
 - **Geführte Einrichtung** unter Administration → Notenarchiv: Archivordner,
   Rollen und Gruppen, Zugriffsprüfung, Import, Dateiabgleich, mit Status je
   Schritt.

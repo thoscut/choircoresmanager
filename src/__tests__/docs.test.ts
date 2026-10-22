@@ -6,8 +6,10 @@
 import { describe, expect, it } from 'vitest'
 import info from '../../appinfo/info.xml?raw'
 import adminGuide from '../../docs/admin-guide.md?raw'
+import quickStart from '../../docs/de/schnellstart.md?raw'
 import userGuide from '../../docs/user-guide.md?raw'
-import { ADMIN_GUIDE, adminGuideUrl, headingAnchor, USER_GUIDE, userGuideUrl } from '../docs.ts'
+import pageController from '../../lib/Controller/PageController.php?raw'
+import { ADMIN_GUIDE, adminGuideUrl, BOTH_GUIDES, headingAnchor, USER_GUIDE, userGuideUrl } from '../docs.ts'
 
 /**
  * The anchors of the headings of a guide.
@@ -37,6 +39,20 @@ describe('links into the guides', () => {
 		for (const anchor of Object.values(USER_GUIDE)) {
 			expect(existing, anchor).toContain(anchor)
 		}
+	})
+
+	it('point to sections that exist in both the user guide and the German quick start', () => {
+		const english = anchors(userGuide)
+		const german = anchors(quickStart)
+		for (const section of Object.values(BOTH_GUIDES)) {
+			expect(english, section.en).toContain(section.en)
+			expect(german, section.de).toContain(section.de)
+		}
+	})
+
+	it('are the same on the page "Access forbidden" of the server', () => {
+		expect(pageController).toContain(`'user-guide.md#${BOTH_GUIDES.noAccess.en}'`)
+		expect(pageController).toContain(`'de/schnellstart.md#${BOTH_GUIDES.noAccess.de}'`)
 	})
 
 	it('point to the documentation named in the app info', () => {

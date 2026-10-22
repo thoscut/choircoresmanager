@@ -11,6 +11,7 @@ namespace OCA\Notenarchiv\Controller;
 
 use OCA\Notenarchiv\AppInfo\Application;
 use OCA\Notenarchiv\Attribute\RequiresModule;
+use OCA\Notenarchiv\Db\Proposal;
 use OCA\Notenarchiv\Exception\InvalidInputException;
 use OCA\Notenarchiv\Service\ExportService;
 use OCA\Notenarchiv\Service\FolderBookService;
@@ -34,6 +35,7 @@ use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\IL10N;
 use OCP\IRequest;
+use OCP\IUserManager;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -60,6 +62,7 @@ class WorkflowController extends Controller {
 		private UserFiles $userFiles,
 		private IL10N $l,
 		private LoggerInterface $logger,
+		private IUserManager $userManager,
 	) {
 		parent::__construct(Application::APP_ID, $request);
 	}
@@ -160,7 +163,11 @@ class WorkflowController extends Controller {
 	public function proposals(): JSONResponse {
 		return $this->run(function (string $uid) {
 			$this->roles->requireRole($uid, [Roles::LIBRARIAN, Roles::CONTRIBUTOR, Roles::READER]);
-			return $this->proposals->open();
+			// The inbox names who proposed with the display name, as the audit log does
+			return array_map(function (Proposal $proposal): array {
+				$creator = $proposal->getCreatedBy();
+				return $proposal->jsonSerialize() + ['created_by_name' => $creator === null ? null : $this->userManager->getDisplayName($creator)];
+			}, $this->proposals->open());
 		});
 	}
 

@@ -11,7 +11,7 @@
  */
 import type { ReleaseRow, ReleaseStatus } from '../types.ts'
 
-import { mdiAlertCircleOutline, mdiCheckCircleOutline } from '@mdi/js'
+import { mdiAlertCircleOutline, mdiBookOpenPageVariantOutline, mdiCheckCircleOutline } from '@mdi/js'
 import { n, t } from '../l10n.ts'
 import { computed, onMounted, ref, watch } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -25,7 +25,7 @@ import ViewHeader from './ViewHeader.vue'
 import { errorMessage, fetchReleaseList } from '../api.ts'
 import { formatDate, translateLabel } from '../format.ts'
 import { releaseStatusLabel } from '../labels.ts'
-import { releaseFilter } from '../navigation.ts'
+import { navigate, releaseFilter } from '../navigation.ts'
 import { canSyncPrintMirror, choiceLabel, openEntry } from '../store.ts'
 
 const props = defineProps<{
@@ -193,6 +193,14 @@ function rightsText(row: ReleaseRow): string {
 				:description="emptyDescription">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiCheckCircleOutline" />
+				</template>
+				<template v-if="releaseFilter === '' && !all" #action>
+					<NcButton @click="navigate('catalog')">
+						<template #icon>
+							<NcIconSvgWrapper :path="mdiBookOpenPageVariantOutline" />
+						</template>
+						{{ t('notenarchiv', 'Open the catalog') }}
+					</NcButton>
 				</template>
 			</NcEmptyContent>
 

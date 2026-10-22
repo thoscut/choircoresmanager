@@ -2,10 +2,10 @@
 
 This guide is for the people who look after a choir's sheet music: music
 librarians, the conductor, the board and the auditors. Choir members find
-their part in [Shared with me](#for-choir-members-shared-with-me). It first shows how to
-find your way around, then the features everybody uses, and then what each
-role does. The interface is available in English and German (informal and
-formal address).
+their part in [Shared with me](#shared-with-me). It first explains a few
+terms and how to find your way around, then what each role does, task by
+task, and at the end what to do about common problems. The interface is
+available in English and German (informal and formal address).
 
 What you see depends on your roles. Roles are bound to Nextcloud groups; an
 administrator assigns them (see the [administration guide](admin-guide.md)).
@@ -14,20 +14,76 @@ role does not include.
 
 **Contents**
 
+- [Terms](#terms)
 - [Getting around](#getting-around)
-- [Scores, practice files and questions](#scores-practice-files-and-questions)
-- [Sharing with choir members and the public](#sharing-with-choir-members-and-the-public)
-- [Reviewing transcriptions](#reviewing-transcriptions)
-- [Revisions of a version](#revisions-of-a-version)
-- [Concerts and song lists](#concerts-and-song-lists)
-- [Statistics and annual report](#statistics-and-annual-report)
-- [Folder book](#folder-book)
-- [For music librarians](#for-music-librarians)
-- [For operations](#for-operations)
-- [For conductors](#for-conductors)
-- [For the board and auditors](#for-the-board-and-auditors)
-- [For contributors and tools](#for-contributors-and-tools)
+- [As a conductor](#as-a-conductor)
+- [As a music librarian](#as-a-music-librarian)
+- [As operations](#as-operations)
+- [As the board or auditors](#as-the-board-or-auditors)
+- [As a choir member](#as-a-choir-member)
+- [As a contributor or tool](#as-a-contributor-or-tool)
+- [Common problems](#common-problems)
 - [Paper](#paper)
+
+## Terms
+
+The app uses a few words in a fixed sense. In the app, a small **?** next to
+these words explains them briefly and links here (see
+[Help next to a term](#help-next-to-a-term)).
+
+### Work, version and copy
+
+A **work** is the piece itself, with its title and composer, for example
+"Der Mond ist aufgegangen". A **version** (German *Fassung*) is one edition
+or arrangement of the work, for example a setting for men's choir from one
+publisher; the rights belong to the version, not to the work. A **copy**
+(German *Exemplar*) is one physical or digital copy of a version with its own
+shelf mark, for example the printed sheets in a binder or a scan. One work
+can have several versions, and one version several copies (see
+[The details of a copy](#the-details-of-a-copy)).
+
+### Shelf mark
+
+The shelf mark says where a copy belongs: the number of the archive binder
+and the number in the binder, for example `5-12` for copy 12 in binder 5.
+Every copy has its own shelf mark, and a number is never given twice. The
+names of the files in the archive folder start with the shelf mark, so that
+the file sync links each file to its copy (see
+[Imports, file sync and exports](#imports-file-sync-and-exports)).
+
+### Rights status and confirmation
+
+The rights status of a version is *public domain*, *protected* or *open*
+(not clarified). The app proposes a status from the data, for example from
+the life dates of the persons involved, but a proposal stays a suggestion.
+A music librarian confirms the status with a reason and evidence, and only a
+confirmed status counts for releases (see
+[Confirming rights](#confirming-rights)). The app supports the decision; it
+is no legal advice.
+
+### Release
+
+A release says whether a version may be given out in a certain way: in the
+singers' portal, at the print station or as a publication. It follows from
+the confirmed rights or from a valid license for that use. Internal
+preservation copies are never released (see
+[Releases: singers' portal and print station](#releases-singers-portal-and-print-station)).
+
+### Valid version
+
+The valid version is the version the conductor has chosen as the one the
+choir sings. A work has at most one valid version, and only the conductor
+sets it. It says nothing about the rights: a valid version can still be
+protected or open (see
+[Choosing the valid version](#choosing-the-valid-version)).
+
+### Internal preservation copy
+
+An internal preservation copy is kept only for the archive, for example a
+scan of a protected print. It is never shared, played or exported. Only the
+catalog librarian and the conductor see it; the catalog marks it with the
+badge *Internal preservation copy – do not share* (see
+[Finding a copy](#finding-a-copy)).
 
 ## Getting around
 
@@ -46,6 +102,9 @@ The navigation on the left lists the views of the app in groups:
 - **Maintaining the catalog:** **New accession** (for the other roles
   **Shelf labels**), **Merge**, **Inventory**, **Folder book** (for the
   roles that read it) and **Checksums**
+
+The conductor also finds **Choose valid versions** (see
+[Choosing the valid version](#choosing-the-valid-version)).
 
 At the bottom, everyone finds **Help** (this guide; in German the quick
 start) and **Customize view**, music librarians **Archive management**
@@ -101,13 +160,16 @@ composer**:
 - Any other text finds the copies whose title or composer contain every word
   you typed; accents do not matter.
 
-The filters narrow the list: archive binder, rights status, repertoire,
+The search field and the filters **Rights status** and **Repertoire** are
+always visible. **More filters** opens the other filters: archive binder,
 status (active by default; retired, missing and lent copies only when you
 choose their status or **All statuses**), **With MusicXML**, **Internal
-preservation copies only**, **Public domain, not confirmed** and **No version
-valid for the choir**. **Reset search and filters** clears them. The list can
-be sorted by catalog order, shelf mark or title; on a phone it shows one card
-per copy.
+preservation copies only**, **Public domain, not confirmed**, **No version
+valid for the choir** and **Open review points**. A second click on **More
+filters** closes them again; the app remembers whether they are open. While
+filters under **More filters** are active, the button says how many.
+**Reset search and filters** clears them. The list can be sorted by catalog
+order, shelf mark or title; on a phone it shows one card per copy.
 
 The **rights badge** always shows a text and a symbol, never only a colour:
 
@@ -137,14 +199,6 @@ the register as well. It shows only what your roles may see: internal
 preservation copies only to the catalog librarian and the conductor, and
 nothing to accounts without a role in the music archive.
 
-**Common problems**
-
-- *The section "Music archive" is missing:* the module is switched off, or
-  your account has no role in the music archive. Ask the administration.
-- *A copy is not found:* check the spelling; a shelf mark must be complete
-  (`2-1`, not `2-`). Internal preservation copies are hidden from roles that
-  may not view them.
-
 ### The details of a copy
 
 ![The sidebar of copy 1-1 on the tab "Overview": title, rights status, the button "Score", the tabs, and the fields of the work and the version, each section with an "Edit" button.](screenshots/copy-overview.png)
@@ -153,16 +207,20 @@ Click a row to open the sidebar. Its head shows the rights badge, the status
 if the copy is not active, and **Score** if there is MusicXML you may view.
 The tabs:
 
-- **Overview:** work, version and copy, the repertoire (class, documented
+- **Details:** work, version and copy, the repertoire (class, documented
   performances, last performed, song lists), merges and the other copies of
   the same work.
 - **Rights:** confirmation, releases, the valid version, licenses, open
   proposals, the persons involved with the protection-term suggestion, and
   the rights and MusicXML fields.
-- **Tasks:** questions and tasks of the copy and its excerpt links.
-- **Files:** the files linked from the archive folder, each opening in
-  Nextcloud in a new tab (see [Files you cannot open](#files-you-cannot-open)).
-- **Audit log:** every change with who, when, old and new value and reason.
+- **Queries:** questions and tasks of the copy and its excerpt links (the
+  tab is called **Links** while the tasks are switched off).
+- **Files:** the files linked from the archive folder, each with a symbol for
+  its file type and the folder it lies in (not the full path). Each file
+  opens in Nextcloud in a new tab (see
+  [Files you cannot open](#files-you-cannot-open)).
+- **History:** the audit log of the copy: every change with who, when, old
+  and new value and reason.
 
 A section you may change shows **Edit**. Change the fields, optionally enter
 a **Reason for the change**, which is stored in the audit log, and **Save**.
@@ -170,6 +228,13 @@ a **Reason for the change**, which is stored in the audit log, and **Save**.
 > [!NOTE]
 > Nothing is ever deleted. A copy that leaves the archive gets the status
 > *retired*, *missing* or *lent*, and the status needs a reason.
+
+### Help next to a term
+
+Next to some terms (version, copy, shelf mark, rights status, release, valid
+version and internal preservation copy) the app shows a small **?** button.
+It opens a short explanation of the term with a link to the matching section
+of this guide (see [Terms](#terms)). Escape closes the explanation.
 
 ### Files you cannot open
 
@@ -212,8 +277,10 @@ how often, for example as a weekly summary. The
 The Nextcloud dashboard can show the widget **Music archive – due**: the same
 as the start page (concert deadlines, the cards with their numbers, tasks for
 your roles), each entry with a link into the app, and **Open the start page**.
-Add it in the dashboard's settings. Only accounts with an archive role can
-add it. It never shows the text of a question or a person's name.
+Each entry has a short title, the details in a second line and a symbol for
+its kind (concert, card or task). Add the widget in the dashboard's settings.
+Only accounts with an archive role can add it. It never shows the text of a
+question or a person's name.
 
 ### Opening from the Files app
 
@@ -243,7 +310,67 @@ conductor and never played.
 Administrators switch the action off with the module **Opening from the
 Files app** (see the [administration guide](admin-guide.md)).
 
-## Scores, practice files and questions
+## As a conductor
+
+The **Conductor** decides which version the choir sings, answers musical
+questions and plans concerts with the music librarians. The conductor may
+also enter key, scoring, language, duration and the review of a
+transcription, view internal preservation copies (without playback), and
+make practice files.
+
+Music librarians use the score viewer, practice files, questions, sharing,
+the review of transcriptions and the concerts in the same way; their chapter
+links here. See also
+[Statistics and annual report](#statistics-and-annual-report) and the
+[Folder book](#folder-book), which the conductor can read.
+
+### Choosing the valid version
+
+Only the conductor decides which version of a work the choir sings (see
+[Valid version](#valid-version)). There is at most one valid version per
+work. Choosing it changes nothing about the rights.
+
+**Several works at once.** **Choose valid versions** in the navigation (only
+for the conductor, and only while the module "Valid version" is switched on)
+lists the works that have several versions and none of them valid for the
+choir.
+
+1. Open **Choose valid versions**. Switch on **Only the current repertoire**
+   to see only the works the choir sings at present.
+2. Each work shows its versions, each with its copies (shelf marks), their
+   kind and the rights status.
+3. Enter a reason if you like and choose **Set as valid** at the version the
+   choir sings. This is done right in the list; you do not need to open the
+   copy.
+
+**One work.**
+
+1. Open a copy of the version the choir sings → tab **Rights** → section
+   **Valid for the choir**.
+2. **Set as valid for the choir**, optionally with a reason, and confirm.
+
+If another version was valid, the dialog says so and that version is no
+longer valid. **Set as no longer valid for the choir** clears it.
+
+> [!TIP]
+> The filter **No version valid for the choir** in the catalog and the start
+> page card **Current repertoire: no valid version chosen** (it opens the
+> catalog with the matching filters) show where a decision is missing.
+
+Within the valid version the music librarians set the current
+[revision](#revisions-of-a-version) of its MusicXML. You see the revisions
+and [compare two of them](#how-to-compare-two-revisions-and-write-a-note-for-choir-members),
+with a short note for the choir to copy.
+
+### Answering a question
+
+Questions for the conductor appear on the start page, in **Tasks** and as a
+notification.
+
+1. Open the question; **Show in the score** shows the place.
+2. **Answer**, write the answer and **Save answer**.
+
+The music librarian then applies the answer to the catalog or discards it.
 
 ### Score viewer
 
@@ -340,7 +467,7 @@ switched on practice audio for choir members, they can also make a file of
 their voice of an excerpt shared with them (see
 [Sharing with choir members and the public](#sharing-with-choir-members-and-the-public)).
 
-### Questions, tasks and sharing
+### Asking a question or giving a task
 
 ![The tab "Tasks" of copy 2-1 with an open question to the conductor about measures 5 to 8 of Tenor II, and below it an internal link to the same place.](screenshots/task-question.png)
 
@@ -349,7 +476,7 @@ score: page, measures, voice and verse.
 
 1. In the score viewer choose the place, then **This passage** and **New task
    for this place**, or
-   in the tab **Tasks** of the sidebar choose **New task**.
+   in the tab **Queries** of the sidebar choose **New task**.
 2. Choose the kind (**Question**, **Check** or **Report**) and the role it is
    **For** (conductor, catalog, operations or read only).
 3. Describe it, add the place and optionally a category, a due date and its
@@ -361,6 +488,12 @@ catalog or the file was corrected) or **Discarded** (nothing to change); a
 check can also be closed by the role it is addressed to. **Show in the
 score** opens the place. **Tasks** in the navigation lists the tasks for your
 roles or all tasks, also the closed ones, and can be printed.
+
+When nothing is waiting, **Tasks** says so and offers **Open the catalog**:
+a task is always created in the sidebar of a copy (tab **Queries**) or from
+the score viewer.
+
+### Sharing a place in the score
 
 Share a place in two ways, both under **This passage** in the score viewer:
 
@@ -376,9 +509,10 @@ Share a place in two ways, both under **This passage** in the score viewer:
   the navigation lists all active links and says for each who can open it.
   Where links for choir members or public links are switched on, the button
   is called **Share excerpt …** and the same dialog asks who can open the
-  link (see the next chapter).
+  link (see
+  [Sharing with choir members and the public](#sharing-with-choir-members-and-the-public)).
 
-## Sharing with choir members and the public
+### Sharing with choir members and the public
 
 Where the administration has switched them on, an excerpt can be shared
 beyond the archive roles: with the **choir members** (they sign in and see
@@ -386,7 +520,7 @@ it under "Shared with me") or with **everyone** through a public link
 without signing in. Both get only the measures of the excerpt, never the
 file; the server cuts the score and checks the rights on every call.
 
-### Sharing an excerpt with the choir
+#### Sharing an excerpt with the choir
 
 Music librarians, operations and the conductor share an excerpt from the
 score viewer:
@@ -432,7 +566,7 @@ calls; **Revoke link** stops a link at once for everyone.
 > for example measures 1 to 7 of "Der Mond ist aufgegangen" (1-1) sound
 > there as 1–6, 1–5, 7, in a shared excerpt as 1–7.
 
-### Public links
+#### Public links
 
 A public link shows and plays an excerpt to anyone who has the link, without
 signing in: only its measures, without download, without names and without
@@ -451,64 +585,7 @@ description of the excerpt, and plays it with the voice emphasised. When the
 link expires, is revoked or the version is no longer released, the page
 shows "not found" without a reason.
 
-### The public repertoire page
-
-The catalog librarian can list works on a public page of the choir
-(`/apps/notenarchiv/repertoire`) with title, composer and lyricist, life
-dates, scoring and links to CPDL and IMSLP:
-
-1. Confirm a version of the work as public domain (tab **Rights**).
-2. In the fields of the work tick **On the public repertoire page**.
-3. Optionally enter **Link to CPDL** and **Link to IMSLP**: the https
-   address of the page of the work there, for example
-   `https://www.cpdl.org/wiki/index.php/…` or `https://imslp.org/wiki/…`.
-
-The page loads nothing from CPDL or IMSLP; it only links to them. Life dates
-come from the register of persons. A work leaves the page as soon as no
-version is confirmed public domain any more.
-
-### For choir members: Shared with me
-
-Choir members sign in to Nextcloud and open **Music archive**. They see
-**Shared with me**: the excerpts shared with the choir, with title,
-composer, measures, voice, the note and how long each is valid, and
-whether it can be played (**Playback: yes** or **Playback: no**).
-
-1. Choose an excerpt in the list (a link sent to you opens it directly).
-   The notes appear above the list.
-2. **Play**, **Pause** and **Stop**; under **Voices during playback**
-   choose **All equal**, **Focus voice louder** or **Focus voice only**, and
-   set the tempo. **Focus voice** chooses another voice; **Smaller** and
-   **Larger** change the size. Space plays and pauses. **Count-in** clicks
-   one or two bars before the music, **Loop** plays the excerpt again and
-   again. A click on a note starts there; with the keyboard, the arrow keys
-   left and right in the score go to the previous or next measure.
-3. **Text reference** and **Description of the excerpt** describe the
-   excerpt in words.
-4. Where practice files are offered (**Practice files: yes**): choose the
-   voice and "Focus voice louder" or "Focus voice only", then under
-   **Practice file** the format **WAV (audio)** or **MIDI** and **Make
-   practice file**. The file is made in your browser; every practice file
-   is recorded in the audit log of the music archive.
-
-### Common problems
-
-| Message or problem | What to do |
-|---|---|
-| The button says **Create internal link**, there is no choice of circle | Links for choir members and public links are switched off; an administrator switches them on (Settings → Modules). |
-| *This kind of link is switched off. …* | The same, for one circle. |
-| *Public domain is not confirmed yet. …* | The catalog librarian confirms the rights on the tab **Rights**. |
-| *Not released for choir members: …* | Confirm public domain or record a license with the use "Singers' portal". |
-| *Not released for publication. …* | Set the publication status of the version to "Released for publication". |
-| *A public link needs confirmed public domain or a valid license for online publication. …* | Record a license with the use "Online publication (public links)", or confirm public domain. |
-| *Internal preservation copy: …* | Preservation copies are never shared; share another version. |
-| *This copy has no MusicXML file. …* | Link a MusicXML file to the copy (tab **Files**). |
-| *Please give the first and the last measure: …* / *There is no measure … in this score.* | Enter both measures as printed in the score. |
-| *A public link has no note, …* | Leave the note empty. |
-| A choir member does not see the excerpt | It has expired or was revoked, or the version is no longer released; make a new link. If they see no app at all, see the [administration guide](admin-guide.md#14-sharing-with-choir-members-and-the-public). |
-| *Only works with a version confirmed as public domain can be shown on the public repertoire page. …* | Confirm the rights of a version of the work first (tab **Rights**). |
-
-## Reviewing transcriptions
+### Reviewing transcriptions
 
 When a scan is transcribed into MusicXML (by a person or with a tool), the
 transcription ends with a **report** (`… - Bericht.json`, format
@@ -518,7 +595,16 @@ found on the material, measure by measure. The app turns these findings into
 score view. The app proposes, people decide: nothing in the catalog changes
 by itself.
 
-### Where review points come from
+As conductor, the musical review points of a transcription report are yours:
+uncertain readings, marks that were not transcribed and questions about a
+measure. You are notified when a report brings new ones. In the score view
+each point shows its measures with the voice highlighted and plays them;
+confirm the reading, order a correction, ask a question or dismiss the point,
+or correct a wrong note or syllable in the app yourself (see
+[Reviewing in the score view](#reviewing-in-the-score-view) and
+[Small corrections in the app](#small-corrections-in-the-app)).
+
+#### Where review points come from
 
 - **File sync.** Put the report next to the MusicXML in the archive folder,
   named like the score file with ` - Bericht.json` at the end (for example
@@ -538,17 +624,18 @@ Reading the same report again creates nothing twice. Each report gives:
 
 The **catalog librarian may decide every point**; the conductor decides the
 musical ones. The rights assessment and catalog fields of the report (for
-example "Verlag / Bestellnummer") go to the [inbox](#inbox) as proposals,
-while the proposals inbox is switched on; otherwise they are only shown with
-the report. The report's origin and review state of the transcription are
-shown with the version.
+example "Verlag / Bestellnummer") go to the
+[inbox](#deciding-proposals-in-the-inbox) as proposals, while the proposals
+inbox is switched on; otherwise they are only shown with the report. The
+report's origin and review state of the transcription are shown with the
+version.
 
 When a new report for the same copy arrives (a new round of the
 transcription with a new MusicXML file), the points it no longer names are
 set to **Corrected** ("done in a new version"). If the MusicXML has not
 changed, they stay open.
 
-### Reviewing in the score view
+#### Reviewing in the score view
 
 1. Open the copy and its **Score**, then **Review** (the sidebar of the copy
    also offers a button with the number of open review points, and a
@@ -585,7 +672,7 @@ and the filter **Open review points** lists the copies that still need a
 decision. The responsible roles are notified of new review points (one
 notification per report).
 
-### Small corrections in the app
+#### Small corrections in the app
 
 Small errors are corrected in the app itself (music librarians and
 conductor). Only these can be changed:
@@ -618,7 +705,7 @@ score, the app says so and saves nothing. Internal preservation copies are
 not corrected in the app. With the module "Revisions of a version" the new
 file becomes the next [revision](#revisions-of-a-version) of the version.
 
-## Revisions of a version
+### Revisions of a version
 
 A version (an arrangement, an edition) changes over time: a wrong note is
 corrected, a syllable fixed, the tool chain delivers a better transcription.
@@ -641,7 +728,7 @@ Revisions are recorded by themselves:
 
 Nobody has to number anything; the revisions count 1, 2, 3 … per version.
 
-### How to see the revisions of a version
+#### How to see the revisions of a version
 
 1. Open the copy and choose the tab **Files**.
 2. Under **Revisions of this version** the newest revision comes first:
@@ -652,7 +739,7 @@ Nobody has to number anything; the revisions count 1, 2, 3 … per version.
 
 Every archive role sees the revisions; choir members do not.
 
-### How to set the current revision
+#### How to set the current revision
 
 Only the music librarians (role "Catalog") set the current revision. It is
 the revision that is valid for the choir within the version; the conductor
@@ -670,7 +757,7 @@ revision by itself.
 
 When a newer revision than the current one exists, the list says so.
 
-### How to compare two revisions and write a note for choir members
+#### How to compare two revisions and write a note for choir members
 
 1. Under **Compare two revisions** choose the **older revision** and the
    **newer revision** (the newest and the current one are preselected) and
@@ -689,7 +776,7 @@ dynamics and slurs are not. The conductor and every other archive role can
 compare; the files are read with your own Nextcloud permissions, as in the
 score view.
 
-### Where the version line appears
+#### Where the version line appears
 
 - On top of the score view, next to the name of the file, and in the text
   reference you copy from the score view ("2-35 · Title · Revision 3 · m.
@@ -706,7 +793,7 @@ score view.
 Shelf labels do not show a revision: they belong to the copy, not to the
 state of its MusicXML.
 
-### Common problems
+#### Common problems
 
 - **"No revision has been recorded yet."** The module has just been switched
   on, or the copy has no MusicXML. Run the file sync (**Archive management**
@@ -725,8 +812,6 @@ state of its MusicXML.
 - **A score file could not be read during the file sync.** The archive
   folder is not shared with the account that runs the file sync, or the file
   is damaged. The next file sync tries again.
-
-## Concerts and song lists
 
 ### Planning a concert
 
@@ -801,149 +886,19 @@ history** shows them. Imported lines whose shelf mark is unclear wait under
 **Unclear programme lines**: choose one of the candidates or another copy, or
 **Not in the archive**, then **Assign**.
 
-## Statistics and annual report
-
-![The statistics of the demo archive: the period, links to the sections stock, rights, repertoire and performances, maintenance and annual report, and the table of key figures with a bar beside each number.](screenshots/statistics.png)
-
-**Statistics** (under *Archive*) is open to every archive role. Choose the
-period with **From year** and **To year** (default: the last ten years);
-figures without a year are those of today. Each figure is a number in a
-table; the bars beside it are only for a quick comparison.
-
-- **Stock:** works, versions and copies; active copies with a file and with
-  MusicXML; internal preservation copies; copies per binder by status; new
-  copies per year, from new accessions and from the catalog import.
-- **Rights:** rights status of the versions, confirmed and not confirmed;
-  works with and without a valid version; licenses valid, ending, ended and
-  not valid yet; the states of the singers' portal and print station lists;
-  publication status.
-- **Repertoire and performances:** concerts and pieces sung per year, the
-  most performed works and composers of the period, the repertoire classes,
-  and works not sung for a long time that can be sung from the archive.
-- **Maintenance:** open tasks per role and age, proposals in the inbox,
-  checksums, and the protection terms that end in the period (a proposal by
-  the life dates, no legal advice).
-
-The statistics contain no personal data of choir members and no account
-names; internal preservation copies are counted but never listed by title or
-shelf mark. **Print** prints the overview, **Statistics as CSV** downloads all
-tables.
-
-![The annual report of a year: the year in figures, the concerts with date, location, status and number of pieces, and the new accessions.](screenshots/annual-report.png)
-
-The **Annual report** at the end of the page summarises one year for the
-board and the general meeting: concerts with their dates and pieces, new
-accessions, licenses that started or ended, open rights questions and the
-stock. In the first half of the year it proposes the past year. **Print
-annual report** prints only the report on A4 in black and white, optionally
-in large print; **Annual report as CSV** downloads its tables.
-
-> [!NOTE]
-> Open rights questions and the stock are always those of today, because the
-> archive keeps no earlier states of them.
-
-## Folder book
-
-The **Folder book** records which choir folder is out with whom since
-when, what it holds and what is missing. Music librarians (catalog and
-operations) keep it; the conductor and the board read it. Choir members and
-tools never see it. The administration switches it on (module "Folder
-book"); it is part of the preset "Complete".
-
-The folder book only records who has which folder. Attendance and handing
-out at the door on rehearsal evenings are not part of the app.
-
-### How to create a folder
-
-1. **Folder book** → **New folder**.
-2. Enter the **Number or name** (for example `12` or `Tenor 3`) and the
-   **Voice or section**.
-3. Under **Contents**, **Add a copy** for every piece in the folder: type
-   the shelf mark or the title and choose the copy, then the **Number** of
-   sheets or copies of it.
-4. Choose the **Condition** and enter **Missing sheets at the moment** if
-   something is missing.
-5. **Save**.
-
-Two folders in service cannot have the same number or name.
-
-### How to issue a folder
-
-1. In the row of the folder, choose **Issue**. Only folders that are
-   available offer it: a folder that is out shows **Take back** instead.
-2. **To whom?** Enter the **Name of the person**, or choose **Nextcloud
-   account** and type at least two letters of the name to pick the account.
-3. Check the day (**Handed out on**, today by default) and add a note if
-   needed.
-4. **Issue**.
-
-### How to take a folder back
-
-1. In the row of the folder, choose **Take back**.
-2. The day (today), the condition and the missing sheets known so far are
-   already filled in. Correct what differs: tick the condition, add or
-   remove missing sheets.
-3. **Take back**. The condition and the missing sheets become those of the
-   folder; the folder is available again.
-
-### Taking a folder out of service
-
-Folders are never deleted. **Edit** → **Take this folder out of service**
-with a reason. This is only possible when the folder is back. **Out of
-service** in **Show** lists these folders with their loans; **Edit** → **Put
-this folder back into service** undoes it.
-
-### Overview and paper
-
-The line above the list counts the folders in service, out and available.
-**Show** narrows the list to folders that are out, available, with missing
-sheets or a hint, or out of service; the search finds a number or name, a
-voice or a person. **Print** prints the list as shown on A4 in black and
-white: folder, voice, out with, since, contents, condition and missing
-sheets. The button with the number of loans shows the history of a folder.
-
-### Hint "The folder contains a version that no longer applies"
-
-The folder book shows this hint when a copy in the folder has been retired
-in the catalog, or when the conductor has chosen another version of its work
-as valid for the choir. It is a hint only: the app changes nothing in the
-folder. Exchange the sheets, then **Edit** the contents.
-
-### When names are removed
-
-A loan holds personal data: the name or the Nextcloud account and the
-notes. Some months after the folder came back (the **retention period**, 12
-months unless the administration set another) the app removes them
-automatically:
-
-- The loan stays as **Former loan** with its days, the condition and the
-  missing sheets.
-- The entries of the loan in the audit log lose the name, too; the audit
-  log notes that it was removed, without the name.
-- A folder that is still out keeps the name until it comes back.
-
-The info box above the list says which period applies.
-
-### Common problems
-
-- **There is no Issue button.** The folder is out (take it back first) or
-  out of service (put it back into service), or your role reads only.
-- **"This folder is already out with someone. Take it back first."**
-  Someone else issued it in the meantime. Reload the folder book.
-- **The account is not found.** Type at least two letters. Nextcloud only
-  finds accounts your account may find; enter the name instead.
-- **"The date lies in the future."** A folder can only be issued or taken
-  back up to today.
-- **"A folder in service is already called …"** Choose another number or
-  name, or take the old folder out of service first.
-- **The folder book is missing in the navigation.** It is switched off, or
-  your role does not read it (tools never do).
-
-## For music librarians
+## As a music librarian
 
 The role **Catalog (music librarian)** keeps the catalog: works, versions and
 rights, imports, the file sync, proposals and closing tasks. It also may do
 everything operations does with copies.
+
+Music librarians also use the features described for the conductor: the
+[Score viewer](#score-viewer), [Practice files](#practice-files),
+[questions and tasks](#asking-a-question-or-giving-a-task),
+[sharing](#sharing-with-choir-members-and-the-public),
+[Reviewing transcriptions](#reviewing-transcriptions) and
+[concerts](#planning-a-concert). The [Folder book](#folder-book) is
+described for operations.
 
 ### Confirming rights
 
@@ -957,7 +912,12 @@ stays a suggestion until a music librarian confirms it:
 3. Enter a **Reason** and the **Evidence**, for example "All persons involved
    died more than 70 years ago" and "Life dates from the register of
    persons". Both are required.
-4. **Confirm**. Name and date are recorded.
+4. Before you confirm, the dialog says what becomes possible afterwards,
+   depending on the modules that are switched on: the singers' portal and
+   the print station, practice files, sharing with choir members and, once
+   the version is released for publication, public links. For *protected*
+   it says that releases then need a valid license.
+5. **Confirm**. Name and date are recorded.
 
 Changing the rights status later removes the confirmation. **When in doubt:
 set to open** sets the status to *open* with a reason and removes any
@@ -967,23 +927,19 @@ confirmation.
 > The rights helpers model German copyright law. They support a decision and
 > are no legal advice.
 
-### Licenses
+### Recording a license
 
 **Add license** on the rights tab records holder or publisher, the uses
 (at least one), number of copies, validity, evidence and notes. Each use is
 separate: copies for the binders, singers' portal, self-printing by singers,
-print station, practice audio, recording, publication and online
-publication (public links). A license for
-printing does not allow the singers' portal. Licenses are never deleted; an
-ended license stays as a record. **Ending licenses** lists the licenses that
-end within the chosen period or have ended.
-print station, practice audio, recording, publication and **transfer to a
-legal successor**. The last one records that the license may pass to a legal
-successor together with the archive, for example when choirs merge or
-another body takes over the archive; tick it only when the license says so.
-A license for printing does not allow the singers' portal. Licenses are
-never deleted; an ended license stays as a record. **Ending licenses** lists
-the licenses that end within the chosen period or have ended.
+print station, practice audio, recording, publication, online publication
+(public links) and **transfer to a legal successor**. The last one records
+that the license may pass to a legal successor together with the archive,
+for example when choirs merge or another body takes over the archive; tick
+it only when the license says so. A license for printing does not allow the
+singers' portal. Licenses are never deleted; an ended license stays as a
+record. **Ending licenses** lists the licenses that end within the chosen
+period or have ended.
 
 ### Releases: singers' portal and print station
 
@@ -1030,23 +986,26 @@ What the sync does:
   lists them as **skipped** with the reason.
 - Every copy, replacement and removal is in the audit log.
 
-Common problems:
+If the report lists skipped files or the sync fails, see
+[Common problems](#common-problems).
 
-- **Skipped: "A file of this name is in the target folder, but the app did
-  not write it …"** Someone put a file of that name there. Rename or remove
-  it in the folder if the app should copy the scan.
-- **Skipped: "The file was changed in the target folder …"** The app leaves
-  the changed file alone and no longer looks after it. Remove it in the
-  folder, and the next sync copies the scan again.
-- **Skipped: "The account of the target folder cannot read this scan."** The
-  account that chose the folder has no access to that part of the archive
-  folder.
-- **"The target folder of the print station is not accessible …"** The
-  folder was deleted, moved or is no longer shared. An administrator
-  chooses it again. The catalog role and the administrators are also
-  notified when the daily sync fails.
+### The public repertoire page
 
-### Inbox
+The catalog librarian can list works on a public page of the choir
+(`/apps/notenarchiv/repertoire`) with title, composer and lyricist, life
+dates, scoring and links to CPDL and IMSLP:
+
+1. Confirm a version of the work as public domain (tab **Rights**).
+2. In the fields of the work tick **On the public repertoire page**.
+3. Optionally enter **Link to CPDL** and **Link to IMSLP**: the https
+   address of the page of the work there, for example
+   `https://www.cpdl.org/wiki/index.php/…` or `https://imslp.org/wiki/…`.
+
+The page loads nothing from CPDL or IMSLP; it only links to them. Life dates
+come from the register of persons. A work leaves the page as soon as no
+version is confirmed public domain any more.
+
+### Deciding proposals in the inbox
 
 Tools and transcription rounds do not change the catalog. Their proposals
 wait in the **Inbox**, grouped by the work, version or copy they concern,
@@ -1054,11 +1013,17 @@ with the current and the proposed value, the source and the reason. **Accept** a
 records it in the audit log; **Reject** discards it. Both take an optional
 reason.
 
+When the inbox is empty, it says so, explains that tools and transcription
+rounds put their proposals there (see
+[As a contributor or tool](#as-a-contributor-or-tool)), and offers **Open the
+start page**.
+
 ### Applying answers
 
 Answered questions appear on the start page as **Answered tasks to apply**.
 Correct the catalog or the file if needed, then close the task as **Applied**
-or **Discarded** (see [Questions, tasks and sharing](#questions-tasks-and-sharing)).
+or **Discarded** (see
+[Asking a question or giving a task](#asking-a-question-or-giving-a-task)).
 
 ### Transcriptions and correction orders
 
@@ -1164,16 +1129,6 @@ as usual, and the later end decides. The suggestion stays a suggestion: a
 music librarian decides whether a special case applies and confirms the
 rights.
 
-**Common problems**
-
-- *"The year in which it first appeared is missing":* enter the **Year first
-  published**; until then the version counts as protected.
-- *"Only editors are recorded for this version":* add the composer and the
-  other persons involved under **Add a person**.
-- *The year is refused:* it must be a year between 1000 and this year, with
-  four digits (e.g. 1998).
-- *The switches are missing:* the module **Protection terms** is switched off.
-
 ### Rights notices in MusicXML files
 
 Many MusicXML files carry a rights notice, e.g. "Public domain" or "CC BY
@@ -1187,15 +1142,6 @@ file, not a decision:
   status "public domain", or the license text for an empty field
   **License**. Accept it only after checking the rights yourself.
 
-**Common problems**
-
-- *No notice is shown:* the file has none, the module **Rights confirmation
-  and licenses** is off, or the file was not read yet; run the file sync
-  (**Archive management** → **File sync**). Large archives are read in parts
-  of 300 files per sync.
-- *The notice contradicts the catalog:* the notice often describes the
-  digital file (e.g. CC0 for a transcription), not the arrangement. Reject
-  the proposal in the inbox; the rights status stays as it is.
 
 ### Merging works and moving copies
 
@@ -1271,25 +1217,7 @@ by itself in January, as the account that set the archive folder.
    by their checksum.
 3. **Print** prints the comparison on A4.
 
-**Common problems**
-
-- *"No write permission for exports in the archive folder":* the account
-  that set the archive folder needs write access to it; ask the
-  administration.
-- *"The snapshots lie in the archive folder, which is not shared with your
-  account":* the comparison reads the snapshots with your own access. Ask the
-  catalog librarian to share the archive folder with you, or to print the
-  comparison.
-- *A snapshot is listed as incomplete:* a file is missing, e.g. because the
-  page was closed while it was written. Freeze the state again; delete the
-  incomplete folder in the Files app if you like.
-- *"The last automatic snapshot failed":* the message says why; freeze the
-  state by hand. The automatic snapshot tries again daily until the end of
-  January.
-- *The comparison button is missing:* a comparison needs two complete
-  snapshots.
-
-## For operations
+## As operations
 
 The role **Operations (music librarian)** looks after the copies on the
 shelf. It changes status, kind and counts of copies, counts the binders, and
@@ -1297,9 +1225,13 @@ answers and closes the checks addressed to it. Where the folder book is
 switched on, it issues and takes back the choir folders (see
 [Folder book](#folder-book)).
 
+Operations also shares excerpts (see
+[Sharing with choir members and the public](#sharing-with-choir-members-and-the-public))
+and answers checks (see [Answering a question](#answering-a-question)).
+
 ### Changing the status of a copy
 
-1. Open the copy → tab **Overview** → **Edit** in the section **Copy**.
+1. Open the copy → tab **Details** → **Edit** in the section **Copy**.
 2. Choose the status *retired*, *missing* or *lent* and enter the **Reason
    for status**, or *active* when the copy is back.
 3. **Save**.
@@ -1335,134 +1267,156 @@ The list is for information only. Gaps are never filled: a new accession
 always gets the next number after the highest, so a shelf mark always means
 the same copy.
 
-## For conductors
+### Folder book
 
-The **Conductor** decides which version the choir sings, answers musical
-questions and plans concerts with the music librarians. The conductor may
-also enter key, scoring, language, duration and the review of a
-transcription, view internal preservation copies (without playback), and
-make practice files.
+The **Folder book** records which choir folder is out with whom since
+when, what it holds and what is missing. Music librarians (catalog and
+operations) keep it; the conductor and the board read it. Choir members and
+tools never see it. The administration switches it on (module "Folder
+book"); it is part of the preset "Complete".
 
-### Choosing the valid version
+The folder book only records who has which folder. Attendance and handing
+out at the door on rehearsal evenings are not part of the app.
 
-1. Open a copy of the version the choir sings → tab **Rights** → section
-   **Valid for the choir**.
-2. **Set as valid for the choir**, optionally with a reason, and confirm.
+#### How to create a folder
 
-There is at most one valid version per work; if another version was valid,
-the dialog says so and that version is no longer valid. **Set as no longer
-valid for the choir** clears it. Choosing the valid version changes nothing
-about the rights.
+1. **Folder book** → **New folder**.
+2. Enter the **Number or name** (for example `12` or `Tenor 3`) and the
+   **Voice or section**.
+3. Under **Contents**, **Add a copy** for every piece in the folder: type
+   the shelf mark or the title and choose the copy, then the **Number** of
+   sheets or copies of it.
+4. Choose the **Condition** and enter **Missing sheets at the moment** if
+   something is missing.
+5. **Save**.
 
-> [!TIP]
-> The filter **No version valid for the choir** in the catalog and the start
-> page card for the current repertoire show where a decision is missing.
+Two folders in service cannot have the same number or name.
 
-Within the valid version the music librarians set the current
-[revision](#revisions-of-a-version) of its MusicXML. You see the revisions
-and [compare two of them](#how-to-compare-two-revisions-and-write-a-note-for-choir-members),
-with a short note for the choir to copy.
+#### How to issue a folder
 
-### Answering questions
+1. In the row of the folder, choose **Issue**. Only folders that are
+   available offer it: a folder that is out shows **Take back** instead.
+2. **To whom?** Enter the **Name of the person**, or choose **Nextcloud
+   account** and type at least two letters of the name to pick the account.
+3. Check the day (**Handed out on**, today by default) and add a note if
+   needed.
+4. **Issue**.
 
-Questions for the conductor appear on the start page, in **Tasks** and as a
-notification.
+#### How to take a folder back
 
-1. Open the question; **Show in the score** shows the place.
-2. **Answer**, write the answer and **Save answer**.
+1. In the row of the folder, choose **Take back**.
+2. The day (today), the condition and the missing sheets known so far are
+   already filled in. Correct what differs: tick the condition, add or
+   remove missing sheets.
+3. **Take back**. The condition and the missing sheets become those of the
+   folder; the folder is available again.
 
-The music librarian then applies the answer to the catalog or discards it.
+#### Taking a folder out of service
 
-### Sharing with choir members and the public
+Folders are never deleted. **Edit** → **Take this folder out of service**
+with a reason. This is only possible when the folder is back. **Out of
+service** in **Show** lists these folders with their loans; **Edit** → **Put
+this folder back into service** undoes it.
 
-Where the administration has switched them on, an excerpt can be shared
-beyond the archive roles: with the **choir members** (they sign in and see
-it under "Shared with me") or with **everyone** through a public link
-without signing in. Both get only the measures of the excerpt, never the
-file; the server cuts the score and checks the rights on every call.
+#### Overview and paper
 
-### Sharing an excerpt with the choir
+The line above the list counts the folders in service, out and available.
+**Show** narrows the list to folders that are out, available, with missing
+sheets or a hint, or out of service; the search finds a number or name, a
+voice or a person. **Print** prints the list as shown on A4 in black and
+white: folder, voice, out with, since, contents, condition and missing
+sheets. The button with the number of loans shows the history of a folder.
 
-Music librarians, operations and the conductor share an excerpt from the
-score viewer:
+#### Hint "The folder contains a version that no longer applies"
 
-1. Open the score, choose the measures (**From measure**, **To measure**)
-   and the **Focus voice**, and set the tempo if needed.
-2. Choose **Share excerpt …**.
-3. Under **Who can open the link?** choose **Choir members**
-   (or **Archive roles (internal)**, **Public (without signing in)**).
-4. Check the measures, voice, verse and tempo, and the **Valid until** date
-   (at most six months). **Note (optional)**: the choir members see this
-   note, for example "Please practise until Thursday".
-5. **What the recipients see** lists the measures, the focus voice, verse,
-   tempo, how long the link is valid, whether they can play the excerpt and
-   whether they can make practice files.
-6. **Create link**, then **Copy link** if you want to send it. Choir members
-   find the excerpt under "Shared with me" anyway, until it expires.
+The folder book shows this hint when a copy in the folder has been retired
+in the catalog, or when the conductor has chosen another version of its work
+as valid for the choir. It is a hint only: the app changes nothing in the
+folder. Exchange the sheets, then **Edit** the contents.
 
-A link for choir members needs both measures, and they must exist in the
-score. It is only possible for a version **released for the singers'
-portal**: confirmed public domain, or a valid license with the use
-"Singers' portal"; never for an internal preservation copy. If it is not
-possible, the dialog says why and what to do instead of offering
-**Create link**, for example *Public domain is not confirmed yet. The catalog
-librarian confirms it on the tab "Rights"; then the version can be shared
-with choir members.*
+#### When names are removed
 
-Playback follows the same rules as in the archive (public domain, or a
-license for practice audio). Practice files for choir members additionally
-need the module "Practice audio for choir members" and a confirmed status
-or a license for practice audio.
+A loan holds personal data: the name or the Nextcloud account and the
+notes. Some months after the folder came back (the **retention period**, 12
+months unless the administration set another) the app removes them
+automatically:
 
-**Links** in the navigation lists every active link with its circle
-(**Internal**, **For choir members**, **Public**), validity and number of
-calls; **Revoke link** stops a link at once for everyone.
+- The loan stays as **Former loan** with its days, the condition and the
+  missing sheets.
+- The entries of the loan in the audit log lose the name, too; the audit
+  log notes that it was removed, without the name.
+- A folder that is still out keeps the name until it comes back.
+
+The info box above the list says which period applies.
+
+For messages of the folder book, see [Common problems](#common-problems).
+
+## As the board or auditors
+
+The role **Read only (board, auditors)** reads everything, including the
+audit log of every copy, the inbox, the excerpt links and the statistics,
+and answers the tasks addressed to it. It changes nothing.
+
+- The [annual report](#statistics-and-annual-report) summarises a year for the
+  general meeting.
+- **Links** shows every active excerpt link with its circle, expiry and
+  number of calls.
+- The tab **History** of a copy shows its audit log: who changed what, when
+  and why.
+- **Annual snapshots** compares the frozen state of two years (see
+  [Annual snapshots](#annual-snapshots)); the comparison needs access to the
+  archive folder.
+
+### Statistics and annual report
+
+![The statistics of the demo archive: the period, links to the sections stock, rights, repertoire and performances, maintenance and annual report, and the table of key figures with a bar beside each number.](screenshots/statistics.png)
+
+**Statistics** (under *Archive*) is open to every archive role. Choose the
+period with **From year** and **To year** (default: the last ten years);
+figures without a year are those of today. Each figure is a number in a
+table; the bars beside it are only for a quick comparison.
+
+- **Stock:** works, versions and copies; active copies with a file and with
+  MusicXML; internal preservation copies; copies per binder by status; new
+  copies per year, from new accessions and from the catalog import.
+- **Rights:** rights status of the versions, confirmed and not confirmed;
+  works with and without a valid version; licenses valid, ending, ended and
+  not valid yet; the states of the singers' portal and print station lists;
+  publication status.
+- **Repertoire and performances:** concerts and pieces sung per year, the
+  most performed works and composers of the period, the repertoire classes,
+  and works not sung for a long time that can be sung from the archive.
+- **Maintenance:** open tasks per role and age, proposals in the inbox,
+  checksums, and the protection terms that end in the period (a proposal by
+  the life dates, no legal advice).
+
+The statistics contain no personal data of choir members and no account
+names; internal preservation copies are counted but never listed by title or
+shelf mark. **Print** prints the overview, **Statistics as CSV** downloads all
+tables.
+
+![The annual report of a year: the year in figures, the concerts with date, location, status and number of pieces, and the new accessions.](screenshots/annual-report.png)
+
+The **Annual report** at the end of the page summarises one year for the
+board and the general meeting: concerts with their dates and pieces, new
+accessions, licenses that started or ended, open rights questions and the
+stock. In the first half of the year it proposes the past year. **Print
+annual report** prints only the report on A4 in black and white, optionally
+in large print; **Annual report as CSV** downloads its tables.
 
 > [!NOTE]
-> Repeats and jumps that lead out of the excerpt are left out, so that the
-> excerpt plays from its first to its last measure. A repeat back to a
-> measure before the excerpt, its first and second endings, and a D.C. of
-> an excerpt that does not start at the beginning are therefore not played.
-> The score viewer of the archive plays a range as part of the whole piece;
-> for example measures 1 to 7 of "Der Mond ist aufgegangen" (1-1) sound
-> there as 1–6, 1–5, 7, in a shared excerpt as 1–7.
+> Open rights questions and the stock are always those of today, because the
+> archive keeps no earlier states of them.
 
-### Public links
+## As a choir member
 
-A public link shows and plays an excerpt to anyone who has the link, without
-signing in: only its measures, without download, without names and without
-a note. Choose **Public (without signing in)** in the same dialog. It is
-only possible when
+Choir members have no role in the music archive. Where the administration
+has switched on links for choir members, they see only the page **Shared
+with me** with the excerpts shared with the choir. If you see no music
+archive at all, see
+[No access to the music archive](#no-access-to-the-music-archive).
 
-- the version is **released for publication**: the catalog librarian sets
-  the publication status of the version to "Released for publication", and
-- it is confirmed public domain, or has a valid license with the use
-  "Online publication (public links)" (a license for "Publication" alone is
-  not enough),
-- and it is no internal preservation copy.
-
-The page shows title, composer, measures, the focus voice and a text
-description of the excerpt, and plays it with the voice emphasised. When the
-link expires, is revoked or the version is no longer released, the page
-shows "not found" without a reason.
-
-### The public repertoire page
-
-The catalog librarian can list works on a public page of the choir
-(`/apps/notenarchiv/repertoire`) with title, composer and lyricist, life
-dates, scoring and links to CPDL and IMSLP:
-
-1. Confirm a version of the work as public domain (tab **Rights**).
-2. In the fields of the work tick **On the public repertoire page**.
-3. Optionally enter **Link to CPDL** and **Link to IMSLP**: the https
-   address of the page of the work there, for example
-   `https://www.cpdl.org/wiki/index.php/…` or `https://imslp.org/wiki/…`.
-
-The page loads nothing from CPDL or IMSLP; it only links to them. Life dates
-come from the register of persons. A work leaves the page as soon as no
-version is confirmed public domain any more.
-
-### For choir members: Shared with me
+### Shared with me
 
 Choir members sign in to Nextcloud and open **Music archive**. They see
 **Shared with me**: the excerpts shared with the choir, with title,
@@ -1486,7 +1440,49 @@ whether it can be played (**Playback: yes** or **Playback: no**).
    practice file**. The file is made in your browser; every practice file
    is recorded in the audit log of the music archive.
 
-### Common problems
+## As a contributor or tool
+
+The role **Proposals (tools)** is meant for transcription rounds and scripts.
+They send proposals for catalog fields through the app's interface (see the
+[API](api.md)); nothing changes until a music librarian accepts a proposal in
+the inbox. Contributors see the inbox and can ask questions about a copy.
+They also send transcription reports, which become review points, and fetch
+the correction orders; the next report of a round closes them (see
+[Reviewing transcriptions](#reviewing-transcriptions)).
+
+## Common problems
+
+Each entry starts with the message of the app (in italics or quotes) or with
+what you notice, and says what to do. Problems of the setup are in the
+[administration guide](admin-guide.md#common-problems).
+
+### No access to the music archive
+
+*"You have no access to the music archive."* Your account has no role in the
+music archive; the app, or the page "Access forbidden", says so. Roles are
+bound to Nextcloud groups, not to persons. Ask the administration to add your
+account to the group of your role (see the
+[administration guide](admin-guide.md#2-roles-and-groups)). Choir members
+have no role: they see only **Shared with me**, and only while links for
+choir members are switched on.
+
+### "The score cannot be shown"
+
+*"The file lies in a folder that is not shared with your account."* Nothing
+is wrong with the file or your role: the archive folder is not shared with
+you. See [Files you cannot open](#files-you-cannot-open).
+
+### The section "Music archive" is missing in the Nextcloud search
+
+The module is switched off, or your account has no role in the music
+archive. Ask the administration.
+
+### A copy is not found in the Nextcloud search
+
+Check the spelling; a shelf mark must be complete (`2-1`, not `2-`).
+Internal preservation copies are hidden from roles that may not view them.
+
+### Messages when sharing an excerpt
 
 | Message or problem | What to do |
 |---|---|
@@ -1503,60 +1499,122 @@ whether it can be played (**Playback: yes** or **Playback: no**).
 | A choir member does not see the excerpt | It has expired or was revoked, or the version is no longer released; make a new link. If they see no app at all, see the [administration guide](admin-guide.md#14-sharing-with-choir-members-and-the-public). |
 | *Only works with a version confirmed as public domain can be shown on the public repertoire page. …* | Confirm the rights of a version of the work first (tab **Rights**). |
 
-## Reviewing transcriptions
+### "The year in which it first appeared is missing"
 
-The musical review points of a transcription report are yours: uncertain
-readings, marks that were not transcribed and questions about a measure. You
-are notified when a report brings new ones. In the score view each point
-shows its measures with the voice highlighted and plays them; confirm the
-reading, order a correction, ask a question or dismiss the point, or correct
-a wrong note or syllable in the app yourself (see
-[Reviewing transcriptions](#reviewing-transcriptions)).
+A special case (scientific edition or posthumous work) is switched on.
+Enter the **Year first published**; until then the version counts as
+protected (see
+[Special cases: scientific editions and posthumous works](#special-cases-scientific-editions-and-posthumous-works)).
 
-### Concerts, calendar and practice files
+### "Only editors are recorded for this version"
 
-- [Planning a concert](#planning-a-concert) and
-  [confirming what was sung](#after-the-concert)
-- [Concerts in your calendar](#concerts-in-your-calendar)
-- [Practice files](#practice-files) for the choir's practice system
+Add the composer and the other persons involved under **Add a person**.
 
-## For the board and auditors
+### The year first published is refused
 
-The role **Read only (board, auditors)** reads everything, including the
-audit log of every copy, the inbox, the excerpt links and the statistics,
-and answers the tasks addressed to it. It changes nothing.
+It must be a year between 1000 and this year, with four digits (e.g. 1998).
 
-- The [annual report](#statistics-and-annual-report) summarises a year for the
-  general meeting.
-- **Links** shows every active excerpt link with its circle, expiry and
-  number of calls.
-- The tab **Audit log** of a copy shows who changed what, when and why.
-- **Annual snapshots** compares the frozen state of two years (see
-  [Annual snapshots](#annual-snapshots)); the comparison needs access to the
-  archive folder.
+### The switches for the special cases are missing
 
-## For contributors and tools
+The module **Protection terms** is switched off.
 
-The role **Proposals (tools)** is meant for transcription rounds and scripts.
-They send proposals for catalog fields through the app's interface (see the
-[API](api.md)); nothing changes until a music librarian accepts a proposal in
-the inbox. Contributors see the inbox and can ask questions about a copy.
-They also send transcription reports, which become review points, and fetch
-the correction orders; the next report of a round closes them (see
-[Reviewing transcriptions](#reviewing-transcriptions)).
+### No rights notice is shown for a MusicXML file
+
+The file has none, the module **Rights confirmation and licenses** is off,
+or the file was not read yet; run the file sync (**Archive management** →
+**File sync**). Large archives are read in parts of 300 files per sync.
+
+### The rights notice contradicts the catalog
+
+The notice often describes the digital file (e.g. CC0 for a transcription),
+not the arrangement. Reject the proposal in the inbox; the rights status
+stays as it is (see
+[Rights notices in MusicXML files](#rights-notices-in-musicxml-files)).
+
+### Print station sync: "A file of this name is in the target folder, but the app did not write it …"
+
+The report lists the file as skipped. Someone put a file of that name in the
+target folder. Rename or remove it in the folder if the app should copy the
+scan.
+
+### Print station sync: "The file was changed in the target folder …"
+
+The report lists the file as skipped. The app leaves the changed file alone
+and no longer looks after it. Remove it in the folder, and the next sync
+copies the scan again.
+
+### Print station sync: "The account of the target folder cannot read this scan."
+
+The report lists the scan as skipped. The account that chose the folder has
+no access to that part of the archive folder.
+
+### "The target folder of the print station is not accessible …"
+
+The folder was deleted, moved or is no longer shared. An administrator
+chooses it again. The catalog role and the administrators are also notified
+when the daily sync fails (see
+[Mirror folder for the print station](#mirror-folder-for-the-print-station)).
+
+### "No write permission for exports in the archive folder"
+
+The account that set the archive folder needs write access to it; ask the
+administration.
+
+### "The snapshots lie in the archive folder, which is not shared with your account"
+
+The comparison of annual snapshots reads the snapshots with your own access.
+Ask the catalog librarian to share the archive folder with you, or to print
+the comparison.
+
+### An annual snapshot is listed as incomplete
+
+A file is missing, e.g. because the page was closed while it was written.
+Freeze the state again; delete the incomplete folder in the Files app if you
+like.
+
+### "The last automatic snapshot failed"
+
+The message says why; freeze the state by hand. The automatic snapshot tries
+again daily until the end of January (see
+[Annual snapshots](#annual-snapshots)).
+
+### The button to compare annual snapshots is missing
+
+A comparison needs two complete snapshots.
+
+### There is no Issue button in the folder book
+
+The folder is out (take it back first) or out of service (put it back into
+service), or your role reads only.
+
+### "This folder is already out with someone. Take it back first."
+
+Someone else issued it in the meantime. Reload the folder book.
+
+### The account is not found when issuing a folder
+
+Type at least two letters. Nextcloud only finds accounts your account may
+find; enter the name instead.
+
+### "The date lies in the future."
+
+A folder can only be issued or taken back up to today.
+
+### "A folder in service is already called …"
+
+Choose another number or name, or take the old folder out of service first.
+
+### The folder book is missing in the navigation
+
+It is switched off, or your role does not read it (tools never do).
 
 ## Paper
 
 Paper stays the fallback. The views with a **Print** button print on A4 in
 black and white: the start page, tasks, inbox, release lists, ending
-licenses, links, concerts and song lists, unclear programme lines,
-persons, protection terms, the inventory of a binder, and the statistics. A
-licenses, internal links, concerts and song lists, unclear programme lines,
-persons, protection terms, the inventory of a binder, the folder book, and
-the statistics. A
-licenses, internal links, concerts and song lists, unclear programme lines,
-persons, protection terms, the inventory of a binder, the gaps in the shelf
-marks, the comparison of two annual snapshots, and the statistics. A
+licenses, links, concerts and song lists, unclear programme lines, persons,
+protection terms, the inventory of a binder, the gaps in the shelf marks,
+the folder book, the comparison of two annual snapshots, and the statistics. A
 programme prints as programme, concert binder list with columns to tick or
 song list; programmes, statistics and the annual report also in large print.
 Shelf labels print on label sheets (see

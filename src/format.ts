@@ -59,18 +59,27 @@ export function toIsoDate(date: Date): string {
 }
 
 /**
- * A date for display in the user's locale. Values that are not complete
- * dates (e.g. "2025-12" from the catalog) are shown as they are.
+ * A date for display in the user's locale, the same everywhere (catalog,
+ * sidebar, statistics). A month without a day ("2025-12", e.g. "last
+ * performed" from an imported catalog) is shown as month and year; other
+ * values (free text) are shown as they are.
  *
- * @param value - ISO date or free text
+ * @param value - ISO date, year and month, or free text
  */
 export function formatDate(value: string): string {
 	const date = parseIsoDate(value)
-	if (date === null) {
-		return value
+	if (date !== null) {
+		return new Intl.DateTimeFormat(locale(), { dateStyle: 'medium' }).format(date)
 	}
-	return new Intl.DateTimeFormat(locale(), { dateStyle: 'medium' }).format(date)
+	const month = value.match(/^(\d{4})-(\d{2})$/)
+	if (month && Number(month[2]) >= 1 && Number(month[2]) <= 12) {
+		return new Intl.DateTimeFormat(locale(), { year: 'numeric', month: 'short' }).format(new Date(Number(month[1]), Number(month[2]) - 1, 1))
+	}
+	return value
 }
+
+/** A date or a month in ISO form, as text fields of the catalog may hold it. */
+const ISO_DATE_TEXT = /^\d{4}-\d{2}(-\d{2})?$/
 
 /**
  * Date and time of a Unix timestamp in the user's locale.
@@ -142,7 +151,8 @@ export function displayValue(info: FieldInfo | undefined, value: FieldValue | un
 		if (typeof value === 'boolean') {
 			return value ? t('notenarchiv', 'Yes') : t('notenarchiv', 'No')
 		}
-		return String(value)
+		// A date in a text field (e.g. "last performed" from the import) looks like every other date
+		return typeof value === 'string' && ISO_DATE_TEXT.test(value) ? formatDate(value) : String(value)
 	}
 }
 

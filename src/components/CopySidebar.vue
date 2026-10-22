@@ -143,9 +143,6 @@ const preservationCopy = computed(() => detail.value?.version.preservation_copy 
 /** Confirmation of the rights: in the app (confirmed_at) or from the old catalog. */
 const rightsConfirmed = computed(() => detail.value?.version.confirmed_at || detail.value?.version.rights_confirmed || null)
 
-/** Number of tasks that are not closed, for the tab name. */
-const openTasks = computed(() => (detail.value?.tasks ?? []).filter((task) => task.status === 'open' || task.status === 'answered').length)
-
 /** Repertoire figures from the catalog row (derived by the server). */
 const repertoire = computed(() => {
 	const entry = listEntry.value
@@ -196,12 +193,9 @@ function keysOf(section: SectionDef): string[] {
 /** Tab with the questions and tasks and the internal links of the copy. */
 const tasksTabShown = computed(() => isModuleActive('tasks') || isModuleActive('excerpt_links'))
 
-const tasksTabName = computed(() => {
-	if (!isModuleActive('tasks')) {
-		return t('notenarchiv', 'Internal links')
-	}
-	return openTasks.value > 0 ? t('notenarchiv', 'Tasks ({count})', { count: openTasks.value }) : t('notenarchiv', 'Tasks')
-})
+// Short names, so that the five tabs are not cut off in a narrow sidebar;
+// the tab itself lists the open questions and tasks
+const tasksTabName = computed(() => (isModuleActive('tasks') ? t('notenarchiv', 'Queries') : t('notenarchiv', 'Links')))
 
 /**
  * Siblings of the same version first, then by shelf mark.
@@ -290,7 +284,7 @@ async function onSaved(): Promise<void> {
 		</NcEmptyContent>
 
 		<template v-if="detail">
-			<NcAppSidebarTab id="overview" :name="t('notenarchiv', 'Overview')" :order="1">
+			<NcAppSidebarTab id="overview" :name="t('notenarchiv', 'Details')" :order="1">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiInformationOutline" />
 				</template>
@@ -417,7 +411,7 @@ async function onSaved(): Promise<void> {
 				</div>
 			</NcAppSidebarTab>
 
-			<NcAppSidebarTab id="audit" :name="t('notenarchiv', 'Audit log')" :order="5">
+			<NcAppSidebarTab id="audit" :name="t('notenarchiv', 'History')" :order="5">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiHistory" />
 				</template>

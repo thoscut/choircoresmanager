@@ -21,6 +21,9 @@ import {
 	mdiCalendarStarOutline,
 	mdiCallMerge,
 	mdiChartBar,
+	mdiCheckDecagramOutline,
+	mdiChevronDown,
+	mdiChevronUp,
 	mdiClipboardCheckOutline,
 	mdiClipboardTextOutline,
 	mdiCogOutline,
@@ -41,7 +44,7 @@ import {
 } from '@mdi/js'
 import { emit } from '@nextcloud/event-bus'
 import { n, t } from '../l10n.ts'
-import { computed, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import NcAppNavigation from '@nextcloud/vue/components/NcAppNavigation'
 import NcAppNavigationCaption from '@nextcloud/vue/components/NcAppNavigationCaption'
 import NcAppNavigationItem from '@nextcloud/vue/components/NcAppNavigationItem'
@@ -53,7 +56,7 @@ import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
 import { adminSettingsUrl } from '../api.ts'
-import { REPERTOIRE_CLASSES } from '../catalog.ts'
+import { moreFiltersActive, REPERTOIRE_CLASSES } from '../catalog.ts'
 import { translateLabel } from '../format.ts'
 import { repertoireClassLabel } from '../labels.ts'
 import { helpUrl } from '../docs.ts'
@@ -72,6 +75,7 @@ import {
 	fieldInfo,
 	filters,
 	filtersActive,
+	isConductor,
 	isLibrarian,
 	isModuleActive,
 	isViewShown,
@@ -123,6 +127,8 @@ const workViews = computed<ViewEntry[]>(() => shown([
 	{ view: 'due', icon: mdiHomeOutline },
 	{ view: 'tasks', icon: mdiClipboardTextOutline },
 	...(canSeeProposals.value ? [{ view: 'proposals' as ViewName, icon: mdiInboxArrowDownOutline }] : []),
+	// Only the conductor chooses the valid version
+	...(isConductor.value ? [{ view: 'validVersions' as ViewName, icon: mdiCheckDecagramOutline }] : []),
 ]))
 
 const releaseViews = computed<ViewEntry[]>(() => shown([
@@ -227,6 +233,40 @@ const statusSelectOptions = computed<Option<string>[]>(() => {
 	]
 })
 
+// ---- "More filters": folded away, the state is remembered in this browser ----
+
+const MORE_FILTERS_KEY = 'notenarchiv.moreFilters'
+
+/** Whether the section was open last time ('1'); storage may be blocked. */
+function readMoreFiltersOpen(): boolean {
+	try {
+		return window.localStorage.getItem(MORE_FILTERS_KEY) === '1'
+	} catch {
+		return false
+	}
+}
+
+const moreFiltersOpen = ref(readMoreFiltersOpen() || moreFiltersActive(filters) > 0)
+
+const moreFiltersCount = computed(() => moreFiltersActive(filters))
+
+// A card of the start page or a link that sets a folded filter opens the
+// section, so that the filter in use can be seen (not remembered)
+watch(moreFiltersCount, (count, before) => {
+	if (count > before) {
+		moreFiltersOpen.value = true
+	}
+})
+
+function toggleMoreFilters(): void {
+	moreFiltersOpen.value = !moreFiltersOpen.value
+	try {
+		window.localStorage.setItem(MORE_FILTERS_KEY, moreFiltersOpen.value ? '1' : '0')
+	} catch {
+		// Not remembered (private window, blocked storage); it still works.
+	}
+}
+
 const countText = computed(() => {
 	const shown = visibleEntries.value.length
 	const total = entries.value.length
@@ -286,12 +326,6 @@ function onFooterClick(event: Event, open: 'archive' | 'view'): void {
 					{{ countText }}
 				</p>
 
-				<NcSelect v-model="filters.binder"
-					:input-label="t('notenarchiv', 'Archive binder')"
-					:placeholder="t('notenarchiv', 'All binders')"
-					:options="binderSelectOptions"
-					:reduce="reduceId" />
-
 				<NcSelect v-model="filters.rightsStatus"
 					:input-label="t('notenarchiv', 'Rights status')"
 					:placeholder="t('notenarchiv', 'Any rights status')"
@@ -304,28 +338,51 @@ function onFooterClick(event: Event, open: 'archive' | 'view'): void {
 					:options="repertoireSelectOptions"
 					:reduce="reduceId" />
 
-				<NcSelect v-model="filters.status"
-					:input-label="t('notenarchiv', 'Status')"
-					:options="statusSelectOptions"
-					:clearable="false"
-					:searchable="false"
-					:reduce="reduceId" />
+				<!-- The other filters are folded away (KISS); the state is remembered -->
+				<NcButton variant="tertiary"
+					alignment="start"
+					wide
+					:aria-expanded="moreFiltersOpen ? 'true' : 'false'"
+					aria-controls="catalog-more-filters"
+					@click="toggleMoreFilters">
+					<template #icon>
+						<NcIconSvgWrapper :path="moreFiltersOpen ? mdiChevronUp : mdiChevronDown" />
+					</template>
+					{{ moreFiltersCount > 0
+						? t('notenarchiv', 'More filters ({count} active)', { count: moreFiltersCount })
+						: t('notenarchiv', 'More filters') }}
+				</NcButton>
 
-				<NcCheckboxRadioSwitch v-model="filters.musicxml">
-					{{ t('notenarchiv', 'With MusicXML') }}
-				</NcCheckboxRadioSwitch>
-				<NcCheckboxRadioSwitch v-model="filters.preservationCopy">
-					{{ t('notenarchiv', 'Internal preservation copies only') }}
-				</NcCheckboxRadioSwitch>
-				<NcCheckboxRadioSwitch v-if="isModuleActive('rights')" v-model="filters.unconfirmed">
-					{{ t('notenarchiv', 'Public domain, not confirmed') }}
-				</NcCheckboxRadioSwitch>
-				<NcCheckboxRadioSwitch v-if="isModuleActive('valid_version')" v-model="filters.noValidVersion">
-					{{ t('notenarchiv', 'No version valid for the choir') }}
-				</NcCheckboxRadioSwitch>
-				<NcCheckboxRadioSwitch v-if="isModuleActive('transcription_review')" v-model="filters.reviewOpen">
-					{{ t('notenarchiv', 'Open review points') }}
-				</NcCheckboxRadioSwitch>
+				<div v-show="moreFiltersOpen" id="catalog-more-filters" class="catalog-filters__more">
+					<NcSelect v-model="filters.binder"
+						:input-label="t('notenarchiv', 'Archive binder')"
+						:placeholder="t('notenarchiv', 'All binders')"
+						:options="binderSelectOptions"
+						:reduce="reduceId" />
+
+					<NcSelect v-model="filters.status"
+						:input-label="t('notenarchiv', 'Status')"
+						:options="statusSelectOptions"
+						:clearable="false"
+						:searchable="false"
+						:reduce="reduceId" />
+
+					<NcCheckboxRadioSwitch v-model="filters.musicxml">
+						{{ t('notenarchiv', 'With MusicXML') }}
+					</NcCheckboxRadioSwitch>
+					<NcCheckboxRadioSwitch v-model="filters.preservationCopy">
+						{{ t('notenarchiv', 'Internal preservation copies only') }}
+					</NcCheckboxRadioSwitch>
+					<NcCheckboxRadioSwitch v-if="isModuleActive('rights')" v-model="filters.unconfirmed">
+						{{ t('notenarchiv', 'Public domain, not confirmed') }}
+					</NcCheckboxRadioSwitch>
+					<NcCheckboxRadioSwitch v-if="isModuleActive('valid_version')" v-model="filters.noValidVersion">
+						{{ t('notenarchiv', 'No version valid for the choir') }}
+					</NcCheckboxRadioSwitch>
+					<NcCheckboxRadioSwitch v-if="isModuleActive('transcription_review')" v-model="filters.reviewOpen">
+						{{ t('notenarchiv', 'Open review points') }}
+					</NcCheckboxRadioSwitch>
+				</div>
 
 				<NcButton v-if="filtersActive"
 					variant="tertiary"
@@ -427,6 +484,12 @@ function onFooterClick(event: Event, open: 'archive' | 'view'): void {
 	gap: calc(2 * var(--default-grid-baseline));
 	padding: var(--default-grid-baseline) calc(2 * var(--default-grid-baseline)) calc(2 * var(--default-grid-baseline)) calc(4 * var(--default-grid-baseline));
 	list-style: none;
+}
+
+.catalog-filters__more {
+	display: flex;
+	flex-direction: column;
+	gap: calc(2 * var(--default-grid-baseline));
 }
 
 .catalog-filters__count {

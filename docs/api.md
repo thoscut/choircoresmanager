@@ -400,7 +400,7 @@ Endpoints (all JSON, errors as `{ "error" }`):
 | `POST /api/versions/{id}/valid-clear` | `{ reason? }` | conductor |
 | `POST /api/versions/{id}/licenses` | `{ license: { holder, uses: [..], quantity, valid_from, valid_until, evidence, notes } }` | librarian |
 | `PATCH /api/licenses/{id}` | `{ license: { …changed fields } }` | librarian |
-| `GET /api/proposals` | – | librarian, contributor, reader |
+| `GET /api/proposals` (open proposals, each with `created_by_name`, the display name of the proposer) | – | librarian, contributor, reader |
 | `POST /api/proposals` | `{ level, id, fields: {..}, reason?, source? }` | contributor, librarian |
 | `POST /api/proposals/{id}/accept` | `{ reason? }` | librarian |
 | `POST /api/proposals/{id}/reject` | `{ reason? }` | librarian |

@@ -121,14 +121,17 @@ class DueWidget implements IAPIWidgetV2, IIconWidget, IButtonWidget, IConditiona
 		$due = $this->due->forUser($userId);
 		$hidden = $this->personalView->get($userId)['cards'];
 		$base = $this->appUrl();
-		$icon = $this->url->getAbsoluteURL($this->url->imagePath(Application::APP_ID, 'dashboard-item.svg'));
+		// One icon per kind: concert, card of the start page, task
+		$concertIcon = $this->icon('dashboard-concert.svg');
+		$cardIcon = $this->icon('dashboard-item.svg');
+		$taskIcon = $this->icon('dashboard-task.svg');
 		$items = [];
 		foreach (in_array('concerts', $hidden, true) ? [] : $due['concerts'] as $concert) {
 			$items[] = new WidgetItem(
 				$concert['title'] !== '' ? $concert['title'] : $this->l->t('(no title)'),
-				$this->formatDate($concert['date']) . ': ' . $this->l->t($concert['label']),
+				$this->formatDate($concert['date']) . ' · ' . $this->l->t($concert['label']),
 				$base . '?event=' . $concert['id'],
-				$icon,
+				$concertIcon,
 				'concert-' . $concert['id'] . '-' . $concert['stage'],
 			);
 		}
@@ -140,7 +143,7 @@ class DueWidget implements IAPIWidgetV2, IIconWidget, IButtonWidget, IConditiona
 				$this->l->t($card['label']),
 				$this->l->n('%n entry', '%n entries', $card['count']),
 				$base . '?due=' . rawurlencode($card['key']),
-				$icon,
+				$cardIcon,
 				'card-' . $card['key'],
 			);
 		}
@@ -150,12 +153,15 @@ class DueWidget implements IAPIWidgetV2, IIconWidget, IButtonWidget, IConditiona
 			if (!is_int($id) || !is_int($copyId)) {
 				continue;
 			}
-			$name = trim(self::text($task['shelfmark'] ?? null) . ' ' . self::text($task['title'] ?? null));
+			// Short title (the shelf mark), the work and the state in the second line
+			$shelfmark = trim(self::text($task['shelfmark'] ?? null));
+			$title = trim(self::text($task['title'] ?? null));
+			$state = ($task['status'] ?? null) === 'answered' ? $this->l->t('Answered, to apply') : $this->l->t('Question or task for your role');
 			$items[] = new WidgetItem(
-				$name !== '' ? $name : $this->l->t('Task'),
-				($task['status'] ?? null) === 'answered' ? $this->l->t('Answered, to apply') : $this->l->t('Question or task for your role'),
+				$shelfmark !== '' ? $shelfmark : ($title !== '' ? $title : $this->l->t('Task')),
+				$shelfmark !== '' && $title !== '' ? $title . ' · ' . $state : $state,
 				$base . '?copy=' . $copyId . '&task=' . $id,
-				$icon,
+				$taskIcon,
 				'task-' . $id,
 			);
 		}
@@ -164,6 +170,10 @@ class DueWidget implements IAPIWidgetV2, IIconWidget, IButtonWidget, IConditiona
 
 	private static function text(mixed $value): string {
 		return is_string($value) ? $value : '';
+	}
+
+	private function icon(string $file): string {
+		return $this->url->getAbsoluteURL($this->url->imagePath(Application::APP_ID, $file));
 	}
 
 	private function appUrl(): string {

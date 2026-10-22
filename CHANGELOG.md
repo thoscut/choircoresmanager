@@ -192,6 +192,47 @@ All notable changes to this app are documented in this file. The format follows
     `GET /api/v1/copies/{id}/states` and the MCP tool `list_revisions`.
   - Migration `Version000820Date20261027100000`: table `notarch_states` (part
     of the complete backup) and the column `notarch_event_items.state_id`.
+- Guidance (milestone 0.9):
+  - Help at the place: a small "?" next to the terms version, copy, shelf
+    mark, rights status, release, valid version and internal preservation
+    copy opens one or two sentences and a link into the guide (the German
+    quick start in German). One component (`HelpTerm.vue`), all texts in
+    `src/helpTerms.ts`; keyboard operable, Escape closes it and the focus
+    returns to the button.
+  - Errors say whom to ask: accounts without a role get a page "Access
+    forbidden" (and in the app a message) that asks to have the account
+    added to the group of a role, with a link to the guide. Empty views name
+    the next step: tasks (show all tasks or open the catalog), inbox, links,
+    release lists and the start page; the register of persons can be loaded
+    again after an error.
+  - Before confirming rights, the dialog says what the confirmation makes
+    possible (singers' portal, print station, practice files, sharing,
+    public links; only switched-on modules) or that a protected version needs
+    licenses.
+  - New view for the conductor "Choose valid versions"
+    (`?view=valid-versions`): the works with several versions and none
+    valid, the valid version set right in the list with the existing route
+    `POST /api/versions/{id}/valid` (no new rule, no new route).
+  - Catalog: search, rights status and repertoire stay visible, the other
+    filters fold away under "More filters" (remembered in the browser,
+    opened by a card of the start page, with the number of active filters).
+    From a list filtered for rights to confirm or a missing valid version a
+    copy opens on the tab Rights.
+  - Shorter sidebar tabs that are no longer cut off: Details, Rights,
+    Queries, Files, History.
+  - The tab Files shows the folder of each file and an icon per kind.
+  - Dates in text fields (e.g. "last performed" from the import) and months
+    without a day are shown like every other date.
+  - The inbox names who proposed with the display name
+    (`GET /api/proposals` adds `created_by_name`).
+  - Notices about the whole app (archive folder, administrator without a
+    role) stand under the heading of the view, the one for administrators
+    without a role with a link to the guide.
+  - Dashboard widget: tasks with the shelf mark as short title and the work
+    in the second line; an icon per kind (concert, card, task).
+  - User guide reorganised by tasks per role ("As a conductor", "As a music
+    librarian", …) with the terms and a collected "Common problems"; the
+    German quick start with "Begriffe" and "Häufige Probleme".
 
 ### Security
 

@@ -10,7 +10,7 @@
  */
 import type { DueCard, DueResult } from '../types.ts'
 
-import { mdiAlertCircleOutline, mdiCheckCircleOutline } from '@mdi/js'
+import { mdiAlertCircleOutline, mdiBookOpenPageVariantOutline, mdiCheckCircleOutline } from '@mdi/js'
 import { t } from '../l10n.ts'
 import { computed, onMounted, ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -145,6 +145,14 @@ const somethingHidden = computed(() => personalView.value.cards.length > 0)
 					:description="t('notenarchiv', 'There are no open tasks or other things to do for your roles.')">
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiCheckCircleOutline" />
+					</template>
+					<template #action>
+						<NcButton @click="navigate('catalog')">
+							<template #icon>
+								<NcIconSvgWrapper :path="mdiBookOpenPageVariantOutline" />
+							</template>
+							{{ t('notenarchiv', 'Open the catalog') }}
+						</NcButton>
 					</template>
 				</NcEmptyContent>
 

@@ -133,15 +133,18 @@ final class DueWidgetTest extends TestCase {
 		self::assertSame('', $items->getEmptyContentMessage());
 		$rows = array_map(fn (WidgetItem $item): array => [$item->getTitle(), $item->getSubtitle(), $item->getLink()], $items->getItems());
 		self::assertSame([
-			['Adventskonzert', '2026-12-06: [Clarify the rights of all pieces]', self::APP_URL . '?event=3'],
-			['[(no title)]', '2026-10-01: [Confirm what was sung]', self::APP_URL . '?event=9'],
+			['Adventskonzert', '2026-12-06 · [Clarify the rights of all pieces]', self::APP_URL . '?event=3'],
+			['[(no title)]', '2026-10-01 · [Confirm what was sung]', self::APP_URL . '?event=9'],
 			['[Open tasks for your role]', '[2 entries]', self::APP_URL . '?due=tasks_open'],
 			['[Current repertoire: no valid version chosen]', '[1 entry]', self::APP_URL . '?due=valid_missing'],
-			['5-1 Freude, schöner Götterfunken', '[Question or task for your role]', self::APP_URL . '?copy=35&task=4'],
+			['5-1', 'Freude, schöner Götterfunken · [Question or task for your role]', self::APP_URL . '?copy=35&task=4'],
 			['[Task]', '[Answered, to apply]', self::APP_URL . '?copy=36&task=5'],
 		], $rows);
+		// One icon per kind
+		$icons = array_map(fn (WidgetItem $item): string => basename($item->getIconUrl()), $items->getItems());
+		self::assertSame(['dashboard-concert.svg', 'dashboard-concert.svg', 'dashboard-item.svg', 'dashboard-item.svg', 'dashboard-task.svg', 'dashboard-task.svg'], $icons);
 		foreach ($items->getItems() as $item) {
-			self::assertSame('https://cloud.example.org/apps/notenarchiv/img/dashboard-item.svg', $item->getIconUrl());
+			self::assertStringStartsWith('https://cloud.example.org/apps/notenarchiv/img/', $item->getIconUrl());
 			self::assertNotSame('', $item->getSinceId());
 		}
 	}

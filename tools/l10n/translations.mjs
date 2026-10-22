@@ -14,9 +14,15 @@ export const singular = {
 	'Try again': 'Erneut versuchen',
 	'Loading …': 'Wird geladen …',
 	'No access to the music archive': 'Kein Zugang zum Notenarchiv',
-	'Your account has no role in the music archive. Roles are linked to groups; please ask an administrator.': [
-		'Dein Konto hat keine Rolle im Notenarchiv. Rollen hängen an Gruppen; bitte wende dich an die Administration.',
-		'Ihr Konto hat keine Rolle im Notenarchiv. Rollen hängen an Gruppen; bitte wenden Sie sich an die Administration.',
+	'Your account has no role in the music archive. Please ask the administration to add your account to the group of your role.': [
+		'Dein Konto hat keine Rolle im Notenarchiv. Bitte die Administration, dein Konto in die Gruppe deiner Rolle aufzunehmen.',
+		'Ihr Konto hat keine Rolle im Notenarchiv. Bitten Sie die Administration, Ihr Konto in die Gruppe Ihrer Rolle aufzunehmen.',
+	],
+	'No access to the music archive (guide)': 'Kein Zugang zum Notenarchiv (Anleitung)',
+	'Access forbidden': 'Zugriff verboten',
+	'You have no access to the music archive: your account has no role in it. Please ask the administration to add your account to the group of your role.': [
+		'Du hast keinen Zugang zum Notenarchiv: Dein Konto hat dort keine Rolle. Bitte die Administration, dein Konto in die Gruppe deiner Rolle aufzunehmen.',
+		'Sie haben keinen Zugang zum Notenarchiv: Ihr Konto hat dort keine Rolle. Bitten Sie die Administration, Ihr Konto in die Gruppe Ihrer Rolle aufzunehmen.',
 	],
 	'No archive folder has been chosen yet. Without it files cannot be linked and exports cannot be stored.': 'Es ist noch kein Archivordner gewählt. Ohne ihn können keine Dateien verknüpft und keine Exporte abgelegt werden.',
 	'Open settings': 'Einstellungen öffnen',
@@ -61,6 +67,10 @@ export const singular = {
 	Publication: 'Veröffentlichung',
 	'Audit log': 'Protokoll',
 	Overview: 'Übersicht',
+	// short names of the tabs of the sidebar
+	Details: 'Details',
+	Queries: 'Fragen',
+	History: 'Verlauf',
 
 	// ---- navigation / list ----
 	'Shelf mark, title or composer': 'Signatur, Titel oder Komposition',
@@ -838,7 +848,6 @@ export const singular = {
 	// ---- 0.2–0.4: navigation and start page ----
 	Due: 'Fällig',
 	Tasks: 'Aufgaben',
-	'Tasks ({count})': 'Aufgaben ({count})',
 	Inbox: 'Eingang',
 	'Internal links': 'Interne Links',
 	Concerts: 'Konzerte',
@@ -922,7 +931,10 @@ export const singular = {
 	'Also closed tasks': 'Auch abgeschlossene Aufgaben',
 	'The tasks could not be loaded': 'Die Aufgaben konnten nicht geladen werden',
 	'No tasks': 'Keine Aufgaben',
-	'New questions and tasks are created in the sidebar of a copy or in the score view.': 'Neue Rückfragen und Aufgaben entstehen in der Seitenleiste eines Exemplars oder in der Notenansicht.',
+	'New questions and tasks are created in the sidebar of a copy (tab Queries) or in the score view.': 'Neue Rückfragen und Aufgaben entstehen in der Seitenleiste eines Exemplars (Reiter „Fragen“) oder in der Notenansicht.',
+	'No task matches the filters.': 'Keine Aufgabe passt zu den Filtern.',
+	'Show all tasks': 'Alle Aufgaben zeigen',
+	'Open the catalog': 'Werkverzeichnis öffnen',
 	Question: 'Rückfrage',
 	Check: 'Prüfung',
 	Report: 'Meldung',
@@ -969,7 +981,10 @@ export const singular = {
 	'All active excerpt links. They are only opened by people with a role in the music archive; the server checks the rights on every call. Calls are counted without names.': 'Alle aktiven Ausschnitt-Links. Nur Personen mit einer Rolle im Notenarchiv können sie öffnen; die Rechte werden bei jedem Öffnen neu geprüft. Gezählt wird nur, wie oft ein Link geöffnet wurde, nicht von wem.',
 	'The links could not be loaded': 'Die Links konnten nicht geladen werden',
 	'No active links': 'Keine aktiven Links',
-	'Links are created in the score view.': 'Links entstehen in der Notenansicht.',
+	'Links are created in the score view: open a copy in the catalog, then “Score”.': [
+		'Links entstehen in der Notenansicht: Öffne ein Exemplar im Werkverzeichnis, dann „Noten“.',
+		'Links entstehen in der Notenansicht: Öffnen Sie ein Exemplar im Werkverzeichnis, dann „Noten“.',
+	],
 
 	// ---- score view: share ----
 	'Copied: {reference}': 'Kopiert: {reference}',
@@ -988,7 +1003,7 @@ export const singular = {
 	'Changes proposed by tools and transcription rounds. Nothing changes until the catalog role accepts a proposal.': 'Änderungen, die Werkzeuge und Übertragungsrunden vorschlagen. Nichts ändert sich, bevor die Rolle „Bestand“ einen Vorschlag annimmt.',
 	'The inbox could not be loaded': 'Der Eingang konnte nicht geladen werden',
 	'The inbox is empty': 'Der Eingang ist leer',
-	'There are no open proposals.': 'Es gibt keine offenen Vorschläge.',
+	'There are no open proposals. Tools and transcription rounds put their proposals here; nothing else to do now.': 'Es gibt keine offenen Vorschläge. Werkzeuge und Übertragungsrunden legen ihre Vorschläge hier ab; sonst ist jetzt nichts zu tun.',
 	'Unknown object ({key})': 'Unbekanntes Objekt ({key})',
 	Field: 'Feld',
 	Now: 'Jetzt',
@@ -2745,6 +2760,41 @@ export const singular = {
 	'Correction in the app': 'Korrektur in der App',
 	'Change found by the file sync': 'Änderung durch Dateiabgleich',
 	'Revisions of a version (user guide)': 'Stände einer Fassung (Benutzerhandbuch, englisch)',
+	// ---- milestone 0.9: guidance (help at the place, filters, valid versions) ----
+	'Explain: {term}': 'Erklärung: {term}',
+	'More in the guide': 'Mehr in der Anleitung',
+	'More filters': 'Weitere Filter',
+	'More filters ({count} active)': 'Weitere Filter ({count} aktiv)',
+	'In the folder': 'Im Ordner',
+	'A version is one edition or arrangement of a work. Rights, releases and the valid version belong to the version, not to the work.': 'Eine Fassung ist eine Ausgabe oder Bearbeitung eines Werks. Rechte, Freigaben und die geltende Fassung hängen an der Fassung, nicht am Werk.',
+	'A copy is one copy of a version on the shelf or in the archive folder, with its own shelf mark and status. A version can have several copies.': 'Ein Exemplar ist ein Stück einer Fassung im Regal oder im Archivordner, mit eigener Signatur und eigenem Status. Eine Fassung kann mehrere Exemplare haben.',
+	'The shelf mark says where a copy is kept: archive binder and number, e.g. 5-12. File names start with it, so that the file sync links the files to the copy.': 'Die Signatur sagt, wo ein Exemplar liegt: Archivmappe und Nummer, z. B. 5-12. Dateinamen beginnen damit, damit der Dateiabgleich die Dateien dem Exemplar zuordnet.',
+	'Public domain, protected or open. The app proposes a status from the data; it counts for releases only after the music librarians have confirmed it. It is not legal advice.': 'Gemeinfrei, geschützt oder offen. Die App schlägt einen Status aus den Daten vor; für Freigaben zählt er erst, wenn die Archivverwaltung ihn bestätigt hat. Er ist keine Rechtsberatung.',
+	Release: 'Freigabe',
+	'A release says whether a version may be given out in a certain way, e.g. in the singers\' portal or at the print station. It follows from the confirmed rights or a valid license.': 'Eine Freigabe sagt, ob eine Fassung auf einem bestimmten Weg weitergegeben werden darf, z. B. im Chorportal oder an der Druckstation. Sie folgt aus den bestätigten Rechten oder einer gültigen Lizenz.',
+	'The version the conductor has chosen for the choir, at most one per work. It says nothing about the rights.': 'Die Fassung, die die Chorleitung für den Chor festgelegt hat, höchstens eine je Werk. Über die Rechte sagt sie nichts.',
+	'A copy kept only for the archive, e.g. the scan of a protected print. It is never shared, played or exported.': 'Ein Exemplar nur für das Archiv, z. B. der Scan eines geschützten Drucks. Es wird nie geteilt, abgespielt oder exportiert.',
+	'This version is an internal preservation copy: it stays internal and is never shared, played or exported, whatever the rights status.': 'Diese Fassung ist eine interne Erhaltungskopie: Sie bleibt intern und wird nie geteilt, abgespielt oder exportiert, ganz gleich, welcher Rechtestatus gilt.',
+	'singers\' portal': 'Chorportal',
+	'print station': 'Druckstation',
+	'practice files': 'Übe-Dateien',
+	'sharing with choir members': 'Teilen mit Chormitgliedern',
+	'public links (after the release for publication)': 'öffentliche Links (nach der Freigabe zur Veröffentlichung)',
+	'After the confirmation this becomes possible: {uses}.': 'Nach der Bestätigung wird möglich: {uses}.',
+	'A protected version needs a valid license for each of these uses: {uses}.': 'Eine geschützte Fassung braucht für jede dieser Nutzungen eine gültige Lizenz: {uses}.',
+	'Choose valid versions': 'Geltende Fassungen festlegen',
+	'Works with several versions of which none is valid for the choir yet. Choose the version the choir sings; you can change it later in the tab Rights of a copy.': [
+		'Werke mit mehreren Fassungen, von denen noch keine für den Chor gilt. Lege die Fassung fest, die der Chor singt; ändern kannst du sie später im Reiter „Rechte“ eines Exemplars.',
+		'Werke mit mehreren Fassungen, von denen noch keine für den Chor gilt. Legen Sie die Fassung fest, die der Chor singt; ändern können Sie sie später im Reiter „Rechte“ eines Exemplars.',
+	],
+	'Only the current repertoire': 'Nur das aktuelle Repertoire',
+	'Nothing to choose': 'Nichts festzulegen',
+	'Every work of the current repertoire with several versions has a valid version.': 'Jedes Werk des aktuellen Repertoires mit mehreren Fassungen hat eine geltende Fassung.',
+	'Every work with several versions has a valid version.': 'Jedes Werk mit mehreren Fassungen hat eine geltende Fassung.',
+	'Show all works': 'Alle Werke zeigen',
+	'Set {shelfmarks} as valid for the choir': '{shelfmarks} als geltend für den Chor festlegen',
+	'{shelfmarks} becomes the version of “{title}” valid for the choir. It says nothing about the rights.': '{shelfmarks} wird die für den Chor geltende Fassung von „{title}“. Über die Rechte sagt das nichts.',
+	'Valid for the choir now: {shelfmarks}.': 'Gilt jetzt für den Chor: {shelfmarks}.',
 }
 
 export const plural = {
@@ -2787,6 +2837,7 @@ export const plural = {
 	'%n open proposal|%n open proposals': ['%n offener Vorschlag', '%n offene Vorschläge'],
 	'%n version: {status}|%n versions: {status}': ['%n Fassung: {status}', '%n Fassungen: {status}'],
 	'%n task shown|%n tasks shown': ['%n Aufgabe angezeigt', '%n Aufgaben angezeigt'],
+	'%n work to decide|%n works to decide': ['%n Werk zu entscheiden', '%n Werke zu entscheiden'],
 	// ---- milestone 0.7: folder book and print station ----
 	'%n folder in service: {out} out, {available} available.|%n folders in service: {out} out, {available} available.': [
 		'%n Mappe im Dienst: {out} ausgegeben, {available} verfügbar.',

@@ -26,6 +26,7 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwit
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcTextArea from '@nextcloud/vue/components/NcTextArea'
 import ActionDialog from './ActionDialog.vue'
+import HelpTerm from './HelpTerm.vue'
 import LicenseDialog from './LicenseDialog.vue'
 import DateField from './DateField.vue'
 import {
@@ -40,6 +41,7 @@ import {
 import { displayValue, formatDate, isEmpty, toIsoDate, translateLabel } from '../format.ts'
 import { licenseUseLabel } from '../labels.ts'
 import { navigate } from '../navigation.ts'
+import { confirmConsequences } from '../rightsHints.ts'
 import { canSeeProposals, choiceLabel, entries, fieldInfo, fieldLabel, isConductor, isLibrarian, isModuleActive } from '../store.ts'
 
 const props = defineProps<{
@@ -239,6 +241,9 @@ const dialogSubmit = computed(() => {
 	}
 })
 
+/** What the confirmation makes possible, for the chosen status. */
+const consequences = computed(() => confirmConsequences(draft.value.status, isPreservationCopy.value, isModuleActive))
+
 /** Whether the reason is required in the current dialog. */
 const reasonRequired = computed(() => dialog.value === 'confirm' || dialog.value === 'open' || dialog.value === 'portal-remove')
 
@@ -305,9 +310,12 @@ function onLicenseSaved(): void {
 	<div class="rights-panel">
 		<!-- Confirmation (module "rights") -->
 		<section v-if="isModuleActive('rights')" class="rights-panel__section" aria-labelledby="rights-panel-confirmation">
-			<h3 id="rights-panel-confirmation">
-				{{ t('notenarchiv', 'Confirmation') }}
-			</h3>
+			<div class="rights-panel__title">
+				<h3 id="rights-panel-confirmation">
+					{{ t('notenarchiv', 'Confirmation') }}
+				</h3>
+				<HelpTerm term="rightsStatus" />
+			</div>
 			<p v-if="isConfirmed" class="rights-panel__state rights-panel__state--success">
 				<NcIconSvgWrapper :path="mdiCheckCircleOutline" :size="20" inline />
 				<span>{{ t('notenarchiv', '{status}, confirmed on {date} by {name}.', { status: choiceLabel('version', 'rights_status', rightsStatus), date: formatDate(confirmedAt), name: confirmedBy }) }}</span>
@@ -334,9 +342,12 @@ function onLicenseSaved(): void {
 
 		<!-- Releases (modules "portal" and "print_station") -->
 		<section v-if="isModuleActive('portal') || isModuleActive('print_station')" class="rights-panel__section" aria-labelledby="rights-panel-releases">
-			<h3 id="rights-panel-releases">
-				{{ t('notenarchiv', 'Releases') }}
-			</h3>
+			<div class="rights-panel__title">
+				<h3 id="rights-panel-releases">
+					{{ t('notenarchiv', 'Releases') }}
+				</h3>
+				<HelpTerm term="release" />
+			</div>
 			<ul class="rights-panel__releases">
 				<li v-if="isModuleActive('portal')">
 					<span class="rights-panel__release-name">{{ t('notenarchiv', 'Singers\' portal') }}</span>
@@ -385,9 +396,12 @@ function onLicenseSaved(): void {
 
 		<!-- Valid version (module "valid_version") -->
 		<section v-if="isModuleActive('valid_version')" class="rights-panel__section" aria-labelledby="rights-panel-valid">
-			<h3 id="rights-panel-valid">
-				{{ t('notenarchiv', 'Valid for the choir') }}
-			</h3>
+			<div class="rights-panel__title">
+				<h3 id="rights-panel-valid">
+					{{ t('notenarchiv', 'Valid for the choir') }}
+				</h3>
+				<HelpTerm term="validVersion" />
+			</div>
 			<p>{{ validText }}</p>
 			<dl v-if="validSince !== '' && (validReason !== '' || validSetBy !== '')" class="rights-panel__facts">
 				<template v-if="validSetBy !== ''">
@@ -520,6 +534,12 @@ function onLicenseSaved(): void {
 					required
 					resize="vertical"
 					rows="2" />
+				<!-- what the confirmation leads to, updated when the status changes -->
+				<div aria-live="polite">
+					<p v-for="sentence in consequences" :key="sentence">
+						{{ sentence }}
+					</p>
+				</div>
 				<p class="action-dialog__hint">
 					{{ t('notenarchiv', 'The confirmation is recorded with your name and the date. Changing the rights status later removes it.') }}
 				</p>
@@ -571,6 +591,12 @@ function onLicenseSaved(): void {
 	gap: var(--default-grid-baseline);
 	padding-block: calc(2 * var(--default-grid-baseline));
 	border-bottom: 1px solid var(--color-border);
+}
+
+.rights-panel__title {
+	display: flex;
+	align-items: center;
+	gap: 2px;
 }
 
 .rights-panel__section h3 {

@@ -35,6 +35,9 @@ use OCP\IRequest;
  * @psalm-suppress UnusedClass
  */
 class PageController extends Controller {
+	/** The guides (as in appinfo/info.xml and src/docs.ts) */
+	private const DOCS = 'https://github.com/thoscut/choircoresmanager/blob/main/docs/';
+
 	public function __construct(
 		IRequest $request,
 		private ?string $userId,
@@ -58,12 +61,28 @@ class PageController extends Controller {
 			return $this->memberPage($this->userId);
 		}
 		if ($this->userId === null || !$this->roles->hasAccess($this->userId)) {
-			$response = new TemplateResponse('core', '403', ['message' => $this->l->t('You have no access to the music archive.')], TemplateResponse::RENDER_AS_ERROR);
+			$response = new TemplateResponse(Application::APP_ID, 'forbidden', [
+				'heading' => $this->l->t('Access forbidden'),
+				'message' => $this->l->t('You have no access to the music archive: your account has no role in it. Please ask the administration to add your account to the group of your role.'),
+				'guideUrl' => self::noAccessGuideUrl($this->l->getLanguageCode()),
+				'guideLabel' => $this->l->t('No access to the music archive (guide)'),
+			], TemplateResponse::RENDER_AS_ERROR);
 			$response->setStatus(Http::STATUS_FORBIDDEN);
 			return $response;
 		}
 		$this->initialState->provideInitialState('meta', $this->meta->forUser($this->userId));
 		return self::withScorePolicy(new TemplateResponse(Application::APP_ID, 'index'), true);
+	}
+
+	/**
+	 * The section of the guide about a missing role: the German quick start
+	 * for German, otherwise the user guide (the anchors are those of
+	 * src/docs.ts, BOTH_GUIDES.noAccess; a unit test there checks them).
+	 */
+	public static function noAccessGuideUrl(string $language): string {
+		return str_starts_with(strtolower($language), 'de')
+			? self::DOCS . 'de/schnellstart.md#kein-zugang-zum-notenarchiv'
+			: self::DOCS . 'user-guide.md#no-access-to-the-music-archive';
 	}
 
 	/**
