@@ -5,10 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.3.0] - Unreleased
 
 ### Added
 
+- Rights status per score (public domain / licensed / protected / unresolved) with reasoning, and a separate confirmation by a person (date and initials); changing the rights status removes the confirmation
+- Publication status per score, independent of the rights status (approved / to clarify / blocked, optionally until a date / internal preservation copy), with reasoning
+- Internal preservation copies are never displayed or played back; only editors can download their MusicXML file
+- MusicXML files (.musicxml, .xml, .mxl) are linked from Nextcloud Files with the file picker, so they stay in their folder and its backups and checksums cover them; notation view and playback (per-voice solo, mute and volume, tempo control)
+- Optional public page listing all scores approved for publication whose rights (public domain or licensed) have been confirmed, with notation view, playback, MusicXML download and the date of the last update; everything is provided as is and without warranty (disabled by default, enabled in the admin settings)
 - Add French, Spanish, Italian, Dutch and Polish Translations
 - Add Signature, Lyricist, Voicing and Language to Scores (#2)
 - Add Inventory Status (active, retired, missing, lent) and a Repertoire Class Derived from the Last Documented Performance (current, dormant, earlier, not documented) with Thresholds Configurable by Admins (#2)

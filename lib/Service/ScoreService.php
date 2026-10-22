@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace OCA\OrchestraScoresManager\Service;
 
+use DateTimeImmutable;
+use DateTimeZone;
 use OCA\OrchestraScoresManager\Db\CommentMapper;
+use OCA\OrchestraScoresManager\Db\Enum\PublicationStatus;
+use OCA\OrchestraScoresManager\Db\Enum\RightsStatus;
 use OCA\OrchestraScoresManager\Db\Score;
 use OCA\OrchestraScoresManager\Db\ScoreBookScoreLinkMapper;
 use OCA\OrchestraScoresManager\Db\ScoreFolderCollectionLinkMapper;
@@ -24,6 +28,9 @@ use Throwable;
 
 class ScoreService {
 	use TTransactional;
+
+	/** Maximum length of the rights confirmation, which is meant for initials or a short name */
+	public const RIGHTS_CONFIRMED_BY_MAX_LENGTH = 32;
 
 	/** @psalm-suppress PossiblyUnusedMethod - Constructor used by DI container */
 	public function __construct(
@@ -127,6 +134,7 @@ class ScoreService {
 	 */
 	public function createScore(Score $score, ?array $tagIds = null, ?array $scoreBookInfo = null): Score {
 		$this->authorizationService->authorizePolicy($this->scorePolicy, PolicyInterface::ACTION_CREATE);
+		$this->normalizeAndValidate($score);
 
 		// Validate before writing anything, so a bad tag id doesn't leave a half-created score behind
 		$validIds = $tagIds !== null ? $this->validateTagIds($tagIds) : null;
@@ -160,6 +168,8 @@ class ScoreService {
 	 */
 	public function updateScore(Score $score, ?array $tagIds = null, ?array $scoreBookInfo = null): Score {
 		$this->authorizationService->authorizePolicy($this->scorePolicy, PolicyInterface::ACTION_UPDATE, $score);
+		$this->resetDependentFields($score);
+		$this->normalizeAndValidate($score);
 
 		$validIds = $tagIds !== null ? $this->validateTagIds($tagIds) : null;
 
@@ -268,6 +278,86 @@ class ScoreService {
 			}
 
 			$this->scoreBookScoreLinkMapper->addScoreToScoreBook($scoreBookId, $scoreId, $index);
+		}
+	}
+
+	/**
+	 * Parse a date given in the API as Y-m-d.
+	 *
+	 * Impossible dates such as 2026-02-30 are rejected instead of being rolled over.
+	 *
+	 * @param mixed $value Date string in Y-m-d format, null or an empty string
+	 * @return DateTimeImmutable|null The date at midnight UTC, or null for an empty value
+	 * @throws \InvalidArgumentException if the value is not a valid date
+	 */
+	public function parseDate(mixed $value): ?DateTimeImmutable {
+		if ($value === null || $value === '') {
+			return null;
+		}
+		if (is_string($value) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $value) === 1) {
+			$date = DateTimeImmutable::createFromFormat('!Y-m-d', $value, new DateTimeZone('UTC'));
+			if ($date !== false && $date->format('Y-m-d') === $value) {
+				return $date;
+			}
+		}
+		throw new \InvalidArgumentException($this->l->t('Invalid date. Use the format YYYY-MM-DD.'));
+	}
+
+	/**
+	 * Clear fields whose meaning depends on a status that is being changed.
+	 *
+	 * A rights confirmation refers to the rights status it confirmed, so it is cleared when
+	 * the rights status changes, unless the same update sets a new confirmation. A "blocked
+	 * until" date only makes sense for blocked scores, so it is cleared when the publication
+	 * status changes to anything else, unless the same update sets it explicitly.
+	 *
+	 * @param Score $score
+	 */
+	private function resetDependentFields(Score $score): void {
+		$updatedFields = $score->getUpdatedFields();
+
+		if (isset($updatedFields['rightsStatus'])
+			&& !isset($updatedFields['rightsConfirmedAt'])
+			&& !isset($updatedFields['rightsConfirmedBy'])) {
+			$score->setRightsConfirmedAt(null);
+			$score->setRightsConfirmedBy(null);
+		}
+
+		if (isset($updatedFields['publicationStatus'])
+			&& !isset($updatedFields['publicationBlockedUntil'])
+			&& $score->getPublicationStatus() !== PublicationStatus::BLOCKED->value) {
+			$score->setPublicationBlockedUntil(null);
+		}
+	}
+
+	/**
+	 * Normalize optional text fields and ensure rights and publication fields have allowed values.
+	 *
+	 * @param Score $score
+	 * @throws \InvalidArgumentException
+	 */
+	private function normalizeAndValidate(Score $score): void {
+		if (RightsStatus::tryFrom($score->getRightsStatus()) === null) {
+			throw new \InvalidArgumentException($this->l->t('Invalid rights status. Must be "public_domain", "licensed", "protected" or "open".'));
+		}
+		if (PublicationStatus::tryFrom($score->getPublicationStatus()) === null) {
+			throw new \InvalidArgumentException($this->l->t('Invalid publication status. Must be "approved", "to_clarify", "blocked" or "internal_preservation_copy".'));
+		}
+
+		$confirmedBy = $score->getRightsConfirmedBy();
+		if ($confirmedBy !== null) {
+			$trimmed = trim($confirmedBy);
+			if (mb_strlen($trimmed) > self::RIGHTS_CONFIRMED_BY_MAX_LENGTH) {
+				throw new \InvalidArgumentException($this->l->t('Use at most %d characters for the person who confirmed the rights, e.g. their initials.', [self::RIGHTS_CONFIRMED_BY_MAX_LENGTH]));
+			}
+			if ($trimmed !== $confirmedBy) {
+				$score->setRightsConfirmedBy($trimmed === '' ? null : $trimmed);
+			}
+		}
+
+		if ($score->getPublicationBlockedUntil() !== null
+			&& $score->getPublicationStatus() !== PublicationStatus::BLOCKED->value) {
+			throw new \InvalidArgumentException($this->l->t('A "blocked until" date can only be set if the publication is blocked.'));
 		}
 	}
 }

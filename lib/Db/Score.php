@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace OCA\OrchestraScoresManager\Db;
 
+use DateTimeImmutable;
 use JsonSerializable;
 use OCA\OrchestraScoresManager\Service\RepertoireClassifier;
 use OCA\OrchestraScoresManager\Utility\DateTimeHelper;
@@ -50,6 +51,28 @@ use OCP\DB\Types;
  * @method void setLanguage(?string $value)
  * @method string getInventoryStatus()
  * @method \DateTimeImmutable|null getLastPerformedImported()
+ * @method string getRightsStatus()
+ * @method void setRightsStatus(string $value)
+ * @method string|null getRightsNote()
+ * @method void setRightsNote(?string $value)
+ * @method DateTimeImmutable|null getRightsConfirmedAt()
+ * @method void setRightsConfirmedAt(?DateTimeImmutable $value)
+ * @method string|null getRightsConfirmedBy()
+ * @method void setRightsConfirmedBy(?string $value)
+ * @method string getPublicationStatus()
+ * @method void setPublicationStatus(string $value)
+ * @method string|null getPublicationNote()
+ * @method void setPublicationNote(?string $value)
+ * @method DateTimeImmutable|null getPublicationBlockedUntil()
+ * @method void setPublicationBlockedUntil(?DateTimeImmutable $value)
+ * @method string|null getMusicxmlFile()
+ * @method void setMusicxmlFile(?string $value)
+ * @method int|null getMusicxmlFileId()
+ * @method void setMusicxmlFileId(?int $value)
+ * @method string|null getMusicxmlLinkedBy()
+ * @method void setMusicxmlLinkedBy(?string $value)
+ * @method DateTimeImmutable|null getUpdatedAt()
+ * @method void setUpdatedAt(?DateTimeImmutable $value)
  */
 class Score extends Entity implements JsonSerializable {
 	public const INVENTORY_STATUS_ACTIVE = 'active';
@@ -88,6 +111,27 @@ class Score extends Entity implements JsonSerializable {
 	 * Not part of jsonSerialize(); served separately to keep score lists small.
 	 */
 	protected ?string $catalogueExtra = null;
+	protected string $rightsStatus = 'open';
+	protected ?string $rightsNote = null;
+	/** DATE field, normalized to midnight UTC and serialized as Y-m-d */
+	protected ?DateTimeImmutable $rightsConfirmedAt = null;
+	protected ?string $rightsConfirmedBy = null;
+	protected string $publicationStatus = 'to_clarify';
+	protected ?string $publicationNote = null;
+	/** DATE field, normalized to midnight UTC and serialized as Y-m-d */
+	protected ?DateTimeImmutable $publicationBlockedUntil = null;
+	/** Name of the linked MusicXML file at the time it was linked, only for display */
+	protected ?string $musicxmlFile = null;
+	/** Nextcloud file id of the linked MusicXML file */
+	protected ?int $musicxmlFileId = null;
+	/**
+	 * User id of the person who linked the file; the file is read with this user's access. Not exposed in the API.
+	 *
+	 * @psalm-suppress PossiblyUnusedProperty - Only accessed through the magic getter and setter
+	 */
+	protected ?string $musicxmlLinkedBy = null;
+	/** Set by the mapper on every insert and update */
+	protected ?DateTimeImmutable $updatedAt = null;
 
 	// transient properties, not stored in DB
 	// ensure to add setters & getters for these
@@ -123,6 +167,21 @@ class Score extends Entity implements JsonSerializable {
 		$this->addType('inventoryStatus', Types::STRING);
 		$this->addType('lastPerformedImported', Types::DATE_IMMUTABLE);
 		$this->addType('catalogueExtra', Types::TEXT);
+		$this->addType('rightsStatus', Types::STRING);
+		$this->addType('rightsNote', Types::TEXT);
+		$this->addType('rightsConfirmedAt', Types::DATE_IMMUTABLE);
+		$this->addType('rightsConfirmedBy', Types::STRING);
+		$this->addType('publicationStatus', Types::STRING);
+		$this->addType('publicationNote', Types::TEXT);
+		$this->addType('publicationBlockedUntil', Types::DATE_IMMUTABLE);
+		$this->addType('musicxmlFile', Types::STRING);
+		$this->addType('musicxmlFileId', Types::BIGINT);
+		$this->addType('musicxmlLinkedBy', Types::STRING);
+		$this->addType('updatedAt', Types::DATETIME_IMMUTABLE);
+
+		// Always write both status columns on insert instead of relying on the database default
+		$this->markFieldUpdated('rightsStatus');
+		$this->markFieldUpdated('publicationStatus');
 	}
 
 	public function jsonSerialize(): array {
@@ -151,6 +210,16 @@ class Score extends Entity implements JsonSerializable {
 			'lastPerformed' => $this->lastPerformed,
 			'lastPerformedImported' => $this->lastPerformedImported?->format('Y-m-d'),
 			'repertoireClass' => $this->repertoireClass,
+			'rightsStatus' => $this->rightsStatus,
+			'rightsNote' => $this->rightsNote,
+			'rightsConfirmedAt' => $this->rightsConfirmedAt?->format('Y-m-d'),
+			'rightsConfirmedBy' => $this->rightsConfirmedBy,
+			'publicationStatus' => $this->publicationStatus,
+			'publicationNote' => $this->publicationNote,
+			'publicationBlockedUntil' => $this->publicationBlockedUntil?->format('Y-m-d'),
+			'musicxmlFile' => $this->musicxmlFile,
+			'musicxmlFileId' => $this->musicxmlFileId,
+			'updatedAt' => $this->updatedAt?->format(DATE_ATOM),
 		];
 	}
 

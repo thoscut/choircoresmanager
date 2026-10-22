@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace OCA\OrchestraScoresManager\Controller;
 
 use OCA\OrchestraScoresManager\Db\Comment;
+use OCA\OrchestraScoresManager\Db\Enum\PublicationStatus;
+use OCA\OrchestraScoresManager\Db\Enum\RightsStatus;
 use OCA\OrchestraScoresManager\Db\Score;
 use OCA\OrchestraScoresManager\Db\ScoreMapper;
 use OCA\OrchestraScoresManager\Db\ScoreTagLinkMapper;
@@ -35,6 +37,9 @@ use OCP\IRequest;
 #[OpenAPI(scope: OpenAPI::SCOPE_DEFAULT)]
 class ScoreApiController extends OCSController {
 	use ServiceExceptionBridgeTrait;
+
+	/** Fields given as Y-m-d strings in the API */
+	private const DATE_FIELDS = ['rightsConfirmedAt', 'publicationBlockedUntil'];
 
 	public function __construct(
 		string $appName,
@@ -91,6 +96,13 @@ class ScoreApiController extends OCSController {
 	 * @param string|null $voicing The voicing of the score, e.g. "TTBB"
 	 * @param string|null $language The language of the lyrics
 	 * @param 'active'|'retired'|'missing'|'lent'|null $inventoryStatus The inventory status of the score (default active)
+	 * @param 'public_domain'|'licensed'|'protected'|'open'|null $rightsStatus The rights status of the score
+	 * @param string|null $rightsNote The reasoning for the rights status
+	 * @param string|null $rightsConfirmedAt The date (Y-m-d) on which a person confirmed the rights status
+	 * @param string|null $rightsConfirmedBy Who confirmed the rights status, e.g. initials (at most 32 characters)
+	 * @param 'approved'|'to_clarify'|'blocked'|'internal_preservation_copy'|null $publicationStatus The publication status of the score
+	 * @param string|null $publicationNote The reasoning for the publication status
+	 * @param string|null $publicationBlockedUntil The date (Y-m-d) until which a blocked score stays blocked; only allowed for blocked scores
 	 * @param list<int>|null $tagIds optional list of tag ids to link
 	 * @param array{id: int, index: int}|null $scoreBook Score book info with id and index (both required)
 	 *
@@ -122,9 +134,19 @@ class ScoreApiController extends OCSController {
 		?string $voicing = null,
 		?string $language = null,
 		?string $inventoryStatus = null,
+		?string $rightsStatus = null,
+		?string $rightsNote = null,
+		?string $rightsConfirmedAt = null,
+		?string $rightsConfirmedBy = null,
+		?string $publicationStatus = null,
+		?string $publicationNote = null,
+		?string $publicationBlockedUntil = null,
 		?array $tagIds = null,
 		?array $scoreBook = null,
 	): DataResponse {
+		$confirmedAt = $this->callService(fn () => $this->scoreService->parseDate($rightsConfirmedAt));
+		$blockedUntil = $this->callService(fn () => $this->scoreService->parseDate($publicationBlockedUntil));
+
 		$score = $this->callService(fn () => Score::fromParams([
 			'title' => $title,
 			'titleShort' => $titleShort,
@@ -144,6 +166,13 @@ class ScoreApiController extends OCSController {
 			'voicing' => $voicing,
 			'language' => $language,
 			'inventoryStatus' => $inventoryStatus,
+			'rightsStatus' => $rightsStatus ?? RightsStatus::OPEN->value,
+			'rightsNote' => $rightsNote,
+			'rightsConfirmedAt' => $confirmedAt,
+			'rightsConfirmedBy' => $rightsConfirmedBy,
+			'publicationStatus' => $publicationStatus ?? PublicationStatus::TO_CLARIFY->value,
+			'publicationNote' => $publicationNote,
+			'publicationBlockedUntil' => $blockedUntil,
 		]));
 
 		// Build score book info if provided
@@ -182,6 +211,13 @@ class ScoreApiController extends OCSController {
 	 * @param string|null $voicing The voicing of the score, e.g. "TTBB"
 	 * @param string|null $language The language of the lyrics
 	 * @param 'active'|'retired'|'missing'|'lent'|null $inventoryStatus The inventory status of the score (default active)
+	 * @param 'public_domain'|'licensed'|'protected'|'open'|null $rightsStatus The rights status of the score
+	 * @param string|null $rightsNote The reasoning for the rights status
+	 * @param string|null $rightsConfirmedAt The date (Y-m-d) on which a person confirmed the rights status
+	 * @param string|null $rightsConfirmedBy Who confirmed the rights status, e.g. initials (at most 32 characters)
+	 * @param 'approved'|'to_clarify'|'blocked'|'internal_preservation_copy'|null $publicationStatus The publication status of the score
+	 * @param string|null $publicationNote The reasoning for the publication status
+	 * @param string|null $publicationBlockedUntil The date (Y-m-d) until which a blocked score stays blocked; only allowed for blocked scores
 	 * @param list<int>|null $tagIds optional list of tag ids to link
 	 * @param array{id?: int, index?: int}|null $scoreBook Score book info (id and/or index). Set id to null to remove from book.
 	 *
@@ -218,6 +254,13 @@ class ScoreApiController extends OCSController {
 		?string $voicing = null,
 		?string $language = null,
 		?string $inventoryStatus = null,
+		?string $rightsStatus = null,
+		?string $rightsNote = null,
+		?string $rightsConfirmedAt = null,
+		?string $rightsConfirmedBy = null,
+		?string $publicationStatus = null,
+		?string $publicationNote = null,
+		?string $publicationBlockedUntil = null,
 		?array $tagIds = null,
 		?array $scoreBook = null,
 	): DataResponse {
@@ -271,15 +314,27 @@ class ScoreApiController extends OCSController {
 			'voicing' => $voicing,
 			'language' => $language,
 			'inventoryStatus' => $inventoryStatus,
+			// the rights and publication status are not nullable, let the service reject a null value
+			'rightsStatus' => $rightsStatus ?? '',
+			'rightsNote' => $rightsNote,
+			'rightsConfirmedAt' => $rightsConfirmedAt,
+			'rightsConfirmedBy' => $rightsConfirmedBy,
+			'publicationStatus' => $publicationStatus ?? '',
+			'publicationNote' => $publicationNote,
+			'publicationBlockedUntil' => $publicationBlockedUntil,
 		];
-		/** @psalm-suppress MixedAssignment */
-		foreach ($updatableFields as $field => $value) {
-			if (!array_key_exists($field, $params)) {
-				continue;
+		$this->callService(function () use ($updatableFields, $params, $score): void {
+			/** @psalm-suppress MixedAssignment */
+			foreach ($updatableFields as $field => $value) {
+				if (!array_key_exists($field, $params)) {
+					continue;
+				}
+				if (in_array($field, self::DATE_FIELDS, true)) {
+					$value = $this->scoreService->parseDate($value);
+				}
+				$score->{'set' . ucfirst($field)}($value);
 			}
-			// setters validate some fields (e.g. inventoryStatus) and throw InvalidArgumentException
-			$this->callService(fn (): mixed => $score->{'set' . ucfirst($field)}($value));
-		}
+		});
 
 		$updated = $this->callService(fn () => $this->scoreService->updateScore($score, $tagIds, $scoreBookInfo));
 		return new DataResponse($updated, Http::STATUS_OK);

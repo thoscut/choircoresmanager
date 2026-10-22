@@ -63,4 +63,5 @@ class PermissionService {
 
 		return false;
 	}
+
 }

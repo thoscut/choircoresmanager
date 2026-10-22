@@ -15,6 +15,14 @@
 			<CommentsList :scoreId="scoreSidebarStore.selectedScore.id" />
 		</NcAppSidebarTab>
 		<NcAppSidebarTab
+			id="musicxml"
+			:name="t('Notes & Playback')">
+			<template #icon>
+				<MusicXmlIcon :size="20" />
+			</template>
+			<MusicXmlTab :score="scoreSidebarStore.selectedScore" :editable="editable" />
+		</NcAppSidebarTab>
+		<NcAppSidebarTab
 			id="foldercollections"
 			:name="t('Folder Collections')">
 			<template #icon>
@@ -52,8 +60,9 @@ import NcAppSidebarTab from '@nextcloud/vue/components/NcAppSidebarTab'
 import EntityFolderCollectionsList from '@/components/EntityFolderCollectionsList.vue'
 import CatalogueDataTab from '@/pages/scores/components/CatalogueDataTab.vue'
 import CommentsList from '@/pages/scores/components/CommentsList.vue'
+import MusicXmlTab from '@/pages/scores/components/MusicXmlTab.vue'
 import ScoreBookInfo from '@/pages/scores/components/ScoreBookInfo.vue'
-import { CatalogueIcon, CommentIcon, FolderCollectionIcon, ScoreBookIcon } from '@/icons/vue-material'
+import { CatalogueIcon, CommentIcon, FolderCollectionIcon, MusicXmlIcon, ScoreBookIcon } from '@/icons/vue-material'
 import { useScoreSidebarStore } from '@/stores/scoreSidebarStore'
 import { t } from '@/utils/l10n.ts'
 

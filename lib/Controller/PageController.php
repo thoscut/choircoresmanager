@@ -7,10 +7,12 @@ namespace OCA\OrchestraScoresManager\Controller;
 use OCA\OrchestraScoresManager\AppInfo\Application;
 use OCA\OrchestraScoresManager\Db\ScoreMapper;
 use OCA\OrchestraScoresManager\Db\TagMapper;
+use OCA\OrchestraScoresManager\Service\ConfigService;
 use OCA\OrchestraScoresManager\Service\FolderCollectionService;
 use OCA\OrchestraScoresManager\Service\PermissionService;
 use OCA\OrchestraScoresManager\Service\ScoreBookService;
 use OCA\OrchestraScoresManager\Service\SetlistService;
+use OCA\OrchestraScoresManager\Utility\ResponseHelper;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\FrontpageRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -37,6 +39,7 @@ class PageController extends Controller {
 		private readonly ScoreBookService $scoreBookService,
 		private readonly FolderCollectionService $folderCollectionService,
 		private readonly SetlistService $setlistService,
+		private readonly ConfigService $configService,
 	) {
 		parent::__construct($appName, $request);
 	}
@@ -115,9 +118,17 @@ class PageController extends Controller {
 			$this->setlistService->getSetlists('all', null, null)
 		);
 
-		return new TemplateResponse(
+		$this->initialStateService->provideInitialState(
+			'publicPageEnabled',
+			$this->configService->isPublicPageEnabled()
+		);
+
+		$response = new TemplateResponse(
 			Application::APP_ID,
 			'index',
 		);
+		// The MusicXML player needs WebAssembly and a blob worker
+		$response->setContentSecurityPolicy(ResponseHelper::playerContentSecurityPolicy());
+		return $response;
 	}
 }

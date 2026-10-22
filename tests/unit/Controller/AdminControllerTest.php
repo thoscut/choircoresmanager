@@ -96,4 +96,27 @@ final class AdminControllerTest extends TestCase {
 
 		$this->controller->postRepertoireThresholds(10, 3);
 	}
+
+	#[TestWith([true])]
+	#[TestWith([false])]
+	public function testGetPublicPageReturnsSetting(bool $enabled): void {
+		$this->configService->method('isPublicPageEnabled')->willReturn($enabled);
+
+		$response = $this->controller->getPublicPage();
+
+		$this->assertEquals(['publicPageEnabled' => $enabled], $response->getData());
+	}
+
+	#[TestWith([true])]
+	#[TestWith([false])]
+	public function testPostPublicPageUpdatesSetting(bool $enabled): void {
+		$this->configService->expects($this->once())
+			->method('setPublicPageEnabled')
+			->with($enabled);
+		$this->configService->method('isPublicPageEnabled')->willReturn($enabled);
+
+		$response = $this->controller->postPublicPage($enabled);
+
+		$this->assertEquals(['publicPageEnabled' => $enabled], $response->getData());
+	}
 }

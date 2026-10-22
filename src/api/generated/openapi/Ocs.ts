@@ -40,6 +40,10 @@ import {
   FolderCollectionVersionApiGetFolderCollectionVersionData,
   FolderCollectionVersionApiPatchFolderCollectionVersionData,
   FolderCollectionVersionApiPatchFolderCollectionVersionPayload,
+  MusicXmlApiDeleteMusicXmlData,
+  MusicXmlApiGetMusicXmlData,
+  MusicXmlApiPostMusicXmlData,
+  MusicXmlApiPostMusicXmlPayload,
   OCSMeta,
   ScoreApiDeleteScoreData,
   ScoreApiGetScoreCommentsData,
@@ -711,6 +715,86 @@ export class Ocs<
       body: data,
       secure: true,
       type: "application/json",
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description The content of the linked file is returned. The file of an internal preservation copy is only available to editors. the MusicXML file
+   *
+   * @tags music_xml_api
+   * @name MusicXmlApiGetMusicXml
+   * @summary Download the MusicXML file of a score
+   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/scores/{id}/musicxml
+   * @secure
+   */
+  musicXmlApiGetMusicXml = (id: number, params: RequestParams = {}) =>
+    this.request<
+      MusicXmlApiGetMusicXmlData,
+      {
+        ocs: {
+          meta: OCSMeta;
+          data: any;
+        };
+      }
+    >({
+      path: `/ocs/v2.php/apps/orchestrascoresmanager/scores/${id}/musicxml`,
+      method: "GET",
+      secure: true,
+      ...params,
+    });
+  /**
+   * @description The file stays in Nextcloud Files. The current user must be able to read it; later reads use the access of the user who linked the file. the updated score
+   *
+   * @tags music_xml_api
+   * @name MusicXmlApiPostMusicXml
+   * @summary Link a MusicXML file (.musicxml, .xml or .mxl) from the user's files to a score, replacing an existing link
+   * @request POST:/ocs/v2.php/apps/orchestrascoresmanager/scores/{id}/musicxml
+   * @secure
+   */
+  musicXmlApiPostMusicXml = (
+    id: number,
+    data: MusicXmlApiPostMusicXmlPayload,
+    params: RequestParams = {},
+  ) =>
+    this.request<
+      MusicXmlApiPostMusicXmlData,
+      {
+        ocs: {
+          meta: OCSMeta;
+          data: any;
+        };
+      }
+    >({
+      path: `/ocs/v2.php/apps/orchestrascoresmanager/scores/${id}/musicxml`,
+      method: "POST",
+      body: data,
+      secure: true,
+      type: "application/json",
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description The file itself stays in Nextcloud Files. the updated score
+   *
+   * @tags music_xml_api
+   * @name MusicXmlApiDeleteMusicXml
+   * @summary Remove the link to the MusicXML file of a score
+   * @request DELETE:/ocs/v2.php/apps/orchestrascoresmanager/scores/{id}/musicxml
+   * @secure
+   */
+  musicXmlApiDeleteMusicXml = (id: number, params: RequestParams = {}) =>
+    this.request<
+      MusicXmlApiDeleteMusicXmlData,
+      {
+        ocs: {
+          meta: OCSMeta;
+          data: any;
+        };
+      }
+    >({
+      path: `/ocs/v2.php/apps/orchestrascoresmanager/scores/${id}/musicxml`,
+      method: "DELETE",
+      secure: true,
       format: "json",
       ...params,
     });

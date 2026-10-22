@@ -1,10 +1,13 @@
 import type { Score } from '@/api/generated/openapi/data-contracts'
 
+import ncAxios from '@nextcloud/axios'
 import { loadState } from '@nextcloud/initial-state'
+import { generateOcsUrl } from '@nextcloud/router'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { apiClients } from '@/api/client'
 import { useScoreBooksStore } from '@/stores/scoreBooksStore'
+import { useScoreSidebarStore } from '@/stores/scoreSidebarStore'
 
 /**
  * Pinia store for managing scores state.
@@ -18,6 +21,7 @@ export const useScoresStore = defineStore('scores', () => {
 	const isLoaded = ref(false)
 	const isLoading = ref(false)
 	const scoreBooksStore = useScoreBooksStore()
+	const scoreSidebarStore = useScoreSidebarStore()
 
 	/**
 	 * Get scores sorted by title
@@ -111,7 +115,9 @@ export const useScoresStore = defineStore('scores', () => {
 		scores.value[index] = { ...scores.value[index], [field]: value }
 
 		try {
-			await apiClients.default.scoreApiPatchScore(id, { [field]: value })
+			const response = await apiClients.default.scoreApiPatchScore(id, { [field]: value })
+			// The server may change dependent fields, e.g. clear the rights confirmation when the rights status changes
+			replaceScore(response.data.ocs.data as Score)
 		} catch (error) {
 			// Revert on error
 			scores.value[index] = { ...scores.value[index], [field]: oldValue }
@@ -160,6 +166,85 @@ export const useScoresStore = defineStore('scores', () => {
 	}
 
 	/**
+	 * Replace a score in the store (and in the sidebar, if shown there) with an updated version from the API
+	 *
+	 * @param updated - The updated score
+	 */
+	function replaceScore(updated: Score): void {
+		const index = scores.value.findIndex((s) => s.id === updated.id)
+		if (index !== -1) {
+			scores.value[index] = updated
+		}
+		scoreSidebarStore.updateSelectedScore(updated)
+	}
+
+	/**
+	 * Link a MusicXML file from Nextcloud Files to a score and update local state
+	 *
+	 * @param id - The score ID
+	 * @param fileId - The Nextcloud file id of the MusicXML file (.musicxml, .xml or .mxl)
+	 * @return The updated score
+	 * @throws { Error } if API call fails
+	 */
+	async function linkMusicXml(id: number, fileId: number): Promise<Score> {
+		const response = await apiClients.default.musicXmlApiPostMusicXml(id, { fileId })
+		const updated = response.data.ocs.data as Score
+		replaceScore(updated)
+		return updated
+	}
+
+	/**
+	 * Remove the link to the MusicXML file of a score and update local state. The file stays in Files.
+	 *
+	 * @param id - The score ID
+	 * @return The updated score
+	 * @throws { Error } if API call fails
+	 */
+	async function unlinkMusicXml(id: number): Promise<Score> {
+		const response = await apiClients.default.musicXmlApiDeleteMusicXml(id)
+		const updated = response.data.ocs.data as Score
+		replaceScore(updated)
+		return updated
+	}
+
+	/**
+	 * Download the content of the MusicXML file of a score
+	 *
+	 * @param id - The score ID
+	 * @return The file content
+	 * @throws { Error } if API call fails; an OCS error body is decoded so that its message can be shown
+	 */
+	async function fetchMusicXml(id: number): Promise<ArrayBuffer> {
+		try {
+			const response = await ncAxios.get(
+				generateOcsUrl('/apps/orchestrascoresmanager/scores/{id}/musicxml', { id }),
+				{ headers: { 'OCS-APIRequest': 'true', Accept: 'application/json' }, responseType: 'arraybuffer' },
+			)
+			return response.data as ArrayBuffer
+		} catch (error) {
+			decodeArrayBufferErrorBody(error)
+			throw error
+		}
+	}
+
+	/**
+	 * Replace the binary body of a failed request by the parsed JSON, if it is JSON
+	 *
+	 * @param error - The error thrown by axios
+	 */
+	function decodeArrayBufferErrorBody(error: unknown): void {
+		const response = (error as { response?: { data?: unknown } }).response
+		if (!response || !(response.data instanceof ArrayBuffer)) {
+			return
+		}
+		try {
+			response.data = JSON.parse(new TextDecoder().decode(response.data))
+		} catch {
+			// not JSON, keep the body as it is
+		}
+	}
+
+	/**
 	 * Delete a score via API and remove from store
 	 *
 	 * @param id - The score ID to remove
@@ -183,6 +268,10 @@ export const useScoresStore = defineStore('scores', () => {
 		updateScoreBookAssignment,
 		updateScoreBookAssignmentApi,
 		updateScoreTags,
+		replaceScore,
+		linkMusicXml,
+		unlinkMusicXml,
+		fetchMusicXml,
 		deleteScore,
 	}
 })

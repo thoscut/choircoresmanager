@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 namespace OCA\OrchestraScoresManager\Db;
 
+use DateTimeImmutable;
+use DateTimeZone;
+use OCA\OrchestraScoresManager\Db\Enum\PublicationStatus;
+use OCA\OrchestraScoresManager\Db\Enum\RightsStatus;
 use OCA\OrchestraScoresManager\Service\RepertoireClassifier;
 use OCP\AppFramework\Db\DoesNotExistException;
+use OCP\AppFramework\Db\Entity;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\Exception;
@@ -25,6 +30,36 @@ class ScoreMapper extends QBMapper {
 		protected readonly RepertoireClassifier $repertoireClassifier,
 	) {
 		parent::__construct($db, 'osm_scores', Score::class);
+	}
+
+	/**
+	 * Insert a score and remember when it was created.
+	 *
+	 * @param Entity $entity
+	 * @psalm-param Score $entity
+	 * @return Entity
+	 * @psalm-return Score
+	 * @throws Exception
+	 */
+	public function insert(Entity $entity): Entity {
+		$entity->setUpdatedAt(new DateTimeImmutable('now', new DateTimeZone('UTC')));
+		return parent::insert($entity);
+	}
+
+	/**
+	 * Update a score and remember when it was changed.
+	 *
+	 * @param Entity $entity
+	 * @psalm-param Score $entity
+	 * @return Entity
+	 * @psalm-return Score
+	 * @throws Exception
+	 * @throws \InvalidArgumentException if the score has no id
+	 * @psalm-suppress PossiblyUnusedReturnValue - Keeps the signature of QBMapper::update
+	 */
+	public function update(Entity $entity): Entity {
+		$entity->setUpdatedAt(new DateTimeImmutable('now', new DateTimeZone('UTC')));
+		return parent::update($entity);
 	}
 
 	/**
@@ -250,5 +285,53 @@ class ScoreMapper extends QBMapper {
 			$score->setLastPerformed($lastPerformed);
 			$score->setRepertoireClass($this->repertoireClassifier->classify($lastPerformed));
 		}
+	}
+
+	/**
+	 * Find all scores that may be shown on the public page, without transient properties.
+	 *
+	 * The filter is applied in SQL so that callers serving anonymous requests
+	 * never load scores they must not expose.
+	 *
+	 * @return array<Score>
+	 * @throws Exception
+	 */
+	public function findPublishable(): array {
+		$qb = $this->db->getQueryBuilder();
+		$qb->select('*')
+			->from($this->getTableName());
+		$this->wherePublishable($qb);
+		$qb->orderBy('title', 'ASC');
+		return $this->findEntities($qb);
+	}
+
+	/**
+	 * Find a single score by ID if it may be shown on the public page, without transient properties.
+	 *
+	 * @param int $id
+	 * @return Score
+	 * @throws MultipleObjectsReturnedException
+	 * @throws DoesNotExistException if the score does not exist or must not be shown publicly
+	 * @throws Exception
+	 */
+	public function findPublishableById(int $id): Score {
+		$qb = $this->db->getQueryBuilder();
+		$qb->select('*')
+			->from($this->getTableName())
+			->where($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
+		$this->wherePublishable($qb);
+		return $this->findEntity($qb);
+	}
+
+	/**
+	 * Restrict a query to scores that may be shown publicly: approved for publication,
+	 * in the public domain or licensed, and with a rights status confirmed by a person.
+	 *
+	 * @param IQueryBuilder $qb
+	 */
+	private function wherePublishable(IQueryBuilder $qb): void {
+		$qb->andWhere($qb->expr()->eq('publication_status', $qb->createNamedParameter(PublicationStatus::APPROVED->value, IQueryBuilder::PARAM_STR)))
+			->andWhere($qb->expr()->in('rights_status', $qb->createNamedParameter(RightsStatus::publishableValues(), IQueryBuilder::PARAM_STR_ARRAY)))
+			->andWhere($qb->expr()->isNotNull('rights_confirmed_at'));
 	}
 }

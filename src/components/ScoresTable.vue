@@ -44,6 +44,7 @@ import RowActionButton from '@/components/RowActionButton.vue'
 import ScoreOrScoreBookTitleRenderer
 	from '@/components/ScoreOrScoreBookTitleRenderer.vue'
 import { useBreakpoints } from '@/composables/useBreakpoints.ts'
+import { formatDateStr } from '@/composables/useDateFormatting'
 import { useScoreBooksStore } from '@/stores/scoreBooksStore'
 import { useScoreSidebarStore } from '@/stores/scoreSidebarStore'
 import { useScoresStore } from '@/stores/scoresStore'
@@ -53,6 +54,12 @@ import { createDurationColumn } from '@/utils/durationColumnUtils'
 import { tryShowError } from '@/utils/errorHandling'
 import { t } from '@/utils/l10n'
 import { createRepertoireColumns } from '@/utils/repertoireColumnUtils'
+import {
+	PUBLICATION_STATUS_VALUES,
+	publicationStatusLabels,
+	RIGHTS_STATUS_VALUES,
+	rightsStatusLabels,
+} from '@/utils/scoreStatus'
 import { parseDurationHHMMSS } from '@/utils/timeFormatUtils'
 
 const props = defineProps<Props>()
@@ -304,6 +311,38 @@ const columnEditHandlers: Record<string, ColumnEditHandler> = {
 	difficulty: inheritableFieldHandlerFactory('difficulty'),
 	defects: inheritableFieldHandlerFactory('defects'),
 	physicalCopiesStatus: inheritableFieldHandlerFactory('physicalCopiesStatus'),
+	rightsNote: optionalValueHandlerFactory('rightsNote'),
+	rightsConfirmedAt: optionalValueHandlerFactory('rightsConfirmedAt'),
+	rightsConfirmedBy: optionalValueHandlerFactory('rightsConfirmedBy'),
+	publicationNote: optionalValueHandlerFactory('publicationNote'),
+	publicationBlockedUntil: optionalValueHandlerFactory('publicationBlockedUntil'),
+}
+
+/**
+ * Factory function to create handlers for optional fields that store null instead of an empty value
+ * @param field The field name
+ */
+function optionalValueHandlerFactory(field: string): ColumnEditHandler {
+	return async (id, newValue) => {
+		const isEmpty = newValue === null || newValue === undefined || (typeof newValue === 'string' && newValue.trim() === '')
+		await scoresStore.updateScoreFieldApi(id, field, isEmpty ? null : newValue)
+	}
+}
+
+/**
+ * Create a column for an optional date (Y-m-d) field, shown in the user's locale
+ * @param field The field name
+ * @param headerName The column header name
+ */
+function createDateColumn(field: keyof Score, headerName: string): ColDef {
+	return {
+		field,
+		headerName,
+		cellDataType: 'dateString',
+		cellEditor: 'agDateStringCellEditor',
+		filter: 'agDateColumnFilter',
+		valueFormatter: (params) => (typeof params.value === 'string' && params.value !== '' ? formatDateStr(params.value) : ''),
+	}
 }
 
 /**
@@ -599,6 +638,40 @@ const columnDefs = computed<ColDef[]>(() => {
 		},
 		// custom valueParser to enable editing of array-type data
 		{ field: 'tags', headerName: t('Tags'), valueParser: (params) => parseArrayValue(params.newValue) },
+		{
+			field: 'rightsStatus',
+			headerName: t('Rights Status'),
+			cellEditor: 'agSelectCellEditor',
+			cellEditorParams: { values: RIGHTS_STATUS_VALUES },
+			refData: rightsStatusLabels(),
+			width: 170,
+		},
+		{ field: 'rightsNote', headerName: t('Rights Reasoning') },
+		createDateColumn('rightsConfirmedAt', t('Rights Confirmed On')),
+		{
+			field: 'rightsConfirmedBy',
+			headerName: t('Rights Confirmed By'),
+			cellEditorParams: { maxLength: 32 },
+			headerTooltip: t('Who confirmed the rights status, e.g. initials. Changing the rights status removes the confirmation.'),
+		},
+		{
+			field: 'publicationStatus',
+			headerName: t('Publication'),
+			cellEditor: 'agSelectCellEditor',
+			cellEditorParams: { values: PUBLICATION_STATUS_VALUES },
+			refData: publicationStatusLabels(),
+			width: 200,
+		},
+		createDateColumn('publicationBlockedUntil', t('Blocked Until')),
+		{ field: 'publicationNote', headerName: t('Publication Reasoning') },
+		{
+			field: 'musicxmlFile',
+			headerName: t('MusicXML'),
+			editable: false,
+			valueFormatter: (params) => (params.value ? '✓' : ''),
+			tooltipValueGetter: (params) => params.value ?? null,
+			width: 110,
+		},
 	)
 
 	return cols

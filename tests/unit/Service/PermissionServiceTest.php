@@ -164,4 +164,5 @@ final class PermissionServiceTest extends TestCase {
 
 		$this->assertTrue($result);
 	}
+
 }

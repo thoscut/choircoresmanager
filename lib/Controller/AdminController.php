@@ -93,4 +93,33 @@ class AdminController extends OCSController {
 		$this->callService(fn () => $this->configService->setRepertoireThresholds($currentYears, $dormantYears));
 		return new DataResponse($this->configService->getRepertoireThresholds());
 	}
+
+	/**
+	 * Get whether the public page for freely available scores is enabled
+	 *
+	 * @return DataResponse<Http::STATUS_OK, array{publicPageEnabled: bool}, array{}> Current setting
+	 *
+	 * 200: Successful response with the setting
+	 */
+	#[ApiRoute(verb: 'GET', url: '/admin/publicPage')]
+	public function getPublicPage(): DataResponse {
+		return new DataResponse([
+			'publicPageEnabled' => $this->configService->isPublicPageEnabled(),
+		]);
+	}
+
+	/**
+	 * Enable or disable the public page for freely available scores
+	 *
+	 * @param bool $publicPageEnabled Whether the public page is enabled
+	 * @return DataResponse<Http::STATUS_OK, array{publicPageEnabled: bool}, array{}> Updated setting
+	 *
+	 * 200: Successful update of the setting
+	 */
+	#[PasswordConfirmationRequired]
+	#[ApiRoute(verb: 'POST', url: '/admin/publicPage')]
+	public function postPublicPage(bool $publicPageEnabled): DataResponse {
+		$this->configService->setPublicPageEnabled($publicPageEnabled);
+		return new DataResponse(['publicPageEnabled' => $this->configService->isPublicPageEnabled()]);
+	}
 }

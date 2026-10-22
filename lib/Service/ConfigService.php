@@ -127,4 +127,17 @@ class ConfigService {
 	public function setCatalogueColumns(array $columns): void {
 		$this->appConfig->setAppValueArray('catalogue_columns', $columns, true);
 	}
+	/**
+	 * Whether the public page listing freely available scores is enabled
+	 */
+	public function isPublicPageEnabled(): bool {
+		return $this->appConfig->getAppValueBool('public_page_enabled', false);
+	}
+
+	/**
+	 * Enable or disable the public page listing freely available scores
+	 */
+	public function setPublicPageEnabled(bool $enabled): void {
+		$this->appConfig->setAppValueBool('public_page_enabled', $enabled);
+	}
 }

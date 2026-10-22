@@ -16,6 +16,9 @@ Source code, issue tracker and releases: https://github.com/Bibo-Joshi/orchestra
 - **Folder Collections** – Organize scores into folder collections with full version history
 - **Setlists** – Build and manage setlists from your score database
 - **Comments** – Add notes to individual scores
+- **Rights & Publication** – Record the rights status of each score with reasoning and a confirmation, and decide separately whether it is published; internal preservation copies stay with the editors
+- **MusicXML & Playback** – Link a MusicXML file from Nextcloud Files (e.g. the club's group folder) to a score, view the notes and play them back voice by voice; the file stays where it is
+- **Public Page** – Optionally publish all scores that are approved for publication and whose rights (public domain or licensed) have been confirmed on a page that needs no login
 - **Import Script** – Migrate existing score data from an ODS spreadsheet (see `import_script/`)
 
 ## Requirements

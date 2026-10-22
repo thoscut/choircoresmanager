@@ -8,6 +8,7 @@ use OCA\OrchestraScoresManager\AppInfo\Application;
 use OCA\OrchestraScoresManager\Controller\PageController;
 use OCA\OrchestraScoresManager\Db\ScoreMapper;
 use OCA\OrchestraScoresManager\Db\TagMapper;
+use OCA\OrchestraScoresManager\Service\ConfigService;
 use OCA\OrchestraScoresManager\Service\FolderCollectionService;
 use OCA\OrchestraScoresManager\Service\PermissionService;
 use OCA\OrchestraScoresManager\Service\ScoreBookService;
@@ -31,6 +32,7 @@ final class PageControllerTest extends TestCase {
 	private ScoreBookService $scoreBookService;
 	private FolderCollectionService $folderCollectionService;
 	private SetlistService $setlistService;
+	private ConfigService $configService;
 	private IRequest $request;
 	private PageController $controller;
 
@@ -47,6 +49,8 @@ final class PageControllerTest extends TestCase {
 		$this->setlistService = $this->createMock(SetlistService::class);
 		$this->request = $this->createMock(IRequest::class);
 
+		$this->configService = $this->createMock(ConfigService::class);
+
 		$this->controller = new PageController(
 			Application::APP_ID,
 			$this->request,
@@ -57,7 +61,8 @@ final class PageControllerTest extends TestCase {
 			$this->tagMapper,
 			$this->scoreBookService,
 			$this->folderCollectionService,
-			$this->setlistService
+			$this->setlistService,
+			$this->configService,
 		);
 	}
 
@@ -101,7 +106,7 @@ final class PageControllerTest extends TestCase {
 			->with('all', null, null)
 			->willReturn([]);
 
-		$this->initialStateService->expects($this->exactly(6))
+		$this->initialStateService->expects($this->exactly(7))
 			->method('provideInitialState');
 
 		$response = $this->controller->pages();
@@ -109,6 +114,7 @@ final class PageControllerTest extends TestCase {
 		$this->assertInstanceOf(TemplateResponse::class, $response);
 		$this->assertEquals('index', $response->getTemplateName());
 		$this->assertEquals('user', $response->getRenderAs());
+		$this->assertStringContainsString("'wasm-unsafe-eval'", $response->getContentSecurityPolicy()->buildPolicy());
 	}
 
 	public function testPagesProvidesEditableState(): void {
@@ -137,7 +143,7 @@ final class PageControllerTest extends TestCase {
 			->with('all', null, null)
 			->willReturn([]);
 
-		$this->initialStateService->expects($this->exactly(6))
+		$this->initialStateService->expects($this->exactly(7))
 			->method('provideInitialState')
 			->willReturnCallback(function ($key, $value) {
 				if ($key === 'editable') {
@@ -164,7 +170,7 @@ final class PageControllerTest extends TestCase {
 		$this->folderCollectionService->method('getAllFolderCollections')->willReturn([]);
 		$this->setlistService->method('getSetlists')->willReturn([]);
 
-		$this->initialStateService->expects($this->exactly(6))
+		$this->initialStateService->expects($this->exactly(7))
 			->method('provideInitialState')
 			->willReturnCallback(function ($key, $value) {
 				if ($key === 'scores') {
@@ -191,7 +197,7 @@ final class PageControllerTest extends TestCase {
 		$this->folderCollectionService->method('getAllFolderCollections')->willReturn([]);
 		$this->setlistService->method('getSetlists')->willReturn([]);
 
-		$this->initialStateService->expects($this->exactly(6))
+		$this->initialStateService->expects($this->exactly(7))
 			->method('provideInitialState')
 			->willReturnCallback(function ($key, $value) {
 				if ($key === 'tags') {
@@ -215,7 +221,7 @@ final class PageControllerTest extends TestCase {
 		$this->folderCollectionService->method('getAllFolderCollections')->willReturn([]);
 		$this->setlistService->method('getSetlists')->willReturn([]);
 
-		$this->initialStateService->expects($this->exactly(6))
+		$this->initialStateService->expects($this->exactly(7))
 			->method('provideInitialState')
 			->willReturnCallback(function ($key, $value) use ($scoreBooks) {
 				if ($key === 'scoreBooks') {
@@ -238,7 +244,7 @@ final class PageControllerTest extends TestCase {
 			->willReturn($folderCollections);
 		$this->setlistService->method('getSetlists')->willReturn([]);
 
-		$this->initialStateService->expects($this->exactly(6))
+		$this->initialStateService->expects($this->exactly(7))
 			->method('provideInitialState')
 			->willReturnCallback(function ($key, $value) use ($folderCollections) {
 				if ($key === 'folderCollections') {
