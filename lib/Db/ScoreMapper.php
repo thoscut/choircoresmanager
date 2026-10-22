@@ -264,8 +264,10 @@ class ScoreMapper extends QBMapper {
 				->andWhere($qb->expr()->lte('s.start_date_time', $qb->createNamedParameter($now, IQueryBuilder::PARAM_DATETIME_IMMUTABLE)))
 				->groupBy('se.score_id');
 			$result = $qb->executeQuery();
-			while ($row = $result->fetch()) {
-				/** @var array{score_id: int|string, last_performed: string|null} $row */
+			/** @var array<int, array{score_id: int|string, last_performed: string|null}> $rows */
+			$rows = $result->fetchAll();
+			$result->closeCursor();
+			foreach ($rows as $row) {
 				if ($row['last_performed'] === null) {
 					continue;
 				}
@@ -273,7 +275,6 @@ class ScoreMapper extends QBMapper {
 				$start = new \DateTimeImmutable($row['last_performed'], new \DateTimeZone('UTC'));
 				$lastPerformedMap[(int)$row['score_id']] = $this->repertoireClassifier->toLocalDate($start);
 			}
-			$result->closeCursor();
 		}
 
 		foreach ($scores as $score) {
