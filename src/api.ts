@@ -339,7 +339,17 @@ export async function storeBackup(): Promise<string[]> {
 
 export async function fetchDue(): Promise<DueResult> {
 	const { data } = await axios.get<DueResult>(apiUrl('/due'))
-	return { cards: list(data.cards), tasks: list(data.tasks) }
+	return dueResult(data)
+}
+
+/**
+ * The answer of GET /api/due with lists that are always arrays; keeps every
+ * part (cards, tasks and the concerts with a deadline now).
+ *
+ * @param data - the answer as sent by the server
+ */
+export function dueResult(data: Partial<DueResult> | null | undefined): DueResult {
+	return { cards: list(data?.cards), tasks: list(data?.tasks), concerts: list(data?.concerts) }
 }
 
 /**
