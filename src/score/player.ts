@@ -60,6 +60,59 @@ export function voiceGains(members: VoiceMember[], mode: PlayMode): (voice: stri
 	return (voice: string) => voiceGain(mode, keys.has(voice), hasFocus)
 }
 
+/**
+ * Sum of the gains of notes sounding at once that the mix takes at full
+ * level: four voices at full balance (4 × 0.55) and a little more.
+ */
+export const MIX_HEADROOM = 2.4
+
+/**
+ * Factor for the gain of every note, so that dense scores keep their
+ * headroom: 1 while the largest sum of the gains of notes sounding at once
+ * stays within MIX_HEADROOM, otherwise that sum scaled down to it. One factor
+ * for the whole timeline: no pumping, the balance of the voices stays.
+ *
+ * @param events - playback events
+ * @param gainOf - gain 0 … 1 per voice member key
+ */
+export function mixLevel(events: PlayEvent[], gainOf: (voice: string) => number): number {
+	const edges: [number, number][] = []
+	for (const event of events) {
+		const gain = event.sound ? gainOf(event.voice) : 0
+		if (gain > 0 && event.soundEnd > event.start) {
+			// whole milliseconds: a note that ends where the next starts does not overlap it
+			edges.push([Math.round(event.start * 1000), gain], [Math.round(event.soundEnd * 1000), -gain])
+		}
+	}
+	// at the same time a note ends before the next one starts
+	edges.sort((a, b) => a[0] - b[0] || a[1] - b[1])
+	let sum = 0
+	let peak = 0
+	for (const [, change] of edges) {
+		sum += change
+		peak = Math.max(peak, sum)
+	}
+	return peak > MIX_HEADROOM ? MIX_HEADROOM / peak : 1
+}
+
+const mixLevels = new WeakMap<PlayEvent[], { gainOf: (voice: string) => number, level: number }>()
+
+/**
+ * mixLevel, computed once per timeline and balance.
+ *
+ * @param events - playback events
+ * @param gainOf - gain 0 … 1 per voice member key
+ */
+function cachedMixLevel(events: PlayEvent[], gainOf: (voice: string) => number): number {
+	const cached = mixLevels.get(events)
+	if (cached?.gainOf === gainOf) {
+		return cached.level
+	}
+	const level = mixLevel(events, gainOf)
+	mixLevels.set(events, { gainOf, level })
+	return level
+}
+
 /** Whatever plays notes: the synthesizer, or a recorder in tests. */
 export interface NoteTarget {
 	note(pitch: number, start: number, end: number, gain: number): void
@@ -97,7 +150,9 @@ export interface Clock {
 /**
  * Hand the events that start up to a horizon to the synthesizer, as the
  * playback and the practice audio files both do: tied continuations are
- * not struck again, voices with gain 0 stay silent.
+ * not struck again, voices with gain 0 stay silent, notes that are already
+ * over (a late timer) are left out, and dense scores are turned down
+ * (mixLevel).
  *
  * @param target - synthesizer
  * @param events - events sorted by start
@@ -110,6 +165,7 @@ export interface Clock {
  */
 export function scheduleEvents(target: NoteTarget, events: PlayEvent[], next: number, clock: Clock, horizon: number, now: number, gainOf: (voice: string) => number): number {
 	let index = next
+	const level = cachedMixLevel(events, gainOf)
 	while (index < events.length) {
 		const event = events[index]
 		const at = clock.startAudio + (event.start - clock.startScore) / clock.rate
@@ -125,7 +181,10 @@ export function scheduleEvents(target: NoteTarget, events: PlayEvent[], next: nu
 			continue
 		}
 		const end = clock.startAudio + (event.soundEnd - clock.startScore) / clock.rate
-		target.note(event.pitch, Math.max(at, now), end, gain)
+		if (end <= now) {
+			continue
+		}
+		target.note(event.pitch, Math.max(at, now), end, gain * level)
 	}
 	return index
 }

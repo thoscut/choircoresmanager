@@ -171,6 +171,19 @@ All notable changes to this app are documented in this file. The format follows
 
 ### Fixed
 
+- Cleaner sound of the playback and the practice audio files (it sounded
+  a little scratchy), measured on rendered demo pieces:
+  - No dynamics compressor any more: its fast gain changes distorted chords
+    (intermodulation −33 dB below the signal, now −65 dB). A static soft
+    limiter only bends peaks above 0.7; dense scores (more than four voices
+    at full balance) are turned down as a whole, the balance of the voices
+    stays.
+  - Stop, pause, a jump and the end of the view fade out from the level
+    each note has (30 ms). Before, a note about to start could sound as a
+    short burst, and a pause during an attack jumped.
+  - Softer tone: fewer upper harmonics, the vibrato sets in after the
+    attack; the count-in click starts in 4 ms; notes end at silence.
+  - A late timer no longer plays notes that are already over.
 - Playing order checked against the test cases of the parallel development
   (own MusicXML test files, `src/__tests__/playOrder.test.ts`):
   - A backward repeat goes back to the last forward repeat or the beginning,
