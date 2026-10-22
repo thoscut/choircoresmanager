@@ -22,7 +22,8 @@ declare(strict_types=1);
  * folder (as after tools/ci/integration-demo.sh). The first shelf mark is a
  * public domain copy with a MusicXML file of at least twelve measures whose
  * rights are not confirmed yet (demo: 1-3), the second an internal
- * preservation copy (demo: 3-1). The test creates a group and an account
+ * preservation copy (demo: 3-1; on a catalog without one it is made one
+ * inside the transaction). The test creates a group and an account
  * "member" (random password, never printed) and deletes both at the end;
  * the role groups of the choir members and the module switches are
  * restored exactly; database changes are rolled back.
@@ -98,7 +99,6 @@ $public = $copies[$publicMark];
 $preservation = $copies[$preservationMark];
 $publicVersion = $versions->find($public->getVersionId());
 $check('the first copy is public domain and not confirmed yet', $publicVersion->getRightsStatus() === 'public_domain' && !$publicVersion->isConfirmed());
-$check('the second copy is an internal preservation copy', $versions->find($preservation->getVersionId())->getPreservationCopy() === true);
 $check('the test account is a catalog librarian', $roles->hasAnyRole($uid, [Roles::LIBRARIAN]));
 
 /** The module switches this test changes: key => stored value, or null when not stored. */
@@ -165,6 +165,11 @@ try {
 		throw new RuntimeException('test account missing');
 	}
 	$group->addUser($member);
+	// Precondition, so that the test also runs on a catalog without a preservation copy
+	if ($versions->find($preservation->getVersionId())->getPreservationCopy() !== true) {
+		$catalog->update('version', $preservation->getVersionId(), ['preservation_copy' => true], $uid, 'integration test');
+	}
+	$check('the second copy is an internal preservation copy', $versions->find($preservation->getVersionId())->getPreservationCopy() === true);
 	$memberUid = $member->getUID();
 	$roles->setGroups(Roles::MEMBER, [...$memberGroups, $group->getGID()]);
 	$modules->change([Modules::MEMBER_PRACTICE_AUDIO => true, Modules::PUBLIC_LINKS => true, Modules::PUBLIC_REPERTOIRE => true, 'persons' => true]);
