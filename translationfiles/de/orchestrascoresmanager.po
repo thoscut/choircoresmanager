@@ -42,20 +42,20 @@ msgid "The signature is missing."
 msgstr "Die Signatur fehlt."
 
 msgid "The signature has leading or trailing spaces."
-msgstr "Die Signatur hat Leerzeichen am Anfang oder Ende."
+msgstr "Die Signatur beginnt oder endet mit Leerzeichen."
 
 msgid "The signature occurs more than once in the file."
 msgstr "Die Signatur kommt in der Datei mehrfach vor."
 
 msgid "The signature is used by more than one existing score."
-msgstr "Die Signatur wird von mehreren vorhandenen Stücken verwendet."
+msgstr "Die Signatur gehört zu mehreren vorhandenen Partituren."
 
 #, php-format
 msgid "New scores need the column \"%s\"."
-msgstr "Neue Stücke brauchen die Spalte „%s“."
+msgstr "Neue Partituren brauchen die Spalte „%s“."
 
 msgid "The file is not valid UTF-8. Save it as \"CSV UTF-8\" and try again."
-msgstr "Die Datei ist kein gültiges UTF-8. Speichere sie als „CSV UTF-8“ und versuche es erneut."
+msgstr "Die Datei ist kein gültiges UTF-8. Speichern Sie sie als „CSV UTF-8“ und versuchen Sie es erneut."
 
 msgid "The file is empty."
 msgstr "Die Datei ist leer."
@@ -297,7 +297,7 @@ msgid "Repertoire"
 msgstr "Repertoire"
 
 msgid "The repertoire class of a score is derived from its last documented performance (setlists and imported catalogue). A score is current if it was performed in the current year or the given number of years before, dormant within the second number of years, and earlier otherwise. Scores without a documented performance are shown as not documented."
-msgstr "Die Repertoireklasse eines Stücks ergibt sich aus seiner letzten belegten Aufführung (Setlisten und importiertes Werkverzeichnis). Ein Stück ist aktuell, wenn es im laufenden Jahr oder in der angegebenen Zahl von Jahren davor aufgeführt wurde, ruhend innerhalb der zweiten Zahl von Jahren und sonst früher. Stücke ohne belegte Aufführung werden als nicht belegt angezeigt."
+msgstr "Die Repertoireklasse einer Partitur wird aus ihrer letzten belegten Aufführung abgeleitet (Setlisten und importiertes Werkverzeichnis). Eine Partitur ist aktuell, wenn sie im laufenden Jahr oder in der angegebenen Zahl von Jahren davor aufgeführt wurde, ruhend innerhalb der zweiten Zahl von Jahren und sonst früher. Partituren ohne belegte Aufführung werden als „nicht belegt“ angezeigt."
 
 msgid "Years back for current repertoire"
 msgstr "Jahre zurück für aktuelles Repertoire"
@@ -1062,6 +1062,94 @@ msgid "Invalid duration format"
 msgstr "Ungültiges Spieldauerformat"
 
 #, php-format
+
+msgid "Import catalogue"
+msgstr "Werkverzeichnis importieren"
+
+msgid "Export catalogue"
+msgstr "Werkverzeichnis exportieren"
+
+msgid "Select the catalogue as a CSV file (semicolon-separated, UTF-8). A dry run first shows what would change. Nothing is saved until you click Apply."
+msgstr "Wählen Sie das Werkverzeichnis als CSV-Datei (Semikolon als Trennzeichen, UTF-8). Ein Probelauf zeigt zuerst, was sich ändern würde. Gespeichert wird erst, wenn Sie auf „Übernehmen“ klicken."
+
+msgid "Rows are matched to scores by their signature. Scores that are not in the file stay unchanged, nothing is deleted."
+msgstr "Zeilen werden den Partituren über die Signatur zugeordnet. Partituren, die nicht in der Datei stehen, bleiben unverändert; gelöscht wird nichts."
+
+msgid "Choose CSV file"
+msgstr "CSV-Datei auswählen"
+
+msgid "The catalogue has been imported."
+msgstr "Das Werkverzeichnis wurde importiert."
+
+msgid "Result"
+msgstr "Ergebnis"
+
+msgid "Dry run"
+msgstr "Probelauf"
+
+msgid "New: {count}"
+msgstr "Neu: {count}"
+
+msgid "Changed: {count}"
+msgstr "Geändert: {count}"
+
+msgid "Unchanged: {count}"
+msgstr "Unverändert: {count}"
+
+msgid "With errors: {count}"
+msgstr "Mit Fehlern: {count}"
+
+msgid "Rows with errors are not applied. Correct them in the file and choose it again."
+msgstr "Zeilen mit Fehlern werden nicht übernommen. Korrigieren Sie sie in der Datei und wählen Sie die Datei erneut aus."
+
+msgid "How the columns are stored"
+msgstr "So werden die Spalten gespeichert"
+
+msgid "In score fields:"
+msgstr "In Feldern der Partitur:"
+
+msgid "Verbatim as further catalogue data:"
+msgstr "Unverändert als weitere Angaben aus dem Werkverzeichnis:"
+
+msgid "Line {line}"
+msgstr "Zeile {line}"
+
+msgid "Column"
+msgstr "Spalte"
+
+msgid "Before"
+msgstr "Vorher"
+
+msgid "After"
+msgstr "Nachher"
+
+msgid "Close"
+msgstr "Schließen"
+
+msgid "Apply"
+msgstr "Übernehmen"
+
+msgid "New"
+msgstr "Neu"
+
+msgid "Changed"
+msgstr "Geändert"
+
+msgid "Error"
+msgstr "Fehler"
+
+msgid "Catalogue imported: {new} new, {changed} changed"
+msgstr "Werkverzeichnis importiert: {new} neu, {changed} geändert"
+
+msgid "Further catalogue data"
+msgstr "Weitere Angaben aus dem Werkverzeichnis"
+
+msgid "No further catalogue data for this score."
+msgstr "Keine weiteren Angaben aus dem Werkverzeichnis für diese Partitur."
+
+msgid "Last performed according to the catalogue"
+msgstr "Zuletzt aufgeführt laut Werkverzeichnis"
+
 #~ msgid "Failed to add score to folder collection: %1$s"
 #~ msgstr "Partitur konnte nicht zur Ordnersammlung hinzugefügt werden: %1$s"
 

@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add Signature, Lyricist, Voicing and Language to Scores (#2)
+- Add Inventory Status (active, retired, missing, lent) and a Repertoire Class Derived from the Last Documented Performance (current, dormant, earlier, not documented) with Thresholds Configurable by Admins (#2)
+- Add CSV Import with Dry Run and Lossless Export of the Work Catalogue; Columns Without a Matching Field Are Kept Verbatim and Shown in the Score Sidebar (#2)
+
 ## [1.2.2] - 2026-08-28
 
 ### Fixed
