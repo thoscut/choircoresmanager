@@ -11,6 +11,7 @@ use OCA\OrchestraScoresManager\Policy\ScorePolicy;
 use OCA\OrchestraScoresManager\Service\AuthorizationService;
 use OCA\OrchestraScoresManager\Service\Exceptions\PermissionDeniedException;
 use OCA\OrchestraScoresManager\Service\MusicXmlService;
+use OCA\OrchestraScoresManager\Service\PermissionService;
 use OCP\Files\IAppData;
 use OCP\Files\NotFoundException;
 use OCP\Files\SimpleFS\ISimpleFile;
@@ -18,6 +19,7 @@ use OCP\Files\SimpleFS\ISimpleFolder;
 use OCP\IL10N;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 /**
  * Unit tests for MusicXmlService.
@@ -267,5 +269,66 @@ final class MusicXmlServiceTest extends TestCase {
 
 		$this->expectException(PermissionDeniedException::class);
 		$this->service->getForScore(1);
+	}
+
+	/**
+	 * A service using the real policy, so that the preservation copy rule itself is tested.
+	 */
+	private function createServiceWithRealPolicy(bool $canEdit): MusicXmlService {
+		$permissionService = $this->createMock(PermissionService::class);
+		$permissionService->method('canCurrentUserEdit')->willReturn($canEdit);
+		$l10n = $this->createMock(IL10N::class);
+		$l10n->method('t')->willReturnArgument(0);
+
+		return new MusicXmlService(
+			$this->appData,
+			$this->scoreMapper,
+			new AuthorizationService($this->createMock(LoggerInterface::class), 'orchestrascoresmanager', $l10n),
+			new ScorePolicy($permissionService),
+			$l10n,
+		);
+	}
+
+	private function createPreservationCopy(): Score {
+		$score = $this->createScore(6, 'protected.mxl');
+		$score->setPublicationStatus('internal_preservation_copy');
+		return $score;
+	}
+
+	public function testGetForScoreDeniesPreservationCopyToNonEditors(): void {
+		$this->scoreMapper->method('find')->with(6)->willReturn($this->createPreservationCopy());
+		$this->folder->expects($this->never())->method('getFile');
+
+		$this->expectException(PermissionDeniedException::class);
+		$this->createServiceWithRealPolicy(false)->getForScore(6);
+	}
+
+	public function testGetForScoreServesPreservationCopyToEditors(): void {
+		$this->scoreMapper->method('find')->with(6)->willReturn($this->createPreservationCopy());
+		$file = $this->createMock(ISimpleFile::class);
+		$file->method('getContent')->willReturn(self::VALID_XML);
+		$this->folder->method('getFile')->with('score-6')->willReturn($file);
+
+		$this->assertSame(self::VALID_XML, $this->createServiceWithRealPolicy(true)->getForScore(6)['content']);
+	}
+
+	#[DataProvider('servedToEveryoneProvider')]
+	public function testGetForScoreServesOtherScoresToNonEditors(string $publicationStatus): void {
+		$score = $this->createScore(7, 'score.musicxml');
+		$score->setPublicationStatus($publicationStatus);
+		$this->scoreMapper->method('find')->with(7)->willReturn($score);
+		$file = $this->createMock(ISimpleFile::class);
+		$file->method('getContent')->willReturn(self::VALID_XML);
+		$this->folder->method('getFile')->with('score-7')->willReturn($file);
+
+		$this->assertSame(self::VALID_XML, $this->createServiceWithRealPolicy(false)->getForScore(7)['content']);
+	}
+
+	public static function servedToEveryoneProvider(): array {
+		return [
+			'approved' => ['approved'],
+			'to clarify' => ['to_clarify'],
+			'blocked' => ['blocked'],
+		];
 	}
 }

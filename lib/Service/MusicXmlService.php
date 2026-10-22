@@ -121,6 +121,8 @@ class MusicXmlService {
 	/**
 	 * Get the MusicXML file of a score for an authenticated user.
 	 *
+	 * The file of an internal preservation copy is only served to editors.
+	 *
 	 * @param int $scoreId
 	 * @return array{content: string, mimeType: string, fileName: string}
 	 * @throws \InvalidArgumentException if the score or file does not exist
@@ -128,7 +130,9 @@ class MusicXmlService {
 	 */
 	public function getForScore(int $scoreId): array {
 		$this->authorizationService->authorizePolicy($this->scorePolicy, PolicyInterface::ACTION_READ);
-		return $this->readFile($this->findScore($scoreId));
+		$score = $this->findScore($scoreId);
+		$this->authorizationService->authorizePolicy($this->scorePolicy, ScorePolicy::ACTION_READ_MUSICXML, $score);
+		return $this->readFile($score);
 	}
 
 	/**

@@ -630,7 +630,7 @@ export class Ocs<
       ...params,
     });
   /**
-   * @description the MusicXML file
+   * @description The file of an internal preservation copy is only available to editors. the MusicXML file
    *
    * @tags music_xml_api
    * @name MusicXmlApiGetMusicXml

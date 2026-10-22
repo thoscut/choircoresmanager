@@ -4,6 +4,7 @@
 			<template v-if="score.musicxmlFile">
 				<span class="musicxml-tab__file-name" :title="score.musicxmlFile">{{ score.musicxmlFile }}</span>
 				<NcButton
+					v-if="canDownload"
 					variant="tertiary"
 					:aria-label="t('Download MusicXML')"
 					:title="t('Download MusicXML')"
@@ -42,12 +43,15 @@
 			</NcButton>
 		</div>
 
-		<NcNoteCard v-if="score.musicxmlFile && isPublishable(score)" type="info">
+		<NcNoteCard v-if="isPreservationCopy" type="warning">
+			{{ t('This score is an internal preservation copy. Its notes are neither displayed nor played back, and only members of the editing groups can download the file.') }}
+		</NcNoteCard>
+		<NcNoteCard v-else-if="score.musicxmlFile && isPublishable(score)" type="info">
 			{{ t('This score is approved for publication and its rights are confirmed, so it is shown on the public page if that page is enabled.') }}
 		</NcNoteCard>
 
 		<MusicXmlPlayer
-			v-if="score.musicxmlFile"
+			v-if="score.musicxmlFile && !isPreservationCopy"
 			:key="`${score.id}-${score.musicxmlFile}-${uploadCount}`"
 			:loadFile="loadFile" />
 	</div>
@@ -57,7 +61,7 @@
 import type { Score } from '@/api/generated/openapi/data-contracts'
 
 import { showError, showSuccess } from '@nextcloud/dialogs'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
@@ -67,7 +71,7 @@ import { useScoreSidebarStore } from '@/stores/scoreSidebarStore'
 import { useScoresStore } from '@/stores/scoresStore'
 import { tryShowError } from '@/utils/errorHandling'
 import { t } from '@/utils/l10n'
-import { isPublishable } from '@/utils/scoreStatus'
+import { isInternalPreservationCopy, isPublishable } from '@/utils/scoreStatus'
 
 interface Props {
 	score: Score
@@ -75,6 +79,12 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+
+/**
+ * Internal preservation copies are never rendered or played back, and only editors may download them
+ */
+const isPreservationCopy = computed(() => isInternalPreservationCopy(props.score))
+const canDownload = computed(() => props.editable || !isPreservationCopy.value)
 
 const scoresStore = useScoresStore()
 const scoreSidebarStore = useScoreSidebarStore()

@@ -3880,7 +3880,7 @@
             "get": {
                 "operationId": "music_xml_api-get-music-xml",
                 "summary": "Download the MusicXML file of a score",
-                "description": "the MusicXML file",
+                "description": "The file of an internal preservation copy is only available to editors.\nthe MusicXML file",
                 "tags": [
                     "music_xml_api"
                 ],
@@ -3961,7 +3961,7 @@
                         }
                     },
                     "403": {
-                        "description": "if the user does not have permission",
+                        "description": "if the user does not have permission, e.g. for an internal preservation copy",
                         "content": {
                             "application/json": {
                                 "schema": {
