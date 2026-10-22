@@ -423,7 +423,10 @@ class PrintMirrorService {
 		try {
 			$file = $target->newFile($name, $handle);
 		} finally {
-			fclose($handle);
+			// newFile() may close the stream itself
+			if (get_resource_type($handle) === 'stream') {
+				fclose($handle);
+			}
 		}
 		$row = new MirrorFile();
 		$row->setName($name);
@@ -599,9 +602,7 @@ class PrintMirrorService {
 			hash_update_stream($context, $handle);
 			return hash_final($context);
 		} finally {
-			if (get_resource_type($handle) === 'stream') {
-				fclose($handle);
-			}
+			fclose($handle);
 		}
 	}
 
