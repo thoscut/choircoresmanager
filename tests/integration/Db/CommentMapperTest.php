@@ -11,6 +11,7 @@ use OCA\OrchestraScoresManager\Db\ScoreBookScoreLinkMapper;
 use OCA\OrchestraScoresManager\Db\ScoreMapper;
 use OCA\OrchestraScoresManager\Db\ScoreTagLinkMapper;
 use OCA\OrchestraScoresManager\Db\TagMapper;
+use OCA\OrchestraScoresManager\Service\RepertoireClassifier;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\DB\Exception;
 
@@ -33,7 +34,7 @@ final class CommentMapperTest extends MapperTestCase {
 		$scoreTagLinkMapper = new ScoreTagLinkMapper($this->db);
 		$tagMapper = new TagMapper($this->db);
 		$scoreBookScoreLinkMapper = new ScoreBookScoreLinkMapper($this->db);
-		$this->scoreMapper = new ScoreMapper($this->db, $scoreTagLinkMapper, $tagMapper, $scoreBookScoreLinkMapper);
+		$this->scoreMapper = new ScoreMapper($this->db, $scoreTagLinkMapper, $tagMapper, $scoreBookScoreLinkMapper, \OC::$server->get(RepertoireClassifier::class));
 	}
 
 	private function createTestScore(): Score {

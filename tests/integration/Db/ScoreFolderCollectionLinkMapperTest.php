@@ -19,6 +19,7 @@ use OCA\OrchestraScoresManager\Db\ScoreFolderCollectionLinkMapper;
 use OCA\OrchestraScoresManager\Db\ScoreMapper;
 use OCA\OrchestraScoresManager\Db\ScoreTagLinkMapper;
 use OCA\OrchestraScoresManager\Db\TagMapper;
+use OCA\OrchestraScoresManager\Service\RepertoireClassifier;
 use OCP\DB\Exception;
 
 /**
@@ -42,7 +43,7 @@ final class ScoreFolderCollectionLinkMapperTest extends MapperTestCase {
 		$scoreBookScoreLinkMapper = new ScoreBookScoreLinkMapper($this->db);
 		$scoreBookTagLinkMapper = new ScoreBookTagLinkMapper($this->db);
 		$this->mapper = new ScoreFolderCollectionLinkMapper($this->db);
-		$this->scoreMapper = new ScoreMapper($this->db, $scoreTagLinkMapper, $tagMapper, $scoreBookScoreLinkMapper);
+		$this->scoreMapper = new ScoreMapper($this->db, $scoreTagLinkMapper, $tagMapper, $scoreBookScoreLinkMapper, \OC::$server->get(RepertoireClassifier::class));
 		$this->scoreBookMapper = new ScoreBookMapper($this->db, $scoreBookTagLinkMapper, $tagMapper);
 		$this->fcMapper = new FolderCollectionMapper($this->db);
 		$this->fcVersionMapper = new FolderCollectionVersionMapper($this->db);

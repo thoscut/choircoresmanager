@@ -34,6 +34,11 @@ class AdminSettings implements ISettings {
 			$allowedGroups
 		);
 
+		$this->initialStateService->provideInitialState(
+			'repertoire_thresholds',
+			$this->configService->getRepertoireThresholds()
+		);
+
 		return new TemplateResponse(
 			'orchestrascoresmanager',
 			'admin-settings',

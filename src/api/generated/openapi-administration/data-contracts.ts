@@ -43,3 +43,40 @@ export interface AdminPostEditGroupsData {
     };
   };
 }
+
+export interface AdminGetRepertoireThresholdsData {
+  ocs: {
+    meta: OCSMeta;
+    data: {
+      /** @format int64 */
+      currentYears: number;
+      /** @format int64 */
+      dormantYears: number;
+    };
+  };
+}
+
+export interface AdminPostRepertoireThresholdsPayload {
+  /**
+   * Years within which a performance counts as current (0 <= currentYears < dormantYears)
+   * @format int64
+   */
+  currentYears: number;
+  /**
+   * Years within which a performance counts as dormant (at most 100)
+   * @format int64
+   */
+  dormantYears: number;
+}
+
+export interface AdminPostRepertoireThresholdsData {
+  ocs: {
+    meta: OCSMeta;
+    data: {
+      /** @format int64 */
+      currentYears: number;
+      /** @format int64 */
+      dormantYears: number;
+    };
+  };
+}

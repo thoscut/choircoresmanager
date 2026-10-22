@@ -6,6 +6,7 @@ namespace OCA\OrchestraScoresManager\Tests\unit\Db;
 
 use OCA\OrchestraScoresManager\Db\Score;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
@@ -223,5 +224,141 @@ final class ScoreTest extends TestCase {
 
 		$this->assertSame([], $json['tags']);
 		$this->assertNull($json['scoreBook']);
+	}
+
+	public static function validInventoryStatusProvider(): array {
+		return [
+			'active' => ['active', 'active'],
+			'retired' => ['retired', 'retired'],
+			'missing' => ['missing', 'missing'],
+			'lent' => ['lent', 'lent'],
+			'null selects default' => [null, 'active'],
+			'empty string selects default' => ['', 'active'],
+		];
+	}
+
+	#[DataProvider('validInventoryStatusProvider')]
+	public function testSetInventoryStatus(?string $input, string $expected): void {
+		$score = new Score();
+		$score->setInventoryStatus('missing');
+		$score->setInventoryStatus($input);
+
+		$this->assertSame($expected, $score->getInventoryStatus());
+		$this->assertSame($expected, $score->jsonSerialize()['inventoryStatus']);
+	}
+
+	public function testInventoryStatusDefaultsToActive(): void {
+		$score = new Score();
+
+		$this->assertSame('active', $score->getInventoryStatus());
+		$this->assertSame('active', $score->jsonSerialize()['inventoryStatus']);
+	}
+
+	#[TestWith(['archived'])]
+	#[TestWith(['dormant'])]
+	#[TestWith(['Active'])]
+	public function testSetInventoryStatusRejectsUnknownValue(string $value): void {
+		$this->expectException(\InvalidArgumentException::class);
+
+		$score = new Score();
+		$score->setInventoryStatus($value);
+	}
+
+	public function testSetLastPerformedImportedFromString(): void {
+		$score = new Score();
+		$score->setLastPerformedImported('2019-05-26');
+
+		$this->assertSame('2019-05-26', $score->getLastPerformedImported()?->format('Y-m-d'));
+		$this->assertSame('2019-05-26', $score->jsonSerialize()['lastPerformedImported']);
+		$this->assertArrayHasKey('lastPerformedImported', $score->getUpdatedFields());
+	}
+
+	public function testSetLastPerformedImportedEmptyStringBecomesNull(): void {
+		$score = new Score();
+		$score->setLastPerformedImported('2019-05-26');
+		$score->setLastPerformedImported('');
+
+		$this->assertNull($score->getLastPerformedImported());
+		$this->assertNull($score->jsonSerialize()['lastPerformedImported']);
+	}
+
+	public function testSetLastPerformedImportedSameDateIsNoUpdate(): void {
+		$score = new Score();
+		$score->setLastPerformedImported('2019-05-26');
+		$score->resetUpdatedFields();
+
+		$score->setLastPerformedImported(new \DateTimeImmutable('2019-05-26'));
+
+		$this->assertArrayNotHasKey('lastPerformedImported', $score->getUpdatedFields());
+	}
+
+	#[TestWith(['26.05.2019'])]
+	#[TestWith(['2019-5-26'])]
+	#[TestWith(['2019-02-30'])]
+	#[TestWith(['2019'])]
+	public function testSetLastPerformedImportedRejectsInvalidDate(string $value): void {
+		$this->expectException(\InvalidArgumentException::class);
+
+		$score = new Score();
+		$score->setLastPerformedImported($value);
+	}
+
+	public function testRepertoireFieldsInJson(): void {
+		$score = new Score();
+		$score->setSignature('5-22');
+		$score->setLyricist('Matthias Claudius');
+		$score->setVoicing('TTBB');
+		$score->setLanguage('Deutsch');
+		$score->setLastPerformed('2025-12-05');
+		$score->setRepertoireClass('current');
+
+		$json = $score->jsonSerialize();
+		$this->assertSame('5-22', $json['signature']);
+		$this->assertSame('Matthias Claudius', $json['lyricist']);
+		$this->assertSame('TTBB', $json['voicing']);
+		$this->assertSame('Deutsch', $json['language']);
+		$this->assertSame('2025-12-05', $json['lastPerformed']);
+		$this->assertSame('current', $json['repertoireClass']);
+	}
+
+	public function testLastPerformedIsNullAndNotDocumentedByDefault(): void {
+		$score = new Score();
+		$this->assertNull($score->getLastPerformed());
+		$this->assertNull($score->jsonSerialize()['lastPerformed']);
+		$this->assertSame('not_documented', $score->getRepertoireClass());
+		$this->assertSame('not_documented', $score->jsonSerialize()['repertoireClass']);
+	}
+
+	public function testCatalogueExtraValuesKeepOrderAndDropEmptyValues(): void {
+		$score = new Score();
+		$score->setCatalogueExtraValues(['Notenliste' => 'Advent, Frühjahr', 'Mappe' => '5', 'Lizenz' => '', '2024' => 'Zahl als Spaltenname']);
+
+		$this->assertSame(['Notenliste' => 'Advent, Frühjahr', 'Mappe' => '5', '2024' => 'Zahl als Spaltenname'], $score->getCatalogueExtraValues());
+		$this->assertSame('{"Notenliste":"Advent, Frühjahr","Mappe":"5","2024":"Zahl als Spaltenname"}', $score->getCatalogueExtra());
+		$this->assertArrayNotHasKey('catalogueExtra', $score->jsonSerialize());
+	}
+
+	public function testCatalogueExtraValuesWithOnlyNumericColumnNamesStayAnObject(): void {
+		$score = new Score();
+		$score->setCatalogueExtraValues(['0' => 'a', '1' => 'b']);
+
+		$this->assertSame('{"0":"a","1":"b"}', $score->getCatalogueExtra());
+		$this->assertSame(['0' => 'a', '1' => 'b'], $score->getCatalogueExtraValues());
+	}
+
+	public function testEmptyCatalogueExtraValuesAreStoredAsNull(): void {
+		$score = new Score();
+		$score->setCatalogueExtraValues(['Mappe' => '5']);
+		$score->setCatalogueExtraValues(['Mappe' => '']);
+
+		$this->assertNull($score->getCatalogueExtra());
+		$this->assertSame([], $score->getCatalogueExtraValues());
+	}
+
+	public function testSetCatalogueExtraRejectsNonObjectJson(): void {
+		$this->expectException(\InvalidArgumentException::class);
+
+		$score = new Score();
+		$score->setCatalogueExtra('"just a string"');
 	}
 }

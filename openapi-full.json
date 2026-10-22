@@ -20,6 +20,167 @@
             }
         },
         "schemas": {
+            "CatalogueChange": {
+                "type": "object",
+                "required": [
+                    "column",
+                    "old",
+                    "new"
+                ],
+                "properties": {
+                    "column": {
+                        "type": "string"
+                    },
+                    "old": {
+                        "type": "string"
+                    },
+                    "new": {
+                        "type": "string"
+                    }
+                }
+            },
+            "CatalogueExport": {
+                "type": "object",
+                "required": [
+                    "fileName",
+                    "content"
+                ],
+                "properties": {
+                    "fileName": {
+                        "type": "string"
+                    },
+                    "content": {
+                        "type": "string"
+                    }
+                }
+            },
+            "CatalogueImportCounts": {
+                "type": "object",
+                "required": [
+                    "new",
+                    "changed",
+                    "unchanged",
+                    "errors"
+                ],
+                "properties": {
+                    "new": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "changed": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "unchanged": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "errors": {
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                }
+            },
+            "CatalogueImportResult": {
+                "type": "object",
+                "required": [
+                    "dryRun",
+                    "counts",
+                    "mappedColumns",
+                    "extraColumns",
+                    "rows"
+                ],
+                "properties": {
+                    "dryRun": {
+                        "type": "boolean"
+                    },
+                    "counts": {
+                        "$ref": "#/components/schemas/CatalogueImportCounts"
+                    },
+                    "mappedColumns": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "extraColumns": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "rows": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CatalogueImportRow"
+                        }
+                    }
+                }
+            },
+            "CatalogueImportRow": {
+                "type": "object",
+                "required": [
+                    "line",
+                    "signature",
+                    "title",
+                    "status",
+                    "scoreId",
+                    "changes",
+                    "errors"
+                ],
+                "properties": {
+                    "line": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "signature": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "new",
+                            "changed",
+                            "error"
+                        ]
+                    },
+                    "scoreId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "nullable": true
+                    },
+                    "changes": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CatalogueChange"
+                        }
+                    },
+                    "errors": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "CatalogueValue": {
+                "type": "object",
+                "required": [
+                    "column",
+                    "value"
+                ],
+                "properties": {
+                    "column": {
+                        "type": "string"
+                    },
+                    "value": {
+                        "type": "string"
+                    }
+                }
+            },
             "Comment": {
                 "type": "object",
                 "required": [
@@ -221,6 +382,14 @@
                     "digitalStatus",
                     "gemaIds",
                     "duration",
+                    "signature",
+                    "lyricist",
+                    "voicing",
+                    "language",
+                    "inventoryStatus",
+                    "lastPerformed",
+                    "lastPerformedImported",
+                    "repertoireClass",
                     "tags",
                     "scoreBook"
                 ],
@@ -288,6 +457,48 @@
                         "type": "integer",
                         "format": "int64",
                         "nullable": true
+                    },
+                    "signature": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "lyricist": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "voicing": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "language": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "inventoryStatus": {
+                        "type": "string",
+                        "enum": [
+                            "active",
+                            "retired",
+                            "missing",
+                            "lent"
+                        ]
+                    },
+                    "lastPerformed": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "lastPerformedImported": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "repertoireClass": {
+                        "type": "string",
+                        "enum": [
+                            "current",
+                            "dormant",
+                            "earlier",
+                            "not_documented"
+                        ]
                     },
                     "tags": {
                         "type": "array",
@@ -503,6 +714,14 @@
                     "digitalStatus",
                     "gemaIds",
                     "duration",
+                    "signature",
+                    "lyricist",
+                    "voicing",
+                    "language",
+                    "inventoryStatus",
+                    "lastPerformed",
+                    "lastPerformedImported",
+                    "repertoireClass",
                     "tags",
                     "scoreBook",
                     "index"
@@ -571,6 +790,48 @@
                         "type": "integer",
                         "format": "int64",
                         "nullable": true
+                    },
+                    "signature": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "lyricist": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "voicing": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "language": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "inventoryStatus": {
+                        "type": "string",
+                        "enum": [
+                            "active",
+                            "retired",
+                            "missing",
+                            "lent"
+                        ]
+                    },
+                    "lastPerformed": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "lastPerformedImported": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "repertoireClass": {
+                        "type": "string",
+                        "enum": [
+                            "current",
+                            "dormant",
+                            "earlier",
+                            "not_documented"
+                        ]
                     },
                     "tags": {
                         "type": "array",
@@ -1009,6 +1270,779 @@
                     },
                     "403": {
                         "description": "Logged in account must be an admin",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/orchestrascoresmanager/admin/repertoireThresholds": {
+            "get": {
+                "operationId": "admin-get-repertoire-thresholds",
+                "summary": "Get the thresholds used to derive the repertoire class of a score",
+                "description": "A score is current if its last performance lies at most currentYears calendar years back, dormant if at most dormantYears, and earlier otherwise.\nCurrent thresholds\nThis endpoint requires admin access",
+                "tags": [
+                    "admin"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response with the thresholds",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "currentYears",
+                                                        "dormantYears"
+                                                    ],
+                                                    "properties": {
+                                                        "currentYears": {
+                                                            "type": "integer",
+                                                            "format": "int64"
+                                                        },
+                                                        "dormantYears": {
+                                                            "type": "integer",
+                                                            "format": "int64"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Current user is not logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Logged in account must be an admin",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "operationId": "admin-post-repertoire-thresholds",
+                "summary": "Update the thresholds used to derive the repertoire class of a score",
+                "description": "Updated thresholds\nThis endpoint requires admin access\nThis endpoint requires password confirmation",
+                "tags": [
+                    "admin"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "currentYears",
+                                    "dormantYears"
+                                ],
+                                "properties": {
+                                    "currentYears": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "Years within which a performance counts as current (0 <= currentYears < dormantYears)"
+                                    },
+                                    "dormantYears": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "Years within which a performance counts as dormant (at most 100)"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful update of the thresholds",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "object",
+                                                    "required": [
+                                                        "currentYears",
+                                                        "dormantYears"
+                                                    ],
+                                                    "properties": {
+                                                        "currentYears": {
+                                                            "type": "integer",
+                                                            "format": "int64"
+                                                        },
+                                                        "dormantYears": {
+                                                            "type": "integer",
+                                                            "format": "int64"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "If the thresholds are invalid",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Current user is not logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Logged in account must be an admin",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/orchestrascoresmanager/catalogue/import": {
+            "post": {
+                "operationId": "catalogue_api-import-catalogue",
+                "summary": "Import the work catalogue from a CSV file",
+                "description": "The file is semicolon-separated UTF-8 with the catalogue header. Rows are matched to scores by the column \"Signatur\"; rows with a missing or duplicate signature or invalid values are reported as errors and not applied. Scores that are not in the file stay untouched. With dryRun (the default) nothing is saved and the result shows what would change.\nCounts and changes per row",
+                "tags": [
+                    "catalogue_api"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "csv"
+                                ],
+                                "properties": {
+                                    "csv": {
+                                        "type": "string",
+                                        "description": "The content of the CSV file"
+                                    },
+                                    "dryRun": {
+                                        "type": "boolean",
+                                        "default": true,
+                                        "description": "Only report the changes without saving them"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The file was analysed, and applied unless dryRun was set",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/CatalogueImportResult"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "The file cannot be read as a catalogue",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The user may not edit scores",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "If saving fails",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Current user is not logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/orchestrascoresmanager/catalogue/export": {
+            "get": {
+                "operationId": "catalogue_api-export-catalogue",
+                "summary": "Export all scores as a work catalogue CSV file",
+                "description": "File name and content (UTF-8 with BOM)",
+                "tags": [
+                    "catalogue_api"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The catalogue as CSV",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/CatalogueExport"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "If the user may not read scores",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Current user is not logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/orchestrascoresmanager/scores/{id}/catalogue": {
+            "get": {
+                "operationId": "catalogue_api-get-score-catalogue-values",
+                "summary": "Get the catalogue values of a score that are not stored in a field",
+                "description": "Column names and values",
+                "tags": [
+                    "catalogue_api"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "The ID of the score",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The catalogue values of the score",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/CatalogueValue"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The score does not exist",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "If the user may not read scores",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Current user is not logged in",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4398,6 +5432,42 @@
                                         "default": null,
                                         "description": "The duration of the score in seconds"
                                     },
+                                    "signature": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "The catalogue number (signature) of the score, e.g. \"5-22\""
+                                    },
+                                    "lyricist": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "The author of the lyrics"
+                                    },
+                                    "voicing": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "The voicing of the score, e.g. \"TTBB\""
+                                    },
+                                    "language": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "The language of the lyrics"
+                                    },
+                                    "inventoryStatus": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "enum": [
+                                            "active",
+                                            "retired",
+                                            "missing",
+                                            "lent"
+                                        ],
+                                        "description": "The inventory status of the score (default active)"
+                                    },
                                     "tagIds": {
                                         "type": "array",
                                         "nullable": true,
@@ -4626,6 +5696,42 @@
                                         "nullable": true,
                                         "default": null,
                                         "description": "The duration of the score in seconds"
+                                    },
+                                    "signature": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "The catalogue number (signature) of the score, e.g. \"5-22\""
+                                    },
+                                    "lyricist": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "The author of the lyrics"
+                                    },
+                                    "voicing": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "The voicing of the score, e.g. \"TTBB\""
+                                    },
+                                    "language": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "The language of the lyrics"
+                                    },
+                                    "inventoryStatus": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "enum": [
+                                            "active",
+                                            "retired",
+                                            "missing",
+                                            "lent"
+                                        ],
+                                        "description": "The inventory status of the score (default active)"
                                     },
                                     "tagIds": {
                                         "type": "array",
@@ -9944,6 +11050,10 @@
         }
     },
     "tags": [
+        {
+            "name": "catalogue_api",
+            "description": "Import and export of the work catalogue (Werkverzeichnis) as CSV."
+        },
         {
             "name": "folder_collection_version_api",
             "description": "Controller for folder collection version operations. Provides endpoints to access and modify folder collection versions independently of their parent folder collection."

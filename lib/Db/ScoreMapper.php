@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace OCA\OrchestraScoresManager\Db;
 
+use OCA\OrchestraScoresManager\Service\RepertoireClassifier;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\AppFramework\Db\QBMapper;
@@ -21,6 +22,7 @@ class ScoreMapper extends QBMapper {
 		protected readonly ScoreTagLinkMapper $scoreTagLinkMapper,
 		protected readonly TagMapper $tagMapper,
 		protected readonly ScoreBookScoreLinkMapper $scoreBookScoreLinkMapper,
+		protected readonly RepertoireClassifier $repertoireClassifier,
 	) {
 		parent::__construct($db, 'osm_scores', Score::class);
 	}
@@ -42,6 +44,7 @@ class ScoreMapper extends QBMapper {
 		$score = $this->findEntity($qb);
 		$this->attachTags($score);
 		$this->attachScoreBookInfo($score);
+		$this->attachLastPerformed([$score]);
 		return $score;
 	}
 
@@ -101,6 +104,7 @@ class ScoreMapper extends QBMapper {
 				]);
 			}
 		}
+		$this->attachLastPerformed($scores);
 
 		return $scores;
 	}
@@ -155,6 +159,7 @@ class ScoreMapper extends QBMapper {
 				]);
 			}
 		}
+		$this->attachLastPerformed($scores);
 
 		return $scores;
 	}
@@ -190,6 +195,60 @@ class ScoreMapper extends QBMapper {
 				'id' => $bookInfo['score_book_id'],
 				'index' => $bookInfo['index'],
 			]);
+		}
+	}
+
+	/**
+	 * Attach the date of the most recent performance and the derived repertoire class to the given scores.
+	 *
+	 * A performance is a non-draft setlist with a start date in the past that contains the score,
+	 * or the last performance documented in an imported catalogue; the later date wins.
+	 *
+	 * @param Score[] $scores
+	 * @throws Exception
+	 */
+	private function attachLastPerformed(array $scores): void {
+		$scoreIds = array_map(fn (Score $s) => $s->getId(), $scores);
+		if (empty($scoreIds)) {
+			return;
+		}
+
+		/** @var array<int, string> $lastPerformedMap score ID => Y-m-d */
+		$lastPerformedMap = [];
+		$now = new \DateTimeImmutable();
+		// chunk to stay below parameter limits of some DB backends
+		foreach (array_chunk($scoreIds, 500) as $chunk) {
+			$qb = $this->db->getQueryBuilder();
+			$qb->select('se.score_id')
+				->selectAlias($qb->func()->max('s.start_date_time'), 'last_performed')
+				->from('osm_setlist_entries', 'se')
+				->innerJoin('se', 'osm_setlists', 's', $qb->expr()->eq('se.setlist_id', 's.id'))
+				->where($qb->expr()->in('se.score_id', $qb->createNamedParameter($chunk, IQueryBuilder::PARAM_INT_ARRAY)))
+				->andWhere($qb->expr()->eq('s.is_draft', $qb->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)))
+				->andWhere($qb->expr()->isNotNull('s.start_date_time'))
+				->andWhere($qb->expr()->lte('s.start_date_time', $qb->createNamedParameter($now, IQueryBuilder::PARAM_DATETIME_IMMUTABLE)))
+				->groupBy('se.score_id');
+			$result = $qb->executeQuery();
+			while ($row = $result->fetch()) {
+				/** @var array{score_id: int|string, last_performed: string|null} $row */
+				if ($row['last_performed'] === null) {
+					continue;
+				}
+				// datetimes are stored in UTC
+				$start = new \DateTimeImmutable($row['last_performed'], new \DateTimeZone('UTC'));
+				$lastPerformedMap[(int)$row['score_id']] = $this->repertoireClassifier->toLocalDate($start);
+			}
+			$result->closeCursor();
+		}
+
+		foreach ($scores as $score) {
+			$fromSetlists = $lastPerformedMap[$score->getId()] ?? null;
+			$imported = $score->getLastPerformedImported()?->format('Y-m-d');
+			// Y-m-d strings compare chronologically
+			$lastPerformed = max($fromSetlists ?? '', $imported ?? '');
+			$lastPerformed = $lastPerformed === '' ? null : $lastPerformed;
+			$score->setLastPerformed($lastPerformed);
+			$score->setRepertoireClass($this->repertoireClassifier->classify($lastPerformed));
 		}
 	}
 }

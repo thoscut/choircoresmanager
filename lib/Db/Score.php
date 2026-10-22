@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace OCA\OrchestraScoresManager\Db;
 
 use JsonSerializable;
+use OCA\OrchestraScoresManager\Service\RepertoireClassifier;
+use OCA\OrchestraScoresManager\Utility\DateTimeHelper;
 use OCP\AppFramework\Db\Entity;
 use OCP\DB\Types;
 
@@ -38,8 +40,29 @@ use OCP\DB\Types;
  * @method string|null getMedleyContents()
  * @method int|null getDuration()
  * @method void setDuration(?int $value)
+ * @method string|null getSignature()
+ * @method void setSignature(?string $value)
+ * @method string|null getLyricist()
+ * @method void setLyricist(?string $value)
+ * @method string|null getVoicing()
+ * @method void setVoicing(?string $value)
+ * @method string|null getLanguage()
+ * @method void setLanguage(?string $value)
+ * @method string getInventoryStatus()
+ * @method \DateTimeImmutable|null getLastPerformedImported()
  */
 class Score extends Entity implements JsonSerializable {
+	public const INVENTORY_STATUS_ACTIVE = 'active';
+	public const INVENTORY_STATUS_RETIRED = 'retired';
+	public const INVENTORY_STATUS_MISSING = 'missing';
+	public const INVENTORY_STATUS_LENT = 'lent';
+	public const INVENTORY_STATUSES = [
+		self::INVENTORY_STATUS_ACTIVE,
+		self::INVENTORY_STATUS_RETIRED,
+		self::INVENTORY_STATUS_MISSING,
+		self::INVENTORY_STATUS_LENT,
+	];
+
 	protected string $title = '';
 	protected ?string $titleShort = null;
 	protected ?string $composer = null;
@@ -53,12 +76,31 @@ class Score extends Entity implements JsonSerializable {
 	protected ?string $digitalStatus = null;
 	protected ?string $gemaIds = null;
 	protected ?int $duration = null;
+	protected ?string $signature = null;
+	protected ?string $lyricist = null;
+	protected ?string $voicing = null;
+	protected ?string $language = null;
+	protected string $inventoryStatus = self::INVENTORY_STATUS_ACTIVE;
+	/** Date of the last performance as documented in an imported catalogue (DATE field) */
+	protected ?\DateTimeImmutable $lastPerformedImported = null;
+	/**
+	 * JSON object with the catalogue columns that are not mapped to a field, keyed by column name.
+	 * Not part of jsonSerialize(); served separately to keep score lists small.
+	 */
+	protected ?string $catalogueExtra = null;
 
 	// transient properties, not stored in DB
 	// ensure to add setters & getters for these
 	protected ?array $tags = null;
 	/** @var array{id: int, index: int}|null */
 	protected ?array $scoreBook = null;
+	/**
+	 * Date (Y-m-d) of the most recent documented performance: the later of the most recent
+	 * past non-draft setlist containing this score and lastPerformedImported
+	 */
+	protected ?string $lastPerformed = null;
+	/** Repertoire class derived from lastPerformed, see RepertoireClassifier */
+	protected string $repertoireClass = RepertoireClassifier::CLASS_NOT_DOCUMENTED;
 
 	public function __construct() {
 		$this->addType('title', Types::STRING);
@@ -74,6 +116,13 @@ class Score extends Entity implements JsonSerializable {
 		$this->addType('digitalStatus', Types::STRING);
 		$this->addType('gemaIds', Types::STRING);
 		$this->addType('duration', Types::INTEGER);
+		$this->addType('signature', Types::STRING);
+		$this->addType('lyricist', Types::STRING);
+		$this->addType('voicing', Types::STRING);
+		$this->addType('language', Types::STRING);
+		$this->addType('inventoryStatus', Types::STRING);
+		$this->addType('lastPerformedImported', Types::DATE_IMMUTABLE);
+		$this->addType('catalogueExtra', Types::TEXT);
 	}
 
 	public function jsonSerialize(): array {
@@ -94,6 +143,14 @@ class Score extends Entity implements JsonSerializable {
 			'tags' => $this->tags ?? [],
 			'scoreBook' => $this->scoreBook,
 			'duration' => $this->duration,
+			'signature' => $this->signature,
+			'lyricist' => $this->lyricist,
+			'voicing' => $this->voicing,
+			'language' => $this->language,
+			'inventoryStatus' => $this->inventoryStatus,
+			'lastPerformed' => $this->lastPerformed,
+			'lastPerformedImported' => $this->lastPerformedImported?->format('Y-m-d'),
+			'repertoireClass' => $this->repertoireClass,
 		];
 	}
 
@@ -108,6 +165,143 @@ class Score extends Entity implements JsonSerializable {
 	public function setMedleyContents(array|string|null $medleyContents): void {
 		$content = is_string($medleyContents) ? $medleyContents : $this->encodeJsonArray($medleyContents, 'medleyContents');
 		$this->setter('medleyContents', [$content]);
+	}
+
+	/**
+	 * Set inventory status.
+	 *
+	 * Null and empty strings select the default status "active"; any other value must be one of
+	 * INVENTORY_STATUSES. Scores leaving the inventory are not deleted, their status is set instead.
+	 *
+	 * @param string|null $inventoryStatus
+	 * @throws \InvalidArgumentException if the value is not an allowed status
+	 * @psalm-suppress PossiblyUnusedMethod - Called by Entity framework and API
+	 */
+	public function setInventoryStatus(?string $inventoryStatus): void {
+		if ($inventoryStatus === null || $inventoryStatus === '') {
+			$inventoryStatus = self::INVENTORY_STATUS_ACTIVE;
+		}
+		if (!\in_array($inventoryStatus, self::INVENTORY_STATUSES, true)) {
+			throw new \InvalidArgumentException('Invalid inventory status: ' . $inventoryStatus);
+		}
+		$this->setter('inventoryStatus', [$inventoryStatus]);
+	}
+
+	/**
+	 * Set the date of the last performance as documented in an imported catalogue.
+	 *
+	 * Setting the same calendar date again does not mark the field as updated.
+	 *
+	 * @param \DateTimeImmutable|string|null $lastPerformedImported Date or Y-m-d string; empty string is stored as null
+	 * @throws \InvalidArgumentException if a string is not a valid Y-m-d date
+	 * @psalm-suppress PossiblyUnusedMethod - Called by Entity framework and catalogue import
+	 */
+	public function setLastPerformedImported(\DateTimeImmutable|string|null $lastPerformedImported): void {
+		if ($lastPerformedImported === '') {
+			$lastPerformedImported = null;
+		}
+		if (is_string($lastPerformedImported)) {
+			$lastPerformedImported = DateTimeHelper::parseStrictDate($lastPerformedImported);
+		}
+		if ($lastPerformedImported !== null
+			&& $this->lastPerformedImported !== null
+			&& $lastPerformedImported->format('Y-m-d') === $this->lastPerformedImported->format('Y-m-d')) {
+			return;
+		}
+		$this->setter('lastPerformedImported', [$lastPerformedImported]);
+	}
+
+	/**
+	 * Get the catalogue columns that are not mapped to a field.
+	 *
+	 * @return array<array-key, string> Column name => value, in stored order (numeric names become integer keys)
+	 */
+	public function getCatalogueExtraValues(): array {
+		if ($this->catalogueExtra === null || $this->catalogueExtra === '') {
+			return [];
+		}
+		/** @var mixed $decoded */
+		$decoded = json_decode($this->catalogueExtra, true);
+		if (!is_array($decoded)) {
+			throw new \RuntimeException('Failed to decode catalogueExtra JSON: ' . json_last_error_msg());
+		}
+		$values = [];
+		/** @var mixed $value */
+		foreach ($decoded as $column => $value) {
+			if (is_scalar($value)) {
+				$values[(string)$column] = (string)$value;
+			}
+		}
+		return $values;
+	}
+
+	/**
+	 * Set the catalogue columns that are not mapped to a field.
+	 *
+	 * Empty values are dropped; an empty list is stored as null.
+	 *
+	 * @param array<array-key, string> $values Column name => value
+	 */
+	public function setCatalogueExtraValues(array $values): void {
+		$values = array_filter($values, fn (string $value): bool => $value !== '');
+		$this->setCatalogueExtra($values === [] ? null : $values);
+	}
+
+	/**
+	 * Set the catalogue columns that are not mapped to a field.
+	 *
+	 * @param array<array-key, string>|string|null $catalogueExtra Values or their JSON object
+	 * @throws \InvalidArgumentException if a string is not a JSON object
+	 * @psalm-suppress PossiblyUnusedMethod - Called by Entity framework
+	 */
+	public function setCatalogueExtra(array|string|null $catalogueExtra): void {
+		if (is_string($catalogueExtra) && $catalogueExtra !== '') {
+			if (!is_array(json_decode($catalogueExtra, true))) {
+				throw new \InvalidArgumentException('catalogueExtra must be a JSON object');
+			}
+		} elseif (is_array($catalogueExtra)) {
+			// JSON_FORCE_OBJECT keeps an object even for numeric column names
+			$catalogueExtra = json_encode($catalogueExtra, JSON_FORCE_OBJECT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
+		}
+		$this->setter('catalogueExtra', [$catalogueExtra === '' ? null : $catalogueExtra]);
+	}
+
+	/**
+	 * Get transient date (Y-m-d) of the most recent documented performance.
+	 *
+	 * @return string|null
+	 * @psalm-suppress PossiblyUnusedMethod - Called via jsonSerialize
+	 */
+	public function getLastPerformed(): ?string {
+		return $this->lastPerformed;
+	}
+
+	/**
+	 * Set transient date (Y-m-d) of the most recent documented performance.
+	 *
+	 * @param string|null $lastPerformed
+	 */
+	public function setLastPerformed(?string $lastPerformed): void {
+		$this->lastPerformed = $lastPerformed;
+	}
+
+	/**
+	 * Get transient repertoire class derived from the last performance.
+	 *
+	 * @return string One of RepertoireClassifier::CLASSES
+	 * @psalm-suppress PossiblyUnusedMethod - Called via jsonSerialize
+	 */
+	public function getRepertoireClass(): string {
+		return $this->repertoireClass;
+	}
+
+	/**
+	 * Set transient repertoire class.
+	 *
+	 * @param string $repertoireClass One of RepertoireClassifier::CLASSES
+	 */
+	public function setRepertoireClass(string $repertoireClass): void {
+		$this->repertoireClass = $repertoireClass;
 	}
 
 	/**

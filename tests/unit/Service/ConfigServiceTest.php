@@ -6,6 +6,7 @@ namespace OCA\OrchestraScoresManager\Tests\unit\Service;
 
 use OCA\OrchestraScoresManager\Service\ConfigService;
 use OCP\AppFramework\Services\IAppConfig;
+use OCP\IL10N;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 
@@ -20,7 +21,9 @@ final class ConfigServiceTest extends TestCase {
 		parent::setUp();
 
 		$this->appConfig = $this->createMock(IAppConfig::class);
-		$this->service = new ConfigService($this->appConfig);
+		$l10n = $this->createMock(IL10N::class);
+		$l10n->method('t')->willReturnCallback(fn ($text, $params = []) => vsprintf($text, $params));
+		$this->service = new ConfigService($this->appConfig, $l10n);
 	}
 
 	public function testGetAllowedEditGroups(): void {
@@ -92,5 +95,88 @@ final class ConfigServiceTest extends TestCase {
 		$result = $this->service->isGroupAllowedToEdit($groupId);
 
 		$this->assertSame($expected, $result);
+	}
+
+	/**
+	 * Configure the mocked app config to return the given stored thresholds.
+	 */
+	private function storeThresholds(int $currentYears, int $dormantYears): void {
+		$this->appConfig->method('getAppValueInt')
+			->willReturnCallback(fn (string $key, int $default) => match ($key) {
+				'repertoire_current_years' => $currentYears,
+				'repertoire_dormant_years' => $dormantYears,
+				default => $default,
+			});
+	}
+
+	public function testGetRepertoireThresholdsUsesDefaults(): void {
+		$this->appConfig->method('getAppValueInt')
+			->willReturnCallback(fn (string $key, int $default) => $default);
+
+		$this->assertSame(['currentYears' => 3, 'dormantYears' => 10], $this->service->getRepertoireThresholds());
+	}
+
+	public function testGetRepertoireThresholdsReturnsStoredValues(): void {
+		$this->storeThresholds(5, 20);
+
+		$this->assertSame(['currentYears' => 5, 'dormantYears' => 20], $this->service->getRepertoireThresholds());
+	}
+
+	#[TestWith([10, 3])]
+	#[TestWith([4, 4])]
+	#[TestWith([-1, 10])]
+	#[TestWith([3, 101])]
+	public function testGetRepertoireThresholdsFallsBackToDefaultsForInvalidStoredValues(int $currentYears, int $dormantYears): void {
+		$this->storeThresholds($currentYears, $dormantYears);
+
+		$this->assertSame(['currentYears' => 3, 'dormantYears' => 10], $this->service->getRepertoireThresholds());
+	}
+
+	#[TestWith([0, 1])]
+	#[TestWith([3, 10])]
+	#[TestWith([99, 100])]
+	public function testSetRepertoireThresholdsStoresValidValues(int $currentYears, int $dormantYears): void {
+		$stored = [];
+		$this->appConfig->expects($this->exactly(2))
+			->method('setAppValueInt')
+			->willReturnCallback(function (string $key, int $value) use (&$stored): bool {
+				$stored[$key] = $value;
+				return true;
+			});
+
+		$this->service->setRepertoireThresholds($currentYears, $dormantYears);
+
+		$this->assertSame([
+			'repertoire_current_years' => $currentYears,
+			'repertoire_dormant_years' => $dormantYears,
+		], $stored);
+	}
+
+	#[TestWith([10, 3])]
+	#[TestWith([5, 5])]
+	#[TestWith([-1, 10])]
+	#[TestWith([3, 101])]
+	public function testSetRepertoireThresholdsRejectsInvalidValues(int $currentYears, int $dormantYears): void {
+		$this->appConfig->expects($this->never())->method('setAppValueInt');
+		$this->expectException(\InvalidArgumentException::class);
+
+		$this->service->setRepertoireThresholds($currentYears, $dormantYears);
+	}
+
+	public function testGetCatalogueColumnsReturnsOnlyStrings(): void {
+		$this->appConfig->expects($this->once())
+			->method('getAppValueArray')
+			->with('catalogue_columns', [], true)
+			->willReturn(['Signatur', 42, 'Titel', null]);
+
+		$this->assertSame(['Signatur', 'Titel'], $this->service->getCatalogueColumns());
+	}
+
+	public function testSetCatalogueColumnsStoresLazily(): void {
+		$this->appConfig->expects($this->once())
+			->method('setAppValueArray')
+			->with('catalogue_columns', ['Signatur', 'Neue Spalte'], true);
+
+		$this->service->setCatalogueColumns(['Signatur', 'Neue Spalte']);
 	}
 }

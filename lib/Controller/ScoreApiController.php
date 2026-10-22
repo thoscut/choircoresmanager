@@ -86,6 +86,11 @@ class ScoreApiController extends OCSController {
 	 * @param string|null $digitalStatus The digital status of the score
 	 * @param list<string>|null $gemaIds The GEMA IDs of the score
 	 * @param int|null $duration The duration of the score in seconds
+	 * @param string|null $signature The catalogue number (signature) of the score, e.g. "5-22"
+	 * @param string|null $lyricist The author of the lyrics
+	 * @param string|null $voicing The voicing of the score, e.g. "TTBB"
+	 * @param string|null $language The language of the lyrics
+	 * @param 'active'|'retired'|'missing'|'lent'|null $inventoryStatus The inventory status of the score (default active)
 	 * @param list<int>|null $tagIds optional list of tag ids to link
 	 * @param array{id: int, index: int}|null $scoreBook Score book info with id and index (both required)
 	 *
@@ -112,10 +117,15 @@ class ScoreApiController extends OCSController {
 		?string $digitalStatus = null,
 		?array $gemaIds = null,
 		?int $duration = null,
+		?string $signature = null,
+		?string $lyricist = null,
+		?string $voicing = null,
+		?string $language = null,
+		?string $inventoryStatus = null,
 		?array $tagIds = null,
 		?array $scoreBook = null,
 	): DataResponse {
-		$score = Score::fromParams([
+		$score = $this->callService(fn () => Score::fromParams([
 			'title' => $title,
 			'titleShort' => $titleShort,
 			'composer' => $composer,
@@ -129,7 +139,12 @@ class ScoreApiController extends OCSController {
 			'digitalStatus' => $digitalStatus,
 			'gemaIds' => $gemaIds,
 			'duration' => $duration,
-		]);
+			'signature' => $signature,
+			'lyricist' => $lyricist,
+			'voicing' => $voicing,
+			'language' => $language,
+			'inventoryStatus' => $inventoryStatus,
+		]));
 
 		// Build score book info if provided
 		$scoreBookInfo = null;
@@ -162,6 +177,11 @@ class ScoreApiController extends OCSController {
 	 * @param string|null $digitalStatus The digital status of the score
 	 * @param list<string>|null $gemaIds The GEMA IDs of the score
 	 * @param int|null $duration The duration of the score in seconds
+	 * @param string|null $signature The catalogue number (signature) of the score, e.g. "5-22"
+	 * @param string|null $lyricist The author of the lyrics
+	 * @param string|null $voicing The voicing of the score, e.g. "TTBB"
+	 * @param string|null $language The language of the lyrics
+	 * @param 'active'|'retired'|'missing'|'lent'|null $inventoryStatus The inventory status of the score (default active)
 	 * @param list<int>|null $tagIds optional list of tag ids to link
 	 * @param array{id?: int, index?: int}|null $scoreBook Score book info (id and/or index). Set id to null to remove from book.
 	 *
@@ -193,6 +213,11 @@ class ScoreApiController extends OCSController {
 		?string $digitalStatus = null,
 		?array $gemaIds = null,
 		?int $duration = null,
+		?string $signature = null,
+		?string $lyricist = null,
+		?string $voicing = null,
+		?string $language = null,
+		?string $inventoryStatus = null,
 		?array $tagIds = null,
 		?array $scoreBook = null,
 	): DataResponse {
@@ -241,13 +266,19 @@ class ScoreApiController extends OCSController {
 			'digitalStatus' => $digitalStatus,
 			'gemaIds' => $gemaIds,
 			'duration' => $duration,
+			'signature' => $signature,
+			'lyricist' => $lyricist,
+			'voicing' => $voicing,
+			'language' => $language,
+			'inventoryStatus' => $inventoryStatus,
 		];
 		/** @psalm-suppress MixedAssignment */
 		foreach ($updatableFields as $field => $value) {
 			if (!array_key_exists($field, $params)) {
 				continue;
 			}
-			$score->{'set' . ucfirst($field)}($value);
+			// setters validate some fields (e.g. inventoryStatus) and throw InvalidArgumentException
+			$this->callService(fn (): mixed => $score->{'set' . ucfirst($field)}($value));
 		}
 
 		$updated = $this->callService(fn () => $this->scoreService->updateScore($score, $tagIds, $scoreBookInfo));

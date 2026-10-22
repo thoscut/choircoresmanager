@@ -58,6 +58,17 @@ export const useScoresStore = defineStore('scores', () => {
 	}
 
 	/**
+	 * Reload all scores from the API, e.g. after a catalogue import
+	 *
+	 * @throws { Error } if API call fails
+	 */
+	async function reload(): Promise<void> {
+		const response = await apiClients.default.scoreApiGetScores()
+		scores.value = response.data.ocs.data || []
+		isLoaded.value = true
+	}
+
+	/**
 	 * Get a specific score by ID
 	 *
 	 * @param id - The score ID
@@ -165,6 +176,7 @@ export const useScoresStore = defineStore('scores', () => {
 		isLoaded,
 		isLoading,
 		initialize,
+		reload,
 		getScoreById,
 		createScore,
 		updateScoreFieldApi,

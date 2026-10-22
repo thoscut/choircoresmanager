@@ -10,6 +10,53 @@
  * ---------------------------------------------------------------
  */
 
+export interface CatalogueChange {
+  column: string;
+  old: string;
+  new: string;
+}
+
+export interface CatalogueExport {
+  fileName: string;
+  content: string;
+}
+
+export interface CatalogueImportCounts {
+  /** @format int64 */
+  new: number;
+  /** @format int64 */
+  changed: number;
+  /** @format int64 */
+  unchanged: number;
+  /** @format int64 */
+  errors: number;
+}
+
+export interface CatalogueImportResult {
+  dryRun: boolean;
+  counts: CatalogueImportCounts;
+  mappedColumns: string[];
+  extraColumns: string[];
+  rows: CatalogueImportRow[];
+}
+
+export interface CatalogueImportRow {
+  /** @format int64 */
+  line: number;
+  signature: string;
+  title: string;
+  status: "new" | "changed" | "error";
+  /** @format int64 */
+  scoreId: number | null;
+  changes: CatalogueChange[];
+  errors: string[];
+}
+
+export interface CatalogueValue {
+  column: string;
+  value: string;
+}
+
 export interface Comment {
   /** @format int64 */
   id: number;
@@ -90,6 +137,14 @@ export interface Score {
   gemaIds: string[] | null;
   /** @format int64 */
   duration: number | null;
+  signature: string | null;
+  lyricist: string | null;
+  voicing: string | null;
+  language: string | null;
+  inventoryStatus: "active" | "retired" | "missing" | "lent";
+  lastPerformed: string | null;
+  lastPerformedImported: string | null;
+  repertoireClass: "current" | "dormant" | "earlier" | "not_documented";
   tags: string[] | null;
   scoreBook: ScoreBookInfo | null;
   viaScoreBook?: true;
@@ -163,6 +218,14 @@ export interface ScoreIndexed {
   gemaIds: string[] | null;
   /** @format int64 */
   duration: number | null;
+  signature: string | null;
+  lyricist: string | null;
+  voicing: string | null;
+  language: string | null;
+  inventoryStatus: "active" | "retired" | "missing" | "lent";
+  lastPerformed: string | null;
+  lastPerformedImported: string | null;
+  repertoireClass: "current" | "dormant" | "earlier" | "not_documented";
   tags: string[] | null;
   scoreBook: ScoreBookInfo | null;
   viaScoreBook?: true;
@@ -213,6 +276,37 @@ export interface UserSetlistSettings {
   defaultModerationTime: number | null;
   /** @format int64 */
   defaultFolderCollectionId: number | null;
+}
+
+export interface CatalogueApiImportCataloguePayload {
+  /** The content of the CSV file */
+  csv: string;
+  /**
+   * Only report the changes without saving them
+   * @default true
+   */
+  dryRun?: boolean;
+}
+
+export interface CatalogueApiImportCatalogueData {
+  ocs: {
+    meta: OCSMeta;
+    data: CatalogueImportResult;
+  };
+}
+
+export interface CatalogueApiExportCatalogueData {
+  ocs: {
+    meta: OCSMeta;
+    data: CatalogueExport;
+  };
+}
+
+export interface CatalogueApiGetScoreCatalogueValuesData {
+  ocs: {
+    meta: OCSMeta;
+    data: CatalogueValue[];
+  };
 }
 
 export interface CommentApiGetCommentData {
@@ -505,6 +599,31 @@ export interface ScoreApiPostScorePayload {
    */
   duration?: number | null;
   /**
+   * The catalogue number (signature) of the score, e.g. "5-22"
+   * @default null
+   */
+  signature?: string | null;
+  /**
+   * The author of the lyrics
+   * @default null
+   */
+  lyricist?: string | null;
+  /**
+   * The voicing of the score, e.g. "TTBB"
+   * @default null
+   */
+  voicing?: string | null;
+  /**
+   * The language of the lyrics
+   * @default null
+   */
+  language?: string | null;
+  /**
+   * The inventory status of the score (default active)
+   * @default null
+   */
+  inventoryStatus?: "active" | "retired" | "missing" | "lent" | null;
+  /**
    * optional list of tag ids to link
    * @default null
    */
@@ -597,6 +716,31 @@ export interface ScoreApiPatchScorePayload {
    * @default null
    */
   duration?: number | null;
+  /**
+   * The catalogue number (signature) of the score, e.g. "5-22"
+   * @default null
+   */
+  signature?: string | null;
+  /**
+   * The author of the lyrics
+   * @default null
+   */
+  lyricist?: string | null;
+  /**
+   * The voicing of the score, e.g. "TTBB"
+   * @default null
+   */
+  voicing?: string | null;
+  /**
+   * The language of the lyrics
+   * @default null
+   */
+  language?: string | null;
+  /**
+   * The inventory status of the score (default active)
+   * @default null
+   */
+  inventoryStatus?: "active" | "retired" | "missing" | "lent" | null;
   /**
    * optional list of tag ids to link
    * @default null

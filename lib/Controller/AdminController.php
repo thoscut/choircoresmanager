@@ -17,6 +17,8 @@ use OCP\IRequest;
 /** @psalm-suppress UnusedClass - Controller discovered by NextCloud framework */
 #[OpenAPI(scope: OpenAPI::SCOPE_ADMINISTRATION)]
 class AdminController extends OCSController {
+	use ServiceExceptionBridgeTrait;
+
 	public function __construct(
 		string $appName,
 		IRequest $request,
@@ -57,5 +59,38 @@ class AdminController extends OCSController {
 		$this->configService->setAllowedEditGroups($editGroups);
 
 		return new DataResponse(['editGroups' => $this->configService->getAllowedEditGroups()]);
+	}
+
+	/**
+	 * Get the thresholds used to derive the repertoire class of a score
+	 *
+	 * A score is current if its last performance lies at most currentYears calendar years back,
+	 * dormant if at most dormantYears, and earlier otherwise.
+	 *
+	 * @return DataResponse<Http::STATUS_OK, array{currentYears: int, dormantYears: int}, array{}> Current thresholds
+	 *
+	 * 200: Successful response with the thresholds
+	 */
+	#[ApiRoute(verb: 'GET', url: '/admin/repertoireThresholds')]
+	public function getRepertoireThresholds(): DataResponse {
+		return new DataResponse($this->configService->getRepertoireThresholds());
+	}
+
+	/**
+	 * Update the thresholds used to derive the repertoire class of a score
+	 *
+	 * @param int $currentYears Years within which a performance counts as current (0 <= currentYears < dormantYears)
+	 * @param int $dormantYears Years within which a performance counts as dormant (at most 100)
+	 * @return DataResponse<Http::STATUS_OK, array{currentYears: int, dormantYears: int}, array{}> Updated thresholds
+	 * @throws OCSBadRequestException If the thresholds are invalid
+	 *
+	 * 200: Successful update of the thresholds
+	 * 400: Invalid thresholds
+	 */
+	#[PasswordConfirmationRequired]
+	#[ApiRoute(verb: 'POST', url: '/admin/repertoireThresholds')]
+	public function postRepertoireThresholds(int $currentYears, int $dormantYears): DataResponse {
+		$this->callService(fn () => $this->configService->setRepertoireThresholds($currentYears, $dormantYears));
+		return new DataResponse($this->configService->getRepertoireThresholds());
 	}
 }
