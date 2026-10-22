@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Unit tests without a Nextcloud server. Run from the app directory:
+    composer test:unit
+  The integration tests (tests/Integration) need a Nextcloud instance and are
+  not part of this suite; see tests/README.md.
+-->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="../vendor-bin/phpunit/vendor/phpunit/phpunit/phpunit.xsd"
+	bootstrap="bootstrap.php"
+	cacheDirectory=".phpunit.cache"
+	colors="true"
+	executionOrder="depends,defects"
+	beStrictAboutOutputDuringTests="true"
+	beStrictAboutChangesToGlobalState="true"
+	failOnDeprecation="true"
+	failOnNotice="true"
+	failOnPhpunitDeprecation="true"
+	failOnRisky="true"
+	failOnWarning="true"
+	displayDetailsOnTestsThatTriggerDeprecations="true"
+	displayDetailsOnTestsThatTriggerNotices="true"
+	displayDetailsOnTestsThatTriggerWarnings="true"
+	displayDetailsOnPhpunitDeprecations="true"
+>
+	<testsuites>
+		<testsuite name="unit">
+			<directory suffix="Test.php">Unit</directory>
+		</testsuite>
+	</testsuites>
+	<source ignoreIndirectDeprecations="true" restrictNotices="true" restrictWarnings="true">
+		<include>
+			<directory suffix=".php">../lib</directory>
+		</include>
+	</source>
+</phpunit>

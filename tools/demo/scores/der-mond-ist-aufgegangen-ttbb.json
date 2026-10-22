@@ -1,0 +1,54 @@
+{
+	"id": "der-mond-ist-aufgegangen-ttbb",
+	"title": "Der Mond ist aufgegangen",
+	"subtitle": "Bearbeitung für Männerchor",
+	"creditLeft": "Text: Matthias Claudius (1779)",
+	"creditRight": "Melodie: J. A. P. Schulz (1790) · Bearbeitung: A. Example (fiktiv)",
+	"composer": "Johann Abraham Peter Schulz",
+	"lyricist": "Matthias Claudius",
+	"arranger": "A. Example (fiktive Person des Demo-Bestands)",
+	"rights": "Im Demo-Bestand als geschützte Bearbeitung einer fiktiven Person gekennzeichnet. Die Datei selbst steht unter CC0 1.0.",
+	"key": { "fifths": -2, "mode": "major" },
+	"time": "4/4",
+	"tempo": { "words": "Ruhig", "beatUnit": "quarter", "perMinute": 69 },
+	"staves": [
+		{ "name": "Tenor 1/2", "abbreviation": "T 1/2", "clef": "treble-8", "voices": ["T1", "T2"] },
+		{ "name": "Bass 1/2", "abbreviation": "B 1/2", "clef": "bass", "voices": ["B1", "B2"] }
+	],
+	"measures": [
+		{ "number": "0", "implicit": true, "length": "q", "dynamics": "p" },
+		{ "number": "1" },
+		{ "number": "2" },
+		{ "number": "3" },
+		{ "number": "4" },
+		{ "number": "5" },
+		{ "number": "6", "length": "h.", "ending": { "number": "1", "start": true, "stop": "stop" }, "repeatEnd": true },
+		{ "number": "7", "length": "h.", "ending": { "number": "2", "start": true, "stop": "discontinue" } }
+	],
+	"voices": {
+		"T1": {
+			"range": ["D3", "A4"],
+			"notes": "Bb3:q | C4:q Bb3:q Eb4:q D4:q | C4:h Bb3:q D4:q | D4:q D4:q G4:q F4:q | Eb4:h D4:q D4:q | D4:q D4:q Eb4:q D4:q | C4:h. | C4:q C4:q Bb3:q^",
+			"lyrics": [
+				"Der Mond ist auf- ge- gan- gen, die gold- nen Stern- lein pran- gen am Him- mel hell und klar.",
+				"Der Wald steht schwarz und schwei- get, und aus den Wie- sen stei- get der wei- ße Ne- bel * wun- der- bar."
+			]
+		},
+		"T2": {
+			"range": ["Bb2", "F4"],
+			"notes": "F3:q | A3:q F3:q Bb3:q Bb3:q | (G3:q A3:q) F3:q Bb3:q | C4:q Bb3:q Eb4:q D4:q | C4:h Bb3:q Bb3:q | Bb3:q Bb3:q G3:q F3:q | A3:h. | A3:q A3:q F3:q^"
+		},
+		"B1": {
+			"range": ["G2", "D4"],
+			"notes": "D3:q | Eb3:q D3:q Eb3:q F3:q | Eb3:h D3:q G3:q | F#3:q G3:q Bb3:q B3:q | (G3:q A3:q) F3:q F3:q | G3:q G3:q Eb3:q Bb2:q | F3:h. | F3:q Eb3:q D3:q^",
+			"lyrics": [
+				"Der Mond ist auf- ge- gan- gen, die gold- nen Stern- lein pran- gen am Him- mel hell und klar.",
+				"Der Wald steht schwarz und schwei- get, und aus den Wie- sen stei- get der wei- ße Ne- bel * wun- der- bar."
+			]
+		},
+		"B2": {
+			"range": ["D2", "C4"],
+			"notes": "Bb2:q | F2:q Bb2:q G2:q Bb2:q | (C3:q F2:q) Bb2:q G2:q | D3:q G2:q Eb3:q G3:q | (C3:q F2:q) Bb2:q Bb2:q | G2:q Bb2:q C3:q F2:q | F2:h. | F2:q F2:q Bb2:q^"
+		}
+	}
+}

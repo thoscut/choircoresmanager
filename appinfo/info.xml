@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<info xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	  xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
+	<id>notenarchiv</id>
+	<name>Notenarchiv</name>
+	<summary lang="en">Sheet music archive for choirs: catalog, rights, scores, concerts</summary>
+	<summary lang="de">Notenarchiv für Chöre: Bestand, Rechte, Noten, Konzerte</summary>
+	<description lang="en"><![CDATA[Keep the catalog of your choir's sheet music archive inside Nextcloud, from the binder on the shelf to the concert programme.
+
+- **Catalog:** works, versions (arrangements, editions) and copies (shelf marks) as separate levels. Nothing is deleted, every change is logged.
+- **Rights:** copyright status per version with reasoning, confirmation and evidence; licenses with separate uses; separate releases for the singers' portal, the print station and publication. Preservation copies are never shared or played.
+- **Files:** links to the scans, MusicXML and MuseScore files that already live in your Nextcloud. The app only reads them.
+- **Score viewer:** MusicXML shown in the browser with bar ranges and voice focus, playback with the chosen voice emphasised, a text description for screen readers.
+- **Working together:** questions with a location in the score, internal excerpt links, a proposals inbox and a start page with what is due.
+- **Concerts and song lists:** rights warnings and deadlines, confirmation of what was sung, derived repertoire figures.
+- **Care of the archive:** accession with label printing, register of persons with a protection-term suggestion, merging with undo, inventory, checksums.
+- **Safety:** weekly backups (CSV, ODS and a complete JSON backup) into the archive folder, restore, notifications to the people responsible (never to singers).
+- **Access by groups,** e.g. the music librarian writes, the board and the conductor read.
+
+Accessible (WCAG 2.2 AA) with inclusive wording, in English and German. Works on managed hosting without shell access; an existing catalog can be imported from CSV.]]></description>
+	<description lang="de"><![CDATA[Führt das Werkverzeichnis des Notenarchivs eines Chors in Nextcloud, von der Mappe im Regal bis zum Konzertprogramm.
+
+- **Bestand:** Werk, Fassung (Satz, Bearbeitung, Ausgabe) und Exemplar (Signatur) als getrennte Ebenen. Nichts wird gelöscht, jede Änderung wird protokolliert.
+- **Rechte:** Rechtestatus je Fassung mit Begründung, Bestätigung und Beleg; Lizenzen mit getrennten Nutzungen; getrennte Freigaben für Chorportal, Druckstation und Veröffentlichung. Erhaltungskopien werden nie geteilt oder abgespielt.
+- **Dateien:** Verweise auf die Scans, MusicXML- und MuseScore-Dateien, die schon in der Nextcloud liegen. Die App liest sie nur.
+- **Notenansicht:** MusicXML im Browser mit Taktbereichen und Stimmfokus, Abspielen mit hervorgehobener Stimme, Textbeschreibung für Screenreader.
+- **Zusammenarbeit:** Rückfragen mit Stelle in den Noten, interne Ausschnitt-Links, Vorschlagseingang und eine Startseite mit allem, was ansteht.
+- **Konzerte und Liederlisten:** Rechtewarnungen und Fristen, Bestätigung des Gesungenen, abgeleitete Repertoirezahlen.
+- **Pflege des Archivs:** Neuzugang mit Etikettendruck, Personenregister mit Vorschlag zur Schutzfrist, Zusammenführen mit Rücknahme, Inventur, Prüfsummen.
+- **Sicherheit:** wöchentliche Sicherungen (CSV, ODS und vollständige JSON-Sicherung) in den Archivordner, Wiederherstellung, Benachrichtigungen an die Zuständigen (nie an Singende).
+- **Zugriff über Gruppen,** z. B. die Archivverwaltung schreibt, Vorstand und Chorleitung lesen.
+
+Barrierefrei (WCAG 2.2 AA) mit inklusiver Sprache, auf Deutsch und Englisch. Läuft auch bei gehosteten Nextclouds ohne Shell-Zugang; ein vorhandenes Verzeichnis lässt sich aus CSV übernehmen.]]></description>
+	<version>0.1.23</version>
+	<licence>AGPL-3.0-or-later</licence>
+	<author homepage="https://github.com/thoscut">Thomas Scheel</author>
+	<namespace>Notenarchiv</namespace>
+	<documentation>
+		<user>https://github.com/thoscut/choircoresmanager/blob/main/docs/user-guide.md</user>
+		<admin>https://github.com/thoscut/choircoresmanager/blob/main/docs/admin-guide.md</admin>
+		<developer>https://github.com/thoscut/choircoresmanager/blob/main/docs/api.md</developer>
+	</documentation>
+	<category>organization</category>
+	<category>office</category>
+	<website>https://github.com/thoscut/choircoresmanager</website>
+	<bugs>https://github.com/thoscut/choircoresmanager/issues</bugs>
+	<repository type="git">https://github.com/thoscut/choircoresmanager.git</repository>
+	<screenshot>https://raw.githubusercontent.com/thoscut/choircoresmanager/main/docs/screenshots/01-catalog-with-filters.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/thoscut/choircoresmanager/main/docs/screenshots/02-copy-rights.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/thoscut/choircoresmanager/main/docs/screenshots/03-score-voice-focus.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/thoscut/choircoresmanager/main/docs/screenshots/04-concert-planning.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/thoscut/choircoresmanager/main/docs/screenshots/05-start-page-due.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/thoscut/choircoresmanager/main/docs/screenshots/06-merge-proposals-german.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/thoscut/choircoresmanager/main/docs/screenshots/07-score-dark-theme.png</screenshot>
+	<dependencies>
+		<php min-version="8.2"/>
+		<!-- Tested with MySQL/MariaDB only; PostgreSQL, SQLite and Oracle are not tested. -->
+		<database>mysql</database>
+		<nextcloud min-version="33" max-version="35"/>
+	</dependencies>
+	<background-jobs>
+		<job>OCA\Notenarchiv\BackgroundJob\WeeklyBackup</job>
+		<job>OCA\Notenarchiv\BackgroundJob\DailyChecks</job>
+		<job>OCA\Notenarchiv\BackgroundJob\ChecksumJob</job>
+	</background-jobs>
+	<commands>
+		<command>OCA\Notenarchiv\Command\Setup</command>
+		<command>OCA\Notenarchiv\Command\Import</command>
+		<command>OCA\Notenarchiv\Command\Export</command>
+		<command>OCA\Notenarchiv\Command\FileSync</command>
+		<command>OCA\Notenarchiv\Command\Restore</command>
+	</commands>
+</info>

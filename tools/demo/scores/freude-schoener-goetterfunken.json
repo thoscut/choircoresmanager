@@ -1,0 +1,69 @@
+{
+	"id": "freude-schoener-goetterfunken",
+	"title": "Freude, schöner Götterfunken",
+	"subtitle": "Ode an die Freude – Satz für gemischten Chor",
+	"creditLeft": "Text: Friedrich Schiller (1785/1803)",
+	"creditRight": "Melodie: Ludwig van Beethoven (1824) · Satz: Demo-Satz (CC0)",
+	"composer": "Ludwig van Beethoven",
+	"lyricist": "Friedrich Schiller",
+	"arranger": "Demo-Satz (CC0)",
+	"rights": "Melodie und Text gemeinfrei. Satz: CC0 1.0 (Notenarchiv-Demo-Bestand)",
+	"key": { "fifths": 1, "mode": "major" },
+	"time": "4/4",
+	"tempo": { "words": "Feierlich bewegt", "beatUnit": "quarter", "perMinute": 108 },
+	"staves": [
+		{ "name": "Sopran", "abbreviation": "S", "clef": "treble", "voices": ["S"] },
+		{ "name": "Alt", "abbreviation": "A", "clef": "treble", "voices": ["A"] },
+		{ "name": "Tenor", "abbreviation": "T", "clef": "treble-8", "voices": ["T"] },
+		{ "name": "Bass", "abbreviation": "B", "clef": "bass", "voices": ["B"] }
+	],
+	"measures": [
+		{ "number": "1", "dynamics": "mf" },
+		{ "number": "2" },
+		{ "number": "3" },
+		{ "number": "4", "ending": { "number": "1", "start": true, "stop": "stop" }, "repeatEnd": true },
+		{ "number": "5", "ending": { "number": "2", "start": true, "stop": "discontinue" } },
+		{ "number": "6", "dynamics": "p" },
+		{ "number": "7" },
+		{ "number": "8" },
+		{ "number": "9" },
+		{ "number": "10", "dynamics": "f" },
+		{ "number": "11" },
+		{ "number": "12" },
+		{ "number": "13" }
+	],
+	"voices": {
+		"S": {
+			"range": ["C4", "G5"],
+			"notes": "B4:q B4:q C5:q D5:q | D5:q C5:q B4:q A4:q | G4:q G4:q A4:q B4:q | B4:q. A4:e A4:h | A4:q. G4:e G4:h | A4:q A4:q B4:q G4:q | A4:q (B4:e C5:e) B4:q G4:q | A4:q (B4:e C5:e) B4:q A4:q | G4:q A4:q D4:q B4:q~ | B4:q B4:q C5:q D5:q | D5:q C5:q B4:q A4:q | G4:q G4:q A4:q B4:q | A4:q. G4:e G4:h^",
+			"lyrics": [
+				"Freu- de, schö- ner Göt- ter- fun- ken, Toch- ter aus E- ly- si- um, * * * Dei- ne Zau- ber bin- den wie- der, was die Mo- de streng ge- teilt; al- le Men- schen wer- den Brü- der, wo dein sanf- ter Flü- gel weilt.",
+				"wir be- tre- ten feu- er- trun- ken, Himm- li- sche, dein * * * Hei- lig- tum!"
+			]
+		},
+		"A": {
+			"range": ["G3", "D5"],
+			"notes": "G4:q G4:q G4:q G4:q | G4:q E4:q G4:q F#4:q | D4:q E4:q D4:q G4:q | G4:q. G4:e F#4:h | F#4:q. F#4:e D4:h | F#4:q D4:q D4:q E4:q | F#4:q D4:q E4:q E4:q | F#4:q G4:q D4:q D4:q | B3:q C#4:q D4:q G4:q~ | G4:q G4:q G4:q G4:q | G4:q E4:q G4:q F#4:q | D4:q E4:q D4:q G4:q | F#4:q. F#4:e D4:h^",
+			"lyrics": [
+				"Freu- de, schö- ner Göt- ter- fun- ken, Toch- ter aus E- ly- si- um, * * * Dei- ne Zau- ber bin- den wie- der, was die Mo- de streng ge- teilt; al- le Men- schen wer- den Brü- der, wo dein sanf- ter Flü- gel weilt.",
+				"wir be- tre- ten feu- er- trun- ken, Himm- li- sche, dein * * * Hei- lig- tum!"
+			]
+		},
+		"T": {
+			"range": ["C3", "G4"],
+			"notes": "D4:q E4:q E4:q D4:q | B3:q A3:q G3:q A3:q | B3:q B3:q A3:q D4:q | D4:q. D4:e D4:h | C4:q. C4:e B3:h | D4:q A3:q G3:q B3:q | D4:q B3:q G3:q B3:q | C4:q B3:q G3:q F#3:q | G3:q G3:q A3:q D4:q~ | D4:q E4:q E4:q D4:q | B3:q A3:q G3:q A3:q | B3:q B3:q A3:q D4:q | C4:q. C4:e B3:h^",
+			"lyrics": [
+				"Freu- de, schö- ner Göt- ter- fun- ken, Toch- ter aus E- ly- si- um, * * * Dei- ne Zau- ber bin- den wie- der, was die Mo- de streng ge- teilt; al- le Men- schen wer- den Brü- der, wo dein sanf- ter Flü- gel weilt.",
+				"wir be- tre- ten feu- er- trun- ken, Himm- li- sche, dein * * * Hei- lig- tum!"
+			]
+		},
+		"B": {
+			"range": ["E2", "D4"],
+			"notes": "G3:q E3:q C3:q B2:q | G2:q A2:q D3:q D3:q | G2:q E3:q F#3:q G3:q | D3:q. D3:e D3:h | D3:q. D3:e G2:h | D3:q F#2:q G2:q E3:q | D3:q G2:q E3:q E3:q | D3:q G2:q G2:q D3:q | E3:q E3:q F#3:q G3:q~ | G3:q E3:q C3:q B2:q | G2:q A2:q D3:q D3:q | G2:q E3:q F#3:q G3:q | D3:q. D3:e G2:h^",
+			"lyrics": [
+				"Freu- de, schö- ner Göt- ter- fun- ken, Toch- ter aus E- ly- si- um, * * * Dei- ne Zau- ber bin- den wie- der, was die Mo- de streng ge- teilt; al- le Men- schen wer- den Brü- der, wo dein sanf- ter Flü- gel weilt.",
+				"wir be- tre- ten feu- er- trun- ken, Himm- li- sche, dein * * * Hei- lig- tum!"
+			]
+		}
+	}
+}

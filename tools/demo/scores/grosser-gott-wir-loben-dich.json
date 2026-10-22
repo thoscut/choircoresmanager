@@ -1,0 +1,62 @@
+{
+	"id": "grosser-gott-wir-loben-dich",
+	"title": "Großer Gott, wir loben dich",
+	"subtitle": "Satz für gemischten Chor",
+	"creditLeft": "Text: Ignaz Franz (1768)",
+	"creditRight": "Melodie: Wien 1776 · Satz: Demo-Satz (CC0)",
+	"composer": "Melodie: Wien 1776",
+	"lyricist": "Ignaz Franz",
+	"arranger": "Demo-Satz (CC0)",
+	"rights": "Melodie und Text gemeinfrei. Satz: CC0 1.0 (Notenarchiv-Demo-Bestand)",
+	"key": { "fifths": -1, "mode": "major" },
+	"time": "3/4",
+	"tempo": { "words": "Feierlich", "beatUnit": "quarter", "perMinute": 92 },
+	"staves": [
+		{ "name": "Sopran/Alt", "abbreviation": "S/A", "clef": "treble", "voices": ["S", "A"] },
+		{ "name": "Tenor/Bass", "abbreviation": "T/B", "clef": "bass", "voices": ["T", "B"] }
+	],
+	"measures": [
+		{ "number": "1", "dynamics": "f" },
+		{ "number": "2" },
+		{ "number": "3" },
+		{ "number": "4" },
+		{ "number": "5" },
+		{ "number": "6" },
+		{ "number": "7" },
+		{ "number": "8", "repeatEnd": true },
+		{ "number": "9" },
+		{ "number": "10" },
+		{ "number": "11" },
+		{ "number": "12" },
+		{ "number": "13" },
+		{ "number": "14" },
+		{ "number": "15" },
+		{ "number": "16" }
+	],
+	"voices": {
+		"S": {
+			"range": ["C4", "G5"],
+			"notes": "F4:h F4:q | (F4:q E4:q) F4:q | (G4:q A4:q) G4:q | F4:h. | A4:h A4:q | (A4:q G4:q) F4:q | (C5:q Bb4:q) A4:q | A4:q G4:q r:q | G4:h A4:q | (Bb4:q A4:q) G4:q | A4:h Bb4:q | C5:h. | D5:h D5:q | (C5:q Bb4:q) A4:q | (Bb4:q A4:q) G4:q | F4:h.^",
+			"lyrics": [
+				"Gro- ßer Gott, wir lo- ben dich; Herr, wir prei- sen dei- ne Stär- ke. Wie du warst vor al- ler Zeit, so bleibst du in E- wig- keit.",
+				"Vor dir neigt die Er- de sich und be- wun- dert dei- ne Wer- ke."
+			]
+		},
+		"A": {
+			"range": ["G3", "D5"],
+			"notes": "C4:h D4:q | (D4:q C4:q) C4:q | (E4:q F4:q) E4:q | C4:h. | F4:h F4:q | (F4:q D4:q) C4:q | G4:h F4:q | F4:q E4:q r:q | E4:h F4:q | (G4:q F4:q) E4:q | F4:h F4:q | F4:h. | F4:h G4:q | E4:h F4:q | (G4:q F4:q) E4:q | C4:h.^"
+		},
+		"T": {
+			"range": ["C3", "G4"],
+			"notes": "A3:h A3:q | Bb3:h A3:q | C4:h Bb3:q | A3:h. | C4:h A3:q | (A3:q Bb3:q) A3:q | C4:h C4:q | C4:q C4:q r:q | Bb3:h A3:q | D4:h Bb3:q | A3:h D4:q | C4:h. | Bb3:h Bb3:q | G3:h A3:q | (D4:q C4:q) Bb3:q | A3:h.^",
+			"lyrics": [
+				"Gro- ßer Gott, wir lo- ben dich; Herr, wir prei- sen dei- ne Stär- ke. Wie du warst vor al- ler Zeit, so bleibst du in E- wig- keit.",
+				"Vor dir neigt die Er- de sich und be- wun- dert dei- ne Wer- ke."
+			]
+		},
+		"B": {
+			"range": ["E2", "D4"],
+			"notes": "F3:h D3:q | (Bb2:q C3:q) F3:q | (C3:q F3:q) C3:q | F3:h. | F3:h F3:q | (D3:q Bb2:q) F3:q | E3:h F3:q | C3:q C3:q r:q | C3:h F3:q | (Bb2:q F3:q) C3:q | F3:h Bb2:q | A2:h. | Bb2:h G2:q | C3:h F3:q | (Bb2:q C3:q) C3:q | F2:h.^"
+		}
+	}
+}

@@ -1,0 +1,9 @@
+# Text files are stored and checked out with LF, also on Windows (shell
+# scripts must run in CI and on servers as they are).
+* text=auto eol=lf
+
+*.png binary
+*.mxl binary
+*.ods binary
+*.xlsx binary
+*.pdf binary

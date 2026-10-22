@@ -1,0 +1,135 @@
+<?php
+
+declare(strict_types=1);
+
+namespace OCA\Notenarchiv\Service;
+
+use OCA\Notenarchiv\Db\EventItem;
+use OCA\Notenarchiv\Db\EventItemMapper;
+use OCA\Notenarchiv\Db\LicenseMapper;
+use OCA\Notenarchiv\Db\ProposalMapper;
+use OCA\Notenarchiv\Db\WorkMapper;
+use OCA\Notenarchiv\Db\WorkVersionMapper;
+
+/**
+ * The start page "due": what each role should do next, so that a successor
+ * without instruction sees the open work (hand-over test).
+ *
+ * Priorities follow the expert reports: the current repertoire first.
+ */
+class DueService {
+	public function __construct(
+		private Roles $roles,
+		private TaskService $tasks,
+		private ProposalMapper $proposals,
+		private ReleaseListService $releaseLists,
+		private LicenseMapper $licenses,
+		private WorkVersionMapper $versions,
+		private WorkMapper $works,
+		private RightsService $rights,
+		private RepertoireService $repertoire,
+		private EventItemMapper $eventItems,
+	) {
+	}
+
+	/**
+	 * @return array{cards: list<array{key: string, count: int, label: string}>, tasks: list<array<string, mixed>>}
+	 */
+	public function forUser(string $uid): array {
+		$roles = $this->roles->rolesOf($uid);
+		$isLibrarian = in_array(Roles::LIBRARIAN, $roles, true);
+		$isConductor = in_array(Roles::CONDUCTOR, $roles, true);
+		$cards = [];
+		$tasks = $this->tasks->forUser($uid);
+		$open = count(array_filter($tasks, fn (array $t): bool => $t['status'] === 'open'));
+		$answered = count($tasks) - $open;
+		if ($open > 0) {
+			$cards[] = ['key' => 'tasks_open', 'count' => $open, 'label' => 'Open tasks for your role'];
+		}
+		if ($isLibrarian && $answered > 0) {
+			$cards[] = ['key' => 'tasks_answered', 'count' => $answered, 'label' => 'Answered tasks to apply'];
+		}
+
+		$current = $this->currentRepertoireVersions();
+		if ($isLibrarian || $isConductor) {
+			$ambiguous = count($this->eventItems->findByAssignment(EventItem::AMBIGUOUS));
+			if ($ambiguous > 0) {
+				$cards[] = ['key' => 'ambiguous_items', 'count' => $ambiguous, 'label' => 'Programme lines with an unclear shelf mark'];
+			}
+		}
+		if ($isLibrarian) {
+			$proposals = $this->proposals->countOpen();
+			if ($proposals > 0) {
+				$cards[] = ['key' => 'proposals', 'count' => $proposals, 'label' => 'Proposals in the inbox'];
+			}
+			$portal = array_count_values(array_column($this->releaseLists->portal($uid), 'status'));
+			if (($portal['remove'] ?? 0) > 0) {
+				$cards[] = ['key' => 'portal_remove', 'count' => $portal['remove'], 'label' => 'Remove from the singers\' portal'];
+			}
+			if (($portal['add'] ?? 0) > 0) {
+				$cards[] = ['key' => 'portal_add', 'count' => $portal['add'], 'label' => 'Released, not yet in the singers\' portal'];
+			}
+			$unconfirmed = 0;
+			$rule1 = 0;
+			foreach ($current as $version) {
+				if ($version->getRightsStatus() === 'public_domain' && !$version->isConfirmed()) {
+					$unconfirmed++;
+				}
+				if ($version->getPreservationCopy() === true && in_array($version->getValue('rule1_status'), [null, 'unchecked', 'board_assumption'], true)) {
+					$rule1++;
+				}
+			}
+			if ($unconfirmed > 0) {
+				$cards[] = ['key' => 'confirm_current', 'count' => $unconfirmed, 'label' => 'Current repertoire: public domain to confirm'];
+			}
+			if ($rule1 > 0) {
+				$cards[] = ['key' => 'rule1_current', 'count' => $rule1, 'label' => 'Current repertoire: check originals of preservation copies'];
+			}
+			$today = $this->rights->today($uid);
+			$soon = (new \DateTimeImmutable($today))->modify('+30 days')->format('Y-m-d');
+			$expiring = 0;
+			foreach ($this->licenses->findAllByVersion() as $list) {
+				foreach ($list as $license) {
+					$end = $license->getValidUntil();
+					if ($end !== null && $end <= $soon) {
+						$expiring++;
+					}
+				}
+			}
+			if ($expiring > 0) {
+				$cards[] = ['key' => 'licenses_expiring', 'count' => $expiring, 'label' => 'Licenses ending or ended'];
+			}
+		}
+		if ($isConductor) {
+			$withoutValid = [];
+			$valid = [];
+			foreach ($this->versions->findAllById() as $version) {
+				if ($version->getValidSince() !== null) {
+					$valid[$version->getWorkId()] = true;
+				}
+			}
+			foreach ($current as $version) {
+				if (!isset($valid[$version->getWorkId()])) {
+					$withoutValid[$version->getWorkId()] = true;
+				}
+			}
+			if ($withoutValid !== []) {
+				$cards[] = ['key' => 'valid_missing', 'count' => count($withoutValid), 'label' => 'Current repertoire: no valid version chosen'];
+			}
+		}
+		return ['cards' => $cards, 'tasks' => $tasks];
+	}
+
+	/**
+	 * Versions of works marked as current repertoire (imported value until
+	 * performances are recorded in the app).
+	 *
+	 * @return list<\OCA\Notenarchiv\Db\WorkVersion>
+	 */
+	private function currentRepertoireVersions(): array {
+		$works = $this->works->findAllById();
+		$derived = $this->repertoire->perWork();
+		return array_values(array_filter($this->versions->findAllById(),
+			fn ($v): bool => CatalogService::repertoireFigures($works[$v->getWorkId()] ?? null, $derived)['repertoire_class'] === 'current'));
+	}
+}

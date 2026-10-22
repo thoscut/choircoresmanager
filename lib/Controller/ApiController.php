@@ -1,0 +1,255 @@
+<?php
+
+declare(strict_types=1);
+
+namespace OCA\Notenarchiv\Controller;
+
+use OCA\Notenarchiv\AppInfo\Application;
+use OCA\Notenarchiv\Db\AuditEntryMapper;
+use OCA\Notenarchiv\Exception\AccessDeniedException;
+use OCA\Notenarchiv\Exception\InvalidInputException;
+use OCA\Notenarchiv\Exception\UserFacingException;
+use OCA\Notenarchiv\Service\AppSettings;
+use OCA\Notenarchiv\Service\CatalogService;
+use OCA\Notenarchiv\Service\ExportService;
+use OCA\Notenarchiv\Service\FileSyncService;
+use OCA\Notenarchiv\Service\ImportService;
+use OCA\Notenarchiv\Service\Input;
+use OCA\Notenarchiv\Service\MetaService;
+use OCA\Notenarchiv\Service\ProtectionText;
+use OCA\Notenarchiv\Service\Roles;
+use OCA\Notenarchiv\Service\ScoreService;
+use OCA\Notenarchiv\Service\UserFiles;
+use OCP\AppFramework\Controller;
+use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\FrontpageRoute;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
+use OCP\AppFramework\Http\Attribute\OpenAPI;
+use OCP\AppFramework\Http\Attribute\UserRateLimit;
+use OCP\AppFramework\Http\DataDisplayResponse;
+use OCP\AppFramework\Http\DataDownloadResponse;
+use OCP\AppFramework\Http\JSONResponse;
+use OCP\AppFramework\Http\Response;
+use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\IDateTimeZone;
+use OCP\IL10N;
+use OCP\IRequest;
+use Psr\Log\LoggerInterface;
+
+/**
+ * JSON API for the UI (see docs/api.md).
+ *
+ * Every method checks the required role itself. Admins may read and change
+ * settings, but may only write catalog data if they also hold a role.
+ *
+ * @psalm-suppress UnusedClass
+ */
+#[OpenAPI(OpenAPI::SCOPE_IGNORE)]
+class ApiController extends Controller {
+	use RunsActions;
+
+	public function __construct(
+		IRequest $request,
+		private ?string $userId,
+		private Roles $roles,
+		private MetaService $meta,
+		private CatalogService $catalog,
+		private ImportService $import,
+		private ExportService $export,
+		private FileSyncService $fileSync,
+		private AppSettings $settings,
+		private AuditEntryMapper $auditEntries,
+		private UserFiles $userFiles,
+		private ITimeFactory $time,
+		private IDateTimeZone $timeZone,
+		private ScoreService $scores,
+		private IL10N $l,
+		private LoggerInterface $logger,
+	) {
+		parent::__construct(Application::APP_ID, $request);
+	}
+
+	#[NoAdminRequired]
+	#[FrontpageRoute(verb: 'GET', url: '/api/meta')]
+	public function meta(): JSONResponse {
+		return $this->run(function (string $uid) {
+			$this->roles->requireAccess($uid);
+			return $this->meta->forUser($uid);
+		});
+	}
+
+	#[NoAdminRequired]
+	#[FrontpageRoute(verb: 'GET', url: '/api/entries')]
+	public function entries(): JSONResponse {
+		return $this->run(function (string $uid) {
+			$this->roles->requireAccess($uid);
+			return $this->catalog->entries();
+		});
+	}
+
+	#[NoAdminRequired]
+	#[FrontpageRoute(verb: 'GET', url: '/api/entries/{id}', requirements: ['id' => '\d+'])]
+	public function entry(int $id): JSONResponse {
+		return $this->run(function (string $uid) use ($id) {
+			$this->roles->requireAccess($uid);
+			$entry = $this->catalog->entry($id, $uid);
+			$score = $entry['score'];
+			if ($score !== null && $score['reason'] !== null) {
+				$score['reason'] = $this->l->t($score['reason']);
+				$entry['score'] = $score;
+			}
+			$releases = $entry['releases'];
+			if ($releases['portal'] !== null) {
+				$releases['portal'] = $this->l->t($releases['portal']);
+			}
+			if ($releases['printStation'] !== null) {
+				$releases['printStation'] = $this->l->t($releases['printStation']);
+			}
+			$entry['releases'] = $releases;
+			$entry['protection'] = ProtectionText::apply($this->l, $entry['protection']);
+			return $entry;
+		});
+	}
+
+	/**
+	 * Raw MusicXML of a score file for the score viewer.
+	 */
+	#[NoAdminRequired]
+	#[FrontpageRoute(verb: 'GET', url: '/api/files/{id}/content', requirements: ['id' => '\d+'])]
+	public function fileContent(int $id): Response {
+		if ($this->userId === null) {
+			return new JSONResponse(['error' => $this->l->t('Not logged in.')], Http::STATUS_UNAUTHORIZED);
+		}
+		try {
+			$this->roles->requireAccess($this->userId);
+			$score = $this->scores->content($id, $this->userId);
+		} catch (UserFacingException $e) {
+			$status = $e instanceof AccessDeniedException ? Http::STATUS_FORBIDDEN : Http::STATUS_BAD_REQUEST;
+			return new JSONResponse(['error' => $this->translate($e->getMessage(), $e->getParameters())], $status);
+		}
+		// The viewer fetches the file with a script. Opened directly, the
+		// browser must neither render the XML on the Nextcloud origin nor guess
+		// another type: attachment, nosniff and the strict default policy of
+		// data responses (default-src 'none'). The file name is fixed (ASCII).
+		$response = new DataDisplayResponse($score['content'], Http::STATUS_OK, ['Content-Type' => $score['mime']]);
+		$response->addHeader('Content-Disposition', 'attachment; filename="score.' . $score['type'] . '"');
+		$response->addHeader('X-Content-Type-Options', 'nosniff');
+		$response->cacheFor(0, false, false);
+		return $response;
+	}
+
+	/**
+	 * @param array<string, mixed> $fields
+	 */
+	#[NoAdminRequired]
+	#[FrontpageRoute(verb: 'PATCH', url: '/api/{level}/{id}', requirements: ['level' => 'work|version|copy', 'id' => '\d+'])]
+	public function update(string $level, int $id, array $fields = [], ?string $reason = null): JSONResponse {
+		return $this->run(function (string $uid) use ($level, $id, $fields, $reason) {
+			$this->roles->requireAccess($uid);
+			$this->catalog->update($level, $id, $fields, $uid, $reason);
+			return ['ok' => true];
+		});
+	}
+
+	#[NoAdminRequired]
+	#[UserRateLimit(limit: 30, period: 600)]
+	#[FrontpageRoute(verb: 'POST', url: '/api/import')]
+	public function import(int $fileId, bool $dryRun = true): JSONResponse {
+		return $this->run(function (string $uid) use ($fileId, $dryRun) {
+			$this->roles->requireRole($uid, [Roles::LIBRARIAN]);
+			$file = $this->userFiles->read($uid, $fileId, UserFiles::MAX_IMPORT_BYTES,
+				new InvalidInputException('The selected CSV file is not accessible.'));
+			$report = $this->import->import($file['content'], $file['name'], $uid, $dryRun);
+			return ['warnings' => $this->translateWarnings($report['warnings'])] + $report;
+		});
+	}
+
+	#[NoAdminRequired]
+	#[UserRateLimit(limit: 10, period: 600)]
+	#[FrontpageRoute(verb: 'POST', url: '/api/file-sync')]
+	public function fileSync(): JSONResponse {
+		return $this->run(function (string $uid) {
+			$this->roles->requireRole($uid, [Roles::LIBRARIAN]);
+			return $this->fileSync->sync($uid);
+		});
+	}
+
+	/**
+	 * Plain download link, therefore without CSRF token. Read-only.
+	 */
+	#[NoAdminRequired]
+	#[NoCSRFRequired]
+	#[UserRateLimit(limit: 30, period: 600)]
+	#[FrontpageRoute(verb: 'GET', url: '/api/export')]
+	public function export(int $extended = 0): Response {
+		if ($this->userId === null || !$this->roles->hasAccess($this->userId)) {
+			return new JSONResponse(['error' => $this->l->t('You have no access to the music archive.')], Http::STATUS_FORBIDDEN);
+		}
+		$today = $this->time->getDateTime('now', $this->timeZone->getTimeZone(false, $this->userId));
+		$name = $today->format('Ymd') . '_catalog' . ($extended === 1 ? '_full' : '') . '.csv';
+		$response = new DataDownloadResponse($this->export->csv($extended === 1), $name, 'text/csv; charset=utf-8');
+		$response->addHeader('X-Content-Type-Options', 'nosniff');
+		return $response;
+	}
+
+	#[NoAdminRequired]
+	#[UserRateLimit(limit: 10, period: 600)]
+	#[FrontpageRoute(verb: 'POST', url: '/api/export/store')]
+	public function exportStore(): JSONResponse {
+		return $this->run(function (string $uid) {
+			$this->roles->requireRole($uid, [Roles::LIBRARIAN]);
+			return ['path' => $this->export->store('export', $uid)];
+		});
+	}
+
+	#[NoAdminRequired]
+	#[FrontpageRoute(verb: 'GET', url: '/api/audit')]
+	public function audit(int $limit = 200): JSONResponse {
+		return $this->run(function (string $uid) use ($limit) {
+			$this->roles->requireAccess($uid);
+			return $this->auditEntries->findLatest(max(1, min($limit, 1000)));
+		});
+	}
+
+	#[FrontpageRoute(verb: 'GET', url: '/api/settings')]
+	public function settings(): JSONResponse {
+		return $this->run(function (string $uid) {
+			$this->roles->requireAdmin($uid);
+			return $this->settingsData();
+		});
+	}
+
+	/**
+	 * @param array<array-key, mixed>|null $roles role => list of group ids (request data)
+	 */
+	#[FrontpageRoute(verb: 'PUT', url: '/api/settings')]
+	public function updateSettings(?array $roles = null, ?int $archiveFolderId = null): JSONResponse {
+		return $this->run(function (string $uid) use ($roles, $archiveFolderId) {
+			$this->roles->requireAdmin($uid);
+			$roles ??= [];
+			foreach (array_keys($roles) as $role) {
+				$role = (string)$role;
+				if (!in_array($role, Roles::ALL, true)) {
+					throw new InvalidInputException('Unknown role: %s', [$role]);
+				}
+				$this->roles->setGroups($role, Input::stringList($roles[$role], 'Groups'));
+			}
+			if ($archiveFolderId !== null) {
+				$this->settings->setArchiveFolder($uid, $archiveFolderId);
+			}
+			return $this->settingsData();
+		});
+	}
+
+	/**
+	 * @return array<string, mixed>
+	 */
+	private function settingsData(): array {
+		$roles = [];
+		foreach (Roles::ALL as $role) {
+			$roles[$role] = $this->roles->groups($role);
+		}
+		return ['roles' => $roles, 'archive' => $this->settings->archiveInfo()];
+	}
+}

@@ -1,0 +1,55 @@
+{
+	"id": "kein-schoener-land",
+	"title": "Kein schöner Land",
+	"subtitle": "Satz für Männerchor",
+	"creditLeft": "Text: Anton Wilhelm von Zuccalmaglio (1840)",
+	"creditRight": "Volksweise · Satz: Demo-Satz (CC0)",
+	"composer": "Volksweise",
+	"lyricist": "Anton Wilhelm von Zuccalmaglio",
+	"arranger": "Demo-Satz (CC0)",
+	"rights": "Melodie und Text gemeinfrei. Satz: CC0 1.0 (Notenarchiv-Demo-Bestand)",
+	"key": { "fifths": 0, "mode": "major" },
+	"time": "3/4",
+	"tempo": { "words": "Ruhig", "beatUnit": "quarter", "perMinute": 80 },
+	"staves": [
+		{ "name": "Tenor 1/2", "abbreviation": "T 1/2", "clef": "treble-8", "voices": ["T1", "T2"] },
+		{ "name": "Bass 1/2", "abbreviation": "B 1/2", "clef": "bass", "voices": ["B1", "B2"] }
+	],
+	"measures": [
+		{ "number": "0", "implicit": true, "length": "q.", "dynamics": "p" },
+		{ "number": "1" },
+		{ "number": "2" },
+		{ "number": "3" },
+		{ "number": "4" },
+		{ "number": "5", "dynamics": "mf" },
+		{ "number": "6" },
+		{ "number": "7" },
+		{ "number": "8", "dynamics": "p" },
+		{ "number": "9" },
+		{ "number": "10", "length": "q." }
+	],
+	"voices": {
+		"T1": {
+			"range": ["D3", "A4"],
+			"notes": "G3:e G3:e G3:e | C4:q E4:q D4:e C4:e | D4:q r:e G3:e G3:e G3:e | C4:q E4:q D4:e C4:e | D4:q r:e E4:e C4:e D4:e | (E4:e G4:e) F4:e E4:e D4:e C4:e | (D4:e F4:e) E4:e D4:e C4:e D4:e | E4:q r:e E4:e C4:e D4:e | (E4:e G4:e) F4:e E4:e D4:e C4:e | (D4:e F4:e) E4:e D4:e C4:e B3:e | C4:q^ r:e",
+			"lyrics": [
+				"Kein schö- ner Land in die- ser Zeit, als hier das uns- re weit und breit, wo wir uns fin- den wohl un- ter Lin- den zur A- bend- zeit! Wo wir uns fin- den wohl un- ter Lin- den zur A- bend- zeit!"
+			]
+		},
+		"T2": {
+			"range": ["B2", "F#4"],
+			"notes": "E3:e E3:e E3:e | G3:q C4:q A3:q | B3:q r:e E3:e E3:e E3:e | G3:q C4:q A3:q | B3:q r:e C4:e A3:e B3:e | C4:q C4:q B3:q | B3:q C4:q A3:q | C4:q r:e C4:e A3:e B3:e | C4:q C4:q B3:q | B3:q G3:q G3:q | G3:q^ r:e"
+		},
+		"B1": {
+			"range": ["G2", "D4"],
+			"notes": "C3:e C3:e C3:e | E3:q E3:q F3:e F3:e | D3:q r:e C3:e C3:e C3:e | E3:q E3:q F3:e F3:e | D3:q r:e G3:e E3:e G3:e | G3:q A3:e C4:e G3:e G3:e | G3:q G3:e E3:e F3:e F3:e | G3:q r:e G3:e E3:e G3:e | G3:q A3:e C4:e G3:e G3:e | D3:q C3:e C3:e D3:e D3:e | E3:q^ r:e",
+			"lyrics": [
+				"Kein schö- ner Land in die- ser Zeit, als hier das uns- re weit und breit, wo wir uns fin- den wohl un- ter Lin- den zur A- bend- zeit! Wo wir uns fin- den wohl un- ter Lin- den zur A- bend- zeit!"
+			]
+		},
+		"B2": {
+			"range": ["E2", "C4"],
+			"notes": "C3:e C3:e C3:e | C3:q A2:q D3:q | G2:q r:e C3:e C3:e C3:e | C3:q A2:q D3:q | G2:q r:e C3:e C3:e G2:e | C3:q F2:q G2:q | G2:q C3:q F2:q | C3:q r:e C3:e C3:e G2:e | C3:q F2:q G2:q | G2:q C3:q G2:q | C3:q^ r:e"
+		}
+	}
+}

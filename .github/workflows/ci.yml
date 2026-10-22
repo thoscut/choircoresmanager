@@ -1,0 +1,248 @@
+# Continuous integration of the Notenarchiv app on GitHub Actions.
+#
+# Every job runs in a pinned container image and installs what it needs, so
+# it does not depend on the software of the runner host. Actions are pinned
+# to the commit of a release (the version is noted next to the hash).
+#
+# Forgejo Actions (e.g. Codeberg) reads .github/workflows as well when a
+# repository has no .forgejo/workflows; there the runner needs the label
+# "ubuntu-latest". JavaScript actions such as actions/checkout run inside the
+# job container on Forgejo and therefore need Node.js there; the PHP jobs
+# install it first (GitHub brings its own).
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  COMPOSER_ALLOW_SUPERUSER: '1'
+  COMPOSER_NO_INTERACTION: '1'
+  DEBIAN_FRONTEND: noninteractive
+
+jobs:
+  php-lint:
+    name: PHP lint ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.2', '8.3', '8.4']
+    container:
+      image: php:${{ matrix.php }}-cli
+    steps:
+      - name: Install job tools
+        run: apt-get update -qq && apt-get install -y -qq --no-install-recommends git nodejs ca-certificates
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Lint all PHP files
+        run: find appinfo lib templates tests -name '*.php' -print0 | xargs -0 -n1 php -l
+
+  composer:
+    name: Composer (validate, audit)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container:
+      image: php:8.2-cli
+    steps:
+      - name: Install job tools
+        run: apt-get update -qq && apt-get install -y -qq --no-install-recommends git unzip curl nodejs ca-certificates
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install Composer
+        run: sh .github/scripts/install-composer.sh
+      - name: Validate composer.json and lock file
+        run: composer validate --no-check-publish
+      - name: Install dependencies
+        run: composer install --no-progress
+      - name: Audit dependencies of the app and the tools
+        run: |
+          composer audit
+          composer bin all audit
+
+  psalm:
+    name: Psalm
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    container:
+      image: php:8.2-cli
+    steps:
+      - name: Install job tools
+        run: apt-get update -qq && apt-get install -y -qq --no-install-recommends git unzip curl nodejs ca-certificates
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install Composer
+        run: sh .github/scripts/install-composer.sh
+      - name: Install dependencies
+        run: composer install --no-progress
+      - name: Static analysis
+        run: vendor/bin/psalm --no-cache --no-progress --threads=2 --output-format=compact
+
+  cs-check:
+    name: Coding standard
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container:
+      # The lowest supported PHP version, as recommended by PHP-CS-Fixer
+      image: php:8.2-cli
+    steps:
+      - name: Install job tools
+        run: apt-get update -qq && apt-get install -y -qq --no-install-recommends git unzip curl nodejs ca-certificates
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install Composer
+        run: sh .github/scripts/install-composer.sh
+      - name: Install dependencies
+        run: composer install --no-progress
+      - name: Check the coding standard
+        run: vendor/bin/php-cs-fixer fix --dry-run --diff --show-progress=none
+
+  phpunit:
+    name: Unit tests ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.2', '8.3', '8.4']
+    container:
+      image: php:${{ matrix.php }}-cli
+    steps:
+      - name: Install job tools
+        run: apt-get update -qq && apt-get install -y -qq --no-install-recommends git unzip curl nodejs ca-certificates libzip-dev
+      - name: Install the zip extension (spreadsheet reader and writer tests)
+        run: docker-php-ext-install zip >/dev/null && php -m | grep -qx zip
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install Composer
+        run: sh .github/scripts/install-composer.sh
+      - name: Install dependencies
+        run: composer install --no-progress
+      - name: Unit tests (without Nextcloud server)
+        run: vendor/bin/phpunit -c tests/phpunit.xml --colors=never
+
+  node:
+    name: Frontend (lint, styles, types, unit tests, build, translations)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    container:
+      # Node.js and npm versions as required by "engines" in package.json
+      image: node:24
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Trust the workspace for git
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Lint
+        run: npm run lint
+      - name: Stylelint
+        # Styles of the Vue components with Nextcloud's shared configuration
+        run: npm run stylelint
+      - name: Type check
+        # vue-tsc: TypeScript and the templates of the Vue components
+        run: npm run typecheck
+      - name: Unit tests
+        # vitest: score logic, catalog filters, text references, start parameters, durations,
+        # maintenance helpers, MXL limits, SVG cleaning, focus voice emphasis,
+        # start page labels in singular and plural, access to the inbox
+        run: npm test
+      - name: Build
+        run: npm run build
+      - name: Translations complete
+        # Fails when a source string has no German translation.
+        run: npm run l10n
+      - name: Translation files up to date
+        run: |
+          if [ -n "$(git status --porcelain -- l10n)" ]; then
+            git --no-pager diff --stat -- l10n
+            echo "l10n/ is not up to date: run 'npm run l10n' and commit the result." >&2
+            exit 1
+          fi
+
+  integration:
+    # The integration tests in tests/Integration against a freshly installed
+    # Nextcloud with MariaDB, the app and the public demo data (tools/demo).
+    # The oldest and the newest supported Nextcloud (appinfo/info.xml).
+    name: Integration tests, Nextcloud ${{ matrix.nextcloud }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        nextcloud: ['33', '35']
+    container:
+      image: php:8.3-cli
+    services:
+      mariadb:
+        # Long-term support release, as on the acceptance instance
+        image: mariadb:11.8
+        env:
+          # Throwaway database of this job only
+          MARIADB_ROOT_PASSWORD: nextcloud-ci
+        options: >-
+          --health-cmd "healthcheck.sh --connect --innodb_initialized"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 30
+    env:
+      NEXTCLOUD_ROOT: /opt/nextcloud
+    defaults:
+      run:
+        # bash with -e and -o pipefail
+        shell: bash
+    steps:
+      - name: Install job tools and the PHP extensions Nextcloud needs
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends git curl bzip2 ca-certificates libpng-dev libzip-dev libicu-dev >/dev/null
+          docker-php-ext-install -j"$(nproc)" gd intl pdo_mysql zip >/dev/null
+          echo 'memory_limit = 1G' > /usr/local/etc/php/conf.d/zz-ci.ini
+          php -r 'foreach (["gd", "intl", "pdo_mysql", "zip"] as $e) { extension_loaded($e) || exit(1); }'
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          # As required by "engines" in package.json; the demo build needs 22 or newer
+          node-version: '24'
+      - name: Build the frontend
+        run: |
+          npm ci --no-audit --no-fund
+          npm run build
+      - name: Build the demo data
+        run: node tools/demo/build.mjs
+      - name: Download Nextcloud ${{ matrix.nextcloud }} and check its checksum
+        env:
+          TARBALL: latest-${{ matrix.nextcloud }}.tar.bz2
+        run: |
+          cd "$RUNNER_TEMP"
+          curl -fsSLO "https://download.nextcloud.com/server/releases/$TARBALL"
+          curl -fsSLO "https://download.nextcloud.com/server/releases/$TARBALL.sha512"
+          grep " $TARBALL\$" "$TARBALL.sha512" | sha512sum -c -
+          tar -xjf "$TARBALL" -C "$(dirname "$NEXTCLOUD_ROOT")"
+          rm "$TARBALL"
+      - name: Install Nextcloud
+        run: |
+          admin_pass="$(head -c 32 /dev/urandom | base64 | tr -dc 'A-Za-z0-9')"
+          php "$NEXTCLOUD_ROOT/occ" maintenance:install --no-interaction \
+            --database=mysql --database-host=mariadb --database-port=3306 \
+            --database-name=nextcloud --database-user=root --database-pass=nextcloud-ci \
+            --admin-user=admin --admin-pass="$admin_pass" \
+            --data-dir="$NEXTCLOUD_ROOT/data"
+          php "$NEXTCLOUD_ROOT/occ" status
+      - name: Install the app
+        # Only the runtime files, as in the release archive
+        # (tools/release/package.sh). The app has no runtime dependencies
+        # from Composer: "require" in composer.json holds only the plugin for
+        # the tools in vendor-bin/, and Nextcloud loads the app's classes
+        # itself, so no "composer install" is needed.
+        run: |
+          mkdir "$NEXTCLOUD_ROOT/apps/notenarchiv"
+          cp -r appinfo lib templates img js css l10n LICENSE "$NEXTCLOUD_ROOT/apps/notenarchiv/"
+          php "$NEXTCLOUD_ROOT/occ" app:enable notenarchiv
+          for app in notenarchiv notifications; do
+            php "$NEXTCLOUD_ROOT/occ" app:list --enabled | grep -E "^  - $app:"
+          done
+      - name: Integration tests with the demo data
+        run: bash tools/ci/integration-demo.sh "$NEXTCLOUD_ROOT"

@@ -1,0 +1,189 @@
+# Roadmap Notenarchiv
+
+Das Notenarchiv ist eine Nextcloud-App für Chöre. Sie führt das
+Werkverzeichnis eines Notenarchivs in Nextcloud. Die Dateien selbst (Scans,
+MusicXML, MuseScore) bleiben, wo sie sind, in einem Ordner der Nextcloud.
+
+Die App ist aus den Anforderungen von fünf Beteiligten entstanden: Sänger,
+Chorleitung, Rechteinhaber, Vereinsorgane und Archivverwaltung (Notenwarte).
+
+Unterstützt werden Nextcloud 33 bis 35.
+
+## Leitlinien
+
+1. **Die App schlägt vor, Menschen entscheiden.**
+   - Einen Rechtestatus bestätigt die Archivverwaltung.
+   - Welche Fassung „gilt“, legt die Chorleitung fest.
+   - Kein Import und keine Automatik setzt eins von beiden.
+2. **Rechte hängen an der Fassung, nicht am Werk.**
+   - Ein Ausschnitt ist rechtlich so viel wie das Ganze.
+   - Interne Erhaltungskopien werden nie weitergegeben, abgespielt oder
+     exportiert.
+3. **Nichts wird gelöscht.**
+   - Exemplare bekommen einen Status.
+   - Jede Änderung wird protokolliert: wer, wann, alt, neu, Grund.
+4. **Dateien werden nur gelesen.** Die App ändert, verschiebt und benennt
+   keine Datei um.
+5. **Rollen statt Personen.**
+   - Rollen werden Nextcloud-Gruppen zugeordnet.
+   - Jede Rolle schreibt nur ihre Felder.
+   - Wer keine Rolle hat, sieht die App nicht.
+6. **Werkzeuge schlagen vor, Menschen übernehmen.** Massenänderungen aus
+   Skripten landen in einem Eingang.
+7. **Es gibt immer einen Rückweg.** Ein datierter Export (CSV/ODS) liegt
+   regelmäßig im Archivordner.
+8. **Papier bleibt die Rückfallebene.** Alle Listen lassen sich in A4
+   schwarzweiß drucken.
+9. **Keine fremden Server.** Notensatz, Schriften und Klänge sind in der App
+   enthalten. Es gibt kein CDN und keine Telemetrie.
+10. **Keine Rechtsberatung.** Die Rechte-Hilfen bilden deutsches Recht ab
+    (Stand der jeweiligen Version). Sie unterstützen eine Entscheidung,
+    ersetzen sie aber nicht.
+11. **Barrierefrei und inklusiv.**
+    - Ziel ist WCAG 2.2 AA.
+    - Alles ist per Tastatur und mit Bildschirmleser bedienbar.
+    - Information steht nie nur in der Farbe; Kontraste stimmen im hellen und
+      im dunklen Design.
+    - Zoom bis 200 % geht ohne Verlust; reduzierte Bewegung wird beachtet.
+    - Zum Notenbild gibt es Alternativen: Textverweis, Textbeschreibung des
+      Ausschnitts und Abspielen.
+    - Die deutsche Oberfläche verwendet neutrale, einfache Sprache.
+
+## Benachrichtigungen (Querschnitt)
+
+Die App meldet sich über die Nextcloud-Benachrichtigungen, die auf Wunsch
+auch als E-Mail-Zusammenfassung kommen. Dafür gilt:
+
+- Meldungen gehen nur an Rollen (Archivverwaltung, Chorleitung), nie an
+  Sänger.
+- Sie enthalten keine personenbezogenen Daten.
+- Sie lassen sich bündeln.
+- Eine erledigte Aufgabe nimmt ihre Meldung zurück.
+
+Ab welchem Meilenstein welcher Anlass gemeldet wird, steht bei den
+Meilensteinen.
+
+## Meilensteine
+
+### 0.1 Fundament
+
+- **Datenmodell** in vier Ebenen:
+  - Werk
+  - Fassung (Satz, Bearbeitung, Ausgabe)
+  - Exemplar (Signatur)
+  - Datei
+  - dazu ein Protokoll
+- **Rollen und Gruppen.** Der Server prüft jeden Zugriff, und die App ist für
+  andere unsichtbar.
+- **Import** eines vorhandenen Werkverzeichnisses aus CSV:
+  - Datei aus der Nextcloud wählen
+  - Bericht und Schnappschuss
+  - Wiederholung möglich
+- **Dateiabgleich** mit dem Archivordner über das Signatur-Präfix im
+  Dateinamen
+- **Liste, Suche, Filter und Werkansicht**, auch am Smartphone, mit
+  Rechteampel
+- **Pflege mit Protokoll.** Status statt Löschen.
+- **CSV-Export**, rundlauffähig zum Import
+
+### 0.2 Rechte und Verantwortung
+
+- **Rechte bestätigen**, mit Begründung und Beleg als Pflicht
+- **Drei getrennte Freigaben:**
+  - digitale Bereitstellung für Mitglieder
+  - Veröffentlichung
+  - Prüfstand
+- **Lizenzen mit einzelnen Nutzungsarten**, Stückzahl und Gültigkeit
+- **Erhaltungskopien** als harte Kennzeichnung mit Prüfung des Originals
+- **„Gilt für den Chor“** nur durch die Chorleitung, mit Historie
+- **Soll/Ist-Abgleich** für das Chorsystem, in dem die Sänger üben, und für
+  eine Druckstation
+- **Vorschlags-Eingang** für Werkzeuge
+- **Automatischer, datierter Export** (CSV/ODS mit Protokoll) als
+  Hintergrundjob
+- **Benachrichtigungen, Grundlage:**
+  - neuer Vorschlag
+  - Fassung herabgestuft, aber noch bereitgestellt
+  - Lizenz läuft ab
+  - Export fehlgeschlagen
+- **Erste Veröffentlichung im App Store**, als experimentell gekennzeichnet
+
+### 0.3 Aufgaben, Rückfragen und Teilen
+
+- **Rückfragen und Prüfaufgaben** mit Stelle: Seite, Takt von–bis, Stimme,
+  Strophe. Dazu Adressat-Rolle und Status.
+- **Startseite „fällig“** je Rolle, mit Druckliste
+- **Benachrichtigungen:** neue Rückfrage an meine Rolle; Rückfrage
+  beantwortet, zu übernehmen
+- **MusicXML-Ansicht in der App:**
+  - gedruckte Taktnummern
+  - Ausschnitt nach Taktbereich, mit der Scan-Seite daneben
+  - gewählte Stimme hervorgehoben, auch innerhalb eines Systems (z. B.
+    Tenor II in „Tenor I/II“)
+- **Teilen nach Stück, Takt und Stimme:**
+  - **Textverweis ohne Noten:** für alle Werke, frei weitergebbar
+  - **Ausschnitt-Link:** für angemeldete Archivrollen. Er zeigt den
+    Taktbereich mit allen Stimmen; die gewählte Stimme ist der Fokus und wird
+    hervorgehoben. Der Server prüft bei jedem Aufruf. Der Link läuft ab, lässt
+    sich widerrufen und zeigt „Stand geändert“, wenn sich die Datei ändert.
+
+### 0.4 Programme, Listen und Aufführungen
+
+- **Programme und Notenlisten:**
+  - Fassung je Programmpunkt
+  - Status Entwurf → fest → gesungen
+  - Rechtewarnungen und Fristen
+- **„Gesungen“ buchen.** Repertoire, Aufführungszahl und „zuletzt gesungen“
+  werden daraus abgeleitet.
+- **Ausgaben:**
+  - Liederfolge (CSV/PDF) für Verwertungsgesellschaft und Programmheft
+  - Konzertmappenliste
+  - Notenliste
+- **Import einer vorhandenen Aufführungsliste.** Mehrdeutige Zeilen werden zu
+  Rückfragen.
+- **Benachrichtigungen:**
+  - Konzertfristen
+  - „gesungen“ bestätigen
+  - wählbare wöchentliche Zusammenfassung statt Einzelmeldungen
+
+### 0.5 Bestand pflegen
+
+- **Neuzugang-Assistent:**
+  - schlägt die nächste freie Signatur vor
+  - fragt die Pflichtfelder ab
+  - druckt Etiketten als PDF
+- **Personenregister und Beteiligungen:**
+  - Rollen: Komponist, Text, Bearbeitung, Übersetzung
+  - Lebensdaten mit Genauigkeit und Quelle
+  - Schutzende nur als Vorschlag; unbekannte Daten gelten als geschützt
+  - Wiedervorlage
+- **Werke zusammenführen** per Vorschlag, rücknehmbar
+- **Benachrichtigung:** Wiedervorlage zum Schutzfristende
+- **Inventurliste und Prüfsummenvergleich**
+
+### 1.0 Stabil
+
+- Abnahme auf der niedrigsten unterstützten Nextcloud-Version
+- Übersetzungen
+- Dokumentation für Archivverwaltung und Admins
+- Mindestens zwei Maintainer
+
+### Später
+
+- **Ausschnitt-Links für Sänger mit Abspielen.** Die gewählte Stimme wird
+  betont (solo oder lauter, die übrigen leiser). Nur für Fassungen, die für
+  die digitale Bereitstellung freigegeben sind; der Server schneidet den
+  Taktbereich zu.
+- **Öffentliche Links** für Fassungen mit Veröffentlichungsfreigabe
+- **Ausgabe von Sängermappen** (Mappenbuch). Nur mit Löschfristen.
+- **Übe-Audio je Stimme** für freigegebene Fassungen
+- **Kalender und Auswertungen**
+
+## Bewusst nicht vorgesehen
+
+- **Funktionen eines Chorsystems:** Üben, Termine, Anwesenheit, Nachrichten an
+  Sänger
+- **Ausgabe und Rücknahme am Probenabend**
+- **Notensatz**
+- **Hochladen zu externen Notenbibliotheken**
+- **Automatische Urheberrechts- oder Lizenzvermerke**

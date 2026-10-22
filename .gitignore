@@ -1,0 +1,21 @@
+/.idea/
+/*.iml
+
+/vendor/
+/vendor-bin/*/vendor/
+
+/.php-cs-fixer.cache
+/tests/.phpunit.cache
+
+/node_modules/
+/js/
+/css/
+
+# Internal, non-public material (reviews, requirements); never in the public repository
+/_intern/
+/tools/l10n/strings.json
+
+# Local Composer binary and tool caches
+/composer.phar
+/.phpunit.cache/
+/build/

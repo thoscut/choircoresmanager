@@ -1,0 +1,56 @@
+{
+	"id": "stille-nacht",
+	"title": "Stille Nacht, heilige Nacht",
+	"subtitle": "Satz für gemischten Chor",
+	"creditLeft": "Text: Joseph Mohr (1816)",
+	"creditRight": "Melodie: Franz Xaver Gruber (1818) · Satz: Demo-Satz (CC0)",
+	"composer": "Franz Xaver Gruber",
+	"lyricist": "Joseph Mohr",
+	"arranger": "Demo-Satz (CC0)",
+	"rights": "Melodie und Text gemeinfrei. Satz: CC0 1.0 (Notenarchiv-Demo-Bestand)",
+	"key": { "fifths": 2, "mode": "major" },
+	"time": "6/8",
+	"tempo": { "words": "Ruhig wiegend", "beatUnit": "quarter", "dots": 1, "perMinute": 46 },
+	"staves": [
+		{ "name": "Sopran/Alt", "abbreviation": "S/A", "clef": "treble", "voices": ["S", "A"] },
+		{ "name": "Tenor/Bass", "abbreviation": "T/B", "clef": "bass", "voices": ["T", "B"] }
+	],
+	"measures": [
+		{ "number": "1", "dynamics": "p" },
+		{ "number": "2" },
+		{ "number": "3" },
+		{ "number": "4" },
+		{ "number": "5" },
+		{ "number": "6" },
+		{ "number": "7" },
+		{ "number": "8" },
+		{ "number": "9", "dynamics": "mf" },
+		{ "number": "10" },
+		{ "number": "11", "dynamics": "p" },
+		{ "number": "12" }
+	],
+	"voices": {
+		"S": {
+			"range": ["C4", "G5"],
+			"notes": "(A4:e. B4:s) A4:e F#4:q. | A4:e. B4:s A4:e F#4:q. | E5:q E5:e C#5:q. | D5:q D5:e A4:q. | B4:q B4:e D5:e. C#5:s B4:e | A4:e. B4:s A4:e F#4:q. | B4:q B4:e D5:e. C#5:s B4:e | A4:e. B4:s A4:e F#4:q. | E5:q E5:e G5:e. E5:s C#5:e | (D5:q. F#5:q) r:e | (D5:e. A4:s) F#4:e A4:e. G4:s E4:e | D4:q.~ D4:q^ r:e",
+			"lyrics": [
+				"Stil- le Nacht, hei- li- ge Nacht! Al- les schläft, ein- sam wacht nur das trau- te hoch- hei- li- ge Paar. Hol- der Kna- be im lo- cki- gen Haar, schlaf in himm- li- scher Ruh, schlaf in himm- li- scher Ruh!"
+			]
+		},
+		"A": {
+			"range": ["G3", "D5"],
+			"notes": "F#4:e. G4:s F#4:e D4:q. | F#4:e. G4:s F#4:e D4:q. | G4:q. G4:q. | F#4:q. F#4:q. | G4:q. G4:q. | F#4:e. G4:s F#4:e D4:q. | D4:q. D4:q. | F#4:e. G4:s F#4:e D4:q. | G4:q. A4:q. | (F#4:q. A4:q) r:e | F#4:q. C#4:q. | D4:q.~ D4:q^ r:e"
+		},
+		"T": {
+			"range": ["C3", "G4"],
+			"notes": "A3:q A3:e A3:q. | D4:e. D4:s D4:e A3:q. | C#4:q C#4:e E4:q. | D4:q D4:e D4:q. | D4:q D4:e D4:e. E4:s D4:e | D4:e. D4:s D4:e A3:q. | G3:q G3:e G3:e. A3:s G3:e | A3:e. A3:s A3:e A3:q. | C#4:q C#4:e C#4:e. B3:s A3:e | (A3:q. D4:q) r:e | A3:q A3:e G3:e. G3:s G3:e | F#3:q.~ F#3:q^ r:e",
+			"lyrics": [
+				"Stil- le Nacht, hei- li- ge Nacht! Al- les schläft, ein- sam wacht nur das trau- te hoch- hei- li- ge Paar. Hol- der Kna- be im lo- cki- gen Haar, schlaf in himm- li- scher Ruh, schlaf in himm- li- scher Ruh!"
+			]
+		},
+		"B": {
+			"range": ["E2", "D4"],
+			"notes": "D3:q. D3:q. | D3:q. D3:q. | A2:q. A2:q. | D3:q. D3:q. | G2:q. G2:q. | D3:q. D3:q. | G2:q. G2:q. | D3:q. D3:q. | A2:q. A2:q. | D3:q. D3:q r:e | D3:q. A2:q. | D3:q.~ D3:q^ r:e"
+		}
+	}
+}

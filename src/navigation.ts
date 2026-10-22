@@ -1,0 +1,98 @@
+/**
+ * Which view the app shows, kept in sync with the URL so that the browser's
+ * back button works and a view can be bookmarked. Also the presets the start
+ * page uses to open a filtered view.
+ */
+import type { ViewName } from './startParams.ts'
+import type { ReleaseStatus } from './types.ts'
+
+import { reactive, ref, watch } from 'vue'
+import { buildQuery, DEFAULT_VIEW, parseStartParams } from './startParams.ts'
+import { closeEntry, filters, openEntry, resetFilters, selectedId } from './store.ts'
+
+export const currentView = ref<ViewName>(DEFAULT_VIEW)
+export const currentEventId = ref<number | null>(null)
+
+/** Filters of the task list. */
+export const taskFilters = reactive({
+	/** 'mine': tasks for my roles; 'all': all tasks */
+	scope: 'mine' as 'mine' | 'all',
+	/** '' = open and answered */
+	status: '' as '' | 'open' | 'answered',
+	/** also show closed tasks (applied, discarded) */
+	closed: false,
+})
+
+/** Status shown first in a release list ('' = all). */
+export const releaseFilter = ref<ReleaseStatus | ''>('')
+
+/** Person to show in the register (opened from a contribution). */
+export const selectedPersonId = ref<number | null>(null)
+
+let listening = false
+
+/**
+ * Write the current location into the URL.
+ *
+ * @param replace - replace the history entry instead of adding one
+ */
+function writeLocation(replace: boolean): void {
+	const query = buildQuery({ view: currentView.value, eventId: currentEventId.value, copyId: selectedId.value })
+	const url = window.location.pathname + query + window.location.hash
+	if (url === window.location.pathname + window.location.search + window.location.hash) {
+		return
+	}
+	if (replace) {
+		window.history.replaceState(null, '', url)
+	} else {
+		window.history.pushState(null, '', url)
+	}
+}
+
+/**
+ * Show a view.
+ *
+ * @param view - the view
+ * @param options - event of the event view; replace: no new history entry
+ * @param options.eventId - event id for the event view
+ * @param options.replace - replace the history entry
+ */
+export function navigate(view: ViewName, options: { eventId?: number | null, replace?: boolean } = {}): void {
+	currentView.value = view
+	currentEventId.value = view === 'event' ? (options.eventId ?? null) : null
+	writeLocation(options.replace === true)
+}
+
+/** Take over the URL after the back or forward button. */
+function onPopState(): void {
+	const params = parseStartParams(window.location.search)
+	currentView.value = params.view ?? DEFAULT_VIEW
+	currentEventId.value = params.eventId
+	if (params.copyId !== null && params.copyId !== selectedId.value) {
+		openEntry(params.copyId)
+	} else if (params.copyId === null && selectedId.value !== null) {
+		closeEntry()
+	}
+}
+
+/** Start keeping view and URL in sync (once). */
+export function startNavigation(): void {
+	if (listening) {
+		return
+	}
+	listening = true
+	window.addEventListener('popstate', onPopState)
+	// The open copy is part of the URL, without a history entry of its own
+	watch(selectedId, () => writeLocation(true))
+}
+
+/**
+ * Open the catalog with filters, e.g. from a card of the start page.
+ *
+ * @param preset - filters to set after resetting all others
+ */
+export function showCatalog(preset: Partial<typeof filters> = {}): void {
+	resetFilters()
+	Object.assign(filters, preset)
+	navigate('catalog')
+}

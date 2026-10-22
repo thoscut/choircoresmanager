@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<!--
+  Static analysis of the server code at the strictest level (errorLevel 1,
+  including values of unknown type).
+
+  The public Nextcloud API comes from nextcloud/ocp in the version of the oldest
+  supported Nextcloud (see composer.json), so only APIs that exist there pass.
+  Doctrine DBAL and Symfony Console are dev dependencies in the versions that
+  this Nextcloud ships.
+
+  There is deliberately no baseline: findings are fixed, or suppressed in the
+  code with a reason. The issue handlers below only cover what the analysis
+  cannot see of the Nextcloud framework; each one names the reason.
+-->
+<psalm
+	errorLevel="1"
+	phpVersion="8.2"
+	resolveFromConfigFile="true"
+	findUnusedCode="true"
+	findUnusedBaselineEntry="true"
+	findUnusedPsalmSuppress="true"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="https://getpsalm.org/schema/config"
+	xsi:schemaLocation="https://getpsalm.org/schema/config vendor-bin/psalm/vendor/vimeo/psalm/config.xsd"
+>
+	<projectFiles>
+		<directory name="lib"/>
+		<ignoreFiles>
+			<directory name="vendor"/>
+		</ignoreFiles>
+	</projectFiles>
+	<extraFiles>
+		<directory name="vendor/nextcloud/ocp"/>
+	</extraFiles>
+	<stubs>
+		<!-- Private server interface that OCP\Files\IRootFolder extends -->
+		<file name="tests/stubs/oc_hooks_emitter.php" preloadClasses="true"/>
+	</stubs>
+	<issueHandlers>
+		<!-- Services, mappers and controllers are created by the dependency injection container. -->
+		<PossiblyUnusedMethod>
+			<errorLevel type="suppress">
+				<referencedMethod name="*::__construct"/>
+			</errorLevel>
+		</PossiblyUnusedMethod>
+		<!-- Classes stay open so that the unit tests can replace them with test doubles. -->
+		<ClassMustBeFinal>
+			<errorLevel type="suppress">
+				<directory name="lib"/>
+			</errorLevel>
+		</ClassMustBeFinal>
+		<!-- Entity properties are read and written through the magic accessors of OCP\AppFramework\Db\Entity. -->
+		<PossiblyUnusedProperty>
+			<errorLevel type="suppress">
+				<directory name="lib/Db"/>
+			</errorLevel>
+		</PossiblyUnusedProperty>
+		<!-- Entity::$id is set by the mapper when an entity is loaded or inserted. -->
+		<PropertyNotSetInConstructor>
+			<errorLevel type="suppress">
+				<referencedProperty name="OCP\AppFramework\Db\Entity::$id"/>
+			</errorLevel>
+		</PropertyNotSetInConstructor>
+		<!-- Entry points registered in appinfo/info.xml (jobs, commands) or found by name (migrations). -->
+		<UnusedClass>
+			<errorLevel type="suppress">
+				<directory name="lib/BackgroundJob"/>
+				<directory name="lib/Command"/>
+				<directory name="lib/Migration"/>
+			</errorLevel>
+		</UnusedClass>
+	</issueHandlers>
+</psalm>

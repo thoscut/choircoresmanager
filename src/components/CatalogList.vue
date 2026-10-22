@@ -1,0 +1,522 @@
+<script setup lang="ts">
+/**
+ * The catalog: a table on wide screens, cards below ~700px. Large
+ * catalogs are rendered in steps: the first rows at once, the rest in the
+ * following frames, so that typing a search or clearing a filter never
+ * blocks the page for long (2,000 copies: about 0.1 s instead of 0.7 s).
+ */
+import type { Entry, SortOrder } from '../types.ts'
+
+import { mdiFilterRemoveOutline, mdiMagnify } from '@mdi/js'
+import { n, t } from '../l10n.ts'
+import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from 'vue'
+import NcButton from '@nextcloud/vue/components/NcButton'
+import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
+import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
+import NcRadioGroup from '@nextcloud/vue/components/NcRadioGroup'
+import NcRadioGroupButton from '@nextcloud/vue/components/NcRadioGroupButton'
+import NcTextField from '@nextcloud/vue/components/NcTextField'
+import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
+import RightsBadge from './RightsBadge.vue'
+import { isEntryConfirmed, songListCount } from '../catalog.ts'
+import { formatDate } from '../format.ts'
+import { repertoireClassLabel, repertoireSourceLabel } from '../labels.ts'
+import {
+	choiceLabel,
+	entries,
+	filters,
+	filtersActive,
+	openEntry,
+	resetFilters,
+	selectedId,
+	sortOrder,
+	visibleEntries,
+} from '../store.ts'
+import { useStickyHeader } from '../stickyHeader.ts'
+
+/** Below this width of the list area cards replace the table. */
+const CARD_BREAKPOINT = 700
+
+const isMobile = useIsMobile()
+const root = useTemplateRef<HTMLElement>('root')
+
+// Focused rows scroll below the sticky header, not under it (WCAG 2.4.11)
+useStickyHeader(useTemplateRef<HTMLElement>('header'))
+const narrow = ref(false)
+let observer: ResizeObserver | null = null
+
+onMounted(() => {
+	if (!root.value) {
+		return
+	}
+	narrow.value = root.value.clientWidth < CARD_BREAKPOINT
+	observer = new ResizeObserver(([entry]) => {
+		narrow.value = entry.contentRect.width < CARD_BREAKPOINT
+	})
+	observer.observe(root.value)
+})
+
+onBeforeUnmount(() => {
+	observer?.disconnect()
+	window.cancelAnimationFrame(renderFrame)
+})
+
+/** Rows rendered at once, and per following frame. */
+const FIRST_ROWS = 150
+const MORE_ROWS = 250
+
+const renderLimit = ref(FIRST_ROWS)
+let renderFrame = 0
+
+/** Render further rows in the next frame until all matches are shown. */
+function renderMore(): void {
+	window.cancelAnimationFrame(renderFrame)
+	if (renderLimit.value >= visibleEntries.value.length) {
+		return
+	}
+	renderFrame = window.requestAnimationFrame(() => {
+		renderLimit.value += MORE_ROWS
+		renderMore()
+	})
+}
+
+// A new search, filter or order starts with the first rows again
+watch(visibleEntries, () => {
+	renderLimit.value = FIRST_ROWS
+	renderMore()
+}, { immediate: true })
+
+const renderedEntries = computed(() => visibleEntries.value.slice(0, renderLimit.value))
+
+const sortModel = computed({
+	get: () => sortOrder.value,
+	set: (value: string) => {
+		sortOrder.value = value as SortOrder
+	},
+})
+
+const countText = computed(() => {
+	const shown = visibleEntries.value.length
+	const total = entries.value.length
+	if (shown === total) {
+		return n('notenarchiv', '%n copy', '%n copies', total)
+	}
+	return t('notenarchiv', '{shown} of {total} copies', { shown, total })
+})
+
+/**
+ * aria-sort value of a sortable column.
+ *
+ * @param order - the column's sort order
+ */
+function ariaSort(order: SortOrder): 'ascending' | 'none' {
+	return sortOrder.value === order ? 'ascending' : 'none'
+}
+
+/**
+ * Text for the files column, e.g. "9 files, 3 PDFs".
+ *
+ * @param entry - catalog entry
+ */
+function filesTitle(entry: Entry): string {
+	return n('notenarchiv', '%n file', '%n files', entry.files)
+		+ ', ' + n('notenarchiv', '%n PDF', '%n PDFs', entry.pdfs)
+}
+
+/**
+ * Confirmation of the rights for the badge (true or null).
+ *
+ * @param entry - catalog entry
+ */
+function confirmation(entry: Entry): true | null {
+	return isEntryConfirmed(entry) ? true : null
+}
+
+/**
+ * Repertoire class with where it comes from and the last performance.
+ *
+ * @param entry - catalog entry
+ */
+function repertoireText(entry: Entry): string {
+	const parts = [repertoireClassLabel(entry.repertoire_class)]
+	if (entry.last_performed_on) {
+		parts.push(t('notenarchiv', 'last {date}', { date: formatDate(entry.last_performed_on) }))
+	}
+	return parts.join(', ')
+}
+
+/**
+ * Where the repertoire class comes from, for a tooltip and screen readers.
+ *
+ * @param entry - catalog entry
+ */
+function repertoireDetail(entry: Entry): string {
+	// Derived from performances: the number says it; otherwise name the source
+	const parts = [entry.repertoire_source === 'performances' && entry.performances
+		? n('notenarchiv', '%n documented performance', '%n documented performances', entry.performances)
+		: repertoireSourceLabel(entry.repertoire_source)]
+	const songLists = songListCount(entry)
+	if (songLists > 0) {
+		parts.push(n('notenarchiv', 'on %n song list', 'on %n song lists', songLists))
+	}
+	return parts.filter((part) => part !== '').join(', ')
+}
+
+/**
+ * Status shown next to the shelf mark if the copy is not active.
+ *
+ * @param entry - catalog entry
+ */
+function statusText(entry: Entry): string {
+	return entry.status === 'active' ? '' : choiceLabel('copy', 'status', entry.status)
+}
+</script>
+
+<template>
+	<div ref="root" class="catalog">
+		<div ref="header" class="catalog__header">
+			<h2 class="hidden-visually">
+				{{ t('notenarchiv', 'Catalog') }}
+			</h2>
+			<NcTextField v-if="isMobile"
+				v-model="filters.search"
+				class="catalog__search"
+				type="search"
+				:label="t('notenarchiv', 'Shelf mark, title or composer')"
+				:show-trailing-button="filters.search !== ''"
+				@trailing-button-click="filters.search = ''">
+				<template #icon>
+					<NcIconSvgWrapper :path="mdiMagnify" />
+				</template>
+			</NcTextField>
+			<div class="catalog__toolbar">
+				<p class="catalog__count" aria-live="polite">
+					{{ countText }}
+				</p>
+				<NcRadioGroup v-model="sortModel"
+					class="catalog__sort"
+					:label="t('notenarchiv', 'Sort by')"
+					hide-label>
+					<NcRadioGroupButton value="catalog" :label="t('notenarchiv', 'Catalog order')" />
+					<NcRadioGroupButton value="shelfmark" :label="t('notenarchiv', 'Shelf mark')" />
+					<NcRadioGroupButton value="title" :label="t('notenarchiv', 'Title')" />
+				</NcRadioGroup>
+			</div>
+		</div>
+
+		<NcEmptyContent v-if="visibleEntries.length === 0"
+			:name="t('notenarchiv', 'No matches')"
+			:description="t('notenarchiv', 'No copy matches the search and filters. Retired copies are only shown when the status filter includes them.')">
+			<template #icon>
+				<NcIconSvgWrapper :path="mdiMagnify" />
+			</template>
+			<template v-if="filtersActive" #action>
+				<NcButton @click="resetFilters">
+					<template #icon>
+						<NcIconSvgWrapper :path="mdiFilterRemoveOutline" />
+					</template>
+					{{ t('notenarchiv', 'Reset search and filters') }}
+				</NcButton>
+			</template>
+		</NcEmptyContent>
+
+		<!-- Cards for narrow screens -->
+		<ul v-else-if="narrow" class="catalog-cards">
+			<li v-for="entry in renderedEntries" :key="entry.id">
+				<button type="button"
+					class="catalog-card"
+					:class="{ 'catalog-card--selected': entry.id === selectedId }"
+					:aria-current="entry.id === selectedId ? 'true' : undefined"
+					@click="openEntry(entry.id)">
+					<span class="catalog-card__head">
+						<span class="shelfmark">{{ entry.shelfmark }}</span>
+						<span class="catalog-card__title">{{ entry.title || t('notenarchiv', '(no title)') }}</span>
+					</span>
+					<span v-if="entry.composer" class="catalog-card__composer">{{ entry.composer }}</span>
+					<span class="catalog-card__meta">
+						<RightsBadge :rights-status="entry.rights_status"
+							:rights-confirmed="confirmation(entry)"
+							:preservation-copy="entry.preservation_copy" />
+						<span v-if="statusText(entry)" class="status-tag">{{ statusText(entry) }}</span>
+						<span class="catalog-card__detail">{{ repertoireText(entry) }}</span>
+						<span class="catalog-card__detail">{{ filesTitle(entry) }}</span>
+						<span v-if="entry.has_musicxml" class="musicxml-tag">MusicXML</span>
+					</span>
+				</button>
+			</li>
+		</ul>
+
+		<!-- Table for wide screens -->
+		<table v-else class="catalog-table">
+			<caption class="hidden-visually">
+				{{ t('notenarchiv', 'Catalog') }}
+			</caption>
+			<thead>
+				<tr>
+					<th scope="col" :aria-sort="ariaSort('shelfmark')">
+						<button type="button" class="catalog-table__sort" @click="sortModel = 'shelfmark'">
+							{{ t('notenarchiv', 'Shelf mark') }}
+						</button>
+					</th>
+					<th scope="col" :aria-sort="ariaSort('title')">
+						<button type="button" class="catalog-table__sort" @click="sortModel = 'title'">
+							{{ t('notenarchiv', 'Title') }}
+						</button>
+					</th>
+					<th scope="col">
+						{{ t('notenarchiv', 'Composer') }}
+					</th>
+					<th scope="col">
+						{{ t('notenarchiv', 'Rights') }}
+					</th>
+					<th scope="col">
+						{{ t('notenarchiv', 'Repertoire') }}
+					</th>
+					<th scope="col" class="catalog-table__files">
+						{{ t('notenarchiv', 'Files') }}
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr v-for="entry in renderedEntries"
+					:key="entry.id"
+					:class="{ 'catalog-table__row--selected': entry.id === selectedId }"
+					@click="openEntry(entry.id)">
+					<td>
+						<button type="button"
+							class="catalog-table__open shelfmark"
+							:aria-current="entry.id === selectedId ? 'true' : undefined"
+							:aria-label="t('notenarchiv', 'Open {shelfmark}', { shelfmark: entry.shelfmark })"
+							@click.stop="openEntry(entry.id)">
+							{{ entry.shelfmark }}
+						</button>
+						<span v-if="statusText(entry)" class="status-tag">{{ statusText(entry) }}</span>
+					</td>
+					<td class="catalog-table__title">
+						{{ entry.title }}
+					</td>
+					<td>{{ entry.composer }}</td>
+					<td>
+						<RightsBadge :rights-status="entry.rights_status"
+							:rights-confirmed="confirmation(entry)"
+							:preservation-copy="entry.preservation_copy" />
+					</td>
+					<td>
+						{{ repertoireText(entry) }}
+						<span v-if="repertoireDetail(entry)" class="catalog-table__detail">{{ repertoireDetail(entry) }}</span>
+					</td>
+					<td class="catalog-table__files" :title="filesTitle(entry)">
+						{{ entry.files }}
+						<span v-if="entry.has_musicxml" class="musicxml-tag">MusicXML</span>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</template>
+
+<style scoped>
+.catalog {
+	min-height: 100%;
+}
+
+.catalog__header {
+	position: sticky;
+	top: 0;
+	z-index: 2;
+	display: flex;
+	flex-direction: column;
+	gap: var(--default-grid-baseline);
+	padding: calc(2 * var(--default-grid-baseline));
+	/* room for the navigation toggle button */
+	padding-inline-start: calc(var(--default-clickable-area) + 3 * var(--default-grid-baseline));
+	background-color: var(--color-main-background);
+	border-bottom: 1px solid var(--color-border);
+}
+
+.catalog__toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: calc(2 * var(--default-grid-baseline));
+}
+
+.catalog__count {
+	margin: 0;
+	color: var(--color-text-maxcontrast);
+}
+
+.catalog__sort {
+	max-width: 420px;
+	flex: 1 1 280px;
+}
+
+.shelfmark {
+	font-weight: bold;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+
+.status-tag,
+.musicxml-tag {
+	display: inline-block;
+	padding: 0 var(--default-grid-baseline);
+	border: 1px solid var(--color-border-maxcontrast);
+	border-radius: var(--border-radius-small, 4px);
+	color: var(--color-text-maxcontrast);
+	font-size: var(--font-size-small, 13px);
+	white-space: nowrap;
+}
+
+.status-tag {
+	margin-inline-start: var(--default-grid-baseline);
+	border-color: var(--color-warning-text, var(--color-warning));
+	color: var(--color-main-text);
+}
+
+/* ---- table ---- */
+
+.catalog-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.catalog-table th,
+.catalog-table td {
+	padding: var(--default-grid-baseline) calc(2 * var(--default-grid-baseline));
+	text-align: start;
+	vertical-align: top;
+	border-bottom: 1px solid var(--color-border);
+}
+
+.catalog-table th {
+	color: var(--color-text-maxcontrast);
+	font-weight: normal;
+	white-space: nowrap;
+}
+
+.catalog-table tbody tr {
+	cursor: pointer;
+}
+
+.catalog-table tbody tr:hover {
+	background-color: var(--color-background-hover);
+}
+
+.catalog-table__row--selected,
+.catalog-table tbody tr.catalog-table__row--selected:hover {
+	background-color: var(--color-primary-element-light);
+}
+
+.catalog-table__detail {
+	display: block;
+	color: var(--color-text-maxcontrast);
+	font-size: var(--font-size-small, 13px);
+}
+
+.catalog-table__title {
+	overflow-wrap: anywhere;
+}
+
+.catalog-table__files {
+	white-space: nowrap;
+}
+
+.catalog-table__sort,
+.catalog-table__open {
+	min-height: auto;
+	margin: 0;
+	padding: 0;
+	border: none;
+	background: none;
+	color: inherit;
+	font: inherit;
+	cursor: pointer;
+}
+
+.catalog-table__sort {
+	text-decoration: underline dotted;
+}
+
+.catalog-table th[aria-sort='ascending'] .catalog-table__sort {
+	color: var(--color-main-text);
+	font-weight: bold;
+	text-decoration: none;
+}
+
+.catalog-table__open {
+	font-weight: bold;
+}
+
+.catalog-table__sort:focus-visible,
+.catalog-table__open:focus-visible {
+	outline: 2px solid var(--color-main-text);
+	outline-offset: 2px;
+}
+
+/* ---- cards ---- */
+
+.catalog-cards {
+	display: flex;
+	flex-direction: column;
+	gap: var(--default-grid-baseline);
+	padding: calc(2 * var(--default-grid-baseline));
+}
+
+.catalog-card {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: var(--default-grid-baseline);
+	width: 100%;
+	min-height: var(--default-clickable-area);
+	margin: 0;
+	padding: calc(2 * var(--default-grid-baseline));
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius-large, 10px);
+	background-color: var(--color-main-background);
+	color: var(--color-main-text);
+	font: inherit;
+	text-align: start;
+	cursor: pointer;
+}
+
+.catalog-card:hover {
+	background-color: var(--color-background-hover);
+}
+
+.catalog-card:focus-visible {
+	outline: 2px solid var(--color-main-text);
+	outline-offset: 2px;
+}
+
+.catalog-card--selected {
+	border-color: var(--color-primary-element);
+	background-color: var(--color-primary-element-light);
+}
+
+.catalog-card__head {
+	display: flex;
+	gap: calc(2 * var(--default-grid-baseline));
+	align-items: baseline;
+}
+
+.catalog-card__title {
+	font-weight: bold;
+	overflow-wrap: anywhere;
+}
+
+.catalog-card__composer,
+.catalog-card__detail {
+	color: var(--color-text-maxcontrast);
+	overflow-wrap: anywhere;
+}
+
+.catalog-card__meta {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--default-grid-baseline) calc(2 * var(--default-grid-baseline));
+}
+</style>

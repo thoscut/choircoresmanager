@@ -1,0 +1,158 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Integration test of the complete backup and restore against a real
+ * Nextcloud instance with an imported catalog (and a file sync, so that the
+ * file table is filled).
+ *
+ * Usage (as the web server user):
+ *   php tests/Integration/backup_test.php <nextcloud-root> <uid>
+ *
+ * <uid> must hold the role "librarian". Inside one outer transaction the
+ * test first adds at least one record to every table through the services
+ * (license, proposal, task, link, concert with an item, person with a
+ * contribution, merge), so that the round trip covers every table with
+ * content. It then exports the complete backup, empties all app tables,
+ * restores the backup and compares every table row by row; then everything
+ * is rolled back.
+ */
+
+require __DIR__ . '/harness.php';
+[$root, $uid] = IntegrationTest::start($argv, ['nextcloud-root', 'uid']);
+
+use OCA\Notenarchiv\Db\CopyMapper;
+use OCA\Notenarchiv\Db\Event;
+use OCA\Notenarchiv\Exception\UserFacingException;
+use OCA\Notenarchiv\Service\EventService;
+use OCA\Notenarchiv\Service\FullBackupService;
+use OCA\Notenarchiv\Service\LicenseService;
+use OCA\Notenarchiv\Service\LinkService;
+use OCA\Notenarchiv\Service\MergeService;
+use OCA\Notenarchiv\Service\PersonService;
+use OCA\Notenarchiv\Service\ProposalService;
+use OCA\Notenarchiv\Service\RightsService;
+use OCA\Notenarchiv\Service\TaskService;
+use OCP\IDBConnection;
+use OCP\Server;
+
+$check = IntegrationTest::check(...);
+$dump = function (IDBConnection $db, string $table): array {
+	$qb = $db->getQueryBuilder();
+	$qb->select('*')->from($table)->orderBy('id');
+	$rows = $qb->executeQuery()->fetchAllAssociative();
+	// Compare values as strings: drivers return numbers and booleans differently.
+	return array_map(fn (array $r): array => array_map(fn ($v) => $v === null ? null : (string)(is_bool($v) ? (int)$v : $v), $r), $rows);
+};
+
+$db = Server::get(IDBConnection::class);
+$backup = Server::get(FullBackupService::class);
+$tables = array_values(array_filter(FullBackupService::TABLES, fn (string $t): bool => $db->tableExists($t)));
+
+$db->beginTransaction();
+try {
+	// At least one record per table, created the way the app creates them.
+	$copies = Server::get(CopyMapper::class)->findAll();
+	$first = $copies[0] ?? null;
+	$other = null;
+	foreach ($copies as $copy) {
+		if ($first !== null && $copy->getVersionId() !== $first->getVersionId()) {
+			$other = $copy;
+			break;
+		}
+	}
+	$check('catalog has copies of two versions', $first !== null && $other !== null, count($copies) . ' copies');
+	if ($first !== null && $other !== null) {
+		$versionId = $first->getVersionId();
+		$today = Server::get(RightsService::class)->today($uid);
+		Server::get(LicenseService::class)->create($versionId, ['holder' => 'Backup test', 'uses' => ['binder', 'practice_audio'], 'quantity' => 0,
+			'valid_from' => $today, 'evidence' => 'invoice 0'], $uid);
+		Server::get(ProposalService::class)->propose('version', $versionId, ['rule1_count' => 0, 'scoring' => 'TTBB'], $uid, 'backup test', 'round 0');
+		Server::get(TaskService::class)->create($first->getId(), ['addressee' => 'librarian', 'question' => 'Backup test: is page 2 missing?', 'page' => 2], $uid);
+		Server::get(LinkService::class)->create($first->getId(), ['measure_from' => '1', 'measure_to' => '8', 'voice' => 'Tenor 1', 'note' => 'backup test'], $uid);
+		$events = Server::get(EventService::class);
+		$event = $events->create(Event::CONCERT, ['title' => 'Backup test concert', 'event_date' => $today, 'location' => 'Test hall', 'is_public' => true], $uid);
+		$events->addItem($event->getId(), $first->getId(), $uid);
+		$persons = Server::get(PersonService::class);
+		$person = $persons->create(['name' => 'Backup Test Person', 'born' => '1850', 'died' => '1910', 'identification' => 'probable'], $uid);
+		$persons->addContribution($versionId, $person->getId(), 'arranger', true, $uid);
+		Server::get(MergeService::class)->moveCopy($other->getId(), $versionId, $uid, 'backup test');
+	}
+
+	$before = [];
+	$empty = [];
+	foreach ($tables as $table) {
+		$before[$table] = $dump($db, $table);
+		if ($before[$table] === []) {
+			$empty[] = $table;
+		}
+	}
+	$check('every table has records before the export', $empty === [], $empty === [] ? count($tables) . ' tables' : 'empty: ' . implode(', ', $empty));
+
+	$json = $backup->export();
+	$parsed = FullBackupService::parse($json);
+	$check('backup passes its own format check with all tables', count($parsed['tables']) === count($tables), count($tables) . ' tables, ' . strlen($json) . ' bytes');
+
+	try {
+		$backup->restore($json, $uid);
+		$check('restore into a non-empty catalog is refused', false);
+	} catch (UserFacingException) {
+		$check('restore into a non-empty catalog is refused', true);
+	}
+	try {
+		$backup->restore('{"format":"something else"}', $uid);
+		$check('foreign file is refused', false);
+	} catch (UserFacingException) {
+		$check('foreign file is refused', true);
+	}
+
+	$emptyAll = function () use ($db, $tables): void {
+		foreach (array_reverse($tables) as $table) {
+			$db->getQueryBuilder()->delete($table)->executeStatement();
+		}
+	};
+	$rowCount = function (string $table) use ($db): int {
+		$qb = $db->getQueryBuilder();
+		$qb->select($qb->func()->count('*'))->from($table);
+		return (int)$qb->executeQuery()->fetchOne();
+	};
+	$emptyAll();
+
+	// A value that does not fit its column is refused and nothing is written.
+	$data = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+	$data['tables']['notarch_works'][0]['title'] = str_repeat('x', 501);
+	$error = IntegrationTest::throws(fn () => $backup->restore(json_encode($data, JSON_THROW_ON_ERROR), $uid));
+	$check('a value longer than its column is refused', $error !== null && str_contains($error, 'invalid value in notarch_works'), (string)$error);
+	$check('a refused restore writes nothing', $rowCount('notarch_works') === 0 && $rowCount('notarch_audit') === 0);
+	$data = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+	$data['tables']['notarch_versions'][0]['preservation_copy'] = 'yes please';
+	$error = IntegrationTest::throws(fn () => $backup->restore(json_encode($data, JSON_THROW_ON_ERROR), $uid));
+	$check('a boolean column refuses text', $error !== null && str_contains($error, 'preservation_copy'), (string)$error);
+
+	// Column names from the file are never used unchecked: unknown ones are left out.
+	$crafted = ['format' => FullBackupService::FORMAT, 'formatVersion' => FullBackupService::FORMAT_VERSION, 'tables' => [
+		'notarch_works' => [['id' => 1, 'title' => 'Crafted', 'title"; DROP TABLE oc_users; --' => 'x', 'created' => '0', 'modified' => 0]],
+	]];
+	$restored = $backup->restore(json_encode($crafted, JSON_THROW_ON_ERROR), $uid);
+	$check('unknown columns are left out', ($restored['notarch_works'] ?? 0) === 1 && $rowCount('notarch_works') === 1);
+	$emptyAll();
+
+	$restored = $backup->restore($json, $uid);
+	$check('restore reports every table', count($restored) === count($tables));
+
+	foreach ($tables as $table) {
+		$after = $dump($db, $table);
+		if ($table === 'notarch_audit') {
+			// The restore itself adds one audit entry.
+			$check('audit log restored plus one entry', count($after) === count($before[$table]) + 1
+				&& array_slice($after, 0, count($before[$table])) === $before[$table]);
+			continue;
+		}
+		$check('table ' . $table . ' identical (' . count($after) . ' rows)', $after === $before[$table]);
+	}
+} finally {
+	$db->rollBack();
+}
+
+IntegrationTest::finish();

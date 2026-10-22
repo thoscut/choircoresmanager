@@ -1,0 +1,62 @@
+<?php
+
+declare(strict_types=1);
+
+namespace OCA\Notenarchiv\Db;
+
+use OCP\AppFramework\Db\QBMapper;
+use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\IDBConnection;
+
+/**
+ * @template-extends QBMapper<Copy>
+ */
+class CopyMapper extends QBMapper {
+	public function __construct(IDBConnection $db) {
+		parent::__construct($db, 'notarch_copies', Copy::class);
+	}
+
+	public function find(int $id): Copy {
+		$qb = $this->db->getQueryBuilder();
+		$qb->select('*')->from($this->getTableName())
+			->where($qb->expr()->eq('id', $qb->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
+		return $this->findEntity($qb);
+	}
+
+	/**
+	 * In catalog order; copies added later follow by binder and number.
+	 *
+	 * @return list<Copy>
+	 */
+	public function findAll(): array {
+		$qb = $this->db->getQueryBuilder();
+		$qb->select('*')->from($this->getTableName())
+			->orderBy('sort_order')
+			->addOrderBy('binder')
+			->addOrderBy('number');
+		return $this->findEntities($qb);
+	}
+
+	/**
+	 * @return array<string, Copy> keyed by shelf mark
+	 */
+	public function findAllByShelfmark(): array {
+		$result = [];
+		foreach ($this->findAll() as $copy) {
+			$result[$copy->getShelfmark()] = $copy;
+		}
+		return $result;
+	}
+
+	/**
+	 * @return list<Copy>
+	 */
+	public function findByVersion(int $versionId): array {
+		$qb = $this->db->getQueryBuilder();
+		$qb->select('*')->from($this->getTableName())
+			->where($qb->expr()->eq('version_id', $qb->createNamedParameter($versionId, IQueryBuilder::PARAM_INT)))
+			->orderBy('binder')
+			->addOrderBy('number');
+		return $this->findEntities($qb);
+	}
+}

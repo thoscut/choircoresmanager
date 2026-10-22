@@ -1,0 +1,59 @@
+{
+  "name": "notenarchiv",
+  "version": "0.1.23",
+  "license": "AGPL-3.0-or-later",
+  "homepage": "https://github.com/thoscut/choircoresmanager",
+  "bugs": {
+    "url": "https://github.com/thoscut/choircoresmanager/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thoscut/choircoresmanager.git"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite --mode development build",
+    "lint": "eslint src",
+    "typecheck": "vue-tsc --noEmit -p tsconfig.json",
+    "stylelint": "stylelint \"src/**/*.{vue,scss,css}\"",
+    "watch": "vite --mode development build --watch",
+    "l10n": "node tools/l10n/extract.mjs . > tools/l10n/strings.json && node tools/l10n/generate.mjs . tools/l10n/strings.json",
+    "score-check": "node tools/score-check/check.mjs",
+    "test": "vitest run"
+  },
+  "browserslist": [
+    "extends @nextcloud/browserslist-config"
+  ],
+  "dependencies": {
+    "@mdi/js": "^7.4.47",
+    "@nextcloud/axios": "^2.6.0",
+    "@nextcloud/dialogs": "^7.5.0",
+    "@nextcloud/event-bus": "^3.3.3",
+    "@nextcloud/initial-state": "^3.0.0",
+    "@nextcloud/l10n": "^3.4.1",
+    "@nextcloud/router": "^3.2.0",
+    "@nextcloud/vue": "^9.8.2",
+    "dompurify": "^3.4.17",
+    "verovio": "6.3.0",
+    "vue": "^3.5.41"
+  },
+  "devDependencies": {
+    "@nextcloud/browserslist-config": "^3.1.2",
+    "@nextcloud/eslint-config": "^8.4.2",
+    "@nextcloud/stylelint-config": "^3.1.1",
+    "@nextcloud/vite-config": "^2.5.2",
+    "@vue/tsconfig": "^0.9.1",
+    "eslint-plugin-vuejs-accessibility": "^2.6.2",
+    "jsdom": "^30.1.2",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.2",
+    "vitest": "^5.0.3",
+    "vue-tsc": "^3.3.12"
+  },
+  "engines": {
+    "node": "^24.0.0",
+    "npm": "^11.3.0"
+  },
+  "description": "Notenarchiv für Chöre — Nextcloud-App"
+}
