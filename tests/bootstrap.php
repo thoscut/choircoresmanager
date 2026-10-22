@@ -34,5 +34,10 @@ if (!interface_exists(\OC\Hooks\Emitter::class)) {
 	require_once __DIR__ . '/stubs/oc_hooks_emitter.php';
 }
 
+// Event of the Files app (not part of OCP) that the app listens to.
+if (!class_exists(\OCA\Files\Event\LoadAdditionalScriptsEvent::class)) {
+	require_once __DIR__ . '/stubs/oca_files_events.php';
+}
+
 // Dates in the tests must not depend on the machine running them.
 date_default_timezone_set('UTC');

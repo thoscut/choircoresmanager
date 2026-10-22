@@ -283,6 +283,10 @@ run_test api_v1_test 1-1 3-1
 # demo reports (1-1, 2-1) do not interfere. The test writes its report
 # itself; the corrected file is deleted again, everything else rolled back.
 run_test review_test 1-2
+# Opening from the Files app: a listed MusicXML file and PDF, an unlisted
+# file (LIESMICH.txt), a file of a second account that the test creates and
+# deletes, and the module switched off (rolled back, switches restored).
+run_test files_integration_test
 run_test backup_test
 
 step "7. An agent without a language model: MCP server over stdio against the API for agents"

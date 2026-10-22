@@ -74,6 +74,7 @@ What is covered:
 | `Service/MusicXmlCorrectionTest` | small corrections: pitch, alteration, accidental (placed in schema order) and syllable are applied to the stored document, which is kept otherwise; refused: other note values, added or removed notes and measures, renumbered measures, other attributes and elements, invalid values, markup or line breaks in a syllable, no change, a document type with an internal subset |
 | `Service/ReviewServiceTest` | who decides a review point (librarian everything, conductor the musical points), allowed decisions (`corrected` only by the app, text for an order, reason for dismissing), questions need the tasks, catalog fields of a report |
 | `Service/CorrectionServiceTest` | name of the corrected file: dated, in the account's language, numbered when it exists, an earlier suffix replaced, long names shortened without cutting a character |
+| `Service/FilesIntegrationServiceTest`, `Listener/FilesScriptListenerTest` | opening from the Files app: the copy of a Nextcloud file only for files the account sees (the same 404 for unlisted and foreign files), the archive folder as the account sees it; the script only for accounts with a role or admins, while the module is on |
 
 `Support/MigratedSchema` runs all migrations in `lib/Migration` against an
 in-memory Doctrine schema. `EntitySchemaTest` discovers the mappers in
@@ -82,7 +83,8 @@ changing the tests; a new column of a work, version or copy needs a field in
 `Service/Fields` or an entry in `FieldsTest::INTERNAL_COLUMNS`.
 
 `tests/stubs/` holds stubs of private server classes that the public API refers
-to (used by the unit tests and by Psalm).
+to, and of the Files app event the app listens to (used by the unit tests and
+by Psalm).
 
 ## Integration tests
 
@@ -108,6 +110,7 @@ sudo -u www-data php tests/Integration/calendar_test.php      /var/www/nextcloud
 sudo -u www-data php tests/Integration/modules_test.php       /var/www/nextcloud <uid> <shelfmark-protected>
 sudo -u www-data php tests/Integration/api_v1_test.php        /var/www/nextcloud <uid> <shelfmark> <shelfmark-preservation-copy>
 sudo -u www-data php tests/Integration/review_test.php        /var/www/nextcloud <uid> <shelfmark-with-musicxml>
+sudo -u www-data php tests/Integration/files_integration_test.php /var/www/nextcloud <uid>
 ```
 
 `statistics_test.php` fixes no figures of a catalog, so it runs on any
@@ -162,6 +165,15 @@ closes the points no longer named. The copy needs a MusicXML file the
 account may read, in a folder it may write to; the new file is deleted at
 the end and everything else rolled back. It runs on any catalog: no fixed
 titles or figures.
+`files_integration_test.php` checks the action "Open in music archive" of
+the Files app: a listed MusicXML file names its copy and opens the score
+view, a PDF opens its copy, an unlisted file of the archive folder, an
+unknown file id and a file of another account all get the same 404 (the
+latter also when it is entered in the archive), the route answers 404 while
+the module is off, and only an account with a role gets the script. It
+creates a second account without a role (random password, never printed)
+with one file and deletes it at the end; everything else is rolled back and
+the module switches are restored exactly.
 
 `<uid>` must hold the role `librarian`; each script's header lists further
 requirements (CSV paths are relative to the user's files). `backup_test.php`
@@ -218,6 +230,7 @@ it runs the tests with these shelf marks of the demo catalog:
 | `modules_test.php` | `2-6` | 2-6 is protected without a license for practice audio |
 | `api_v1_test.php` | `1-1 3-1` | 1-1 is public domain with MusicXML (and a demo report, which the test's own reports do not touch), 3-1 the internal preservation copy |
 | `review_test.php` | `1-2` | MXL with four staves and without a demo report, so the review points of the demo reports do not interfere |
+| `files_integration_test.php` | – | finds a MusicXML file and a PDF of copies itself; `LIESMICH.txt` is the unlisted file; creates and deletes a second account |
 | `backup_test.php` | – | |
 
 Finally (step 7) an **agent without a language model** uses the MCP server

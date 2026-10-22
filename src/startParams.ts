@@ -5,9 +5,10 @@
 
 /**
  * The views of the app and their representation in the URL. Notifications,
- * the dashboard widget and shared links open the app with query parameters
- * (`?copy=`, `?task=`, `?view=proposals`, `?event=`, `?due=`, `?link=`,
- * `?review=1` with a copy for the review of a transcription); the
+ * the dashboard widget, shared links and the Files app open the app with
+ * query parameters (`?copy=`, `?score=1`, `?task=`, `?view=proposals`,
+ * `?event=`, `?due=`, `?link=`, `?review=1` with a copy for the review of a
+ * transcription); the
  * app also writes its current view into the URL so that the browser's back
  * button works. Pure functions, no Vue, easy to test.
  */
@@ -61,6 +62,8 @@ export const DEFAULT_VIEW: ViewName = 'due'
 export interface StartParams {
 	view: ViewName | null
 	copyId: number | null
+	/** open the score view of the copy (`?copy=…&score=1`, from the Files app) */
+	score: boolean
 	taskId: number | null
 	eventId: number | null
 	linkToken: string | null
@@ -75,6 +78,8 @@ export interface Location {
 	view: ViewName
 	eventId?: number | null
 	copyId?: number | null
+	/** with the copy: open its score view (`score=1`) */
+	score?: boolean
 }
 
 /**
@@ -119,6 +124,7 @@ export function parseStartParams(search: string): StartParams {
 	const eventId = positiveId(params.get('event'))
 	const due = params.get('due')?.trim() ?? ''
 	const dueKey = eventId === null && /^[a-z0-9_]{1,40}$/.test(due) ? due : null
+	const copyId = positiveId(params.get('copy'))
 	let view = viewFromParam(params.get('view'))
 	if (eventId !== null) {
 		view = 'event'
@@ -127,7 +133,8 @@ export function parseStartParams(search: string): StartParams {
 	}
 	return {
 		view,
-		copyId: positiveId(params.get('copy')),
+		copyId,
+		score: copyId !== null && params.get('score')?.trim() === '1',
 		taskId: positiveId(params.get('task')),
 		eventId,
 		linkToken: /^[A-Za-z0-9]{32}$/.test(token) ? token : null,
@@ -152,7 +159,7 @@ export function isMissingCopy(copyId: number, entries: readonly { id: number }[]
 /**
  * Query string ("?view=…") for a location; the start view gives "".
  *
- * @param location - view, event and copy
+ * @param location - view, event, copy and whether to open its score view
  */
 export function buildQuery(location: Location): string {
 	const params = new URLSearchParams()
@@ -165,6 +172,9 @@ export function buildQuery(location: Location): string {
 	}
 	if (location.copyId) {
 		params.set('copy', String(location.copyId))
+		if (location.score) {
+			params.set('score', '1')
+		}
 	}
 	const query = params.toString()
 	return query === '' ? '' : '?' + query

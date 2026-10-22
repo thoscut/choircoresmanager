@@ -178,6 +178,17 @@ and 35.0.2 with MariaDB; the app requires MySQL or MariaDB.
   every file names its copyright and license in an SPDX header or in
   `REUSE.toml`, the license texts are in `LICENSES/` (also in the release
   archive), and CI checks it with `reuse lint`.
+- Opening from the Files app (module "Opening from the Files app", on in
+  Standard and Complete): files of the archive folder get the action "Open
+  in music archive". A click on MusicXML opens the score view of its copy
+  (unless another app opens MusicXML through Nextcloud's viewer), scans,
+  MuseScore and audio files open their copy from the actions menu; PDFs keep
+  Nextcloud's viewer. The small script (`@nextcloud/files` 4, Nextcloud 33
+  to 35) is only loaded for accounts with access; the server answers which
+  copy a file belongs to only for files the account can see
+  (`GET /api/nextcloud-files/{fileId}/copy`, otherwise 404) and the score
+  view checks the rights as always. New start parameter `?copy={id}&score=1`
+  opens the score view of a copy.
 
 ### Fixed
 

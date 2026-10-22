@@ -10,9 +10,11 @@ declare(strict_types=1);
 namespace OCA\Notenarchiv\Exception;
 
 /**
- * The requested object does not exist. The internal API answers 400 as for
- * any other invalid input (unchanged since 0.1); the API for agents (v1)
- * answers 404.
+ * What was asked for is not there, or not for this account. Both APIs answer
+ * 404 (the internal one through RunsActions, the API for agents through
+ * RunsOcsActions); the message must not tell the two cases apart. It extends
+ * InvalidInputException, so code that handles invalid input in general also
+ * handles it.
  */
 class NotFoundException extends InvalidInputException {
 }

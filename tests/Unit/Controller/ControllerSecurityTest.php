@@ -12,6 +12,7 @@ namespace OCA\Notenarchiv\Tests\Unit\Controller;
 use OCA\Notenarchiv\Controller\ApiController;
 use OCA\Notenarchiv\Controller\ApiV1StatusController;
 use OCA\Notenarchiv\Controller\CalendarController;
+use OCA\Notenarchiv\Controller\FilesIntegrationController;
 use OCA\Notenarchiv\Controller\PageController;
 use OCA\Notenarchiv\Controller\PracticeAudioController;
 use OCA\Notenarchiv\Controller\ReviewController;
@@ -20,6 +21,7 @@ use OCA\Notenarchiv\Db\AuditEntryMapper;
 use OCA\Notenarchiv\Exception\AccessDeniedException;
 use OCA\Notenarchiv\Exception\InvalidInputException;
 use OCA\Notenarchiv\Exception\ModuleDisabledException;
+use OCA\Notenarchiv\Exception\NotFoundException;
 use OCA\Notenarchiv\Exception\UnknownLinkException;
 use OCA\Notenarchiv\Middleware\ModuleMiddleware;
 use OCA\Notenarchiv\Service\AppSettings;
@@ -28,6 +30,7 @@ use OCA\Notenarchiv\Service\ConcertCalendarService;
 use OCA\Notenarchiv\Service\CorrectionService;
 use OCA\Notenarchiv\Service\DueService;
 use OCA\Notenarchiv\Service\ExportService;
+use OCA\Notenarchiv\Service\FilesIntegrationService;
 use OCA\Notenarchiv\Service\FileSyncService;
 use OCA\Notenarchiv\Service\ImportService;
 use OCA\Notenarchiv\Service\LinkService;
@@ -75,6 +78,7 @@ use Psr\Log\LoggerInterface;
  */
 #[CoversClass(ApiController::class)]
 #[CoversClass(CalendarController::class)]
+#[CoversClass(FilesIntegrationController::class)]
 #[CoversClass(PageController::class)]
 #[CoversClass(TaskController::class)]
 #[CoversClass(ApiV1StatusController::class)]
@@ -132,6 +136,8 @@ final class ControllerSecurityTest extends TestCase {
 		'CalendarController::concertFile', 'CalendarController::upcomingFile', 'CalendarController::addConcert',
 		'CalendarController::addUpcoming',
 		'ReviewController::ingest', 'ReviewController::correct', 'ReviewController::scan',
+		// answers only for files the account sees; limited against trying file ids all the same
+		'FilesIntegrationController::copyOfFile',
 	];
 
 	/**
@@ -387,6 +393,59 @@ final class ControllerSecurityTest extends TestCase {
 		$response = $controller->authorize(3);
 		self::assertSame(Http::STATUS_NOT_FOUND, $response->getStatus());
 		self::assertSame(['error' => 'This function is switched off.'], $response->getData());
+	}
+
+	public function testTheFilesActionRouteIsPartOfItsModule(): void {
+		$route = self::routes()['FilesIntegrationController::copyOfFile'] ?? null;
+		self::assertNotNull($route);
+		self::assertSame('GET', $route['verb']);
+		self::assertContains(NoAdminRequired::class, $route['attributes'], 'any account with access, checked by the method');
+		self::assertNotContains(NoCSRFRequired::class, $route['attributes'], 'called by a script with the request token');
+		self::assertContains(UserRateLimit::class, $route['attributes']);
+		self::assertSame([Modules::FILES_INTEGRATION], ModuleMiddleware::required(FilesIntegrationController::class, 'copyOfFile'));
+
+		$controller = $this->filesController('carla', true, null);
+		(new ModuleMiddleware($this->modulesWithout(), $this->l10n()))->beforeController($controller, 'copyOfFile');
+		$middleware = new ModuleMiddleware($this->modulesWithout([Modules::FILES_INTEGRATION]), $this->l10n());
+		$this->expectException(ModuleDisabledException::class);
+		$middleware->beforeController($controller, 'copyOfFile');
+	}
+
+	/**
+	 * @param array{copyId: int, shelfmark: string, role: string, score: bool}|null $copy answer of the service, null: not listed
+	 */
+	private function filesController(?string $uid, bool $access, ?array $copy): FilesIntegrationController {
+		$roles = $this->createStub(Roles::class);
+		$roles->method('requireAccess')->willReturnCallback(function () use ($access): void {
+			if (!$access) {
+				throw new AccessDeniedException('You have no access to the music archive.');
+			}
+		});
+		$service = $this->createStub(FilesIntegrationService::class);
+		if ($copy === null) {
+			$service->method('copyOf')->willThrowException(new NotFoundException('This file is not listed in the music archive.'));
+		} else {
+			$service->method('copyOf')->willReturn($copy);
+		}
+		return new FilesIntegrationController($this->createStub(IRequest::class), $uid, $roles, $service, $this->l10n(),
+			$this->createStub(LoggerInterface::class));
+	}
+
+	public function testTheFilesActionAnswersWithTheCopyOr404(): void {
+		$copy = ['copyId' => 35, 'shelfmark' => '2-1', 'role' => 'musicxml', 'score' => true];
+		$response = $this->filesController('carla', true, $copy)->copyOfFile(4711);
+		self::assertSame(Http::STATUS_OK, $response->getStatus());
+		self::assertSame($copy, $response->getData());
+
+		$response = $this->filesController('carla', true, null)->copyOfFile(4711);
+		self::assertSame(Http::STATUS_NOT_FOUND, $response->getStatus());
+		self::assertSame(['error' => 'This file is not listed in the music archive.'], $response->getData());
+
+		$response = $this->filesController('stranger', false, $copy)->copyOfFile(4711);
+		self::assertSame(Http::STATUS_FORBIDDEN, $response->getStatus(), 'no access: refused before any file is looked at');
+		self::assertSame(['error' => 'You have no access to the music archive.'], $response->getData());
+
+		self::assertSame(Http::STATUS_UNAUTHORIZED, $this->filesController(null, true, $copy)->copyOfFile(4711)->getStatus());
 	}
 
 	#[CoversNothing]

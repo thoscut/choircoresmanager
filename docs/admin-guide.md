@@ -12,7 +12,7 @@ Daily work with the app is described in the [user guide](user-guide.md).
 4. [First import](#4-first-import)
 5. [Backups and restore](#5-backups-and-restore)
 6. [Notifications](#6-notifications)
-7. [Dashboard widget and calendar](#7-dashboard-widget-and-calendar)
+7. [Dashboard widget, calendar and Files app](#7-dashboard-widget-calendar-and-files-app)
 8. [Security settings of the instance](#8-security-settings-of-the-instance)
 9. [Managed hosting](#9-managed-hosting)
 10. [Data protection](#10-data-protection)
@@ -267,7 +267,7 @@ notifications of a cancelled concert are withdrawn. Every user chooses in
 their personal settings whether notifications also arrive by email and how
 often (for example weekly).
 
-## 7. Dashboard widget and calendar
+## 7. Dashboard widget, calendar and Files app
 
 ### Dashboard widget
 
@@ -299,6 +299,24 @@ accounts without a writable calendar can still download the files.
 > token): it would be a new way to the concert data without logging in, and
 > it is a decision for the choir (who may see concerts, how links are
 > revoked).
+
+### Files app
+
+With the module **Opening from the Files app** (on in the presets Standard
+and Complete), files of the archive folder get the action **Open in music
+archive** in the Files app: a click on MusicXML (`.musicxml`, `.mxl`) opens
+the score view of its copy, other files of a copy (scans, MuseScore, audio)
+open the copy from the actions menu. PDFs keep Nextcloud's viewer, and a
+click on MusicXML stays with another app if one already opens MusicXML
+through Nextcloud's viewer.
+
+The Files app loads the small script of the action only for accounts with
+an archive role and for admins, and only when the account can see the
+archive folder; other accounts get nothing. Which copy a file belongs to is
+decided by the server when the action runs. It answers only for files the
+account can see in its own files (otherwise 404, the same as for a file that
+is not listed), so the action tells nobody whether a file of another account
+is in the archive. The score view checks the rights as always.
 
 ## 8. Security settings of the instance
 
@@ -452,6 +470,7 @@ preset later neither opens nor closes it.
 | Excerpt links | Score view | on | No new links, and existing links do not open (they are kept and expire as before). |
 | Reviewing transcriptions | Score view | on | The file sync still recognises transcription reports, but does not read them; no review points, no correction orders, no review in the score view, no filter "open review points". Reports, points and decisions are kept. |
 | Small corrections | Score view | on | No corrections in the score view; files corrected before stay as they are. |
+| Opening from the Files app | – | on | The Files app has no action "Open in music archive"; a click on MusicXML in the archive folder does what it did before. Without the score view, MusicXML opens its copy instead. |
 | Questions and tasks | – | on | No questions and tasks, no task cards and notifications. Existing tasks are kept. |
 | Proposals inbox | – | off | No inbox; tools cannot propose. Open proposals are kept. |
 | Concerts and song lists | – | on | No concerts and song lists, no deadlines on the start page, in the dashboard or as notifications. |

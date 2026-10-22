@@ -185,7 +185,8 @@ export function fieldActive(key: string, modules: ModuleStates): boolean {
  * What a link from the URL may still open. Parts that need a switched-off
  * module are dropped: a view, an event, a card of the dashboard widget lead
  * to the start page, an excerpt link, a task and the review of a
- * transcription are ignored (the copy still opens; the catalog is core). The
+ * transcription are ignored (the copy still opens; the catalog is core), and
+ * so is the score view of `?score=1` without the module "score_viewer". The
  * personal view does not count: it only hides navigation entries.
  *
  * @param params - parsed query parameters
@@ -221,6 +222,10 @@ export function applyModules(params: StartParams, modules: ModuleStates): { para
 	}
 	if (result.review && !moduleActive(modules, 'transcription_review')) {
 		result.review = false
+		switchedOff = true
+	}
+	if (result.score && !moduleActive(modules, 'score_viewer')) {
+		result.score = false
 		switchedOff = true
 	}
 	return { params: result, switchedOff }

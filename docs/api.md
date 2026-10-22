@@ -31,6 +31,7 @@ Request bodies are checked strictly: unknown fields are refused with 400
 | `GET /api/statistics/csv`, `GET /api/statistics/report/csv` | 30 in 10 minutes |
 | `GET /api/events/{id}/ics`, `GET /api/events/upcoming/ics` | 60 in 10 minutes |
 | `POST /api/events/{id}/calendar`, `POST /api/events/upcoming/calendar` | 30 in 10 minutes |
+| `GET /api/nextcloud-files/{fileId}/copy` | 120 in 10 minutes |
 
 Files chosen by `fileId` for an import may be at most 20 MB, a backup for a
 restore at most 64 MB; larger files are refused with 400
@@ -1017,6 +1018,7 @@ audio and preservation copies applies whatever is switched on.
 | `excerpt_links` | `score_viewer` | on |
 | `transcription_review` | `score_viewer` | on |
 | `corrections` | `score_viewer` | on |
+| `files_integration` | – | on |
 | `tasks` | – | on |
 | `proposals` | – | off |
 | `concerts` | – | on |
@@ -1070,6 +1072,7 @@ other check of the app. The routes and their modules:
 | `corrections` | `POST /api/versions/{id}/corrections` (and `score_viewer`) |
 | `practice_audio` | `POST /api/versions/{id}/practice-audio` |
 | `excerpt_links` | `POST /api/copies/{id}/links`, `GET /api/links`, `GET /api/links/{token}`, `POST /api/links/{id}/revoke` |
+| `files_integration` | `GET /api/nextcloud-files/{fileId}/copy` (and the script of the Files app is not loaded) |
 | `tasks` | `GET /api/tasks`, `POST /api/copies/{id}/tasks`, `POST /api/tasks/{id}/answer`, `…/close` |
 | `proposals` | `GET /api/proposals`, `POST /api/proposals`, `…/accept`, `…/reject` |
 | `concerts` | `/api/events…`, `/api/event-items…` |
@@ -1123,6 +1126,10 @@ What else follows the modules:
 - Notifications: a notification whose `notify_{subject}` is not active is
   not sent; one sent before is withdrawn when it is shown (the Nextcloud
   notifications app then deletes it).
+- Files app: without `files_integration` the script of the action "Open in
+  music archive" is not loaded (see "Opening from the Files app" below);
+  without `score_viewer` the route answers `score: false` and `?score=1`
+  only opens the copy.
 
 ### Module settings (admins only)
 
@@ -1503,3 +1510,64 @@ score.
 Switches: `notify_review_points` (requires `notifications` and
 `transcription_review`), `notify_correction_received` (requires
 `notifications` and `score_viewer`).
+## Opening from the Files app (module `files_integration`)
+
+Files of the archive folder get the action **Open in music archive** in the
+Files app. The script (`js/notenarchiv-files.mjs`, built from
+`src/files.ts`; no score viewer, no Vue, no store) is added by
+`Listener\FilesScriptListener` on `OCA\Files\Event\LoadAdditionalScriptsEvent`
+as an init script, only for accounts with access (a role, or an admin, who
+may read), only while `files_integration` is active and only when the
+account can see the archive folder. It registers two file actions with
+`registerFileAction` of `@nextcloud/files` 4 (the file action registry of the
+Files app in Nextcloud 33 to 35, `window._nc_files_scope.v4_0`):
+
+| Action id | Default action | Shown for |
+|---|---|---|
+| `notenarchiv-open-score` | yes (a click opens it) | `.musicxml` and `.mxl` while `score_viewer` is active, unless the Nextcloud viewer opens the file's MIME type (`OCA.Viewer.mimetypes`) |
+| `notenarchiv-open` | no (actions menu only) | the other extensions the file sync knows (`FileSyncService::ROLE_BY_TYPE`: PDF, MuseScore, audio, images, …) and MusicXML when the first action does not apply |
+
+Both have order 20: after the Nextcloud viewer (0), whose click wins, and
+before the download (30), the Files app's own default action. A PDF never
+gets a default action of the app. Both only apply to one readable file of the
+account's own files (`/files/{uid}`) below the archive folder.
+
+Initial state `files` (only with the script):
+
+```json
+{ "archivePath": "/Notenarchiv", "extensions": ["pdf", "mxl", "musicxml", "xml", "mscz", "..."],
+  "scoreExtensions": ["musicxml", "mxl"], "scoreView": true }
+```
+
+`archivePath` is the archive folder as the account sees it, relative to its
+files (it differs from `meta.archive.path` when the folder is shared with the
+account).
+
+`GET /api/nextcloud-files/{fileId}/copy` (any role or admin; rate limited)
+tells which copy a file belongs to. `fileId` is the **Nextcloud file id**
+(`files[].file_id`), not the id of the archive file that the other
+`/api/files/{id}/…` routes take.
+
+```json
+{ "copyId": 35, "shelfmark": "2-1", "role": "musicxml", "score": true }
+```
+
+`role` is the file role (see "Catalog"); `score` is `true` for a MusicXML
+file the score viewer reads (`.mxl`, `.musicxml`, `.xml` with role
+`musicxml`) while `score_viewer` is active. The file is looked up in the
+account's own view of Nextcloud first: a file the account cannot see, a file
+that is not in the archive and a file of the archive without a copy all get
+the same **404** `{ "error": "This file is not listed in the music archive." }`,
+so the route does not tell whether a file of another account is in the
+archive. Without access: 403; module switched off: 404
+`This function is switched off.`. The route keeps Nextcloud's CSRF check
+(the script sends the request token); it is read-only.
+
+The action then opens the app with `?copy={copyId}&score=1` (score view of
+the copy, see `src/startParams.ts`) or `?copy={copyId}` (the copy in the
+sidebar). The score view shows the score of the copy as in the app (`score`
+of the entry: the MusicXML marked as valid first), which is the clicked file
+unless the copy has several. It checks the rights itself as always
+(preservation copies, playback). `?score=1` without `copy` is ignored, and without an
+active `score_viewer` the app only opens the copy and says that the function
+is switched off. After opening, the app writes `?copy={copyId}` into the URL.

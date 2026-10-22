@@ -160,6 +160,34 @@ your roles), each entry with a link into the app, and **Open the start page**.
 Add it in the dashboard's settings. Only accounts with an archive role can
 add it. It never shows the text of a question or a person's name.
 
+### Opening from the Files app
+
+<!-- Screenshot planned: screenshots/files-action.png (docs/screenshots/README.md) -->
+
+The archive folder is an ordinary folder in Nextcloud, so you can also find a
+file there in the **Files** app. Files of the archive folder have the action
+**Open in music archive** in their actions menu (⋯):
+
+- **MusicXML** (`.musicxml`, `.mxl`): a click on the file opens the score
+  viewer of its copy directly. If another app in your Nextcloud already opens
+  MusicXML, a click stays with that app and the action is in the menu.
+- **Scans (PDF), MuseScore, audio and the other files of a copy**: the action
+  opens the copy in the sidebar of the music archive. A click on a PDF keeps
+  opening Nextcloud's own viewer.
+
+The action is there for accounts with an archive role and for
+administrators, and only for files in the archive folder with a type the
+file sync knows. When you choose it, the app asks the server which copy the
+file belongs to. A file that is not listed in the catalog (for example a file
+whose name does not start with a shelf mark) gives the message **This file
+is not listed in the music archive.** Opening a file this way grants
+nothing: the score viewer checks the rights as always, so internal
+preservation copies are only shown to the catalog librarian and the
+conductor and never played.
+
+Administrators switch the action off with the module **Opening from the
+Files app** (see the [administration guide](admin-guide.md)).
+
 ## Scores, practice files and questions
 
 ### Score viewer

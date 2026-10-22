@@ -9,7 +9,9 @@ declare(strict_types=1);
 
 namespace OCA\Notenarchiv\AppInfo;
 
+use OCA\Files\Event\LoadAdditionalScriptsEvent;
 use OCA\Notenarchiv\Dashboard\DueWidget;
+use OCA\Notenarchiv\Listener\FilesScriptListener;
 use OCA\Notenarchiv\Middleware\ModuleMiddleware;
 use OCA\Notenarchiv\Notification\Notifier;
 use OCA\Notenarchiv\Service\Roles;
@@ -38,6 +40,9 @@ class Application extends App implements IBootstrap {
 		$context->registerDashboardWidget(DueWidget::class);
 		// Routes of switched-off modules answer 404 (attribute RequiresModule).
 		$context->registerMiddleware(ModuleMiddleware::class);
+		// The action "Open in music archive" in the Files app (module
+		// "files_integration"), only for accounts with access.
+		$context->registerEventListener(LoadAdditionalScriptsEvent::class, FilesScriptListener::class);
 	}
 
 	#[\Override]

@@ -11,6 +11,7 @@ namespace OCA\Notenarchiv\Controller;
 
 use OCA\Notenarchiv\Exception\AccessDeniedException;
 use OCA\Notenarchiv\Exception\ModuleDisabledException;
+use OCA\Notenarchiv\Exception\NotFoundException;
 use OCA\Notenarchiv\Exception\UnknownLinkException;
 use OCA\Notenarchiv\Exception\UserFacingException;
 use OCP\AppFramework\Http;
@@ -36,7 +37,11 @@ trait RunsActions {
 		try {
 			return new JSONResponse($action($this->userId));
 		} catch (UserFacingException $e) {
-			$status = $e instanceof AccessDeniedException ? Http::STATUS_FORBIDDEN : Http::STATUS_BAD_REQUEST;
+			$status = match (true) {
+				$e instanceof AccessDeniedException => Http::STATUS_FORBIDDEN,
+				$e instanceof NotFoundException => Http::STATUS_NOT_FOUND,
+				default => Http::STATUS_BAD_REQUEST,
+			};
 			$response = new JSONResponse(['error' => $this->translate($e->getMessage(), $e->getParameters())], $status);
 			if ($e instanceof UnknownLinkException) {
 				// A guessed token: counts for Nextcloud's brute-force protection

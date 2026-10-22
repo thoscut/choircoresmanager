@@ -39,6 +39,8 @@
 	<stubs>
 		<!-- Private server interface that OCP\Files\IRootFolder extends -->
 		<file name="tests/stubs/oc_hooks_emitter.php" preloadClasses="true"/>
+		<!-- Event of the Files app that loads the script of the action "Open in music archive" -->
+		<file name="tests/stubs/oca_files_events.php" preloadClasses="true"/>
 	</stubs>
 	<issueHandlers>
 		<!-- Services, mappers and controllers are created by the dependency injection container. -->

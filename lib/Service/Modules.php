@@ -53,6 +53,8 @@ class Modules {
 	 * purpose, and a preset chosen later neither opens nor closes it.
 	 */
 	public const OUTSIDE_PRESETS = [self::AGENT_API];
+	/** The action "Open in music archive" in the Files app */
+	public const FILES_INTEGRATION = 'files_integration';
 
 	/** Switches of the notifications: this prefix plus the subject (NotificationService) */
 	public const NOTIFY_PREFIX = 'notify_';
@@ -146,6 +148,9 @@ class Modules {
 		'corrections' => ['group' => 'scores', 'requires' => ['score_viewer'], 'simple' => false, 'standard' => true, 'planned' => false,
 			'label' => 'Small corrections',
 			'description' => 'The catalog librarian and the conductor correct pitches, accidentals and syllables of a MusicXML file in the score view. The app saves the result as a new file next to the old one, which stays unchanged.'],
+		'files_integration' => ['group' => 'scores', 'requires' => [], 'simple' => false, 'standard' => true, 'planned' => false,
+			'label' => 'Opening from the Files app',
+			'description' => 'The action "Open in music archive" for files of the archive folder in the Files app: a click on MusicXML opens the score view, other files of a copy open the copy. Rights are checked as in the app.'],
 		'tasks' => ['group' => 'collaboration', 'requires' => [], 'simple' => false, 'standard' => true, 'planned' => false,
 			'label' => 'Questions and tasks',
 			'description' => 'Questions and checks with a location in the score (page, measures, voice), addressed to a role.'],

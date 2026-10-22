@@ -190,6 +190,14 @@ describe('links from the URL with switched-off modules', () => {
 		expect(result.params.taskId).toBeNull()
 	})
 
+	it('opens the copy of ?score=1 without the score view, but not the score view', () => {
+		const result = applyModules(parseStartParams('?copy=3&score=1'), without('score_viewer'))
+		expect(result.switchedOff).toBe(true)
+		expect(result.params.copyId).toBe(3)
+		expect(result.params.score).toBe(false)
+		expect(applyModules(parseStartParams('?copy=3&score=1'), without()).params.score).toBe(true)
+	})
+
 	it('opens a copy: the catalog is core', () => {
 		const result = applyModules(parseStartParams('?copy=3'), {})
 		expect(result).toEqual({ params: parseStartParams('?copy=3'), switchedOff: false })
