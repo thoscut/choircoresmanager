@@ -50,6 +50,13 @@ Unterstützt werden Nextcloud 33 bis 35.
     - Zum Notenbild gibt es Alternativen: Textverweis, Textbeschreibung des
       Ausschnitts und Abspielen.
     - Die deutsche Oberfläche verwendet neutrale, einfache Sprache.
+12. **Nur, was gebraucht wird.**
+    - Jede Funktion außerhalb des Kerns ist ein Modul, das die Administration
+      abschalten kann. Zum Kern gehören Werkverzeichnis, Dateiabgleich,
+      Rollen, Protokoll, Import, Export und Sicherung.
+    - Ein abgeschaltetes Modul ist auch auf dem Server aus: keine Routen,
+      keine Hintergrundjobs, keine Meldungen. Seine Daten bleiben erhalten.
+    - Jede Person kann Bereiche ausblenden, die sie nicht braucht.
 
 ## Benachrichtigungen (Querschnitt)
 
@@ -162,6 +169,25 @@ Meilensteinen.
 - **Werke zusammenführen** per Vorschlag, rücknehmbar
 - **Benachrichtigung:** Wiedervorlage zum Schutzfristende
 - **Inventurliste und Prüfsummenvergleich**
+
+### 0.5.1 Module und Voreinstellungen
+
+- **Modul-Schalter in den Admin-Einstellungen**, gruppiert und mit
+  Beschreibung. Abhängigkeiten werden angezeigt (z. B. Übe-Audio braucht die
+  Notenansicht, der Kalender die Konzerte). Dazu ein `occ`-Befehl.
+- **Die Server-Seite erzwingt die Schalter:**
+  - Routen eines abgeschalteten Moduls antworten nicht.
+  - Hintergrundjobs, Benachrichtigungen, Fällig-Karten, Dashboard-Widget und
+    Navigation lassen es aus.
+  - Ein Test stellt sicher, dass jede Route zum Kern gehört oder einem Modul
+    zugeordnet ist.
+- **Voreinstellungen:** „Einfach“ (Werkverzeichnis, Dateien, Notenansicht),
+  „Standard“ und „Vollständig“.
+  - Bestehende Installationen behalten alle bisherigen Funktionen.
+  - Die Agenten-Schnittstelle ist anfangs aus.
+- **Persönliche Ansicht:** Jede Person blendet Bereiche aus, die sie nicht
+  braucht. Die Rechte ändern sich dadurch nicht.
+- **Benachrichtigungen** lassen sich je Anlass abschalten.
 
 ### 0.6 Agenten und Prüfung der Übertragungen
 
