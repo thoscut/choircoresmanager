@@ -6,7 +6,8 @@
 /**
  * The views of the app and their representation in the URL. Notifications,
  * the dashboard widget and shared links open the app with query parameters
- * (`?copy=`, `?task=`, `?view=proposals`, `?event=`, `?due=`, `?link=`); the
+ * (`?copy=`, `?task=`, `?view=proposals`, `?event=`, `?due=`, `?link=`,
+ * `?review=1` with a copy for the review of a transcription); the
  * app also writes its current view into the URL so that the browser's back
  * button works. Pure functions, no Vue, easy to test.
  */
@@ -65,6 +66,8 @@ export interface StartParams {
 	linkToken: string | null
 	/** card of the start page to open with its filters (dashboard widget) */
 	dueKey: string | null
+	/** open the score view of the copy with the review of its transcription */
+	review: boolean
 }
 
 /** Where the app is: a view, optionally an event and an open copy. */
@@ -129,6 +132,7 @@ export function parseStartParams(search: string): StartParams {
 		eventId,
 		linkToken: /^[A-Za-z0-9]{32}$/.test(token) ? token : null,
 		dueKey,
+		review: params.get('review')?.trim() === '1' && positiveId(params.get('copy')) !== null,
 	}
 }
 

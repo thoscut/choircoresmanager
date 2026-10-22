@@ -69,7 +69,7 @@ final class ModulesTest extends TestCase {
 
 	public function testEveryNotificationHasASwitch(): void {
 		$subjects = array_values((new \ReflectionClass(NotificationService::class))->getConstants());
-		self::assertCount(11, $subjects);
+		self::assertCount(13, $subjects);
 		foreach ($subjects as $subject) {
 			self::assertIsString($subject);
 			$key = Modules::notificationKey($subject);
@@ -127,7 +127,8 @@ final class ModulesTest extends TestCase {
 		self::assertSame(['practice_audio'], $changes['enabled']);
 		self::assertSame(['score_viewer', 'playback'], $changes['alsoEnabled']);
 		self::assertSame([], $changes['disabled']);
-		self::assertSame(['excerpt_links'], $changes['activated'], 'its switch was on');
+		self::assertSame(['excerpt_links', 'transcription_review', 'corrections', 'notify_review_points', 'notify_correction_received'], $changes['activated'],
+			'their switches were on');
 		self::assertTrue($modules->isEnabled('practice_audio'));
 		self::assertTrue($this->moduleConfig['module_score_viewer']);
 	}

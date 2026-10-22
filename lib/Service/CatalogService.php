@@ -20,6 +20,7 @@ use OCA\Notenarchiv\Db\License;
 use OCA\Notenarchiv\Db\LicenseMapper;
 use OCA\Notenarchiv\Db\Proposal;
 use OCA\Notenarchiv\Db\ProposalMapper;
+use OCA\Notenarchiv\Db\ReviewPointMapper;
 use OCA\Notenarchiv\Db\Task;
 use OCA\Notenarchiv\Db\Work;
 use OCA\Notenarchiv\Db\WorkMapper;
@@ -70,6 +71,7 @@ class CatalogService {
 		private PersonService $persons,
 		private MergeService $merges,
 		private Modules $modules,
+		private ReviewPointMapper $reviewPoints,
 	) {
 	}
 
@@ -161,6 +163,8 @@ class CatalogService {
 		$versions = $this->versions->findAllById();
 		$fileCounts = $this->files->countPerCopy();
 		$derived = $this->repertoire->perWork();
+		// Review state of the transcription (milestone 0.6); null while the review is switched off
+		$review = $this->modules->isEnabled(ReviewService::MODULE) ? $this->reviewPoints->countsPerCopy() : null;
 
 		$rows = [];
 		foreach ($this->copies->findAll() as $copy) {
@@ -191,6 +195,8 @@ class CatalogService {
 				'has_musicxml' => self::hasMusicxml($counts, $version),
 				'files' => array_sum($counts),
 				'pdfs' => $counts['pdf'] ?? 0,
+				'review_open' => $review === null ? null : ($review[$copy->getId()]['open'] ?? 0),
+				'review_orders' => $review === null ? null : ($review[$copy->getId()]['orders'] ?? 0),
 			];
 		}
 		return $rows;
@@ -249,6 +255,7 @@ class CatalogService {
 				[Fields::WORK, $work->getId()],
 				[Fields::VERSION, $version->getId()],
 				[Fields::COPY, $copy->getId()],
+				...$this->reviewObjects($copy->getId(), $active[ReviewService::MODULE]),
 			]),
 		];
 	}
@@ -327,6 +334,23 @@ class CatalogService {
 			$this->db->rollBack();
 			throw $e;
 		}
+	}
+
+	/**
+	 * The review points of a copy as objects of the audit log, so that their
+	 * decisions show with the copy (milestone 0.6).
+	 *
+	 * @return list<array{0: string, 1: int}>
+	 */
+	private function reviewObjects(int $copyId, bool $active): array {
+		if (!$active) {
+			return [];
+		}
+		$objects = [];
+		foreach ($this->reviewPoints->findByCopy($copyId) as $point) {
+			$objects[] = ['review_point', $point->getId()];
+		}
+		return $objects;
 	}
 
 	private function load(string $level, int $id): Work|WorkVersion|Copy {

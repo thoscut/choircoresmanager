@@ -59,6 +59,12 @@ final class NotificationServiceTest extends TestCase {
 		$this->service($manager, [])->notifyRole(Roles::LIBRARIAN, NotificationService::TASK_ANSWERED, 'task', '4');
 	}
 
+	public function testThePersonWhoCausedItIsNotNotified(): void {
+		$manager = $this->createMock(IManager::class);
+		$manager->expects(self::never())->method('notify');
+		$this->service($manager, [])->notifyRole(Roles::LIBRARIAN, NotificationService::CORRECTION_RECEIVED, 'version', '3', [], false, 'lena');
+	}
+
 	public function testSendsNothingForASwitchedOffOccasion(): void {
 		foreach ([['notify_task_answered'], ['tasks'], ['notifications']] as $off) {
 			$this->moduleConfig = [];

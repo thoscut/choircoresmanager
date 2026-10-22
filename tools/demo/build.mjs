@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-// Builds the public demo data of the Notenarchiv app from tools/demo/catalog.json
-// and tools/demo/scores/*.json (see tools/demo/README.md):
+// Builds the public demo data of the Notenarchiv app from tools/demo/catalog.json,
+// tools/demo/scores/*.json and tools/demo/reports/*.json (see tools/demo/README.md):
 //
 //   build/demo/Notenarchiv-Demo/            archive folder to upload to Nextcloud
-//     Mappe_1 … Mappe_4/                    placeholder PDFs and MusicXML files
+//     Mappe_1 … Mappe_4/                    placeholder PDFs, MusicXML files and transcription reports
 //     LIESMICH.txt                          note for people who open the folder
 //     _Import/                              CSV files for the imports (skipped by the file sync)
 //
@@ -209,6 +209,116 @@ function checkCatalog() {
 }
 
 // ---------------------------------------------------------------------------
+// Transcription reports (format bericht/1, see docs/api.md, "Reviewing
+// transcriptions"): written next to the score as "<basisname> - Bericht.json"
+
+/** Fields the format bericht/1 requires */
+const REPORT_REQUIRED = ['format', 'signatur', 'basisname', 'weg', 'vorlage', 'umfang', 'gegenprobe', 'geprueft',
+	'vortragszeichen', 'unsicher', 'rechte', 'wv', 'lernen', 'scores']
+
+/** Voice of a report ("T1", "T II", "Tenor 1", "Alt", "B") as key of the score spec ("t1", "a", "b") */
+function voiceKey(text) {
+	const names = { sopran: 's', alt: 'a', tenor: 't', bass: 'b' }
+	const numerals = { i: '1', ii: '2', iii: '3', iv: '4' }
+	const match = /^([a-zäöü]+)\.?\s*(iv|iii|ii|i|[1-4])?\.?$/.exec(text.trim().toLowerCase())
+	if (!match) {
+		return null
+	}
+	return (names[match[1]] ?? match[1]) + (match[2] ? (numerals[match[2]] ?? match[2]) : '')
+}
+
+/** Printed measure numbers of a reference like "12", "12–14" or "T. 6" */
+function measureNumbers(text) {
+	return String(text).replace(/^(?:T\.|Takte?)\s*/, '').split(/\s*[–-]\s*/).filter((part) => part !== '')
+}
+
+/** What a score contains, counted like the report fields (vortragszeichen, umfang) */
+function scoreCounts(spec, score) {
+	const voices = Object.values(score.voices)
+	const notes = voices.flatMap((voice) => voice.measures.flat())
+	return {
+		takte: spec.measures.filter((measure) => !measure.implicit).length,
+		auftakt: spec.measures[0]?.implicit === true,
+		stimmen: voices.length,
+		systeme: spec.staves.length,
+		strophen: Math.max(0, ...Object.values(spec.voices).map((voice) => (voice.lyrics ?? []).length)),
+		dynamik: spec.measures.filter((measure) => measure.dynamics).length,
+		boegen: notes.filter((note) => note.slurStart).length,
+		haltebogen: notes.filter((note) => note.tieStart).length,
+		fermaten: notes.filter((note) => note.fermata).length,
+	}
+}
+
+function loadReports(scores) {
+	const reports = []
+	for (const name of readdirSync(join(here, 'reports')).filter((file) => file.endsWith('.json')).sort()) {
+		const report = JSON.parse(readFileSync(join(here, 'reports', name), 'utf8'))
+		const where = `reports/${name}`
+		for (const field of REPORT_REQUIRED) {
+			if (report[field] === undefined) {
+				fail(`${where}: required field "${field}" is missing`)
+			}
+		}
+		if (report.format !== 'bericht/1') {
+			fail(`${where}: format must be "bericht/1"`)
+		}
+		const copy = catalog.copies.find((candidate) => candidate.shelfmark === report.signatur)
+		const files = copy ? describeCopy(copy) : null
+		if (!copy || !files?.score) {
+			fail(`${where}: shelf mark ${report.signatur} is not a copy with a score`)
+			continue
+		}
+		const basename = files.score.replace(/\.(musicxml|mxl)$/, '')
+		if (report.basisname !== basename) {
+			fail(`${where}: basisname "${report.basisname}" is not the score file name "${basename}"`)
+		}
+		const spec = JSON.parse(readFileSync(join(here, 'scores', `${copy.score}.json`), 'utf8'))
+		const numbers = new Set(spec.measures.map((measure) => measure.number))
+		const voices = new Set(Object.keys(spec.voices).map((key) => key.toLowerCase()))
+		const checkMeasures = (text, context) => {
+			for (const number of measureNumbers(text)) {
+				if (!numbers.has(number)) {
+					fail(`${where}: ${context}: measure ${number} is not in the score`)
+				}
+			}
+		}
+		for (const [i, item] of (report.unsicher ?? []).entries()) {
+			if (typeof item.was !== 'string' || item.was === '') {
+				fail(`${where}: unsicher[${i}] needs "was"`)
+			}
+			checkMeasures(item.takt, `unsicher[${i}]`)
+			if (!['alle', 'all'].includes(String(item.stimme).toLowerCase()) && !voices.has(voiceKey(String(item.stimme)))) {
+				fail(`${where}: unsicher[${i}]: voice "${item.stimme}" is not in the score`)
+			}
+		}
+		for (const text of [...(report.vortragszeichen?.ausgelassen ?? []), ...(report.rueckfragen ?? [])]) {
+			const match = /\bT\.\s*(\d+(?:\s*[–-]\s*\d+)?)/.exec(text)
+			if (match) {
+				checkMeasures(match[1], `"${text}"`)
+			}
+		}
+		const counts = scoreCounts(spec, scores.get(copy.score))
+		for (const key of ['takte', 'auftakt', 'stimmen', 'systeme', 'strophen']) {
+			if (report.umfang?.[key] !== counts[key]) {
+				fail(`${where}: umfang.${key} is ${report.umfang?.[key]}, the score has ${counts[key]}`)
+			}
+		}
+		for (const key of ['dynamik', 'boegen', 'haltebogen', 'fermaten']) {
+			if (report.vortragszeichen?.[key] !== counts[key]) {
+				fail(`${where}: vortragszeichen.${key} is ${report.vortragszeichen?.[key]}, the score has ${counts[key]}`)
+			}
+		}
+		if (String(report.vorlage?.seiten) !== copy.pages) {
+			fail(`${where}: vorlage.seiten ${report.vorlage?.seiten} differs from the catalog (${copy.pages})`)
+		}
+		console.log(`report ${report.signatur}: ${report.unsicher.length} uncertain, ${report.vortragszeichen.ausgelassen.length} omitted, `
+			+ `${report.material.length} material, ${report.rueckfragen.length} questions, ${Object.keys(report.wv.felder ?? {}).length} catalog fields`)
+		reports.push({ report, path: `${files.folder}/${basename} - Bericht.json` })
+	}
+	return reports
+}
+
+// ---------------------------------------------------------------------------
 
 const scores = loadScores()
 checkCatalog()
@@ -217,6 +327,7 @@ for (const copy of catalog.copies) {
 		fail(`${copy.shelfmark}: score ${copy.score} not found in scores/`)
 	}
 }
+const reports = loadReports(scores)
 if (problems.length > 0) {
 	for (const problem of problems) {
 		console.error(`ERROR ${problem}`)
@@ -275,6 +386,10 @@ for (const copy of catalog.copies) {
 for (const extra of catalog.extraFiles) {
 	write(extra.path, extra.text ?? placeholderPdf({ shelfmark: extra.shelfmark, title: extra.title, pages: 1, lines: extra.lines }))
 }
+// Transcription reports next to their scores (read by the file sync)
+for (const { report, path } of reports) {
+	write(path, JSON.stringify(report, null, '\t') + '\n')
+}
 
 // Import files
 const importFile = (name, content) => write(`${catalog.importFolder}/${name}`, content)
@@ -307,4 +422,4 @@ importFile('song-lists.csv', writeCsv(
 
 const count = (pattern) => written.filter((path) => pattern.test(path)).length
 console.log(`written to ${archive}: ${written.length} files `
-	+ `(${count(/\.pdf$/)} PDF, ${count(/\.mxl$/)} MXL, ${count(/\.musicxml$/)} MusicXML, ${count(/\.csv$/)} CSV)`)
+	+ `(${count(/\.pdf$/)} PDF, ${count(/\.mxl$/)} MXL, ${count(/\.musicxml$/)} MusicXML, ${count(/ - Bericht\.json$/)} reports, ${count(/\.csv$/)} CSV)`)

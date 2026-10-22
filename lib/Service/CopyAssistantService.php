@@ -385,7 +385,7 @@ class CopyAssistantService {
 		$file->setPath(ltrim($archive->getRelativePath($node->getPath()) ?? $name, '/'));
 		$file->setName($name);
 		$file->setType($type === '' ? null : $type);
-		$file->setRole(FileSyncService::ROLE_BY_TYPE[$type] ?? 'other');
+		$file->setRole(FileSyncService::roleOf($name));
 		$file->setSize((int)$node->getSize());
 		$file->setMtime($node->getMTime());
 		$file->setEtag($node->getEtag());

@@ -9,6 +9,11 @@
  * score with a small built-in synthesizer. Practice files (WAV/MIDI) of the
  * same choice are made in PracticeAudioDialog.
  *
+ * Milestone 0.6: the review of a transcription (ReviewPanel: review points
+ * that set measures and focus voice), the scan beside the score (the
+ * browser's own PDF viewer in a frame or a second window) and small
+ * corrections in the app (CorrectionDialog, own chunk).
+ *
  * This component is loaded lazily (own chunk); Verovio is a further chunk
  * that is only fetched when a score is opened.
  */
@@ -19,7 +24,7 @@ import type { Timeline } from '../score/timeline.ts'
 import type { VerovioToolkit } from '../score/toolkit.ts'
 import type { Voice } from '../score/voices.ts'
 import type { ScoreRequest } from '../store.ts'
-import type { Detail } from '../types.ts'
+import type { CorrectionResult, Detail, ReviewPoint, VersionReview } from '../types.ts'
 
 import {
 	mdiAlertCircleOutline,
@@ -32,6 +37,9 @@ import {
 	mdiContentCopy,
 	mdiFileMusicOutline,
 	mdiLinkVariantPlus,
+	mdiOpenInNew,
+	mdiPencilOutline,
+	mdiTextBoxCheckOutline,
 } from '@mdi/js'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { n, t } from '../l10n.ts'
@@ -48,9 +56,10 @@ import NcRadioGroupButton from '@nextcloud/vue/components/NcRadioGroupButton'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import LinkDialog from './LinkDialog.vue'
+import ReviewPanel from './ReviewPanel.vue'
 import RightsBadge from './RightsBadge.vue'
 import TaskDialog from './TaskDialog.vue'
-import { fetchFileContent } from '../api.ts'
+import { errorMessage, fetchFileContent, fetchReview, scanUrl } from '../api.ts'
 import { translateLabel } from '../format.ts'
 import { playbackTimeline, renderPages, selectMeasures, loadScore } from '../score/model.ts'
 import { markFocus } from '../score/emphasis.ts'
@@ -64,10 +73,17 @@ import { copyText } from '../clipboard.ts'
 import { focusAfterDialog } from '../focus.ts'
 import { referenceWords } from '../labels.ts'
 import { textReference } from '../references.ts'
-import { canCreateLinks, canCreateTasks, fieldInfo, fieldLabel, isModuleActive } from '../store.ts'
+import { canonicalVoice, matchVoice, pointPlace, pointRange } from '../review.ts'
+import { parsePage, scanFiles, storedScanPage, storeScanPage } from '../scan.ts'
+import { canCreateLinks, canCreateTasks, fieldInfo, fieldLabel, hasAnyRole, isModuleActive } from '../store.ts'
 
 /** Practice audio files: own chunk, loaded when the dialog is opened */
 const PracticeAudioDialog = defineAsyncComponent(() => import('./PracticeAudioDialog.vue'))
+/** Small corrections: own chunk, loaded when the dialog is opened */
+const CorrectionDialog = defineAsyncComponent(() => import('./CorrectionDialog.vue'))
+
+/** Most measures the correction form shows at once. */
+const MAX_CORRECTION_MEASURES = 8
 
 const props = defineProps<{
 	detail: Detail
@@ -90,6 +106,7 @@ const summaryId = useId()
 const tempoId = useId()
 const tempoHintId = useId()
 const volumeId = useId()
+const scanSelectId = useId()
 
 const score = computed(() => props.detail.score)
 /** Playback (module "playback"); the server also refuses it when switched off. */
@@ -102,7 +119,7 @@ const shelfmark = computed(() => String(props.detail.copy.shelfmark ?? ''))
 const title = computed(() => String(props.detail.work.title ?? ''))
 const composer = computed(() => String(props.detail.work.composer ?? ''))
 const heading = computed(() => [shelfmark.value, title.value].filter((part) => part !== '').join(' · '))
-const review = computed(() => String(props.detail.version.musicxml_review ?? '').trim())
+const musicxmlReview = computed(() => String(props.detail.version.musicxml_review ?? '').trim())
 const reviewLabel = computed(() => fieldInfo('version', 'musicxml_review') ? fieldLabel('version', 'musicxml_review') : t('notenarchiv', 'MusicXML review'))
 
 // ---- loading ----------------------------------------------------------------
@@ -111,6 +128,8 @@ const status = ref<'loading' | 'ready' | 'error'>('loading')
 const loadingText = ref('')
 const errorText = ref('')
 const model = shallowRef<ScoreModel | null>(null)
+/** MusicXML text of the score shown, for the correction form */
+const scoreText = ref('')
 const pages = shallowRef<string[]>([])
 const scoreElement = ref<HTMLElement | null>(null)
 const pagesElement = ref<HTMLElement | null>(null)
@@ -126,11 +145,17 @@ function nextFrame(): Promise<void> {
 	return new Promise((resolve) => requestAnimationFrame(() => setTimeout(resolve, 0)))
 }
 
-async function load(): Promise<void> {
+/**
+ * Load the score of the copy.
+ *
+ * @param keep - keep range and focus voice (the score was replaced, e.g. by a correction)
+ */
+async function load(keep = false): Promise<void> {
 	const info = score.value
 	if (!info) {
 		return
 	}
+	const kept = keep ? { from: rangeFrom.value, to: rangeTo.value, ranged: range.value !== null, focus: focusKey.value } : null
 	status.value = 'loading'
 	errorText.value = ''
 	loadingText.value = t('notenarchiv', 'Loading the score …')
@@ -165,11 +190,21 @@ async function load(): Promise<void> {
 			return
 		}
 		const loaded = loadScore(engraver, text)
+		scoreText.value = text
 		model.value = loaded
 		rangeFrom.value = loaded.measures[0]?.number ?? ''
 		rangeTo.value = loaded.measures[loaded.measures.length - 1]?.number ?? ''
 		range.value = null
-		applyStart(loaded)
+		if (kept) {
+			if (kept.ranged) {
+				rangeFrom.value = kept.from
+				rangeTo.value = kept.to
+				rangeStartPending = true
+			}
+			focusKey.value = loaded.voices.some((voice) => voice.key === kept.focus) ? kept.focus : ''
+		} else {
+			applyStart(loaded)
+		}
 		status.value = 'ready'
 		await nextTick()
 		if (rangeStartPending) {
@@ -263,6 +298,197 @@ function onTaskCreated(): void {
 	taskDialogOpen.value = false
 	emit('changed')
 }
+
+// ---- review of the transcription (module "transcription_review") -------------
+
+const reviewOn = computed(() => isModuleActive('transcription_review'))
+const review = shallowRef<VersionReview | null>(null)
+const reviewLoading = ref(false)
+const reviewError = ref('')
+const reviewShown = ref(props.start?.review === true)
+const selectedPointId = ref<number | null>(null)
+
+/** Points that wait for a decision (open or asked). */
+const openPoints = computed(() => (review.value?.counts.open ?? 0) + (review.value?.counts.question ?? 0))
+
+const reviewToggleLabel = computed(() => openPoints.value > 0
+	? n('notenarchiv', 'Review: %n open point', 'Review: %n open points', openPoints.value)
+	: t('notenarchiv', 'Review'))
+
+async function loadReview(): Promise<void> {
+	if (!reviewOn.value) {
+		return
+	}
+	reviewLoading.value = true
+	reviewError.value = ''
+	try {
+		review.value = await fetchReview(props.detail.version.id)
+		if (selectedPointId.value !== null && !review.value.points.some((point) => point.id === selectedPointId.value)) {
+			selectedPointId.value = null
+		}
+	} catch (error) {
+		reviewError.value = errorMessage(error)
+	} finally {
+		reviewLoading.value = false
+	}
+}
+
+/**
+ * Show the place of a review point: its measures, its voice as focus voice
+ * and its page of the scan; say it for screen readers.
+ *
+ * @param point - review point
+ */
+function selectPoint(point: ReviewPoint): void {
+	selectedPointId.value = point.id
+	if (point.page) {
+		scanPage.value = point.page
+	}
+	const loaded = model.value
+	if (!loaded || status.value !== 'ready') {
+		return
+	}
+	const parts = [pointPlace(point)]
+	const found = pointRange(point, loaded.measures)
+	if (found !== null) {
+		rangeFrom.value = loaded.measures[found.start].number
+		rangeTo.value = loaded.measures[found.end].number
+		applyRange()
+	} else if (point.measure_from || point.measure_to || point.measures) {
+		parts.push(t('notenarchiv', 'These measures are not in the score.'))
+	}
+	const voice = matchVoice(loaded.voices, point.voice, labelOf)
+	focusKey.value = voice?.key ?? ''
+	if (voice) {
+		parts.push(t('notenarchiv', 'Focus voice: {voice}', { voice: labelOf(voice) }))
+	} else if (canonicalVoice(point.voice) !== null) {
+		parts.push(t('notenarchiv', 'The voice "{voice}" is not in the score; no focus voice.', { voice: point.voice ?? '' }))
+	}
+	announce(parts.join('. '))
+}
+
+/**
+ * Play the measures of a review point.
+ *
+ * @param point - review point
+ */
+async function playPoint(point: ReviewPoint): Promise<void> {
+	selectPoint(point)
+	await nextTick()
+	if (canPlay.value && !player?.isPlaying) {
+		await togglePlay()
+	}
+}
+
+function toggleReview(): void {
+	reviewShown.value = !reviewShown.value
+	if (reviewShown.value && review.value === null) {
+		loadReview()
+	}
+}
+
+async function onReviewChanged(): Promise<void> {
+	await loadReview()
+	emit('changed')
+}
+
+// ---- small corrections (module "corrections") ----------------------------------
+
+const correctionsOn = computed(() => isModuleActive('corrections'))
+/** The server checks again: module, roles, preservation copy, file permissions. */
+const canCorrect = computed(() => correctionsOn.value && scoreText.value !== '' && (review.value
+	? review.value.may.correct
+	: hasAnyRole(['librarian', 'conductor']) && props.detail.version.preservation_copy !== true))
+const correction = shallowRef<{ range: MeasureRange, voice: Voice, pointId: number | null } | null>(null)
+const correctionHint = ref('')
+const correctButton = ref(null)
+
+/**
+ * Open the correction form for the shown measures and the focus voice, or
+ * for the place of a review point.
+ *
+ * @param point - review point the correction starts from
+ */
+function openCorrection(point: ReviewPoint | null = null): void {
+	if (point) {
+		selectPoint(point)
+	}
+	const loaded = model.value
+	if (!loaded || scoreText.value === '') {
+		return
+	}
+	const shown = range.value ?? { start: 0, end: loaded.measures.length - 1 }
+	const voice = focusVoice.value
+	if (!voice) {
+		correctionHint.value = t('notenarchiv', 'Please choose a focus voice first: the form shows the notes of one voice.')
+		return
+	}
+	if (shown.end - shown.start + 1 > MAX_CORRECTION_MEASURES) {
+		correctionHint.value = t('notenarchiv', 'Please show at most {count} measures first (fields "From measure" and "To measure").', { count: MAX_CORRECTION_MEASURES })
+		return
+	}
+	correctionHint.value = ''
+	if (player?.isPlaying) {
+		player.pause()
+		playing.value = false
+	}
+	correction.value = { range: shown, voice, pointId: point?.id ?? null }
+}
+
+function closeCorrection(): void {
+	correction.value = null
+	focusAfterDialog(correctButton)
+}
+
+/**
+ * A correction was saved as a new file: the copy and the review are loaded
+ * again; the score follows its new file (watch below).
+ *
+ * @param result - the server's answer
+ */
+async function onCorrected(result: CorrectionResult): Promise<void> {
+	correction.value = null
+	focusAfterDialog(correctButton)
+	announce(t('notenarchiv', 'Saved as a new file: {name}', { name: result.file.name }))
+	await loadReview()
+	emit('changed')
+}
+
+// The copy got another score file (a correction): show it, keeping measures and voice
+watch(() => score.value?.fileId, (id, previous) => {
+	if (id !== undefined && previous !== undefined && id !== previous) {
+		load(true)
+	}
+})
+
+// ---- scan beside the score ---------------------------------------------------------
+
+const scans = computed(() => scanFiles(props.detail.files))
+const scanFileId = ref<number | null>(scans.value[0]?.id ?? null)
+const scanShown = ref(false)
+const scanPage = ref(scanFileId.value !== null ? storedScanPage(props.detail.copy.id, scanFileId.value) : 1)
+const scanPageInput = ref(String(scanPage.value))
+
+watch(scanFileId, (id) => {
+	if (id !== null) {
+		scanPage.value = storedScanPage(props.detail.copy.id, id)
+	}
+})
+watch(scanPage, (page) => {
+	scanPageInput.value = String(page)
+	if (scanFileId.value !== null) {
+		storeScanPage(props.detail.copy.id, scanFileId.value, page)
+	}
+})
+watch(scanPageInput, (value) => {
+	const page = parsePage(value)
+	if (page !== null && page !== scanPage.value) {
+		scanPage.value = page
+	}
+})
+
+const scanSrc = computed(() => (scanFileId.value === null ? '' : scanUrl(scanFileId.value, scanPage.value)))
+const scanName = computed(() => scans.value.find((file) => file.id === scanFileId.value)?.name ?? '')
 
 // ---- layout and rendering ---------------------------------------------------
 
@@ -848,7 +1074,10 @@ function onKeydown(event: KeyboardEvent): void {
 
 // ---- lifecycle --------------------------------------------------------------
 
-onMounted(load)
+onMounted(() => {
+	load()
+	loadReview()
+})
 
 // Lay out again when the width changes (window, phone rotation)
 watch(scoreElement, (element) => {
@@ -897,10 +1126,10 @@ onBeforeUnmount(() => {
 					class="score-viewer__notice">
 					{{ start.notice }}
 				</NcNoteCard>
-				<details v-if="review !== ''" class="score-viewer__review">
+				<details v-if="musicxmlReview !== ''" class="score-viewer__review">
 					<summary>{{ reviewLabel }}</summary>
 					<p class="score-viewer__review-text">
-						{{ review }}
+						{{ musicxmlReview }}
 					</p>
 				</details>
 			</div>
@@ -918,7 +1147,7 @@ onBeforeUnmount(() => {
 					<NcIconSvgWrapper :path="mdiAlertCircleOutline" />
 				</template>
 				<template #action>
-					<NcButton @click="load">
+					<NcButton @click="load()">
 						{{ t('notenarchiv', 'Try again') }}
 					</NcButton>
 				</template>
@@ -1074,32 +1303,110 @@ onBeforeUnmount(() => {
 					</p>
 				</section>
 
+				<section v-if="reviewOn || canCorrect || scans.length > 0"
+					class="score-viewer__share"
+					:aria-label="t('notenarchiv', 'Review and scan')">
+					<NcButton v-if="reviewOn"
+						variant="secondary"
+						:aria-pressed="reviewShown ? 'true' : 'false'"
+						@click="toggleReview">
+						<template #icon>
+							<NcIconSvgWrapper :path="mdiTextBoxCheckOutline" />
+						</template>
+						{{ reviewToggleLabel }}
+					</NcButton>
+					<NcButton v-if="canCorrect"
+						ref="correctButton"
+						variant="secondary"
+						aria-haspopup="dialog"
+						@click="openCorrection()">
+						<template #icon>
+							<NcIconSvgWrapper :path="mdiPencilOutline" />
+						</template>
+						{{ t('notenarchiv', 'Correct notes …') }}
+					</NcButton>
+					<div v-if="scans.length > 0"
+						class="score-viewer__scan-controls"
+						role="group"
+						:aria-label="t('notenarchiv', 'Scan')">
+						<label v-if="scans.length > 1" class="score-viewer__scan-choice" :for="scanSelectId">
+							<span>{{ t('notenarchiv', 'Scan file') }}</span>
+							<select :id="scanSelectId" v-model.number="scanFileId">
+								<option v-for="file in scans" :key="file.id" :value="file.id">
+									{{ file.name }}
+								</option>
+							</select>
+						</label>
+						<NcCheckboxRadioSwitch v-model="scanShown" type="switch">
+							{{ t('notenarchiv', 'Show scan beside the score') }}
+						</NcCheckboxRadioSwitch>
+						<NcTextField v-model="scanPageInput"
+							class="score-viewer__measure-field"
+							type="number"
+							min="1"
+							:label="t('notenarchiv', 'Page of the scan')" />
+						<NcButton variant="tertiary"
+							:href="scanSrc"
+							target="_blank">
+							<template #icon>
+								<NcIconSvgWrapper :path="mdiOpenInNew" />
+							</template>
+							{{ t('notenarchiv', 'Open scan in a new window') }}
+						</NcButton>
+					</div>
+					<p v-if="correctionHint" class="score-viewer__hint score-viewer__reference" role="status">
+						{{ correctionHint }}
+					</p>
+				</section>
+
 				<p :id="summaryId" class="score-viewer__summary">
 					{{ summary }}
 				</p>
-				<!-- Scrollable score; focusable so it can be scrolled with the keyboard -->
-				<!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -->
-				<div ref="scoreElement"
-					class="score-viewer__score"
-					tabindex="0"
-					role="region"
-					:aria-label="t('notenarchiv', 'Score')"
-					:aria-describedby="summaryId"
-					@wheel="onWheel">
-					<div ref="pagesElement"
-						class="score-viewer__pages"
-						role="img"
-						:aria-label="description">
-						<!-- SVG rendered by Verovio in the browser from the MusicXML file and cleaned by sanitizeSvg() -->
-						<!-- eslint-disable vue/no-v-html -->
-						<div v-for="(svg, index) in pages"
-							:key="index"
-							class="score-viewer__page"
-							v-html="svg" />
-						<!-- eslint-enable vue/no-v-html -->
+				<div class="score-viewer__workspace">
+					<!-- Scrollable score; focusable so it can be scrolled with the keyboard -->
+					<!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -->
+					<div ref="scoreElement"
+						class="score-viewer__score"
+						tabindex="0"
+						role="region"
+						:aria-label="t('notenarchiv', 'Score')"
+						:aria-describedby="summaryId"
+						@wheel="onWheel">
+						<div ref="pagesElement"
+							class="score-viewer__pages"
+							role="img"
+							:aria-label="description">
+							<!-- SVG rendered by Verovio in the browser from the MusicXML file and cleaned by sanitizeSvg() -->
+							<!-- eslint-disable vue/no-v-html -->
+							<div v-for="(svg, index) in pages"
+								:key="index"
+								class="score-viewer__page"
+								v-html="svg" />
+							<!-- eslint-enable vue/no-v-html -->
+						</div>
 					</div>
+					<!-- The browser's own PDF viewer; only present while switched on -->
+					<div v-if="scanShown && scanSrc !== ''" class="score-viewer__scan">
+						<iframe :src="scanSrc"
+							class="score-viewer__scan-frame"
+							:title="t('notenarchiv', 'Scan {name}, page {page}', { name: scanName, page: scanPage })" />
+					</div>
+					<ReviewPanel v-if="reviewOn && reviewShown"
+						class="score-viewer__review-panel"
+						:review="review"
+						:loading="reviewLoading"
+						:error="reviewError"
+						:selected-id="selectedPointId"
+						:can-play="canPlay"
+						:can-correct="canCorrect"
+						:tasks-active="isModuleActive('tasks')"
+						@select="selectPoint"
+						@play="playPoint"
+						@correct="openCorrection"
+						@changed="onReviewChanged"
+						@retry="loadReview" />
 				</div>
-				<p class="hidden-visually" aria-live="polite">
+				<p class="hidden-visually" role="status">
 					{{ announcement }}
 				</p>
 				<TaskDialog v-if="taskDialogOpen"
@@ -1125,6 +1432,17 @@ onBeforeUnmount(() => {
 					:mode="mode"
 					:voice-name="labelOf"
 					@close="closePractice" />
+				<CorrectionDialog v-if="correction && model"
+					:detail="detail"
+					:model="model"
+					:score-text="scoreText"
+					:range="correction.range"
+					:voice="correction.voice"
+					:voice-name="labelOf(correction.voice)"
+					:points="review?.points ?? []"
+					:point-id="correction.pointId"
+					@saved="onCorrected"
+					@close="closeCorrection" />
 			</template>
 		</div>
 	</NcModal>
@@ -1292,14 +1610,66 @@ onBeforeUnmount(() => {
 	color: var(--color-text-maxcontrast);
 }
 
+.score-viewer__workspace {
+	display: flex;
+	flex: 1 0 auto;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: calc(2 * var(--default-grid-baseline));
+	min-width: 0;
+}
+
 .score-viewer__score {
-	flex: 1 0 min(60vh, 30em);
-	min-height: 16em;
+	flex: 3 1 28em;
+	box-sizing: border-box;
+	height: max(16em, min(70vh, 40em));
+	min-width: 0;
 	overflow: auto;
 	border: 1px solid var(--color-border);
 	border-radius: var(--border-radius-large, 8px);
 	background-color: var(--color-main-background);
 	color: var(--color-main-text);
+}
+
+.score-viewer__scan {
+	display: flex;
+	flex: 2 1 22em;
+	height: max(16em, min(70vh, 40em));
+	min-width: 0;
+}
+
+.score-viewer__scan-frame {
+	flex: 1 1 auto;
+	width: 100%;
+	height: 100%;
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius-large, 8px);
+	background-color: var(--color-main-background);
+}
+
+.score-viewer__review-panel {
+	flex: 1 1 20em;
+	box-sizing: border-box;
+	max-height: max(16em, min(85vh, 60em));
+	overflow: auto;
+}
+
+.score-viewer__scan-controls {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	gap: calc(2 * var(--default-grid-baseline));
+}
+
+.score-viewer__scan-choice {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.score-viewer__scan-choice select {
+	min-height: var(--default-clickable-area);
+	max-width: 20em;
 }
 
 .score-viewer__score:focus-visible {

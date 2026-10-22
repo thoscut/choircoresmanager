@@ -15,8 +15,9 @@ composers, lyricists and arrangers of the works, all of whom died more than
 
 ## License
 
-- The demo data – `catalog.json`, the score specs in `scores/`, the generated
-  CSV, PDF and MusicXML files and the four-part settings ("Demo-Satz") – are
+- The demo data – `catalog.json`, the score specs in `scores/`, the
+  transcription reports in `reports/`, the generated CSV, PDF, MusicXML and
+  report files and the four-part settings ("Demo-Satz") – are
   dedicated to the public domain under
   [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/).
 - The works themselves (melodies and texts) are in the public domain: every
@@ -38,7 +39,8 @@ composers, lyricists and arrangers of the works, all of whom died more than
 
 ```
 Notenarchiv-Demo/
-  Mappe_1/ … Mappe_4/      placeholder PDFs and MusicXML, file names start with the shelf mark
+  Mappe_1/ … Mappe_4/      placeholder PDFs and MusicXML, file names start with the shelf mark;
+                           two transcription reports "… - Bericht.json" (1-1, 2-1)
   LIESMICH.txt             short note in German; ignored by the file sync
   _Import/                 skipped by the file sync (folder name starts with "_")
     catalog.csv            catalog in the legacy format (31 German columns)
@@ -52,7 +54,7 @@ The catalog has 23 copies (shelf marks `1-1` to `4-3`) of 20 works:
 
 | Shelf mark | Title | Version | Rights status | Files | Shows |
 |---|---|---|---|---|---|
-| 1-1 | Der Mond ist aufgegangen (Schulz/Claudius) | Demo-Satz SATB | gemeinfrei | PDF, MusicXML | pickup, 1st/2nd ending, two verses; second version 3-1 |
+| 1-1 | Der Mond ist aufgegangen (Schulz/Claudius) | Demo-Satz SATB | gemeinfrei | PDF, MusicXML, report | pickup, 1st/2nd ending, two verses; second version 3-1; transcription report with review points |
 | 1-2 | Freude, schöner Götterfunken (Beethoven/Schiller) | Demo-Satz SATB, four staves | gemeinfrei | PDF, MXL | endings, tie across the bar line; legacy "on the singers' portal" without confirmation |
 | 1-3 | Großer Gott, wir loben dich (Wien 1776/Franz) | Demo-Satz SATB | gemeinfrei | PDF, MusicXML | repeat, two verses |
 | 1-4 | Stille Nacht, heilige Nacht (Gruber/Mohr) | Demo-Satz SATB | gemeinfrei | PDF, MXL | 6/8 with dotted rhythms |
@@ -60,7 +62,7 @@ The catalog has 23 copies (shelf marks `1-1` to `4-3`) of 20 works:
 | 1-6 | Es ist ein Ros entsprungen (Praetorius) | Satz 1609 | gemeinfrei | PDF | |
 | 1-7 | Ein feste Burg ist unser Gott (Luther) | Satz: B. Beispiel | gemeinfrei | PDF | **conflict**: marked public domain, arranger's dates unknown |
 | 1-8 | Abschied vom Walde (Mendelssohn/Eichendorff) | original | gemeinfrei | PDF | "reserve" in a programme |
-| 2-1 | Ännchen von Tharau (Silcher/Dach/Herder) | Demo-Satz TTBB | gemeinfrei | PDF, MXL | repeat, two verses, "Tenor I/II" on one staff |
+| 2-1 | Ännchen von Tharau (Silcher/Dach/Herder) | Demo-Satz TTBB | gemeinfrei | PDF, MXL, report | repeat, two verses, "Tenor I/II" on one staff; transcription report with review points |
 | 2-2 | Kein schöner Land (Volksweise/Zuccalmaglio) | Demo-Satz TTBB | gemeinfrei | PDF, MusicXML | pickup of three eighths, short last bar |
 | 2-3 | Am Brunnen vor dem Tore (Schubert/Silcher/Müller) | Satz Silcher | gemeinfrei | PDF | |
 | 2-4 | Tischlied (Zelter/Goethe) | edition by B. Beispiel | offen | PDF | same print as 3-2 |
@@ -91,7 +93,7 @@ Node 22 or newer, no further dependencies:
 
 ```sh
 node tools/demo/build.mjs            # writes build/demo/Notenarchiv-Demo/
-node tools/demo/build.mjs --check    # only checks scores and catalog
+node tools/demo/build.mjs --check    # only checks scores, reports and catalog
 ```
 
 The build reads the legacy columns and the allowed values from
@@ -106,13 +108,16 @@ Checks of the result:
 # the app's score logic with Verovio: loading, measures, voices, playing order
 node tools/score-check/check.mjs build/demo/Notenarchiv-Demo/Mappe_*/*.mxl build/demo/Notenarchiv-Demo/Mappe_*/*.musicxml
 
-# the import files with the app's own PHP classes (after `composer install`)
+# the import files and the transcription reports with the app's own PHP classes (after `composer install`)
 php tools/demo/check-csv.php . build/demo/Notenarchiv-Demo/_Import
 ```
 
 `check-csv.php` parses every CSV with `CatalogCsv`, checks each catalog cell
 against the field registry, confirms that parse → write gives the same bytes,
 and reports what the person and performance imports will make of the lists.
+It also reads the transcription reports of the archive folder (the folder
+above the import folder) with `TranscriptionReportParser`, as the file sync
+does, and checks that each names its copy and the score file next to it.
 
 ### Score specs
 
@@ -142,7 +147,10 @@ holds the role "Catalog (music librarian)".
    columns as missing, which is expected, and stores a snapshot first.
 5. **File sync**: 30 files named after a shelf mark (23 PDF, 4 MXL, 3
    MusicXML), 29 assigned, `Mappe_4/4-04_…pdf` not assignable, `LIESMICH.txt`
-   ignored, `_Import` skipped, 4-3 without a file.
+   ignored, `_Import` skipped, 4-3 without a file. The two transcription
+   reports are counted apart (`reports`: 2 files, 2 assigned); with the module
+   "Reviewing transcriptions" on (preset "standard") both are read (2
+   imported). Together 32 new file rows.
 6. **Persons**: import `_Import/persons.csv`: 30 rows, 29 persons (Friedrich
    Silcher appears twice), role words such as "Tonsatz von" removed, B.
    Beispiel uncertain. Afterwards the protection proposal shows "free" for
@@ -159,6 +167,27 @@ holds the role "Catalog (music librarian)".
    librarian (internal preservation copy, no playback); the release lists
    show 1-2 and 2-1 as "remove" until their public domain status is
    confirmed in the app; the merge proposals list the three pairs above.
+9. **Review points**: open the score view of 1-1 or 2-1 and its review. Each
+   report gives 7 review points: 4 uncertain readings with measures and voice
+   (e.g. 2-1, measure 7, "T II"), 1 omitted mark, 1 material finding and 1
+   question. 1-1 has 5 points for the conductor and 2 for the librarian (its
+   question names no measure), 2-1 has 6 and 1. Choosing a point shows its
+   measures with the voice highlighted. The reports also propose one catalog
+   field each (1-1 "Veröffentlichung", 2-1 "Verlag / Bestellnummer"); the
+   proposals reach the inbox only when the module "Proposals inbox" is on (it
+   is off in the preset "standard"). Their rights assessment (public domain)
+   equals the catalog, so no rights status is proposed.
 
 The repertoire classes depend on the date: with the default thresholds,
 works performed since 2023 count as current in 2026.
+
+## Transcription reports
+
+`reports/<shelf mark>.json` are invented reports of a transcription round in
+the format `bericht/1` (see `docs/api.md`, "Reviewing transcriptions and
+corrections"), with the optional fields `runde` and `datum` of the proposed
+extension. `build.mjs` writes each as `<base name> - Bericht.json` next to
+its score, where the file sync finds it, and checks it against the score
+spec: required fields, shelf mark and base name of the copy, every measure
+number and voice named, and the counted marks (`umfang`, dynamics, slurs,
+ties, fermatas) as `abnahme.py` of the transcription skill would count them.

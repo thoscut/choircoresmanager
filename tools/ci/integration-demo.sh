@@ -15,8 +15,9 @@
 #   3. copies the demo folder into the account's files and scans it,
 #   4. sets the demo folder as archive folder,
 #   5. imports the catalog (dry run, then for real) and runs the file sync,
-#      checking the figures given in tools/demo/README.md, and switches on
-#      the interface for agents (module agent_api),
+#      checking the figures given in tools/demo/README.md (the two demo
+#      transcription reports are read into review points here), and
+#      switches on the interface for agents (module agent_api),
 #   6. runs the integration tests,
 #   7. runs an agent without a language model against the API for agents:
 #      an account with the role "contributor" gets an app password, the MCP
@@ -212,13 +213,21 @@ occ notenarchiv:file-sync "$CI_USER" > "$WORK/file-sync.json"
 expect file-sync.json files 30
 expect file-sync.json byType '{"pdf": 23, "mxl": 4, "musicxml": 3}'
 expect file-sync.json assigned 29
-expect file-sync.json new 30
+# 30 score and scan files plus the two transcription reports (1-1, 2-1)
+expect file-sync.json new 32
 expect file-sync.json missing 0
 expect file-sync.json unassignable '["Mappe_4/4-04_Neuzugang-ohne-Eintrag.pdf"]'
 # LIESMICH.txt
 expect file-sync.json ignored 1
 expect file-sync.json skippedFolders '["_Import"]'
 expect file-sync.json copiesWithoutFile '["4-3"]'
+# The reports "… - Bericht.json" count as reports, not as score files, and are
+# read into review points (module transcription_review, on in "complete").
+expect file-sync.json reports.files 2
+expect file-sync.json reports.assigned 2
+expect file-sync.json reports.imported 2
+expect file-sync.json reports.failed '[]'
+expect file-sync.json reports.switchedOff false
 
 step "5b. Interface for agents"
 # Never part of a preset ("complete" leaves it off): switched on by itself.
@@ -265,6 +274,11 @@ run_test modules_test 2-6
 # The API for agents through its controllers (1-1 public domain, 3-1 the
 # internal preservation copy); roles and modules restored exactly.
 run_test api_v1_test 1-1 3-1
+# Transcription review and a correction in the app on 1-2 (MXL, four
+# staves), a copy without a demo report, so that the review points of the
+# demo reports (1-1, 2-1) do not interfere. The test writes its report
+# itself; the corrected file is deleted again, everything else rolled back.
+run_test review_test 1-2
 run_test backup_test
 
 step "7. An agent without a language model: MCP server over stdio against the API for agents"

@@ -163,6 +163,10 @@ async function followStartParams(params: StartParams): Promise<void> {
 		return
 	}
 	if (copyId !== null) {
+		if (params.review) {
+			// A notification about review points: the score view with the review
+			scoreRequest.value = { copyId, review: true }
+		}
 		await openEntry(copyId, params.taskId !== null ? 'tasks' : undefined)
 		// after opening: opening another copy resets the highlight
 		highlightedTaskId.value = params.taskId

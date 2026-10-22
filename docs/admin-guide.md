@@ -121,11 +121,20 @@ who uses it, so everybody only sees files they may see anyway. Background
 jobs (weekly backup, checksums) read through the account that chose the
 folder. The app never changes, moves or deletes files; it only writes into
 its own subfolder `_notenarchiv-app`, for exports, snapshots and backups.
+The one exception is a small correction of a MusicXML in the score view
+(module "Small corrections"): the app saves it as a **new file**
+next to the old one, with the Nextcloud permissions of the person who
+corrects (for example `5-01_Title (korrigiert 2026-10-22).mxl`); the old file
+stays unchanged. Without write permission in that folder the app says so and
+saves nothing.
 
 File names start with the shelf mark: `5-01_Title_Composer.pdf` belongs to
 copy 5-1 (leading zeros do not matter). Folders whose name starts with `_` or
 `.` are skipped. A file whose name does not fit can be linked to a copy by
-hand; such a link stays.
+hand; such a link stays. A file with a shelf mark whose name ends with
+`bericht.json` (for example `5-01_Title - Bericht.json`) is the report of a
+transcription: the file sync counts it as a report, not as a score file, and
+reads it into review points (module "Reviewing transcriptions").
 
 With shell access: `occ notenarchiv:setup <account> <folder>` (the folder
 relative to the account's files).
@@ -188,7 +197,7 @@ therefore writes, every week, into `_notenarchiv-app/`:
 - `…_backup_weekly.json`: the **complete** backup of all tables (works,
   versions, copies, files, licenses, proposals, tasks, links, concerts and
   song lists with their programme lines, persons, contributions, merges,
-  audit log) for a lossless restore
+  transcription reports and review points, audit log) for a lossless restore
 
 ![The backup sections of the archive management: storing a complete backup now, downloading the complete backup as JSON, and restoring a backup into an empty catalog.](screenshots/backup-restore.png)
 
@@ -250,6 +259,8 @@ notifications. A notification is withdrawn when the matter is resolved.
 | Protection term ended | catalog role | daily check: marked protected, but public domain by the life dates |
 | File changed without modification | catalog role | when the checksum job finds a deviation |
 | Weekly backup failed | catalog role and admins | when the weekly backup fails |
+| New review points | the role responsible: conductor (musical points) and/or catalog role (material, questions without a measure) | a transcription report brings review points; one notification per report and role, withdrawn when none of them is open any more |
+| Correction received | catalog role (not the person who made it) | a correction was saved in the app, or a new round of a transcription closed review points |
 
 Notifications never go to singers and contain no personal data. The deadline
 notifications of a cancelled concert are withdrawn. Every user chooses in
@@ -328,6 +339,9 @@ it (audit log, as a snapshot of the display name). The register of persons
 holds names, life dates and roles of composers, arrangers, lyricists and
 other persons involved; for living persons this is personal data from public
 sources (prints, publisher catalogues) kept for the rights assessment.
+Transcription reports are kept as received (as evidence, with their
+checksum); their rights section may name the persons involved in a work.
+Review points record who decided them and when.
 
 The app stores no data about singers. Excerpt links count calls without
 recording who opened them. The statistics contain no personal data of choir
@@ -403,6 +417,13 @@ its first year. Left off, and easy to switch on when needed:
   The weekly backup is the safety net of every installation.
 - *Statistics and annual report*: figures for the board of a larger archive.
 
+*Reviewing transcriptions* and *small corrections in the app* are on in
+**Standard**: they only show something where a transcription report or a
+MusicXML exists, and they spare the conductor the detour over questions and
+files. **Simple** leaves them off: it keeps to reading the catalog and the
+scores. The corrections need only the score view, not the review, so that a
+choir without transcription reports can still correct a wrong note.
+
 **Existing installations** keep every function: an update from a version
 before 0.1.27 stores all switches as on. The switches are stored on every
 installation and update, so a later change of the defaults never switches
@@ -429,6 +450,8 @@ preset later neither opens nor closes it.
 | Playback | Score view | on | No playback. |
 | Practice audio files | Playback | off | The server refuses every export. |
 | Excerpt links | Score view | on | No new links, and existing links do not open (they are kept and expire as before). |
+| Reviewing transcriptions | Score view | on | The file sync still recognises transcription reports, but does not read them; no review points, no correction orders, no review in the score view, no filter "open review points". Reports, points and decisions are kept. |
+| Small corrections | Score view | on | No corrections in the score view; files corrected before stay as they are. |
 | Questions and tasks | – | on | No questions and tasks, no task cards and notifications. Existing tasks are kept. |
 | Proposals inbox | – | off | No inbox; tools cannot propose. Open proposals are kept. |
 | Concerts and song lists | – | on | No concerts and song lists, no deadlines on the start page, in the dashboard or as notifications. |
@@ -442,7 +465,7 @@ preset later neither opens nor closes it.
 | Statistics and annual report | – | off | No statistics, no annual report. |
 | Dashboard widget | – | on | Nextcloud does not offer the widget. |
 | Notifications | – | on | The app sends no notifications; notifications sent before disappear when they are shown. |
-| One switch per occasion | Notifications and the module of the occasion | on | That notification is not sent; the daily checks withdraw it. Occasions: proposals waiting, remove from the singers' portal, license ends soon, license has ended, weekly backup failed, new question or task, question answered, concert deadlines, confirm what was sung, protection term ended, file changed unnoticed. |
+| One switch per occasion | Notifications and the module of the occasion | on | That notification is not sent; the daily checks withdraw it. Occasions: proposals waiting, remove from the singers' portal, license ends soon, license has ended, weekly backup failed, new question or task, question answered, concert deadlines, confirm what was sung, protection term ended, file changed unnoticed, new review points, correction received. |
 | Interface for agents | – | off (in no preset) | The API for agents (`/ocs/v2.php/apps/notenarchiv/api/v1/…`) answers 404; the MCP server reports the interface as switched off. Nothing else changes. |
 
 ### Command line

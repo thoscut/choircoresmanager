@@ -124,6 +124,36 @@ and 35.0.2 with MariaDB; the app requires MySQL or MariaDB.
 - Personal view: every account hides navigation areas and start page cards
   it does not need ("Customize view", stored on the server); permissions do
   not change.
+- Reviewing transcriptions (milestone 0.6, module `transcription_review`):
+  the report of a transcription (`bericht.json`, format `bericht/1`) comes
+  in through the file sync (`… - Bericht.json` next to the score, counted as
+  a report, not as a score file) or `POST /api/versions/{id}/transcription-reports`.
+  It is checked strictly (size, nesting, types, shelf mark and base name),
+  kept unchanged as evidence with its checksum, and read only once.
+  Uncertain readings, omitted marks, material findings and questions become
+  review points with measures and voice, for the conductor (musical) or the
+  catalog librarian (material); rights and catalog fields of the report go
+  to the proposals inbox, the catalog never changes by itself. A new round
+  closes the points it no longer names when the MusicXML has changed. In
+  the score view a review panel lists the points; choosing one shows its
+  measures with the voice highlighted and plays the passage (where playback
+  is allowed). Decisions: reading is right, correction order for the tool
+  chain (`GET /api/review/orders`), question (becomes a task with the
+  location), dismissed; status instead of deletion, with decider, time and
+  reason. Open review points per copy in the catalog with a filter;
+  notifications "new review points" and "correction received".
+- Small corrections in the app (module `corrections`): pitch, accidental and
+  syllables of a measure range and voice, with a preview; the server
+  compares old and new MusicXML element by element and saves only these
+  changes as a new file next to the old one (`… (korrigiert 2026-10-22).mxl`)
+  with the permissions of the person who corrects; the old file stays
+  unchanged, the change list goes into the audit log
+  (`POST /api/versions/{id}/corrections`).
+- Scan beside the score: a linked PDF scan opens next to the score or in a
+  second window at a page, in the browser's own PDF viewer
+  (`GET /api/files/{id}/scan`).
+- Demo data: two invented transcription reports (1-1, 2-1) with review
+  points of every kind; integration test `review_test.php`.
 - Documentation with screenshots of the demo data: README, user and
   administration guides, German quick start, contributing guide, issue and
   pull request templates; a script recreates the screenshots

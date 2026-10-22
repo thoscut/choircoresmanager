@@ -25,6 +25,8 @@ Request bodies are checked strictly: unknown fields are refused with 400
 | `POST /api/backup/restore` | 5 in 10 minutes |
 | `GET /api/events/{id}/song-order` | 60 in 10 minutes |
 | `POST /api/versions/{id}/practice-audio` | 30 in 10 minutes |
+| `POST /api/versions/{id}/transcription-reports`, `POST /api/versions/{id}/corrections` | 30 in 10 minutes |
+| `GET /api/files/{id}/scan` | 120 in 10 minutes |
 | `GET /api/statistics`, `GET /api/statistics/report` | 120 in 10 minutes |
 | `GET /api/statistics/csv`, `GET /api/statistics/report/csv` | 30 in 10 minutes |
 | `GET /api/events/{id}/ics`, `GET /api/events/upcoming/ics` | 60 in 10 minutes |
@@ -156,11 +158,14 @@ subset are refused with 400 `This file is not a MusicXML score.`; files above
 viewer should nevertheless tell its renderer to read MusicXML only.
 
 File roles: `score_pdf`, `musicxml`, `musescore`, `analysis`, `source`,
-`audio`, `image`, `other`. Open a file in Nextcloud via
+`audio`, `image`, `transcription_report` (a `…bericht.json`, see
+"Reviewing transcriptions"), `other`. Open a file in Nextcloud via
 `generateUrl('/f/{file_id}')`.
 
 Audit actions: `created`, `changed`, `import`, `restore`, `not_found`,
-`file_sync`, `practice_audio` (see "Practice audio files").
+`file_sync`, `practice_audio` (see "Practice audio files"), `imported`
+(object `review_report`), `decided` and `corrected` (object
+`review_point`), `corrected` (object `file`, a correction in the app).
 
 `PATCH /api/{level}/{id}` with `level` = `work` | `version` | `copy`:
 
@@ -1010,6 +1015,8 @@ audio and preservation copies applies whatever is switched on.
 | `playback` | `score_viewer` | on |
 | `practice_audio` | `playback` | off |
 | `excerpt_links` | `score_viewer` | on |
+| `transcription_review` | `score_viewer` | on |
+| `corrections` | `score_viewer` | on |
 | `tasks` | – | on |
 | `proposals` | – | off |
 | `concerts` | – | on |
@@ -1032,7 +1039,14 @@ audio and preservation copies applies whatever is switched on.
 (`rights`), `notify_export_failed`, `notify_task_new` and
 `notify_task_answered` (`tasks`), `notify_concert_deadline` and
 `notify_concert_confirm` (`concerts`), `notify_protection_ended`
-(`protection_terms`), `notify_checksum_mismatch` (`checksums`).
+(`protection_terms`), `notify_checksum_mismatch` (`checksums`),
+`notify_review_points` (`transcription_review`),
+`notify_correction_received` (`score_viewer`).
+
+`corrections` needs only `score_viewer`, not `transcription_review`: a
+small correction is useful without transcription reports (e.g. after a
+question from a singer). Points are only set to `corrected` while
+`transcription_review` is active.
 
 Presets: `simple` (core, `score_viewer`, `playback`, `notifications` with all
 `notify_*` switches), `standard` (the column above), `complete` (everything
@@ -1051,7 +1065,9 @@ other check of the app. The routes and their modules:
 | `valid_version` | `POST /api/versions/{id}/valid`, `…/valid-clear` |
 | `portal` | `POST /api/versions/{id}/portal`, `…/portal-remove`, `GET /api/lists/portal` |
 | `print_station` | `GET /api/lists/print-station` |
-| `score_viewer` | `GET /api/files/{id}/content` |
+| `score_viewer` | `GET /api/files/{id}/content`, `GET /api/files/{id}/scan` |
+| `transcription_review` | `GET /api/versions/{id}/review`, `POST /api/versions/{id}/transcription-reports`, `POST /api/review-points/{id}/decision`, `GET /api/review/orders` (and `score_viewer`) |
+| `corrections` | `POST /api/versions/{id}/corrections` (and `score_viewer`) |
 | `practice_audio` | `POST /api/versions/{id}/practice-audio` |
 | `excerpt_links` | `POST /api/copies/{id}/links`, `GET /api/links`, `GET /api/links/{token}`, `POST /api/links/{id}/revoke` |
 | `tasks` | `GET /api/tasks`, `POST /api/copies/{id}/tasks`, `POST /api/tasks/{id}/answer`, `…/close` |
@@ -1089,7 +1105,10 @@ What else follows the modules:
   `protection: null` without `protection_terms`.
 - `GET /api/entries`: without `repertoire` the repertoire figures are those
   of the imported catalog (`repertoire_source: "import"`); without
-  `concerts`, `song_lists` is empty, too.
+  `concerts`, `song_lists` is empty, too; without `transcription_review`,
+  `review_open` and `review_orders` are `null`.
+- File sync: without `transcription_review` report files are registered and
+  counted, but not read (`reports.switchedOff: true`).
 - `GET /api/due`: only cards, tasks and concerts of active modules
   (`tasks_open`, `tasks_answered` and `tasks`: `tasks`; `ambiguous_items`:
   `performance_import`; `proposals`: `proposals`; `portal_remove`,
@@ -1158,3 +1177,324 @@ two lists). Each list holds at most 50 distinct names of the form
 not allowed.`, `Too many entries at once (at most %s).`). Unknown names hide
 nothing. Stored on the server as the user setting `personal_view` of the
 app. It only hides: permissions stay the same.
+
+## Reviewing transcriptions and corrections (milestone 0.6)
+
+A transcription (scan → MusicXML, e.g. with the skill `noten-pdf-to-musicxml`)
+ends with a report in the format `bericht/1` (`bericht.json`). The app reads
+it into **review points** with a location in the score (measures, voice),
+which the conductor and the catalog librarian decide in the score view.
+Small corrections (pitch, accidental, syllable) are saved in the app as a
+**new file** next to the old one; everything larger becomes a **correction
+order** for the tool chain, whose next report closes the points.
+
+Modules: `transcription_review` (requires `score_viewer`) for reports, review
+points, decisions and orders; `corrections` (requires `score_viewer`) for the
+small corrections in the app. See "Modules and the personal view" above.
+
+Services for other callers (e.g. the agent interface): `ReviewService`
+(`ingest`, `forVersion`, `decide`, `orders`), `CorrectionService`
+(`correct`), `TranscriptionReportParser::parse` (pure, no server needed),
+`MusicXmlCorrection::apply` (pure). They check roles and modules themselves;
+the controller `ReviewController` only maps requests to them.
+
+### Reading a report
+
+A report reaches the app in two ways:
+
+1. **File sync.** A file in the archive folder whose name starts with a shelf
+   mark and ends with `bericht.json` (case-insensitive, e.g.
+   `5-01_Titel - Bericht.json`) is registered with the role
+   `transcription_report`, not as a score file. While `transcription_review`
+   is active, the sync reads every report file that is new, changed or not
+   read yet, as the account that runs the sync. The sync report gets
+   `reports`:
+
+   ```json
+   "reports": { "files": 2, "assigned": 2, "imported": 1, "unchanged": 1,
+                "failed": [{ "path": "Mappe_5/5-01_X - Bericht.json", "error": "…translated…" }],
+                "switchedOff": false }
+   ```
+
+   Report files are not counted in `files`, `assigned` and `byType` (score
+   and scan files only); `new`, `changed` and `missing` count all file rows,
+   reports included; an unassignable report is listed in `unassignable`.
+   `switchedOff: true`: the module is off, the files are registered but not
+   read. `imported` counts reports read with new content, `unchanged`
+   report files not read again (or read with a known checksum).
+2. **API.** `POST /api/versions/{id}/transcription-reports` (roles
+   `librarian`, `contributor`; 30 per 10 minutes) with
+   `{ "content": "<the JSON text of bericht.json>" }` or
+   `{ "report": { …the object… } }`.
+
+Both give (the API as response, the sync per file internally):
+
+```json
+{ "report": { "id": 4, "…": "report row, see below" }, "unchanged": false,
+  "points": { "created": 5, "kept": 1, "closed": 2, "open": 6 },
+  "proposals": 2, "proposalsSkipped": false,
+  "warnings": ["…translated…"] }
+```
+
+`unchanged: true`: the same report (same SHA-256 of the received text) was
+read for this copy before; nothing is created again. `kept`: points the
+report names again that already exist (same category, measures, voice and
+text). `closed`: points of earlier reports of this copy that the new report
+no longer names and whose MusicXML has changed since (see "New round").
+`open`: points of the copy with status `open` after reading.
+
+**Checks.** The report must be a JSON object of at most 1 MB, nested at most
+16 levels, with `"format": "bericht/1"`. `signatur` must be a shelf mark
+(`5-1`, leading zeros allowed) of a copy of the version in the URL (sync: of
+the copy the file belongs to). `basisname` (the name of the result files
+without extension) must not contain `/`, `\` or control characters and must
+not be `.` or `..`, at most 200 characters; if it starts with a shelf mark,
+it must be the same. Every known field is type-checked: a wrong type of a
+field the app uses is refused with 400, of the other fields it only gives a
+warning. Unknown fields are ignored and named in a warning. The received text
+is kept unchanged as evidence (`raw`, with its SHA-256) and never interpreted
+beyond the known fields. Errors (400): `The report is not valid JSON.`,
+`The report must be a JSON object.`, `The report is too large (at most %s
+MB).`, `The report is nested too deeply.`, `The report has an unknown format
+(expected bericht/1).`, `"%s" is missing in the report.`, `"%s" in the
+report must be text.` (also `… must be a whole number.`, `… must be a
+list.`, `… must be an object.`, `… must be yes or no.`; `%s` is the path of
+the field, e.g. `unsicher[2].was`), `"%s" in the report is too long.`,
+`"%s" in the report has too many entries.`, `The shelf mark in the report
+is not valid.`, `The base name in the report is not a valid file name.`,
+`The base name in the report belongs to another shelf mark.`, `The shelf
+mark of the report does not belong to this version.` (API) or `The shelf
+mark of the report does not match its file name.` (file sync), `Please send
+the report either as text or as an object.`. Warnings (in `warnings`, the
+report is read): unknown fields, a missing field the format requires, an
+unknown `weg` or `einstufung`, a `datum` that is no date, a wrong type of a
+field the app only shows (`vorlage`, `umfang`, `gegenprobe`, `geprueft`,
+`aufwand`, `lernen`, `pruefpunkte`, `generator`, `scores`).
+
+**What becomes what.**
+
+| Report field | Becomes | Responsible role |
+|---|---|---|
+| `unsicher[]` `{takt, stimme, was}` | review point `uncertain` | conductor |
+| `vortragszeichen.ausgelassen[]` (text; a leading `T. 23` is read as measures) | review point `omitted` | conductor |
+| `material[]` | review point `material` | librarian |
+| `rueckfragen[]` (text; `T. 23` anywhere is read as measures) | review point `question` | conductor with measures, otherwise librarian |
+| `rechte.einstufung` (`gemeinfrei`/`geschützt`/`offen`) | proposal `version.rights_status` (only if different); reason: `wv.begruendung` and `rechte.beteiligte` | – |
+| `wv.felder` `{ "<legacy column or level.field>": value }` | one proposal per field (only fields the librarian may write, only if different) | – |
+| `wv.herkunft`, `wv.pruefstand`, `wv.begruendung` | shown with the version as the review state of the transcription (`origin`, `review`, `reasoning` of the report) | – |
+
+Proposals go to the inbox with the source `Transcription <round or date>`
+(`round` from the optional field `runde`, otherwise `datum` or the day of
+reading) and only while the module `proposals` is active; otherwise
+`proposalsSkipped: true` and a warning, and the values stay readable in the
+report. The catalog itself never changes.
+
+Measures are printed measure numbers as in the score: `"23"`, `"12–14"`
+(also `12-14`, `T. 12–14`, `Takt 5`); `measure_from`/`measure_to` are filled
+when they look like measure numbers (`[0-9A-Za-z.]{1,16}`), `measures` keeps
+the text (at most 32 characters). `stimme` `alle`/`all`/`tutti` means no
+voice.
+
+**MusicXML of a report.** The MusicXML file of the copy whose name without
+extension is `basisname` (the valid one or `.mxl` first, like the score
+view). Its SHA-256 is stored with the report (`musicxml_sha256`) and with
+every point created (`file_sha256`); points refer to it by `file_id`
+(`files[].id`). Without such a file the points have no file and a warning
+says so.
+
+**New round.** A different report for the same copy supersedes the earlier
+ones (`superseded_by`). Points of earlier reports with the status `open` or
+`correct` that the new report does not name again are set to `corrected`
+("done in a new version", `resolved_report_id`) when the MusicXML of the new
+report differs from the file of the point (checksums); when the MusicXML is
+unchanged they stay open and a warning says so. Everything is recorded in the
+audit log (object types `review_report` and `review_point`).
+
+**Proposed extension of `bericht/1`** (optional fields, read when present,
+ignored otherwise; not part of the skill yet):
+
+| Field | Meaning |
+|---|---|
+| `runde` | round of the transcription (text or number), for the source of the proposals |
+| `datum` | day of the transcription (`YYYY-MM-DD`) |
+| `unsicher[].seite`, `unsicher[].strophe` | page of the scan and verse of the point |
+| `rueckfragen[]` as object `{ "frage": "…", "takt": "23", "stimme": "B", "an": "chorleitung" \| "archiv" }` | question with a location and an addressee |
+| `erledigt` | list of review point ids (from `GET /api/review/orders`) or `{ "takt": "23", "stimme": "B" }` that the new file has done; they are closed like points no longer named (only when the MusicXML changed) |
+
+### Review points
+
+`GET /api/versions/{id}/review` (any role):
+
+```json
+{ "version_id": 3,
+  "reports": [{ "id": 4, "version_id": 3, "copy_id": 5, "report_file_id": 17, "source": "file|api",
+                "sha256": "…", "round": "39", "report_date": "2026-10-22", "basename": "5-01_Titel",
+                "musicxml_id": 12, "musicxml_sha256": "…", "method": "neuaufbau",
+                "origin": "…wv.herkunft…", "review": "…wv.pruefstand…", "reasoning": "…wv.begruendung…",
+                "rights_class": "gemeinfrei|geschützt|offen|null",
+                "summary": { "title": "…", "template": { "typ": "druck", "beschreibung": "…", "seiten": 2, "schreiber_oder_verlag": "…" },
+                             "extent": { "takte": 32, "auftakt": true, "stimmen": 4, "systeme": 1, "strophen": 2 },
+                             "persons": [{ "rolle": "…", "name": "…", "lebensdaten": "…", "beleg": "…" }],
+                             "edition": "…", "rights": "…", "fields": { "Verlag / Bestellnummer": "…" },
+                             "warnings": ["…translated…"] },
+                "superseded_by": null, "created_by": "…", "created": 1761150000 }],
+  "points": [{ "id": 12, "version_id": 3, "copy_id": 5, "report_id": 4, "file_id": 12, "file_sha256": "…",
+               "category": "uncertain|omitted|material|question", "measures": "12–14",
+               "measure_from": "12", "measure_to": "14", "voice": "B", "verse": null, "page": null,
+               "text": "d or c", "point_key": "…", "role": "conductor|librarian",
+               "status": "open|confirmed|correct|corrected|question|dismissed",
+               "correction": null, "decided_by": null, "decided_by_name": null, "decided": null,
+               "decision_reason": null, "task_id": null, "resolved_report_id": null,
+               "created_by": "…", "created": 1761150000 }],
+  "counts": { "open": 3, "question": 0, "correct": 1, "confirmed": 2, "corrected": 1, "dismissed": 0 },
+  "may": { "decideMusical": true, "decideMaterial": true, "ingest": true, "correct": true } }
+```
+
+Reports newest first (without `raw`); points in the order they were created.
+Any field of `summary` may be missing or `null`. `may` tells the UI what the
+account may do (the server checks again): `decideMusical` (points of the
+role `conductor`: librarian or conductor), `decideMaterial` (points of the
+role `librarian`: librarian), `ingest` (librarian, contributor), `correct`
+(module `corrections` active, librarian or conductor, not a preservation
+copy).
+
+`POST /api/review-points/{id}/decision`
+
+```json
+{ "status": "confirmed|correct|question|dismissed|open", "correction": "for correct",
+  "reason": "optional, required for dismissed", "addressee": "conductor|librarian (question only)" }
+```
+
+returns the point. Statuses:
+
+| Status | Meaning | Set by |
+|---|---|---|
+| `open` | not decided (also: reopen a decided point) | report; any decider |
+| `confirmed` | the reading is right | decider |
+| `correct` | correction order for the tool chain; `correction` (text, required) says what to change | decider |
+| `corrected` | corrected in the app or done in a new version | the app only (correction, new round) |
+| `question` | turned into a question (task) with the point's location; `task_id` links it | decider (needs the module `tasks`) |
+| `dismissed` | not relevant; `reason` required | decider |
+
+The catalog librarian may decide every point; the conductor decides the
+points of the role `conductor` (musical points). Decider, time and reason are
+stored; nothing is deleted. A `question` creates a task (kind `question`) for
+`addressee` (default: the conductor when the librarian asks, otherwise the
+librarian) with measures, voice, verse and page of the point; without the
+module `tasks` the answer is 404. Errors (400): `"%s": value not allowed.`,
+`Please describe the correction.`, `Please give a reason.`, `The review point
+already has this status.`, `A review point is set to corrected only by a
+correction or a new version.`; 403 `Only the catalog librarian decides this
+review point.`.
+
+`GET /api/review/orders` (any role, also `contributor`): the correction
+orders (status `correct`) for the tool chain, oldest first:
+
+```json
+[{ "id": 12, "version_id": 3, "copy_id": 5, "shelfmark": "5-1", "title": "…", "basename": "5-01_Titel",
+   "file_id": 12, "file_name": "5-01_Titel.mxl", "file_sha256": "…",
+   "measures": "12–14", "measure_from": "12", "measure_to": "14", "voice": "B", "verse": null,
+   "category": "uncertain", "text": "d or c", "correction": "d, as in the scan",
+   "decided_by_name": "…", "decided": 1761150000 }]
+```
+
+Each order is the full point row (see above) plus `shelfmark`, `title`,
+`basename` (of the report that named it) and `file_name` (of the MusicXML
+the point was made for).
+
+The tool chain closes an order with its next report for the same copy: by
+naming the id in `erledigt`, by `{ "takt", "stimme" }` in `erledigt`, or by no
+longer naming the point (in each case only when the MusicXML changed).
+
+The catalog rows (`GET /api/entries`) get `review_open` (points with status
+`open` or `question`) and `review_orders` (status `correct`) of the copy;
+both are `null` while `transcription_review` is off.
+
+### Small corrections in the app
+
+`POST /api/versions/{id}/corrections` (module `corrections`; roles
+`librarian`, `conductor`; 30 per 10 minutes):
+
+```json
+{ "fileId": 12, "content": "<the whole changed MusicXML as text>", "pointIds": [12, 13], "reason": "optional" }
+```
+
+`fileId` is the score file shown (`score.fileId`, `files[].id`) of a copy of
+the version; `content` is plain MusicXML (also for an `.mxl`: the server
+packs it). The server reads the old file with the account's own access,
+checks it like the score view (only real MusicXML, at most 32 MB, no
+document type declaration with an internal subset) and compares both
+documents element by element. **Allowed** are only:
+
+- `note/pitch/step` (A–G), `note/pitch/octave` (0–9), `note/pitch/alter`
+  (−2 to 2; added, changed or removed),
+- `note/accidental` (added, changed or removed; values `sharp`, `natural`,
+  `flat`, `double-sharp`, `sharp-sharp`, `flat-flat`, `natural-sharp`,
+  `natural-flat`; attributes `cautionary`, `editorial`, `parentheses`,
+  `bracket` with `yes`/`no`),
+- the text of `note/lyric/text` (a syllable, at most 200 characters, no
+  line breaks or other control characters).
+
+Everything else must be equal (white space between elements, comments and
+processing instructions do not count): no other element, attribute or
+text, no other note values, no notes added or removed, the same measures with
+the same lengths. Where an added element stands in the received document
+does not matter. The new file is the **old document with only these changes
+applied**; the server never stores the text it received.
+
+The new file is written with the account's Nextcloud permissions into the
+folder of the old one, named `<old name without extension> (corrected
+YYYY-MM-DD).<extension>` with the word in the account's language (German
+`korrigiert`) and a number added if the name exists
+(`(korrigiert 2026-10-22, 2)`); an earlier such suffix is replaced, not
+repeated. An `.mxl` stays an `.mxl` (all other entries of the archive copied
+unchanged). The old file is not changed. The new file becomes the MusicXML of
+the copy (file flag `musicxml_valid`, version fields `musicxml_valid` and
+`musicxml_date`); the old one stays linked as a file. The changes are recorded
+in the audit log (object `file` of the new file, action `corrected`, field
+`changes`, old → new per note); `pointIds` (points of this version with status
+`open`, `correct` or `question`) are set to `corrected` (only while
+`transcription_review` is active).
+
+```json
+{ "file": { "id": 31, "copy_id": 5, "name": "5-01_Titel (korrigiert 2026-10-22).mxl", "path": "Mappe_5/…", "…": "file row" },
+  "changes": [{ "measure": "12", "part": "Bass", "staff": "1", "voice": "1", "kind": "pitch|accidental|lyric",
+                "verse": null, "old": "C3", "new": "D3" }],
+  "points": [12, 13] }
+```
+
+`old`/`new` of a pitch: step, `#`/`##`/`b`/`bb` (other alterations as
+`+0.5`) and octave, e.g. `F#4`; of an accidental: its value or `''`; of a
+syllable: the text. `verse`: the `number` of the lyric.
+
+Errors (400): `This correction changes more than pitches, accidentals and
+syllables (measure %s).`, `The length of measure %s has changed.`, `The
+correction contains no change.`, `Please correct the score file shown in the
+score view.`, `Internal preservation copies cannot be corrected in the app.`,
+`This file is not a MusicXML score.`, `The file is too large (at most %s
+MB).`, `You have no permission to save a new file in the folder of this
+score.` (no write permission in Nextcloud).
+
+### Scan beside the score
+
+`GET /api/files/{id}/scan` (module `score_viewer`; any role that may view the
+version's score; plain GET without CSRF token, 120 per 10 minutes) returns a
+linked PDF (`files[].role` `score_pdf`, a `%PDF-` header within the first
+kilobyte, as PDF readers accept it) with
+`Content-Type: application/pdf`, `Content-Disposition: inline`, `nosniff` and
+a content security policy that allows nothing but the browser's own PDF
+viewer, so that the UI can show it in a frame beside the score or open it in
+a second window at a page (`#page=3`). The app page allows frames from its
+own origin only. Errors: 400 `This file is not a PDF scan.`, 403 as for the
+score.
+
+### Notifications
+
+| Subject | To | When |
+|---|---|---|
+| `review_points` | the responsible role (conductor and/or librarian) | a report created review points for the role; one notification per report and role with the count (`count`, `shelfmark`, `title`, `copyId`). Link `?copy={id}&review=1` (opens the score view with the review). Withdrawn when no open point of the role is left in that report. |
+| `correction_received` | librarian (not the person who made it) | a correction was saved in the app (`kind: app`) or a new report closed points because the MusicXML changed (`kind: report`). One per version, replaced by the next. Link `?copy={id}&review=1`. |
+
+Switches: `notify_review_points` (requires `notifications` and
+`transcription_review`), `notify_correction_received` (requires
+`notifications` and `score_viewer`).

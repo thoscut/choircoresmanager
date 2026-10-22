@@ -40,6 +40,8 @@ final class NotifierTest extends TestCase {
 	private function prepare(string $subject, array $parameters): void {
 		$l = $this->createStub(IL10N::class);
 		$l->method('t')->willReturnCallback(fn (string $text, array $p = []): string => vsprintf('[' . $text . ']', $p));
+		$l->method('n')->willReturnCallback(fn (string $one, string $many, int $count, array $p = []): string
+			=> vsprintf('[' . str_replace('%n', (string)$count, $count === 1 ? $one : $many) . ']', $p));
 		$factory = $this->createStub(IFactory::class);
 		$factory->method('get')->willReturn($l);
 		$url = $this->createStub(IURLGenerator::class);
@@ -102,6 +104,26 @@ final class NotifierTest extends TestCase {
 		$this->off = ['notifications'];
 		$this->expectException(AlreadyProcessedException::class);
 		$this->prepare(NotificationService::EXPORT_FAILED, []);
+	}
+
+	public function testNewReviewPointsOpenTheReview(): void {
+		$this->prepare(NotificationService::REVIEW_POINTS, ['count' => 3, 'shelfmark' => '5-1', 'title' => 'Ave', 'copyId' => 35]);
+		self::assertSame('[5-1 Ave: 3 new review points of the transcription for your role]', $this->parsedSubject);
+		self::assertSame('https://cloud.example.org/apps/notenarchiv/?copy=35&review=1', $this->link);
+	}
+
+	public function testACorrectionArrived(): void {
+		$this->prepare(NotificationService::CORRECTION_RECEIVED, ['kind' => 'app', 'shelfmark' => '5-1', 'title' => 'Ave', 'copyId' => '35"><x']);
+		self::assertSame('[5-1 Ave: a corrected MusicXML file was saved in the app.]', $this->parsedSubject);
+		self::assertSame('https://cloud.example.org/apps/notenarchiv/?copy=35&review=1', $this->link);
+		$this->prepare(NotificationService::CORRECTION_RECEIVED, ['kind' => 'report', 'shelfmark' => '5-1', 'title' => 'Ave', 'copyId' => 35]);
+		self::assertSame('[5-1 Ave: a new transcription has done review points.]', $this->parsedSubject);
+	}
+
+	public function testReviewPointsOfASwitchedOffReviewAreWithdrawn(): void {
+		$this->off = ['transcription_review'];
+		$this->expectException(AlreadyProcessedException::class);
+		$this->prepare(NotificationService::REVIEW_POINTS, ['count' => 1, 'shelfmark' => '5-1', 'title' => 'Ave', 'copyId' => 35]);
 	}
 
 	public function testLinksStayInsideTheApp(): void {
