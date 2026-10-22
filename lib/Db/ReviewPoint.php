@@ -128,5 +128,9 @@ class ReviewPoint extends Entity implements JsonSerializable {
 			'correction', 'decidedBy', 'decidedByName', 'decisionReason', 'createdBy'] as $field) {
 			$this->addType($field, 'string');
 		}
+		// The setter ignores a value equal to the default, so a point of the
+		// default category would be inserted without one; the column has no
+		// database default.
+		$this->markFieldUpdated('category');
 	}
 }

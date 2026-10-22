@@ -126,6 +126,40 @@ final class EntitySchemaTest extends TestCase {
 	}
 
 	/**
+	 * Nextcloud's Entity setter ignores a value equal to the current one, so a
+	 * property whose default is a real value (anything but null or the
+	 * placeholders 0 and '') is left out of an INSERT when it is set to that
+	 * value. For a NOT NULL column without a database default the database
+	 * then refuses the row; the entity must mark such a property as updated
+	 * in its constructor.
+	 */
+	public function testRealDefaultsOfRequiredColumnsAreAlwaysInserted(): void {
+		$problems = [];
+		foreach ($this->mappedEntities() as $tableName => $entityClass) {
+			$table = $this->tables[$tableName] ?? null;
+			$entity = new $entityClass();
+			$updated = $entity->getUpdatedFields();
+			foreach (array_keys($entity->getFieldTypes()) as $property) {
+				$column = $entity->propertyToColumn($property);
+				if ($property === 'id' || $table === null || !$table->hasColumn($column)) {
+					continue;
+				}
+				$definition = $table->getColumn($column);
+				$reflection = new \ReflectionProperty($entityClass, $property);
+				if (!$definition->getNotnull() || $definition->getDefault() !== null || !$reflection->hasDefaultValue()) {
+					continue;
+				}
+				$default = $reflection->getDefaultValue();
+				if (!in_array($default, [null, 0, ''], true) && !isset($updated[$property])) {
+					$problems[] = sprintf('%s::$%s defaults to %s, but %s.%s has no database default and the constructor does not mark it as updated',
+						$entityClass, $property, var_export($default, true), $tableName, $column);
+				}
+			}
+		}
+		self::assertSame([], $problems);
+	}
+
+	/**
 	 * @return array<string, class-string<Entity>> table name => entity class
 	 */
 	private function mappedEntities(): array {
