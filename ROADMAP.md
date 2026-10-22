@@ -15,6 +15,9 @@ Unterstützt werden Nextcloud 33 bis 35.
 
 ## Leitlinien
 
+Dauerhafte Ziele jeder Runde: **einfach gebaut (KISS), barrierefrei, sicher
+und nutzerfreundlich** (Leitlinien 11, 13, 14 und 15).
+
 1. **Die App schlägt vor, Menschen entscheiden.**
    - Einen Rechtestatus bestätigt die Archivverwaltung.
    - Welche Fassung „gilt“, legt die Chorleitung fest.
@@ -70,6 +73,19 @@ Unterstützt werden Nextcloud 33 bis 35.
       passende Stelle der Doku. Leere Ansichten nennen den nächsten Schritt.
     - Die Doku ist nach Aufgaben je Rolle gegliedert und hat einen Abschnitt
       „Häufige Probleme“.
+14. **Einfach gebaut (KISS).**
+    - Die einfachste Lösung, die trägt; keine Abstraktion auf Vorrat.
+    - Vorhandene Dienste werden wiederverwendet, statt eine Regel ein zweites
+      Mal zu bauen.
+    - Eine neue Abhängigkeit nur, wenn sie deutlich Aufwand spart.
+    - Viele Module heißen nicht viel Komplexität je Modul.
+15. **Sicher von Anfang an.**
+    - Jede Route prüft Rolle und Modul auf dem Server; Tests prüfen das für
+      alle Routen.
+    - Sichere Voreinstellungen: Was etwas nach außen öffnet, ist anfangs aus.
+    - Begrenzte Aufrufe, keine Kontonamen nach außen, keine Geheimnisse in
+      Protokollen.
+    - Das Bedrohungsmodell steht in `SECURITY.md`.
 
 ## Benachrichtigungen (Querschnitt)
 
