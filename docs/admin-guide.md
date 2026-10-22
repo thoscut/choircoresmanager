@@ -110,6 +110,31 @@ Notifications never go to singers and contain no personal data. Every user can
 choose in their personal settings whether notifications also arrive by email
 and how often (e.g. weekly).
 
+The **dashboard widget** "Music archive – due" shows the same as the start page
+of the app. Nextcloud offers it only to accounts with an archive role; admins
+without a role do not get it. It contains concert titles and dates, numbers
+and shelf marks with titles, never the text of a question or a person's name.
+
+### Calendar
+
+Concerts can be added to the users' own Nextcloud calendars and downloaded as
+calendar files (iCalendar). This uses the calendars of the **dav** app (shipped
+with Nextcloud); the Calendar app is only needed to look at them. Accounts
+without a writable calendar can still download the files.
+
+- New entries are created through Nextcloud's calendar interface for apps.
+  That interface cannot change existing entries, so an entry that is already
+  in a calendar is updated by the user's browser with a normal CalDAV request
+  in the user's own session (the same as the Calendar app does). Proxies or
+  web application firewalls that block `PUT` requests to `/remote.php/dav/`
+  prevent these updates; the app then reports the entries it could not save.
+- Times of a concert refer to the Nextcloud time zone of the account that
+  entered them (personal settings). Check that the planners' time zones are
+  right.
+- There is deliberately **no public subscription link** (webcal feed with a
+  token): it would be a new way to the concert data without logging in and is
+  a decision for the choir (who may see concerts, how links are revoked).
+
 ## 7. Security settings of the instance
 
 The app works with Nextcloud's defaults; nothing has to be relaxed:

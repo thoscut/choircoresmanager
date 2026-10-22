@@ -12,6 +12,7 @@ use OCA\Notenarchiv\Db\LicenseMapper;
 use OCA\Notenarchiv\Db\WorkMapper;
 use OCA\Notenarchiv\Db\WorkVersionMapper;
 use OCA\Notenarchiv\Service\AppSettings;
+use OCA\Notenarchiv\Service\ConcertDeadlines;
 use OCA\Notenarchiv\Service\FieldValue;
 use OCA\Notenarchiv\Service\NotificationService;
 use OCA\Notenarchiv\Service\PersonService;
@@ -94,15 +95,8 @@ class DailyChecks extends TimedJob {
 			if ($event->getImported() === true || $date === null || !FieldValue::isDate($date)) {
 				continue;
 			}
-			$days = (int)(new \DateTimeImmutable($today))->diff(new \DateTimeImmutable($date))->format('%r%a');
-			$state = match (true) {
-				$event->getStatus() === 'sung' => '',
-				$days < 0 => 'confirm',
-				$days <= 42 => '6',
-				$days <= 56 => '8',
-				$days <= 70 => '10',
-				default => '',
-			};
+			// A sung or cancelled concert has no stage: its notification is withdrawn.
+			$state = ConcertDeadlines::stage($event, $today);
 			$this->transition('notified_event_' . $event->getId(), $state, 'event', (string)$event->getId(), [
 				'10' => NotificationService::CONCERT_DEADLINE,
 				'8' => NotificationService::CONCERT_DEADLINE,

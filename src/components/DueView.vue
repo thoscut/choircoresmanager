@@ -1,7 +1,8 @@
 <script setup lang="ts">
 /**
  * Start page "Due": what needs the user's roles now, as cards with a number
- * that lead to the filtered view, and the tasks for these roles below.
+ * that lead to the filtered view, the concerts with a deadline now and the
+ * tasks for these roles below. The Nextcloud dashboard widget shows the same.
  */
 import type { DueCard, DueResult } from '../types.ts'
 
@@ -17,7 +18,8 @@ import ViewHeader from './ViewHeader.vue'
 import { errorMessage, fetchDue } from '../api.ts'
 import { dueCardLabel } from '../dueLabels.ts'
 import { dueTarget } from '../dueTargets.ts'
-import { navigate, releaseFilter, showCatalog, taskFilters } from '../navigation.ts'
+import { formatDate } from '../format.ts'
+import { navigate, openDueTarget } from '../navigation.ts'
 import { canSeeProposals } from '../store.ts'
 
 const due = ref<DueResult | null>(null)
@@ -53,20 +55,13 @@ const cards = computed(() => (due.value?.cards ?? [])
  * @param card - card of the start page
  */
 function openCard(card: DueCard): void {
-	const target = dueTarget(card.key)
-	if (target.view === 'catalog') {
-		showCatalog(target.catalog ?? {})
-		return
-	}
-	if (target.view === 'tasks') {
-		taskFilters.scope = 'mine'
-		taskFilters.status = target.taskStatus ?? ''
-	}
-	if (target.view === 'portal') {
-		releaseFilter.value = target.releaseStatus ?? ''
-	}
-	navigate(target.view)
+	openDueTarget(card.key)
 }
+
+/** Concerts with a deadline now, the next first. */
+const concerts = computed(() => due.value?.concerts ?? [])
+
+const nothingDue = computed(() => cards.value.length === 0 && concerts.value.length === 0 && (due.value?.tasks.length ?? 0) === 0)
 </script>
 
 <template>
@@ -116,7 +111,24 @@ function openCard(card: DueCard): void {
 					</ul>
 				</section>
 
-				<NcEmptyContent v-if="cards.length === 0 && due.tasks.length === 0"
+				<section v-if="concerts.length > 0" class="due-view__concerts" aria-labelledby="due-concerts-heading">
+					<h3 id="due-concerts-heading">
+						{{ t('notenarchiv', 'Concert deadlines') }}
+					</h3>
+					<ul class="due-view__concert-list">
+						<li v-for="concert in concerts" :key="concert.id">
+							<!-- The visible text is the accessible name (WCAG 2.5.3) -->
+							<button type="button"
+								class="due-concert"
+								@click="navigate('event', { eventId: concert.id })">
+								<span class="due-concert__title">{{ concert.title || t('notenarchiv', '(no title)') }}</span>
+								<span class="due-concert__meta">{{ formatDate(concert.date) }} · {{ concert.label }}</span>
+							</button>
+						</li>
+					</ul>
+				</section>
+
+				<NcEmptyContent v-if="nothingDue"
 					:name="t('notenarchiv', 'Nothing is due')"
 					:description="t('notenarchiv', 'There are no open tasks or other things to do for your roles.')">
 					<template #icon>
@@ -186,10 +198,53 @@ function openCard(card: DueCard): void {
 	font-variant-numeric: tabular-nums;
 }
 
-.due-view__tasks h3 {
+.due-view__tasks h3,
+.due-view__concerts h3 {
 	margin: 0 0 calc(2 * var(--default-grid-baseline));
 	font-size: 1.2em;
 	font-weight: bold;
+}
+
+.due-view__concert-list {
+	display: flex;
+	flex-direction: column;
+	gap: var(--default-grid-baseline);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.due-concert {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	width: 100%;
+	margin: 0;
+	padding: calc(2 * var(--default-grid-baseline)) calc(3 * var(--default-grid-baseline));
+	border: 1px solid var(--color-border-maxcontrast);
+	border-radius: var(--border-radius-large, 8px);
+	background-color: var(--color-main-background);
+	color: var(--color-main-text);
+	font: inherit;
+	text-align: start;
+	cursor: pointer;
+}
+
+.due-concert:hover {
+	background-color: var(--color-background-hover);
+}
+
+.due-concert:focus-visible {
+	outline: 2px solid var(--color-main-text);
+	outline-offset: 2px;
+}
+
+.due-concert__title {
+	font-weight: bold;
+}
+
+.due-concert__meta {
+	color: var(--color-text-maxcontrast);
 }
 
 @media print {

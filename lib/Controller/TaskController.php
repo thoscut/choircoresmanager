@@ -51,6 +51,11 @@ class TaskController extends Controller {
 			foreach ($due['cards'] as &$card) {
 				$card['label'] = $this->l->t($card['label']);
 			}
+			unset($card);
+			foreach ($due['concerts'] as &$concert) {
+				$concert['label'] = $this->l->t($concert['label']);
+			}
+			unset($concert);
 			return $due;
 		});
 	}

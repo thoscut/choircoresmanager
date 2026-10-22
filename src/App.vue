@@ -32,7 +32,7 @@ import DueView from './components/DueView.vue'
 import SettingsDialog from './components/SettingsDialog.vue'
 import { errorMessage, fetchTasks, resolveLink } from './api.ts'
 import { formatDate } from './format.ts'
-import { currentEventId, currentView, navigate, startNavigation } from './navigation.ts'
+import { currentEventId, currentView, navigate, openDueTarget, startNavigation } from './navigation.ts'
 import { DEFAULT_VIEW, isMissingCopy, parseStartParams } from './startParams.ts'
 import {
 	archiveDialogOpen,
@@ -194,8 +194,11 @@ onMounted(async () => {
 		currentView.value = allowedView(params)
 		currentEventId.value = params.eventId
 		startNavigation()
-		// An unknown view or one the roles do not include: show the start page in the URL, too
-		if (new URLSearchParams(window.location.search).has('view') && params.view !== currentView.value) {
+		if (params.dueKey !== null && params.view === currentView.value) {
+			// A card of the start page from the dashboard widget: its view with its filters
+			openDueTarget(params.dueKey, { replace: true })
+		} else if ((new URLSearchParams(window.location.search).has('view') || params.dueKey !== null) && params.view !== currentView.value) {
+			// An unknown view or one the roles do not include: show the start page in the URL, too
 			navigate(currentView.value, { replace: true })
 		}
 		await loadEntries()

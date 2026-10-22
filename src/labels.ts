@@ -96,6 +96,8 @@ export function eventStatusLabel(status: EventStatus | string): string {
 		return t('notenarchiv', 'Fixed')
 	case 'sung':
 		return t('notenarchiv', 'Sung')
+	case 'cancelled':
+		return t('notenarchiv', 'Cancelled')
 	default:
 		return status
 	}

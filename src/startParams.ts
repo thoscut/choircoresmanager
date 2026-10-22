@@ -1,10 +1,11 @@
 /**
- * The views of the app and their representation in the URL. Notifications
- * and shared links open the app with query parameters (`?copy=`, `?task=`,
- * `?view=proposals`, `?event=`, `?link=`); the app also writes its current
- * view into the URL so that the browser's back button works. Pure functions,
- * no Vue, easy to test.
+ * The views of the app and their representation in the URL. Notifications,
+ * the dashboard widget and shared links open the app with query parameters
+ * (`?copy=`, `?task=`, `?view=proposals`, `?event=`, `?due=`, `?link=`); the
+ * app also writes its current view into the URL so that the browser's back
+ * button works. Pure functions, no Vue, easy to test.
  */
+import { dueTarget } from './dueTargets.ts'
 
 export type ViewName =
 	| 'due'
@@ -57,6 +58,8 @@ export interface StartParams {
 	taskId: number | null
 	eventId: number | null
 	linkToken: string | null
+	/** card of the start page to open with its filters (dashboard widget) */
+	dueKey: string | null
 }
 
 /** Where the app is: a view, optionally an event and an open copy. */
@@ -106,12 +109,21 @@ export function parseStartParams(search: string): StartParams {
 	const params = new URLSearchParams(search.startsWith('?') ? search.slice(1) : search)
 	const token = params.get('link')?.trim() ?? ''
 	const eventId = positiveId(params.get('event'))
+	const due = params.get('due')?.trim() ?? ''
+	const dueKey = eventId === null && /^[a-z0-9_]{1,40}$/.test(due) ? due : null
+	let view = viewFromParam(params.get('view'))
+	if (eventId !== null) {
+		view = 'event'
+	} else if (dueKey !== null) {
+		view = dueTarget(dueKey).view
+	}
 	return {
-		view: eventId !== null ? 'event' : viewFromParam(params.get('view')),
+		view,
 		copyId: positiveId(params.get('copy')),
 		taskId: positiveId(params.get('task')),
 		eventId,
 		linkToken: /^[A-Za-z0-9]{32}$/.test(token) ? token : null,
+		dueKey,
 	}
 }
 

@@ -5,13 +5,16 @@ declare(strict_types=1);
 namespace OCA\Notenarchiv\Tests\Unit\Controller;
 
 use OCA\Notenarchiv\Controller\ApiController;
+use OCA\Notenarchiv\Controller\CalendarController;
 use OCA\Notenarchiv\Controller\PageController;
 use OCA\Notenarchiv\Controller\TaskController;
 use OCA\Notenarchiv\Db\AuditEntryMapper;
+use OCA\Notenarchiv\Exception\AccessDeniedException;
 use OCA\Notenarchiv\Exception\InvalidInputException;
 use OCA\Notenarchiv\Exception\UnknownLinkException;
 use OCA\Notenarchiv\Service\AppSettings;
 use OCA\Notenarchiv\Service\CatalogService;
+use OCA\Notenarchiv\Service\ConcertCalendarService;
 use OCA\Notenarchiv\Service\DueService;
 use OCA\Notenarchiv\Service\ExportService;
 use OCA\Notenarchiv\Service\FileSyncService;
@@ -30,6 +33,7 @@ use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\Attribute\UserRateLimit;
+use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
@@ -48,6 +52,7 @@ use Psr\Log\LoggerInterface;
  * user files and the content security policy of the app page.
  */
 #[CoversClass(ApiController::class)]
+#[CoversClass(CalendarController::class)]
 #[CoversClass(PageController::class)]
 #[CoversClass(TaskController::class)]
 final class ControllerSecurityTest extends TestCase {
@@ -58,12 +63,15 @@ final class ControllerSecurityTest extends TestCase {
 
 	/**
 	 * Plain GET downloads (links, no CSRF token) that change nothing. The CSV
-	 * files of the statistics and the annual report are such downloads: they
-	 * only read, like the song order.
+	 * files of the statistics and the annual report and the calendar files of
+	 * concerts are such downloads: they only read, like the song order, need a
+	 * logged-in account with access and are rate limited. Adding entries to a
+	 * calendar (POST) keeps the CSRF check.
 	 */
 	private const WITHOUT_CSRF = [
 		'PageController::index', 'ApiController::export', 'WorkflowController::fullBackup', 'EventController::songOrder',
 		'StatisticsController::csv', 'StatisticsController::reportCsv',
+		'CalendarController::concertFile', 'CalendarController::upcomingFile',
 	];
 
 	/** Expensive endpoints: limited per user (the statistics aggregate the whole archive) */
@@ -74,6 +82,8 @@ final class ControllerSecurityTest extends TestCase {
 		'PracticeAudioController::authorize',
 		'StatisticsController::overview', 'StatisticsController::report', 'StatisticsController::csv',
 		'StatisticsController::reportCsv',
+		'CalendarController::concertFile', 'CalendarController::upcomingFile', 'CalendarController::addConcert',
+		'CalendarController::addUpcoming',
 	];
 
 	/**
@@ -202,6 +212,21 @@ final class ControllerSecurityTest extends TestCase {
 		self::assertSame('application/vnd.recordare.musicxml+xml', $headers['Content-Type'] ?? null);
 		self::assertStringContainsString("default-src 'none'", $response->getContentSecurityPolicy()->buildPolicy());
 		self::assertSame('<score-partwise/>', $response->render());
+	}
+
+	public function testCalendarFilesAreRefusedWithoutAccess(): void {
+		$calendar = $this->createStub(ConcertCalendarService::class);
+		$calendar->method('upcomingFile')->willThrowException(new AccessDeniedException('You have no access to the music archive.'));
+		$controller = new CalendarController($this->createStub(IRequest::class), 'stranger', $calendar, $this->l10n(),
+			$this->createStub(LoggerInterface::class));
+		$response = $controller->upcomingFile();
+		self::assertSame(Http::STATUS_FORBIDDEN, $response->getStatus());
+		self::assertInstanceOf(JSONResponse::class, $response);
+		self::assertSame(['error' => 'You have no access to the music archive.'], $response->getData());
+
+		$loggedOut = new CalendarController($this->createStub(IRequest::class), null, $calendar, $this->l10n(),
+			$this->createStub(LoggerInterface::class));
+		self::assertSame(Http::STATUS_UNAUTHORIZED, $loggedOut->upcomingFile()->getStatus());
 	}
 
 	public function testTheAppPageAllowsWebAssemblyButNoScriptEval(): void {

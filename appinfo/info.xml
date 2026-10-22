@@ -31,7 +31,7 @@ Accessible (WCAG 2.2 AA) with inclusive wording, in English and German. Works on
 - **Zugriff über Gruppen,** z. B. die Archivverwaltung schreibt, Vorstand und Chorleitung lesen.
 
 Barrierefrei (WCAG 2.2 AA) mit inklusiver Sprache, auf Deutsch und Englisch. Läuft auch bei gehosteten Nextclouds ohne Shell-Zugang; ein vorhandenes Verzeichnis lässt sich aus CSV übernehmen.]]></description>
-	<version>0.1.25</version>
+	<version>0.1.26</version>
 	<licence>AGPL-3.0-or-later</licence>
 	<author homepage="https://github.com/thoscut">Thomas Scheel</author>
 	<namespace>Notenarchiv</namespace>

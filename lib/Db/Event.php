@@ -15,6 +15,12 @@ use OCP\AppFramework\Db\Entity;
  * should have in their binders; they are no proof of performance.
  *
  * `event_date` is YYYY-MM-DD, or only YYYY for imported undated programmes.
+ * A concert may have a start and an end time (HH:MM, local time at the
+ * venue); `time_zone` is the Nextcloud time zone of the account that entered
+ * the time, so that calendar entries show the right hour everywhere.
+ *
+ * A planned concert can be cancelled; it then stays in the list (nothing is
+ * deleted) and its calendar entries can be updated to "cancelled".
  *
  * @method string getKind()
  * @method void setKind(string $kind)
@@ -22,6 +28,12 @@ use OCP\AppFramework\Db\Entity;
  * @method void setTitle(?string $title)
  * @method string|null getEventDate()
  * @method void setEventDate(?string $eventDate)
+ * @method string|null getStartTime()
+ * @method void setStartTime(?string $startTime)
+ * @method string|null getEndTime()
+ * @method void setEndTime(?string $endTime)
+ * @method string|null getTimeZone()
+ * @method void setTimeZone(?string $timeZone)
  * @method string|null getLocation()
  * @method void setLocation(?string $location)
  * @method string|null getPeriod()
@@ -51,11 +63,15 @@ class Event extends Entity implements JsonSerializable {
 	public const CONCERT = 'concert';
 	public const SONG_LIST = 'song_list';
 	public const KINDS = [self::CONCERT, self::SONG_LIST];
-	public const STATUSES = ['draft', 'fixed', 'sung'];
+	public const CANCELLED = 'cancelled';
+	public const STATUSES = ['draft', 'fixed', 'sung', self::CANCELLED];
 
 	protected string $kind = self::CONCERT;
 	protected ?string $title = null;
 	protected ?string $eventDate = null;
+	protected ?string $startTime = null;
+	protected ?string $endTime = null;
+	protected ?string $timeZone = null;
 	protected ?string $location = null;
 	protected ?string $period = null;
 	protected string $status = 'draft';
@@ -72,7 +88,7 @@ class Event extends Entity implements JsonSerializable {
 		foreach (['created', 'modified'] as $field) {
 			$this->addType($field, 'integer');
 		}
-		foreach (['kind', 'title', 'eventDate', 'location', 'period', 'status', 'source', 'notes', 'createdBy'] as $field) {
+		foreach (['kind', 'title', 'eventDate', 'startTime', 'endTime', 'timeZone', 'location', 'period', 'status', 'source', 'notes', 'createdBy'] as $field) {
 			$this->addType($field, 'string');
 		}
 		foreach (['isPublic', 'boardAgreed', 'imported'] as $field) {

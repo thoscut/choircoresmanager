@@ -67,6 +67,17 @@ and 35.0.2 with MariaDB; the app requires MySQL or MariaDB.
   tutti. The server allows each export only for confirmed public domain or
   versions licensed for practice audio, never for preservation copies, and
   records it in the audit log (`POST /api/versions/{id}/practice-audio`).
+- Dashboard widget "Music archive – due" for accounts with an archive role:
+  the start page's concert deadlines, cards and tasks with links into the app
+  (new start parameter `?due=` opens a card with its filters).
+- Concerts in the calendar: optional start and end time of a concert,
+  calendar files (iCalendar, RFC 5545) of a concert and of all upcoming
+  concerts, "Add to my calendar" into a writable Nextcloud calendar of the
+  account (adding again updates the entries instead of duplicating them),
+  the preparation deadlines optionally as separate all-day entries. No public
+  subscription link.
+- Concerts can be cancelled and reopened; the start page lists concerts with
+  a deadline now.
 
 ### Fixed
 

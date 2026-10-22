@@ -142,6 +142,18 @@ class EventController extends Controller {
 		});
 	}
 
+	#[NoAdminRequired]
+	#[FrontpageRoute(verb: 'POST', url: '/api/events/{id}/cancel', requirements: ['id' => '\d+'])]
+	public function cancel(int $id): JSONResponse {
+		return $this->run(fn (string $uid) => $this->events->cancel($id, $uid));
+	}
+
+	#[NoAdminRequired]
+	#[FrontpageRoute(verb: 'POST', url: '/api/events/{id}/reopen', requirements: ['id' => '\d+'])]
+	public function reopen(int $id): JSONResponse {
+		return $this->run(fn (string $uid) => $this->events->reopen($id, $uid));
+	}
+
 	/**
 	 * @param list<int> $struck
 	 */

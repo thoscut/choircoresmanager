@@ -60,6 +60,10 @@ What is covered:
 | `Service/ScoreServiceTest` | only real MusicXML reaches the browser (root element, document type declarations, `.mxl` contents, size limit) |
 | `Service/UserFilesTest`, `Service/RequestBoundaryTest` | reading uploaded files with a size limit, limits of request data (unknown fields, list sizes) |
 | `Notification/NotifierTest` | notification texts, no internal error texts |
+| `Service/IcsWriterTest`, `Service/ConcertIcsTest` | calendar files after RFC 5545: CRLF, folding after 75 octets without splitting umlauts or other multi-octet characters, escaping of `,;\` and line breaks, time zone definitions (daylight saving time, half-hour offsets), all-day entries, stable UIDs, deadlines as separate entries, cancelled concerts |
+| `Service/ConcertDeadlinesTest`, `Service/DueServiceTest` | the deadlines 10, 8 and 6 weeks before a concert and the confirmation after it; which roles see them on the start page |
+| `Service/ConcertCalendarServiceTest` | entries in the account's own calendars (test double in `Support/FakeCalendar`): only writable calendars, roles, adding again updates instead of duplicating, cancelled concerts are only updated |
+| `Dashboard/DueWidgetTest` | the dashboard widget: only for accounts with a role, items and deep links of the start page, no personal data |
 
 `Support/MigratedSchema` runs all migrations in `lib/Migration` against an
 in-memory Doctrine schema. `EntitySchemaTest` discovers the mappers in
@@ -90,6 +94,7 @@ sudo -u www-data php tests/Integration/maintenance_test.php   /var/www/nextcloud
 sudo -u www-data php tests/Integration/practice_audio_test.php /var/www/nextcloud <uid> <shelfmark-protected> <shelfmark-preservation-copy> <shelfmark-public-domain>
 sudo -u www-data php tests/Integration/statistics_test.php    /var/www/nextcloud <uid> [<programme-csv>]
 sudo -u www-data php tests/Integration/backup_test.php        /var/www/nextcloud <uid>
+sudo -u www-data php tests/Integration/calendar_test.php      /var/www/nextcloud <uid>
 ```
 
 `statistics_test.php` fixes no figures of a catalog, so it runs on any
@@ -98,6 +103,13 @@ statistics with the catalog list, the release lists, the resubmission list
 and the checksums, books a concert, an accession and a license and checks
 the difference, and finally fills the catalog up to 2,000 copies to measure
 the time of the whole call (rolled back like everything else).
+
+`calendar_test.php` needs the dav app (calendars). It creates a calendar of
+its own for `<uid>`, adds a concert with its deadlines through Nextcloud's
+calendar interface, adds it again after a change and after the cancellation
+(updates instead of duplicates), checks the calendar files with Nextcloud's
+iCalendar parser (Sabre VObject) and the dashboard widget; the calendar is
+deleted and everything is rolled back.
 
 `<uid>` must hold the role `librarian`; each script's header lists further
 requirements (CSV paths are relative to the user's files). `backup_test.php`
@@ -141,6 +153,7 @@ these shelf marks of the demo catalog:
 | `notifications_test.php` | `2-1` | |
 | `tasks_links_test.php` | `1-2` | |
 | `events_test.php` | `_Import/performances.csv _Import/song-lists.csv 2-1 3-1` | 2-1 is current repertoire; the first ambiguous programme line (1-1 or 3-1) is resolved to 3-1 |
+| `calendar_test.php` | – | creates its own calendar and concert (rolled back) |
 | `maintenance_test.php` | `_Import/persons.csv 2-4 3-2 2-1` | 2-4 and 3-2 are two copies of the same print with an uncertainly identified editor; all persons of 2-1 died more than 70 years ago |
 | `practice_audio_test.php` | `2-6 3-1 2-2` | 2-6 is protected without a license for practice audio, 3-1 an internal preservation copy, 2-2 public domain but not confirmed |
 | `statistics_test.php` | `_Import/performances.csv` | the performance list gives the statistics concerts to count; no fixed figures |

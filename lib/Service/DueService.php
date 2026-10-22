@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace OCA\Notenarchiv\Service;
 
+use OCA\Notenarchiv\Db\Event;
 use OCA\Notenarchiv\Db\EventItem;
 use OCA\Notenarchiv\Db\EventItemMapper;
+use OCA\Notenarchiv\Db\EventMapper;
 use OCA\Notenarchiv\Db\LicenseMapper;
 use OCA\Notenarchiv\Db\ProposalMapper;
 use OCA\Notenarchiv\Db\WorkMapper;
@@ -16,6 +18,8 @@ use OCA\Notenarchiv\Db\WorkVersionMapper;
  * without instruction sees the open work (hand-over test).
  *
  * Priorities follow the expert reports: the current repertoire first.
+ *
+ * The same data feed the Nextcloud dashboard widget (Dashboard\DueWidget).
  */
 class DueService {
 	public function __construct(
@@ -29,11 +33,17 @@ class DueService {
 		private RightsService $rights,
 		private RepertoireService $repertoire,
 		private EventItemMapper $eventItems,
+		private EventMapper $events,
 	) {
 	}
 
 	/**
-	 * @return array{cards: list<array{key: string, count: int, label: string}>, tasks: list<array<string, mixed>>}
+	 * Cards with a number, the tasks for the user's roles and the concerts
+	 * with a deadline now (for conductor and catalog librarian, like the
+	 * notifications; confirming what was sung only for the conductor).
+	 * Labels are English source strings.
+	 *
+	 * @return array{cards: list<array{key: string, count: int, label: string}>, tasks: list<array<string, mixed>>, concerts: list<array{id: int, title: string, date: string, stage: string, label: string}>}
 	 */
 	public function forUser(string $uid): array {
 		$roles = $this->roles->rolesOf($uid);
@@ -117,7 +127,20 @@ class DueService {
 				$cards[] = ['key' => 'valid_missing', 'count' => count($withoutValid), 'label' => 'Current repertoire: no valid version chosen'];
 			}
 		}
-		return ['cards' => $cards, 'tasks' => $tasks];
+		$concerts = [];
+		if ($isLibrarian || $isConductor) {
+			$today = $this->rights->today($uid);
+			foreach ($this->events->findByKind(Event::CONCERT) as $event) {
+				$stage = ConcertDeadlines::stage($event, $today);
+				if ($stage === '' || ($stage === 'confirm' && !$isConductor)) {
+					continue;
+				}
+				$concerts[] = ['id' => $event->getId(), 'title' => (string)$event->getTitle(), 'date' => (string)$event->getEventDate(),
+					'stage' => $stage, 'label' => ConcertDeadlines::label($stage)];
+			}
+			usort($concerts, fn (array $a, array $b): int => [$a['date'], $a['id']] <=> [$b['date'], $b['id']]);
+		}
+		return ['cards' => $cards, 'tasks' => $tasks, 'concerts' => $concerts];
 	}
 
 	/**

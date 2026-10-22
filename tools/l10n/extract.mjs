@@ -73,6 +73,11 @@ for (const f of files(join(root, 'lib'), ['.php'])) {
 	if (base.endsWith('DueService.php')) {
 		for (const m of src.matchAll(new RegExp("'label' => (" + STR + ')', 'g'))) add(unq(m[1]), 'due card')
 	}
+	// What is due at each concert deadline (start page, dashboard, calendar)
+	if (base.endsWith('ConcertDeadlines.php')) {
+		const block = src.match(/public const LABELS = \[([\s\S]*?)\];/)
+		for (const m of block[1].matchAll(new RegExp('=>\\s*(' + STR + ')', 'g'))) add(unq(m[1]), 'concert deadline')
+	}
 	if (base.endsWith('RightsPolicy.php')) {
 		// Reasons why viewing or playback is denied (shown in the UI, also thrown)
 		for (const m of src.matchAll(new RegExp('(?:return|[?:])\\s*(' + STR + ')', 'g'))) add(unq(m[1]), base + ' reason')
