@@ -146,4 +146,78 @@ final class RightsPolicyTest extends TestCase {
 		$version = self::version(['rights_status' => 'public_domain']);
 		self::assertNull($this->policy(true, false, [], false)->playDenial($version, self::UID));
 	}
+
+	// ---- practice audio files ----
+
+	private const MAKERS_ONLY = 'Practice audio files are made by the catalog librarian or the conductor.';
+	private const UNCONFIRMED_EXPORT = 'Public domain is not confirmed yet: practice audio files need a confirmed rights status or a license for practice audio.';
+
+	/**
+	 * A policy for a user with the given roles (access to the app with any role).
+	 *
+	 * @param list<string> $userRoles
+	 * @param list<License> $licenses licenses of the version
+	 */
+	private function practicePolicy(array $userRoles, array $licenses = []): RightsPolicy {
+		$roles = $this->createStub(Roles::class);
+		$roles->method('hasAccess')->willReturnCallback(fn (string $uid): bool => $uid === self::UID && $userRoles !== []);
+		$roles->method('rolesOf')->willReturn($userRoles);
+		$roles->method('hasAnyRole')->willReturnCallback(
+			fn (string $uid, array $allowed): bool => $uid === self::UID && array_intersect($userRoles, $allowed) !== []);
+
+		$mapper = $this->createStub(LicenseMapper::class);
+		$mapper->method('findByVersion')->willReturn($licenses);
+		$time = $this->createStub(ITimeFactory::class);
+		$time->method('getDateTime')->willReturnCallback(
+			fn (string $when = 'now', ?\DateTimeZone $zone = null): \DateTime => new \DateTime(self::TODAY . ' 12:00:00', $zone));
+		$timeZone = $this->createStub(IDateTimeZone::class);
+		$timeZone->method('getTimeZone')->willReturn(new \DateTimeZone('Europe/Berlin'));
+		$rights = new RightsService($this->createStub(IDBConnection::class), $this->createStub(WorkVersionMapper::class), $mapper,
+			$this->createStub(AuditLog::class), $roles, $this->createStub(IUserManager::class), $time, $timeZone);
+		return new RightsPolicy($roles, $rights, $mapper);
+	}
+
+	/**
+	 * @return iterable<string, array{0: list<string>, 1: array<string, mixed>, 2: list<array{0: string, 1?: ?string, 2?: ?string}>, 3: ?string}>
+	 */
+	public static function practiceAudioCases(): iterable {
+		$confirmed = ['rights_status' => 'public_domain', 'confirmed_at' => '2026-01-01'];
+		// roles of the user, version values, licenses [uses, from, until], expected denial
+		yield 'confirmed public domain, librarian' => [[Roles::LIBRARIAN], $confirmed, [], null];
+		yield 'confirmed public domain, conductor' => [[Roles::CONDUCTOR], $confirmed, [], null];
+		yield 'confirmed public domain, operations' => [[Roles::OPERATIONS], $confirmed, [], self::MAKERS_ONLY];
+		yield 'confirmed public domain, read only' => [[Roles::READER], $confirmed, [], self::MAKERS_ONLY];
+		yield 'confirmed public domain, contributor' => [[Roles::CONTRIBUTOR], $confirmed, [], self::MAKERS_ONLY];
+		yield 'no role at all' => [[], $confirmed, [], self::NO_ACCESS];
+		yield 'unconfirmed public domain' => [[Roles::LIBRARIAN], ['rights_status' => 'public_domain'], [], self::UNCONFIRMED_EXPORT];
+		yield 'unconfirmed public domain with practice audio license' => [[Roles::CONDUCTOR], ['rights_status' => 'public_domain'], [['practice_audio']], null];
+		yield 'unconfirmed public domain, license for the portal only' => [[Roles::LIBRARIAN], ['rights_status' => 'public_domain'], [['portal']], self::UNCONFIRMED_EXPORT];
+		yield 'protected without license' => [[Roles::LIBRARIAN], ['rights_status' => 'protected'], [], self::PROTECTED_PLAY];
+		yield 'protected with practice audio license' => [[Roles::LIBRARIAN], ['rights_status' => 'protected'], [['binder,practice_audio']], null];
+		yield 'protected, license ended yesterday' => [[Roles::LIBRARIAN], ['rights_status' => 'protected'], [['practice_audio', null, '2026-10-21']], self::PROTECTED_PLAY];
+		yield 'protected with license, read only' => [[Roles::READER], ['rights_status' => 'protected'], [['practice_audio']], self::MAKERS_ONLY];
+		yield 'open with practice audio license' => [[Roles::CONDUCTOR], ['rights_status' => 'open'], [['practice_audio']], null];
+		yield 'open without license' => [[Roles::CONDUCTOR], ['rights_status' => 'open'], [], self::UNCLEAR_PLAY];
+		yield 'preservation copy, confirmed and licensed' => [[Roles::LIBRARIAN], $confirmed + ['preservation_copy' => true], [['practice_audio']], self::PRESERVATION_PLAY];
+		yield 'preservation copy, read only' => [[Roles::READER], ['rights_status' => 'protected', 'preservation_copy' => true], [['practice_audio']], self::PRESERVATION_VIEW];
+	}
+
+	/**
+	 * @param list<string> $userRoles
+	 * @param array<string, mixed> $values
+	 * @param list<array{0: string, 1?: ?string, 2?: ?string}> $licenseSpecs
+	 */
+	#[DataProvider('practiceAudioCases')]
+	public function testPracticeAudioDenial(array $userRoles, array $values, array $licenseSpecs, ?string $denial): void {
+		$licenses = array_map(fn (array $spec): License => self::license(...$spec), $licenseSpecs);
+		self::assertSame($denial, $this->practicePolicy($userRoles, $licenses)->practiceAudioDenial(self::version($values), self::UID));
+	}
+
+	public function testPracticeAudioNeedsMoreThanPlayback(): void {
+		// Playback in the app accepts an unconfirmed public domain status, a file that leaves the app does not
+		$version = self::version(['rights_status' => 'public_domain']);
+		$policy = $this->practicePolicy([Roles::LIBRARIAN]);
+		self::assertNull($policy->playDenial($version, self::UID));
+		self::assertSame(self::UNCONFIRMED_EXPORT, $policy->practiceAudioDenial($version, self::UID));
+	}
 }

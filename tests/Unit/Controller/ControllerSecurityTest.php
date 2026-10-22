@@ -66,6 +66,7 @@ final class ControllerSecurityTest extends TestCase {
 		'ApiController::import', 'ApiController::fileSync', 'ApiController::export', 'ApiController::exportStore',
 		'WorkflowController::backup', 'WorkflowController::fullBackup', 'WorkflowController::restore',
 		'EventController::songOrder', 'EventController::importPerformances', 'PersonController::import',
+		'PracticeAudioController::authorize',
 	];
 
 	/**

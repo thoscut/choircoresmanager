@@ -203,6 +203,9 @@ run_test events_test "$IMPORT/performances.csv" "$IMPORT/song-lists.csv" 2-1 3-1
 # uncertainly identified B. Beispiel, so no "free" proposal); all persons of
 # 2-1 (Silcher, Dach, Herder) died more than 70 years ago.
 run_test maintenance_test "$IMPORT/persons.csv" 2-4 3-2 2-1
+# 2-6 is protected without a license for practice audio, 3-1 an internal
+# preservation copy, 2-2 public domain but not confirmed.
+run_test practice_audio_test 2-6 3-1 2-2
 run_test backup_test
 
 echo

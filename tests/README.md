@@ -42,7 +42,8 @@ What is covered:
 | `Db/EntitySchemaTest` | every entity against the table of its mapper: columns, types, nullability |
 | `Db/LicenseTest` | `License::covers()` (uses, first and last day) |
 | `Service/RightsServiceTest` | releases for the singers' portal and the print station, licenses, confirmation, portal workflow, transactions |
-| `Service/RightsPolicyTest` | viewing and playback of scores, preservation copies |
+| `Service/RightsPolicyTest` | viewing and playback of scores, practice audio files (roles, confirmed public domain or license), preservation copies |
+| `Service/PracticeAudioServiceTest` | the gatekeeper for practice audio files: an allowed export is recorded with measures, voice, mode and format; refused and invalid requests are not |
 | `Service/ImportServiceTest` | CSV import: invalid values skipped, decision fields never overwritten, shelf marks normalized, dry run rolled back, snapshot before a real import |
 | `Service/ProposalServiceTest` | proposed values stored exactly (also `0`, `false`, `""`), accepting applies them |
 | `Service/LifeDatesTest` | life dates from free text with their precision (ranges, full dates, "ca.", "?", living, before Christ) |
@@ -84,6 +85,7 @@ sudo -u www-data php tests/Integration/notifications_test.php /var/www/nextcloud
 sudo -u www-data php tests/Integration/tasks_links_test.php   /var/www/nextcloud <uid> <shelfmark>
 sudo -u www-data php tests/Integration/events_test.php        /var/www/nextcloud <uid> <programme-csv> <song-list-csv> <shelfmark-a> <shelfmark-b>
 sudo -u www-data php tests/Integration/maintenance_test.php   /var/www/nextcloud <uid> <persons-csv> <shelfmark-a> <shelfmark-b> <shelfmark-free>
+sudo -u www-data php tests/Integration/practice_audio_test.php /var/www/nextcloud <uid> <shelfmark-protected> <shelfmark-preservation-copy> <shelfmark-public-domain>
 sudo -u www-data php tests/Integration/backup_test.php        /var/www/nextcloud <uid>
 ```
 
@@ -101,7 +103,7 @@ missing arguments end with exit code 2.
 
 ### Integration tests in CI (demo data)
 
-The CI job `integration` runs all six scripts against a freshly installed
+The CI job `integration` runs all seven scripts against a freshly installed
 Nextcloud 33 and 35 (release archives from download.nextcloud.com, checked
 against their SHA-512 checksum) with MariaDB 11.8 and PHP 8.3. The job
 installs the app with its built frontend, builds the public demo data
@@ -130,6 +132,7 @@ these shelf marks of the demo catalog:
 | `tasks_links_test.php` | `1-2` | |
 | `events_test.php` | `_Import/performances.csv _Import/song-lists.csv 2-1 3-1` | 2-1 is current repertoire; the first ambiguous programme line (1-1 or 3-1) is resolved to 3-1 |
 | `maintenance_test.php` | `_Import/persons.csv 2-4 3-2 2-1` | 2-4 and 3-2 are two copies of the same print with an uncertainly identified editor; all persons of 2-1 died more than 70 years ago |
+| `practice_audio_test.php` | `2-6 3-1 2-2` | 2-6 is protected without a license for practice audio, 3-1 an internal preservation copy, 2-2 public domain but not confirmed |
 | `backup_test.php` | – | |
 
 The person and performance lists are imported only inside the tests'

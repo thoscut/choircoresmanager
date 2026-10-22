@@ -34,6 +34,7 @@ import type {
 	Person,
 	PersonDetail,
 	PersonImportReport,
+	PracticeAudioInput,
 	Proposal,
 	ProtectionReviewRow,
 	ReleaseRow,
@@ -384,6 +385,17 @@ export async function revokeLink(id: number): Promise<void> {
  */
 export function linkUrl(token: string): string {
 	return window.location.origin + generateUrl('/apps/{app}/', { app: APP }) + '?link=' + encodeURIComponent(token)
+}
+
+/**
+ * Ask the server before making practice audio files: it checks the rights
+ * and records the export. Throws with the server's reason when refused.
+ *
+ * @param versionId - id of the version
+ * @param request - measures, voice, mode and format
+ */
+export async function authorizePracticeAudio(versionId: number, request: PracticeAudioInput): Promise<void> {
+	await axios.post(apiUrl('/versions/{id}/practice-audio', { id: versionId }), { export: request })
 }
 
 // ---- milestone 0.4: concerts, song lists, repertoire ------------------------

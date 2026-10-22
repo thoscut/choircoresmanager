@@ -2,6 +2,9 @@
  * A small Web Audio synthesizer for playing scores in the browser: a soft,
  * organ-like tone (a few harmonics, gentle vibrato, low-pass filter) with an
  * envelope. No sound fonts, nothing is loaded from a server.
+ *
+ * The same synthesizer renders practice audio files into an
+ * OfflineAudioContext, so that a file sounds like the playback.
  */
 
 interface SoundingNote {
@@ -12,9 +15,12 @@ interface SoundingNote {
 const ATTACK = 0.035
 const RELEASE = 0.08
 
+/** How long a note sounds after its end (release of the envelope), in seconds. */
+export const RELEASE_TAIL = RELEASE * 2
+
 export class Synth {
 
-	readonly context: AudioContext
+	readonly context: BaseAudioContext
 	private readonly bus: GainNode
 	private readonly master: GainNode
 	private readonly wave: PeriodicWave
@@ -22,8 +28,12 @@ export class Synth {
 	private readonly vibratoDepth: GainNode
 	private readonly sounding = new Set<SoundingNote>()
 
-	constructor(volume = 0.7) {
-		const context = new AudioContext({ latencyHint: 'playback' })
+	/**
+	 * @param volume - overall volume 0 … 1
+	 * @param target - context to play into; default: a new AudioContext for the speakers
+	 */
+	constructor(volume = 0.7, target?: BaseAudioContext) {
+		const context = target ?? new AudioContext({ latencyHint: 'playback' })
 		this.context = context
 
 		// Harmonics of a mellow reed/organ tone
@@ -57,7 +67,7 @@ export class Synth {
 
 	/** Start audio output; browsers allow this only after a user action. */
 	async resume(): Promise<void> {
-		if (this.context.state !== 'running') {
+		if (this.context instanceof AudioContext && this.context.state !== 'running') {
 			await this.context.resume()
 		}
 	}
@@ -95,7 +105,7 @@ export class Synth {
 
 		oscillator.connect(envelope).connect(this.bus)
 		oscillator.start(start)
-		oscillator.stop(release + RELEASE * 2)
+		oscillator.stop(release + RELEASE_TAIL)
 		const sounding: SoundingNote = { oscillator, envelope }
 		this.sounding.add(sounding)
 		oscillator.onended = () => {
@@ -123,7 +133,9 @@ export class Synth {
 	async close(): Promise<void> {
 		this.silence()
 		this.vibrato.stop()
-		await this.context.close()
+		if (this.context instanceof AudioContext) {
+			await this.context.close()
+		}
 	}
 
 }

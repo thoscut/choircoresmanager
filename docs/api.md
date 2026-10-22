@@ -20,6 +20,7 @@ Request bodies are checked strictly: unknown fields are refused with 400
 | `GET /api/backup/full` | 10 in 10 minutes |
 | `POST /api/backup/restore` | 5 in 10 minutes |
 | `GET /api/events/{id}/song-order` | 60 in 10 minutes |
+| `POST /api/versions/{id}/practice-audio` | 30 in 10 minutes |
 
 Files chosen by `fileId` for an import may be at most 20 MB, a backup for a
 restore at most 64 MB; larger files are refused with 400
@@ -114,13 +115,17 @@ The entry also contains `score`: the MusicXML to show for this copy and what
 the user may do with it, or `null` if there is no MusicXML:
 
 ```json
-"score": { "fileId": 12, "fileName": "5-01_….mxl", "canView": true, "canPlay": true, "reason": null }
+"score": { "fileId": 12, "fileName": "5-01_….mxl", "canView": true, "canPlay": true, "reason": null,
+           "canExportAudio": false, "exportReason": "Public domain is not confirmed yet: …" }
 ```
 
 `fileId` refers to `files[].id`. `reason` (translated) explains why viewing or
 playback is not allowed: internal preservation copies may only be viewed by
 the roles `librarian` and `conductor` and are never played; playback is only
-offered for public domain versions.
+offered for public domain versions and for versions with a valid license for
+`practice_audio`. `canExportAudio` tells whether practice audio files may be
+made (see "Practice audio files" below); `exportReason` (translated) explains
+why not when playback is allowed, otherwise it is `null` and `reason` applies.
 
 `GET /api/files/{id}/content` returns the raw score file (`.mxl` is a ZIP,
 `.musicxml` is XML) after checking the rights policy and the user's own
@@ -142,7 +147,7 @@ File roles: `score_pdf`, `musicxml`, `musescore`, `analysis`, `source`,
 `generateUrl('/f/{file_id}')`.
 
 Audit actions: `created`, `changed`, `import`, `restore`, `not_found`,
-`file_sync`.
+`file_sync`, `practice_audio` (see "Practice audio files").
 
 `PATCH /api/{level}/{id}` with `level` = `work` | `version` | `copy`:
 
@@ -368,6 +373,60 @@ and `task_answered` (to the librarian).
 **Text reference** (no server call): the UI builds a plain text such as
 `5-1 · Freude, schöner Götterfunken · p. 2 · m. 17–24 · Tenor II · note` that can
 be copied anywhere; it contains no notation and is always allowed.
+
+## Practice audio files
+
+The score view makes practice files per voice in the browser: WAV (16 bit,
+44.1 kHz, mono or stereo) rendered with the playback's own synthesizer and
+playing order, or a Standard MIDI File (format 1: a track with tempo, time
+and key signature, then one track per voice with its name; the mode is in
+the channel volume of each track). "Every voice" gives a ZIP archive (stored
+entries) with one file per voice plus a tutti. File names:
+`<shelf mark>_<title>_<voice>_T<from>-<to>.<ext>`, ASCII only. The files never
+pass through the server, and the app gives nothing to choir members.
+
+Before every export the UI asks the server, which checks the rights and
+records the export:
+
+`POST /api/versions/{id}/practice-audio`
+
+```json
+{ "export": { "copy_id": 35, "measure_from": "0", "measure_to": "11", "voice": "Tenor 1",
+              "mode": "focus", "format": "wav", "all_voices": false, "tempo": 80, "repeats": true } }
+```
+
+| Field | Meaning |
+|---|---|
+| `copy_id` | the copy shown; must belong to version `{id}` |
+| `measure_from`, `measure_to` | printed numbers of the first and last measure (digits, letters, dots; at most 16 characters) |
+| `voice` | name of the focus voice (at most 100 characters); `null` for a tutti or with `all_voices` |
+| `mode` | `all` (all voices equal), `focus` (focus voice louder), `solo` (focus voice only); `focus` and `solo` need a voice |
+| `format` | `wav` or `midi` |
+| `all_voices` | one file per voice plus a tutti; needs `mode` `focus` or `solo` (default `false`) |
+| `tempo` | percent of the score's tempo, 25–200 (default 100) |
+| `repeats` | whether repeats are played (default `true`) |
+
+The answer is `{ "ok": true }`. Without it the UI makes no file. Refusals:
+
+- 403 with the reason (translated) when the rights policy refuses: the user
+  needs the role `librarian` or `conductor`; playback must be allowed
+  (`playDenial`: never for internal preservation copies, public domain or a
+  valid license for `practice_audio`); a public domain version must
+  additionally be confirmed, unless a license covers `practice_audio`.
+  Reasons: `Practice audio files are made by the catalog librarian or the
+  conductor.`, `Public domain is not confirmed yet: practice audio files need
+  a confirmed rights status or a license for practice audio.`, or the
+  playback reasons (`Internal preservation copy: no playback.`, `Protected
+  version: playback needs a license for practice audio.`, …).
+- 400 for invalid request data (`Unknown field: %s`, `"%s": value not
+  allowed.`, `The copy does not belong to this version.`, …). The rights are
+  checked first.
+
+An allowed export is recorded in the audit log of the version: action
+`practice_audio`, `field` `null`, `new_value` a JSON object such as
+`{"copy":"2-2","measures":"0-11","voice":"Tenor 1","mode":"focus","format":"wav","tempo":80,"repeats":true}`
+(`voice` is `"*"` for every voice, `null` for a tutti). Refused requests are not
+recorded. A cancelled rendering in the browser does not remove the entry.
 
 ## Concerts, song lists and repertoire (milestone 0.4)
 

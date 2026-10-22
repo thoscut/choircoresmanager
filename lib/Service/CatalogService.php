@@ -159,7 +159,8 @@ class CatalogService {
 	 * merges that can be undone, audit log.
 	 *
 	 * @return array{work: Work, version: WorkVersion, copy: Copy, files: list<ArchiveFile>,
-	 *     score: ?array{fileId: int, fileName: string, canView: bool, canPlay: bool, reason: ?string}, licenses: list<License>,
+	 *     score: ?array{fileId: int, fileName: string, canView: bool, canPlay: bool, reason: ?string, canExportAudio: bool, exportReason: ?string},
+	 *     licenses: list<License>,
 	 *     releases: array{portal: ?string, onPortal: bool, printStation: ?string}, tasks: list<Task>, links: list<ExcerptLink>,
 	 *     proposals: list<Proposal>, siblings: list<array{id: int, shelfmark: string, version_id: int, status: string}>,
 	 *     contributions: list<array<string, string|int|bool|null|array<string, string|int|bool|null>>>, protection: ProtectionProposal,

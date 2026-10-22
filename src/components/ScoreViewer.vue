@@ -2,7 +2,8 @@
 /**
  * Score view: renders the MusicXML of a copy with Verovio, shows a range of
  * measures in printed numbering, highlights a focus voice and plays the
- * score with a small built-in synthesizer.
+ * score with a small built-in synthesizer. Practice files (WAV/MIDI) of the
+ * same choice are made in PracticeAudioDialog.
  *
  * This component is loaded lazily (own chunk); Verovio is a further chunk
  * that is only fetched when a score is opened.
@@ -25,11 +26,12 @@ import {
 	mdiStop,
 	mdiClipboardTextOutline,
 	mdiContentCopy,
+	mdiFileMusicOutline,
 	mdiLinkVariantPlus,
 } from '@mdi/js'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { n, t } from '../l10n.ts'
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, useId, watch } from 'vue'
+import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, useId, watch } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
@@ -46,18 +48,22 @@ import RightsBadge from './RightsBadge.vue'
 import TaskDialog from './TaskDialog.vue'
 import { fetchFileContent } from '../api.ts'
 import { translateLabel } from '../format.ts'
-import { playingOrder, renderPages, selectMeasures, timelineFor, loadScore } from '../score/model.ts'
+import { playbackTimeline, renderPages, selectMeasures, loadScore } from '../score/model.ts'
 import { markFocus } from '../score/emphasis.ts'
 import { ArchiveLimitError, readScoreText } from '../score/mxl.ts'
-import { ScorePlayer, voiceGain } from '../score/player.ts'
+import { ScorePlayer, voiceGains } from '../score/player.ts'
 import { resolveRange } from '../score/range.ts'
 import { sanitizeSvg } from '../score/sanitize.ts'
 import { createToolkit } from '../score/toolkit.ts'
-import { memberKey, voiceLabel } from '../score/voices.ts'
+import { voiceLabel } from '../score/voices.ts'
 import { copyText } from '../clipboard.ts'
+import { focusAfterDialog } from '../focus.ts'
 import { referenceWords } from '../labels.ts'
 import { textReference } from '../references.ts'
 import { canCreateLinks, canCreateTasks, fieldInfo, fieldLabel } from '../store.ts'
+
+/** Practice audio files: own chunk, loaded when the dialog is opened */
+const PracticeAudioDialog = defineAsyncComponent(() => import('./PracticeAudioDialog.vue'))
 
 const props = defineProps<{
 	detail: Detail
@@ -509,14 +515,12 @@ function updateTimeline(): void {
 		return
 	}
 	stop()
-	timeline.value = timelineFor(loaded, playingOrder(loaded, range.value, repeats.value))
+	timeline.value = playbackTimeline(loaded, range.value, repeats.value)
 	player?.setTimeline(timeline.value)
 }
 
 function gains(): (voice: string) => number {
-	const members = new Set((focusVoice.value?.members ?? []).map((member) => memberKey(member.staff, member.layer)))
-	const hasFocus = members.size > 0
-	return (voice: string) => voiceGain(mode.value, members.has(voice), hasFocus)
+	return voiceGains(focusVoice.value?.members ?? [], mode.value)
 }
 
 function ensurePlayer(): ScorePlayerType {
@@ -581,6 +585,27 @@ watch([focusKey, mode], () => {
 watch(tempoPercent, (value) => player?.setRate(value / 100))
 watch(volumePercent, (value) => player?.setVolume(value / 100))
 watch(repeats, () => updateTimeline())
+
+// ---- practice audio files ------------------------------------------------------
+
+const practiceOpen = ref(false)
+const practiceButton = ref(null)
+const canExportAudio = computed(() => score.value?.canExportAudio === true)
+// Why the button is missing although playback is allowed (translated by the server)
+const exportReason = computed(() => (score.value?.exportReason ? translateLabel(score.value.exportReason) : ''))
+const tempoValue = computed(() => t('notenarchiv', '{percent} % ({mark})', { percent: tempoPercent.value, mark: tempoMark(tempoPercent.value / 100) }))
+
+function openPractice(): void {
+	if (player?.isPlaying) {
+		togglePlay()
+	}
+	practiceOpen.value = true
+}
+
+function closePractice(): void {
+	practiceOpen.value = false
+	focusAfterDialog(practiceButton)
+}
 
 // ---- following the playback -------------------------------------------------
 
@@ -908,6 +933,15 @@ onBeforeUnmount(() => {
 								</template>
 								{{ t('notenarchiv', 'Stop') }}
 							</NcButton>
+							<NcButton v-if="canExportAudio"
+								ref="practiceButton"
+								aria-haspopup="dialog"
+								@click="openPractice">
+								<template #icon>
+									<NcIconSvgWrapper :path="mdiFileMusicOutline" />
+								</template>
+								{{ t('notenarchiv', 'Practice files …') }}
+							</NcButton>
 						</div>
 						<NcRadioGroup v-model="mode" :label="t('notenarchiv', 'Voices during playback')">
 							<NcRadioGroupButton value="all" :label="t('notenarchiv', 'All equal')" />
@@ -948,6 +982,9 @@ onBeforeUnmount(() => {
 								{{ t('notenarchiv', 'Scroll along') }}
 							</NcCheckboxRadioSwitch>
 						</div>
+						<p v-if="!canExportAudio && exportReason" class="score-viewer__hint">
+							{{ exportReason }}
+						</p>
 					</section>
 					<NcNoteCard v-else type="info" class="score-viewer__no-playback">
 						{{ playReason }}
@@ -1068,6 +1105,17 @@ onBeforeUnmount(() => {
 					:prefill="placePrefill"
 					@created="emit('changed')"
 					@close="linkDialogOpen = false" />
+				<PracticeAudioDialog v-if="practiceOpen && model"
+					:detail="detail"
+					:model="model"
+					:range="range"
+					:repeats="repeats"
+					:tempo-percent="tempoPercent"
+					:tempo-text="tempoValue"
+					:focus-key="focusKey"
+					:mode="mode"
+					:voice-name="labelOf"
+					@close="closePractice" />
 			</template>
 		</div>
 	</NcModal>
