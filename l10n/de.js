@@ -271,7 +271,7 @@ OC.L10N.register(
     "Replace file" : "Datei ersetzen",
     "Upload MusicXML" : "MusicXML hochladen",
     "Remove file" : "Datei entfernen",
-    "This score is an internal preservation copy. Its notes are neither displayed nor played back, and only members of the editing groups can download the file." : "Diese Partitur ist eine interne Sicherungskopie. Die Noten werden weder angezeigt noch abgespielt, und nur Mitglieder der Bearbeitergruppen können die Datei herunterladen.",
+    "This score is an internal preservation copy. Its notes are neither displayed nor played back, and only members of the editing groups can download the file." : "Diese Partitur ist eine interne Erhaltungskopie. Die Noten werden weder angezeigt noch abgespielt, und nur Mitglieder der Bearbeitergruppen können die Datei herunterladen.",
     "This score is approved for publication and its rights are confirmed, so it is shown on the public page if that page is enabled." : "Diese Partitur ist zur Veröffentlichung freigegeben und ihre Rechte sind bestätigt. Sie erscheint daher auf der öffentlichen Seite, sofern diese aktiviert ist.",
     "Scores in this book" : "Partituren in diesem Notenbuch",
     "Failed to load setlist" : "Setlist konnte nicht geladen werden",
