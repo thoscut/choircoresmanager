@@ -8,6 +8,7 @@
 /tests/.phpunit.cache
 
 /node_modules/
+/tools/screenshots/node_modules/
 /js/
 /css/
 

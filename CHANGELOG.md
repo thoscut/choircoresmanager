@@ -94,6 +94,10 @@ and 35.0.2 with MariaDB; the app requires MySQL or MariaDB.
 - Personal view: every account hides navigation areas and start page cards
   it does not need ("Customize view", stored on the server); permissions do
   not change.
+- Documentation with screenshots of the demo data: README, user and
+  administration guides, German quick start, contributing guide, issue and
+  pull request templates; a script recreates the screenshots
+  (`tools/screenshots`).
 
 ### Fixed
 
@@ -161,3 +165,5 @@ Found when checking the prints in Firefox 158 and the icon at small sizes:
   endpoints, formula injection neutralised in CSV files meant for people.
 - The app page allows WebAssembly for the bundled notation engine and nothing
   else beyond Nextcloud's default policy.
+- Vulnerabilities are reported privately through GitHub Security Advisories;
+  `SECURITY.md` names the supported versions.

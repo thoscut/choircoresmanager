@@ -4,7 +4,9 @@
 #
 # The archive contains only what the app needs at runtime (appinfo, lib,
 # templates, img, js, css, l10n, LICENSE, README, CHANGELOG). Tests, sources,
-# tooling, internal documents and dependencies for development stay out.
+# tooling (including tools/screenshots), the documentation with its
+# screenshots (docs/), the GitHub templates (.github/), internal documents
+# and dependencies for development stay out.
 #
 # With --sign (KEY = private key of the app store certificate request, CERT =
 # the certificate issued by Nextcloud, OCC = path to `occ` of any Nextcloud
@@ -39,6 +41,17 @@ if ! grep -q '<bugs>' appinfo/info.xml; then
 	exit 1
 fi
 
+# It also refuses an info.xml that does not match its schema (e.g. elements
+# in the wrong order). Needs xmllint and network access.
+if command -v xmllint >/dev/null; then
+	XSD=$(mktemp)
+	curl -fsSL -o "$XSD" https://apps.nextcloud.com/schema/apps/info.xsd
+	xmllint --noout --schema "$XSD" appinfo/info.xml || { rm -f "$XSD"; exit 1; }
+	rm -f "$XSD"
+else
+	echo "warning: xmllint not found, appinfo/info.xml was not checked against the app store schema" >&2
+fi
+
 OUT="$ROOT/build/release"
 STAGE="$(mktemp -d)"
 trap 'rm -rf "$STAGE"' EXIT
@@ -55,7 +68,7 @@ cp -r appinfo lib templates img js css l10n LICENSE README.md CHANGELOG.md "$STA
 find "$STAGE/$APP_ID/js" -name '*.map' -delete
 
 # Refuse to package anything internal or development-only.
-for forbidden in _intern node_modules tests src tools vendor-bin; do
+for forbidden in _intern node_modules tests src tools vendor-bin docs .github; do
 	if [ -e "$STAGE/$APP_ID/$forbidden" ]; then
 		echo "refusing to package $forbidden" >&2
 		exit 1

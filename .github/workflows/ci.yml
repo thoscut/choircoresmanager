@@ -46,6 +46,23 @@ env:
   DEBIAN_FRONTEND: noninteractive
 
 jobs:
+  appinfo:
+    # The app store refuses a release whose appinfo/info.xml does not match
+    # its schema, e.g. a wrong order of elements.
+    name: App info against the app store schema
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    container:
+      image: php:8.2-cli
+    steps:
+      - name: Install job tools
+        run: apt-get update -qq && apt-get install -y -qq --no-install-recommends git nodejs ca-certificates curl libxml2-utils
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Validate appinfo/info.xml
+        run: |
+          curl -fsSL -o "$RUNNER_TEMP/info.xsd" https://apps.nextcloud.com/schema/apps/info.xsd
+          xmllint --noout --schema "$RUNNER_TEMP/info.xsd" appinfo/info.xml
+
   php-lint:
     name: PHP lint ${{ matrix.php }}
     runs-on: ubuntu-latest

@@ -1,12 +1,34 @@
 # Security policy
 
+## Supported versions
+
+The app is in its 0.x series and no release has been published yet. Security
+fixes go into the `main` branch and into the next release; once releases are
+published, only the latest release receives fixes. Please update to it
+before you report an issue.
+
+| Version | Security fixes |
+|---|---|
+| `main` | yes |
+| latest 0.x release | yes |
+| older releases | no |
+
 ## Reporting a vulnerability
 
-Please report security issues privately to the maintainers (see the contact
-in the app store listing or the repository description) and not in public
-issues. Include steps to reproduce and the affected version. You will receive
-an answer within a week; fixes are released as soon as possible and mentioned
-in the changelog.
+Please report security issues **privately** through
+[GitHub Security Advisories](https://github.com/thoscut/choircoresmanager/security/advisories/new)
+("Report a vulnerability" in the Security tab of the repository), not in
+public issues, pull requests or discussions.
+
+Please include:
+
+- the affected version of the app and of Nextcloud,
+- what an attacker can do and which role or account they need,
+- steps to reproduce, ideally with the public demo data from `tools/demo`
+  instead of real data.
+
+You will receive an answer within a week. Fixes are released as soon as
+possible and mentioned in the changelog.
 
 ## Design notes
 
@@ -24,9 +46,10 @@ in the changelog.
   confirmation, the valid version or the portal release) can only be set
   through their own workflow, never through a generic update. Requests that
   create tasks, links or accessions also refuse unknown fields.
-- Write requests require Nextcloud's CSRF token. Only four plain GET
-  downloads skip it (app page, CSV export, full backup, song order); they do
-  not change state.
+- Write requests require Nextcloud's CSRF token. Only plain GET downloads
+  skip it (app page, CSV export, full backup, song order, the CSV files of the
+  statistics and the annual report, the calendar files of concerts); they do
+  not change state. Adding concerts to a calendar keeps the check.
 - A unit test (`tests/Unit/Controller/ControllerSecurityTest`) checks these
   route attributes, so that a new route cannot silently become public, skip
   the CSRF check or lose its admin restriction.
@@ -89,8 +112,9 @@ in the changelog.
   them. Tokens are 32 alphanumeric characters from Nextcloud's secure random
   generator. Unknown tokens count as failed attempts for Nextcloud's
   brute-force protection.
-- Expensive endpoints (imports, file sync, exports, backups, restore) are rate
-  limited per user; Nextcloud answers with HTTP 429 when a limit is reached.
+- Expensive endpoints (imports, file sync, exports, backups, restore, practice
+  audio, statistics, calendar files and entries) are rate limited per user;
+  Nextcloud answers with HTTP 429 when a limit is reached.
 - Clients only see translated messages meant for users; internal errors are
   answered with a generic message and logged by Nextcloud. Notifications
   contain no personal data and no internal error texts; their links only lead
