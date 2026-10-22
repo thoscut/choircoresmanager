@@ -433,8 +433,10 @@ try {
 	// ---- modules switched off ----
 	$modules->change(['tasks' => false]);
 	$off = $gate($tasks, 'tasks');
+	// The message is translated into the account's language
+	$l10n = Server::get(\OCP\L10N\IFactory::class)->get('notenarchiv');
 	$check('without tasks the task routes answer 404', $off instanceof OCSNotFoundException && $off->getCode() === 404
-		&& $off->getMessage() === 'This function is switched off.', $describe($off));
+		&& in_array($off->getMessage(), ['This function is switched off.', $l10n->t('This function is switched off.')], true), $describe($off));
 	$check('the catalog still answers', $gate($catalog, 'search') === null && $gate($tasks, 'due') === null);
 	$modules->change(['tasks' => true]);
 	$modules->change([ReviewService::MODULE => false]);
