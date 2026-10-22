@@ -65,7 +65,8 @@ class PublicScoreService {
 	 *
 	 * @param int $id
 	 * @return array{content: string, mimeType: string, fileName: string}
-	 * @throws \InvalidArgumentException if the public page is disabled, the score may not be shown or has no file
+	 * @throws \InvalidArgumentException if the public page is disabled or the score may not be shown
+	 * @throws Exceptions\NotFoundException if the score has no readable, valid MusicXML file
 	 */
 	public function getPublicMusicXml(int $id): array {
 		$this->assertEnabled();

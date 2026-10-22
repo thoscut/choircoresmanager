@@ -13,35 +13,52 @@
 						<DownloadIcon :size="20" />
 					</template>
 				</NcButton>
+				<NcButton
+					v-if="editable && score.musicxmlFileId !== null"
+					variant="tertiary"
+					:href="filesUrl"
+					target="_blank"
+					:aria-label="t('Show in Files')"
+					:title="t('Show in Files')">
+					<template #icon>
+						<OpenExternalIcon :size="20" />
+					</template>
+				</NcButton>
 			</template>
-			<span v-else class="musicxml-tab__empty">{{ t('No MusicXML file uploaded yet.') }}</span>
+			<span v-else class="musicxml-tab__empty">{{ t('No MusicXML file linked yet.') }}</span>
 		</div>
 
-		<div v-if="editable" class="musicxml-tab__actions">
-			<input
-				ref="fileInput"
-				type="file"
-				accept=".musicxml,.xml,.mxl"
-				class="hidden-visually"
-				@change="onFileSelected">
-			<NcButton :disabled="busy" @click="fileInput?.click()">
-				<template #icon>
-					<NcLoadingIcon v-if="busy" :size="20" />
-					<UploadIcon v-else :size="20" />
-				</template>
-				{{ score.musicxmlFile ? t('Replace file') : t('Upload MusicXML') }}
-			</NcButton>
-			<NcButton
-				v-if="score.musicxmlFile"
-				variant="error"
-				:disabled="busy"
-				@click="onDelete">
-				<template #icon>
-					<DeleteIcon :size="20" />
-				</template>
-				{{ t('Remove file') }}
-			</NcButton>
-		</div>
+		<template v-if="editable">
+			<div class="musicxml-tab__actions">
+				<NcButton :disabled="busy" @click="onLink">
+					<template #icon>
+						<NcLoadingIcon v-if="busy" :size="20" />
+						<LinkIcon v-else :size="20" />
+					</template>
+					{{ score.musicxmlFile ? t('Link another file') : t('Link MusicXML file') }}
+				</NcButton>
+				<NcButton
+					v-if="score.musicxmlFile"
+					variant="secondary"
+					:disabled="busy"
+					@click="onUnlink">
+					<template #icon>
+						<UnlinkIcon :size="20" />
+					</template>
+					{{ t('Unlink file') }}
+				</NcButton>
+			</div>
+			<p class="musicxml-tab__hint">
+				{{ t('The file stays in Files, where it is uploaded, replaced and backed up. Unlinking does not delete it.') }}
+			</p>
+		</template>
+
+		<NcNoteCard v-if="unavailableMessage" type="error">
+			<p>{{ unavailableMessage }}</p>
+			<p v-if="editable">
+				{{ t('Check the file in Files or link it again.') }}
+			</p>
+		</NcNoteCard>
 
 		<NcNoteCard v-if="isPreservationCopy" type="warning">
 			{{ t('This score is an internal preservation copy. Its notes are neither displayed nor played back, and only members of the editing groups can download the file.') }}
@@ -51,8 +68,8 @@
 		</NcNoteCard>
 
 		<MusicXmlPlayer
-			v-if="score.musicxmlFile && !isPreservationCopy"
-			:key="`${score.id}-${score.musicxmlFile}-${uploadCount}`"
+			v-if="score.musicxmlFile && !isPreservationCopy && !unavailableMessage"
+			:key="`${score.id}-${score.musicxmlFileId}-${linkCount}`"
 			:loadFile="loadFile" />
 	</div>
 </template>
@@ -60,16 +77,16 @@
 <script setup lang="ts">
 import type { Score } from '@/api/generated/openapi/data-contracts'
 
-import { showError, showSuccess } from '@nextcloud/dialogs'
-import { computed, ref } from 'vue'
+import { FilePickerClosed, getFilePickerBuilder, showSuccess } from '@nextcloud/dialogs'
+import { generateUrl } from '@nextcloud/router'
+import { computed, ref, watch } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import MusicXmlPlayer from '@/components/MusicXmlPlayer.vue'
-import { DeleteIcon, DownloadIcon, UploadIcon } from '@/icons/vue-material'
-import { useScoreSidebarStore } from '@/stores/scoreSidebarStore'
+import { DownloadIcon, LinkIcon, OpenExternalIcon, UnlinkIcon } from '@/icons/vue-material'
 import { useScoresStore } from '@/stores/scoresStore'
-import { tryShowError } from '@/utils/errorHandling'
+import { extractErrorMessage, tryShowError } from '@/utils/errorHandling'
 import { t } from '@/utils/l10n'
 import { isInternalPreservationCopy, isPublishable } from '@/utils/scoreStatus'
 
@@ -80,28 +97,51 @@ interface Props {
 
 const props = defineProps<Props>()
 
+const MUSICXML_FILE_NAME = /\.(musicxml|xml|mxl)$/i
+
 /**
  * Internal preservation copies are never rendered or played back, and only editors may download them
  */
 const isPreservationCopy = computed(() => isInternalPreservationCopy(props.score))
 const canDownload = computed(() => props.editable || !isPreservationCopy.value)
+const filesUrl = computed(() => generateUrl('/f/{fileId}', { fileId: props.score.musicxmlFileId ?? 0 }))
 
 const scoresStore = useScoresStore()
-const scoreSidebarStore = useScoreSidebarStore()
 
-const fileInput = ref<HTMLInputElement | null>(null)
 const busy = ref(false)
-const uploadCount = ref(0)
+const linkCount = ref(0)
+/** Message of the server if the linked file is missing, not accessible or no longer valid */
+const unavailableMessage = ref<string | null>(null)
 
-const MAX_SIZE = 20 * 1024 * 1024
+watch(() => [props.score.id, props.score.musicxmlFileId], () => {
+	unavailableMessage.value = null
+})
+
+/**
+ * Remember why the linked file is unavailable, if the server says so
+ *
+ * @param error - The error of a failed request for the file content
+ */
+function rememberIfUnavailable(error: unknown): void {
+	if ((error as { response?: { status?: number } }).response?.status === 404) {
+		unavailableMessage.value = extractErrorMessage(error)
+	}
+}
 
 /**
  * Load the score's MusicXML file for the player
  */
-const loadFile = () => scoresStore.fetchMusicXml(props.score.id)
+async function loadFile(): Promise<ArrayBuffer> {
+	try {
+		return await scoresStore.fetchMusicXml(props.score.id)
+	} catch (error) {
+		rememberIfUnavailable(error)
+		throw error
+	}
+}
 
 /**
- * Download the MusicXML file under its original name
+ * Download the MusicXML file under its name in Files
  */
 async function onDownload(): Promise<void> {
 	await tryShowError(
@@ -115,51 +155,65 @@ async function onDownload(): Promise<void> {
 			URL.revokeObjectURL(url)
 		},
 		t('Downloading the file failed: '),
+		rememberIfUnavailable,
 	)
 }
 
 /**
- * Upload the selected file
- *
- * @param event - The change event of the file input
+ * Let the user pick a MusicXML file in Files and link it to the score
  */
-async function onFileSelected(event: Event): Promise<void> {
-	const input = event.target as HTMLInputElement
-	const file = input.files?.[0]
-	input.value = ''
-	if (!file) {
+async function onLink(): Promise<void> {
+	const picker = getFilePickerBuilder(t('Choose a MusicXML file'))
+		.setMultiSelect(false)
+		.allowDirectories(false)
+		.setFilter((node) => node.type === 'folder' || MUSICXML_FILE_NAME.test(node.basename))
+		.setCanPick((node) => node.type !== 'folder' && MUSICXML_FILE_NAME.test(node.basename))
+		.addButton({
+			label: t('Link file'),
+			variant: 'primary',
+			callback: () => {},
+		})
+		.build()
+
+	let pickedFileId: number | undefined
+	try {
+		const nodes = await picker.pickNodes()
+		pickedFileId = nodes[0]?.fileid
+	} catch (error) {
+		if (!(error instanceof FilePickerClosed)) {
+			console.error('File picker failed:', error)
+		}
 		return
 	}
-	if (file.size > MAX_SIZE) {
-		showError(t('The file is too large (maximum {size} MB)', { size: 20 }))
+	if (pickedFileId === undefined) {
 		return
 	}
+	const fileId = pickedFileId
 
 	busy.value = true
 	await tryShowError(
 		async () => {
-			const updated = await scoresStore.uploadMusicXml(props.score.id, file)
-			scoreSidebarStore.updateSelectedScore(updated)
-			uploadCount.value++
-			showSuccess(t('MusicXML file uploaded'))
+			await scoresStore.linkMusicXml(props.score.id, fileId)
+			unavailableMessage.value = null
+			linkCount.value++
+			showSuccess(t('MusicXML file linked'))
 		},
-		t('Uploading the file failed: '),
+		t('Linking the file failed: '),
 	)
 	busy.value = false
 }
 
 /**
- * Remove the MusicXML file
+ * Remove the link to the MusicXML file; the file itself stays in Files
  */
-async function onDelete(): Promise<void> {
+async function onUnlink(): Promise<void> {
 	busy.value = true
 	await tryShowError(
 		async () => {
-			const updated = await scoresStore.deleteMusicXml(props.score.id)
-			scoreSidebarStore.updateSelectedScore(updated)
-			showSuccess(t('MusicXML file removed'))
+			await scoresStore.unlinkMusicXml(props.score.id)
+			showSuccess(t('MusicXML file unlinked'))
 		},
-		t('Removing the file failed: '),
+		t('Unlinking the file failed: '),
 	)
 	busy.value = false
 }
@@ -184,7 +238,8 @@ async function onDelete(): Promise<void> {
 		white-space: nowrap;
 	}
 
-	&__empty {
+	&__empty,
+	&__hint {
 		color: var(--color-text-maxcontrast);
 	}
 

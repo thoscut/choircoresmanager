@@ -16,7 +16,6 @@ use OCA\OrchestraScoresManager\Policy\PolicyInterface;
 use OCA\OrchestraScoresManager\Policy\ScorePolicy;
 use OCA\OrchestraScoresManager\Service\AuthorizationService;
 use OCA\OrchestraScoresManager\Service\Exceptions\PermissionDeniedException;
-use OCA\OrchestraScoresManager\Service\MusicXmlService;
 use OCA\OrchestraScoresManager\Service\ScoreService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\IDBConnection;
@@ -37,7 +36,6 @@ final class ScoreServiceTest extends TestCase {
 	private AuthorizationService $authorizationService;
 	private ScorePolicy $scorePolicy;
 	private IL10N $l10n;
-	private MusicXmlService $musicXmlService;
 	private ScoreService $service;
 
 	protected function setUp(): void {
@@ -52,7 +50,6 @@ final class ScoreServiceTest extends TestCase {
 		$this->authorizationService = $this->createMock(AuthorizationService::class);
 		$this->scorePolicy = $this->createMock(ScorePolicy::class);
 		$this->l10n = $this->createMock(IL10N::class);
-		$this->musicXmlService = $this->createMock(MusicXmlService::class);
 
 		$this->l10n->method('t')->willReturnCallback(fn ($text, $params = []) => vsprintf($text, $params));
 
@@ -67,7 +64,6 @@ final class ScoreServiceTest extends TestCase {
 			$this->scorePolicy,
 			$this->l10n,
 			$this->createMock(IDBConnection::class),
-			$this->musicXmlService,
 		);
 	}
 
@@ -214,10 +210,6 @@ final class ScoreServiceTest extends TestCase {
 		$this->scoreMapper->expects($this->once())
 			->method('delete')
 			->with($score);
-
-		$this->musicXmlService->expects($this->once())
-			->method('removeFile')
-			->with(1);
 
 		$this->service->deleteScoreById(1);
 	}
@@ -508,7 +500,6 @@ final class ScoreServiceTest extends TestCase {
 			$this->scorePolicy,
 			$this->l10n,
 			$db,
-			$this->musicXmlService,
 		);
 
 		$created = new Score();

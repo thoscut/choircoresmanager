@@ -44,7 +44,6 @@ class ScoreService {
 		private readonly ScorePolicy $scorePolicy,
 		private IL10N $l,
 		private readonly IDBConnection $db,
-		private readonly MusicXmlService $musicXmlService,
 	) {
 	}
 
@@ -98,9 +97,6 @@ class ScoreService {
 
 			$this->scoreMapper->delete($score);
 		}, $this->db);
-
-		// Remove the attached MusicXML file, if any
-		$this->musicXmlService->removeFile($id);
 	}
 
 	/**

@@ -55,6 +55,10 @@ use OCP\DB\Types;
  * @method void setPublicationBlockedUntil(?DateTimeImmutable $value)
  * @method string|null getMusicxmlFile()
  * @method void setMusicxmlFile(?string $value)
+ * @method int|null getMusicxmlFileId()
+ * @method void setMusicxmlFileId(?int $value)
+ * @method string|null getMusicxmlLinkedBy()
+ * @method void setMusicxmlLinkedBy(?string $value)
  * @method DateTimeImmutable|null getUpdatedAt()
  * @method void setUpdatedAt(?DateTimeImmutable $value)
  */
@@ -81,7 +85,16 @@ class Score extends Entity implements JsonSerializable {
 	protected ?string $publicationNote = null;
 	/** DATE field, normalized to midnight UTC and serialized as Y-m-d */
 	protected ?DateTimeImmutable $publicationBlockedUntil = null;
+	/** Name of the linked MusicXML file at the time it was linked, only for display */
 	protected ?string $musicxmlFile = null;
+	/** Nextcloud file id of the linked MusicXML file */
+	protected ?int $musicxmlFileId = null;
+	/**
+	 * User id of the person who linked the file; the file is read with this user's access. Not exposed in the API.
+	 *
+	 * @psalm-suppress PossiblyUnusedProperty - Only accessed through the magic getter and setter
+	 */
+	protected ?string $musicxmlLinkedBy = null;
 	/** Set by the mapper on every insert and update */
 	protected ?DateTimeImmutable $updatedAt = null;
 
@@ -113,6 +126,8 @@ class Score extends Entity implements JsonSerializable {
 		$this->addType('publicationNote', Types::TEXT);
 		$this->addType('publicationBlockedUntil', Types::DATE_IMMUTABLE);
 		$this->addType('musicxmlFile', Types::STRING);
+		$this->addType('musicxmlFileId', Types::BIGINT);
+		$this->addType('musicxmlLinkedBy', Types::STRING);
 		$this->addType('updatedAt', Types::DATETIME_IMMUTABLE);
 
 		// Always write both status columns on insert instead of relying on the database default
@@ -146,6 +161,7 @@ class Score extends Entity implements JsonSerializable {
 			'publicationNote' => $this->publicationNote,
 			'publicationBlockedUntil' => $this->publicationBlockedUntil?->format('Y-m-d'),
 			'musicxmlFile' => $this->musicxmlFile,
+			'musicxmlFileId' => $this->musicxmlFileId,
 			'updatedAt' => $this->updatedAt?->format(DATE_ATOM),
 		];
 	}

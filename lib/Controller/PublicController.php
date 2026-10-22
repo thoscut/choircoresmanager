@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OCA\OrchestraScoresManager\Controller;
 
 use OCA\OrchestraScoresManager\AppInfo\Application;
+use OCA\OrchestraScoresManager\Service\Exceptions\NotFoundException;
 use OCA\OrchestraScoresManager\Service\PublicScoreService;
 use OCA\OrchestraScoresManager\Utility\ResponseHelper;
 use OCP\AppFramework\Controller;
@@ -74,7 +75,7 @@ class PublicController extends Controller {
 	public function musicXml(int $id): DataDownloadResponse|NotFoundResponse {
 		try {
 			$file = $this->publicScoreService->getPublicMusicXml($id);
-		} catch (\InvalidArgumentException) {
+		} catch (\InvalidArgumentException|NotFoundException) {
 			return new NotFoundResponse();
 		}
 		return ResponseHelper::musicXmlDownload($file);

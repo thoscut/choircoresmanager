@@ -11,7 +11,7 @@ use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
 /**
- * Migration to add rights and publication information and a MusicXML file reference to scores.
+ * Migration to add rights and publication information and a link to a MusicXML file to scores.
  *
  * Columns added to osm_scores:
  * - rights_status: rights status ('public_domain', 'licensed', 'protected', 'open')
@@ -21,7 +21,9 @@ use OCP\Migration\SimpleMigrationStep;
  * - publication_status: publication status ('approved', 'to_clarify', 'blocked', 'internal_preservation_copy')
  * - publication_note: free text explaining the publication status
  * - publication_blocked_until: date until which a blocked score stays blocked (null if open-ended)
- * - musicxml_file: original file name of the uploaded MusicXML file (null if none)
+ * - musicxml_file: name of the linked MusicXML file at the time it was linked, for display (null if none)
+ * - musicxml_file_id: Nextcloud file id of the linked MusicXML file (null if none)
+ * - musicxml_linked_by: user id of the person who linked the file; the file is read with this user's access
  * - updated_at: when the score was last created or changed (null for scores not changed since this migration)
  *
  * @psalm-suppress UnusedClass - Migration class discovered by Nextcloud framework
@@ -94,6 +96,22 @@ class Version000007000Date20261021000000 extends SimpleMigrationStep {
 			$table->addColumn('musicxml_file', Types::STRING, [
 				'notnull' => false,
 				'length' => 255,
+			]);
+			$changed = true;
+		}
+
+		if (!$table->hasColumn('musicxml_file_id')) {
+			$table->addColumn('musicxml_file_id', Types::BIGINT, [
+				'notnull' => false,
+				'unsigned' => true,
+			]);
+			$changed = true;
+		}
+
+		if (!$table->hasColumn('musicxml_linked_by')) {
+			$table->addColumn('musicxml_linked_by', Types::STRING, [
+				'notnull' => false,
+				'length' => 64,
 			]);
 			$changed = true;
 		}

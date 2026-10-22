@@ -102,6 +102,8 @@ export interface Score {
   publicationNote: string | null;
   publicationBlockedUntil: string | null;
   musicxmlFile: string | null;
+  /** @format int64 */
+  musicxmlFileId: number | null;
   updatedAt: string | null;
   tags: string[] | null;
   scoreBook: ScoreBookInfo | null;
@@ -188,6 +190,8 @@ export interface ScoreIndexed {
   publicationNote: string | null;
   publicationBlockedUntil: string | null;
   musicxmlFile: string | null;
+  /** @format int64 */
+  musicxmlFileId: number | null;
   updatedAt: string | null;
   tags: string[] | null;
   scoreBook: ScoreBookInfo | null;
@@ -459,6 +463,14 @@ export interface FolderCollectionVersionApiPatchFolderCollectionVersionData {
 
 /** @format binary */
 export type MusicXmlApiGetMusicXmlData = File;
+
+export interface MusicXmlApiPostMusicXmlPayload {
+  /**
+   * The Nextcloud file id of the MusicXML file
+   * @format int64
+   */
+  fileId: number;
+}
 
 export interface MusicXmlApiPostMusicXmlData {
   ocs: {

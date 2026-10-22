@@ -168,34 +168,28 @@ export const useScoresStore = defineStore('scores', () => {
 	}
 
 	/**
-	 * Upload a MusicXML file for a score and update local state
+	 * Link a MusicXML file from Nextcloud Files to a score and update local state
 	 *
 	 * @param id - The score ID
-	 * @param file - The MusicXML file (.musicxml, .xml or .mxl)
+	 * @param fileId - The Nextcloud file id of the MusicXML file (.musicxml, .xml or .mxl)
 	 * @return The updated score
 	 * @throws { Error } if API call fails
 	 */
-	async function uploadMusicXml(id: number, file: File): Promise<Score> {
-		const formData = new FormData()
-		formData.append('file', file)
-		const response = await ncAxios.post(
-			generateOcsUrl('/apps/orchestrascoresmanager/scores/{id}/musicxml', { id }),
-			formData,
-			{ headers: { 'OCS-APIRequest': 'true', Accept: 'application/json' } },
-		)
+	async function linkMusicXml(id: number, fileId: number): Promise<Score> {
+		const response = await apiClients.default.musicXmlApiPostMusicXml(id, { fileId })
 		const updated = response.data.ocs.data as Score
 		replaceScore(updated)
 		return updated
 	}
 
 	/**
-	 * Remove the MusicXML file of a score and update local state
+	 * Remove the link to the MusicXML file of a score and update local state. The file stays in Files.
 	 *
 	 * @param id - The score ID
 	 * @return The updated score
 	 * @throws { Error } if API call fails
 	 */
-	async function deleteMusicXml(id: number): Promise<Score> {
+	async function unlinkMusicXml(id: number): Promise<Score> {
 		const response = await apiClients.default.musicXmlApiDeleteMusicXml(id)
 		const updated = response.data.ocs.data as Score
 		replaceScore(updated)
@@ -203,17 +197,40 @@ export const useScoresStore = defineStore('scores', () => {
 	}
 
 	/**
-	 * Download the MusicXML file of a score
+	 * Download the content of the MusicXML file of a score
 	 *
 	 * @param id - The score ID
 	 * @return The file content
+	 * @throws { Error } if API call fails; an OCS error body is decoded so that its message can be shown
 	 */
 	async function fetchMusicXml(id: number): Promise<ArrayBuffer> {
-		const response = await ncAxios.get(
-			generateOcsUrl('/apps/orchestrascoresmanager/scores/{id}/musicxml', { id }),
-			{ headers: { 'OCS-APIRequest': 'true' }, responseType: 'arraybuffer' },
-		)
-		return response.data as ArrayBuffer
+		try {
+			const response = await ncAxios.get(
+				generateOcsUrl('/apps/orchestrascoresmanager/scores/{id}/musicxml', { id }),
+				{ headers: { 'OCS-APIRequest': 'true', Accept: 'application/json' }, responseType: 'arraybuffer' },
+			)
+			return response.data as ArrayBuffer
+		} catch (error) {
+			decodeArrayBufferErrorBody(error)
+			throw error
+		}
+	}
+
+	/**
+	 * Replace the binary body of a failed request by the parsed JSON, if it is JSON
+	 *
+	 * @param error - The error thrown by axios
+	 */
+	function decodeArrayBufferErrorBody(error: unknown): void {
+		const response = (error as { response?: { data?: unknown } }).response
+		if (!response || !(response.data instanceof ArrayBuffer)) {
+			return
+		}
+		try {
+			response.data = JSON.parse(new TextDecoder().decode(response.data))
+		} catch {
+			// not JSON, keep the body as it is
+		}
 	}
 
 	/**
@@ -240,8 +257,8 @@ export const useScoresStore = defineStore('scores', () => {
 		updateScoreBookAssignmentApi,
 		updateScoreTags,
 		replaceScore,
-		uploadMusicXml,
-		deleteMusicXml,
+		linkMusicXml,
+		unlinkMusicXml,
 		fetchMusicXml,
 		deleteScore,
 	}

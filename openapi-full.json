@@ -229,6 +229,7 @@
                     "publicationNote",
                     "publicationBlockedUntil",
                     "musicxmlFile",
+                    "musicxmlFileId",
                     "updatedAt",
                     "tags",
                     "scoreBook"
@@ -338,6 +339,11 @@
                     },
                     "musicxmlFile": {
                         "type": "string",
+                        "nullable": true
+                    },
+                    "musicxmlFileId": {
+                        "type": "integer",
+                        "format": "int64",
                         "nullable": true
                     },
                     "updatedAt": {
@@ -566,6 +572,7 @@
                     "publicationNote",
                     "publicationBlockedUntil",
                     "musicxmlFile",
+                    "musicxmlFileId",
                     "updatedAt",
                     "tags",
                     "scoreBook",
@@ -676,6 +683,11 @@
                     },
                     "musicxmlFile": {
                         "type": "string",
+                        "nullable": true
+                    },
+                    "musicxmlFileId": {
+                        "type": "integer",
+                        "format": "int64",
                         "nullable": true
                     },
                     "updatedAt": {
@@ -4509,7 +4521,7 @@
             "get": {
                 "operationId": "music_xml_api-get-music-xml",
                 "summary": "Download the MusicXML file of a score",
-                "description": "The file of an internal preservation copy is only available to editors.\nthe MusicXML file",
+                "description": "The content of the linked file is returned. The file of an internal preservation copy is only available to editors.\nthe MusicXML file",
                 "tags": [
                     "music_xml_api"
                 ],
@@ -4562,7 +4574,35 @@
                         }
                     },
                     "400": {
-                        "description": "if the score or file does not exist",
+                        "description": "if the score does not exist",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "if no file is linked or the linked file is missing, not accessible or not a valid MusicXML file",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4649,8 +4689,8 @@
             },
             "post": {
                 "operationId": "music_xml_api-post-music-xml",
-                "summary": "Upload a MusicXML file (.musicxml, .xml or .mxl) for a score, replacing an existing one",
-                "description": "The file must be sent as multipart form data in the field \"file\".\nthe updated score",
+                "summary": "Link a MusicXML file (.musicxml, .xml or .mxl) from the user's files to a score, replacing an existing link",
+                "description": "The file stays in Nextcloud Files. The current user must be able to read it; later reads use the access of the user who linked the file.\nthe updated score",
                 "tags": [
                     "music_xml_api"
                 ],
@@ -4662,6 +4702,26 @@
                         "basic_auth": []
                     }
                 ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "fileId"
+                                ],
+                                "properties": {
+                                    "fileId": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "The Nextcloud file id of the MusicXML file"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "parameters": [
                     {
                         "name": "id",
@@ -4686,7 +4746,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "The file was stored",
+                        "description": "The file was linked",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4716,7 +4776,7 @@
                         }
                     },
                     "400": {
-                        "description": "if the score does not exist or the file is invalid",
+                        "description": "if the score does not exist, the file cannot be read or is not a valid MusicXML file",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4803,8 +4863,8 @@
             },
             "delete": {
                 "operationId": "music_xml_api-delete-music-xml",
-                "summary": "Remove the MusicXML file of a score",
-                "description": "the updated score",
+                "summary": "Remove the link to the MusicXML file of a score",
+                "description": "The file itself stays in Nextcloud Files.\nthe updated score",
                 "tags": [
                     "music_xml_api"
                 ],
@@ -4840,7 +4900,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "The file was removed",
+                        "description": "The link was removed",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -10885,6 +10945,10 @@
         {
             "name": "folder_collection_version_api",
             "description": "Controller for folder collection version operations. Provides endpoints to access and modify folder collection versions independently of their parent folder collection."
+        },
+        {
+            "name": "music_xml_api",
+            "description": "MusicXML files of scores. The files live in Nextcloud Files; a score only links to one."
         }
     ]
 }
