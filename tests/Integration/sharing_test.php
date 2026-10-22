@@ -181,7 +181,11 @@ $isInlinePdf = function (Response $response): bool {
 /** The PDF scans of a copy. */
 $scansOf = fn (int $copyId): array => array_values(array_filter(Server::get(ArchiveFileMapper::class)->findByCopy($copyId),
 	fn (ArchiveFile $file): bool => $file->getRole() === 'score_pdf' && $file->getFound() !== false));
-$wholePiece = array_map('strval', range(1, 16));
+// The measures of the whole piece, from the score file itself (any catalog)
+$sourceFile = ScoreService::pick(Server::get(ArchiveFileMapper::class)->findByCopy($public->getId()));
+$sourceXml = $sourceFile === null ? '' : Server::get(ScoreService::class)->scoreText(Server::get(ScoreService::class)->content($sourceFile->getId(), $uid)['content'])['xml'];
+$wholePiece = $measures($sourceXml);
+$sourceRepeats = str_contains($sourceXml, 'direction="backward"');
 
 $db->beginTransaction();
 try {
@@ -232,8 +236,8 @@ try {
 	$check('a link without measures shares the whole piece, with the scan', $wholeLink->getMeasureFrom() === null
 		&& $wholeLink->getMeasureTo() === null && $wholeLink->getScanFileId() === $scanId);
 	$wholeXml = $shared->memberScore($wholeLink->getToken(), $memberUid);
-	$check('the server sends every measure of the whole piece', $measures($wholeXml) === $wholePiece, implode(',', $measures($wholeXml)));
-	$check('with its repeat (the full playing order)', str_contains($wholeXml, 'direction="backward"'));
+	$check('the server sends every measure of the whole piece', $wholePiece !== [] && $measures($wholeXml) === $wholePiece, implode(',', $measures($wholeXml)));
+	$check('with the repeats of the score (the full playing order)', str_contains($wholeXml, 'direction="backward"') === $sourceRepeats);
 	$wholeEntry = array_values(array_filter($shared->forMember($memberUid), fn (array $row): bool => $row['token'] === $wholeLink->getToken()))[0] ?? [];
 	$check('listed as the whole piece with the scan', array_key_exists('measure_from', $wholeEntry) && $wholeEntry['measure_from'] === null
 		&& ($wholeEntry['scan'] ?? false) === true, json_encode($wholeEntry) ?: '');
