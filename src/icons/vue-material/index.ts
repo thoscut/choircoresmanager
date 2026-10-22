@@ -25,7 +25,8 @@ export { default as PDFIcon } from 'vue-material-design-icons/FilePdfBox.vue'
 export { default as SettingsIcon } from 'vue-material-design-icons/CogOutline.vue'
 export { default as TableViewIcon } from 'vue-material-design-icons/TableHeadersEye.vue'
 export { default as EditIcon } from 'vue-material-design-icons/Pencil.vue'
-export { default as UploadIcon } from 'vue-material-design-icons/Upload.vue'
+export { default as LinkIcon } from 'vue-material-design-icons/Link.vue'
+export { default as UnlinkIcon } from 'vue-material-design-icons/LinkOff.vue'
 
 // Player icons
 export { default as PlayIcon } from 'vue-material-design-icons/Play.vue'

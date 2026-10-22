@@ -26,9 +26,9 @@ class SetlistPolicy implements PolicyInterface {
 		if (!($subject instanceof Setlist)) {
 			return false;
 		}
-		// Published setlists are readable by everyone
+		// Published setlists are readable by every logged-in user
 		if ($subject->getIsPublished()) {
-			return true;
+			return $this->permissionService->isCurrentUserLoggedIn();
 		}
 		// Drafts require edit permission
 		return $this->permissionService->canCurrentUserEdit();

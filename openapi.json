@@ -223,7 +223,14 @@
                     "duration",
                     "rightsStatus",
                     "rightsNote",
+                    "rightsConfirmedAt",
+                    "rightsConfirmedBy",
+                    "publicationStatus",
+                    "publicationNote",
+                    "publicationBlockedUntil",
                     "musicxmlFile",
+                    "musicxmlFileId",
+                    "updatedAt",
                     "tags",
                     "scoreBook"
                 ],
@@ -295,16 +302,51 @@
                     "rightsStatus": {
                         "type": "string",
                         "enum": [
-                            "free",
-                            "unclear",
-                            "restricted"
+                            "public_domain",
+                            "licensed",
+                            "protected",
+                            "open"
                         ]
                     },
                     "rightsNote": {
                         "type": "string",
                         "nullable": true
                     },
+                    "rightsConfirmedAt": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "rightsConfirmedBy": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "publicationStatus": {
+                        "type": "string",
+                        "enum": [
+                            "approved",
+                            "to_clarify",
+                            "blocked",
+                            "internal_preservation_copy"
+                        ]
+                    },
+                    "publicationNote": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "publicationBlockedUntil": {
+                        "type": "string",
+                        "nullable": true
+                    },
                     "musicxmlFile": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "musicxmlFileId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "nullable": true
+                    },
+                    "updatedAt": {
                         "type": "string",
                         "nullable": true
                     },
@@ -524,7 +566,14 @@
                     "duration",
                     "rightsStatus",
                     "rightsNote",
+                    "rightsConfirmedAt",
+                    "rightsConfirmedBy",
+                    "publicationStatus",
+                    "publicationNote",
+                    "publicationBlockedUntil",
                     "musicxmlFile",
+                    "musicxmlFileId",
+                    "updatedAt",
                     "tags",
                     "scoreBook",
                     "index"
@@ -597,16 +646,51 @@
                     "rightsStatus": {
                         "type": "string",
                         "enum": [
-                            "free",
-                            "unclear",
-                            "restricted"
+                            "public_domain",
+                            "licensed",
+                            "protected",
+                            "open"
                         ]
                     },
                     "rightsNote": {
                         "type": "string",
                         "nullable": true
                     },
+                    "rightsConfirmedAt": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "rightsConfirmedBy": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "publicationStatus": {
+                        "type": "string",
+                        "enum": [
+                            "approved",
+                            "to_clarify",
+                            "blocked",
+                            "internal_preservation_copy"
+                        ]
+                    },
+                    "publicationNote": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "publicationBlockedUntil": {
+                        "type": "string",
+                        "nullable": true
+                    },
                     "musicxmlFile": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "musicxmlFileId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "nullable": true
+                    },
+                    "updatedAt": {
                         "type": "string",
                         "nullable": true
                     },
@@ -841,6 +925,34 @@
                             }
                         }
                     },
+                    "404": {
+                        "description": "if the comment does not exist",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
                     "400": {
                         "description": "if the request is invalid",
                         "content": {
@@ -988,6 +1100,34 @@
                                                 "data": {
                                                     "type": "object"
                                                 }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "if the comment does not exist",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
                                             }
                                         }
                                     }
@@ -3808,7 +3948,7 @@
             "get": {
                 "operationId": "music_xml_api-get-music-xml",
                 "summary": "Download the MusicXML file of a score",
-                "description": "the MusicXML file",
+                "description": "The content of the linked file is returned. The file of an internal preservation copy is only available to editors.\nthe MusicXML file",
                 "tags": [
                     "music_xml_api"
                 ],
@@ -3861,7 +4001,35 @@
                         }
                     },
                     "400": {
-                        "description": "if the score or file does not exist",
+                        "description": "if the score does not exist",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "if no file is linked or the linked file is missing, not accessible or not a valid MusicXML file",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -3889,7 +4057,7 @@
                         }
                     },
                     "403": {
-                        "description": "if the user does not have permission",
+                        "description": "if the user does not have permission, e.g. for an internal preservation copy",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -3948,8 +4116,8 @@
             },
             "post": {
                 "operationId": "music_xml_api-post-music-xml",
-                "summary": "Upload a MusicXML file (.musicxml, .xml or .mxl) for a score, replacing an existing one",
-                "description": "The file must be sent as multipart form data in the field \"file\".\nthe updated score",
+                "summary": "Link a MusicXML file (.musicxml, .xml or .mxl) from the user's files to a score, replacing an existing link",
+                "description": "The file stays in Nextcloud Files. The current user must be able to read it; later reads use the access of the user who linked the file.\nthe updated score",
                 "tags": [
                     "music_xml_api"
                 ],
@@ -3961,6 +4129,26 @@
                         "basic_auth": []
                     }
                 ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "fileId"
+                                ],
+                                "properties": {
+                                    "fileId": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "description": "The Nextcloud file id of the MusicXML file"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 "parameters": [
                     {
                         "name": "id",
@@ -3985,7 +4173,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "The file was stored",
+                        "description": "The file was linked",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4015,7 +4203,7 @@
                         }
                     },
                     "400": {
-                        "description": "if the score does not exist or the file is invalid",
+                        "description": "if the score does not exist, the file cannot be read or is not a valid MusicXML file",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4102,8 +4290,8 @@
             },
             "delete": {
                 "operationId": "music_xml_api-delete-music-xml",
-                "summary": "Remove the MusicXML file of a score",
-                "description": "the updated score",
+                "summary": "Remove the link to the MusicXML file of a score",
+                "description": "The file itself stays in Nextcloud Files.\nthe updated score",
                 "tags": [
                     "music_xml_api"
                 ],
@@ -4139,7 +4327,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "The file was removed",
+                        "description": "The link was removed",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4532,17 +4720,54 @@
                                         "nullable": true,
                                         "default": null,
                                         "enum": [
-                                            "free",
-                                            "unclear",
-                                            "restricted"
+                                            "public_domain",
+                                            "licensed",
+                                            "protected",
+                                            "open"
                                         ],
-                                        "description": "The publication rights status of the score"
+                                        "description": "The rights status of the score"
                                     },
                                     "rightsNote": {
                                         "type": "string",
                                         "nullable": true,
                                         "default": null,
-                                        "description": "A note explaining the rights status"
+                                        "description": "The reasoning for the rights status"
+                                    },
+                                    "rightsConfirmedAt": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "The date (Y-m-d) on which a person confirmed the rights status"
+                                    },
+                                    "rightsConfirmedBy": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "Who confirmed the rights status, e.g. initials (at most 32 characters)"
+                                    },
+                                    "publicationStatus": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "enum": [
+                                            "approved",
+                                            "to_clarify",
+                                            "blocked",
+                                            "internal_preservation_copy"
+                                        ],
+                                        "description": "The publication status of the score"
+                                    },
+                                    "publicationNote": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "The reasoning for the publication status"
+                                    },
+                                    "publicationBlockedUntil": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "The date (Y-m-d) until which a blocked score stays blocked; only allowed for blocked scores"
                                     },
                                     "tagIds": {
                                         "type": "array",
@@ -4778,17 +5003,54 @@
                                         "nullable": true,
                                         "default": null,
                                         "enum": [
-                                            "free",
-                                            "unclear",
-                                            "restricted"
+                                            "public_domain",
+                                            "licensed",
+                                            "protected",
+                                            "open"
                                         ],
-                                        "description": "The publication rights status of the score"
+                                        "description": "The rights status of the score"
                                     },
                                     "rightsNote": {
                                         "type": "string",
                                         "nullable": true,
                                         "default": null,
-                                        "description": "A note explaining the rights status"
+                                        "description": "The reasoning for the rights status"
+                                    },
+                                    "rightsConfirmedAt": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "The date (Y-m-d) on which a person confirmed the rights status"
+                                    },
+                                    "rightsConfirmedBy": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "Who confirmed the rights status, e.g. initials (at most 32 characters)"
+                                    },
+                                    "publicationStatus": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "enum": [
+                                            "approved",
+                                            "to_clarify",
+                                            "blocked",
+                                            "internal_preservation_copy"
+                                        ],
+                                        "description": "The publication status of the score"
+                                    },
+                                    "publicationNote": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "The reasoning for the publication status"
+                                    },
+                                    "publicationBlockedUntil": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "The date (Y-m-d) until which a blocked score stays blocked; only allowed for blocked scores"
                                     },
                                     "tagIds": {
                                         "type": "array",
@@ -4875,6 +5137,34 @@
                         }
                     },
                     "400": {
+                        "description": "If the input is invalid",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
                         "description": "If the score is not found",
                         "content": {
                             "application/json": {
@@ -5250,23 +5540,12 @@
                             "schema": {
                                 "type": "object",
                                 "required": [
-                                    "content",
-                                    "userId",
-                                    "creationDate"
+                                    "content"
                                 ],
                                 "properties": {
                                     "content": {
                                         "type": "string",
                                         "description": "The content of the comment"
-                                    },
-                                    "userId": {
-                                        "type": "string",
-                                        "description": "The user ID of the commenter"
-                                    },
-                                    "creationDate": {
-                                        "type": "integer",
-                                        "format": "int64",
-                                        "description": "The creation date timestamp"
                                     }
                                 }
                             }
@@ -5478,6 +5757,34 @@
                                                         "$ref": "#/components/schemas/FolderCollectionScore"
                                                     }
                                                 }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "if the score does not exist",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
                                             }
                                         }
                                     }
@@ -10065,6 +10372,10 @@
         {
             "name": "folder_collection_version_api",
             "description": "Controller for folder collection version operations. Provides endpoints to access and modify folder collection versions independently of their parent folder collection."
+        },
+        {
+            "name": "music_xml_api",
+            "description": "MusicXML files of scores. The files live in Nextcloud Files; a score only links to one."
         }
     ]
 }

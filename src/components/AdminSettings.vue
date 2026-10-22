@@ -16,7 +16,7 @@
 	</NcSettingsSection>
 	<NcSettingsSection
 		:name="t('Public page')"
-		:description="t('Show all scores marked as free (public domain) on a page that can be opened without logging in. Visitors can view and play the MusicXML files of these scores. No other scores or internal details are shown.')">
+		:description="t('Show all scores that are approved for publication and whose rights status (public domain or licensed) has been confirmed on a page that can be opened without logging in. Visitors can view and play the MusicXML files of these scores. No other scores or internal details are shown.')">
 		<NcCheckboxRadioSwitch
 			v-model="publicPageEnabled"
 			type="switch"

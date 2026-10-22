@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OCA\OrchestraScoresManager\Controller;
 
 use OCA\OrchestraScoresManager\AppInfo\Application;
+use OCA\OrchestraScoresManager\Service\Exceptions\NotFoundException;
 use OCA\OrchestraScoresManager\Service\PublicScoreService;
 use OCA\OrchestraScoresManager\Utility\ResponseHelper;
 use OCP\AppFramework\Controller;
@@ -21,7 +22,10 @@ use OCP\IL10N;
 use OCP\IRequest;
 
 /**
- * Pages and files for anonymous visitors. Only freely available scores are exposed.
+ * Pages and files for anonymous visitors.
+ *
+ * Only scores approved for publication whose rights status (public domain or licensed)
+ * has been confirmed are exposed, see PublicScoreService.
  *
  * @psalm-suppress UnusedClass - Controller discovered by NextCloud framework
  */
@@ -38,7 +42,7 @@ class PublicController extends Controller {
 	}
 
 	/**
-	 * Public page listing all freely available scores with a MusicXML player.
+	 * Public page listing all publishable scores with a MusicXML player.
 	 *
 	 * @return PublicTemplateResponse|NotFoundResponse
 	 */
@@ -60,7 +64,7 @@ class PublicController extends Controller {
 	}
 
 	/**
-	 * Download the MusicXML file of a freely available score.
+	 * Download the MusicXML file of a publishable score.
 	 *
 	 * @return DataDownloadResponse|NotFoundResponse
 	 */
@@ -71,7 +75,7 @@ class PublicController extends Controller {
 	public function musicXml(int $id): DataDownloadResponse|NotFoundResponse {
 		try {
 			$file = $this->publicScoreService->getPublicMusicXml($id);
-		} catch (\InvalidArgumentException) {
+		} catch (\InvalidArgumentException|NotFoundException) {
 			return new NotFoundResponse();
 		}
 		return ResponseHelper::musicXmlDownload($file);

@@ -90,9 +90,21 @@ export interface Score {
   gemaIds: string[] | null;
   /** @format int64 */
   duration: number | null;
-  rightsStatus: "free" | "unclear" | "restricted";
+  rightsStatus: "public_domain" | "licensed" | "protected" | "open";
   rightsNote: string | null;
+  rightsConfirmedAt: string | null;
+  rightsConfirmedBy: string | null;
+  publicationStatus:
+    | "approved"
+    | "to_clarify"
+    | "blocked"
+    | "internal_preservation_copy";
+  publicationNote: string | null;
+  publicationBlockedUntil: string | null;
   musicxmlFile: string | null;
+  /** @format int64 */
+  musicxmlFileId: number | null;
+  updatedAt: string | null;
   tags: string[] | null;
   scoreBook: ScoreBookInfo | null;
   viaScoreBook?: true;
@@ -166,9 +178,21 @@ export interface ScoreIndexed {
   gemaIds: string[] | null;
   /** @format int64 */
   duration: number | null;
-  rightsStatus: "free" | "unclear" | "restricted";
+  rightsStatus: "public_domain" | "licensed" | "protected" | "open";
   rightsNote: string | null;
+  rightsConfirmedAt: string | null;
+  rightsConfirmedBy: string | null;
+  publicationStatus:
+    | "approved"
+    | "to_clarify"
+    | "blocked"
+    | "internal_preservation_copy";
+  publicationNote: string | null;
+  publicationBlockedUntil: string | null;
   musicxmlFile: string | null;
+  /** @format int64 */
+  musicxmlFileId: number | null;
+  updatedAt: string | null;
   tags: string[] | null;
   scoreBook: ScoreBookInfo | null;
   viaScoreBook?: true;
@@ -440,6 +464,14 @@ export interface FolderCollectionVersionApiPatchFolderCollectionVersionData {
 /** @format binary */
 export type MusicXmlApiGetMusicXmlData = File;
 
+export interface MusicXmlApiPostMusicXmlPayload {
+  /**
+   * The Nextcloud file id of the MusicXML file
+   * @format int64
+   */
+  fileId: number;
+}
+
 export interface MusicXmlApiPostMusicXmlData {
   ocs: {
     meta: OCSMeta;
@@ -528,15 +560,45 @@ export interface ScoreApiPostScorePayload {
    */
   duration?: number | null;
   /**
-   * The publication rights status of the score
+   * The rights status of the score
    * @default null
    */
-  rightsStatus?: "free" | "unclear" | "restricted" | null;
+  rightsStatus?: "public_domain" | "licensed" | "protected" | "open" | null;
   /**
-   * A note explaining the rights status
+   * The reasoning for the rights status
    * @default null
    */
   rightsNote?: string | null;
+  /**
+   * The date (Y-m-d) on which a person confirmed the rights status
+   * @default null
+   */
+  rightsConfirmedAt?: string | null;
+  /**
+   * Who confirmed the rights status, e.g. initials (at most 32 characters)
+   * @default null
+   */
+  rightsConfirmedBy?: string | null;
+  /**
+   * The publication status of the score
+   * @default null
+   */
+  publicationStatus?:
+    | "approved"
+    | "to_clarify"
+    | "blocked"
+    | "internal_preservation_copy"
+    | null;
+  /**
+   * The reasoning for the publication status
+   * @default null
+   */
+  publicationNote?: string | null;
+  /**
+   * The date (Y-m-d) until which a blocked score stays blocked; only allowed for blocked scores
+   * @default null
+   */
+  publicationBlockedUntil?: string | null;
   /**
    * optional list of tag ids to link
    * @default null
@@ -631,15 +693,45 @@ export interface ScoreApiPatchScorePayload {
    */
   duration?: number | null;
   /**
-   * The publication rights status of the score
+   * The rights status of the score
    * @default null
    */
-  rightsStatus?: "free" | "unclear" | "restricted" | null;
+  rightsStatus?: "public_domain" | "licensed" | "protected" | "open" | null;
   /**
-   * A note explaining the rights status
+   * The reasoning for the rights status
    * @default null
    */
   rightsNote?: string | null;
+  /**
+   * The date (Y-m-d) on which a person confirmed the rights status
+   * @default null
+   */
+  rightsConfirmedAt?: string | null;
+  /**
+   * Who confirmed the rights status, e.g. initials (at most 32 characters)
+   * @default null
+   */
+  rightsConfirmedBy?: string | null;
+  /**
+   * The publication status of the score
+   * @default null
+   */
+  publicationStatus?:
+    | "approved"
+    | "to_clarify"
+    | "blocked"
+    | "internal_preservation_copy"
+    | null;
+  /**
+   * The reasoning for the publication status
+   * @default null
+   */
+  publicationNote?: string | null;
+  /**
+   * The date (Y-m-d) until which a blocked score stays blocked; only allowed for blocked scores
+   * @default null
+   */
+  publicationBlockedUntil?: string | null;
   /**
    * optional list of tag ids to link
    * @default null
@@ -676,13 +768,6 @@ export interface ScoreApiGetScoreCommentsData {
 export interface ScoreApiPostScoreCommentPayload {
   /** The content of the comment */
   content: string;
-  /** The user ID of the commenter */
-  userId: string;
-  /**
-   * The creation date timestamp
-   * @format int64
-   */
-  creationDate: number;
 }
 
 export interface ScoreApiPostScoreCommentData {

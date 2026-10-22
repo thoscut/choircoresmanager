@@ -73,4 +73,8 @@
 			</errorLevel>
 		</MixedReturnTypeCoercion>
 	</issueHandlers>
+	<stubs>
+		<!-- Server-internal interface extended by OCP\Files\IRootFolder -->
+		<file name="tests/stubs/oc_hooks_emitter.php" />
+	</stubs>
 </psalm>

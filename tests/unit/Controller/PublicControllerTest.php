@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OCA\OrchestraScoresManager\Tests\unit\Controller;
 
 use OCA\OrchestraScoresManager\Controller\PublicController;
+use OCA\OrchestraScoresManager\Service\Exceptions\NotFoundException;
 use OCA\OrchestraScoresManager\Service\MusicXmlService;
 use OCA\OrchestraScoresManager\Service\PublicScoreService;
 use OCP\AppFramework\Http\DataDownloadResponse;
@@ -59,7 +60,7 @@ final class PublicControllerTest extends TestCase {
 
 	public function testIndexProvidesPublicScores(): void {
 		$this->requireServer();
-		$scores = [['id' => 1, 'title' => 'A', 'composer' => null, 'arranger' => null, 'year' => null, 'duration' => null, 'hasMusicXml' => false]];
+		$scores = [['id' => 1, 'title' => 'A', 'composer' => null, 'arranger' => null, 'year' => null, 'duration' => null, 'hasMusicXml' => false, 'lastUpdated' => null]];
 		$this->publicScoreService->method('isEnabled')->willReturn(true);
 		$this->publicScoreService->method('getPublicScores')->willReturn($scores);
 		$this->initialState->expects($this->once())
@@ -76,6 +77,13 @@ final class PublicControllerTest extends TestCase {
 	public function testMusicXmlReturnsNotFoundForUnavailableScore(): void {
 		$this->publicScoreService->method('getPublicMusicXml')
 			->willThrowException(new \InvalidArgumentException('Score not found'));
+
+		$this->assertInstanceOf(NotFoundResponse::class, $this->controller->musicXml(5));
+	}
+
+	public function testMusicXmlReturnsNotFoundForMissingOrInaccessibleFile(): void {
+		$this->publicScoreService->method('getPublicMusicXml')
+			->willThrowException(new NotFoundException('The linked MusicXML file is missing or no longer accessible.'));
 
 		$this->assertInstanceOf(NotFoundResponse::class, $this->controller->musicXml(5));
 	}
