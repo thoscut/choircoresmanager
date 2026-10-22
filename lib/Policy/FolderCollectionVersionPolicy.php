@@ -27,7 +27,7 @@ class FolderCollectionVersionPolicy implements PolicyInterface {
 			self::ACTION_CREATE => $this->permissionService->canCurrentUserEdit(),
 			self::ACTION_UPDATE => $this->canUpdate($subject),
 			self::ACTION_DELETE => $this->permissionService->canCurrentUserEdit(),
-			self::ACTION_READ => true,
+			self::ACTION_READ => $this->permissionService->isCurrentUserLoggedIn(),
 			default => false,
 		};
 	}

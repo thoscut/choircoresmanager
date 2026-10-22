@@ -13,6 +13,7 @@ use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCS\OCSBadRequestException;
 use OCP\AppFramework\OCS\OCSForbiddenException;
+use OCP\AppFramework\OCS\OCSNotFoundException;
 use OCP\AppFramework\OCSController;
 use OCP\DB\Exception;
 use OCP\IRequest;
@@ -84,11 +85,11 @@ class CatalogueApiController extends OCSController {
 	 *
 	 * @param int $id The ID of the score
 	 * @return DataResponse<Http::STATUS_OK, list<OrchestraScoresManagerCatalogueValue>, array{}> Column names and values
-	 * @throws OCSBadRequestException If the score does not exist
+	 * @throws OCSNotFoundException If the score does not exist
 	 * @throws OCSForbiddenException If the user may not read scores
 	 *
 	 * 200: The catalogue values of the score
-	 * 400: The score does not exist
+	 * 404: The score does not exist
 	 * 403: The user may not read scores
 	 */
 	#[NoAdminRequired]

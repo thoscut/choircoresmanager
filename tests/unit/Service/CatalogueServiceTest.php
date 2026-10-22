@@ -12,6 +12,7 @@ use OCA\OrchestraScoresManager\Service\Catalogue\CatalogueColumns;
 use OCA\OrchestraScoresManager\Service\Catalogue\CatalogueCsv;
 use OCA\OrchestraScoresManager\Service\CatalogueService;
 use OCA\OrchestraScoresManager\Service\ConfigService;
+use OCA\OrchestraScoresManager\Service\Exceptions\NotFoundException;
 use OCA\OrchestraScoresManager\Service\Exceptions\PermissionDeniedException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -334,7 +335,7 @@ final class CatalogueServiceTest extends TestCase {
 	}
 
 	public function testGetCatalogueValuesOfUnknownScore(): void {
-		$this->expectException(\InvalidArgumentException::class);
+		$this->expectException(NotFoundException::class);
 
 		$this->service->getCatalogueValues(4711);
 	}

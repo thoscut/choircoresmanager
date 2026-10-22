@@ -12,6 +12,7 @@ use OCA\OrchestraScoresManager\ResponseDefinitions;
 use OCA\OrchestraScoresManager\Service\Catalogue\CatalogueColumns;
 use OCA\OrchestraScoresManager\Service\Catalogue\CatalogueCsv;
 use OCA\OrchestraScoresManager\Service\Catalogue\CatalogueException;
+use OCA\OrchestraScoresManager\Service\Exceptions\NotFoundException;
 use OCA\OrchestraScoresManager\Utility\SignatureComparator;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
@@ -162,14 +163,14 @@ class CatalogueService {
 	 *
 	 * @param int $scoreId
 	 * @return list<OrchestraScoresManagerCatalogueValue> In catalogue column order, then further columns
-	 * @throws \InvalidArgumentException If the score does not exist
+	 * @throws NotFoundException If the score does not exist
 	 */
 	public function getCatalogueValues(int $scoreId): array {
 		$this->authorizationService->authorizePolicy($this->scorePolicy, PolicyInterface::ACTION_READ);
 		try {
 			$score = $this->scoreMapper->find($scoreId);
 		} catch (DoesNotExistException|MultipleObjectsReturnedException|Exception $e) {
-			throw new \InvalidArgumentException($this->l->t('Score not found'), 0, $e);
+			throw new NotFoundException($this->l->t('Score not found'), 0, $e);
 		}
 
 		$values = $score->getCatalogueExtraValues();
