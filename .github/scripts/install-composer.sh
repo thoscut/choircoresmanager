@@ -1,4 +1,7 @@
 #!/bin/sh
+# SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # Installs Composer into /usr/local/bin after checking the SHA-384 checksum of
 # the installer against the published signature (getcomposer.org/download).
 set -eu

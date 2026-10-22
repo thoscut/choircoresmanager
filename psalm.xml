@@ -1,5 +1,9 @@
 <?xml version="1.0"?>
 <!--
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-License-Identifier: CC0-1.0
+-->
+<!--
   Static analysis of the server code at the strictest level (errorLevel 1,
   including values of unknown type).
 

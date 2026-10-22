@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Reading score files: compressed MusicXML (.mxl, a ZIP archive whose
  * META-INF/container.xml names the score) or plain MusicXML. Unpacking uses
  * the platform's DecompressionStream, available in current browsers and in

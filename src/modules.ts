@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Modules that the administration can switch off (see docs/api.md, "Modules
  * and the personal view") and the personal view of an account: which views
  * and start page cards belong to which module, what a link from the URL may

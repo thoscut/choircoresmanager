@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Translation for texts that Vue shows as text. By default @nextcloud/l10n
  * prepares a translation for use as HTML: it escapes the placeholder values
  * and sanitizes the result. Vue escapes text by itself, so a title like

@@ -1,3 +1,8 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: CC0-1.0
+ */
+
 import { createAppConfig } from '@nextcloud/vite-config'
 import { join, resolve } from 'path'
 

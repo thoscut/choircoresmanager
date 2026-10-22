@@ -1,3 +1,8 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: CC0-1.0
+ */
+
 module.exports = {
 	extends: [
 		// Vue 3 + TypeScript (also inside <script setup lang="ts">)

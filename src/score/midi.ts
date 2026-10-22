@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Writing Standard MIDI Files, format 1: one track per voice plus a first
  * track with tempo, time and key signature ("conductor track").
  *

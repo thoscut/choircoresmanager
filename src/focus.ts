@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Focus helpers for keyboard and screen reader users (WCAG 2.4.3 focus
  * order). When an action removes or disables the control that had the
  * focus (a button that disappears after saving, a form that closes), the

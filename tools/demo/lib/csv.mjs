@@ -1,3 +1,8 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 // CSV as the catalog import expects it: UTF-8 with BOM, ";" as separator,
 // CRLF line ends and quotes only where needed (like Python's csv module
 // with QUOTE_MINIMAL), see lib/Service/CatalogCsv.php.

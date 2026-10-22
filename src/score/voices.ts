@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Voices of a score: every MEI layer (= MusicXML voice) of every staff that
  * contains notes. Two voices on one staff are named from the part name:
  * in "Tenor I/II", "Tenor I. II." or "Bass 1./2." the first (upper) voice is

@@ -3,6 +3,11 @@
 declare(strict_types=1);
 
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Integration test of the gatekeeper for practice audio files against a real
  * Nextcloud instance with an imported catalog: the rights policy, the roles
  * and the audit entry of an allowed export.

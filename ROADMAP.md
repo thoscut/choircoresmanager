@@ -1,3 +1,7 @@
+<!--
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
 # Roadmap Notenarchiv
 
 Das Notenarchiv ist eine Nextcloud-App für Chöre. Sie führt das

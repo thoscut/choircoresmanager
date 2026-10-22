@@ -1,3 +1,8 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 // Compact score notation of the demo data and checks of a four-part setting.
 //
 // A score spec (tools/demo/scores/*.json) describes staves, voices and

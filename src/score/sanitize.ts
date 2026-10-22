@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Cleaning of the SVG that Verovio renders from a MusicXML file before it
  * is put into the page. Verovio escapes texts of the file, but the file is
  * user content: the SVG is cleaned anyway (defence in depth). Kept is what

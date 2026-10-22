@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Copy text to the clipboard, with a fallback for browsers that block the
  * asynchronous clipboard API (e.g. outside a secure context).
  */

@@ -1,3 +1,8 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 // Writes l10n/de.json, de_DE.json, de.js, de_DE.js from translations.mjs
 // and checks them against the strings extracted from src/ and lib/.
 // Usage: node generate.mjs <projectRoot> <strings.json>

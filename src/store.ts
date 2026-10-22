@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Shared state of the app: meta data, catalog entries, filters, selected
  * entry and open dialogs. Plain Vue refs, no store library.
  */

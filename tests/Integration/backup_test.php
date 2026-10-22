@@ -3,6 +3,11 @@
 declare(strict_types=1);
 
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Integration test of the complete backup and restore against a real
  * Nextcloud instance with an imported catalog (and a file sync, so that the
  * file table is filled).

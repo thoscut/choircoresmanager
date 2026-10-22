@@ -1,3 +1,8 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 // Small placeholder PDFs for the demo archive: an A4 page per printed page
 // with the shelf mark, the title and a note that this is no real scan.
 // Text uses the standard Helvetica font with WinAnsi encoding, so umlauts

@@ -1,3 +1,8 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it } from 'vitest'
 import { elementOf, focusAfterUpdate, focusElement, focusWhenPresent } from '../focus.ts'

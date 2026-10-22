@@ -1,3 +1,8 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 // Writes a parsed score (see notation.mjs) as MusicXML 4.0 (partwise).
 // Every staff is one part; two voices on a staff are MusicXML voices 1 and
 // 2 with stems up and down. Pitches are sounding pitches; a tenor staff

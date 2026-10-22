@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+# SPDX-License-Identifier: CC0-1.0
+
 # Text files are stored and checked out with LF, also on Windows (shell
 # scripts must run in CI and on servers as they are).
 * text=auto eol=lf

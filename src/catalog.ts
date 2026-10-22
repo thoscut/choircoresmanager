@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Pure helpers for the catalog list: search, filters, sorting and the
  * derived rights indicator. No Vue, no server access, easy to test.
  */

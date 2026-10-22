@@ -68,12 +68,12 @@ Barrierefrei (WCAG 2.2 AA) mit inklusiver Sprache, auf Deutsch und Englisch. Lä
 	<repair-steps>
 		<!-- Stores the module switches: all on for installations from before
 		     0.1.27, the preset "standard" for new ones; never changes a stored switch. -->
-		<install>
-			<step>OCA\Notenarchiv\Migration\ModuleDefaults</step>
-		</install>
 		<post-migration>
 			<step>OCA\Notenarchiv\Migration\ModuleDefaults</step>
 		</post-migration>
+		<install>
+			<step>OCA\Notenarchiv\Migration\ModuleDefaults</step>
+		</install>
 	</repair-steps>
 	<commands>
 		<command>OCA\Notenarchiv\Command\Setup</command>

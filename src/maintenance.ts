@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Pure helpers for maintaining the catalog: shelf label sheets, lists of
  * shelf marks typed by a user and the counts of an inventory. No Vue, no
  * server access, easy to test.

@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Names of the views, shared by the navigation and the title of the browser
  * tab (WCAG 2.4.2: every view has its own page title).
  */

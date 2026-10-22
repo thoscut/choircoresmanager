@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Escape closes the topmost dialog, also while a form field has the focus.
  *
  * The dialogs of @nextcloud/vue close with Escape, but ignore the key while

@@ -3,6 +3,11 @@
 declare(strict_types=1);
 
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Bootstrap of the unit tests (tests/Unit). They run without a Nextcloud
  * server: the app code and the tests come from the Composer autoloader, the
  * public Nextcloud API (OCP) from the nextcloud/ocp package in the version of

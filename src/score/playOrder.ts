@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * The order in which measures sound: repeats, endings (volta brackets),
  * D.C./D.S. al Fine/Coda. Verovio's own expansion misses cases that occur
  * in the archive (a first ending without a second one, `times="3"`), so the

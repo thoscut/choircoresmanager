@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Practice audio files from the score view: which files an export makes,
  * their names, the loudness of the voices, MIDI files from the playback
  * events and rough size estimates. Rendering WAV files needs Web Audio and

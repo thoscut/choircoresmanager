@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Labels of the start page cards in singular or plural. The card shows the
  * number above its label ("1" / "Proposal in the inbox"), so the texts have
  * no "%n"; together they are the visible text and the accessible name of the

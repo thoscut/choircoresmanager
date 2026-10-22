@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Pure helpers of the statistics view: bar widths, shares, periods, number
  * formats and the default year of the annual report. No Vue, no server
  * access, easy to test.

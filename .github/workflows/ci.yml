@@ -1,8 +1,12 @@
+# SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # Continuous integration of the Notenarchiv app on GitHub Actions.
 #
 # Every job runs in a pinned container image and installs what it needs, so
-# it does not depend on the software of the runner host. Actions are pinned
-# to the commit of a release (the version is noted next to the hash).
+# it does not depend on the software of the runner host (the REUSE check runs
+# in the image of its Docker action). Actions are pinned to the commit of a
+# release (the version is noted next to the hash).
 #
 # Forgejo Actions (e.g. Codeberg) reads .github/workflows as well when a
 # repository has no .forgejo/workflows; there the runner needs the label
@@ -46,6 +50,19 @@ env:
   DEBIAN_FRONTEND: noninteractive
 
 jobs:
+  reuse:
+    # Every file states its copyright and license (https://reuse.software),
+    # as in Nextcloud's own apps; see "Licensing (REUSE)" in tests/README.md.
+    name: REUSE compliance
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Check copyright and license information (reuse lint)
+        uses: fsfe/reuse-action@676e2d560c9a403aa252096d99fcab3e1132b0f5 # v6.0.0
+
   php-lint:
     name: PHP lint ${{ matrix.php }}
     runs-on: ubuntu-latest
