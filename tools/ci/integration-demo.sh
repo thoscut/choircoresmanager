@@ -48,8 +48,12 @@ IMPORT="$FOLDER/_Import"
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
 
+# --no-warnings: without it occ prints global warnings on stdout ahead of the
+# command's output, e.g. about the PCNTL extension, which the php:*-cli
+# images of the CI lack; the script reads JSON reports and the data
+# directory from that output.
 occ() {
-	"$PHP" -d memory_limit=1G "$NC_ROOT/occ" "$@"
+	"$PHP" -d memory_limit=1G "$NC_ROOT/occ" --no-warnings "$@"
 }
 
 step() {

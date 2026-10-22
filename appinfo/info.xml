@@ -54,8 +54,10 @@ Barrierefrei (WCAG 2.2 AA) mit inklusiver Sprache, auf Deutsch und Englisch. Lä
 	<screenshot>https://raw.githubusercontent.com/thoscut/choircoresmanager/main/docs/screenshots/07-score-dark-theme.png</screenshot>
 	<dependencies>
 		<php min-version="8.2"/>
-		<!-- Tested with MySQL/MariaDB only; PostgreSQL, SQLite and Oracle are not tested. -->
-		<database>mysql</database>
+		<!-- Tested with MySQL/MariaDB only; PostgreSQL, SQLite and Oracle are not tested.
+		     The attribute makes Nextcloud parse the entry as a list: a single plain
+		     <database> element triggers a PHP warning in its MigrationService. -->
+		<database min-version="8.0">mysql</database>
 		<nextcloud min-version="33" max-version="35"/>
 	</dependencies>
 	<background-jobs>
