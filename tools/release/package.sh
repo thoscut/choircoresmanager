@@ -7,10 +7,11 @@
 #
 # The archive contains only what the app needs at runtime (appinfo, lib,
 # templates, img, js, css, l10n, LICENSE, README, CHANGELOG) and, as in
-# Nextcloud's own app archives, the license texts (LICENSES/) and REUSE.toml,
+# Nextcloud's own app archives, the license texts (LICENSES/), REUSE.toml,
 # which names the license of the files without a header (icons,
-# translations, info.xml). Tests, sources, tooling (including
-# tools/screenshots), the documentation with its screenshots (docs/), the
+# translations, info.xml), and openapi.json, the description of the API for
+# agents. Tests, sources, tooling (including tools/screenshots and the MCP
+# server in tools/mcp), the documentation with its screenshots (docs/), the
 # GitHub templates (.github/), internal documents and dependencies for
 # development stay out.
 #
@@ -68,7 +69,7 @@ npm run build >/dev/null
 npm run l10n >/dev/null
 
 mkdir -p "$STAGE/$APP_ID" "$OUT"
-cp -r appinfo lib templates img js css l10n LICENSE LICENSES REUSE.toml README.md CHANGELOG.md "$STAGE/$APP_ID/"
+cp -r appinfo lib templates img js css l10n LICENSE LICENSES REUSE.toml README.md CHANGELOG.md openapi.json "$STAGE/$APP_ID/"
 # Source maps are not needed at runtime; the license files of bundled
 # third-party code (*.license) stay.
 find "$STAGE/$APP_ID/js" -name '*.map' -delete

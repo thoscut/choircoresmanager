@@ -26,6 +26,7 @@ use OCA\Notenarchiv\Db\WorkMapper;
 use OCA\Notenarchiv\Db\WorkVersion;
 use OCA\Notenarchiv\Db\WorkVersionMapper;
 use OCA\Notenarchiv\Exception\InvalidInputException;
+use OCA\Notenarchiv\Exception\NotFoundException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IDateTimeZone;
@@ -38,6 +39,13 @@ use OCP\IUserManager;
  *
  * @psalm-import-type FieldInfo from Fields
  * @psalm-import-type Proposal from ProtectionTerm as ProtectionProposal
+ * @psalm-type Entry = array{work: Work, version: WorkVersion, copy: Copy, files: list<ArchiveFile>,
+ *     score: ?array{fileId: int, fileName: string, canView: bool, canPlay: bool, reason: ?string, canExportAudio: bool, exportReason: ?string},
+ *     licenses: list<License>,
+ *     releases: array{portal: ?string, onPortal: bool, printStation: ?string}, tasks: list<Task>, links: list<ExcerptLink>,
+ *     proposals: list<Proposal>, siblings: list<array{id: int, shelfmark: string, version_id: int, status: string}>,
+ *     contributions: list<array<string, string|int|bool|null|array<string, string|int|bool|null>>>, protection: ?ProtectionProposal,
+ *     merges: list<array<string, mixed>>, audit: list<AuditEntry>}
  */
 class CatalogService {
 	public function __construct(
@@ -126,6 +134,24 @@ class CatalogService {
 	}
 
 	/**
+	 * A copy with its version and the work it is listed under (after
+	 * merges), without anything else of the entry.
+	 *
+	 * @return array{copy: Copy, version: WorkVersion, work: Work}
+	 * @throws NotFoundException
+	 */
+	public function copyWithContext(int $copyId): array {
+		$copy = $this->load(Fields::COPY, $copyId);
+		assert($copy instanceof Copy);
+		$version = $this->versions->find($copy->getVersionId());
+		$work = $this->works->find($version->getWorkId());
+		if ($work->getMergedInto() !== null) {
+			$work = self::listedWork($work, $this->works->findAllById()) ?? $work;
+		}
+		return ['copy' => $copy, 'version' => $version, 'work' => $work];
+	}
+
+	/**
 	 * One row per copy with the data needed for list and filters.
 	 *
 	 * @return list<array<string, mixed>>
@@ -176,22 +202,10 @@ class CatalogService {
 	 * merges that can be undone, audit log. Parts of switched-off modules are
 	 * empty (lists) or null, without being read.
 	 *
-	 * @return array{work: Work, version: WorkVersion, copy: Copy, files: list<ArchiveFile>,
-	 *     score: ?array{fileId: int, fileName: string, canView: bool, canPlay: bool, reason: ?string, canExportAudio: bool, exportReason: ?string},
-	 *     licenses: list<License>,
-	 *     releases: array{portal: ?string, onPortal: bool, printStation: ?string}, tasks: list<Task>, links: list<ExcerptLink>,
-	 *     proposals: list<Proposal>, siblings: list<array{id: int, shelfmark: string, version_id: int, status: string}>,
-	 *     contributions: list<array<string, string|int|bool|null|array<string, string|int|bool|null>>>, protection: ?ProtectionProposal,
-	 *     merges: list<array<string, mixed>>, audit: list<AuditEntry>}
+	 * @return Entry
 	 */
 	public function entry(int $copyId, string $uid): array {
-		$copy = $this->load(Fields::COPY, $copyId);
-		assert($copy instanceof Copy);
-		$version = $this->versions->find($copy->getVersionId());
-		$work = $this->works->find($version->getWorkId());
-		if ($work->getMergedInto() !== null) {
-			$work = self::listedWork($work, $this->works->findAllById()) ?? $work;
-		}
+		['copy' => $copy, 'version' => $version, 'work' => $work] = $this->copyWithContext($copyId);
 
 		$siblings = [];
 		foreach ($this->versions->findByWork($work->getId()) as $otherVersion) {
@@ -324,7 +338,7 @@ class CatalogService {
 				default => throw new InvalidInputException('Unknown level: %s', [$level]),
 			};
 		} catch (DoesNotExistException) {
-			throw new InvalidInputException('Not found.');
+			throw new NotFoundException('Not found.');
 		}
 	}
 

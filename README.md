@@ -102,7 +102,10 @@ The screenshots show the invented demo archive from [tools/demo](tools/demo/READ
       <h3>Dashboard widget and calendar</h3>
       <p>The dashboard widget "Music archive – due" shows the concert deadlines, things to do and tasks of the start page, with links into the app, to accounts with an archive role. A concert can have a start and end time. "Add to my calendar" puts one concert or all upcoming concerts into one of your Nextcloud calendars and updates them when added again; a calendar file (.ics) works with any calendar program. The preparation deadlines can be added as all-day entries. There is no public subscription link.</p>
     </td>
-    <td width="33%" valign="top"></td>
+    <td width="33%" valign="top">
+      <h3>Agents and tools</h3>
+      <p>An optional interface for agents: a stable, versioned API (OCS, v1, with an OpenAPI description) and an MCP server for Claude Desktop, Claude Code and other clients. With an account and app password of its own, an agent searches the catalog, reads copies, concerts and statistics, asks questions and proposes changes. It never decides: rights, the valid version and every proposal stay with people, and the server checks every request against the agent's role. Off until the administration switches it on.</p>
+    </td>
   </tr>
 </table>
 
@@ -118,9 +121,9 @@ fallback, and no external server is involved. The rights helpers model German
 copyright law; they support a decision and are no legal advice. The interface
 aims at WCAG 2.2 AA and uses plain, inclusive language.
 
-Planned: every function outside the core becomes a module that admins can
-switch off (milestone 0.5.1), and milestone 0.6 adds an interface for agents
-and the review of transcriptions. Neither is built yet. All principles and
+Every function outside the core is a module that admins can switch off.
+Milestone 0.6 adds an interface for agents (built: the API v1 and the MCP
+server) and the review of transcriptions (planned). All principles and
 milestones are in [ROADMAP.md](ROADMAP.md) (German).
 
 ## Trying it out
@@ -238,6 +241,9 @@ fails when a text has no translation. More languages are planned; see
 - [Schnellstart](docs/de/schnellstart.md): German quick start for the archive
   management and the conductor
 - [API](docs/api.md): the internal JSON API of the user interface
+- [API for agents](docs/api-v1.md): the stable OCS API v1 with its
+  description [openapi.json](openapi.json), and the
+  [MCP server](tools/mcp/README.md) for agents
 - [Tests](tests/README.md): unit and integration tests
 - [Releasing](docs/release.md): signing and publishing in the App Store
 - [Roadmap](ROADMAP.md) (German): principles and milestones
@@ -251,6 +257,8 @@ npm run lint && npm run stylelint && npm run typecheck && npm test
 npm run l10n                   # regenerate translations, fails on missing texts
 composer install               # PHP tools (Psalm, PHPUnit, coding standard)
 composer test:unit && composer psalm && composer cs:check
+composer run openapi           # regenerate openapi.json (API for agents)
+(cd tools/mcp && npm ci && npm test)   # MCP server for agents
 ```
 
 Code, identifiers and comments are in English; user-facing texts are English

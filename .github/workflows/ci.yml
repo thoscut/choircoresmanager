@@ -95,7 +95,7 @@ jobs:
         run: apt-get update -qq && apt-get install -y -qq --no-install-recommends git nodejs ca-certificates
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Lint all PHP files
-        run: find appinfo lib templates tests -name '*.php' -print0 | xargs -0 -n1 php -l
+        run: find appinfo lib templates tests tools/ci -name '*.php' -print0 | xargs -0 -n1 php -l
 
   composer:
     name: Composer (validate, audit)
@@ -152,6 +152,37 @@ jobs:
         run: composer install --no-progress
       - name: Check the coding standard
         run: vendor/bin/php-cs-fixer fix --dry-run --diff --show-progress=none
+
+  openapi:
+    # openapi.json describes the API for agents (OCS, api/v1). It is generated
+    # from lib/ResponseDefinitions.php and the controllers and must be
+    # committed in the state the code describes.
+    name: OpenAPI description up to date
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container:
+      image: php:8.2-cli
+    steps:
+      - name: Install job tools
+        run: apt-get update -qq && apt-get install -y -qq --no-install-recommends git unzip curl nodejs ca-certificates
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Trust the workspace for git
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - name: Install Composer
+        run: sh .github/scripts/install-composer.sh
+      - name: Install dependencies
+        run: composer install --no-progress
+      - name: Generate openapi.json (nextcloud/openapi-extractor)
+        run: composer run openapi
+      - name: openapi.json is committed and current
+        run: |
+          if [ -n "$(git status --porcelain -- 'openapi*.json')" ]; then
+            git status --porcelain -- 'openapi*.json'
+            git --no-pager diff -- openapi.json | head -n 200
+            echo "openapi.json is not up to date: run 'composer run openapi' and commit the result." >&2
+            exit 1
+          fi
+          git diff --exit-code -- openapi.json
 
   phpunit:
     name: Unit tests ${{ matrix.php }}
@@ -220,6 +251,24 @@ jobs:
             exit 1
           fi
 
+  mcp:
+    # The MCP server for agents (tools/mcp): own package and lock file, not
+    # part of the app or its release archive.
+    name: MCP server (build, tests)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container:
+      image: node:24
+    defaults:
+      run:
+        working-directory: tools/mcp
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Build and test (node:test, HTTP mocked)
+        run: npm test
+
   integration:
     # The integration tests in tests/Integration against a freshly installed
     # Nextcloud with MariaDB, the app and the public demo data (tools/demo).
@@ -265,10 +314,17 @@ jobs:
           # As required by "engines" in package.json; the demo build needs 22 or newer
           node-version: '24'
           cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            tools/mcp/package-lock.json
       - name: Build the frontend
         run: |
           npm ci --no-audit --no-fund
           npm run build
+      - name: Build the MCP server for the agent run (tools/mcp)
+        run: |
+          npm ci --prefix tools/mcp --no-audit --no-fund
+          npm run build --prefix tools/mcp
       - name: Build the demo data
         run: node tools/demo/build.mjs
       - name: Look up the checksum of Nextcloud ${{ matrix.nextcloud }}
@@ -316,5 +372,8 @@ jobs:
           for app in notenarchiv notifications; do
             php "$NEXTCLOUD_ROOT/occ" app:list --enabled | grep -E "^  - $app:"
           done
-      - name: Integration tests with the demo data
+      - name: Integration tests and the agent run with the demo data
+        # Step 7 of the script needs Nextcloud behind a web server: without
+        # NC_URL it starts PHP's built-in server (php -S 127.0.0.1:8080) for
+        # the Nextcloud directory and stops it at the end.
         run: bash tools/ci/integration-demo.sh "$NEXTCLOUD_ROOT"

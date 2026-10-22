@@ -12,6 +12,7 @@ namespace OCA\Notenarchiv\Service;
 use OCA\Notenarchiv\Db\Event;
 use OCA\Notenarchiv\Db\EventMapper;
 use OCA\Notenarchiv\Exception\InvalidInputException;
+use OCA\Notenarchiv\Exception\NotFoundException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\Calendar\ICalendar;
 use OCP\Calendar\ICalendarIsEnabled;
@@ -193,7 +194,7 @@ class ConcertCalendarService {
 		try {
 			$event = $this->events->find($eventId);
 		} catch (DoesNotExistException) {
-			throw new InvalidInputException('Not found.');
+			throw new NotFoundException('Not found.');
 		}
 		if ($event->getKind() !== Event::CONCERT) {
 			throw new InvalidInputException('Only concerts can be added to a calendar.');

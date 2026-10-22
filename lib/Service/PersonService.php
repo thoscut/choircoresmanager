@@ -17,6 +17,7 @@ use OCA\Notenarchiv\Db\PersonMapper;
 use OCA\Notenarchiv\Db\WorkMapper;
 use OCA\Notenarchiv\Db\WorkVersionMapper;
 use OCA\Notenarchiv\Exception\InvalidInputException;
+use OCA\Notenarchiv\Exception\NotFoundException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IUserManager;
@@ -369,7 +370,7 @@ class PersonService {
 		try {
 			return $this->persons->find($personId);
 		} catch (DoesNotExistException) {
-			throw new InvalidInputException('Not found.');
+			throw new NotFoundException('Not found.');
 		}
 	}
 
@@ -490,7 +491,7 @@ class PersonService {
 		try {
 			$this->versions->find($versionId);
 		} catch (DoesNotExistException) {
-			throw new InvalidInputException('Not found.');
+			throw new NotFoundException('Not found.');
 		}
 	}
 
@@ -498,7 +499,7 @@ class PersonService {
 		try {
 			return $this->contributions->find($contributionId);
 		} catch (DoesNotExistException) {
-			throw new InvalidInputException('Not found.');
+			throw new NotFoundException('Not found.');
 		}
 	}
 

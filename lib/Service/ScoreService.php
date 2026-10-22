@@ -16,6 +16,7 @@ use OCA\Notenarchiv\Db\WorkVersion;
 use OCA\Notenarchiv\Db\WorkVersionMapper;
 use OCA\Notenarchiv\Exception\AccessDeniedException;
 use OCA\Notenarchiv\Exception\InvalidInputException;
+use OCA\Notenarchiv\Exception\NotFoundException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\Files\File;
 use OCP\Files\IRootFolder;
@@ -97,7 +98,7 @@ class ScoreService {
 			$copy = $this->copies->find($copyId);
 			$version = $this->versions->find($copy->getVersionId());
 		} catch (DoesNotExistException) {
-			throw new InvalidInputException('Not found.');
+			throw new NotFoundException('Not found.');
 		}
 		$type = (string)$file->getType();
 		if ($file->getRole() !== 'musicxml' || !isset(self::MIME_TYPES[$type])) {

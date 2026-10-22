@@ -49,10 +49,19 @@ class RightsPolicy {
 		if (!$this->roles->hasAccess($uid)) {
 			return 'You have no access to the music archive.';
 		}
-		if ($version->getPreservationCopy() === true && !$this->roles->hasAnyRole($uid, self::PRESERVATION_COPY_VIEWERS)) {
+		if ($version->getPreservationCopy() === true && !$this->mayViewPreservationCopies($uid)) {
 			return 'Internal preservation copy: only the catalog librarian and the conductor may view it.';
 		}
 		return null;
+	}
+
+	/**
+	 * Whether the account holds a role that may view internal preservation
+	 * copies (the API for agents also leaves them out of its lists for the
+	 * other roles).
+	 */
+	public function mayViewPreservationCopies(string $uid): bool {
+		return $this->roles->hasAnyRole($uid, self::PRESERVATION_COPY_VIEWERS);
 	}
 
 	/**

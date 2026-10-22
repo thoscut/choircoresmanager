@@ -12,6 +12,8 @@
 
 /node_modules/
 /tools/screenshots/node_modules/
+/tools/mcp/node_modules/
+/tools/mcp/dist/
 /js/
 /css/
 

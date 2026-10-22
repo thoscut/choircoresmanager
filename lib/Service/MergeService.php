@@ -19,6 +19,7 @@ use OCA\Notenarchiv\Db\WorkMapper;
 use OCA\Notenarchiv\Db\WorkVersion;
 use OCA\Notenarchiv\Db\WorkVersionMapper;
 use OCA\Notenarchiv\Exception\InvalidInputException;
+use OCA\Notenarchiv\Exception\NotFoundException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IDBConnection;
@@ -175,7 +176,7 @@ class MergeService {
 		try {
 			$merge = $this->merges->find($mergeId);
 		} catch (DoesNotExistException) {
-			throw new InvalidInputException('Not found.');
+			throw new NotFoundException('Not found.');
 		}
 		if ($merge->getUndone() !== null) {
 			throw new InvalidInputException('This merge has already been undone.');
@@ -454,7 +455,7 @@ class MergeService {
 		try {
 			return $this->works->find($id);
 		} catch (DoesNotExistException) {
-			throw new InvalidInputException('Not found.');
+			throw new NotFoundException('Not found.');
 		}
 	}
 
@@ -462,7 +463,7 @@ class MergeService {
 		try {
 			return $this->versions->find($id);
 		} catch (DoesNotExistException) {
-			throw new InvalidInputException('Not found.');
+			throw new NotFoundException('Not found.');
 		}
 	}
 
@@ -470,7 +471,7 @@ class MergeService {
 		try {
 			return $this->copies->find($id);
 		} catch (DoesNotExistException) {
-			throw new InvalidInputException('Not found.');
+			throw new NotFoundException('Not found.');
 		}
 	}
 }

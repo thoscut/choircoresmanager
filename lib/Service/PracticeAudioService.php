@@ -13,6 +13,7 @@ use OCA\Notenarchiv\Db\CopyMapper;
 use OCA\Notenarchiv\Db\WorkVersionMapper;
 use OCA\Notenarchiv\Exception\AccessDeniedException;
 use OCA\Notenarchiv\Exception\InvalidInputException;
+use OCA\Notenarchiv\Exception\NotFoundException;
 use OCP\AppFramework\Db\DoesNotExistException;
 
 /**
@@ -58,7 +59,7 @@ class PracticeAudioService {
 		try {
 			$version = $this->versions->find($versionId);
 		} catch (DoesNotExistException) {
-			throw new InvalidInputException('Not found.');
+			throw new NotFoundException('Not found.');
 		}
 		$denial = $this->policy->practiceAudioDenial($version, $uid);
 		if ($denial !== null) {
@@ -68,7 +69,7 @@ class PracticeAudioService {
 		try {
 			$copy = $this->copies->find($request['copy_id']);
 		} catch (DoesNotExistException) {
-			throw new InvalidInputException('Not found.');
+			throw new NotFoundException('Not found.');
 		}
 		if ($copy->getVersionId() !== $versionId) {
 			throw new InvalidInputException('The copy does not belong to this version.');

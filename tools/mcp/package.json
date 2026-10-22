@@ -1,0 +1,30 @@
+{
+  "name": "notenarchiv-mcp",
+  "version": "1.0.0",
+  "private": true,
+  "description": "MCP server for the API for agents (v1) of the Nextcloud app Notenarchiv; runs locally next to the agent, over stdio",
+  "license": "AGPL-3.0-or-later",
+  "type": "module",
+  "bin": {
+    "notenarchiv-mcp": "dist/src/index.js"
+  },
+  "files": [
+    "dist/src"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "tsc -p tsconfig.json && node --test dist/test/",
+    "start": "node dist/src/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.32.1",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.1",
+    "typescript": "5.9.3"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

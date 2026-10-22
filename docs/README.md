@@ -19,6 +19,7 @@ and requirements are in the [README](../README.md) of the repository.
 |---|---|
 | a Nextcloud administrator who installs and sets up the app | [Administration guide](admin-guide.md) |
 | responsible for backups and data protection | [Administration guide](admin-guide.md) and [SECURITY.md](../SECURITY.md) |
+| setting up an agent or a tool that works with the archive | [Administration guide, section 13](admin-guide.md#13-agents-and-the-api), [API for agents](api-v1.md) and the [MCP server](../tools/mcp/README.md) |
 
 ## Trying it out
 
@@ -31,6 +32,8 @@ and requirements are in the [README](../README.md) of the repository.
   translations, style and commit messages.
 - [API](api.md): the internal JSON API between the user interface and the
   server. It is not a stable public interface.
+- [API for agents](api-v1.md): the stable, versioned OCS API v1 for tools
+  and agents, described in [openapi.json](../openapi.json).
 - [Tests](../tests/README.md): unit tests and integration tests against a
   real Nextcloud.
 - [Releasing](release.md): building, signing and publishing a release in the

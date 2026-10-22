@@ -12,6 +12,7 @@ namespace OCA\Notenarchiv\Service;
 use OCA\Notenarchiv\Db\Proposal;
 use OCA\Notenarchiv\Db\ProposalMapper;
 use OCA\Notenarchiv\Exception\InvalidInputException;
+use OCA\Notenarchiv\Exception\NotFoundException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 
@@ -22,6 +23,9 @@ use OCP\AppFramework\Utility\ITimeFactory;
  * own rights and records the proposal in the audit log.
  */
 class ProposalService {
+	/** Roles that may propose changes */
+	public const PROPOSERS = [Roles::CONTRIBUTOR, Roles::LIBRARIAN];
+
 	public function __construct(
 		private ProposalMapper $proposals,
 		private CatalogService $catalog,
@@ -33,28 +37,46 @@ class ProposalService {
 	}
 
 	/**
+	 * Fields that can be proposed, per level: those the catalog librarian may
+	 * write (the librarian applies an accepted proposal with their own
+	 * rights). Read-only fields, such as a rights confirmation or the valid
+	 * version, can never be proposed.
+	 *
+	 * @return array<string, list<string>> level => fields in the order of the registry
+	 */
+	public static function proposableFields(): array {
+		$fields = [];
+		foreach (Fields::all() as $level => $registry) {
+			$fields[$level] = array_keys(array_filter($registry, fn (array $info): bool => in_array(Roles::LIBRARIAN, $info['write'], true)));
+		}
+		return $fields;
+	}
+
+	/**
 	 * Creates one proposal per field. Only fields the catalog librarian may
-	 * write can be proposed.
+	 * write can be proposed. All fields are checked before the first proposal
+	 * is stored, so that a request is taken as a whole or not at all.
 	 *
 	 * @param array<array-key, mixed> $fields field => proposed value (request data)
 	 * @return list<Proposal>
 	 */
 	public function propose(string $level, int $objectId, array $fields, string $uid, ?string $reason, ?string $source): array {
-		$this->roles->requireRole($uid, [Roles::CONTRIBUTOR, Roles::LIBRARIAN]);
-		$registry = Fields::all()[$level] ?? null;
-		if ($registry === null) {
+		$this->roles->requireRole($uid, self::PROPOSERS);
+		if (!isset(Fields::all()[$level])) {
 			throw new InvalidInputException('Unknown level: %s', [$level]);
 		}
 		if ($fields === []) {
 			throw new InvalidInputException('The proposal contains no changes.');
 		}
 		$this->catalog->entityExists($level, $objectId);
-		$created = [];
-		foreach (Input::values($fields) as $field => $value) {
-			$info = $registry[$field] ?? null;
-			if ($info === null || !in_array(Roles::LIBRARIAN, $info['write'], true)) {
+		$values = Input::values($fields);
+		foreach (array_keys($values) as $field) {
+			if (!in_array($field, self::proposableFields()[$level] ?? [], true)) {
 				throw new InvalidInputException('"%s" cannot be proposed.', [$field]);
 			}
+		}
+		$created = [];
+		foreach ($values as $field => $value) {
 			$proposal = new Proposal();
 			$proposal->setObjectType($level);
 			$proposal->setObjectId($objectId);
@@ -95,6 +117,20 @@ class ProposalService {
 		return $this->proposals->findByStatus(Proposal::OPEN);
 	}
 
+	/**
+	 * The proposals an account made, oldest first, optionally of one status.
+	 *
+	 * @return list<Proposal>
+	 * @throws InvalidInputException for an unknown status
+	 */
+	public function own(string $uid, ?string $status): array {
+		$status = $status === '' ? null : $status;
+		if ($status !== null && !in_array($status, [Proposal::OPEN, Proposal::ACCEPTED, Proposal::REJECTED], true)) {
+			throw new InvalidInputException('"%s": value not allowed.', ['Status']);
+		}
+		return $this->proposals->findByCreator($uid, $status);
+	}
+
 	private function decide(Proposal $proposal, string $status, string $uid, ?string $reason): void {
 		$proposal->setStatus($status);
 		$proposal->setDecidedBy($uid);
@@ -109,7 +145,7 @@ class ProposalService {
 		try {
 			$proposal = $this->proposals->find($proposalId);
 		} catch (DoesNotExistException) {
-			throw new InvalidInputException('Not found.');
+			throw new NotFoundException('Not found.');
 		}
 		if ($proposal->getStatus() !== Proposal::OPEN) {
 			throw new InvalidInputException('This proposal has already been decided.');

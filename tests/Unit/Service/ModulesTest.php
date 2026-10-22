@@ -39,7 +39,32 @@ final class ModulesTest extends TestCase {
 			self::assertNotContains($key, Modules::requirements($key), $key . ' depends on itself');
 		}
 		self::assertSame(array_keys(Modules::PRESET_LABELS), Modules::PRESETS);
-		self::assertSame([Modules::AGENT_API], array_values(array_filter(array_keys(Modules::MODULES), Modules::isPlanned(...))));
+		self::assertSame([], array_values(array_filter(array_keys(Modules::MODULES), Modules::isPlanned(...))), 'nothing is planned at the moment');
+		foreach (Modules::OUTSIDE_PRESETS as $key) {
+			self::assertTrue(Modules::exists($key), $key);
+			self::assertFalse(Modules::MODULES[$key]['standard'], $key . ' is off by default');
+			self::assertFalse(Modules::inPresets($key), $key);
+		}
+	}
+
+	public function testTheInterfaceForAgentsIsSwitchedOnlyByItself(): void {
+		self::assertSame([Modules::AGENT_API], Modules::OUTSIDE_PRESETS);
+		self::assertContains(Modules::AGENT_API, Modules::switchable());
+		self::assertSame('interfaces', Modules::MODULES[Modules::AGENT_API]['group']);
+		self::assertSame([], Modules::requirements(Modules::AGENT_API));
+
+		$modules = $this->modulesWithout([Modules::AGENT_API]);
+		self::assertFalse($modules->isEnabled(Modules::AGENT_API));
+		$modules->applyPreset(Modules::COMPLETE);
+		self::assertFalse($modules->isEnabled(Modules::AGENT_API), '"complete" does not open the interface');
+		$changes = $modules->change([Modules::AGENT_API => true]);
+		self::assertSame([Modules::AGENT_API], $changes['enabled']);
+		self::assertTrue($modules->isEnabled(Modules::AGENT_API));
+		$modules->applyPreset(Modules::SIMPLE);
+		self::assertTrue($modules->isEnabled(Modules::AGENT_API), 'a preset chosen later does not close it either');
+		$modules->change([Modules::AGENT_API => false]);
+		self::assertFalse($modules->isEnabled(Modules::AGENT_API));
+		self::assertFalse($this->moduleConfig['module_agent_api']);
 	}
 
 	public function testEveryNotificationHasASwitch(): void {
@@ -69,7 +94,7 @@ final class ModulesTest extends TestCase {
 		self::assertFalse($modules->isEnabled('practice_audio'));
 		self::assertFalse($modules->isEnabled('excerpt_links'));
 		self::assertTrue($modules->isEnabled('concerts'));
-		self::assertFalse($modules->isEnabled(Modules::AGENT_API), 'planned: always off');
+		self::assertTrue($modules->isEnabled(Modules::AGENT_API), 'needs nothing else');
 		self::assertCount(count(Modules::MODULES), $modules->states());
 	}
 
@@ -142,14 +167,13 @@ final class ModulesTest extends TestCase {
 
 	public function testOnlyKnownSwitchableModulesCanBeChanged(): void {
 		$modules = $this->modulesWithout();
-		foreach (['nonsense' => 'Unknown module: %s', Modules::AGENT_API => 'This function is not available yet: %s'] as $key => $message) {
-			try {
-				$modules->change([$key => true]);
-				self::fail($key . ' accepted');
-			} catch (InvalidInputException $e) {
-				self::assertSame($message, $e->getMessage());
-			}
+		try {
+			$modules->change(['nonsense' => true]);
+			self::fail('nonsense accepted');
+		} catch (InvalidInputException $e) {
+			self::assertSame('Unknown module: %s', $e->getMessage());
 		}
+		self::assertSame([], $modules->change([Modules::AGENT_API => true])['enabled'], 'switchable, already on');
 	}
 
 	public function testPresets(): void {
@@ -177,9 +201,11 @@ final class ModulesTest extends TestCase {
 		self::assertSame([], $changes['disabled']);
 		self::assertContains('concerts', $changes['enabled']);
 		self::assertContains('notify_task_new', $changes['activated']);
-		foreach (Modules::switchable() as $key) {
+		foreach (array_keys(Modules::presetValues(Modules::COMPLETE)) as $key) {
 			self::assertTrue($modules->isEnabled($key), $key);
 		}
+		self::assertSame(array_values(array_diff(Modules::switchable(), Modules::OUTSIDE_PRESETS)),
+			array_keys(Modules::presetValues(Modules::COMPLETE)), '"complete" is everything but the interface for agents');
 	}
 
 	public function testUnknownPreset(): void {
@@ -200,7 +226,7 @@ final class ModulesTest extends TestCase {
 	public function testAnExistingInstallationKeepsEveryFunction(): void {
 		$modules = $this->modules();
 		$modules->writeBaseline(true);
-		foreach (Modules::switchable() as $key) {
+		foreach (array_keys(Modules::presetValues(Modules::COMPLETE)) as $key) {
 			self::assertTrue($this->moduleConfig['module_' . $key], $key);
 			self::assertTrue($modules->isEnabled($key), $key);
 		}

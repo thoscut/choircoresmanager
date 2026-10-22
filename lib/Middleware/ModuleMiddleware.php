@@ -17,14 +17,18 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Middleware;
+use OCP\AppFramework\OCS\OCSNotFoundException;
+use OCP\AppFramework\OCSController;
 use OCP\IL10N;
 
 /**
  * Switched-off modules are off on the server, too: a route of a module that
  * is not active answers 404 with `{ "error": "This function is switched
  * off." }` before the controller method runs (attribute RequiresModule on
- * the method or its controller). Runs after Nextcloud's own checks (login,
- * admin, CSRF), so it tells nothing to whoever may not call the route.
+ * the method or its controller); a route of the API for agents (OCS) answers
+ * 404 with the message in the OCS meta. Runs after Nextcloud's own checks
+ * (login, admin, CSRF, rate limits), so it tells nothing to whoever may not
+ * call the route.
  */
 class ModuleMiddleware extends Middleware {
 	public function __construct(
@@ -57,10 +61,19 @@ class ModuleMiddleware extends Middleware {
 		}
 	}
 
+	/**
+	 * @throws OCSNotFoundException for a route of the API for agents (OCS)
+	 */
 	#[\Override]
 	public function afterException(Controller $controller, string $methodName, \Exception $exception): Response {
 		if ($exception instanceof ModuleDisabledException) {
-			return new JSONResponse(['error' => $this->l->t('This function is switched off.')], Http::STATUS_NOT_FOUND);
+			$message = $this->l->t('This function is switched off.');
+			if ($controller instanceof OCSController) {
+				// Nextcloud's OCS middleware comes earlier in the chain, so it
+				// handles this exception next and answers 404 with OCS meta.
+				throw new OCSNotFoundException($message);
+			}
+			return new JSONResponse(['error' => $message], Http::STATUS_NOT_FOUND);
 		}
 		throw $exception;
 	}

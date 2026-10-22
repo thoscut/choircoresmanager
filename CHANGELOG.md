@@ -93,8 +93,34 @@ and 35.0.2 with MariaDB; the app requires MySQL or MariaDB.
   widget leave it out. Data are never deleted and no rights check is relaxed.
   Notifications can be switched off per occasion. Presets "Simple",
   "Standard" (new installations) and "Complete"; installations updated from
-  before 0.1.27 keep every function. The interface for agents (0.6) is
-  planned as a module that starts off.
+  before 0.1.27 keep every function. The interface for agents starts off
+  and is part of no preset.
+- Interface for agents (milestone 0.6, first part): a stable, versioned API
+  (OCS, `/ocs/v2.php/apps/notenarchiv/api/v1/…`, `docs/api-v1.md`) with its
+  OpenAPI description `openapi.json` (generated with
+  nextcloud/openapi-extractor, checked in CI, part of the release archive).
+  Agents read the catalog (search with filters and cursor pages, a copy with
+  version, work and rights), the due list of their roles, questions and
+  tasks, concerts with their programmes and statistics, build text
+  references, create and answer questions and tasks, and propose changes
+  and read their own proposals. Nothing decides: there are no routes to
+  confirm rights, change licenses, set the valid version, accept proposals,
+  delete, restore, back up or change settings. Every route needs the module
+  "Interface for agents" (`agent_api`, off, in no preset; "Complete" leaves
+  it alone) and the module of its function, a role, and is rate limited; a
+  switched-off route answers 404 with OCS meta. Answers use snake_case,
+  ISO dates and contain no account names; internal preservation copies stay
+  hidden from roles that may not view them.
+- MCP server for agents (`tools/mcp`, TypeScript, official MCP SDK 1.32.1,
+  stdio, own package not in the release archive) with one tool per use case
+  (`search_catalog`, `get_copy`, `list_due`, `list_tasks`, `create_task`,
+  `answer_task`, `propose_change`, `list_my_proposals`, `text_reference`,
+  `list_concerts`, `get_concert`, `statistics`, `modules`), MCP annotations,
+  a read-only mode and no secret in any output. CI runs an agent without a
+  language model against the demo data (`tools/ci/integration-demo.sh`,
+  step 7, PHP's built-in web server).
+- A proposal request is checked as a whole before anything is stored: one
+  field that cannot be proposed refuses the whole request.
 - Personal view: every account hides navigation areas and start page cards
   it does not need ("Customize view", stored on the server); permissions do
   not change.

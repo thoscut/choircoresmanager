@@ -60,7 +60,9 @@ What is covered:
 | `Service/StatisticsServiceTest` | aggregation of the statistics without a database: period, copies per binder, new copies per year (audit log or creation date, time zone of the user), rights states, valid versions, license groups, concerts and pieces per year, most performed works and composers, repertoire classes, works not sung for a long time, tasks by age, protection terms, open rights questions, licenses and accessions of the annual report; 2,000 copies aggregated in well under a second |
 | `Service/StatisticsCsvTest` | CSV of the statistics and the annual report: every table under its heading, translated labels, formula cells neutralized |
 | `Service/InputTest`, `Service/SortTest`, `Db/MergeTest` | request data checks, typed sorting, what a merge recorded |
-| `Controller/ControllerSecurityTest` | route attributes of every controller (no public page, CSRF skipped only for plain downloads, admin-only settings, brute-force and rate limits), headers of the score file response, the app page's content security policy |
+| `Controller/ControllerSecurityTest` | route attributes of every controller (no public page, CSRF skipped only for plain downloads, admin-only settings, brute-force and rate limits), headers of the score file response, the app page's content security policy; every route of the API for agents is an OCS route under `/api/v1/` with `agent_api` plus the module of the same function in the UI, `NoAdminRequired`, a rate limit, no `NoCSRFRequired` and no CORS, and answers 404 with OCS meta when switched off |
+| `Controller/ApiV1ControllerTest` | the API for agents with the services as test doubles: search with filters and cursor pages in shelf order, the fixed fields, preservation copies only for the roles that may view them, no account names, errors as OCS exceptions (400, 403, 404, 500 without internal details), tasks and proposals answer 201, own proposals, concerts by date, module status and permissions |
+| `Service/ApiV1ViewsTest`, `Service/TextReferenceTest` | cursors (opaque, checked, stable when entries are added), snake_case statistics, values without JSON; the server's text reference follows the rules and examples of the UI (`src/__tests__/references.test.ts`) |
 | `Service/ScoreServiceTest` | only real MusicXML reaches the browser (root element, document type declarations, `.mxl` contents, size limit) |
 | `Service/UserFilesTest`, `Service/RequestBoundaryTest` | reading uploaded files with a size limit, limits of request data (unknown fields, list sizes) |
 | `Notification/NotifierTest` | notification texts, no internal error texts |
@@ -100,6 +102,7 @@ sudo -u www-data php tests/Integration/statistics_test.php    /var/www/nextcloud
 sudo -u www-data php tests/Integration/backup_test.php        /var/www/nextcloud <uid>
 sudo -u www-data php tests/Integration/calendar_test.php      /var/www/nextcloud <uid>
 sudo -u www-data php tests/Integration/modules_test.php       /var/www/nextcloud <uid> <shelfmark-protected>
+sudo -u www-data php tests/Integration/api_v1_test.php        /var/www/nextcloud <uid> <shelfmark> <shelfmark-preservation-copy>
 ```
 
 `statistics_test.php` fixes no figures of a catalog, so it runs on any
@@ -124,6 +127,18 @@ practice audio of a protected version stay refused. Everything is rolled
 back, and at the end the module switches are exactly as before (also those
 that were not stored).
 
+`api_v1_test.php` takes the controllers of the API for agents from
+Nextcloud's dependency injection container with `<uid>` as the account of the
+session. It reads (module status, search with filters and every page,
+a copy, a text reference, the due list, tasks, concerts, statistics),
+creates a proposal and a task, checks what is refused (proposing a
+decision, answering for another role, unknown objects, invalid cursors,
+writing as reader, the preservation copy for reader and contributor) and
+that every route answers 404 without `agent_api` and the task routes without
+`tasks`. For the other roles it gives the account's groups the role
+`reader` or `contributor` for a while. Everything is rolled back; the
+module switches and the role groups are restored exactly.
+
 `<uid>` must hold the role `librarian`; each script's header lists further
 requirements (CSV paths are relative to the user's files). `backup_test.php`
 first adds a record to every app table (license, proposal, task, link,
@@ -138,7 +153,7 @@ missing arguments end with exit code 2.
 
 ### Integration tests in CI (demo data)
 
-The CI job `integration` runs all ten scripts against a freshly installed
+The CI job `integration` runs all eleven scripts against a freshly installed
 Nextcloud 33 and 35 (release archives from download.nextcloud.com, checked
 against their SHA-512 checksum) with MariaDB 11.8 and PHP 8.3. The job
 installs the app with its built frontend, builds the public demo data
@@ -159,8 +174,9 @@ real) and runs the file sync. It checks the figures of
 3 MusicXML), 29 assigned, `Mappe_4/4-04_…pdf` not assignable, `LIESMICH.txt`
 ignored, `_Import` skipped, 4-3 without a file. It switches every module on
 (`occ notenarchiv:modules preset complete`; a new installation starts with
-the preset "standard"). Then it runs the tests with these shelf marks of the
-demo catalog:
+the preset "standard") and, after the import, the interface for agents
+(`occ notenarchiv:modules enable agent_api`, which no preset touches). Then
+it runs the tests with these shelf marks of the demo catalog:
 
 | Script | Arguments | Why |
 |---|---|---|
@@ -173,15 +189,44 @@ demo catalog:
 | `practice_audio_test.php` | `2-6 3-1 2-2` | 2-6 is protected without a license for practice audio, 3-1 an internal preservation copy, 2-2 public domain but not confirmed |
 | `statistics_test.php` | `_Import/performances.csv` | the performance list gives the statistics concerts to count; no fixed figures |
 | `modules_test.php` | `2-6` | 2-6 is protected without a license for practice audio |
+| `api_v1_test.php` | `1-1 3-1` | 1-1 is public domain with MusicXML, 3-1 the internal preservation copy |
 | `backup_test.php` | – | |
+
+Finally (step 7) an **agent without a language model** uses the MCP server
+(`tools/mcp`, built by the CI job; the script builds it when
+`tools/mcp/dist` is missing). The script creates an account with the role
+`contributor` (group `demo-agents`, random password passed only through the
+environment) and, unless `NC_URL` names the web server of the instance,
+starts PHP's built-in web server for the Nextcloud directory
+(`php -S 127.0.0.1:8080`). `tools/mcp/ci/agent-demo.mjs` gets an app password
+from `/ocs/v2.php/core/getapppassword` without printing it, starts the MCP
+server over stdio like Claude Desktop would and calls `tools/list`,
+`modules`, `search_catalog` (1-1, and 3-1 hidden), `list_due`,
+`text_reference`, `propose_change` (the key of the version of 1-1, to be
+rejected), `list_my_proposals`, `create_task` and `answer_task` (refused:
+another role). It checks that confirming rights with the app password is
+refused with 403 (internal API) and has no route in api/v1, that
+`occ notenarchiv:modules disable agent_api` makes the API answer 404 with
+OCS meta, that the server log holds no secret, and that read-only mode
+offers no writing tools; then it deletes the app password and checks that
+it no longer signs in. `tools/ci/agent-demo-cleanup.php` rejects the
+agent's proposals and discards its tasks as the librarian; the account,
+its group and the role are removed again.
+
+To run the whole script against an existing test instance with a web
+server, pass its URL:
+
+```sh
+NC_URL=https://nc33.example.org bash tools/ci/integration-demo.sh /var/www/nextcloud
+```
 
 The person and performance lists are imported only inside the tests'
 rolled-back transactions. `events_test.php` expects no concert at all and
 `maintenance_test.php` expects new persons in its dry run, so a real import
 of these lists must never come before them.
 
-Environment variables `CI_USER`, `CI_GROUP`, `DEMO_DIR` and `PHP` change the
-defaults. The script ends with exit code 0 only when every check and every
+Environment variables `CI_USER`, `CI_GROUP`, `DEMO_DIR`, `PHP`,
+`AGENT_USER`, `AGENT_GROUP`, `NC_URL` and `NC_PORT` change the defaults. The script ends with exit code 0 only when every check and every
 test passed and prints the lines of a failed test. On an instance that
 already holds a catalog, back it up first (`occ notenarchiv:export --full`),
 empty it, run the script with an account of its own, then empty the catalog
@@ -198,8 +243,11 @@ composer lint       # php -l on all PHP files
 ```
 
 The CI workflow (`.github/workflows/ci.yml`) runs all of these, the unit
-tests on PHP 8.2, 8.3 and 8.4, the frontend checks, the REUSE check and the
-integration tests with the demo data on Nextcloud 33 and 35.
+tests on PHP 8.2, 8.3 and 8.4, the frontend checks, the REUSE check, the
+check that `openapi.json` is current (`composer run openapi`, then
+`git diff --exit-code`), the build and tests of the MCP server and the
+integration tests with the demo data and the agent run on Nextcloud 33 and
+35.
 
 ## Licensing (REUSE)
 

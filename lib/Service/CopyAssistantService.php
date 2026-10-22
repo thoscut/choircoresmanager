@@ -21,6 +21,7 @@ use OCA\Notenarchiv\Db\WorkMapper;
 use OCA\Notenarchiv\Db\WorkVersion;
 use OCA\Notenarchiv\Db\WorkVersionMapper;
 use OCA\Notenarchiv\Exception\InvalidInputException;
+use OCA\Notenarchiv\Exception\NotFoundException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\Exception as DbException;
@@ -272,7 +273,7 @@ class CopyAssistantService {
 		try {
 			$copy = $this->copies->find($copyId);
 		} catch (DoesNotExistException) {
-			throw new InvalidInputException('Not found.');
+			throw new NotFoundException('Not found.');
 		}
 		return $this->link($copy, $fileId, $uid, $this->audit->newOperation());
 	}
@@ -286,7 +287,7 @@ class CopyAssistantService {
 		try {
 			$file = $this->files->find($archiveFileId);
 		} catch (DoesNotExistException) {
-			throw new InvalidInputException('Not found.');
+			throw new NotFoundException('Not found.');
 		}
 		if ($file->getLinkedManually() !== true) {
 			throw new InvalidInputException('Only files linked by hand can be unlinked; the others follow their file name.');

@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\Notenarchiv\Tests\Unit\Controller;
 
 use OCA\Notenarchiv\Controller\ApiController;
+use OCA\Notenarchiv\Controller\ApiV1StatusController;
 use OCA\Notenarchiv\Controller\CalendarController;
 use OCA\Notenarchiv\Controller\PageController;
 use OCA\Notenarchiv\Controller\PracticeAudioController;
@@ -31,6 +32,7 @@ use OCA\Notenarchiv\Service\LinkService;
 use OCA\Notenarchiv\Service\MetaService;
 use OCA\Notenarchiv\Service\Modules;
 use OCA\Notenarchiv\Service\PracticeAudioService;
+use OCA\Notenarchiv\Service\RightsPolicy;
 use OCA\Notenarchiv\Service\Roles;
 use OCA\Notenarchiv\Service\ScoreService;
 use OCA\Notenarchiv\Service\TaskService;
@@ -38,7 +40,9 @@ use OCA\Notenarchiv\Service\UserFiles;
 use OCA\Notenarchiv\Tests\Unit\Support\ModuleSwitches;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
+use OCP\AppFramework\Http\Attribute\CORS;
 use OCP\AppFramework\Http\Attribute\FrontpageRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
@@ -47,6 +51,8 @@ use OCP\AppFramework\Http\Attribute\UserRateLimit;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\TemplateResponse;
+use OCP\AppFramework\OCS\OCSNotFoundException;
+use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IDateTimeZone;
@@ -66,6 +72,7 @@ use Psr\Log\LoggerInterface;
 #[CoversClass(CalendarController::class)]
 #[CoversClass(PageController::class)]
 #[CoversClass(TaskController::class)]
+#[CoversClass(ApiV1StatusController::class)]
 #[CoversClass(ModuleMiddleware::class)]
 final class ControllerSecurityTest extends TestCase {
 	use ModuleSwitches;
@@ -119,7 +126,33 @@ final class ControllerSecurityTest extends TestCase {
 	];
 
 	/**
-	 * @return array<string, array{verb: string, attributes: list<class-string>}> "Class::method" => route
+	 * Routes of the API for agents (OCS, api/v1) and the route of the UI
+	 * that does the same, or null for a function the UI has without a
+	 * server call (the text reference). Each API route needs the module
+	 * `agent_api` plus exactly the modules of its counterpart.
+	 *
+	 * API-V1-EXTENSION (milestone 0.6): the routes of review points
+	 * (Prüfpunkte) and correction orders are added here with their
+	 * counterparts.
+	 */
+	private const API_V1 = [
+		'ApiV1StatusController::modules' => 'ApiController::meta',
+		'ApiV1CatalogController::search' => 'ApiController::entries',
+		'ApiV1CatalogController::copy' => 'ApiController::entry',
+		'ApiV1CatalogController::reference' => null,
+		'ApiV1TaskController::due' => 'TaskController::due',
+		'ApiV1TaskController::tasks' => 'TaskController::tasks',
+		'ApiV1TaskController::createTask' => 'TaskController::createTask',
+		'ApiV1TaskController::answer' => 'TaskController::answer',
+		'ApiV1ProposalController::proposals' => 'WorkflowController::proposals',
+		'ApiV1ProposalController::propose' => 'WorkflowController::propose',
+		'ApiV1ConcertController::concerts' => 'EventController::list',
+		'ApiV1ConcertController::concert' => 'EventController::detail',
+		'ApiV1StatisticsController::statistics' => 'StatisticsController::overview',
+	];
+
+	/**
+	 * @return array<string, array{verb: string, url: string, ocs: bool, attributes: list<class-string>}> "Class::method" => route
 	 */
 	private static function routes(): array {
 		$routes = [];
@@ -127,18 +160,88 @@ final class ControllerSecurityTest extends TestCase {
 			$class = 'OCA\\Notenarchiv\\Controller\\' . basename($file, '.php');
 			self::assertTrue(is_subclass_of($class, Controller::class), $class);
 			foreach ((new \ReflectionClass($class))->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
-				$route = $method->getAttributes(FrontpageRoute::class)[0] ?? null;
+				$route = $method->getAttributes(FrontpageRoute::class)[0] ?? $method->getAttributes(ApiRoute::class)[0] ?? null;
 				if ($route === null) {
 					continue;
 				}
 				$routes[basename($file, '.php') . '::' . $method->getName()] = [
 					'verb' => $route->newInstance()->getVerb(),
+					'url' => $route->newInstance()->getUrl(),
+					'ocs' => $route->getName() === ApiRoute::class,
 					'attributes' => array_map(fn (\ReflectionAttribute $a): string => $a->getName(), $method->getAttributes()),
 				];
 			}
 		}
-		self::assertGreaterThan(80, count($routes), 'all controllers were found');
+		self::assertGreaterThan(90, count($routes), 'all controllers were found');
 		return $routes;
+	}
+
+	/**
+	 * Every route of the API for agents: an OCS controller under /api/v1/,
+	 * the module `agent_api` plus the modules of the same function in the
+	 * UI, for every account with a role (#[NoAdminRequired]; the services
+	 * check the roles), limited per account, never public.
+	 *
+	 * None skips the CSRF check (#[NoCSRFRequired]), and none needs to:
+	 * Nextcloud's SecurityMiddleware lets a request to an OCS controller pass
+	 * without a CSRF token only when it carries the header
+	 * `OCS-APIRequest: true` (or a Bearer token). A foreign web page cannot
+	 * send that header with the cookies of a logged-in browser without a
+	 * CORS preflight, which these routes do not allow (no #[CORS]). With
+	 * #[NoCSRFRequired], such a page could make a logged-in browser create
+	 * tasks or proposals with a plain form.
+	 */
+	public function testEveryApiV1RouteNeedsTheInterfaceItsModuleARoleAndALimit(): void {
+		$routes = self::routes();
+		$ocs = array_keys(array_filter($routes, fn (array $route): bool => $route['ocs']));
+		sort($ocs);
+		$expected = array_keys(self::API_V1);
+		sort($expected);
+		self::assertSame($expected, $ocs, 'every OCS route is listed in API_V1');
+
+		foreach (self::API_V1 as $name => $counterpart) {
+			$route = $routes[$name];
+			[$class, $method] = explode('::', $name);
+			self::assertTrue(is_subclass_of('OCA\\Notenarchiv\\Controller\\' . $class, OCSController::class), $name . ' is an OCS controller');
+			self::assertStringStartsWith('/api/v1/', $route['url'], $name);
+			self::assertContains(NoAdminRequired::class, $route['attributes'], $name);
+			self::assertContains(UserRateLimit::class, $route['attributes'], $name . ' is rate limited');
+			self::assertNotContains(NoCSRFRequired::class, $route['attributes'], $name . ' keeps the CSRF check (OCS header)');
+			self::assertNotContains(PublicPage::class, $route['attributes'], $name);
+			self::assertNotContains(CORS::class, $route['attributes'], $name);
+
+			$modules = ModuleMiddleware::required('OCA\\Notenarchiv\\Controller\\' . $class, $method);
+			$expectedModules = [Modules::AGENT_API];
+			if ($counterpart !== null) {
+				self::assertArrayHasKey($counterpart, $routes, 'counterpart of ' . $name);
+				[$counterClass, $counterMethod] = explode('::', $counterpart);
+				$expectedModules = [...$expectedModules, ...ModuleMiddleware::required('OCA\\Notenarchiv\\Controller\\' . $counterClass, $counterMethod)];
+			}
+			sort($modules);
+			sort($expectedModules);
+			self::assertSame($expectedModules, $modules, $name . ': agent_api plus the module of the function');
+		}
+	}
+
+	public function testASwitchedOffApiV1RouteAnswers404WithOcsMeta(): void {
+		$l = $this->l10n();
+		$controller = new ApiV1StatusController($this->createStub(IRequest::class), 'agent', $this->createStub(Roles::class),
+			$this->modulesWithout(), $this->createStub(RightsPolicy::class), $l, $this->createStub(LoggerInterface::class));
+		(new ModuleMiddleware($this->modulesWithout(), $l))->beforeController($controller, 'modules');
+
+		$middleware = new ModuleMiddleware($this->modulesWithout([Modules::AGENT_API]), $l);
+		try {
+			$middleware->beforeController($controller, 'modules');
+			self::fail('the interface for agents is off');
+		} catch (ModuleDisabledException $e) {
+			try {
+				$middleware->afterException($controller, 'modules', $e);
+				self::fail('an OCS route gets an OCS exception, which Nextcloud turns into the OCS envelope');
+			} catch (OCSNotFoundException $ocs) {
+				self::assertSame(Http::STATUS_NOT_FOUND, $ocs->getCode());
+				self::assertSame('This function is switched off.', $ocs->getMessage());
+			}
+		}
 	}
 
 	#[CoversNothing]

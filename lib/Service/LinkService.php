@@ -16,6 +16,7 @@ use OCA\Notenarchiv\Db\ExcerptLinkMapper;
 use OCA\Notenarchiv\Db\WorkVersionMapper;
 use OCA\Notenarchiv\Exception\AccessDeniedException;
 use OCA\Notenarchiv\Exception\InvalidInputException;
+use OCA\Notenarchiv\Exception\NotFoundException;
 use OCA\Notenarchiv\Exception\UnknownLinkException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -68,7 +69,7 @@ class LinkService {
 			$copy = $this->copies->find($copyId);
 			$version = $this->versions->find($copy->getVersionId());
 		} catch (DoesNotExistException) {
-			throw new InvalidInputException('Not found.');
+			throw new NotFoundException('Not found.');
 		}
 		$denial = $this->policy->viewDenial($version, $uid);
 		if ($denial !== null) {
@@ -183,7 +184,7 @@ class LinkService {
 		try {
 			$link = $this->links->find($linkId);
 		} catch (DoesNotExistException) {
-			throw new InvalidInputException('Not found.');
+			throw new NotFoundException('Not found.');
 		}
 		if ($link->getCreatedBy() !== $uid && !$this->roles->hasAnyRole($uid, [Roles::LIBRARIAN])) {
 			throw new AccessDeniedException('Only the creator or the catalog librarian can revoke this link.');

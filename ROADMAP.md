@@ -199,14 +199,25 @@ Beschreibung im Admin-Guide, Abschnitt „Modules and presets“, und in
 
 ### 0.6 Agenten und Prüfung der Übertragungen
 
+*Teilweise umgesetzt: die Schnittstelle für Agenten ohne Prüfpunkte
+(Beschreibung in `docs/api-v1.md`, Einrichtung im Admin-Guide, Abschnitt
+„Agents and the API“, MCP-Server in `tools/mcp`). Die Prüfung der
+Übertragungen ist noch offen.*
+
 - **Schnittstelle für Agenten:**
   - eine feste, versionierte API (OCS, `api/v1`) mit OpenAPI-Beschreibung
     für Lesen, Fällig-Liste, Vorschläge, Rückfragen und Prüfpunkte
+    – *umgesetzt bis auf die Prüfpunkte; sie kommen mit „Übertragung
+    prüfen“ als weitere Routen von v1 hinzu.*
   - ein MCP-Server, der lokal neben dem Agenten läuft, mit App-Passwort
-    eines eigenen Kontos
+    eines eigenen Kontos – *umgesetzt.*
   - Schreibende Werkzeuge erzeugen nur Vorschläge, Rückfragen und
-    Prüfergebnisse. Der Server begrenzt sie über die Rolle.
+    Prüfergebnisse. Der Server begrenzt sie über die Rolle. – *umgesetzt
+    für Vorschläge und Rückfragen; Prüfergebnisse folgen.*
   - Ein Agentenlauf gegen den Demo-Bestand läuft in der CI mit.
+    – *umgesetzt (`tools/ci/integration-demo.sh`, Schritt 7).*
+  - Das Modul „Schnittstelle für Agenten“ ist anfangs aus und in keiner
+    Voreinstellung enthalten, auch nicht in „Vollständig“.
 - **Übertragung prüfen:**
   - Der Bericht einer Übertragung (`bericht.json`, Format `bericht/1`) kommt
     über den Dateiabgleich oder die API.

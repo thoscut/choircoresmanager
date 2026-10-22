@@ -24,6 +24,8 @@ use OCP\AppFramework\Http\JSONResponse;
  * @psalm-import-type Warning from \OCA\Notenarchiv\Service\ImportService
  */
 trait RunsActions {
+	use TranslatesMessages;
+
 	/**
 	 * @param callable(string): (array|\JsonSerializable) $action
 	 */
@@ -49,18 +51,6 @@ trait RunsActions {
 			$this->logger->error('Notenarchiv: ' . $e->getMessage(), ['exception' => $e]);
 			return new JSONResponse(['error' => $this->l->t('Internal error. Details are in the Nextcloud log.')], Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
-	}
-
-	/**
-	 * Translates a message and its parameters. Parameters are mostly field or
-	 * role labels and are translated too; `%` is escaped first because
-	 * IL10N::t() always runs vsprintf and parameters may contain user input.
-	 *
-	 * @param list<string|int> $parameters
-	 */
-	private function translate(string $message, array $parameters): string {
-		$translated = array_map(fn (string|int $p): string => $this->l->t(str_replace('%', '%%', (string)$p)), $parameters);
-		return $this->l->t($message, $translated);
 	}
 
 	/**
