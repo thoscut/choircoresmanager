@@ -20,11 +20,6 @@ namespace OCA\Notenarchiv;
  * left out. Fields are only ever added; nothing is renamed, removed or given
  * another type within v1.
  *
- * API-V1-EXTENSION (milestone 0.6, review of transcriptions): the types of
- * review points (Prüfpunkte, report format `bericht/1`) and correction
- * orders are added here, e.g. NotenarchivReviewPoint and
- * NotenarchivCorrectionOrder, with their pages like NotenarchivTaskPage.
- *
  * @psalm-type NotenarchivFieldValues = array<string, string|int|bool|null>
  *
  * @psalm-type NotenarchivApiStatus = array{
@@ -36,6 +31,7 @@ namespace OCA\Notenarchiv;
  *         answer_tasks_for: list<string>,
  *         propose: bool,
  *         view_preservation_copies: bool,
+ *         submit_transcription_reports: bool,
  *     },
  *     proposable_fields: array<string, list<string>>,
  *     task_options: array{
@@ -284,6 +280,117 @@ namespace OCA\Notenarchiv;
  *         tasks: list<array{addressee: string, open: int, answered: int}>,
  *         proposals: array{open: int, older_than_30_days: int},
  *     },
+ * }
+ *
+ * @psalm-type NotenarchivTranscriptionReport = array{
+ *     id: int,
+ *     copy_id: int,
+ *     version_id: int,
+ *     source: string,
+ *     sha256: string,
+ *     report_file_id: ?int,
+ *     round: ?string,
+ *     report_date: ?string,
+ *     title: ?string,
+ *     basename: string,
+ *     method: ?string,
+ *     musicxml_file_id: ?int,
+ *     musicxml_sha256: ?string,
+ *     origin: ?string,
+ *     review: ?string,
+ *     reasoning: ?string,
+ *     rights_class: ?string,
+ *     warnings: list<string>,
+ *     superseded_by: ?int,
+ *     created_at: string,
+ *     own: bool,
+ * }
+ *
+ * @psalm-type NotenarchivReviewPoint = array{
+ *     id: int,
+ *     copy_id: int,
+ *     version_id: int,
+ *     report_id: ?int,
+ *     file_id: ?int,
+ *     file_sha256: ?string,
+ *     category: string,
+ *     measures: ?string,
+ *     measure_from: ?string,
+ *     measure_to: ?string,
+ *     voice: ?string,
+ *     verse: ?int,
+ *     page: ?int,
+ *     text: ?string,
+ *     role: string,
+ *     status: string,
+ *     correction: ?string,
+ *     decision_reason: ?string,
+ *     task_id: ?int,
+ *     resolved_report_id: ?int,
+ *     created_at: string,
+ *     decided_at: ?string,
+ *     own: bool,
+ * }
+ *
+ * @psalm-type NotenarchivReviewCounts = array{
+ *     open: int,
+ *     confirmed: int,
+ *     correct: int,
+ *     corrected: int,
+ *     question: int,
+ *     dismissed: int,
+ * }
+ *
+ * @psalm-type NotenarchivReview = array{
+ *     copy_id: int,
+ *     shelfmark: string,
+ *     version_id: int,
+ *     counts: NotenarchivReviewCounts,
+ *     reports: list<NotenarchivTranscriptionReport>,
+ *     items: list<NotenarchivReviewPoint>,
+ *     total: int,
+ *     next_cursor: ?string,
+ * }
+ *
+ * @psalm-type NotenarchivCorrectionOrder = array{
+ *     id: int,
+ *     copy_id: int,
+ *     version_id: int,
+ *     shelfmark: ?string,
+ *     title: ?string,
+ *     report_id: ?int,
+ *     basename: ?string,
+ *     file_id: ?int,
+ *     file_name: ?string,
+ *     file_sha256: ?string,
+ *     category: string,
+ *     measures: ?string,
+ *     measure_from: ?string,
+ *     measure_to: ?string,
+ *     voice: ?string,
+ *     verse: ?int,
+ *     page: ?int,
+ *     text: ?string,
+ *     role: string,
+ *     correction: ?string,
+ *     decision_reason: ?string,
+ *     decided_at: ?string,
+ *     own: bool,
+ * }
+ *
+ * @psalm-type NotenarchivCorrectionOrderPage = array{
+ *     items: list<NotenarchivCorrectionOrder>,
+ *     total: int,
+ *     next_cursor: ?string,
+ * }
+ *
+ * @psalm-type NotenarchivReportResult = array{
+ *     report: NotenarchivTranscriptionReport,
+ *     unchanged: bool,
+ *     points: array{created: int, kept: int, closed: int, open: int},
+ *     proposals: int,
+ *     proposals_skipped: bool,
+ *     warnings: list<string>,
  * }
  *
  * @psalm-suppress UnusedClass

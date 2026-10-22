@@ -13,9 +13,14 @@ its own**.
 
 The agent can read the catalog, a copy with its rights, the due list,
 concerts and statistics, build text references, ask questions, answer
-questions addressed to its role and propose changes. It cannot decide:
-there is no tool (and no route) to confirm rights, change licenses, set the
-valid version, accept proposals, delete anything or change settings.
+questions addressed to its role and propose changes. For the review of
+transcriptions it reads the review points of a copy, picks up correction
+orders and hands in the reports of transcriptions (`bericht/1`). It cannot
+decide: there is no tool (and no route) to confirm rights, change licenses,
+set the valid version, accept proposals, decide review points, save
+corrections, delete anything or change settings. A corrected MusicXML
+reaches the archive as a new file through the archive folder and its file
+sync, never through this server.
 
 This folder is a separate package (own `package.json` and lock file). It is
 not part of the app or its release archive.
@@ -57,7 +62,8 @@ not part of the app or its release archive.
 
    It is part of no preset; the presets never switch it on or off. The
    modules of the functions (questions and tasks, proposals inbox,
-   concerts, statistics) must be on for their tools.
+   concerts, statistics, review of transcriptions) must be on for their
+   tools.
 
 4. **An app password.** Log in as the agent's account and create one in
    *Personal settings → Security → Devices & sessions*, or get one with the
@@ -143,11 +149,16 @@ app password into `.mcp.json` in the repository.
 | `list_my_proposals` | – | The own proposals and their decision |
 | `list_concerts`, `get_concert` | – | Concerts and song lists with programme and warnings |
 | `statistics` | – | Figures of the archive |
+| `get_review` | – | Review of the transcription of a copy: reports, counts, review points with place, role and status |
+| `list_correction_orders` | – | Correction orders for the tool chain (what to change where), in pages |
+| `submit_transcription_report` | adds | Hand in the report of a transcription (`bericht/1`) for a copy; review points and proposals |
 
 The tools carry MCP annotations: the reading ones `readOnlyHint: true`, the
 writing ones `readOnlyHint: false, destructiveHint: false, idempotentHint:
 false` (they add a proposal or task and change nothing that exists;
-repeating them adds another one). With `NOTENARCHIV_READ_ONLY=1` the writing
+repeating them adds another one). `submit_transcription_report` is
+`idempotentHint: true`: the same report again is recognised by its checksum
+and creates nothing. With `NOTENARCHIV_READ_ONLY=1` the writing
 tools are not offered at all, and the client refuses every writing request
 before it is sent. Results are compact JSON (fields without a value are
 left out); errors come back as tool errors with the reason.
@@ -162,8 +173,9 @@ left out); errors come back as tool errors with the reason.
 - **Prompt injection.** Catalog texts (notes, questions, answers) are
   written by people and imported from files; an agent must treat them as
   data. The worst an injected agent can do with the role "contributor" is
-  to create proposals and tasks, which people then reject; use read-only
-  mode where nothing needs to be written.
+  to create proposals, tasks and review points (from a report), which
+  people then reject or dismiss; use read-only mode where nothing needs to
+  be written.
 - **The app password** stays in the environment of the MCP server. It is
   never logged, never part of a tool result or an error (the server
   replaces it with `[redacted]` even if a server repeats it), never sent in
@@ -173,8 +185,9 @@ left out); errors come back as tool errors with the reason.
 - **HTTPS** is required except for `localhost`.
 - **Limits.** Nextcloud limits the requests per account (see
   docs/api-v1.md); a runaway agent gets HTTP 429.
-- **Audit.** Proposals and tasks are recorded with the agent's account in
-  the audit log of the app, like any other change.
+- **Audit.** Proposals, tasks and reports are recorded with the agent's
+  account in the audit log of the app, like any other change; a report is
+  kept unchanged as evidence.
 - **Switching off.** `occ notenarchiv:modules disable agent_api` closes the
   interface at once (404); deleting the app password or the account ends
   the agent's access.

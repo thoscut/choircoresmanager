@@ -59,6 +59,8 @@ use OCP\AppFramework\Db\Entity;
  * @method void setCreatedBy(?string $createdBy)
  * @method int getCreated()
  * @method void setCreated(int $created)
+ *
+ * @psalm-import-type Warning from \OCA\Notenarchiv\Service\ImportService
  */
 class TranscriptionReport extends Entity implements JsonSerializable {
 	use FieldAccess {
@@ -125,6 +127,36 @@ class TranscriptionReport extends Entity implements JsonSerializable {
 		} catch (\JsonException) {
 			return [];
 		}
+	}
+
+	/**
+	 * The warnings kept with the summary: English source strings with their
+	 * parameters, as [message, parameters] pairs; anything else is dropped.
+	 *
+	 * @return list<Warning>
+	 */
+	public function summaryWarnings(): array {
+		$summary = $this->summaryData();
+		if (!isset($summary['warnings']) || !is_array($summary['warnings'])) {
+			return [];
+		}
+		$stored = $summary['warnings'];
+		$warnings = [];
+		foreach (array_keys($stored) as $key) {
+			if (!is_array($stored[$key]) || !isset($stored[$key][0]) || !is_string($stored[$key][0])) {
+				continue;
+			}
+			$parameters = [];
+			if (isset($stored[$key][1]) && is_array($stored[$key][1])) {
+				foreach (array_keys($stored[$key][1]) as $index) {
+					if (is_string($stored[$key][1][$index]) || is_int($stored[$key][1][$index])) {
+						$parameters[] = $stored[$key][1][$index];
+					}
+				}
+			}
+			$warnings[] = [$stored[$key][0], $parameters];
+		}
+		return $warnings;
 	}
 
 	/**

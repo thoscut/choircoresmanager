@@ -21,10 +21,13 @@
 #   6. runs the integration tests,
 #   7. runs an agent without a language model against the API for agents:
 #      an account with the role "contributor" gets an app password, the MCP
-#      server (tools/mcp) is started over stdio and its tools are called;
-#      forbidden actions and the switched-off interface must be refused.
-#      Afterwards the proposals are rejected, the tasks discarded, and the
-#      app password, the account and its group are deleted.
+#      server (tools/mcp) is started over stdio and its tools are called,
+#      including the review of 1-1 and a new round of its demo report;
+#      forbidden actions (deciding a review point among them) and the
+#      switched-off interface must be refused. Afterwards the proposals are
+#      rejected, the tasks discarded, the review points of the agent's
+#      report dismissed, and the app password, the account and its group
+#      are deleted.
 #
 # Step 7 needs Nextcloud behind a web server. Without NC_URL the script
 # starts PHP's built-in server for the Nextcloud directory on 127.0.0.1
@@ -272,7 +275,8 @@ run_test statistics_test "$IMPORT/performances.csv"
 # license for practice audio.
 run_test modules_test 2-6
 # The API for agents through its controllers (1-1 public domain, 3-1 the
-# internal preservation copy); roles and modules restored exactly.
+# internal preservation copy), with transcription reports the test writes
+# itself; roles and modules restored exactly, everything else rolled back.
 run_test api_v1_test 1-1 3-1
 # Transcription review and a correction in the app on 1-2 (MXL, four
 # staves), a copy without a demo report, so that the review points of the
@@ -309,7 +313,7 @@ if ! NOTENARCHIV_URL="$NC_URL" AGENT_USER="$AGENT_USER" AGENT_LOGIN_PASSWORD="$a
 	agent_failed=1
 fi
 unset agent_password
-echo "-- cleanup: proposals rejected, tasks discarded, account and group deleted"
+echo "-- cleanup: proposals rejected, tasks discarded, review points dismissed, account and group deleted"
 if ! "$PHP" -d memory_limit=1G "$REPO/tools/ci/agent-demo-cleanup.php" "$NC_ROOT" "$CI_USER" "$AGENT_USER"; then
 	agent_failed=1
 fi

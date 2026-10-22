@@ -135,14 +135,22 @@ that were not stored).
 `api_v1_test.php` takes the controllers of the API for agents from
 Nextcloud's dependency injection container with `<uid>` as the account of the
 session. It reads (module status, search with filters and every page,
-a copy, a text reference, the due list, tasks, concerts, statistics),
-creates a proposal and a task, checks what is refused (proposing a
-decision, answering for another role, unknown objects, invalid cursors,
-writing as reader, the preservation copy for reader and contributor) and
-that every route answers 404 without `agent_api` and the task routes without
-`tasks`. For the other roles it gives the account's groups the role
-`reader` or `contributor` for a while. Everything is rolled back; the
-module switches and the role groups are restored exactly.
+a copy, a text reference, the due list, tasks, concerts, statistics, the
+review of a copy page by page and the correction orders), creates a
+proposal and a task, hands in transcription reports it writes itself (so
+the catalog needs no demo report; one point is decided as a correction
+order through the service, as the score view does), checks what is refused
+(proposing a decision, answering for another role, unknown objects, invalid
+cursors, a report naming another copy, writing as reader, the preservation
+copy for reader and contributor, deciding a review point or saving a
+correction as contributor through the routes of the UI) and that every
+route answers 404 without `agent_api`, the task routes without `tasks` and
+the review routes without `transcription_review`. The second shelf mark is
+made an internal preservation copy inside the transaction when it is not
+one, so any two copies of different versions do. For the other roles it
+gives the account's groups the role `reader` or `contributor` for a while.
+Everything is rolled back; the module switches and the role groups are
+restored exactly.
 `review_test.php` writes a transcription report (`bericht/1`) from the
 shelf mark, the name and the measures and parts of the copy's score, reads
 it, decides its review points (confirmed, correction order, question as a
@@ -208,7 +216,7 @@ it runs the tests with these shelf marks of the demo catalog:
 | `practice_audio_test.php` | `2-6 3-1 2-2` | 2-6 is protected without a license for practice audio, 3-1 an internal preservation copy, 2-2 public domain but not confirmed |
 | `statistics_test.php` | `_Import/performances.csv` | the performance list gives the statistics concerts to count; no fixed figures |
 | `modules_test.php` | `2-6` | 2-6 is protected without a license for practice audio |
-| `api_v1_test.php` | `1-1 3-1` | 1-1 is public domain with MusicXML, 3-1 the internal preservation copy |
+| `api_v1_test.php` | `1-1 3-1` | 1-1 is public domain with MusicXML (and a demo report, which the test's own reports do not touch), 3-1 the internal preservation copy |
 | `review_test.php` | `1-2` | MXL with four staves and without a demo report, so the review points of the demo reports do not interfere |
 | `backup_test.php` | – | |
 
@@ -223,15 +231,21 @@ from `/ocs/v2.php/core/getapppassword` without printing it, starts the MCP
 server over stdio like Claude Desktop would and calls `tools/list`,
 `modules`, `search_catalog` (1-1, and 3-1 hidden), `list_due`,
 `text_reference`, `propose_change` (the key of the version of 1-1, to be
-rejected), `list_my_proposals`, `create_task` and `answer_task` (refused:
-another role). It checks that confirming rights with the app password is
-refused with 403 (internal API) and has no route in api/v1, that
+rejected), `list_my_proposals`, `create_task`, `answer_task` (refused:
+another role), `get_review` (the points of the demo report of 1-1, read by
+the file sync), `list_correction_orders` and `submit_transcription_report`
+(a new round of `tools/demo/reports/1-1.json` with one more point; the same
+report again changes nothing; a report naming 3-1 is refused). It checks
+that confirming rights, deciding a review point and saving a correction
+with the app password are refused with 403 (internal API) and have no
+route in api/v1, that
 `occ notenarchiv:modules disable agent_api` makes the API answer 404 with
 OCS meta, that the server log holds no secret, and that read-only mode
 offers no writing tools; then it deletes the app password and checks that
 it no longer signs in. `tools/ci/agent-demo-cleanup.php` rejects the
-agent's proposals and discards its tasks as the librarian; the account,
-its group and the role are removed again.
+agent's proposals, discards its tasks and dismisses the review points of its
+report as the librarian (the report stays as evidence); the account, its
+group and the role are removed again.
 
 To run the whole script against an existing test instance with a web
 server, pass its URL:

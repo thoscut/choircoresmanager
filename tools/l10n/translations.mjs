@@ -1928,6 +1928,7 @@ export const singular = {
 	'"%s" in the report has an unexpected type and was ignored.': '„%s“ hat im Bericht einen unerwarteten Typ und wurde übergangen.',
 	'Unknown catalog field "%s" in the report was ignored.': 'Das unbekannte Werkverzeichnis-Feld „%s“ im Bericht wurde übergangen.',
 	'The shelf mark of the report does not belong to this version.': 'Die Signatur des Berichts gehört nicht zu dieser Fassung.',
+	'The shelf mark of the report does not belong to this copy.': 'Die Signatur des Berichts gehört nicht zu diesem Exemplar.',
 	'The shelf mark of the report does not match its file name.': 'Die Signatur des Berichts passt nicht zu seinem Dateinamen.',
 	'No MusicXML file named "%s" belongs to this copy; the review points refer to no file.': 'Zu diesem Exemplar gehört keine MusicXML-Datei namens „%s“; die Prüfpunkte beziehen sich auf keine Datei.',
 	'The MusicXML file "%s" could not be read; changes of it cannot be recognised.': 'Die MusicXML-Datei „%s“ ließ sich nicht lesen; Änderungen an ihr lassen sich nicht erkennen.',

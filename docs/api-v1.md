@@ -21,30 +21,35 @@ The internal API of the user interface (`/apps/notenarchiv/api/…`,
 ## Principles
 
 1. **The app proposes, people decide** (ROADMAP, guideline 1). Agents read,
-   ask and propose. The API has no route to confirm a rights status, to add
-   or change a license, to set the valid version, to accept or reject a
-   proposal, to close a task, to delete or restore anything, to make a
-   backup or to change settings. These stay with people in the app.
+   ask, propose and hand in reports of transcriptions. The API has no route
+   to confirm a rights status, to add or change a license, to set the valid
+   version, to accept or reject a proposal, to close a task, to decide a
+   review point, to save a correction, to delete or restore anything, to
+   make a backup or to change settings. These stay with people in the app.
 2. **No right beyond the roles.** The API calls the same services as the
    user interface; every role check applies unchanged. An agent signs in
    with an account of its own and can do exactly what the roles of that
    account allow. Use the role "contributor" (proposals and questions) or
    "reader" (reading only).
 3. **Tools propose, people take over** (guideline 6). Writing creates
-   proposals (the catalog librarian accepts or rejects them in the inbox)
-   and questions or tasks (the addressed role answers them); an agent may
-   answer a task addressed to a role it holds.
+   proposals (the catalog librarian accepts or rejects them in the inbox),
+   questions or tasks (the addressed role answers them) and review points
+   from the report of a transcription (the conductor and the catalog
+   librarian decide them); an agent may answer a task addressed to a role
+   it holds.
 4. **Only what is switched on** (guideline 12). The whole API is the module
    "Interface for agents" (`agent_api`), off by default and in no preset.
    Each route also needs the module of its function, as in the app.
 5. **Internal preservation copies are not passed on** (guideline 2). For
    roles that may not view them (all except the catalog librarian and the
-   conductor) the search leaves them out, and a copy, a text reference or a
-   task on one is refused with 403.
+   conductor) the search and the correction orders leave them out, and a
+   copy, a text reference, a task, the review or a report on one is refused
+   with 403.
 6. **No account names.** Answers name roles, never accounts: the fields
-   `confirmed_by`, `confirmed_by_name`, `valid_set_by` and `rule1_checked`
-   are left out, tasks and proposals say only whether the calling account
-   created them (`own`).
+   `confirmed_by`, `confirmed_by_name`, `valid_set_by`, `rule1_checked`,
+   `created_by`, `decided_by` and `decided_by_name` are left out; tasks,
+   proposals, reports and review points say only whether the calling
+   account created them (`own`).
 
 ## Authentication
 
@@ -132,6 +137,9 @@ the table. Every route is rate limited per account.
 | `GET /api/v1/concerts` | `concerts` | 120 | Concerts and song lists |
 | `GET /api/v1/concerts/{id}` | `concerts` | 300 | One concert or song list with its programme |
 | `GET /api/v1/statistics` | `statistics` | 60 | Figures of the archive |
+| `GET /api/v1/copies/{id}/review` | `transcription_review` | 300 | Review of the transcription of a copy: reports, counts, review points (pages) |
+| `GET /api/v1/correction_orders` | `transcription_review` | 120 | Correction orders for the tool chain |
+| `POST /api/v1/copies/{id}/transcription_reports` | `transcription_review` | 30 | Hand in the report of a transcription (`bericht/1`) |
 
 Parameters and fields of every route are in `openapi.json`. The most
 important ones follow.
@@ -140,8 +148,9 @@ important ones follow.
 
 ```json
 { "api_version": 1, "roles": ["contributor"],
-  "modules": { "tasks": true, "proposals": true, "concerts": true, "statistics": false, "agent_api": true, "…": true },
-  "permissions": { "create_tasks": true, "answer_tasks_for": [], "propose": true, "view_preservation_copies": false },
+  "modules": { "tasks": true, "proposals": true, "concerts": true, "statistics": false, "transcription_review": true, "agent_api": true, "…": true },
+  "permissions": { "create_tasks": true, "answer_tasks_for": [], "propose": true, "view_preservation_copies": false,
+                   "submit_transcription_reports": true },
   "proposable_fields": { "work": ["work_no", "title", "composer", "notes"], "version": ["kind", "…", "duration"], "copy": ["status", "…", "pages"] },
   "task_options": { "kinds": ["question", "check", "report"], "addressees": ["conductor", "librarian", "operations", "reader"],
                     "categories": ["reading", "structure", "origin", "shelf", "rights", "other"] } }
@@ -260,6 +269,104 @@ licenses, repertoire classes, concerts and pieces per year, the most
 performed works and composers, open tasks and proposals. Lists that name
 copies (works not sung for a long time, protection terms) stay in the app.
 
+### Review of transcriptions
+
+A transcription (scan → MusicXML) ends with a report in the format
+`bericht/1` (`bericht.json`, see [docs/api.md](api.md), "Reviewing
+transcriptions and corrections"). The app reads it into **review points**
+with a place in the score; the conductor decides the musical ones, the
+catalog librarian everything. An agent reads the review, hands in reports
+and picks up the correction orders; it never decides.
+
+`POST /api/v1/copies/{id}/transcription_reports` (roles contributor,
+librarian; module `transcription_review`) with the report as text
+(`content`, preferred: the text is kept unchanged as evidence) or as object
+(`report`), not both:
+
+```sh
+curl -u "notenarchiv-agent:$APP_PASSWORD" -H 'OCS-APIRequest: true' -H 'Accept: application/json' \
+  -H 'Content-Type: application/json' -X POST \
+  --data "$(jq -n --rawfile report bericht.json '{content: $report}')" \
+  'https://cloud.example.org/ocs/v2.php/apps/notenarchiv/api/v1/copies/1/transcription_reports'
+```
+
+```json
+{ "report": { "id": 4, "copy_id": 1, "version_id": 1, "source": "api", "sha256": "…", "report_file_id": null,
+              "round": "2", "report_date": "2026-10-20", "title": "Der Mond ist aufgegangen",
+              "basename": "1-01_Der-Mond-ist-aufgegangen_Schulz", "method": "neuaufbau",
+              "musicxml_file_id": 2, "musicxml_sha256": "…", "origin": "…", "review": "…", "reasoning": "…",
+              "rights_class": "gemeinfrei", "warnings": ["…translated…"], "superseded_by": null,
+              "created_at": "2026-10-22T12:00:00Z", "own": true },
+  "unchanged": false, "points": { "created": 1, "kept": 7, "closed": 0, "open": 8 },
+  "proposals": 0, "proposals_skipped": false, "warnings": [] }
+```
+
+**201** when the report was read, **200** with `unchanged: true` when the
+same text was read for this copy before (nothing is created again). The
+checks are those of the app (size, nesting, types, `format`, base name),
+plus: `signatur` must be the shelf mark of the copy in the path (400
+`The shelf mark of the report does not belong to this copy.`). `points`:
+`created` new review points, `kept` points the report names again,
+`closed` points of earlier rounds closed because the MusicXML changed,
+`open` open points of the copy afterwards. Rights and catalog fields of the
+report become proposals (`proposals`; `proposals_skipped` when the inbox is
+off); the catalog never changes.
+
+`GET /api/v1/copies/{id}/review?status=…&role=…&limit=…&cursor=…` (every
+role) gives the review of the copy:
+
+```json
+{ "copy_id": 1, "shelfmark": "1-1", "version_id": 1,
+  "counts": { "open": 7, "confirmed": 0, "correct": 1, "corrected": 0, "question": 0, "dismissed": 0 },
+  "reports": [ { "id": 4, "…": "as above" } ],
+  "items": [{ "id": 12, "copy_id": 1, "version_id": 1, "report_id": 4, "file_id": 2, "file_sha256": "…",
+              "category": "uncertain", "measures": "3", "measure_from": "3", "measure_to": "3", "voice": "T",
+              "verse": null, "page": null, "text": "…", "role": "conductor", "status": "open",
+              "correction": null, "decision_reason": null, "task_id": null, "resolved_report_id": null,
+              "created_at": "2026-10-22T12:00:00Z", "decided_at": null, "own": false }],
+  "total": 8, "next_cursor": null }
+```
+
+`reports`: the reports of this copy, newest first, without the received
+text; the one with `superseded_by: null` gives the current review state
+(`origin`, `review`, `reasoning` = `wv.herkunft`, `wv.pruefstand`,
+`wv.begruendung`). `counts` counts all points of the copy; `items` are the
+points in the order they were created, in pages, filtered by `status`
+(`open`, `confirmed`, `correct`, `corrected`, `question`, `dismissed`) and
+`role` (`conductor`, `librarian`). `category`: `uncertain`, `omitted`,
+`material`, `question`. `file_id` is the MusicXML the point was made for
+(`files[].id` of the copy).
+
+`GET /api/v1/correction_orders?copy_id=…&limit=…&cursor=…` (every role)
+lists the points decided as `correct`, oldest first:
+
+```json
+{ "items": [{ "id": 12, "copy_id": 1, "version_id": 1, "shelfmark": "1-1", "title": "Der Mond ist aufgegangen",
+              "report_id": 4, "basename": "1-01_Der-Mond-ist-aufgegangen_Schulz", "file_id": 2,
+              "file_name": "1-01_Der-Mond-ist-aufgegangen_Schulz.musicxml", "file_sha256": "…",
+              "category": "uncertain", "measures": "3", "measure_from": "3", "measure_to": "3", "voice": "T",
+              "verse": null, "page": null, "text": "…", "role": "conductor", "correction": "c sharp, as in the scan",
+              "decision_reason": null, "decided_at": "2026-10-22T13:00:00Z", "own": true }],
+  "total": 1, "next_cursor": null }
+```
+
+The tool chain carries out an order outside this API: it writes the
+corrected MusicXML as a **new file** into the archive folder (the file sync
+takes it over) and hands in its next report, naming the order `id` in
+`erledigt` (or the place as `{ "takt", "stimme" }`); the app closes the
+order when the MusicXML has changed.
+
+**Roles compared with the routes of the app.** Reading the review and the
+orders is open to every role, handing in reports to the contributor and the
+catalog librarian, as in the app. Deciding a point (`POST
+/api/review-points/{id}/decision`: conductor, catalog librarian) and saving
+a correction in the app (`POST /api/versions/{id}/corrections`: conductor,
+catalog librarian) have no counterpart here. Three differences on purpose:
+the routes take the **copy** (as every route of v1; a report belongs to the
+copy its `signatur` names), a report must name exactly that copy (the app
+route accepts any copy of the version), and internal preservation copies
+are refused or left out for roles that may not view them (principle 5).
+
 ## Versioning
 
 - **v1 stays stable.** Within v1, changes are only **additive**: new routes,
@@ -273,22 +380,8 @@ copies (works not sung for a long time, protection terms) stay in the app.
 - `api_version` of `GET /api/v1/modules` is `1` for the whole of v1.
 - `openapi.json` is generated from the code and checked in CI; a change of
   the API shows up there.
-
-## Planned: review points and correction orders (milestone 0.6)
-
-The review of transcriptions (report format `bericht/1`, review points
-with measures and voice, results, correction orders) comes as additional
-routes of v1. Planned, not built yet:
-
-| Method and path | Module | Purpose |
-|---|---|---|
-| `POST /api/v1/reports` | review module | Upload a report (`bericht/1`) of a transcription |
-| `GET /api/v1/review-points` | review module | Review points of a version (filter: state, role, measures) |
-| `POST /api/v1/review-points/{id}/result` | review module | Result of a check: reading correct, correction needed, question |
-| `GET /api/v1/correction-orders` | review module | Correction orders for the tool chain |
-
-They follow the rules above: `agent_api` plus their module, roles decide,
-no route decides for people. In the code the places to extend are marked
-`API-V1-EXTENSION` (`lib/ResponseDefinitions.php`,
-`tests/Unit/Controller/ControllerSecurityTest.php`,
-`tools/mcp/src/tools.ts`).
+- A new route follows the rules above: `agent_api` plus the module of its
+  function, the roles of the service, a rate limit, no route that decides
+  for people. `tests/Unit/Controller/ControllerSecurityTest.php` lists
+  every route of v1 with its counterpart in the app and the only routes
+  that write.

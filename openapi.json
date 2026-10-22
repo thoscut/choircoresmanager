@@ -53,7 +53,8 @@
                             "create_tasks",
                             "answer_tasks_for",
                             "propose",
-                            "view_preservation_copies"
+                            "view_preservation_copies",
+                            "submit_transcription_reports"
                         ],
                         "properties": {
                             "create_tasks": {
@@ -69,6 +70,9 @@
                                 "type": "boolean"
                             },
                             "view_preservation_copies": {
+                                "type": "boolean"
+                            },
+                            "submit_transcription_reports": {
                                 "type": "boolean"
                             }
                         }
@@ -539,6 +543,153 @@
                     }
                 }
             },
+            "CorrectionOrder": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "copy_id",
+                    "version_id",
+                    "shelfmark",
+                    "title",
+                    "report_id",
+                    "basename",
+                    "file_id",
+                    "file_name",
+                    "file_sha256",
+                    "category",
+                    "measures",
+                    "measure_from",
+                    "measure_to",
+                    "voice",
+                    "verse",
+                    "page",
+                    "text",
+                    "role",
+                    "correction",
+                    "decision_reason",
+                    "decided_at",
+                    "own"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "copy_id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "version_id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "shelfmark": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "title": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "report_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "nullable": true
+                    },
+                    "basename": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "file_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "nullable": true
+                    },
+                    "file_name": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "file_sha256": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "category": {
+                        "type": "string"
+                    },
+                    "measures": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "measure_from": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "measure_to": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "voice": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "verse": {
+                        "type": "integer",
+                        "format": "int64",
+                        "nullable": true
+                    },
+                    "page": {
+                        "type": "integer",
+                        "format": "int64",
+                        "nullable": true
+                    },
+                    "text": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "role": {
+                        "type": "string"
+                    },
+                    "correction": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "decision_reason": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "decided_at": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "own": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "CorrectionOrderPage": {
+                "type": "object",
+                "required": [
+                    "items",
+                    "total",
+                    "next_cursor"
+                ],
+                "properties": {
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CorrectionOrder"
+                        }
+                    },
+                    "total": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "next_cursor": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                }
+            },
             "Due": {
                 "type": "object",
                 "required": [
@@ -861,6 +1012,274 @@
                     "next_cursor": {
                         "type": "string",
                         "nullable": true
+                    }
+                }
+            },
+            "ReportResult": {
+                "type": "object",
+                "required": [
+                    "report",
+                    "unchanged",
+                    "points",
+                    "proposals",
+                    "proposals_skipped",
+                    "warnings"
+                ],
+                "properties": {
+                    "report": {
+                        "$ref": "#/components/schemas/TranscriptionReport"
+                    },
+                    "unchanged": {
+                        "type": "boolean"
+                    },
+                    "points": {
+                        "type": "object",
+                        "required": [
+                            "created",
+                            "kept",
+                            "closed",
+                            "open"
+                        ],
+                        "properties": {
+                            "created": {
+                                "type": "integer",
+                                "format": "int64"
+                            },
+                            "kept": {
+                                "type": "integer",
+                                "format": "int64"
+                            },
+                            "closed": {
+                                "type": "integer",
+                                "format": "int64"
+                            },
+                            "open": {
+                                "type": "integer",
+                                "format": "int64"
+                            }
+                        }
+                    },
+                    "proposals": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "proposals_skipped": {
+                        "type": "boolean"
+                    },
+                    "warnings": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "Review": {
+                "type": "object",
+                "required": [
+                    "copy_id",
+                    "shelfmark",
+                    "version_id",
+                    "counts",
+                    "reports",
+                    "items",
+                    "total",
+                    "next_cursor"
+                ],
+                "properties": {
+                    "copy_id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "shelfmark": {
+                        "type": "string"
+                    },
+                    "version_id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "counts": {
+                        "$ref": "#/components/schemas/ReviewCounts"
+                    },
+                    "reports": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TranscriptionReport"
+                        }
+                    },
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ReviewPoint"
+                        }
+                    },
+                    "total": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "next_cursor": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                }
+            },
+            "ReviewCounts": {
+                "type": "object",
+                "required": [
+                    "open",
+                    "confirmed",
+                    "correct",
+                    "corrected",
+                    "question",
+                    "dismissed"
+                ],
+                "properties": {
+                    "open": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "confirmed": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "correct": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "corrected": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "question": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "dismissed": {
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                }
+            },
+            "ReviewPoint": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "copy_id",
+                    "version_id",
+                    "report_id",
+                    "file_id",
+                    "file_sha256",
+                    "category",
+                    "measures",
+                    "measure_from",
+                    "measure_to",
+                    "voice",
+                    "verse",
+                    "page",
+                    "text",
+                    "role",
+                    "status",
+                    "correction",
+                    "decision_reason",
+                    "task_id",
+                    "resolved_report_id",
+                    "created_at",
+                    "decided_at",
+                    "own"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "copy_id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "version_id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "report_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "nullable": true
+                    },
+                    "file_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "nullable": true
+                    },
+                    "file_sha256": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "category": {
+                        "type": "string"
+                    },
+                    "measures": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "measure_from": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "measure_to": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "voice": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "verse": {
+                        "type": "integer",
+                        "format": "int64",
+                        "nullable": true
+                    },
+                    "page": {
+                        "type": "integer",
+                        "format": "int64",
+                        "nullable": true
+                    },
+                    "text": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "role": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "correction": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "decision_reason": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "task_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "nullable": true
+                    },
+                    "resolved_report_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "decided_at": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "own": {
+                        "type": "boolean"
                     }
                 }
             },
@@ -1496,6 +1915,118 @@
                     "title": {
                         "type": "string",
                         "nullable": true
+                    }
+                }
+            },
+            "TranscriptionReport": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "copy_id",
+                    "version_id",
+                    "source",
+                    "sha256",
+                    "report_file_id",
+                    "round",
+                    "report_date",
+                    "title",
+                    "basename",
+                    "method",
+                    "musicxml_file_id",
+                    "musicxml_sha256",
+                    "origin",
+                    "review",
+                    "reasoning",
+                    "rights_class",
+                    "warnings",
+                    "superseded_by",
+                    "created_at",
+                    "own"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "copy_id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "version_id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "source": {
+                        "type": "string"
+                    },
+                    "sha256": {
+                        "type": "string"
+                    },
+                    "report_file_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "nullable": true
+                    },
+                    "round": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "report_date": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "title": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "basename": {
+                        "type": "string"
+                    },
+                    "method": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "musicxml_file_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "nullable": true
+                    },
+                    "musicxml_sha256": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "origin": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "review": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "reasoning": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "rights_class": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "warnings": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "superseded_by": {
+                        "type": "integer",
+                        "format": "int64",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "own": {
+                        "type": "boolean"
                     }
                 }
             }
@@ -3046,6 +3577,692 @@
                 }
             }
         },
+        "/ocs/v2.php/apps/notenarchiv/api/v1/copies/{id}/review": {
+            "get": {
+                "operationId": "api_v1_review-review",
+                "summary": "Review of the transcription of a copy",
+                "description": "The reports of transcriptions read for the copy, newest first and without the received text: the first one with \"superseded_by\" null gives the current review state (origin, review, reasoning). Then the number of review points per status and the review points themselves in pages, in the order they were created, each with its place in the score, the responsible role and its status. Deciding them stays with the conductor and the catalog librarian in the app.",
+                "tags": [
+                    "api_v1_review"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the copy",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Only review points with this status",
+                        "schema": {
+                            "type": "string",
+                            "nullable": true,
+                            "default": null,
+                            "enum": [
+                                "open",
+                                "confirmed",
+                                "correct",
+                                "corrected",
+                                "question",
+                                "dismissed"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "role",
+                        "in": "query",
+                        "description": "Only review points of this responsible role",
+                        "schema": {
+                            "type": "string",
+                            "nullable": true,
+                            "default": null,
+                            "enum": [
+                                "conductor",
+                                "librarian"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Review points per page",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "default": 25,
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "name": "cursor",
+                        "in": "query",
+                        "description": "The \"next_cursor\" of the page before; omit it for the first page",
+                        "schema": {
+                            "type": "string",
+                            "nullable": true,
+                            "default": null
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Review of the copy returned",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Review"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "The status, the role, the limit or the cursor is not valid",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The account has no role, or the copy is an internal preservation copy it may not view",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The copy does not exist, or the review of transcriptions or the interface for agents is switched off",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Current user is not logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/notenarchiv/api/v1/correction_orders": {
+            "get": {
+                "operationId": "api_v1_review-orders",
+                "summary": "List correction orders",
+                "description": "The review points decided as \"correct\": what the tool chain has to change in the MusicXML (\"correction\"), oldest first, with copy, report base name, the MusicXML file and its checksum, and the place in the score. The tool chain delivers the corrected MusicXML as a new file through the file sync and closes an order with its next report (the order \"id\" in \"erledigt\"). Orders of internal preservation copies are left out for roles that may not view them.",
+                "tags": [
+                    "api_v1_review"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "copy_id",
+                        "in": "query",
+                        "description": "Only the orders of this copy",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "nullable": true,
+                            "default": null
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Orders per page",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "default": 25,
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "name": "cursor",
+                        "in": "query",
+                        "description": "The \"next_cursor\" of the page before; omit it for the first page",
+                        "schema": {
+                            "type": "string",
+                            "nullable": true,
+                            "default": null
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Page of correction orders returned",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/CorrectionOrderPage"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "The limit or the cursor is not valid",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The account has no role in the music archive",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The review of transcriptions or the interface for agents is switched off",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Current user is not logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/notenarchiv/api/v1/copies/{id}/transcription_reports": {
+            "post": {
+                "operationId": "api_v1_review-submit-report",
+                "summary": "Hand in the report of a transcription",
+                "description": "The report (format bericht/1, as written by the transcription, e.g. bericht.json) of a transcription of this copy; its \"signatur\" must be the shelf mark of the copy. The app checks it strictly, keeps it unchanged as evidence and reads it once: uncertain readings, omitted marks, material findings and questions become review points for the conductor or the catalog librarian, rights and catalog fields become proposals; the catalog itself never changes. The same report again creates nothing (200, \"unchanged\": true). Allowed for the roles contributor and librarian.",
+                "tags": [
+                    "api_v1_review"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "content": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "The report as JSON text (the content of bericht.json, at most 1 MB); send this or \"report\""
+                                    },
+                                    "report": {
+                                        "type": "object",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "The report as a JSON object, instead of \"content\"",
+                                        "additionalProperties": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the copy the report is about",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Report read; review points and proposals created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/ReportResult"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "The same report was read for this copy before; nothing created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/ReportResult"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "The report is not valid, names another shelf mark, or comes both or neither as text and object",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The roles of the account may not hand in reports, or the copy is an internal preservation copy it may not view",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The copy does not exist, or the review of transcriptions or the interface for agents is switched off",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Current user is not logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/ocs/v2.php/apps/notenarchiv/api/v1/statistics": {
             "get": {
                 "operationId": "api_v1_statistics-statistics",
@@ -3246,7 +4463,7 @@
             "get": {
                 "operationId": "api_v1_status-modules",
                 "summary": "Status of the interface and the modules for this account",
-                "description": "The version of the API, the roles of the account, which modules are active, what the account may write, the fields that can be proposed and the choices of a new task. Call it first: a route of a switched-off module answers 404.",
+                "description": "The version of the API, the roles of the account, which modules are active, what the account may write (tasks, proposals, reports of transcriptions), the fields that can be proposed and the choices of a new task. Call it first: a route of a switched-off module answers 404.",
                 "tags": [
                     "api_v1_status"
                 ],
@@ -4243,6 +5460,10 @@
         {
             "name": "api_v1_proposal",
             "description": "Proposals: create them and read the own ones (API v1, see docs/api-v1.md). A proposal changes nothing; the catalog librarian accepts or rejects it in the app (guideline 6)."
+        },
+        {
+            "name": "api_v1_review",
+            "description": "Review of transcriptions (API v1, see docs/api-v1.md): read the review of a copy and the correction orders, hand in the report of a transcription (format bericht/1). Deciding review points and saving corrections stay with people in the app: the conductor and the catalog librarian decide, the tool chain delivers a corrected MusicXML as a new file through the file sync. Internal preservation copies are left out for roles that may not view them, as in the other routes."
         },
         {
             "name": "api_v1_statistics",

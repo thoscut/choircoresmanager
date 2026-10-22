@@ -15,6 +15,7 @@ use OCA\Notenarchiv\Db\Task;
 use OCA\Notenarchiv\ResponseDefinitions;
 use OCA\Notenarchiv\Service\Modules;
 use OCA\Notenarchiv\Service\ProposalService;
+use OCA\Notenarchiv\Service\ReviewService;
 use OCA\Notenarchiv\Service\RightsPolicy;
 use OCA\Notenarchiv\Service\Roles;
 use OCA\Notenarchiv\Service\TaskService;
@@ -60,9 +61,9 @@ class ApiV1StatusController extends OCSController {
 	 * Status of the interface and the modules for this account
 	 *
 	 * The version of the API, the roles of the account, which modules are
-	 * active, what the account may write, the fields that can be proposed
-	 * and the choices of a new task. Call it first: a route of a switched-off
-	 * module answers 404.
+	 * active, what the account may write (tasks, proposals, reports of
+	 * transcriptions), the fields that can be proposed and the choices of a
+	 * new task. Call it first: a route of a switched-off module answers 404.
 	 *
 	 * @return DataResponse<Http::STATUS_OK, NotenarchivApiStatus, array{}>
 	 * @throws OCSForbiddenException The account has no role in the music archive
@@ -86,6 +87,7 @@ class ApiV1StatusController extends OCSController {
 					'answer_tasks_for' => array_values(array_intersect(TaskService::ADDRESSEES, $roles)),
 					'propose' => $this->roles->hasAnyRole($uid, ProposalService::PROPOSERS),
 					'view_preservation_copies' => $this->policy->mayViewPreservationCopies($uid),
+					'submit_transcription_reports' => $this->roles->hasAnyRole($uid, ReviewService::INGESTERS),
 				],
 				'proposable_fields' => ProposalService::proposableFields(),
 				'task_options' => [
