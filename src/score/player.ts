@@ -6,8 +6,10 @@
 /**
  * Plays a timeline with the synthesizer: look-ahead scheduling on the
  * AudioContext clock, pause/resume, tempo and voice balance changes while
- * playing. Browser only (Web Audio).
+ * playing, a count-in, a loop over the whole timeline and jumps to another
+ * place. Browser only (Web Audio).
  */
+import type { CountIn } from './countIn.ts'
 import type { PlayEvent, Timeline } from './timeline.ts'
 import type { VoiceMember } from './voices.ts'
 
@@ -25,6 +27,8 @@ export interface PlayerCallbacks {
 
 const LOOK_AHEAD = 0.25
 const START_DELAY = 0.06
+/** A loop shorter than this (seconds) is not repeated */
+const MIN_LOOP = 0.2
 
 /**
  * Loudness of a voice in a playback mode.
@@ -59,6 +63,25 @@ export function voiceGains(members: VoiceMember[], mode: PlayMode): (voice: stri
 /** Whatever plays notes: the synthesizer, or a recorder in tests. */
 export interface NoteTarget {
 	note(pitch: number, start: number, end: number, gain: number): void
+}
+
+/** Whatever plays the clicks of a count-in. */
+export interface ClickTarget {
+	click(time: number, accent: boolean): void
+}
+
+/**
+ * Hand the clicks of a count-in to the synthesizer.
+ *
+ * @param target - synthesizer
+ * @param countIn - the count-in
+ * @param startAudio - context time at which the music starts
+ * @param rate - tempo factor
+ */
+export function scheduleClicks(target: ClickTarget, countIn: CountIn, startAudio: number, rate: number): void {
+	for (const click of countIn.clicks) {
+		target.click(startAudio + click.time / rate, click.accent)
+	}
 }
 
 /** Where the timeline lies on the clock of an audio context. */
@@ -135,8 +158,11 @@ export class ScorePlayer {
 	private volume = 0.7
 	private gainOf: (voice: string) => number = () => 0.55
 	private playing = false
+	private loop = false
 	private startAudio = 0
 	private startScore = 0
+	/** the clock of the pass before a loop started again, while it still sounds */
+	private previous: Clock | null = null
 	private position = 0
 	private next = 0
 	private timer: ReturnType<typeof setInterval> | null = null
@@ -160,8 +186,9 @@ export class ScorePlayer {
 		if (!this.playing || !this.synth) {
 			return this.position
 		}
-		const elapsed = this.synth.context.currentTime - this.startAudio
-		return Math.max(this.startScore, this.startScore + elapsed * this.rate)
+		const now = this.synth.context.currentTime
+		const clock = this.previous && now < this.startAudio ? this.previous : this.clock()
+		return Math.max(clock.startScore, clock.startScore + (now - clock.startAudio) * this.rate)
 	}
 
 	/**
@@ -206,7 +233,38 @@ export class ScorePlayer {
 		this.synth?.setVolume(volume)
 	}
 
-	async play(): Promise<void> {
+	/**
+	 * Play the timeline again and again (the A–B loop: the timeline holds
+	 * the chosen measures).
+	 *
+	 * @param loop - true: start again at the end
+	 */
+	setLoop(loop: boolean): void {
+		this.loop = loop
+	}
+
+	/**
+	 * Go to another place: while playing, the playback continues there.
+	 *
+	 * @param time - position in seconds of the timeline
+	 */
+	seek(time: number): void {
+		const target = Math.max(0, Math.min(time, this.timeline.duration))
+		if (!this.playing) {
+			this.position = target
+			return
+		}
+		this.synth?.silence()
+		this.startFrom(target)
+		this.schedule()
+	}
+
+	/**
+	 * Start or resume.
+	 *
+	 * @param countIn - clicks before the music, for the position it starts at
+	 */
+	async play(countIn?: (start: number) => CountIn | null): Promise<void> {
 		if (this.playing || this.timeline.events.length === 0) {
 			return
 		}
@@ -218,6 +276,11 @@ export class ScorePlayer {
 			this.position = 0
 		}
 		this.startFrom(this.position)
+		const clicks = countIn?.(this.position) ?? null
+		if (clicks) {
+			this.startAudio += clicks.lead / this.rate
+			scheduleClicks(this.synth, clicks, this.startAudio, this.rate)
+		}
 		this.playing = true
 		this.timer = setInterval(() => this.schedule(), 25)
 		this.schedule()
@@ -268,7 +331,12 @@ export class ScorePlayer {
 		}
 		this.startScore = time
 		this.startAudio = synth.context.currentTime + START_DELAY
+		this.previous = null
 		this.next = firstEventAt(this.timeline.events, time)
+	}
+
+	private clock(): Clock {
+		return { startAudio: this.startAudio, startScore: this.startScore, rate: this.rate }
 	}
 
 	/**
@@ -294,9 +362,20 @@ export class ScorePlayer {
 			return
 		}
 		const now = synth.context.currentTime
+		const horizon = now + LOOK_AHEAD
 		const events = this.timeline.events
-		const clock = { startAudio: this.startAudio, startScore: this.startScore, rate: this.rate }
-		this.next = scheduleEvents(synth, events, this.next, clock, now + LOOK_AHEAD, now, this.gainOf)
+		this.next = scheduleEvents(synth, events, this.next, this.clock(), horizon, now, this.gainOf)
+		if (this.next >= events.length && this.loop && this.timeline.duration >= MIN_LOOP) {
+			// Start again seamlessly where the timeline ends
+			const end = this.startAudio + (this.timeline.duration - this.startScore) / this.rate
+			if (end <= horizon) {
+				this.previous = this.clock()
+				this.startAudio = end
+				this.startScore = 0
+				this.next = scheduleEvents(synth, events, 0, this.clock(), horizon, now, this.gainOf)
+			}
+			return
+		}
 		if (this.next >= events.length && this.currentTime() >= this.timeline.duration) {
 			this.halt()
 			this.position = 0

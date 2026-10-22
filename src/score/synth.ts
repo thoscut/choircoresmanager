@@ -120,6 +120,32 @@ export class Synth {
 		}
 	}
 
+	/**
+	 * Schedule one click of a count-in: a short, bright tick, higher on the
+	 * first beat of a bar.
+	 *
+	 * @param time - start in AudioContext time
+	 * @param accent - first beat of a bar
+	 */
+	click(time: number, accent: boolean): void {
+		const context = this.context
+		const oscillator = context.createOscillator()
+		oscillator.frequency.value = accent ? 1760 : 1320
+		const envelope = context.createGain()
+		envelope.gain.setValueAtTime(0, time)
+		envelope.gain.linearRampToValueAtTime(accent ? 0.9 : 0.6, time + 0.002)
+		envelope.gain.setTargetAtTime(0, time + 0.006, 0.015)
+		oscillator.connect(envelope).connect(this.bus)
+		oscillator.start(time)
+		oscillator.stop(time + 0.12)
+		const sounding: SoundingNote = { oscillator, envelope }
+		this.sounding.add(sounding)
+		oscillator.onended = () => {
+			envelope.disconnect()
+			this.sounding.delete(sounding)
+		}
+	}
+
 	/** Fade out everything that sounds or is scheduled. */
 	silence(): void {
 		const now = this.context.currentTime

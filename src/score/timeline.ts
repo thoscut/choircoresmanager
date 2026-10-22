@@ -214,3 +214,39 @@ export function buildTimeline(order: number[], timing: LinearTiming, notesByMeas
 		duration: toSeconds(cursor),
 	}
 }
+
+/**
+ * Where the playback starts for a note or a measure chosen in the score: its
+ * next pass from the current position on (in a repeat, the pass that comes
+ * next), otherwise its first pass.
+ *
+ * @param starts - start of every pass in seconds, in playing order
+ * @param after - current position in seconds
+ * @return seconds, or null when it is not played
+ */
+export function nextPass(starts: number[], after: number): number | null {
+	if (starts.length === 0) {
+		return null
+	}
+	return starts.find((start) => start >= after - 1e-6) ?? starts[0]
+}
+
+/**
+ * Start of every pass of a note.
+ *
+ * @param timeline - playback events
+ * @param id - note id in the SVG
+ */
+export function noteStarts(timeline: Timeline, id: string): number[] {
+	return timeline.events.filter((event) => event.id === id).map((event) => event.start)
+}
+
+/**
+ * Start of every pass of a measure.
+ *
+ * @param timeline - playback events
+ * @param index - measure index
+ */
+export function measureStarts(timeline: Timeline, index: number): number[] {
+	return timeline.measures.filter((slot) => slot.index === index).map((slot) => slot.start)
+}

@@ -9,9 +9,10 @@
  * OfflineAudioContext, which computes the sound faster than real time.
  * Browser only (Web Audio).
  */
+import type { CountIn } from './countIn.ts'
 import type { Timeline } from './timeline.ts'
 
-import { scheduleEvents } from './player.ts'
+import { scheduleClicks, scheduleEvents } from './player.ts'
 import { renderedSeconds } from './practice.ts'
 import { Synth } from './synth.ts'
 
@@ -45,6 +46,8 @@ export interface RenderOptions {
 	signal?: AbortSignal
 	/** share of the rendering done, 0 … 1 */
 	onProgress?: (done: number) => void
+	/** clicks before the music */
+	countIn?: CountIn | null
 }
 
 /**
@@ -55,15 +58,20 @@ export interface RenderOptions {
  * @param options - tempo, sample rate, cancel signal, progress
  */
 export async function renderTimeline(timeline: Timeline, gainOf: (voice: string) => number, options: RenderOptions): Promise<Float32Array> {
-	const { rate, sampleRate, signal, onProgress } = options
+	const { rate, sampleRate, signal, onProgress, countIn } = options
 	if (signal?.aborted) {
 		throw new RenderCancelled()
 	}
-	const seconds = renderedSeconds(timeline, rate)
+	const lead = countIn?.lead ?? 0
+	const seconds = renderedSeconds(timeline, rate, lead)
 	const context = new OfflineAudioContext({ numberOfChannels: 1, length: Math.max(1, Math.ceil(seconds * sampleRate)), sampleRate })
 	const synth = new Synth(EXPORT_VOLUME, context)
 	// The whole timeline at once, with the same scheduling as the playback
-	scheduleEvents(synth, timeline.events, 0, { startAudio: 0, startScore: 0, rate }, Infinity, 0, gainOf)
+	const startAudio = lead / rate
+	if (countIn) {
+		scheduleClicks(synth, countIn, startAudio, rate)
+	}
+	scheduleEvents(synth, timeline.events, 0, { startAudio, startScore: 0, rate }, Infinity, 0, gainOf)
 
 	let cancelled = false
 	const rendering = new Promise<AudioBuffer>((resolve, reject) => {

@@ -9,16 +9,21 @@
  * in the archive (a first ending without a second one, `times="3"`), so the
  * order is computed here from the MusicXML marks.
  *
- * Conventions (as MuseScore plays them):
- * - A backward repeat without a forward repeat goes back to the measure after
- *   the previous backward repeat, or to the beginning.
- * - Without `times`, a section is played twice, or as often as the highest
- *   ending number of the bracket group requires.
+ * Conventions (as MuseScore 4 plays them):
+ * - A backward repeat goes back to the last forward repeat before it, or to
+ *   the beginning; not to the measure after an earlier backward repeat.
+ * - Without `times`, a section is played twice. In a bracket group it is
+ *   played at least as often as the highest ending number requires
+ *   (`times="3"` with a fourth ending: four passes).
  * - An ending is played in the passes it is numbered for; in a pass not
  *   covered by any ending of the group, the whole group is skipped.
  * - After D.C./D.S. (and when playing without repeats), repeats are not
  *   taken; of each bracket group only the last ending that does not lead
  *   back is played. Fine ends the piece and "To Coda" jumps to the coda.
+ * - Jump marks count from every part (musicxml.ts). Printed segno and coda
+ *   signs stand in for missing playback marks: a segno sign is a segno, a
+ *   coda sign before the first D.C./D.S. is "To Coda", one after it the coda.
+ *   Words such as "D.C. al Fine" without a playback mark do not jump.
  */
 import type { MeasureMarks } from './musicxml.ts'
 
@@ -79,17 +84,53 @@ function endingGroups(measures: MeasureMarks[]): { spanAt: Map<number, EndingSpa
 }
 
 /**
+ * Marks with the printed segno and coda signs used where the file has no
+ * playback mark for them.
+ *
+ * @param measures - structure marks
+ */
+function withSigns(measures: MeasureMarks[]): MeasureMarks[] {
+	const marks = measures.map((measure) => ({ ...measure }))
+	if (!marks.some((measure) => measure.segno !== null)) {
+		for (const measure of marks) {
+			if (measure.segnoSign) {
+				measure.segno = ''
+			}
+		}
+	}
+	const firstJump = marks.findIndex((measure) => measure.daCapo || measure.dalSegno !== null)
+	if (firstJump !== -1) {
+		const needToCoda = !marks.some((measure) => measure.toCoda !== null)
+		const needCoda = !marks.some((measure) => measure.coda !== null)
+		marks.forEach((measure, index) => {
+			if (!measure.codaSign || measure.coda !== null || measure.toCoda !== null) {
+				return
+			}
+			if (needToCoda && index < firstJump) {
+				measure.toCoda = ''
+			} else if (needCoda && index > firstJump) {
+				measure.coda = ''
+			}
+		})
+	}
+	return marks
+}
+
+/**
  * Measure indices in playing order.
  *
- * @param measures - structure marks of all measures
+ * @param written - structure marks of all measures
  * @param repeats - false: play straight through (no repeats or jumps, only
  *   the last ending of each bracket group)
  */
-export function unfoldRepeats(measures: MeasureMarks[], repeats = true): number[] {
+export function unfoldRepeats(written: MeasureMarks[], repeats = true): number[] {
+	const measures = withSigns(written)
 	const n = measures.length
 	const { spanAt, groupOf } = endingGroups(measures)
 	const groupEnds = new Set([...groupOf.values()].map((group) => group.end))
 	const order: number[] = []
+	// passes taken back from each backward repeat outside of bracket groups
+	const taken = new Map<number, number>()
 	let sectionStart = 0
 	let pass = 1
 	let jumped = !repeats
@@ -99,10 +140,10 @@ export function unfoldRepeats(measures: MeasureMarks[], repeats = true): number[
 	let guard = 0
 
 	while (i < n && guard++ < 50 * n + 1000) {
-		// Leaving a bracket group ends its repeat section
+		// Leaving a bracket group starts counting the passes anew; a later
+		// backward repeat still goes back to the last forward repeat
 		if (i > 0 && groupEnds.has(i - 1) && !cameBack) {
 			pass = 1
-			sectionStart = i
 		}
 		const span = spanAt.get(i)
 		if (span) {
@@ -138,19 +179,26 @@ export function unfoldRepeats(measures: MeasureMarks[], repeats = true): number[
 				continue
 			}
 		}
-		if (marks.repeatEnd) {
-			if (!jumped) {
-				const group = groupOf.get(i)
-				const times = marks.repeatTimes ?? Math.max(2, group?.maxNumber ?? 0)
-				if (pass < times) {
+		if (marks.repeatEnd && !jumped) {
+			const group = groupOf.get(i)
+			if (group) {
+				if (pass < Math.max(marks.repeatTimes ?? 2, group.maxNumber)) {
 					pass++
 					i = sectionStart
 					cameBack = true
 					continue
 				}
+			} else {
+				const done = taken.get(i) ?? 0
+				if (done < (marks.repeatTimes ?? 2) - 1) {
+					taken.set(i, done + 1)
+					pass++
+					i = sectionStart
+					cameBack = true
+					continue
+				}
+				pass = 1
 			}
-			pass = 1
-			sectionStart = i + 1
 		}
 		if (repeats && !jumpUsed && marks.daCapo) {
 			jumped = true

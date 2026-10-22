@@ -13,6 +13,7 @@
  * and the loudness of the playback (player.voiceGains), so that a file
  * sounds like playing the same choice in the score view.
  */
+import type { CountIn } from './countIn.ts'
 import type { MidiEvent, MidiTrack } from './midi.ts'
 import type { ScoreModel } from './model.ts'
 import type { PlayMode } from './player.ts'
@@ -59,6 +60,11 @@ export const MIDI_PROGRAM = 20
 
 /** Velocity of every note; the balance of the voices is in the channel volume */
 export const MIDI_VELOCITY = 80
+
+/** General MIDI drum channel (10, counted from 0) and the sounds of a count-in: high and low wood block */
+const DRUM_CHANNEL = 9
+const CLICK_ACCENT = 76
+const CLICK_BEAT = 77
 
 /** Loudest gain of the playback (focus voice louder), channel volume 127 */
 const FULL_GAIN = voiceGain('focus', true, true)
@@ -169,14 +175,15 @@ export function practiceFileName(name: { shelfmark: string, title: string, label
 }
 
 /**
- * Length of a rendered file in seconds: the timeline at the chosen tempo
- * and the release of the last notes.
+ * Length of a rendered file in seconds: the count-in and the timeline at
+ * the chosen tempo, and the release of the last notes.
  *
  * @param timeline - playback events
  * @param rate - tempo factor
+ * @param lead - seconds of count-in at 100 % tempo
  */
-export function renderedSeconds(timeline: Timeline, rate: number): number {
-	return timeline.duration / rate + RELEASE_TAIL + 0.1
+export function renderedSeconds(timeline: Timeline, rate: number, lead = 0): number {
+	return (lead + timeline.duration) / rate + RELEASE_TAIL + 0.1
 }
 
 /**
@@ -336,11 +343,14 @@ interface NoteSpan {
  * @param options.rate - tempo factor (1 = as in the score)
  * @param options.title - name of the first track
  * @param options.labelOf - display name of a voice
+ * @param options.countIn - clicks before the music, on a drum track of their own
  */
 export function practiceMidi(model: ScoreModel, timeline: Timeline, part: PracticePart,
-	options: { rate: number, title: string, labelOf: (voice: Voice) => string }): Uint8Array {
-	const slots = slotsOf(model, timeline)
-	const endTick = slots.length > 0 ? slots[slots.length - 1].tick + Math.round(slots[slots.length - 1].quarters * PPQ) : 0
+	options: { rate: number, title: string, labelOf: (voice: Voice) => string, countIn?: CountIn | null }): Uint8Array {
+	const countIn = options.countIn ?? null
+	const lead = countIn ? Math.round(countIn.lead / countIn.quarterSeconds * PPQ) : 0
+	const slots = slotsOf(model, timeline).map((slot) => ({ ...slot, tick: slot.tick + lead }))
+	const endTick = slots.length > 0 ? slots[slots.length - 1].tick + Math.round(slots[slots.length - 1].quarters * PPQ) : lead
 	const written = writtenSignature(model.signatures.time)
 
 	// Conductor track: tempo, time and key signature
@@ -350,6 +360,18 @@ export function practiceMidi(model: ScoreModel, timeline: Timeline, part: Practi
 	}
 	let tempo = -1
 	let signature = ''
+	if (countIn && lead > 0) {
+		// The count-in in the bars of the music and in the tempo where it starts
+		const bars = countIn.lead / countIn.quarterSeconds / countIn.barQuarters
+		const fitting = fittingSignature(Math.abs(bars - Math.round(bars)) < 1e-3 ? countIn.barQuarters : lead / PPQ, written)
+		if (fitting) {
+			signature = fitting.join('/')
+			conductor.push({ tick: 0, bytes: timeSignatureEvent(fitting[0], fitting[1]) })
+		}
+		const quarterTempo = 60 / countIn.quarterSeconds * options.rate
+		tempo = Math.round(60_000_000 / quarterTempo)
+		conductor.push({ tick: 0, bytes: tempoEvent(quarterTempo) })
+	}
 	for (const slot of slots) {
 		const fitting = fittingSignature(slot.quarters, written)
 		if (fitting && fitting.join('/') !== signature) {
@@ -396,6 +418,16 @@ export function practiceMidi(model: ScoreModel, timeline: Timeline, part: Practi
 	}
 
 	const tracks: MidiTrack[] = [{ events: conductor, end: endTick }]
+	if (countIn && lead > 0) {
+		const clicks: MidiEvent[] = [{ tick: 0, bytes: trackName('Count-in') }]
+		for (const click of countIn.clicks) {
+			const tick = lead + Math.round(click.time / countIn.quarterSeconds * PPQ)
+			const key = click.accent ? CLICK_ACCENT : CLICK_BEAT
+			clicks.push({ tick, bytes: noteOn(DRUM_CHANNEL, key, click.accent ? 110 : MIDI_VELOCITY) })
+			clicks.push({ tick: tick + PPQ / 8, bytes: noteOff(DRUM_CHANNEL, key) })
+		}
+		tracks.push({ events: clicks, end: endTick })
+	}
 	notes.forEach((spans, index) => {
 		const channel = channelOf(index)
 		const head: MidiEvent[] = [

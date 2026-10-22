@@ -136,6 +136,34 @@ All notable changes to this app are documented in this file. The format follows
     a sender per choir, built with Node and puppeteer-core.
   - Migration `Version000810Date20261026100000`: five columns in existing
     tables, no new table.
+- Playback (milestone 0.8), in the score viewer and in the view of shared
+  excerpts:
+  - Count-in of one or two bars (**Count-in** under "Tempo and volume"), in
+    the time signature and tempo of the place where the playback starts; a
+    pickup comes in on its last beats. Remembered per person in the browser.
+    Practice files can start with it, too (WAV: clicks; MIDI: a drum track of
+    its own).
+  - A–B loop: the switch **Loop** next to "From measure" and "To measure"
+    plays the shown measures again and again, without a gap; in a shared
+    excerpt the whole excerpt. Announced to screen readers.
+  - A click on a note or a measure starts the playback there (at its next
+    pass in a repeat), with one handler on the score container; the cleaned
+    SVG carries no handlers. Keyboard alternative: the arrow keys left and
+    right in the score go to the previous or next measure in playing order.
+
+### Fixed
+
+- Playing order checked against the test cases of the parallel development
+  (own MusicXML test files, `src/__tests__/playOrder.test.ts`):
+  - A backward repeat goes back to the last forward repeat or the beginning,
+    as MuseScore 4 plays it, no longer to the measure after an earlier
+    backward repeat.
+  - `times="3"` with an ending "1, 2, 3" and a fourth ending plays four
+    passes (before: three, and the fourth ending was left out).
+  - Jump marks (segno, coda, To Coda, D.C., D.S., Fine) count from every
+    part, not only from the first one; a D.C. or Coda written only in a
+    lower voice was ignored before.
+  - Printed segno and coda signs stand in for missing playback marks.
 
 ### Security
 

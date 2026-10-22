@@ -13,6 +13,7 @@
  *
  * Loaded lazily (own chunk) when the dialog is opened.
  */
+import type { CountInBars } from '../score/countIn.ts'
 import type { ScoreModel } from '../score/model.ts'
 import type { PlayMode } from '../score/player.ts'
 import type { PracticeFormat, PracticePart } from '../score/practice.ts'
@@ -35,6 +36,7 @@ import { authorizePracticeAudio, errorMessage } from '../api.ts'
 import { formatDuration } from '../durations.ts'
 import { focusAfterUpdate } from '../focus.ts'
 import { formatSize } from '../format.ts'
+import { countInFor } from '../score/countIn.ts'
 import { playbackTimeline } from '../score/model.ts'
 import {
 	estimateBytes,
@@ -63,6 +65,8 @@ const props = defineProps<{
 	/** focus voice of the score view ('' for none) */
 	focusKey: string
 	mode: PlayMode
+	/** count-in of the score view, the first choice here */
+	countInBars: CountInBars
 	/** display name of a voice */
 	voiceName: (voice: Voice) => string
 }>()
@@ -88,7 +92,10 @@ const rate = computed(() => props.tempoPercent / 100)
 const timeline = computed(() => playbackTimeline(props.model, props.range, props.repeats))
 const from = computed(() => props.model.measures[props.range?.start ?? 0]?.number ?? '')
 const to = computed(() => props.model.measures[props.range?.end ?? props.model.measures.length - 1]?.number ?? '')
-const playingSeconds = computed(() => timeline.value.duration / rate.value)
+/** Count-in at the start of every file: "0", "1" or "2" bars */
+const countInChoice = ref<'0' | '1' | '2'>(String(props.countInBars) as '0' | '1' | '2')
+const countIn = computed(() => countInFor(props.model, timeline.value, 0, Number(countInChoice.value)))
+const playingSeconds = computed(() => ((countIn.value?.lead ?? 0) + timeline.value.duration) / rate.value)
 
 const scope = ref<'one' | 'all'>('one')
 const voiceKey = ref(props.mode === 'all' ? '' : props.focusKey)
@@ -140,7 +147,7 @@ const downloadName = computed(() => (parts.value.length > 1
 	? practiceFileName({ shelfmark: shelfmark.value, title: title.value, label: t('notenarchiv', 'All voices'), from: from.value, to: to.value, ext: 'zip' })
 	: fileNameOf(parts.value[0])))
 
-const estimate = computed(() => estimateBytes(format.value, renderedSeconds(timeline.value, rate.value), Number(channels.value),
+const estimate = computed(() => estimateBytes(format.value, renderedSeconds(timeline.value, rate.value, countIn.value?.lead ?? 0), Number(channels.value),
 	timeline.value.events.filter((event) => event.sound).length, parts.value.length))
 
 const long = computed(() => playingSeconds.value > LONG_EXPORT_SECONDS)
@@ -239,11 +246,12 @@ async function makeFile(part: PracticePart, onProgress: (done: number) => void, 
 			rate: rate.value,
 			title: [shelfmark.value, title.value].filter((text) => text !== '').join(' '),
 			labelOf: props.voiceName,
+			countIn: countIn.value,
 		})
 		onProgress(1)
 		return data
 	}
-	const samples = await renderTimeline(timeline.value, partGains(part), { rate: rate.value, sampleRate: SAMPLE_RATE, signal, onProgress })
+	const samples = await renderTimeline(timeline.value, partGains(part), { rate: rate.value, sampleRate: SAMPLE_RATE, signal, onProgress, countIn: countIn.value })
 	return encodeWav(samples, SAMPLE_RATE, channels.value === '2' ? 2 : 1)
 }
 
@@ -434,6 +442,11 @@ onBeforeUnmount(() => {
 				<NcRadioGroup v-if="format === 'wav'" v-model="channels" :label="t('notenarchiv', 'Channels')">
 					<NcRadioGroupButton value="1" :label="t('notenarchiv', 'Mono')" />
 					<NcRadioGroupButton value="2" :label="t('notenarchiv', 'Stereo')" />
+				</NcRadioGroup>
+				<NcRadioGroup v-model="countInChoice" :label="t('notenarchiv', 'Count-in')">
+					<NcRadioGroupButton value="0" :label="t('notenarchiv', 'Off')" />
+					<NcRadioGroupButton value="1" :label="t('notenarchiv', '1 bar')" />
+					<NcRadioGroupButton value="2" :label="t('notenarchiv', '2 bars')" />
 				</NcRadioGroup>
 			</fieldset>
 

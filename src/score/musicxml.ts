@@ -8,6 +8,10 @@
  * incompletely: part names and staff counts, printed measure numbers, and
  * the playback structure (repeats with `times`, endings, D.C./D.S./Fine/Coda
  * from `<sound>`), plus the tempo marking.
+ *
+ * Repeats and endings are read from the first part. Jump marks (segno, coda,
+ * D.C., D.S., Fine) are read from every part: they are often written only in
+ * the top part, but sometimes only in another one.
  */
 import type { XmlElement } from './xml.ts'
 
@@ -21,7 +25,10 @@ export interface PartInfo {
 	staves: number
 }
 
-/** Structure marks of one measure, read from the first part. */
+/**
+ * Structure marks of one measure: repeats and endings of the first part,
+ * jump marks of all parts.
+ */
 export interface MeasureMarks {
 	/** `measure@number` – the printed measure number */
 	number: string
@@ -41,6 +48,10 @@ export interface MeasureMarks {
 	daCapo: boolean
 	dalSegno: string | null
 	fine: boolean
+	/** a printed segno sign (with or without a playback mark) */
+	segnoSign: boolean
+	/** a printed coda sign (with or without a playback mark) */
+	codaSign: boolean
 }
 
 export interface TempoMark {
@@ -115,6 +126,8 @@ function readMeasure(content: XmlElement, measure: XmlElement): MeasureMarks {
 		daCapo: false,
 		dalSegno: null,
 		fine: false,
+		segnoSign: descendants(content, 'segno').length > 0,
+		codaSign: descendants(content, 'coda').length > 0,
 	}
 	for (const barline of childElements(content, 'barline')) {
 		for (const repeat of childElements(barline, 'repeat')) {
@@ -138,26 +151,44 @@ function readMeasure(content: XmlElement, measure: XmlElement): MeasureMarks {
 	}
 	for (const sound of descendants(content, 'sound')) {
 		const attrs = sound.attrs
-		if (attrs.segno !== undefined) {
-			marks.segno = attrs.segno
-		}
-		if (attrs.coda !== undefined) {
-			marks.coda = attrs.coda
-		}
-		if (attrs.tocoda !== undefined) {
-			marks.toCoda = attrs.tocoda
-		}
-		if (attrs.dalsegno !== undefined) {
-			marks.dalSegno = attrs.dalsegno
-		}
+		marks.segno = jumpValue(attrs.segno) ?? marks.segno
+		marks.coda = jumpValue(attrs.coda) ?? marks.coda
+		marks.toCoda = jumpValue(attrs.tocoda) ?? marks.toCoda
+		marks.dalSegno = jumpValue(attrs.dalsegno) ?? marks.dalSegno
 		if (attrs.dacapo === 'yes') {
 			marks.daCapo = true
 		}
-		if (attrs.fine !== undefined && attrs.fine !== 'no') {
+		if (jumpValue(attrs.fine) !== null) {
 			marks.fine = true
 		}
 	}
 	return marks
+}
+
+/**
+ * Value of a jump attribute of `<sound>`; "no" switches it off.
+ *
+ * @param value - attribute value, e.g. the name of a segno
+ */
+function jumpValue(value: string | undefined): string | null {
+	return value === undefined || value.trim().toLowerCase() === 'no' ? null : value
+}
+
+/**
+ * Add the jump marks of the same measure in another part.
+ *
+ * @param target - marks of the first part, changed in place
+ * @param other - marks of another part
+ */
+function mergeJumps(target: MeasureMarks, other: MeasureMarks): void {
+	target.segno ??= other.segno
+	target.coda ??= other.coda
+	target.toCoda ??= other.toCoda
+	target.dalSegno ??= other.dalSegno
+	target.daCapo ||= other.daCapo
+	target.fine ||= other.fine
+	target.segnoSign ||= other.segnoSign
+	target.codaSign ||= other.codaSign
 }
 
 /**
@@ -260,6 +291,12 @@ export function parseMusicXml(text: string): MusicXmlStructure {
 				measures = partMeasures.map((measure) => readMeasure(measure, measure))
 				tempoScope = part
 				firstContents = partMeasures
+			} else {
+				partMeasures.forEach((measure, k) => {
+					if (measures[k]) {
+						mergeJumps(measures[k], readMeasure(measure, measure))
+					}
+				})
 			}
 		})
 	} else {
@@ -279,7 +316,14 @@ export function parseMusicXml(text: string): MusicXmlStructure {
 		for (const id of order) {
 			parts.push({ id, name: names.get(id) ?? '', staves: staffCount(contents.get(id) ?? []) })
 		}
-		measures = timewise.map((measure) => readMeasure(childElements(measure, 'part')[0] ?? measure, measure))
+		measures = timewise.map((measure) => {
+			const [first, ...others] = childElements(measure, 'part')
+			const marks = readMeasure(first ?? measure, measure)
+			for (const other of others) {
+				mergeJumps(marks, readMeasure(other, measure))
+			}
+			return marks
+		})
 		firstContents = contents.get(order[0] ?? '') ?? []
 		tempoScope = timewise.length > 0 ? root : undefined
 	}

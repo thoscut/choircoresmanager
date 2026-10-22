@@ -13,8 +13,10 @@
  *
  * Built from the same modules as the score view of the archive (src/score);
  * the text reference and the text description are the alternatives to the
- * notation (WCAG 1.1.1).
+ * notation (WCAG 1.1.1). As there: a count-in, a loop (here over the whole
+ * excerpt) and starting at a clicked note, or with the arrow keys.
  */
+import type { CountInBars } from '../score/countIn.ts'
 import type { MemberPracticeAudioInput } from '../types.ts'
 import type { PlayMode, ScorePlayer as ScorePlayerType } from '../score/player.ts'
 import type { PracticePart } from '../score/practice.ts'
@@ -35,12 +37,14 @@ import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcRadioGroup from '@nextcloud/vue/components/NcRadioGroup'
 import NcRadioGroupButton from '@nextcloud/vue/components/NcRadioGroupButton'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
+import { countInFor, slotAt, storeCountIn, storedCountIn } from '../score/countIn.ts'
 import { markFocus } from '../score/emphasis.ts'
 import { loadScore, playbackTimeline, renderPages, selectMeasures } from '../score/model.ts'
 import { ScorePlayer, voiceGains } from '../score/player.ts'
 import { partGains, practiceFileName, practiceMidi, SAMPLE_RATE } from '../score/practice.ts'
 import { RenderCancelled, renderTimeline } from '../score/render.ts'
 import { sanitizeSvg } from '../score/sanitize.ts'
+import { measureStarts, nextPass, noteStarts } from '../score/timeline.ts'
 import { createToolkit } from '../score/toolkit.ts'
 import { voiceLabel } from '../score/voices.ts'
 import { encodeWav } from '../score/wav.ts'
@@ -81,6 +85,7 @@ const summaryId = useId()
 const tempoId = useId()
 const tempoHintId = useId()
 const exportStatusId = useId()
+const scoreHintId = useId()
 
 // ---- loading ----------------------------------------------------------------
 
@@ -237,6 +242,16 @@ function applyFocus(): void {
 const playing = ref(false)
 const mode = ref<PlayMode>('all')
 const repeats = ref(true)
+/** Play the excerpt again and again */
+const loop = ref(false)
+/** Bars of count-in, remembered in this browser (as in the score view) */
+const countInBars = ref<CountInBars>(storedCountIn())
+const countInChoice = computed<'0' | '1' | '2'>({
+	get: () => String(countInBars.value) as '0' | '1' | '2',
+	set: (value) => {
+		countInBars.value = Number(value) as CountInBars
+	},
+})
 const tempoPercent = ref(excerptTempo(props.tempo))
 const position = ref(0)
 const timeline = shallowRef<Timeline>({ events: [], measures: [], duration: 0 })
@@ -271,6 +286,7 @@ function ensurePlayer(): ScorePlayerType {
 		player.setTimeline(timeline.value)
 		player.setRate(tempoPercent.value / 100)
 		player.setGains(gains())
+		player.setLoop(loop.value)
 	}
 	return player
 }
@@ -286,14 +302,94 @@ async function togglePlay(): Promise<void> {
 		announce(t('notenarchiv', 'Paused at measure {number}.', { number: currentMeasureNumber.value }))
 		return
 	}
+	await startPlaying(current)
+}
+
+/**
+ * Start playing from the player's position, with the count-in.
+ *
+ * @param current - the player
+ */
+async function startPlaying(current: ScorePlayerType): Promise<void> {
 	resetHighlights()
-	await current.play()
+	const loaded = model.value
+	const bars = countInBars.value
+	await current.play(loaded && bars > 0 ? (time) => countInFor(loaded, timeline.value, time, bars) : undefined)
 	playing.value = current.isPlaying
 	if (playing.value) {
 		lastMeasureAnnouncement = Date.now()
 		updatePosition(current.currentTime())
-		announce(t('notenarchiv', 'Playing from measure {number}.', { number: currentMeasureNumber.value }))
+		const number = currentMeasureNumber.value
+		announce(bars > 0
+			? t('notenarchiv', 'Count-in, then playing from measure {number}.', { number })
+			: t('notenarchiv', 'Playing from measure {number}.', { number }))
 	}
+}
+
+/**
+ * Go to a place of the playback: while playing, it continues there;
+ * otherwise the next start begins there.
+ *
+ * @param time - position in seconds of the timeline
+ */
+function moveTo(time: number): void {
+	const current = ensurePlayer()
+	current.seek(time)
+	resetHighlights()
+	updatePosition(time)
+	lastMeasureAnnouncement = Date.now()
+	const number = currentMeasureNumber.value
+	announce(current.isPlaying
+		? t('notenarchiv', 'Playing from measure {number}.', { number })
+		: t('notenarchiv', 'Start at measure {number}.', { number }))
+}
+
+/**
+ * A click into the score: on a note or a measure, the playback starts there
+ * (at its next pass from the current position). One handler on the
+ * container; the SVG itself carries no handlers.
+ *
+ * @param event - click event
+ */
+function onScoreClick(event: MouseEvent): void {
+	const target = event.target instanceof Element ? event.target : null
+	const loaded = model.value
+	if (!target || !loaded || !props.canPlay || status.value !== 'ready') {
+		return
+	}
+	const after = player?.currentTime() ?? 0
+	const note = target.closest('g.note[data-id]')
+	let time = note ? nextPass(noteStarts(timeline.value, note.getAttribute('data-id') ?? ''), after) : null
+	if (time === null) {
+		const measure = target.closest('g.measure[data-id]')
+		const index = measure ? loaded.measures.findIndex((candidate) => candidate.id === measure.getAttribute('data-id')) : -1
+		time = index === -1 ? null : nextPass(measureStarts(timeline.value, index), after)
+	}
+	if (time === null) {
+		return
+	}
+	const current = ensurePlayer()
+	if (current.isPlaying) {
+		moveTo(time)
+	} else {
+		current.seek(time)
+		startPlaying(current)
+	}
+}
+
+/**
+ * The keyboard alternative to clicking a note: arrow left and right in the
+ * score go to the previous or next measure in playing order.
+ *
+ * @param step - -1 back, +1 forward
+ */
+function stepMeasure(step: number): void {
+	const slots = timeline.value.measures
+	if (slots.length === 0) {
+		return
+	}
+	const current = Math.max(0, slotAt(slots, player?.currentTime() ?? 0))
+	moveTo(slots[Math.min(slots.length - 1, Math.max(0, current + step))].start)
 }
 
 function stop(): void {
@@ -321,6 +417,13 @@ watch(focusKey, (key) => {
 })
 watch(tempoPercent, (value) => player?.setRate(value / 100))
 watch(repeats, () => updateTimeline())
+watch(countInBars, (bars) => storeCountIn(bars))
+watch(loop, (on) => {
+	player?.setLoop(on)
+	announce(on
+		? t('notenarchiv', 'Loop on: measures {from} to {to} play again and again.', { from: props.measureFrom, to: props.measureTo })
+		: t('notenarchiv', 'Loop off.'))
+})
 
 // ---- following the playback -------------------------------------------------
 
@@ -350,6 +453,10 @@ function resetHighlights(): void {
  * @param time - position in seconds of the timeline
  */
 function updatePosition(time: number): void {
+	if (time < position.value - 0.05) {
+		// The loop started again
+		resetHighlights()
+	}
 	position.value = time
 	const events = timeline.value.events
 	while (nextHighlight < events.length && events[nextHighlight].start <= time) {
@@ -534,12 +641,16 @@ const exportPart = computed<PracticePart>(() => {
 
 const exportChoice = computed(() => {
 	const part = exportPart.value
+	// the count-in of the playback is at the start of the file, too
+	const tempo = countInBars.value > 0
+		? t('notenarchiv', '{tempo}, count-in {bars}', { tempo: tempoText.value, bars: countInBars.value === 1 ? t('notenarchiv', '1 bar') : t('notenarchiv', '2 bars') })
+		: tempoText.value
 	if (part.voice === null) {
-		return t('notenarchiv', 'All voices equal, {tempo}', { tempo: tempoText.value })
+		return t('notenarchiv', 'All voices equal, {tempo}', { tempo })
 	}
 	return part.mode === 'solo'
-		? t('notenarchiv', '{voice} alone, {tempo}', { voice: part.label, tempo: tempoText.value })
-		: t('notenarchiv', '{voice} louder, {tempo}', { voice: part.label, tempo: tempoText.value })
+		? t('notenarchiv', '{voice} alone, {tempo}', { voice: part.label, tempo })
+		: t('notenarchiv', '{voice} louder, {tempo}', { voice: part.label, tempo })
 })
 
 function clearDownload(): void {
@@ -599,14 +710,16 @@ async function makePracticeFile(): Promise<void> {
 		exportStatus.value = t('notenarchiv', 'Making the file …')
 		await nextFrame()
 		const events = playbackTimeline(loaded, null, repeats.value)
+		const countIn = countInFor(loaded, events, 0, countInBars.value)
 		let data: Uint8Array
 		if (format.value === 'midi') {
-			data = practiceMidi(loaded, events, part, { rate, title: props.title, labelOf })
+			data = practiceMidi(loaded, events, part, { rate, title: props.title, labelOf, countIn })
 		} else {
 			const samples = await renderTimeline(events, partGains(part), {
 				rate,
 				sampleRate: SAMPLE_RATE,
 				signal,
+				countIn,
 				onProgress: (done) => {
 					exportStatus.value = t('notenarchiv', 'Making the file … {percent} %', { percent: Math.floor(done * 10) * 10 })
 				},
@@ -639,8 +752,9 @@ function cancelExport(): void {
 const INTERACTIVE = 'input, textarea, select, button, a, summary, [role="button"], [role="combobox"], [role="option"], [role="radio"], [role="checkbox"], [role="switch"], [contenteditable="true"]'
 
 /**
- * Space plays and pauses unless a control has the focus; + and − zoom
- * while the score has the focus.
+ * Space plays and pauses unless a control has the focus. While the score
+ * has the focus, + and − zoom and the arrow keys left and right go to the
+ * previous or next measure.
  *
  * @param event - key event inside the view
  */
@@ -649,12 +763,17 @@ function onKeydown(event: KeyboardEvent): void {
 	if (target?.closest(INTERACTIVE)) {
 		return
 	}
+	const inScore = target === scoreElement.value
+	const plain = !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey
 	if (event.key === ' ' && props.canPlay && status.value === 'ready') {
 		event.preventDefault()
 		togglePlay()
-	} else if (target === scoreElement.value && (event.key === '+' || event.key === '-')) {
+	} else if (inScore && (event.key === '+' || event.key === '-')) {
 		event.preventDefault()
 		zoomBy(event.key === '+' ? 1 : -1)
+	} else if (inScore && plain && (event.key === 'ArrowLeft' || event.key === 'ArrowRight') && props.canPlay && status.value === 'ready') {
+		event.preventDefault()
+		stepMeasure(event.key === 'ArrowLeft' ? -1 : 1)
 	}
 }
 
@@ -752,9 +871,19 @@ onBeforeUnmount(() => {
 							:aria-valuetext="t('notenarchiv', '{percent} % of the tempo', { percent: tempoPercent })">
 						<span :id="tempoHintId" class="excerpt-viewer__hint">{{ t('notenarchiv', 'Percent of the tempo in the score.') }}</span>
 					</label>
-					<NcCheckboxRadioSwitch v-model="repeats" type="switch">
-						{{ t('notenarchiv', 'Play repeats') }}
-					</NcCheckboxRadioSwitch>
+					<NcRadioGroup v-model="countInChoice" :label="t('notenarchiv', 'Count-in')">
+						<NcRadioGroupButton value="0" :label="t('notenarchiv', 'Off')" />
+						<NcRadioGroupButton value="1" :label="t('notenarchiv', '1 bar')" />
+						<NcRadioGroupButton value="2" :label="t('notenarchiv', '2 bars')" />
+					</NcRadioGroup>
+					<div class="excerpt-viewer__switches">
+						<NcCheckboxRadioSwitch v-model="repeats" type="switch">
+							{{ t('notenarchiv', 'Play repeats') }}
+						</NcCheckboxRadioSwitch>
+						<NcCheckboxRadioSwitch v-model="loop" type="switch">
+							{{ t('notenarchiv', 'Loop') }}
+						</NcCheckboxRadioSwitch>
+					</div>
 				</section>
 				<NcNoteCard v-else type="info" class="excerpt-viewer__note">
 					{{ playReason || t('notenarchiv', 'Playback is not available for this excerpt.') }}
@@ -791,17 +920,27 @@ onBeforeUnmount(() => {
 
 			<p :id="summaryId" class="excerpt-viewer__summary">
 				{{ summary }}
+				<template v-if="canPlay">
+					{{ t('notenarchiv', 'Click a note to play from there.') }}
+				</template>
 			</p>
-			<!-- Scrollable score; focusable so it can be scrolled with the keyboard -->
-			<!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -->
+			<p v-if="canPlay" :id="scoreHintId" class="hidden-visually">
+				{{ t('notenarchiv', 'Space plays and pauses. The arrow keys left and right go to the previous or next measure.') }}
+			</p>
+			<!-- Scrollable score; focusable so it can be scrolled with the keyboard.
+			     A click on a note plays from there; the keyboard alternative are the
+			     arrow keys in the score (onKeydown on the whole view) -->
+			<!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions, vuejs-accessibility/click-events-have-key-events -->
 			<div ref="scoreElement"
 				class="excerpt-viewer__score"
 				tabindex="0"
 				role="region"
 				:aria-label="t('notenarchiv', 'Score')"
-				:aria-describedby="summaryId">
+				:aria-describedby="canPlay ? `${summaryId} ${scoreHintId}` : summaryId"
+				@click="onScoreClick">
 				<div ref="pagesElement"
 					class="excerpt-viewer__pages"
+					:class="{ 'excerpt-viewer__pages--playable': canPlay }"
 					role="img"
 					:aria-label="description">
 					<!-- SVG rendered by Verovio in the browser from the MusicXML and cleaned by sanitizeSvg() -->
@@ -889,7 +1028,8 @@ onBeforeUnmount(() => {
 }
 
 .excerpt-viewer__group,
-.excerpt-viewer__buttons {
+.excerpt-viewer__buttons,
+.excerpt-viewer__switches {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: flex-end;
@@ -1011,6 +1151,11 @@ onBeforeUnmount(() => {
 .excerpt-viewer__page :deep(.score-muted .score-shared) {
 	color: var(--color-main-text);
 	fill: var(--color-main-text);
+}
+
+/* A click on a note plays from there */
+.excerpt-viewer__pages--playable :deep(g.note) {
+	cursor: pointer;
 }
 
 /* Sounding notes: color, outline and larger note heads */

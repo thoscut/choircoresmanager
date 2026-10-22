@@ -121,6 +121,18 @@ Je Werk gilt höchstens eine Fassung. Die Rechte ändern sich dadurch nicht.
 Abspielen gibt es für gemeinfreie Fassungen und für Fassungen mit einer
 Lizenz für Übe-Audio, nie für interne Erhaltungskopien.
 
+#### So übst du eine Stelle in Schleife
+
+1. Trage die Stelle in **Von Takt** und **Bis Takt** ein.
+2. Schalte daneben **Wiederholen** ein. Die Stelle wird gezeigt und beim
+   Abspielen immer wieder gespielt, bis du **Pause** oder **Stopp** wählst.
+3. Unter **Tempo und Lautstärke** wählst du einen **Einzähler** von 1 oder
+   2 Takten. Die Wahl merkt sich dein Browser.
+
+Ein Klick auf eine Note startet die Wiedergabe dort. Mit der Tastatur gehst
+du in den Noten mit den Pfeiltasten links und rechts zum vorigen oder
+nächsten Takt und spielst mit der Leertaste ab.
+
 ### Übe-Dateien erstellen
 
 ![Der Dialog „Übe-Dateien“: Takte und Tempo aus der Notenansicht, die Wahl zwischen einer Datei und einem ZIP-Archiv mit jeder Stimme und einem Tutti, die Stimme und das Format WAV oder MIDI.](../screenshots/de/practice-audio.png)

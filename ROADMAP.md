@@ -349,8 +349,8 @@ dieselben Anforderungen auf einem anderen Weg umgesetzt hat):
 *Umgesetzt: der Teil „Archiv“ (Schutzfrist-Sonderfälle, Nutzungsart,
 Nextcloud-Suche, Lückenbericht, Jahresstand, Lizenzvermerk, Vorlagen für
 Infomaterial; Beschreibung in `docs/api.md`, im Benutzerhandbuch und im
-Admin-Guide). Offen: die Stände einer Fassung, das Abspielen und weitere
-Sprachen.*
+Admin-Guide) und das Abspielen (Einzähler, Schleife, Startpunkt,
+Abspielfolge). Offen: die Stände einer Fassung und weitere Sprachen.*
 
 - **Schutzfrist-Sonderfälle** als Schalter: wissenschaftliche Ausgaben
   (§ 70 UrhG) und nachgelassene Werke (§ 71 UrhG). – *umgesetzt im Modul
@@ -364,6 +364,14 @@ Sprachen.*
   - Einzähler, A–B-Schleife, Klick auf eine Note als Startpunkt
   - Abgleich der Abspielfolge mit den dortigen Testfällen: dreifache Volte,
     `times="3"`, D.C. al Fine, D.S. al Coda, Sprungzeichen nur in einer Stimme
+
+  – *umgesetzt in der Notenansicht und in der Ansicht geteilter Ausschnitte:
+  Einzähler (1 oder 2 Takte, je Person gemerkt, auch für Übe-Dateien),
+  Schalter „Wiederholen“ für die Takte aus „Von Takt“/„Bis Takt“, Klick auf
+  Note oder Takt, Pfeiltasten als Tastatur-Weg. Die Testfälle sind eigene
+  MusicXML-Tests; behoben: Rücksprung zur letzten Vorwärts-Wiederholung,
+  `times="3"` mit vierter Volte, Sprungzeichen aus allen Stimmen, gedruckte
+  Segno- und Coda-Zeichen.*
 - **Lückenbericht der Signaturen** je Mappe, nur zur Information; Nummern
   werden weiter nie wiederverwendet. – *umgesetzt im Modul „Inventur“.*
 - **Jahresstand einfrieren** (CSV, JSON, Prüfsummen-Manifest) und mit dem

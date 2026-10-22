@@ -20,6 +20,7 @@ import {
 	variableLength,
 	writeMidi,
 } from '../score/midi.ts'
+import { countInFor } from '../score/countIn.ts'
 import { loadScore, playbackTimeline, playingOrder, timelineFor } from '../score/model.ts'
 import { readScoreText } from '../score/mxl.ts'
 import { scheduleEvents, voiceGain, voiceGains } from '../score/player.ts'
@@ -516,6 +517,35 @@ describe('practice files from a score (Verovio)', () => {
 			expect(notes.map((note) => note.start)).toEqual(altoEvents.map((event) => event.start / rate))
 			expect(notes.map((note) => note.end)).toEqual(altoEvents.map((event) => event.soundEnd / rate))
 			expect(new Set(notes.map((note) => note.gain))).toEqual(new Set([0.8]))
+		} finally {
+			toolkit.destroy()
+		}
+	}, 30000)
+
+	it('start with a count-in on a drum track when it is chosen', async () => {
+		const toolkit = await createToolkit()
+		try {
+			const model = loadScore(toolkit, SCORE)
+			const timeline = playbackTimeline(model, null, true)
+			// 3/4 at ♩ = 90 with a pickup of one quarter: one bar of count-in is two clicks
+			const countIn = countInFor(model, timeline, 0, 1)
+			expect(countIn?.clicks.map((click) => [click.accent, Math.round(click.time * 100)])).toEqual([[true, -133], [false, -67]])
+			const part: PracticePart = { voice: null, mode: 'all', label: 'Tutti' }
+			const labelOf = (v: Voice) => v.name ?? ''
+			const plain = readMidi(practiceMidi(model, timeline, part, { rate: 1, title: 'x', labelOf }))
+			const midi = readMidi(practiceMidi(model, timeline, part, { rate: 1, title: 'x', labelOf, countIn }))
+
+			// the count-in: first in 2/4, then the pickup and the bars of the music
+			expect(midi.tracks[0].filter((event) => event.meta === 0x58).map((event) => [event.tick, event.data[0], 2 ** event.data[1]]))
+				.toEqual([[0, 2, 4], [960, 1, 4], [1440, 3, 4]])
+			// a drum track (channel 10) with an accented first click
+			expect(midi.tracks).toHaveLength(plain.tracks.length + 1)
+			const drums = midi.tracks[1]
+			expect(String.fromCharCode(...drums[0].data)).toBe('Count-in')
+			expect(drums.filter((event) => event.status === 0x99).map((event) => [event.tick, event.data[0]])).toEqual([[0, 76], [480, 77]])
+			// every note of the music two quarters later
+			const ticks = (read: typeof midi, track: number) => read.tracks[track].filter((event) => (event.status & 0xf0) === 0x90).map((event) => event.tick)
+			expect(ticks(midi, 2)).toEqual(ticks(plain, 1).map((tick) => tick + 960))
 		} finally {
 			toolkit.destroy()
 		}

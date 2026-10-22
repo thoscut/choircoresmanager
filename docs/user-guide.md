@@ -269,6 +269,32 @@ current measure is announced to screen readers during playback, and the score
 has a text description (measures, voices, focus voice, key and time
 signature).
 
+#### How to practise a passage in a loop
+
+1. Enter the passage in **From measure** and **To measure**.
+2. Switch on **Loop** next to the fields. The passage is shown, and the
+   playback plays it again and again until you choose **Pause** or **Stop**.
+   Screen readers hear "Loop on" with the measures.
+3. Switch **Loop** off to play on to the end again.
+
+#### How to count in before the playback
+
+Under **Tempo and volume**, choose **Count-in**: **Off**, **1 bar** or
+**2 bars**. Before the music starts you hear clicks in the time signature and
+tempo of the place where the playback starts, the first beat of each bar
+higher. A pickup comes in on the last beats of the count-in. The choice is
+remembered in your browser, also for shared excerpts.
+
+#### How to start at a particular note
+
+- **Mouse or touch:** click a note in the score (or a measure). The playback
+  starts there, with the count-in. While it plays, it jumps there. In a
+  repeated passage it takes the next pass from the current position.
+- **Keyboard:** move the focus to the score (Tab) and use the arrow keys
+  **left** and **right**: they go to the previous or next measure in playing
+  order, and the measure is announced. Space then plays from there. You can
+  also enter the measure in **From measure** and choose **Show**.
+
 > [!IMPORTANT]
 > Playback is offered for public domain versions and for versions with a
 > valid license for practice audio. Internal preservation copies are never
@@ -282,8 +308,9 @@ signature).
 Music librarians and the conductor make practice files for the choir's
 practice system from the score viewer:
 
-1. Choose measures, tempo and repeats in the score viewer.
-2. Open **Practice files …**.
+1. Choose measures, tempo, repeats and count-in in the score viewer.
+2. Open **Practice files …**. **Count-in** starts every file with one or two
+   bars of clicks (in MIDI files on a drum track of their own).
 3. Choose **One file** (a voice, with the other voices quieter or silent, or
    all voices equal) or **Every voice and a tutti (ZIP)**.
 4. Choose the format: **WAV (audio)**, 16 bit, mono or stereo, rendered with
@@ -451,7 +478,10 @@ whether it can be played (**Playback: yes** or **Playback: no**).
 2. **Play**, **Pause** and **Stop**; under **Voices during playback**
    choose **All equal**, **Focus voice louder** or **Focus voice only**, and
    set the tempo. **Focus voice** chooses another voice; **Smaller** and
-   **Larger** change the size. Space plays and pauses.
+   **Larger** change the size. Space plays and pauses. **Count-in** clicks
+   one or two bars before the music, **Loop** plays the excerpt again and
+   again. A click on a note starts there; with the keyboard, the arrow keys
+   left and right in the score go to the previous or next measure.
 3. **Text reference** and **Description of the excerpt** describe the
    excerpt in words.
 4. Where practice files are offered (**Practice files: yes**): choose the
@@ -1324,7 +1354,10 @@ whether it can be played (**Playback: yes** or **Playback: no**).
 2. **Play**, **Pause** and **Stop**; under **Voices during playback**
    choose **All equal**, **Focus voice louder** or **Focus voice only**, and
    set the tempo. **Focus voice** chooses another voice; **Smaller** and
-   **Larger** change the size. Space plays and pauses.
+   **Larger** change the size. Space plays and pauses. **Count-in** clicks
+   one or two bars before the music, **Loop** plays the excerpt again and
+   again. A click on a note starts there; with the keyboard, the arrow keys
+   left and right in the score go to the previous or next measure.
 3. **Text reference** and **Description of the excerpt** describe the
    excerpt in words.
 4. Where practice files are offered (**Practice files: yes**): choose the

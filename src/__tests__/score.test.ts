@@ -40,6 +40,8 @@ function m(number: string, marks: Partial<MeasureMarks> = {}): MeasureMarks {
 		daCapo: false,
 		dalSegno: null,
 		fine: false,
+		segnoSign: false,
+		codaSign: false,
 		...marks,
 	}
 }
@@ -133,11 +135,11 @@ describe('unfoldRepeats', () => {
 		expect(order(measures)).toBe('1 2 1 2 3')
 	})
 
-	it('goes back to the measure after the previous end repeat', () => {
+	it('goes back to the beginning, not to the measure after the previous end repeat (as MuseScore 4)', () => {
 		const measures = plain(1, 5)
 		measures[1].repeatEnd = true
 		measures[3].repeatEnd = true
-		expect(order(measures)).toBe('1 2 1 2 3 4 3 4 5')
+		expect(order(measures)).toBe('1 2 1 2 3 4 1 2 3 4 5')
 	})
 
 	it('plays first and second ending', () => {
