@@ -99,12 +99,21 @@ final class PdfServiceTest extends TestCase {
 	}
 
 	/**
+	 * A mock of a user's home folder; from Nextcloud 34 on, getUserFolder() returns the dedicated IUserFolder.
+	 */
+	private function createUserFolderMock(): Folder&MockObject {
+		/** @var class-string<Folder> $class */
+		$class = interface_exists('OCP\\Files\\IUserFolder') ? 'OCP\\Files\\IUserFolder' : Folder::class;
+		return $this->createMock($class);
+	}
+
+	/**
 	 * Make the given nodes reachable for a user under a file id.
 	 *
 	 * @param list<File|Folder> $nodes
 	 */
 	private function giveAccess(string $userId, int $fileId, array $nodes): void {
-		$folder = $this->userFolders[$userId] ?? $this->createMock(Folder::class);
+		$folder = $this->userFolders[$userId] ?? $this->createUserFolderMock();
 		$folder->method('getById')->willReturnCallback(fn (int $id) => $id === $fileId ? $nodes : []);
 		$this->userFolders[$userId] = $folder;
 	}
