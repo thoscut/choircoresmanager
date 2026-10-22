@@ -179,6 +179,42 @@ Meilensteinen.
 - **Übe-Audio je Stimme** für freigegebene Fassungen
 - **Kalender und Auswertungen**
 
+### Aus der Parallelentwicklung übernommen
+
+Ein Fork des Orchestra Scores Manager hat dieselben Anforderungen auf einem
+anderen Weg umgesetzt. Was dort entstanden ist und hier noch fehlt:
+
+- **Stände einer Fassung:**
+  - Jede Korrektur ergibt einen neuen, unveränderlichen Stand, mit
+    Änderungsnotiz (Takte, Stimmen, Grund) und Prüfsumme je Datei.
+  - Innerhalb der geltenden Fassung legt die Archivverwaltung den geltenden
+    Stand fest.
+  - Eine Fassungszeile (Signatur · Fassung · Stand · gültig seit) steht auf
+    jeder Ausgabe.
+  - Zwei Stände lassen sich takt- und stimmweise vergleichen. Daraus entsteht
+    eine kurze Notiz für Chormitglieder.
+  - Aufführungen merken sich den gesungenen Stand.
+- **Schutzfrist-Sonderfälle** als Schalter: wissenschaftliche Ausgaben
+  (§ 70 UrhG) und nachgelassene Werke (§ 71 UrhG).
+- **Lizenz-Nutzungsart „Weitergabe an Nachfolger“.**
+- **Nextcloud-Suche** nach Signatur, Titel und Person.
+- **Abspielen:**
+  - Einzähler, A–B-Schleife, Klick auf eine Note als Startpunkt
+  - Abgleich der Abspielfolge mit den dortigen Testfällen: dreifache Volte,
+    `times="3"`, D.C. al Fine, D.S. al Coda, Sprungzeichen nur in einer Stimme
+- **Lückenbericht der Signaturen** je Mappe, nur zur Information; Nummern
+  werden weiter nie wiederverwendet.
+- **Jahresstand einfrieren** (CSV, JSON, Prüfsummen-Manifest) und mit dem
+  Vorjahr vergleichen.
+- **Lizenzvermerk aus der MusicXML** anzeigen (`<identification><rights>`).
+- **Weitere Sprachen** (z. B. Französisch, Spanisch, Italienisch,
+  Niederländisch, Polnisch).
+- **Vorlagen für Infomaterial** (Flyer, Banner) mit eigenem Absender je Chor.
+
+Nur nach Vereinsentscheidung: Gruppenfreigaben und öffentliche Links für
+Chormitglieder, Mappenbuch (Ausgabe und Rücknahme), ein Spiegelordner für die
+Druckstation, eine öffentliche Seite mit Links zu CPDL und IMSLP.
+
 ## Bewusst nicht vorgesehen
 
 - **Funktionen eines Chorsystems:** Üben, Termine, Anwesenheit, Nachrichten an
