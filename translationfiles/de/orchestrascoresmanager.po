@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2026-10-21 23:31+0000\n"
+"POT-Creation-Date: 2026-10-22 00:17+0000\n"
 "PO-Revision-Date: 2025-11-28 22:37+0000\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -19,6 +19,78 @@ msgstr ""
 
 msgid "Insufficient permissions"
 msgstr "Unzureichende Berechtigungen"
+
+#, php-format
+msgid "The file is too large. The maximum size is %d MB."
+msgstr "Die Datei ist zu groß. Die maximale Größe beträgt %d MB."
+
+#, php-format
+msgid "The file has no column \"%s\"."
+msgstr "Die Datei hat keine Spalte „%s“."
+
+msgid "Catalogue"
+msgstr "Werkverzeichnis"
+
+msgid "Score not found"
+msgstr "Partitur nicht gefunden"
+
+#, php-format
+msgid "The row has %1$d values, but the header has only %2$d columns."
+msgstr "Die Zeile hat %1$d Werte, die Kopfzeile aber nur %2$d Spalten."
+
+msgid "The signature is missing."
+msgstr "Die Signatur fehlt."
+
+msgid "The signature has leading or trailing spaces."
+msgstr "Die Signatur hat Leerzeichen am Anfang oder Ende."
+
+msgid "The signature occurs more than once in the file."
+msgstr "Die Signatur kommt in der Datei mehrfach vor."
+
+msgid "The signature is used by more than one existing score."
+msgstr "Die Signatur wird von mehreren vorhandenen Stücken verwendet."
+
+#, php-format
+msgid "New scores need the column \"%s\"."
+msgstr "Neue Stücke brauchen die Spalte „%s“."
+
+msgid "The file is not valid UTF-8. Save it as \"CSV UTF-8\" and try again."
+msgstr "Die Datei ist kein gültiges UTF-8. Speichere sie als „CSV UTF-8“ und versuche es erneut."
+
+msgid "The file is empty."
+msgstr "Die Datei ist leer."
+
+#, php-format
+msgid "The quoted value starting in line %d is not closed."
+msgstr "Der in Zeile %d beginnende Wert in Anführungszeichen wird nicht geschlossen."
+
+#, php-format
+msgid "Column %d of the header has no name."
+msgstr "Spalte %d der Kopfzeile hat keinen Namen."
+
+#, php-format
+msgid "The header contains the column \"%s\" more than once."
+msgstr "Die Kopfzeile enthält die Spalte „%s“ mehrfach."
+
+#, php-format
+msgid "%1$s: The value is longer than %2$d characters."
+msgstr "%1$s: Der Wert ist länger als %2$d Zeichen."
+
+#, php-format
+msgid "%s: The value is not a date in the form YYYY-MM-DD."
+msgstr "%s: Der Wert ist kein Datum im Format JJJJ-MM-TT."
+
+#, php-format
+msgid "%1$s: The value is not one of: %2$s."
+msgstr "%1$s: Der Wert ist keiner von: %2$s."
+
+#, php-format
+msgid "%s: The value must not be empty."
+msgstr "%s: Der Wert darf nicht leer sein."
+
+#, php-format
+msgid "The years for current repertoire must be at least 0 and less than the years for dormant repertoire, which must be at most %d."
+msgstr "Die Jahre für aktuelles Repertoire müssen mindestens 0 und kleiner als die Jahre für ruhendes Repertoire sein; diese dürfen höchstens %d betragen."
 
 msgid "Folder collection not found"
 msgstr "Ordnersammlung nicht gefunden"
@@ -38,9 +110,6 @@ msgstr "Ungültiger Sammlungstyp. Muss \"alphabetisch\" oder \"indiziert\" sein.
 msgid "Collection type cannot be changed after creation."
 msgstr "Sammlungstyp kann nach der Erstellung nicht mehr geändert werden."
 
-msgid "Score not found"
-msgstr "Partitur nicht gefunden"
-
 msgid "Cannot add score individually when its score book is already in the collection"
 msgstr "Partitur kann nicht einzeln hinzugefügt werden, wenn ihr Notenbuch bereits in der Sammlung ist"
 
@@ -54,9 +123,8 @@ msgstr "Index sollte für alphabetische Ordnersammlungen nicht angegeben werden"
 msgid "Index %d or score %d is already used in this folder collection"
 msgstr "Index %d oder Partitur %d wird bereits in dieser Ordnersammlung verwendet"
 
-#, php-format
-msgid "Failed to add score to folder collection: %1$s"
-msgstr "Partitur konnte nicht zur Ordnersammlung hinzugefügt werden: %1$s"
+msgid "Failed to add score to folder collection"
+msgstr "Stück konnte nicht zur Ordnersammlung hinzugefügt werden"
 
 msgid "Cannot remove score that is part of a score book in this collection. Remove the score book instead."
 msgstr "Partitur, die Teil eines Notenbuchs in dieser Sammlung ist, kann nicht entfernt werden. Entfernen Sie stattdessen das Notenbuch."
@@ -77,13 +145,11 @@ msgstr "Notenbuch kann nicht hinzugefügt werden, wenn eine seiner Partituren be
 msgid "Index %d or score book %d is already used in this folder collection"
 msgstr "Index %d oder Notenbuch %d wird bereits in dieser Ordnersammlung verwendet"
 
-#, php-format
-msgid "Failed to add score book to folder collection: %1$s"
-msgstr "Notenbuch konnte nicht zur Ordnersammlung hinzugefügt werden: %1$s"
+msgid "Failed to add score book to folder collection"
+msgstr "Notenbuch konnte nicht zur Ordnersammlung hinzugefügt werden"
 
-#, php-format
-msgid "Failed to remove score book from folder collection: %1$s"
-msgstr "Notenbuch konnte nicht aus der Ordnersammlung entfernt werden: %1$s"
+msgid "Failed to remove score book from folder collection"
+msgstr "Notenbuch konnte nicht aus der Ordnersammlung entfernt werden"
 
 msgid "Version date range overlaps with an existing version"
 msgstr "Versionsdatumsbereich überschneidet sich mit einer bestehenden Version"
@@ -104,9 +170,8 @@ msgstr "Partitur ist bereits Teil eines Notenbuchs"
 msgid "Index %d is already occupied in this score book"
 msgstr "Index %d ist in diesem Notenbuch bereits belegt"
 
-#, php-format
-msgid "Failed to add score to score book: %1$s"
-msgstr "Partitur konnte nicht zum Notenbuch hinzugefügt werden: %1$s"
+msgid "Failed to add score to score book"
+msgstr "Stück konnte nicht zum Notenbuch hinzugefügt werden"
 
 #, php-format
 msgid "Score %d not found"
@@ -120,13 +185,11 @@ msgstr "Partitur %d ist bereits Teil eines Notenbuchs"
 msgid "Duplicate index %d in request"
 msgstr "Doppelter Index %d in der Anfrage"
 
-#, php-format
-msgid "Failed to add scores to score book: %1$s"
-msgstr "Partituren konnten nicht zum Notenbuch hinzugefügt werden: %1$s"
+msgid "Failed to add scores to score book"
+msgstr "Stücke konnten nicht zum Notenbuch hinzugefügt werden"
 
-#, php-format
-msgid "Failed to remove score from score book: %1$s"
-msgstr "Partitur konnte nicht aus dem Notenbuch entfernt werden: %1$s"
+msgid "Failed to remove score from score book"
+msgstr "Stück konnte nicht aus dem Notenbuch entfernt werden"
 
 msgid "Index is required when adding score to a score book"
 msgstr "Index ist erforderlich, wenn eine Partitur zu einem Notenbuch hinzugefügt wird"
@@ -206,8 +269,11 @@ msgstr "Abbrechen"
 msgid "Create"
 msgstr "Erstellen"
 
-msgid "The dormant threshold must not be smaller than the current threshold."
-msgstr "Die Schwelle für „ruhend“ darf nicht kleiner sein als die für „aktuell“."
+msgid "Please enter whole numbers."
+msgstr "Bitte ganze Zahlen eingeben."
+
+msgid "The first number must be at least 0 and smaller than the second, which must be at most {max}."
+msgstr "Die erste Zahl muss mindestens 0 und kleiner als die zweite sein; die zweite darf höchstens {max} betragen."
 
 msgid "Settings updated successfully."
 msgstr "Einstellungen erfolgreich aktualisiert."
@@ -230,14 +296,14 @@ msgstr ""
 msgid "Repertoire"
 msgstr "Repertoire"
 
-msgid "A score counts as current or dormant repertoire if it was performed within the given number of years. Performances are taken from setlists that are not drafts."
-msgstr "Ein Stück gilt als aktuelles oder ruhendes Repertoire, wenn es innerhalb der angegebenen Anzahl Jahre aufgeführt wurde. Als Aufführung zählen Setlisten, die keine Entwürfe sind."
+msgid "The repertoire class of a score is derived from its last documented performance (setlists and imported catalogue). A score is current if it was performed in the current year or the given number of years before, dormant within the second number of years, and earlier otherwise. Scores without a documented performance are shown as not documented."
+msgstr "Die Repertoireklasse eines Stücks ergibt sich aus seiner letzten belegten Aufführung (Setlisten und importiertes Werkverzeichnis). Ein Stück ist aktuell, wenn es im laufenden Jahr oder in der angegebenen Zahl von Jahren davor aufgeführt wurde, ruhend innerhalb der zweiten Zahl von Jahren und sonst früher. Stücke ohne belegte Aufführung werden als nicht belegt angezeigt."
 
-msgid "Current repertoire (years)"
-msgstr "Aktuelles Repertoire (Jahre)"
+msgid "Years back for current repertoire"
+msgstr "Jahre zurück für aktuelles Repertoire"
 
-msgid "Dormant repertoire (years)"
-msgstr "Ruhendes Repertoire (Jahre)"
+msgid "Years back for dormant repertoire"
+msgstr "Jahre zurück für ruhendes Repertoire"
 
 msgid "Save"
 msgstr "Speichern"
@@ -698,9 +764,6 @@ msgstr "Unbekannter Benutzer"
 msgid "Delete comment"
 msgstr "Kommentar löschen"
 
-msgid "Unable to determine current user"
-msgstr "Aktueller Benutzer konnte nicht ermittelt werden"
-
 msgid "Failed to submit comment: "
 msgstr "Kommentar konnte nicht gesendet werden: "
 
@@ -971,23 +1034,20 @@ msgstr "Aktuell"
 msgid "Dormant"
 msgstr "Ruhend"
 
-msgid "Former"
+msgid "Earlier"
 msgstr "Früher"
 
-msgid "Not performed"
+msgid "Not documented"
 msgstr "Nicht belegt"
 
 msgid "Signature"
 msgstr "Signatur"
 
-msgid "Derived from the performances in setlists"
-msgstr "Aus den Aufführungen in Setlisten berechnet"
+msgid "Inventory status"
+msgstr "Bestandsstatus"
 
 msgid "Last performed"
 msgstr "Zuletzt gesungen"
-
-msgid "Inventory"
-msgstr "Bestand"
 
 msgid "Lyricist"
 msgstr "Textdichter"
@@ -1000,6 +1060,57 @@ msgstr "Sprache"
 
 msgid "Invalid duration format"
 msgstr "Ungültiges Spieldauerformat"
+
+#, php-format
+#~ msgid "Failed to add score to folder collection: %1$s"
+#~ msgstr "Partitur konnte nicht zur Ordnersammlung hinzugefügt werden: %1$s"
+
+#, php-format
+#~ msgid "Failed to add score book to folder collection: %1$s"
+#~ msgstr "Notenbuch konnte nicht zur Ordnersammlung hinzugefügt werden: %1$s"
+
+#, php-format
+#~ msgid "Failed to remove score book from folder collection: %1$s"
+#~ msgstr "Notenbuch konnte nicht aus der Ordnersammlung entfernt werden: %1$s"
+
+#, php-format
+#~ msgid "Failed to add score to score book: %1$s"
+#~ msgstr "Partitur konnte nicht zum Notenbuch hinzugefügt werden: %1$s"
+
+#, php-format
+#~ msgid "Failed to add scores to score book: %1$s"
+#~ msgstr "Partituren konnten nicht zum Notenbuch hinzugefügt werden: %1$s"
+
+#, php-format
+#~ msgid "Failed to remove score from score book: %1$s"
+#~ msgstr "Partitur konnte nicht aus dem Notenbuch entfernt werden: %1$s"
+
+#~ msgid "The dormant threshold must not be smaller than the current threshold."
+#~ msgstr "Die Schwelle für „ruhend“ darf nicht kleiner sein als die für „aktuell“."
+
+#~ msgid "A score counts as current or dormant repertoire if it was performed within the given number of years. Performances are taken from setlists that are not drafts."
+#~ msgstr "Ein Stück gilt als aktuelles oder ruhendes Repertoire, wenn es innerhalb der angegebenen Anzahl Jahre aufgeführt wurde. Als Aufführung zählen Setlisten, die keine Entwürfe sind."
+
+#~ msgid "Current repertoire (years)"
+#~ msgstr "Aktuelles Repertoire (Jahre)"
+
+#~ msgid "Dormant repertoire (years)"
+#~ msgstr "Ruhendes Repertoire (Jahre)"
+
+#~ msgid "Unable to determine current user"
+#~ msgstr "Aktueller Benutzer konnte nicht ermittelt werden"
+
+#~ msgid "Former"
+#~ msgstr "Früher"
+
+#~ msgid "Not performed"
+#~ msgstr "Nicht belegt"
+
+#~ msgid "Derived from the performances in setlists"
+#~ msgstr "Aus den Aufführungen in Setlisten berechnet"
+
+#~ msgid "Inventory"
+#~ msgstr "Bestand"
 
 #~ msgid "Archived"
 #~ msgstr "Archiv"

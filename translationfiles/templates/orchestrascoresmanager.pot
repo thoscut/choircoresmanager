@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2026-10-21 23:31+0000\n"
+"POT-Creation-Date: 2026-10-22 00:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,6 +18,80 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid "Insufficient permissions"
+msgstr ""
+
+#, php-format
+msgid "The file is too large. The maximum size is %d MB."
+msgstr ""
+
+#, php-format
+msgid "The file has no column \"%s\"."
+msgstr ""
+
+msgid "Catalogue"
+msgstr ""
+
+msgid "Score not found"
+msgstr ""
+
+#, php-format
+msgid "The row has %1$d values, but the header has only %2$d columns."
+msgstr ""
+
+msgid "The signature is missing."
+msgstr ""
+
+msgid "The signature has leading or trailing spaces."
+msgstr ""
+
+msgid "The signature occurs more than once in the file."
+msgstr ""
+
+msgid "The signature is used by more than one existing score."
+msgstr ""
+
+#, php-format
+msgid "New scores need the column \"%s\"."
+msgstr ""
+
+msgid "The file is not valid UTF-8. Save it as \"CSV UTF-8\" and try again."
+msgstr ""
+
+msgid "The file is empty."
+msgstr ""
+
+#, php-format
+msgid "The quoted value starting in line %d is not closed."
+msgstr ""
+
+#, php-format
+msgid "Column %d of the header has no name."
+msgstr ""
+
+#, php-format
+msgid "The header contains the column \"%s\" more than once."
+msgstr ""
+
+#, php-format
+msgid "%1$s: The value is longer than %2$d characters."
+msgstr ""
+
+#, php-format
+msgid "%s: The value is not a date in the form YYYY-MM-DD."
+msgstr ""
+
+#, php-format
+msgid "%1$s: The value is not one of: %2$s."
+msgstr ""
+
+#, php-format
+msgid "%s: The value must not be empty."
+msgstr ""
+
+#, php-format
+msgid ""
+"The years for current repertoire must be at least 0 and less than the years "
+"for dormant repertoire, which must be at most %d."
 msgstr ""
 
 msgid "Folder collection not found"
@@ -38,9 +112,6 @@ msgstr ""
 msgid "Collection type cannot be changed after creation."
 msgstr ""
 
-msgid "Score not found"
-msgstr ""
-
 msgid ""
 "Cannot add score individually when its score book is already in the "
 "collection"
@@ -56,8 +127,7 @@ msgstr ""
 msgid "Index %d or score %d is already used in this folder collection"
 msgstr ""
 
-#, php-format
-msgid "Failed to add score to folder collection: %1$s"
+msgid "Failed to add score to folder collection"
 msgstr ""
 
 msgid ""
@@ -82,12 +152,10 @@ msgstr ""
 msgid "Index %d or score book %d is already used in this folder collection"
 msgstr ""
 
-#, php-format
-msgid "Failed to add score book to folder collection: %1$s"
+msgid "Failed to add score book to folder collection"
 msgstr ""
 
-#, php-format
-msgid "Failed to remove score book from folder collection: %1$s"
+msgid "Failed to remove score book from folder collection"
 msgstr ""
 
 msgid "Version date range overlaps with an existing version"
@@ -110,8 +178,7 @@ msgstr ""
 msgid "Index %d is already occupied in this score book"
 msgstr ""
 
-#, php-format
-msgid "Failed to add score to score book: %1$s"
+msgid "Failed to add score to score book"
 msgstr ""
 
 #, php-format
@@ -126,12 +193,10 @@ msgstr ""
 msgid "Duplicate index %d in request"
 msgstr ""
 
-#, php-format
-msgid "Failed to add scores to score book: %1$s"
+msgid "Failed to add scores to score book"
 msgstr ""
 
-#, php-format
-msgid "Failed to remove score from score book: %1$s"
+msgid "Failed to remove score from score book"
 msgstr ""
 
 msgid "Index is required when adding score to a score book"
@@ -204,7 +269,12 @@ msgstr ""
 msgid "Create"
 msgstr ""
 
-msgid "The dormant threshold must not be smaller than the current threshold."
+msgid "Please enter whole numbers."
+msgstr ""
+
+msgid ""
+"The first number must be at least 0 and smaller than the second, which must "
+"be at most {max}."
 msgstr ""
 
 msgid "Settings updated successfully."
@@ -229,15 +299,17 @@ msgid "Repertoire"
 msgstr ""
 
 msgid ""
-"A score counts as current or dormant repertoire if it was performed within "
-"the given number of years. Performances are taken from setlists that are not "
-"drafts."
+"The repertoire class of a score is derived from its last documented "
+"performance (setlists and imported catalogue). A score is current if it was "
+"performed in the current year or the given number of years before, dormant "
+"within the second number of years, and earlier otherwise. Scores without a "
+"documented performance are shown as not documented."
 msgstr ""
 
-msgid "Current repertoire (years)"
+msgid "Years back for current repertoire"
 msgstr ""
 
-msgid "Dormant repertoire (years)"
+msgid "Years back for dormant repertoire"
 msgstr ""
 
 msgid "Save"
@@ -713,9 +785,6 @@ msgstr ""
 msgid "Delete comment"
 msgstr ""
 
-msgid "Unable to determine current user"
-msgstr ""
-
 msgid "Failed to submit comment: "
 msgstr ""
 
@@ -986,22 +1055,19 @@ msgstr ""
 msgid "Dormant"
 msgstr ""
 
-msgid "Former"
+msgid "Earlier"
 msgstr ""
 
-msgid "Not performed"
+msgid "Not documented"
 msgstr ""
 
 msgid "Signature"
 msgstr ""
 
-msgid "Derived from the performances in setlists"
+msgid "Inventory status"
 msgstr ""
 
 msgid "Last performed"
-msgstr ""
-
-msgid "Inventory"
 msgstr ""
 
 msgid "Lyricist"
