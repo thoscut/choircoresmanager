@@ -12,13 +12,16 @@ namespace OCA\Notenarchiv\Tests\Unit\Controller;
 use OCA\Notenarchiv\Controller\ApiV1CatalogController;
 use OCA\Notenarchiv\Controller\ApiV1ConcertController;
 use OCA\Notenarchiv\Controller\ApiV1ProposalController;
+use OCA\Notenarchiv\Controller\ApiV1ReviewController;
 use OCA\Notenarchiv\Controller\ApiV1StatusController;
 use OCA\Notenarchiv\Controller\ApiV1TaskController;
 use OCA\Notenarchiv\Db\ArchiveFile;
 use OCA\Notenarchiv\Db\Copy;
 use OCA\Notenarchiv\Db\Event;
 use OCA\Notenarchiv\Db\Proposal;
+use OCA\Notenarchiv\Db\ReviewPoint;
 use OCA\Notenarchiv\Db\Task;
+use OCA\Notenarchiv\Db\TranscriptionReport;
 use OCA\Notenarchiv\Db\Work;
 use OCA\Notenarchiv\Db\WorkVersion;
 use OCA\Notenarchiv\Exception\AccessDeniedException;
@@ -26,11 +29,13 @@ use OCA\Notenarchiv\Exception\InvalidInputException;
 use OCA\Notenarchiv\Exception\ModuleDisabledException;
 use OCA\Notenarchiv\Exception\NotFoundException;
 use OCA\Notenarchiv\Service\ApiV1\Page;
+use OCA\Notenarchiv\Service\ApiV1\ReviewView;
 use OCA\Notenarchiv\Service\CatalogService;
 use OCA\Notenarchiv\Service\DueService;
 use OCA\Notenarchiv\Service\EventService;
 use OCA\Notenarchiv\Service\Modules;
 use OCA\Notenarchiv\Service\ProposalService;
+use OCA\Notenarchiv\Service\ReviewService;
 use OCA\Notenarchiv\Service\RightsPolicy;
 use OCA\Notenarchiv\Service\Roles;
 use OCA\Notenarchiv\Service\TaskService;
@@ -59,6 +64,8 @@ use Psr\Log\LoggerInterface;
 #[CoversClass(ApiV1TaskController::class)]
 #[CoversClass(ApiV1ProposalController::class)]
 #[CoversClass(ApiV1ConcertController::class)]
+#[CoversClass(ApiV1ReviewController::class)]
+#[CoversClass(ReviewView::class)]
 #[CoversClass(Page::class)]
 final class ApiV1ControllerTest extends TestCase {
 	use ModuleSwitches;
@@ -312,8 +319,8 @@ final class ApiV1ControllerTest extends TestCase {
 		self::assertSame([Roles::CONTRIBUTOR], $data['roles']);
 		self::assertTrue($data['modules'][Modules::AGENT_API]);
 		self::assertFalse($data['modules']['statistics']);
-		self::assertSame(['create_tasks' => true, 'answer_tasks_for' => [], 'propose' => true, 'view_preservation_copies' => false],
-			$data['permissions']);
+		self::assertSame(['create_tasks' => true, 'answer_tasks_for' => [], 'propose' => true, 'view_preservation_copies' => false,
+			'submit_transcription_reports' => true], $data['permissions']);
 		self::assertContains('key_signature', $data['proposable_fields']['version']);
 		self::assertNotContains('confirmed_at', $data['proposable_fields']['version'], 'decisions are never proposed');
 		self::assertNotContains('valid_since', $data['proposable_fields']['version']);
@@ -443,5 +450,202 @@ final class ApiV1ControllerTest extends TestCase {
 		self::assertSame(180, $detail['total_duration']);
 		$this->expectException(OCSBadRequestException::class);
 		$controller->concerts(from: '2026-02-31');
+	}
+
+	private function reviewController(ReviewService $review): ApiV1ReviewController {
+		return new ApiV1ReviewController($this->createStub(IRequest::class), 'agent', $this->roles, $review, $this->catalog, $this->policy,
+			$this->l10n(), $this->createStub(LoggerInterface::class));
+	}
+
+	private static function report(int $id, int $copyId, ?int $supersededBy = null): TranscriptionReport {
+		$report = new TranscriptionReport();
+		$report->setId($id);
+		$report->setCopyId($copyId);
+		$report->setVersionId(201);
+		$report->setSource(TranscriptionReport::SOURCE_API);
+		$report->setSha256(str_repeat('a', 64));
+		$report->setRound('2');
+		$report->setBasename('5-01_Ehre');
+		$report->setReview('7 measures, 4 voices; uncertain: m. 3');
+		$report->setRaw('{"format":"bericht/1","secret":"evidence only"}');
+		$report->setSummary('{"title":"Freude, schöner Götterfunken","warnings":[["Unknown field \"%s\" in the report was ignored.",["farbe"]]]}');
+		$report->setSupersededBy($supersededBy);
+		$report->setCreatedBy('agent');
+		$report->setCreated(1761134400);
+		return $report;
+	}
+
+	private static function reviewPoint(int $id, int $copyId, string $status = ReviewPoint::OPEN, string $role = Roles::CONDUCTOR): ReviewPoint {
+		$point = new ReviewPoint();
+		$point->setId($id);
+		$point->setCopyId($copyId);
+		$point->setVersionId(201);
+		$point->setReportId(4);
+		$point->setCategory(ReviewPoint::UNCERTAIN);
+		$point->setMeasures('3');
+		$point->setMeasureFrom('3');
+		$point->setMeasureTo('3');
+		$point->setVoice('Tenor');
+		$point->setText('c or c sharp');
+		$point->setPointKey('internal-key');
+		$point->setRole($role);
+		$point->setStatus($status);
+		$point->setCreatedBy('someone-else');
+		$point->setCreated(1761134400);
+		if ($status !== ReviewPoint::OPEN) {
+			$point->setDecidedBy('anna');
+			$point->setDecidedByName('Anna Archiv');
+			$point->setDecided(1761138000);
+			$point->setDecisionReason('as in the scan');
+		}
+		return $point;
+	}
+
+	public function testTheReviewOfACopyHasNoAccountNamesAndComesInPages(): void {
+		$this->catalog->method('copyWithContext')->willReturn(self::copyContext(false));
+		$review = $this->createStub(ReviewService::class);
+		$review->method('forVersion')->willReturn(['version_id' => 201,
+			'reports' => [self::report(6, 1), self::report(5, 2), self::report(4, 1, 6)],
+			'points' => [self::reviewPoint(10, 1), self::reviewPoint(11, 2), self::reviewPoint(12, 1, ReviewPoint::CONFIRMED),
+				self::reviewPoint(13, 1, ReviewPoint::OPEN, Roles::LIBRARIAN)],
+			'counts' => [], 'may' => ['decideMusical' => false, 'decideMaterial' => false, 'ingest' => true, 'correct' => false]]);
+		$controller = $this->reviewController($review);
+
+		$first = $controller->review(1, limit: 2)->getData();
+		self::assertSame(1, $first['copy_id']);
+		self::assertSame('5-1', $first['shelfmark']);
+		self::assertSame(201, $first['version_id']);
+		self::assertSame(['open' => 2, 'confirmed' => 1, 'correct' => 0, 'corrected' => 0, 'question' => 0, 'dismissed' => 0], $first['counts'],
+			'only the points of this copy');
+		self::assertSame([6, 4], array_column($first['reports'], 'id'), 'reports of this copy, newest first');
+		self::assertSame('Freude, schöner Götterfunken', $first['reports'][0]['title']);
+		self::assertSame(['Unknown field "farbe" in the report was ignored.'], $first['reports'][0]['warnings']);
+		self::assertTrue($first['reports'][0]['own']);
+		self::assertSame('2025-10-22T12:00:00Z', $first['reports'][0]['created_at']);
+		self::assertSame([10, 12], array_column($first['items'], 'id'));
+		self::assertSame(3, $first['total']);
+		self::assertIsString($first['next_cursor']);
+		self::assertSame('2025-10-22T13:00:00Z', $first['items'][1]['decided_at']);
+		self::assertSame('as in the scan', $first['items'][1]['decision_reason']);
+		self::assertFalse($first['items'][0]['own']);
+		$json = (string)json_encode($first);
+		foreach (['decided_by', 'created_by', 'Anna Archiv', 'anna', 'someone-else', 'point_key', 'internal-key', 'evidence only', 'raw'] as $hidden) {
+			self::assertStringNotContainsString($hidden, $json, 'no account names, no internal key, no received text');
+		}
+
+		$second = $controller->review(1, limit: 2, cursor: $first['next_cursor'])->getData();
+		self::assertSame([13], array_column($second['items'], 'id'));
+		self::assertNull($second['next_cursor']);
+		self::assertSame([13], array_column($controller->review(1, role: 'librarian')->getData()['items'], 'id'));
+		self::assertSame([12], array_column($controller->review(1, status: 'confirmed')->getData()['items'], 'id'));
+		self::assertSame(200, $controller->review(1)->getStatus());
+	}
+
+	public function testTheReviewOfAPreservationCopyIsRefused(): void {
+		$this->catalog->method('copyWithContext')->willReturn(self::copyContext(true));
+		$this->policy->method('viewDenial')->willReturn('Internal preservation copy: only the catalog librarian and the conductor may view it.');
+		$review = $this->createMock(ReviewService::class);
+		$review->expects(self::never())->method('forVersion');
+		$review->expects(self::never())->method('ingestForCopy');
+		$controller = $this->reviewController($review);
+		foreach ([fn () => $controller->review(1), fn () => $controller->submitReport(1, '{}')] as $call) {
+			try {
+				$call();
+				self::fail('a preservation copy was passed on');
+			} catch (OCSForbiddenException $e) {
+				self::assertSame('Internal preservation copy: only the catalog librarian and the conductor may view it.', $e->getMessage());
+			}
+		}
+	}
+
+	/**
+	 * @return iterable<string, array{0: array<string, mixed>, 1: string}>
+	 */
+	public static function invalidReviewFilters(): iterable {
+		yield 'unknown status' => [['status' => 'deleted'], '"Status": value not allowed.'];
+		yield 'role without points' => [['role' => 'operations'], '"Role": value not allowed.'];
+		yield 'limit too large' => [['limit' => 101], 'The limit must be between 1 and 100.'];
+	}
+
+	/**
+	 * @param array<string, mixed> $arguments
+	 */
+	#[DataProvider('invalidReviewFilters')]
+	public function testInvalidReviewFiltersAnswer400(array $arguments, string $message): void {
+		$this->catalog->method('copyWithContext')->willReturn(self::copyContext(false));
+		$review = $this->createStub(ReviewService::class);
+		$review->method('forVersion')->willReturn(['version_id' => 201, 'reports' => [], 'points' => [], 'counts' => [],
+			'may' => ['decideMusical' => false, 'decideMaterial' => false, 'ingest' => false, 'correct' => false]]);
+		$this->expectExceptionObject(new OCSBadRequestException($message));
+		$this->reviewController($review)->review(1, ...$arguments);
+	}
+
+	public function testCorrectionOrdersLeaveOutPreservationCopiesAndComeInPages(): void {
+		$order = fn (int $id, int $copyId, bool $preservation): array => ['id' => $id, 'version_id' => 201, 'copy_id' => $copyId,
+			'report_id' => 4, 'file_id' => 12, 'file_sha256' => 'abc', 'category' => 'uncertain', 'measures' => '12–14', 'measure_from' => '12',
+			'measure_to' => '14', 'voice' => 'B', 'verse' => null, 'page' => null, 'text' => 'd or c', 'point_key' => 'k', 'role' => 'conductor',
+			'status' => 'correct', 'correction' => 'd, as in the scan', 'decided_by' => 'anna', 'decided_by_name' => 'Anna Archiv',
+			'decided' => 1761138000, 'decision_reason' => null, 'task_id' => null, 'resolved_report_id' => null, 'created_by' => 'agent',
+			'created' => 1761134400, 'shelfmark' => '5-1', 'title' => 'Freude, schöner Götterfunken', 'basename' => '5-01_Ehre', 'file_name' => '5-01_Ehre.mxl',
+			'preservation_copy' => $preservation];
+		$review = $this->createStub(ReviewService::class);
+		$review->method('orders')->willReturn([$order(30, 1, false), $order(31, 7, true), $order(32, 2, false), $order(33, 1, false)]);
+		$controller = $this->reviewController($review);
+
+		$first = $controller->orders(limit: 2)->getData();
+		self::assertSame([30, 32], array_column($first['items'], 'id'), 'the preservation copy is left out');
+		self::assertSame(3, $first['total']);
+		self::assertSame([33], array_column($controller->orders(limit: 2, cursor: $first['next_cursor'])->getData()['items'], 'id'));
+		self::assertSame([30, 33], array_column($controller->orders(copy_id: 1)->getData()['items'], 'id'));
+		self::assertSame(['id' => 30, 'copy_id' => 1, 'version_id' => 201, 'shelfmark' => '5-1', 'title' => 'Freude, schöner Götterfunken', 'report_id' => 4,
+			'basename' => '5-01_Ehre', 'file_id' => 12, 'file_name' => '5-01_Ehre.mxl', 'file_sha256' => 'abc', 'category' => 'uncertain',
+			'measures' => '12–14', 'measure_from' => '12', 'measure_to' => '14', 'voice' => 'B', 'verse' => null, 'page' => null,
+			'text' => 'd or c', 'role' => 'conductor', 'correction' => 'd, as in the scan', 'decision_reason' => null,
+			'decided_at' => '2025-10-22T13:00:00Z', 'own' => true], $first['items'][0]);
+
+		$this->policy->method('mayViewPreservationCopies')->willReturn(true);
+		self::assertSame([30, 31, 32, 33], array_column($controller->orders()->getData()['items'], 'id'), 'the librarian sees every order');
+	}
+
+	public function testAReportIs201AndTheSameReportAgain200(): void {
+		$this->catalog->method('copyWithContext')->willReturn(self::copyContext(false));
+		$text = '{"format":"bericht/1","signatur":"5-1","basisname":"5-01_Ehre"}';
+		$result = fn (bool $unchanged): array => ['report' => self::report(6, 1), 'unchanged' => $unchanged,
+			'points' => ['created' => $unchanged ? 0 : 3, 'kept' => 1, 'closed' => 0, 'open' => 4], 'proposals' => 1, 'proposalsSkipped' => false,
+			'warnings' => [['"%s" is missing in the report.', ['lernen']]]];
+		$review = $this->createMock(ReviewService::class);
+		$review->expects(self::exactly(2))->method('ingestForCopy')
+			->with(1, self::callback(fn (string $raw): bool => json_decode($raw, true) === json_decode($text, true)), 'agent')
+			->willReturnOnConsecutiveCalls($result(false), $result(true));
+		$controller = $this->reviewController($review);
+
+		$created = $controller->submitReport(1, $text);
+		self::assertSame(Http::STATUS_CREATED, $created->getStatus());
+		self::assertSame(['created' => 3, 'kept' => 1, 'closed' => 0, 'open' => 4], $created->getData()['points']);
+		self::assertSame(['"lernen" is missing in the report.'], $created->getData()['warnings']);
+		self::assertFalse($created->getData()['proposals_skipped']);
+		self::assertSame(6, $created->getData()['report']['id']);
+		self::assertStringNotContainsString('evidence only', (string)json_encode($created->getData()), 'the received text stays on the server');
+
+		$again = $controller->submitReport(1, report: ['format' => 'bericht/1', 'signatur' => '5-1', 'basisname' => '5-01_Ehre']);
+		self::assertSame(Http::STATUS_OK, $again->getStatus());
+		self::assertTrue($again->getData()['unchanged']);
+	}
+
+	public function testAReportComesAsTextOrAsObjectAndOnlyFromItsRoles(): void {
+		$this->catalog->method('copyWithContext')->willReturn(self::copyContext(false));
+		$review = $this->createStub(ReviewService::class);
+		$review->method('ingestForCopy')->willThrowException(new AccessDeniedException('This requires one of these roles: %s', ['Catalog librarian']));
+		$controller = $this->reviewController($review);
+		foreach ([[null, null], ['{}', ['format' => 'bericht/1']]] as [$content, $report]) {
+			try {
+				$controller->submitReport(1, $content, $report);
+				self::fail('accepted');
+			} catch (OCSBadRequestException $e) {
+				self::assertSame('Please send the report either as text or as an object.', $e->getMessage());
+			}
+		}
+		$this->expectException(OCSForbiddenException::class);
+		$controller->submitReport(1, '{}');
 	}
 }

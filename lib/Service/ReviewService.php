@@ -111,6 +111,28 @@ class ReviewService {
 	}
 
 	/**
+	 * Reads a report sent through the API for agents (v1) for one copy: the
+	 * report must name exactly this copy, not another copy of its version.
+	 *
+	 * @return IngestResult
+	 * @throws InvalidInputException|AccessDeniedException|NotFoundException
+	 */
+	public function ingestForCopy(int $copyId, string $raw, string $uid): array {
+		$this->modules->requireEnabled(self::MODULE);
+		$this->roles->requireRole($uid, self::INGESTERS);
+		try {
+			$copy = $this->copies->find($copyId);
+		} catch (DoesNotExistException) {
+			throw new NotFoundException('Not found.');
+		}
+		$parsed = TranscriptionReportParser::parse($raw);
+		if (TranscriptionReportParser::canonicalShelfmark($copy->getShelfmark()) !== $parsed['report']['signatur']) {
+			throw new InvalidInputException('The shelf mark of the report does not belong to this copy.');
+		}
+		return $this->store($copy, $this->loadVersion($copy->getVersionId()), $raw, $parsed, TranscriptionReport::SOURCE_API, null, $uid);
+	}
+
+	/**
 	 * Reads a report file found by the file sync for its copy.
 	 *
 	 * @return IngestResult
@@ -136,6 +158,9 @@ class ReviewService {
 		$this->modules->requireEnabled(self::MODULE);
 		$this->roles->requireAccess($uid);
 		$version = $this->loadVersion($versionId);
+		if ($version->getPreservationCopy() === true && !$this->roles->hasAnyRole($uid, RightsPolicy::PRESERVATION_COPY_VIEWERS)) {
+			throw new AccessDeniedException('Internal preservation copy: only the catalog librarian and the conductor may view it.');
+		}
 		$points = $this->points->findByVersion($version->getId());
 		$counts = array_fill_keys(ReviewPoint::STATUSES, 0);
 		foreach ($points as $point) {
@@ -212,13 +237,17 @@ class ReviewService {
 	}
 
 	/**
-	 * The correction orders for the tool chain, oldest first.
+	 * The correction orders for the tool chain, oldest first. Each row is the
+	 * point plus shelf mark, title, report base name, file name and whether
+	 * the version is an internal preservation copy; roles that may not view
+	 * preservation copies do not get those rows.
 	 *
 	 * @return list<array<string, mixed>>
 	 */
 	public function orders(string $uid): array {
 		$this->modules->requireEnabled(self::MODULE);
 		$this->roles->requireAccess($uid);
+		$mayViewPreservation = $this->roles->hasAnyRole($uid, RightsPolicy::PRESERVATION_COPY_VIEWERS);
 		$copies = [];
 		foreach ($this->copies->findAll() as $copy) {
 			$copies[$copy->getId()] = $copy;
@@ -229,6 +258,9 @@ class ReviewService {
 		foreach ($this->points->findByStatus([ReviewPoint::CORRECT]) as $point) {
 			$copy = $copies[$point->getCopyId()] ?? null;
 			$version = $versions[$point->getVersionId()] ?? null;
+			if ($version?->getPreservationCopy() === true && !$mayViewPreservation) {
+				continue;
+			}
 			$work = $version === null ? null : ($works[$version->getWorkId()] ?? null);
 			$report = null;
 			$file = null;
@@ -244,6 +276,7 @@ class ReviewService {
 				'title' => $work?->getTitle(),
 				'basename' => $report?->getBasename(),
 				'file_name' => $file?->getName(),
+				'preservation_copy' => $version?->getPreservationCopy() === true,
 			];
 		}
 		return $rows;

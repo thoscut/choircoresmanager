@@ -199,26 +199,29 @@ Beschreibung im Admin-Guide, Abschnitt „Modules and presets“, und in
 
 ### 0.6 Agenten und Prüfung der Übertragungen
 
-*Teilweise umgesetzt: die Schnittstelle für Agenten (Beschreibung in
+*Umgesetzt: die Schnittstelle für Agenten (Beschreibung in
 `docs/api-v1.md`, Einrichtung im Admin-Guide, Abschnitt „Agents and the
-API“, MCP-Server in `tools/mcp`) sowie Übertragung prüfen, Prüfen in der
-Notenansicht, Korrigieren und die Benachrichtigungen dazu, als Module
-`transcription_review` und `corrections` (Beschreibung in `docs/api.md`,
-Abschnitt „Reviewing transcriptions and corrections“, und im
-Benutzerhandbuch, Abschnitt „Reviewing transcriptions“). Offen ist noch,
-die Prüfpunkte und Korrekturaufträge an die Schnittstelle für Agenten
-anzubinden.*
+API“, MCP-Server in `tools/mcp`) mit Prüfstand, Prüfpunkten,
+Korrekturaufträgen und dem Einreichen von Berichten, sowie Übertragung
+prüfen, Prüfen in der Notenansicht, Korrigieren und die
+Benachrichtigungen dazu, als Module `transcription_review` und
+`corrections` (Beschreibung in `docs/api.md`, Abschnitt „Reviewing
+transcriptions and corrections“, und im Benutzerhandbuch, Abschnitt
+„Reviewing transcriptions“).*
 
 - **Schnittstelle für Agenten:**
   - eine feste, versionierte API (OCS, `api/v1`) mit OpenAPI-Beschreibung
     für Lesen, Fällig-Liste, Vorschläge, Rückfragen und Prüfpunkte
-    – *umgesetzt bis auf die Prüfpunkte; sie kommen mit „Übertragung
-    prüfen“ als weitere Routen von v1 hinzu.*
+    – *umgesetzt; Prüfstand und Prüfpunkte eines Exemplars,
+    Korrekturaufträge und Berichte (`bericht/1`) als Routen von v1.*
   - ein MCP-Server, der lokal neben dem Agenten läuft, mit App-Passwort
     eines eigenen Kontos – *umgesetzt.*
   - Schreibende Werkzeuge erzeugen nur Vorschläge, Rückfragen und
-    Prüfergebnisse. Der Server begrenzt sie über die Rolle. – *umgesetzt
-    für Vorschläge und Rückfragen; Prüfergebnisse folgen.*
+    Prüfergebnisse. Der Server begrenzt sie über die Rolle. – *umgesetzt:
+    Prüfergebnisse kommen als Bericht einer Übertragung und werden zu
+    Prüfpunkten; entscheiden (Lesung richtig, korrigieren, verwerfen) und
+    Korrekturen speichern bleiben bei Chorleitung und Archivverwaltung in
+    der App.*
   - Ein Agentenlauf gegen den Demo-Bestand läuft in der CI mit.
     – *umgesetzt (`tools/ci/integration-demo.sh`, Schritt 7).*
   - Das Modul „Schnittstelle für Agenten“ ist anfangs aus und in keiner

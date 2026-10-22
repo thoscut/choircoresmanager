@@ -10,11 +10,13 @@ declare(strict_types=1);
 namespace OCA\Notenarchiv\Tests\Unit\Service;
 
 use OCA\Notenarchiv\Db\ArchiveFileMapper;
+use OCA\Notenarchiv\Db\Copy;
 use OCA\Notenarchiv\Db\CopyMapper;
 use OCA\Notenarchiv\Db\ReviewPoint;
 use OCA\Notenarchiv\Db\ReviewPointMapper;
 use OCA\Notenarchiv\Db\TranscriptionReportMapper;
 use OCA\Notenarchiv\Db\WorkMapper;
+use OCA\Notenarchiv\Db\WorkVersion;
 use OCA\Notenarchiv\Db\WorkVersionMapper;
 use OCA\Notenarchiv\Exception\AccessDeniedException;
 use OCA\Notenarchiv\Exception\InvalidInputException;
@@ -54,9 +56,16 @@ final class ReviewServiceTest extends TestCase {
 	 * @param list<string> $roles roles of the account "anna"
 	 * @param list<string> $off modules switched off
 	 */
-	private function service(ReviewPoint $point, array $roles, array $off = []): ReviewService {
+	private function service(ReviewPoint $point, array $roles, array $off = [], ?CopyMapper $copies = null, ?WorkVersion $version = null): ReviewService {
 		$points = $this->createStub(ReviewPointMapper::class);
 		$points->method('find')->willReturn($point);
+		$points->method('findByVersion')->willReturn([$point]);
+		$points->method('findByStatus')->willReturn([$point]);
+		$versions = $this->createStub(WorkVersionMapper::class);
+		if ($version !== null) {
+			$versions->method('find')->willReturn($version);
+			$versions->method('findAllById')->willReturn([$version->getId() => $version]);
+		}
 		$points->method('update')->willReturnCallback(function (ReviewPoint $p): ReviewPoint {
 			$this->updated[] = $p;
 			return $p;
@@ -64,6 +73,11 @@ final class ReviewServiceTest extends TestCase {
 		$rolesService = $this->createStub(Roles::class);
 		$rolesService->method('rolesOf')->willReturn($roles);
 		$rolesService->method('hasAnyRole')->willReturnCallback(fn (string $uid, array $allowed): bool => array_intersect($roles, $allowed) !== []);
+		$rolesService->method('requireRole')->willReturnCallback(function (string $uid, array $allowed) use ($roles): void {
+			if (array_intersect($roles, $allowed) === []) {
+				throw new AccessDeniedException('This requires one of these roles: %s', [implode(', ', $allowed)]);
+			}
+		});
 		$users = $this->createStub(IUserManager::class);
 		$users->method('getDisplayName')->willReturn('Anna');
 		$time = $this->createStub(ITimeFactory::class);
@@ -71,7 +85,7 @@ final class ReviewServiceTest extends TestCase {
 		$l = $this->createStub(IL10N::class);
 		$l->method('t')->willReturnCallback(fn (string $text, array $p = []): string => vsprintf($text, $p));
 		return new ReviewService($this->createStub(IDBConnection::class), $points, $this->createStub(TranscriptionReportMapper::class),
-			$this->createStub(CopyMapper::class), $this->createStub(WorkVersionMapper::class), $this->createStub(WorkMapper::class),
+			$copies ?? $this->createStub(CopyMapper::class), $versions, $this->createStub(WorkMapper::class),
 			$this->createStub(ArchiveFileMapper::class), $this->createStub(AuditLog::class), $rolesService, $this->modulesWithout($off),
 			$this->createStub(NotificationService::class), $this->createStub(ProposalService::class), $this->createStub(TaskService::class),
 			$this->createStub(AppSettings::class), $this->createStub(IRootFolder::class), $users, $time, $this->createStub(IDateTimeZone::class),
@@ -88,6 +102,36 @@ final class ReviewServiceTest extends TestCase {
 		$point->setStatus($status);
 		$point->setText('d or c');
 		return $point;
+	}
+
+	private static function version(bool $preservationCopy): WorkVersion {
+		$version = new WorkVersion();
+		$version->setId(3);
+		$version->setWorkId(1);
+		$version->setPreservationCopy($preservationCopy);
+		return $version;
+	}
+
+	public function testThePointsOfAPreservationCopyAreOnlyForItsViewers(): void {
+		$point = self::point(Roles::CONDUCTOR);
+		$reason = null;
+		try {
+			$this->service($point, [Roles::READER], version: self::version(true))->forVersion(3, 'anna');
+		} catch (AccessDeniedException $e) {
+			$reason = $e->getMessage();
+		}
+		self::assertSame('Internal preservation copy: only the catalog librarian and the conductor may view it.', $reason);
+		self::assertSame([$point], $this->service($point, [Roles::CONDUCTOR], version: self::version(true))->forVersion(3, 'anna')['points']);
+		self::assertSame([$point], $this->service($point, [Roles::READER], version: self::version(false))->forVersion(3, 'anna')['points']);
+	}
+
+	public function testCorrectionOrdersOfAPreservationCopyAreOnlyForItsViewers(): void {
+		$point = self::point(Roles::CONDUCTOR, ReviewPoint::CORRECT);
+		self::assertSame([], $this->service($point, [Roles::READER], version: self::version(true))->orders('anna'));
+		$rows = $this->service($point, [Roles::LIBRARIAN], version: self::version(true))->orders('anna');
+		self::assertCount(1, $rows);
+		self::assertTrue($rows[0]['preservation_copy']);
+		self::assertCount(1, $this->service($point, [Roles::READER], version: self::version(false))->orders('anna'));
 	}
 
 	public function testTheConductorDecidesMusicalPoints(): void {
@@ -169,6 +213,31 @@ final class ReviewServiceTest extends TestCase {
 		self::assertFalse(ReviewService::mayDecide([Roles::CONDUCTOR], Roles::LIBRARIAN));
 		self::assertFalse(ReviewService::mayDecide([Roles::OPERATIONS, Roles::READER, Roles::CONTRIBUTOR], Roles::CONDUCTOR));
 		self::assertFalse(ReviewService::mayDecide([], Roles::CONDUCTOR));
+	}
+
+	/**
+	 * A report handed in through the API for agents for one copy must name
+	 * exactly that copy, and only the contributor and the catalog librarian
+	 * hand in reports.
+	 */
+	public function testAReportForACopyMustNameThatCopy(): void {
+		$copy = new Copy();
+		$copy->setId(5);
+		$copy->setVersionId(3);
+		$copy->setShelfmark('5-1');
+		$copies = $this->createStub(CopyMapper::class);
+		$copies->method('find')->willReturn($copy);
+		$other = '{"format":"bericht/1","signatur":"5-02","basisname":"5-02_Titel"}';
+		try {
+			$this->service(self::point(Roles::CONDUCTOR), [Roles::CONTRIBUTOR], [], $copies)->ingestForCopy(5, $other, 'agent');
+			self::fail('a report of another copy of the version was read');
+		} catch (InvalidInputException $e) {
+			self::assertSame('The shelf mark of the report does not belong to this copy.', $e->getMessage());
+		}
+
+		$this->expectException(AccessDeniedException::class);
+		$this->service(self::point(Roles::CONDUCTOR), [Roles::READER, Roles::CONDUCTOR, Roles::OPERATIONS], [], $copies)
+			->ingestForCopy(5, $other, 'agent');
 	}
 
 	public function testCatalogFieldsOfAReport(): void {

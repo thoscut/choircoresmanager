@@ -140,9 +140,9 @@ final class ControllerSecurityTest extends TestCase {
 	 * server call (the text reference). Each API route needs the module
 	 * `agent_api` plus exactly the modules of its counterpart.
 	 *
-	 * API-V1-EXTENSION (milestone 0.6): the routes of review points
-	 * (Prüfpunkte) and correction orders are added here with their
-	 * counterparts.
+	 * The review of transcriptions has no counterpart for deciding review
+	 * points (ReviewController::decide) or saving corrections
+	 * (ReviewController::correct): people do that in the app.
 	 */
 	private const API_V1 = [
 		'ApiV1StatusController::modules' => 'ApiController::meta',
@@ -158,6 +158,18 @@ final class ControllerSecurityTest extends TestCase {
 		'ApiV1ConcertController::concerts' => 'EventController::list',
 		'ApiV1ConcertController::concert' => 'EventController::detail',
 		'ApiV1StatisticsController::statistics' => 'StatisticsController::overview',
+		'ApiV1ReviewController::review' => 'ReviewController::review',
+		'ApiV1ReviewController::orders' => 'ReviewController::orders',
+		'ApiV1ReviewController::submitReport' => 'ReviewController::ingest',
+	];
+
+	/**
+	 * Routes of the UI that decide or change what exists: the API for agents
+	 * must never offer them (guideline 1, people decide). Checked by their
+	 * path, so that no API route reaches them under another name.
+	 */
+	private const NEVER_FOR_AGENTS = [
+		'ReviewController::decide', 'ReviewController::correct',
 	];
 
 	/**
@@ -230,6 +242,28 @@ final class ControllerSecurityTest extends TestCase {
 			sort($expectedModules);
 			self::assertSame($expectedModules, $modules, $name . ': agent_api plus the module of the function');
 		}
+	}
+
+	/**
+	 * Agents read, ask, answer, propose and hand in reports; they never
+	 * decide a review point, save a correction or confirm anything. The
+	 * writing routes of api/v1 are exactly these four.
+	 */
+	#[CoversNothing]
+	public function testNoApiV1RouteDecidesOrCorrects(): void {
+		$routes = self::routes();
+		foreach (self::NEVER_FOR_AGENTS as $name) {
+			self::assertArrayHasKey($name, $routes, 'the route of the UI exists');
+			self::assertNotContains($name, self::API_V1, $name . ' has no counterpart in api/v1');
+		}
+		$writing = array_filter($routes, fn (array $route): bool => $route['ocs'] && $route['verb'] !== 'GET');
+		foreach ($writing as $name => $route) {
+			self::assertDoesNotMatchRegularExpression('/decision|decide|corrections|confirm|valid|licen|close/', $route['url'], $name);
+		}
+		$names = array_keys($writing);
+		sort($names);
+		self::assertSame(['ApiV1ProposalController::propose', 'ApiV1ReviewController::submitReport', 'ApiV1TaskController::answer',
+			'ApiV1TaskController::createTask'], $names, 'the only writing routes of api/v1');
 	}
 
 	public function testASwitchedOffApiV1RouteAnswers404WithOcsMeta(): void {

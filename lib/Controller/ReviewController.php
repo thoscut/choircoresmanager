@@ -40,7 +40,6 @@ use Psr\Log\LoggerInterface;
  * The services check roles and modules themselves; the attributes switch the
  * routes off with their module.
  *
- * @psalm-import-type Warning from \OCA\Notenarchiv\Service\ImportService
  * @psalm-suppress UnusedClass
  */
 #[OpenAPI(OpenAPI::SCOPE_IGNORE)]
@@ -159,44 +158,7 @@ class ReviewController extends Controller {
 	private function reportData(TranscriptionReport $report): array {
 		$summary = $report->summaryData();
 		$summary['warnings'] = array_map(fn (array $warning): string => $this->translate($warning[0], $warning[1]),
-			self::warnings($summary['warnings'] ?? null));
+			$report->summaryWarnings());
 		return ['summary' => $summary] + $report->jsonSerialize();
-	}
-
-	/**
-	 * Warnings as stored with a report: [message, parameters] pairs.
-	 *
-	 * @return list<Warning>
-	 */
-	private static function warnings(mixed $stored): array {
-		$warnings = [];
-		if (!is_array($stored)) {
-			return [];
-		}
-		foreach (array_keys($stored) as $key) {
-			$warning = self::warning($stored[$key]);
-			if ($warning !== null) {
-				$warnings[] = $warning;
-			}
-		}
-		return $warnings;
-	}
-
-	/**
-	 * @return Warning|null
-	 */
-	private static function warning(mixed $stored): ?array {
-		if (!is_array($stored) || !isset($stored[0]) || !is_string($stored[0])) {
-			return null;
-		}
-		$parameters = [];
-		if (isset($stored[1]) && is_array($stored[1])) {
-			foreach (array_keys($stored[1]) as $key) {
-				if (is_string($stored[1][$key]) || is_int($stored[1][$key])) {
-					$parameters[] = $stored[1][$key];
-				}
-			}
-		}
-		return [$stored[0], $parameters];
 	}
 }

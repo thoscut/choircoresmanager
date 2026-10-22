@@ -497,20 +497,27 @@ versioned interface: the **API for agents** (OCS, version 1, described in
 clients such as Claude Desktop or Claude Code ([tools/mcp](../tools/mcp/README.md)).
 An agent can read the catalog, a copy with its rights, the due list,
 concerts and statistics, build text references, ask questions, answer
-questions addressed to its role and propose changes.
+questions addressed to its role and propose changes. For the review of
+transcriptions it reads the review points of a copy and the correction
+orders, and hands in the report of a transcription (`bericht.json`), which
+becomes review points as if it had come through the file sync.
 
 **Agents never decide.** The interface has no way to confirm a rights status,
 to add or change licenses, to choose the valid version, to accept proposals,
-to close tasks, to delete or restore anything, to make backups or to change
-settings. People do that in the app, as before. A proposal of an agent lands
-in the proposals inbox; a question goes to the role it is addressed to.
+to close tasks, to decide review points, to save corrections, to delete or
+restore anything, to make backups or to change settings. People do that in
+the app, as before. A proposal of an agent lands in the proposals inbox; a
+question goes to the role it is addressed to; the review points of its
+report go to the conductor and the catalog librarian. A corrected MusicXML
+of the tool chain reaches the archive as a new file in the archive folder
+(file sync), not through the interface.
 
 Setting up:
 
 1. Switch on the module **Interface for agents** (Settings → Modules, or
    `occ notenarchiv:modules enable agent_api`). For proposals, the
    **Proposals inbox** must be on as well; for questions, **Questions and
-   tasks**.
+   tasks**; for review points and reports, **Reviewing transcriptions**.
 2. Create an account that only the agent uses and a group for it, and give
    the group the role **Proposals (tools)** (reads, proposes, asks) or
    **Read only**. Do not give agents the roles of the catalog or operations
@@ -522,8 +529,8 @@ Setting up:
 What the server enforces: every request is checked against the roles of
 the agent's account and the modules, as in the app; every route is limited
 per account; internal preservation copies stay hidden from roles that may
-not view them; answers contain no account names. Proposals and questions
-of the agent appear in the audit log under its account.
+not view them; answers contain no account names. Proposals, questions and
+reports of the agent appear in the audit log under its account.
 
 To stop all agents at once, switch the module off: the interface answers
 404 immediately. Deleting an app password or the account ends the access of

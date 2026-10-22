@@ -154,6 +154,22 @@ and 35.0.2 with MariaDB; the app requires MySQL or MariaDB.
   (`GET /api/files/{id}/scan`).
 - Demo data: two invented transcription reports (1-1, 2-1) with review
   points of every kind; integration test `review_test.php`.
+- Review of transcriptions in the interface for agents (milestone 0.6
+  complete): `GET /api/v1/copies/{id}/review` (reports without the received
+  text, counts per status, review points with place, role and status in
+  cursor pages), `GET /api/v1/correction_orders` (cursor pages) and
+  `POST /api/v1/copies/{id}/transcription_reports` (201; 200 for the same
+  report again; roles contributor and librarian, 30 per 10 minutes; the
+  report must name the shelf mark of that copy), each needing `agent_api`
+  and `transcription_review`; `GET /api/v1/modules` tells
+  `submit_transcription_reports`. No route decides a review point or saves
+  a correction; answers name no accounts (`own` instead of `created_by`,
+  `decided_by`), internal preservation copies stay hidden from roles that
+  may not view them. MCP tools `get_review`, `list_correction_orders` and
+  `submit_transcription_report` (not offered in read-only mode). The CI
+  agent reads the review of 1-1, hands in a new round of its demo report,
+  and is refused when it tries to decide a point. The correction orders of
+  the internal API name `preservation_copy`.
 - Documentation with screenshots of the demo data: README, user and
   administration guides, German quick start, contributing guide, issue and
   pull request templates; a script recreates the screenshots

@@ -14,20 +14,27 @@ declare(strict_types=1);
  * the session, as for a request of that account.
  *
  * - reading: module status, search with filters and pages, a copy, a text
- *   reference, the due list, tasks, concerts, statistics;
- * - writing: a proposal and a task;
+ *   reference, the due list, tasks, concerts, statistics, the review of a
+ *   copy and the correction orders;
+ * - writing: a proposal, a task and the report of a transcription (the test
+ *   writes its reports itself, so it also runs on a catalog without
+ *   transcription reports);
  * - forbidden: proposing a decision, answering for another role, internal
- *   preservation copies for roles that may not view them, writing as reader;
+ *   preservation copies for roles that may not view them, writing as reader,
+ *   deciding a review point as contributor (the API has no such route; the
+ *   route of the UI refuses it);
  * - switched off: every route answers 404 without `agent_api`, the routes of
  *   a module without it.
  *
  * Usage (as the web server user):
  *   php tests/Integration/api_v1_test.php <nextcloud-root> <uid> <shelfmark> <shelfmark-preservation-copy>
  *
- * <uid> must hold the role "librarian". The test gives the account's groups
- * other roles for a while (reader, contributor) and switches modules. Every
- * database change is rolled back; at the end the module switches and the
- * role groups are exactly as before.
+ * <uid> must hold the role "librarian". The second copy is made an internal
+ * preservation copy inside the transaction if it is not one already, so any
+ * two copies of different versions do (e.g. 1-1 3-1 of the demo data). The
+ * test gives the account's groups other roles for a while (reader,
+ * contributor) and switches modules. Every database change is rolled back;
+ * at the end the module switches and the role groups are exactly as before.
  */
 
 require __DIR__ . '/harness.php';
@@ -37,15 +44,19 @@ use OCA\Notenarchiv\AppInfo\Application;
 use OCA\Notenarchiv\Controller\ApiV1CatalogController;
 use OCA\Notenarchiv\Controller\ApiV1ConcertController;
 use OCA\Notenarchiv\Controller\ApiV1ProposalController;
+use OCA\Notenarchiv\Controller\ApiV1ReviewController;
 use OCA\Notenarchiv\Controller\ApiV1StatisticsController;
 use OCA\Notenarchiv\Controller\ApiV1StatusController;
 use OCA\Notenarchiv\Controller\ApiV1TaskController;
+use OCA\Notenarchiv\Controller\ReviewController;
 use OCA\Notenarchiv\Db\CopyMapper;
+use OCA\Notenarchiv\Db\ReviewPoint;
 use OCA\Notenarchiv\Db\WorkVersionMapper;
 use OCA\Notenarchiv\Exception\ModuleDisabledException;
 use OCA\Notenarchiv\Middleware\ModuleMiddleware;
 use OCA\Notenarchiv\Service\CatalogService;
 use OCA\Notenarchiv\Service\Modules;
+use OCA\Notenarchiv\Service\ReviewService;
 use OCA\Notenarchiv\Service\Roles;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
@@ -124,16 +135,47 @@ $describe = fn (mixed $result): string => $result instanceof OCSException ? get_
 	: substr((string)json_encode($result), 0, 300);
 
 $copies = Server::get(CopyMapper::class)->findAllByShelfmark();
-$copy = $copies[$shelfmark];
-$preservation = $copies[$preservationMark];
-$check('the second shelf mark is an internal preservation copy',
-	Server::get(WorkVersionMapper::class)->find($preservation->getVersionId())->getPreservationCopy() === true);
+$copy = $copies[$shelfmark] ?? null;
+$preservation = $copies[$preservationMark] ?? null;
+$check('both copies exist', $copy !== null && $preservation !== null, $shelfmark . ', ' . $preservationMark);
+if ($copy === null || $preservation === null) {
+	IntegrationTest::finish();
+}
+$check('the two copies belong to different versions', $copy->getVersionId() !== $preservation->getVersionId());
+$versions = Server::get(WorkVersionMapper::class);
+
+/**
+ * A minimal report of a transcription (bericht/1) for a copy, with review
+ * points whose texts are unique to this run.
+ *
+ * @param list<array{takt: string, stimme: string, was: string}> $uncertain
+ * @param list<string> $material
+ */
+$reportText = fn (string $shelfmarkOfReport, array $uncertain, array $material = []): string => json_encode([
+	'format' => 'bericht/1',
+	'signatur' => $shelfmarkOfReport,
+	'basisname' => 'api-v1-test',
+	'titel' => 'API v1 test',
+	'runde' => 'api_v1_test',
+	'weg' => 'neuaufbau',
+	'unsicher' => $uncertain,
+	'material' => $material,
+	'rueckfragen' => [],
+], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
+$run = bin2hex(random_bytes(4));
 
 $db->beginTransaction();
 try {
 	$modules->applyPreset(Modules::COMPLETE);
 	$modules->change([Modules::AGENT_API => true]);
 	$onlyRoles([Roles::LIBRARIAN]);
+
+	// Precondition, so that the test also runs on a catalog without a preservation copy
+	if ($versions->find($preservation->getVersionId())->getPreservationCopy() !== true) {
+		Server::get(CatalogService::class)->update('version', $preservation->getVersionId(), ['preservation_copy' => true], $uid, 'integration test');
+	}
+	$check('the second shelf mark is an internal preservation copy', $versions->find($preservation->getVersionId())->getPreservationCopy() === true);
+	$check('the first one is not', $versions->find($copy->getVersionId())->getPreservationCopy() !== true);
 
 	// The controllers as Nextcloud creates them for a request of $uid
 	$statusController = Server::get(ApiV1StatusController::class);
@@ -142,11 +184,12 @@ try {
 	$proposals = Server::get(ApiV1ProposalController::class);
 	$concerts = Server::get(ApiV1ConcertController::class);
 	$statistics = Server::get(ApiV1StatisticsController::class);
+	$reviewApi = Server::get(ApiV1ReviewController::class);
 	$middleware = Server::get(ModuleMiddleware::class);
 	$routes = [
 		[$statusController, 'modules'], [$catalog, 'search'], [$catalog, 'copy'], [$catalog, 'reference'], [$tasks, 'due'], [$tasks, 'tasks'],
 		[$tasks, 'createTask'], [$tasks, 'answer'], [$proposals, 'proposals'], [$proposals, 'propose'], [$concerts, 'concerts'],
-		[$concerts, 'concert'], [$statistics, 'statistics'],
+		[$concerts, 'concert'], [$statistics, 'statistics'], [$reviewApi, 'review'], [$reviewApi, 'orders'], [$reviewApi, 'submitReport'],
 	];
 	/** The answer of the module middleware: null when the route may run, else the OCS exception. */
 	$gate = function (Controller $controller, string $method) use ($middleware): ?OCSException {
@@ -169,7 +212,8 @@ try {
 	$moduleStatus = $ocs(fn () => $statusController->modules());
 	$check('module status of the session account', is_array($moduleStatus) && $moduleStatus['api_version'] === 1 && $moduleStatus['roles'] === [Roles::LIBRARIAN]
 		&& $moduleStatus['modules'][Modules::AGENT_API] === true && $moduleStatus['permissions']['propose'] === true
-		&& $moduleStatus['permissions']['view_preservation_copies'] === true, $describe($moduleStatus));
+		&& $moduleStatus['permissions']['view_preservation_copies'] === true && $moduleStatus['permissions']['submit_transcription_reports'] === true,
+		$describe($moduleStatus));
 
 	$found = $ocs(fn () => $catalog->search(shelfmark: $shelfmark));
 	$row = is_array($found) ? ($found['items'][0] ?? null) : null;
@@ -238,6 +282,103 @@ try {
 	$check('a task for an unknown role is refused',
 		$fails($ocs(fn () => $tasks->createTask($copy->getId(), 'question', 'board', 'x')), OCSBadRequestException::class, 400));
 
+	// ---- review of transcriptions: reports, the review of a copy, correction orders ----
+	$reviewService = Server::get(ReviewService::class);
+	/**
+	 * The response of a call, or the OCS exception it ends with.
+	 *
+	 * @param callable(): DataResponse $call
+	 */
+	$respond = function (callable $call): DataResponse|OCSException {
+		try {
+			return $call();
+		} catch (OCSException $e) {
+			return $e;
+		}
+	};
+	/** Every review point of a copy, page by page (two per page, to page through) */
+	$allPoints = function (int $copyId, ?string $status = null) use ($reviewApi, $ocs): ?array {
+		$items = [];
+		$cursor = null;
+		$pages = 0;
+		do {
+			$page = $ocs(fn () => $reviewApi->review($copyId, status: $status, limit: 2, cursor: $cursor));
+			if (!is_array($page)) {
+				return null;
+			}
+			$items = [...$items, ...$page['items']];
+			$cursor = $page['next_cursor'];
+			$pages++;
+		} while ($cursor !== null && $pages < 2000);
+		return $items;
+	};
+	$text = fn (string $what): string => 'API test ' . $run . ': ' . $what;
+	$raw = $reportText($copy->getShelfmark(), [
+		['takt' => '1', 'stimme' => 'Tenor', 'was' => $text('first note uncertain')],
+		['takt' => '2–3', 'stimme' => 'Bass', 'was' => $text('tie or slur')],
+	], [$text('page 2 of the scan is missing')]);
+	$submitted = $respond(fn () => $reviewApi->submitReport($copy->getId(), $raw));
+	$result = $submitted instanceof DataResponse ? $submitted->getData() : null;
+	$reportId = $result['report']['id'] ?? null;
+	$check('a report is read (201)', $submitted instanceof DataResponse && $submitted->getStatus() === Http::STATUS_CREATED
+		&& $result['unchanged'] === false && $result['points']['created'] === 3 && $result['report']['own'] === true
+		&& $result['report']['copy_id'] === $copy->getId() && $result['report']['round'] === 'api_v1_test', $describe($result ?? $submitted));
+	$check('the answer has no received text and no account name', is_array($result) && !array_key_exists('raw', $result['report'])
+		&& !array_key_exists('created_by', $result['report']));
+	$again = $respond(fn () => $reviewApi->submitReport($copy->getId(), $raw));
+	$check('the same report again creates nothing (200)', $again instanceof DataResponse && $again->getStatus() === Http::STATUS_OK
+		&& $again->getData()['unchanged'] === true && $again->getData()['report']['id'] === $reportId, $describe($again));
+	$check('a report naming another copy is refused', $fails($ocs(fn () => $reviewApi->submitReport($copy->getId(),
+		$reportText($preservation->getShelfmark(), []))), OCSBadRequestException::class, 400));
+	$check('an invalid report is refused', $fails($ocs(fn () => $reviewApi->submitReport($copy->getId(), '{"format":"bericht/2"}')),
+		OCSBadRequestException::class, 400));
+	$check('a report for an unknown copy answers 404', $fails($ocs(fn () => $reviewApi->submitReport(999999999, $raw)), OCSNotFoundException::class, 404));
+
+	$reviewData = $ocs(fn () => $reviewApi->review($copy->getId()));
+	$check('the review names the copy and lists the new report first', is_array($reviewData) && $reviewData['copy_id'] === $copy->getId()
+		&& $reviewData['shelfmark'] === $copy->getShelfmark() && ($reviewData['reports'][0]['id'] ?? null) === $reportId
+		&& $reviewData['reports'][0]['superseded_by'] === null && $reviewData['counts']['open'] >= 3, $describe($reviewData));
+	$points = $allPoints($copy->getId()) ?? [];
+	$mine = array_column(array_values(array_filter($points, fn (array $p): bool => $p['report_id'] === $reportId)), null, 'text');
+	$uncertain = $mine[$text('first note uncertain')] ?? [];
+	$material = $mine[$text('page 2 of the scan is missing')] ?? [];
+	$check('pages cover the review points once', count($points) === count(array_unique(array_column($points, 'id')))
+		&& is_array($reviewData) && count($points) === $reviewData['total'], count($points) . ' points');
+	$check('the points of the report with place, role and status', count($mine) === 3 && ($uncertain['category'] ?? '') === 'uncertain'
+		&& ($uncertain['role'] ?? '') === 'conductor' && ($uncertain['measure_from'] ?? '') === '1' && ($uncertain['voice'] ?? '') === 'Tenor'
+		&& ($uncertain['status'] ?? '') === 'open' && ($uncertain['own'] ?? false) === true && ($material['role'] ?? '') === 'librarian',
+		$describe(array_values($mine)));
+	$json = (string)json_encode($reviewData);
+	$check('no account names in the review', !str_contains($json, '"decided_by') && !str_contains($json, '"created_by')
+		&& !str_contains($json, '"point_key"') && !str_contains($json, '"raw"'));
+	$check('an unknown status is refused', $fails($ocs(fn () => $reviewApi->review($copy->getId(), status: 'deleted')), OCSBadRequestException::class, 400));
+
+	// People decide (here through the service, as the score view does); the order reaches the tool chain
+	$reviewService->decide((int)($uncertain['id'] ?? 0), ReviewPoint::CORRECT, $text('read again from the scan'), null, null, $uid);
+	$orders = $ocs(fn () => $reviewApi->orders(copy_id: $copy->getId(), limit: 100));
+	$order = is_array($orders) ? (array_column($orders['items'], null, 'id')[$uncertain['id'] ?? 0] ?? null) : null;
+	$check('the decided point is a correction order', is_array($order) && $order['correction'] === $text('read again from the scan')
+		&& $order['shelfmark'] === $copy->getShelfmark() && $order['basename'] === 'api-v1-test' && $order['own'] === true
+		&& $order['decided_at'] !== null && !array_key_exists('decided_by_name', $order), $describe($orders));
+	$decided = array_column($allPoints($copy->getId(), ReviewPoint::CORRECT) ?? [], null, 'id')[$uncertain['id'] ?? 0] ?? [];
+	$check('the review shows the decision without the decider', ($decided['status'] ?? '') === 'correct' && ($decided['decided_at'] ?? null) !== null
+		&& !array_key_exists('decided_by', $decided), $describe($decided));
+	$firstOrders = $ocs(fn () => $reviewApi->orders(limit: 1));
+	$check('the orders come in pages', is_array($firstOrders) && $firstOrders['total'] >= 1 && count($firstOrders['items']) === 1
+		&& ($firstOrders['total'] === 1) === ($firstOrders['next_cursor'] === null), $describe($firstOrders));
+
+	// An order on the preservation copy, for the checks of the other roles
+	$preserved = $respond(fn () => $reviewApi->submitReport($preservation->getId(),
+		$reportText($preservation->getShelfmark(), [['takt' => '1', 'stimme' => 'Alt', 'was' => $text('preservation copy, first note')]])));
+	$check('the librarian hands in a report for the preservation copy', $preserved instanceof DataResponse
+		&& $preserved->getStatus() === Http::STATUS_CREATED, $describe($preserved));
+	$preservedPoint = array_values(array_filter($allPoints($preservation->getId()) ?? [],
+		fn (array $p): bool => $p['text'] === $text('preservation copy, first note')))[0] ?? [];
+	$reviewService->decide((int)($preservedPoint['id'] ?? 0), ReviewPoint::CORRECT, $text('preservation copy, read again'), null, null, $uid);
+	$preservedOrders = $ocs(fn () => $reviewApi->orders(copy_id: $preservation->getId()));
+	$check('the librarian sees the order of the preservation copy', is_array($preservedOrders)
+		&& in_array($preservedPoint['id'] ?? 0, array_column($preservedOrders['items'], 'id'), true), $describe($preservedOrders));
+
 	// ---- other roles ----
 	$onlyRoles([Roles::READER]);
 	$readerStatus = $ocs(fn () => Server::get(ApiV1StatusController::class)->modules());
@@ -252,12 +393,41 @@ try {
 		OCSForbiddenException::class, 403));
 	$check('a reader cannot create tasks', $fails($ocs(fn () => $tasks->createTask($copy->getId(), 'question', 'conductor', 'x')),
 		OCSForbiddenException::class, 403));
+	$check('a reader reads the review', is_array($ocs(fn () => $reviewApi->review($copy->getId()))));
+	$check('a reader may not hand in reports', is_array($readerStatus) && $readerStatus['permissions']['submit_transcription_reports'] === false
+		&& $fails($ocs(fn () => $reviewApi->submitReport($copy->getId(), $reportText($copy->getShelfmark(),
+			[['takt' => '1', 'stimme' => 'Sopran', 'was' => $text('from a reader')]]))), OCSForbiddenException::class, 403));
+	$check('a reader cannot read the review of the preservation copy',
+		$fails($ocs(fn () => $reviewApi->review($preservation->getId())), OCSForbiddenException::class, 403));
+	$hiddenOrders = $ocs(fn () => $reviewApi->orders(copy_id: $preservation->getId()));
+	$check('nor its correction orders', is_array($hiddenOrders) && $hiddenOrders['items'] === [] && $hiddenOrders['total'] === 0, $describe($hiddenOrders));
 
 	$onlyRoles([Roles::CONTRIBUTOR]);
 	$check('a contributor proposes', is_array($ocs(fn () => $proposals->propose('copy', $copy->getId(), ['pages' => '4'], null, 'api_v1_test'))));
 	$check('a contributor asks', is_array($ocs(fn () => $tasks->createTask($copy->getId(), 'report', 'librarian', 'API test: page 2 is missing'))));
 	$check('a contributor cannot create a task on the preservation copy',
 		$fails($ocs(fn () => $tasks->createTask($preservation->getId(), 'question', 'conductor', 'x')), OCSForbiddenException::class, 403));
+	$contributed = $respond(fn () => $reviewApi->submitReport($copy->getId(), $reportText($copy->getShelfmark(),
+		[['takt' => '4', 'stimme' => 'Sopran', 'was' => $text('from the contributor')]])));
+	$check('a contributor hands in a report', $contributed instanceof DataResponse && $contributed->getStatus() === Http::STATUS_CREATED
+		&& $contributed->getData()['points']['created'] === 1, $describe($contributed));
+	$check('but not for the preservation copy', $fails($ocs(fn () => $reviewApi->submitReport($preservation->getId(),
+		$reportText($preservation->getShelfmark(), []))), OCSForbiddenException::class, 403));
+	$contributorOrders = $ocs(fn () => $reviewApi->orders(copy_id: $preservation->getId()));
+	$ownOrders = $ocs(fn () => $reviewApi->orders(copy_id: $copy->getId()));
+	$check('a contributor reads the orders without those of the preservation copy', is_array($contributorOrders) && $contributorOrders['total'] === 0
+		&& is_array($ownOrders) && in_array($uncertain['id'] ?? 0, array_column($ownOrders['items'], 'id'), true),
+		$describe([$contributorOrders, $ownOrders]));
+	// api/v1 has no route to decide a review point or to save a correction; the routes of the UI refuse a contributor
+	$check('api/v1 has no way to decide or correct', !method_exists($reviewApi, 'decide') && !method_exists($reviewApi, 'correct'));
+	$internal = Server::get(ReviewController::class);
+	$refusedDecision = $internal->decide((int)($material['id'] ?? 0), ReviewPoint::CONFIRMED);
+	$check('a contributor cannot decide a review point through the route of the UI', $refusedDecision->getStatus() === Http::STATUS_FORBIDDEN,
+		(string)json_encode($refusedDecision->getData()));
+	$check('the point stays open', (array_column($allPoints($copy->getId(), ReviewPoint::OPEN) ?? [], null, 'id')[$material['id'] ?? 0]['status'] ?? '')
+		=== ReviewPoint::OPEN);
+	$refusedCorrection = $internal->correct($copy->getVersionId(), 0, '<score-partwise/>', [], 'agent');
+	$check('nor save a correction', $refusedCorrection->getStatus() === Http::STATUS_FORBIDDEN, (string)json_encode($refusedCorrection->getData()));
 	$onlyRoles([Roles::LIBRARIAN]);
 
 	// ---- modules switched off ----
@@ -267,6 +437,12 @@ try {
 		&& $off->getMessage() === 'This function is switched off.', $describe($off));
 	$check('the catalog still answers', $gate($catalog, 'search') === null && $gate($tasks, 'due') === null);
 	$modules->change(['tasks' => true]);
+	$modules->change([ReviewService::MODULE => false]);
+	$offReview = array_map(fn (string $method): ?OCSException => $gate($reviewApi, $method), ['review', 'orders', 'submitReport']);
+	$check('without the review of transcriptions its routes answer 404',
+		array_filter($offReview, fn (?OCSException $e): bool => !($e instanceof OCSNotFoundException && $e->getCode() === 404)) === []);
+	$check('and the rest still answers', $gate($catalog, 'copy') === null && $gate($tasks, 'tasks') === null);
+	$modules->change([ReviewService::MODULE => true]);
 
 	$modules->change([Modules::AGENT_API => false]);
 	$refused = array_map(fn (array $route): ?OCSException => $gate(...$route), $routes);

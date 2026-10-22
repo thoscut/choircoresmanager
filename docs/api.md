@@ -1193,10 +1193,13 @@ points, decisions and orders; `corrections` (requires `score_viewer`) for the
 small corrections in the app. See "Modules and the personal view" above.
 
 Services for other callers (e.g. the agent interface): `ReviewService`
-(`ingest`, `forVersion`, `decide`, `orders`), `CorrectionService`
-(`correct`), `TranscriptionReportParser::parse` (pure, no server needed),
-`MusicXmlCorrection::apply` (pure). They check roles and modules themselves;
-the controller `ReviewController` only maps requests to them.
+(`ingest`, `ingestForCopy`, `forVersion`, `decide`, `orders`),
+`CorrectionService` (`correct`), `TranscriptionReportParser::parse` (pure,
+no server needed), `MusicXmlCorrection::apply` (pure). They check roles and
+modules themselves; the controllers `ReviewController` and
+`ApiV1ReviewController` (API for agents, [api-v1.md](api-v1.md): review of
+a copy, correction orders, reports; no decisions, no corrections) only map
+requests to them.
 
 ### Reading a report
 
@@ -1399,8 +1402,10 @@ orders (status `correct`) for the tool chain, oldest first:
 ```
 
 Each order is the full point row (see above) plus `shelfmark`, `title`,
-`basename` (of the report that named it) and `file_name` (of the MusicXML
-the point was made for).
+`basename` (of the report that named it), `file_name` (of the MusicXML
+the point was made for) and `preservation_copy` (the version is an internal
+preservation copy; the API for agents leaves such orders out for roles that
+may not view them).
 
 The tool chain closes an order with its next report for the same copy: by
 naming the id in `erledigt`, by `{ "takt", "stimme" }` in `erledigt`, or by no
