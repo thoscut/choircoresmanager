@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2026-10-21 23:53+0000\n"
+"POT-Creation-Date: 2026-10-22 13:01+0200\n"
 "PO-Revision-Date: 2026-10-21 20:30+0000\n"
 "Last-Translator: Claude Code\n"
 "Language-Team: none\n"
@@ -14,8 +14,83 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
+msgid "Public scores"
+msgstr "Partitions publiques"
+
 msgid "Insufficient permissions"
 msgstr "Autorisations insuffisantes"
+
+#, php-format
+msgid "The file is too large. The maximum size is %d MB."
+msgstr "Le fichier est trop volumineux. La taille maximale est de %d Mo."
+
+#, php-format
+msgid "The file has no column \"%s\"."
+msgstr "Le fichier n'a pas de colonne « %s »."
+
+msgid "Catalogue"
+msgstr "Catalogue"
+
+msgid "Score not found"
+msgstr "Partition introuvable"
+
+#, php-format
+msgid "The row has %1$d values, but the header has only %2$d columns."
+msgstr "La ligne contient %1$d valeurs, mais l'en-tête ne compte que %2$d colonnes."
+
+msgid "The signature is missing."
+msgstr "La cote est manquante."
+
+msgid "The signature has leading or trailing spaces."
+msgstr "La cote commence ou se termine par des espaces."
+
+msgid "The signature occurs more than once in the file."
+msgstr "La cote apparaît plusieurs fois dans le fichier."
+
+msgid "The signature is used by more than one existing score."
+msgstr "La cote est utilisée par plusieurs partitions existantes."
+
+#, php-format
+msgid "New scores need the column \"%s\"."
+msgstr "Les nouvelles partitions nécessitent la colonne « %s »."
+
+msgid "The file is not valid UTF-8. Save it as \"CSV UTF-8\" and try again."
+msgstr "Le fichier n'est pas en UTF-8 valide. Enregistrez-le au format \"CSV UTF-8\" et réessayez."
+
+msgid "The file is empty."
+msgstr "Le fichier est vide."
+
+#, php-format
+msgid "The quoted value starting in line %d is not closed."
+msgstr "La valeur entre guillemets commençant à la ligne %d n'est pas fermée."
+
+#, php-format
+msgid "Column %d of the header has no name."
+msgstr "La colonne %d de l'en-tête n'a pas de nom."
+
+#, php-format
+msgid "The header contains the column \"%s\" more than once."
+msgstr "L'en-tête contient la colonne « %s » plusieurs fois."
+
+#, php-format
+msgid "%1$s: The value is longer than %2$d characters."
+msgstr "%1$s : la valeur comporte plus de %2$d caractères."
+
+#, php-format
+msgid "%s: The value is not a date in the form YYYY-MM-DD."
+msgstr "%s : la valeur n'est pas une date au format AAAA-MM-JJ."
+
+#, php-format
+msgid "%1$s: The value is not one of: %2$s."
+msgstr "%1$s : la valeur ne fait pas partie des valeurs suivantes : %2$s."
+
+#, php-format
+msgid "%s: The value must not be empty."
+msgstr "%s : la valeur ne doit pas être vide."
+
+#, php-format
+msgid "The years for current repertoire must be at least 0 and less than the years for dormant repertoire, which must be at most %d."
+msgstr "Le nombre d'années du répertoire actuel doit être d'au moins 0 et inférieur à celui du répertoire en sommeil, qui doit être d'au plus %d."
 
 msgid "Folder collection not found"
 msgstr "Collection de classeurs introuvable"
@@ -34,9 +109,6 @@ msgstr "Type de collection non valide. Doit être \"alphabetical\" ou \"indexed\
 
 msgid "Collection type cannot be changed after creation."
 msgstr "Le type de collection ne peut plus être modifié après la création."
-
-msgid "Score not found"
-msgstr "Partition introuvable"
 
 msgid "Cannot add score individually when its score book is already in the collection"
 msgstr "Impossible d'ajouter la partition individuellement lorsque son recueil fait déjà partie de la collection"
@@ -88,6 +160,52 @@ msgstr "Une version active existe déjà. Désactivez-la d'abord en définissant
 msgid "New version must start at least one day after the current version"
 msgstr "La nouvelle version doit commencer au moins un jour après la version actuelle"
 
+msgid "The selected file does not exist or you are not allowed to read it"
+msgstr "Le fichier sélectionné n'existe pas ou vous n'êtes pas autorisé à le lire"
+
+msgid "No MusicXML file is linked to this score"
+msgstr "Aucun fichier MusicXML n'est associé à cette partition"
+
+msgid "The linked MusicXML file is missing or no longer accessible."
+msgstr "Le fichier MusicXML associé est introuvable ou n'est plus accessible."
+
+msgid "Only MusicXML files (.musicxml, .xml, .mxl) are allowed"
+msgstr "Seuls les fichiers MusicXML (.musicxml, .xml, .mxl) sont autorisés"
+
+msgid "The file could not be read"
+msgstr "Le fichier n'a pas pu être lu"
+
+#, php-format
+msgid "The file is too large (maximum %d MB)"
+msgstr "Le fichier est trop volumineux (maximum %d Mo)"
+
+msgid "The file is empty"
+msgstr "Le fichier est vide"
+
+msgid "The file is not a valid MusicXML file"
+msgstr "Le fichier n'est pas un fichier MusicXML valide"
+
+msgid "MusicXML files with entity declarations are not supported"
+msgstr "Les fichiers MusicXML contenant des déclarations d'entités ne sont pas pris en charge"
+
+msgid "The file is not a valid compressed MusicXML file"
+msgstr "Le fichier n'est pas un fichier MusicXML compressé valide"
+
+msgid "The file is too large when uncompressed"
+msgstr "Le fichier est trop volumineux une fois décompressé"
+
+msgid "No PDF file is linked to this score"
+msgstr "Aucun fichier PDF n'est associé à cette partition"
+
+msgid "The linked PDF file is missing or no longer accessible."
+msgstr "Le fichier PDF associé est introuvable ou n'est plus accessible."
+
+msgid "Only PDF files are allowed"
+msgstr "Seuls les fichiers PDF sont autorisés"
+
+msgid "The file is not a valid PDF file"
+msgstr "Le fichier n'est pas un fichier PDF valide"
+
 msgid "Cannot delete score book with linked scores. Remove all scores first."
 msgstr "Impossible de supprimer un recueil contenant des partitions. Retirez d'abord toutes les partitions."
 
@@ -132,6 +250,22 @@ msgstr "Impossible de supprimer la partition car elle fait partie d'une collecti
 msgid "Score is already part of another score book. Remove it first."
 msgstr "La partition fait déjà partie d'un autre recueil. Retirez-la d'abord."
 
+msgid "Invalid date. Use the format YYYY-MM-DD."
+msgstr "Date non valide. Utilisez le format AAAA-MM-JJ."
+
+msgid "Invalid rights status. Must be \"public_domain\", \"licensed\", \"protected\" or \"open\"."
+msgstr "Statut des droits non valide. Doit être \"public_domain\", \"licensed\", \"protected\" ou \"open\"."
+
+msgid "Invalid publication status. Must be \"approved\", \"to_clarify\", \"blocked\" or \"internal_preservation_copy\"."
+msgstr "Statut de publication non valide. Doit être \"approved\", \"to_clarify\", \"blocked\" ou \"internal_preservation_copy\"."
+
+#, php-format
+msgid "Use at most %d characters for the person who confirmed the rights, e.g. their initials."
+msgstr "Utilisez au maximum %d caractères pour la personne ayant confirmé les droits, p. ex. ses initiales."
+
+msgid "A \"blocked until\" date can only be set if the publication is blocked."
+msgstr "Une date « Bloquée jusqu'au » ne peut être définie que si la publication est bloquée."
+
 msgid "Setlist entry not found"
 msgstr "Entrée de setlist introuvable"
 
@@ -156,6 +290,21 @@ msgstr "Seul scoreId ou breakDuration peut être défini, pas les deux"
 
 msgid "An entry with this index already exists in the setlist"
 msgstr "Une entrée avec cet index existe déjà dans la setlist"
+
+msgid "Invalid share type"
+msgstr "Type de partage non valide"
+
+msgid "Group not found"
+msgstr "Groupe introuvable"
+
+msgid "Already shared with this group"
+msgstr "Déjà partagé avec ce groupe"
+
+msgid "Share not found"
+msgstr "Partage introuvable"
+
+msgid "Invalid share target"
+msgstr "Cible de partage non valide"
 
 msgid "Orchestra Scores Manager"
 msgstr "Gestionnaire de partitions d'orchestre"
@@ -203,6 +352,12 @@ msgstr "Paramètres mis à jour avec succès."
 msgid "Failed to update settings."
 msgstr "Impossible de mettre à jour les paramètres."
 
+msgid "Please enter whole numbers."
+msgstr "Veuillez saisir des nombres entiers."
+
+msgid "The first number must be at least 0 and smaller than the second, which must be at most {max}."
+msgstr "Le premier nombre doit être d'au moins 0 et inférieur au second, qui doit être d'au plus {max}."
+
 msgid "Group Permissions"
 msgstr "Autorisations des groupes"
 
@@ -214,6 +369,33 @@ msgstr "Groupes autorisés"
 
 msgid "Select groups…"
 msgstr "Sélectionner des groupes…"
+
+msgid "Repertoire"
+msgstr "Répertoire"
+
+msgid "The repertoire class of a score is derived from its last documented performance (setlists and imported catalogue). A score is current if it was performed in the current year or the given number of years before, dormant within the second number of years, and earlier otherwise. Scores without a documented performance are shown as not documented."
+msgstr "La classe de répertoire d'une partition est calculée à partir de sa dernière interprétation documentée (setlists et catalogue importé). Une partition fait partie du répertoire actuel si elle a été interprétée pendant l'année en cours ou pendant le nombre d'années précédentes indiqué, du répertoire en sommeil si elle l'a été dans les limites du second nombre d'années, et du répertoire ancien dans les autres cas. Les partitions sans interprétation documentée sont affichées comme « Non documenté »."
+
+msgid "Years back for current repertoire"
+msgstr "Années en arrière pour le répertoire actuel"
+
+msgid "Years back for dormant repertoire"
+msgstr "Années en arrière pour le répertoire en sommeil"
+
+msgid "Save"
+msgstr "Enregistrer"
+
+msgid "Public page"
+msgstr "Page publique"
+
+msgid "Show all scores that are approved for publication and whose rights status (public domain or licensed) has been confirmed on a page that can be opened without logging in. Visitors can view and play the MusicXML files of these scores. No other scores or internal details are shown."
+msgstr "Afficher sur une page accessible sans connexion toutes les partitions validées pour publication et dont le statut des droits (domaine public ou sous licence) a été confirmé. Les visiteurs peuvent consulter et écouter les fichiers MusicXML de ces partitions. Aucune autre partition ni aucun détail interne n'est affiché."
+
+msgid "Enable public page"
+msgstr "Activer la page publique"
+
+msgid "Public address:"
+msgstr "Adresse publique :"
 
 msgid "Invalid default moderation time format. Use (HH:)MM:SS"
 msgstr "Format de durée de présentation par défaut non valide. Utilisez (HH:)MM:SS"
@@ -241,9 +423,6 @@ msgstr "Sélectionner une collection de classeurs"
 
 msgid "Saving …"
 msgstr "Enregistrement …"
-
-msgid "Save"
-msgstr "Enregistrer"
 
 msgid "Score book assignment updated"
 msgstr "Attribution au recueil mise à jour"
@@ -314,11 +493,64 @@ msgstr "Échec de l'export : "
 msgid "Export CSV"
 msgstr "Exporter en CSV"
 
+msgid "The score could not be loaded"
+msgstr "La partition n'a pas pu être chargée"
+
+msgid "Pause"
+msgstr "Pause"
+
+msgid "Play"
+msgstr "Lecture"
+
+msgid "Stop"
+msgstr "Arrêter"
+
+msgid "Tempo"
+msgstr "Tempo"
+
+msgid "Previous page"
+msgstr "Page précédente"
+
+msgid "Page {page} of {count}"
+msgstr "Page {page} sur {count}"
+
+msgid "Next page"
+msgstr "Page suivante"
+
+msgid "Solo"
+msgstr "Solo"
+
+msgid "Mute"
+msgstr "Muet"
+
+msgid "Volume of {voice}"
+msgstr "Volume de {voice}"
+
+msgid "Loading score…"
+msgstr "Chargement de la partition…"
+
 msgid "Main app navigation"
 msgstr "Navigation principale de l'application"
 
 msgid "No folder collections yet"
 msgstr "Aucune collection de classeurs pour le moment"
+
+msgid "Zoom out"
+msgstr "Zoom arrière"
+
+msgid "Zoom in"
+msgstr "Zoom avant"
+
+msgid "Loading PDF…"
+msgstr "Chargement du PDF…"
+
+msgid "The PDF could not be displayed"
+msgstr "Le PDF n'a pas pu être affiché"
+
+msgid "%n page"
+msgid_plural "%n pages"
+msgstr[0] "%n page"
+msgstr[1] "%n pages"
 
 msgid "Operation failed: "
 msgstr "Échec de l'opération : "
@@ -349,6 +581,15 @@ msgstr "Supprimer"
 
 msgid "Comments"
 msgstr "Commentaires"
+
+msgid "Notes & Playback"
+msgstr "Partition et lecture"
+
+msgid "PDF"
+msgstr "PDF"
+
+msgid "Shares"
+msgstr "Partages"
 
 msgid "Folder Collections"
 msgstr "Collections de classeurs"
@@ -425,11 +666,101 @@ msgstr "Exemplaires physiques"
 msgid "Tags"
 msgstr "Étiquettes"
 
+msgid "Rights Status"
+msgstr "Statut des droits"
+
+msgid "Rights Reasoning"
+msgstr "Justification (droits)"
+
+msgid "Rights Confirmed On"
+msgstr "Droits confirmés le"
+
+msgid "Rights Confirmed By"
+msgstr "Droits confirmés par"
+
+msgid "Who confirmed the rights status, e.g. initials. Changing the rights status removes the confirmation."
+msgstr "Personne ayant confirmé le statut des droits, p. ex. ses initiales. Modifier le statut des droits supprime la confirmation."
+
+msgid "Publication"
+msgstr "Publication"
+
+msgid "Blocked Until"
+msgstr "Bloquée jusqu'au"
+
+msgid "Publication Reasoning"
+msgstr "Justification (publication)"
+
+msgid "MusicXML"
+msgstr "MusicXML"
+
 msgid "Active"
 msgstr "Active"
 
 msgid "History"
 msgstr "Historique"
+
+msgid "Share {title}"
+msgstr "Partager {title}"
+
+msgid "Failed to load shares: "
+msgstr "Impossible de charger les partages : "
+
+msgid "Failed to share: "
+msgstr "Échec du partage : "
+
+msgid "Failed to remove share: "
+msgstr "Impossible de supprimer le partage : "
+
+msgid "Link copied to the clipboard"
+msgstr "Lien copié dans le presse-papiers"
+
+msgid "Public links work without login and only show scores that are approved for publication and whose rights are confirmed. Group shares show all scores, including PDFs, to the members of the group, but never the notes of internal preservation copies. Files cannot be downloaded from shares."
+msgstr "Les liens publics fonctionnent sans connexion et n'affichent que les partitions validées pour publication et dont les droits ont été confirmés. Les partages de groupe montrent toutes les partitions aux membres du groupe, PDF compris, mais jamais les notes des copies de conservation internes. Aucun fichier ne peut être téléchargé depuis un partage."
+
+msgid "Public link"
+msgstr "Lien public"
+
+msgid "Copy link"
+msgstr "Copier le lien"
+
+msgid "Open link"
+msgstr "Ouvrir le lien"
+
+msgid "Remove share"
+msgstr "Supprimer le partage"
+
+msgid "Not shared yet"
+msgstr "Pas encore partagé"
+
+msgid "Title shown on the share (optional)"
+msgstr "Titre affiché sur le partage (facultatif)"
+
+msgid "Share with group"
+msgstr "Partager avec un groupe"
+
+msgid "Select group"
+msgstr "Sélectionner un groupe"
+
+msgid "Share"
+msgstr "Partager"
+
+msgid "Create public link"
+msgstr "Créer un lien public"
+
+msgid "No scores shared"
+msgstr "Aucune partition partagée"
+
+msgid "arr. {arranger}"
+msgstr "arr. {arranger}"
+
+msgid "Close"
+msgstr "Fermer"
+
+msgid "Show & play"
+msgstr "Afficher et écouter"
+
+msgid "No digital notes"
+msgstr "Pas de partition numérique"
 
 msgid "Remove score book from collection"
 msgstr "Retirer le recueil de la collection"
@@ -659,6 +990,90 @@ msgstr "Échec de la création de la partition : "
 msgid "Create score"
 msgstr "Créer une partition"
 
+msgid "Last performed according to the catalogue"
+msgstr "Dernière interprétation selon le catalogue"
+
+msgid "Further catalogue data"
+msgstr "Autres données du catalogue"
+
+msgid "No further catalogue data for this score."
+msgstr "Aucune autre donnée du catalogue pour cette partition."
+
+msgid "New"
+msgstr "Nouvelle"
+
+msgid "Changed"
+msgstr "Modifiée"
+
+msgid "Error"
+msgstr "Erreur"
+
+msgid "Catalogue imported: {new} new, {changed} changed"
+msgstr "Catalogue importé : {new} nouvelle(s), {changed} modifiée(s)"
+
+msgid "Import catalogue"
+msgstr "Importer le catalogue"
+
+msgid "Select the catalogue as a CSV file (semicolon-separated, UTF-8). A dry run first shows what would change. Nothing is saved until you click Apply."
+msgstr "Sélectionnez le catalogue sous forme de fichier CSV (séparateur point-virgule, UTF-8). Une simulation montre d'abord ce qui changerait. Rien n'est enregistré tant que vous n'avez pas cliqué sur « Appliquer »."
+
+msgid "Rows are matched to scores by their signature. Scores that are not in the file stay unchanged, nothing is deleted."
+msgstr "Les lignes sont associées aux partitions par leur cote. Les partitions absentes du fichier restent inchangées ; rien n'est supprimé."
+
+msgid "Choose CSV file"
+msgstr "Choisir un fichier CSV"
+
+msgid "The catalogue has been imported."
+msgstr "Le catalogue a été importé."
+
+msgid "Result"
+msgstr "Résultat"
+
+msgid "Dry run"
+msgstr "Simulation"
+
+msgid "New: {count}"
+msgstr "Nouvelles : {count}"
+
+msgid "Changed: {count}"
+msgstr "Modifiées : {count}"
+
+msgid "Unchanged: {count}"
+msgstr "Inchangées : {count}"
+
+msgid "With errors: {count}"
+msgstr "Avec erreurs : {count}"
+
+msgid "Rows with errors are not applied. Correct them in the file and choose it again."
+msgstr "Les lignes comportant des erreurs ne sont pas appliquées. Corrigez-les dans le fichier, puis choisissez-le à nouveau."
+
+msgid "How the columns are stored"
+msgstr "Comment les colonnes sont enregistrées"
+
+msgid "In score fields:"
+msgstr "Dans les champs de la partition :"
+
+msgid "Verbatim as further catalogue data:"
+msgstr "Telles quelles, comme autres données du catalogue :"
+
+msgid "Line {line}"
+msgstr "Ligne {line}"
+
+msgid "Column"
+msgstr "Colonne"
+
+msgid "Before"
+msgstr "Avant"
+
+msgid "After"
+msgstr "Après"
+
+msgid "Apply"
+msgstr "Appliquer"
+
+msgid "Export catalogue"
+msgstr "Exporter le catalogue"
+
 msgid "Delete Comment"
 msgstr "Supprimer le commentaire"
 
@@ -694,6 +1109,75 @@ msgstr "En savoir plus"
 
 msgid "Submit comment"
 msgstr "Envoyer le commentaire"
+
+msgid "Downloading the file failed: "
+msgstr "Échec du téléchargement du fichier : "
+
+msgid "Choose a MusicXML file"
+msgstr "Choisir un fichier MusicXML"
+
+msgid "Link file"
+msgstr "Associer le fichier"
+
+msgid "MusicXML file linked"
+msgstr "Fichier MusicXML associé"
+
+msgid "Linking the file failed: "
+msgstr "Échec de l'association du fichier : "
+
+msgid "MusicXML file unlinked"
+msgstr "Fichier MusicXML dissocié"
+
+msgid "Unlinking the file failed: "
+msgstr "Échec de la dissociation du fichier : "
+
+msgid "Download MusicXML"
+msgstr "Télécharger le MusicXML"
+
+msgid "Show in Files"
+msgstr "Afficher dans Fichiers"
+
+msgid "No MusicXML file linked yet."
+msgstr "Aucun fichier MusicXML associé pour le moment."
+
+msgid "Link another file"
+msgstr "Associer un autre fichier"
+
+msgid "Link MusicXML file"
+msgstr "Associer un fichier MusicXML"
+
+msgid "Unlink file"
+msgstr "Dissocier le fichier"
+
+msgid "The file stays in Files, where it is uploaded, replaced and backed up. Unlinking does not delete it."
+msgstr "Le fichier reste dans Fichiers, où il est envoyé, remplacé et sauvegardé. Le dissocier ne le supprime pas."
+
+msgid "Check the file in Files or link it again."
+msgstr "Vérifiez le fichier dans Fichiers ou associez-le à nouveau."
+
+msgid "This score is an internal preservation copy. Its notes are neither displayed nor played back, and only members of the editing groups can download the file."
+msgstr "Cette partition est une copie de conservation interne. Ses notes ne sont ni affichées ni lues, et seuls les membres des groupes autorisés à modifier peuvent télécharger le fichier."
+
+msgid "This score is approved for publication and its rights are confirmed, so it is shown on the public page if that page is enabled."
+msgstr "Cette partition est validée pour publication et ses droits sont confirmés : elle apparaît donc sur la page publique si celle-ci est activée."
+
+msgid "Choose a PDF file"
+msgstr "Choisir un fichier PDF"
+
+msgid "PDF file linked"
+msgstr "Fichier PDF associé"
+
+msgid "PDF file unlinked"
+msgstr "Fichier PDF dissocié"
+
+msgid "No PDF file linked yet."
+msgstr "Aucun fichier PDF associé pour le moment."
+
+msgid "Link PDF file"
+msgstr "Associer un fichier PDF"
+
+msgid "This score is an internal preservation copy. Its notes are neither displayed nor played back."
+msgstr "Cette partition est une copie de conservation interne. Ses notes ne sont ni affichées ni lues."
 
 msgid "Scores in this book"
 msgstr "Partitions de ce recueil"
@@ -878,465 +1362,6 @@ msgstr "Supprimer la setlist"
 msgid "Are you sure you want to delete this setlist?"
 msgstr "Voulez-vous vraiment supprimer cette setlist ?"
 
-msgid "Starting"
-msgstr "Depuis le"
-
-msgid "Present"
-msgstr "Aujourd'hui"
-
-msgid "Index must be a non-negative integer"
-msgstr "L'index doit être un entier positif ou nul"
-
-msgid "This index is already occupied"
-msgstr "Cet index est déjà occupé"
-
-msgid "Loading occupied indices…"
-msgstr "Chargement des index occupés…"
-
-msgid "Index is unchanged"
-msgstr "L'index n'a pas changé"
-
-msgid "Index is valid"
-msgstr "L'index est valide"
-
-msgid "Enter the position index in the collection"
-msgstr "Saisissez la position d'index dans la collection"
-
-msgid "Setlist"
-msgstr "Setlist"
-
-msgid "Value must not be empty"
-msgstr "La valeur ne doit pas être vide"
-
-msgid "Contents"
-msgstr "Contenu"
-
-msgid "h"
-msgstr "h"
-
-msgid "Info"
-msgstr "Infos"
-
-msgid "Date"
-msgstr "Date"
-
-msgid "Playtime"
-msgstr "Temps de jeu"
-
-msgid "Moderation & Breaks"
-msgstr "Présentations et pauses"
-
-msgid "Overall Duration"
-msgstr "Durée totale"
-
-msgid "Invalid duration format"
-msgstr "Format de durée non valide"
-
-#, php-format
-msgid "Failed to add score to folder collection: %1$s"
-msgstr "Impossible d'ajouter la partition à la collection de classeurs : %1$s"
-
-#, php-format
-msgid "Failed to add score book to folder collection: %1$s"
-msgstr "Impossible d'ajouter le recueil à la collection de classeurs : %1$s"
-
-#, php-format
-msgid "Failed to remove score book from folder collection: %1$s"
-msgstr "Impossible de retirer le recueil de la collection de classeurs : %1$s"
-
-#, php-format
-msgid "Failed to add score to score book: %1$s"
-msgstr "Impossible d'ajouter la partition au recueil : %1$s"
-
-#, php-format
-msgid "Failed to add scores to score book: %1$s"
-msgstr "Impossible d'ajouter les partitions au recueil : %1$s"
-
-#, php-format
-msgid "Failed to remove score from score book: %1$s"
-msgstr "Impossible de retirer la partition du recueil : %1$s"
-
-msgid "The dormant threshold must not be smaller than the current threshold."
-msgstr "Le seuil « en sommeil » ne doit pas être inférieur au seuil « actuel »."
-
-msgid "Repertoire"
-msgstr "Répertoire"
-
-msgid "A score counts as current or dormant repertoire if it was performed within the given number of years. Performances are taken from setlists that are not drafts."
-msgstr "Une partition fait partie du répertoire actuel ou en sommeil si elle a été interprétée au cours du nombre d'années indiqué. Les interprétations sont tirées des setlists qui ne sont pas des brouillons."
-
-msgid "Current repertoire (years)"
-msgstr "Répertoire actuel (années)"
-
-msgid "Dormant repertoire (years)"
-msgstr "Répertoire en sommeil (années)"
-
-msgid "Unable to determine current user"
-msgstr "Impossible de déterminer l'utilisateur actuel"
-
-msgid "Retired"
-msgstr "Retirée"
-
-msgid "Missing"
-msgstr "Manquante"
-
-msgid "Lent"
-msgstr "Prêtée"
-
-msgid "Current"
-msgstr "Actuel"
-
-msgid "Dormant"
-msgstr "En sommeil"
-
-msgid "Former"
-msgstr "Ancien"
-
-msgid "Not performed"
-msgstr "Jamais interprétée"
-
-msgid "Signature"
-msgstr "Cote"
-
-msgid "Derived from the performances in setlists"
-msgstr "Calculé à partir des interprétations dans les setlists"
-
-msgid "Last performed"
-msgstr "Dernière interprétation"
-
-msgid "Inventory"
-msgstr "Inventaire"
-
-msgid "Lyricist"
-msgstr "Parolier"
-
-msgid "Voicing"
-msgstr "Effectif vocal"
-
-msgid "Language"
-msgstr "Langue"
-
-msgid "No file uploaded"
-msgstr "Aucun fichier envoyé"
-
-msgid "Public scores"
-msgstr "Partitions publiques"
-
-msgid "Only MusicXML files (.musicxml, .xml, .mxl) are allowed"
-msgstr "Seuls les fichiers MusicXML (.musicxml, .xml, .mxl) sont autorisés"
-
-msgid "The uploaded file is empty"
-msgstr "Le fichier envoyé est vide"
-
-#, php-format
-msgid "The uploaded file is too large (maximum %d MB)"
-msgstr "Le fichier envoyé est trop volumineux (maximum %d Mo)"
-
-msgid "The uploaded file could not be read"
-msgstr "Le fichier envoyé n'a pas pu être lu"
-
-msgid "This score is an internal preservation copy"
-msgstr "Cette partition est une copie de conservation interne"
-
-msgid "No MusicXML file available for this score"
-msgstr "Aucun fichier MusicXML disponible pour cette partition"
-
-msgid "The uploaded file is not a valid MusicXML file"
-msgstr "Le fichier envoyé n'est pas un fichier MusicXML valide"
-
-msgid "MusicXML files with entity declarations are not supported"
-msgstr "Les fichiers MusicXML contenant des déclarations d'entités ne sont pas pris en charge"
-
-msgid "The uploaded file is not a valid compressed MusicXML file"
-msgstr "Le fichier envoyé n'est pas un fichier MusicXML compressé valide"
-
-msgid "The uploaded file is too large when uncompressed"
-msgstr "Le fichier envoyé est trop volumineux une fois décompressé"
-
-msgid "Invalid rights status. Must be \"public_domain\", \"licensed\", \"protected\" or \"open\"."
-msgstr "Statut des droits non valide. Doit être \"public_domain\", \"licensed\", \"protected\" ou \"open\"."
-
-msgid "Invalid publication status. Must be \"free\", \"to_clarify\", \"blocked\" or \"internal_copy\"."
-msgstr "Statut de publication non valide. Doit être \"free\", \"to_clarify\", \"blocked\" ou \"internal_copy\"."
-
-msgid "Public page"
-msgstr "Page publique"
-
-msgid "Show all scores that are released for publication and whose rights allow it (public domain or licensed) on a page that can be opened without logging in. Visitors can view and play the MusicXML files of these scores. No other scores or internal details are shown."
-msgstr "Afficher toutes les partitions validées pour publication et dont les droits le permettent (domaine public ou sous licence) sur une page accessible sans connexion. Les visiteurs peuvent consulter et écouter les fichiers MusicXML de ces partitions. Aucune autre partition ni aucun détail interne n'est affiché."
-
-msgid "Enable public page"
-msgstr "Activer la page publique"
-
-msgid "Public address:"
-msgstr "Adresse publique :"
-
-msgid "The score could not be loaded"
-msgstr "La partition n'a pas pu être chargée"
-
-msgid "Pause"
-msgstr "Pause"
-
-msgid "Play"
-msgstr "Lecture"
-
-msgid "Stop"
-msgstr "Arrêter"
-
-msgid "Tempo"
-msgstr "Tempo"
-
-msgid "Previous page"
-msgstr "Page précédente"
-
-msgid "Page {page} of {count}"
-msgstr "Page {page} sur {count}"
-
-msgid "Next page"
-msgstr "Page suivante"
-
-msgid "Solo"
-msgstr "Solo"
-
-msgid "Mute"
-msgstr "Muet"
-
-msgid "Volume of {voice}"
-msgstr "Volume de {voice}"
-
-msgid "Loading score…"
-msgstr "Chargement de la partition…"
-
-msgid "Notes & Playback"
-msgstr "Partition et lecture"
-
-msgid "Rights"
-msgstr "Droits"
-
-msgid "Publication"
-msgstr "Publication"
-
-msgid "Blocked until"
-msgstr "Bloquée jusqu'au"
-
-msgid "Rights Note"
-msgstr "Note sur les droits"
-
-msgid "MusicXML"
-msgstr "MusicXML"
-
-msgid "Downloading the file failed: "
-msgstr "Échec du téléchargement du fichier : "
-
-msgid "The file is too large (maximum {size} MB)"
-msgstr "Le fichier est trop volumineux (maximum {size} Mo)"
-
-msgid "MusicXML file uploaded"
-msgstr "Fichier MusicXML envoyé"
-
-msgid "Uploading the file failed: "
-msgstr "Échec de l'envoi du fichier : "
-
-msgid "MusicXML file removed"
-msgstr "Fichier MusicXML supprimé"
-
-msgid "Removing the file failed: "
-msgstr "Échec de la suppression du fichier : "
-
-msgid "Download MusicXML"
-msgstr "Télécharger le MusicXML"
-
-msgid "No MusicXML file uploaded yet."
-msgstr "Aucun fichier MusicXML envoyé pour le moment."
-
-msgid "Replace file"
-msgstr "Remplacer le fichier"
-
-msgid "Upload MusicXML"
-msgstr "Envoyer un MusicXML"
-
-msgid "Remove file"
-msgstr "Supprimer le fichier"
-
-msgid "This score is released for publication and its rights allow it, so it is shown on the public page if that page is enabled."
-msgstr "Cette partition est validée pour publication et ses droits le permettent : elle apparaît donc sur la page publique si celle-ci est activée."
-
-msgid "This score is an internal preservation copy. Only editors can view and play it."
-msgstr "Cette partition est une copie de conservation interne. Seuls les éditeurs peuvent la consulter et l'écouter."
-
-msgid "This score is an internal preservation copy. It can only be viewed by the music librarians."
-msgstr "Cette partition est une copie de conservation interne. Seuls les bibliothécaires musicaux peuvent la consulter."
-
-msgid "arr. {arranger}"
-msgstr "arr. {arranger}"
-
-msgid "Freely available scores"
-msgstr "Partitions librement disponibles"
-
-msgid "These scores are in the public domain or licensed for publication. Select a score to view the notes and listen to the individual voices."
-msgstr "Ces partitions appartiennent au domaine public ou sont sous licence de publication. Sélectionnez une partition pour afficher les notes et écouter chaque voix séparément."
-
-msgid "Search by title or composer"
-msgstr "Rechercher par titre ou compositeur"
-
-msgid "Close"
-msgstr "Fermer"
-
-msgid "No freely available scores yet"
-msgstr "Aucune partition librement disponible pour le moment"
-
-msgid "No scores match your search"
-msgstr "Aucune partition ne correspond à votre recherche"
-
-msgid "Show & play"
-msgstr "Afficher et écouter"
-
-msgid "No digital notes"
-msgstr "Pas de partition numérique"
-
-msgid "The file could not be read as MusicXML"
-msgstr "Le fichier n'a pas pu être lu comme MusicXML"
-
-msgid "Voice {number}"
-msgstr "Voix {number}"
-
-msgid "The score could not be displayed"
-msgstr "La partition n'a pas pu être affichée"
-
-msgid "Public domain"
-msgstr "Domaine public"
-
-msgid "Licensed"
-msgstr "Sous licence"
-
-msgid "Protected"
-msgstr "Protégée"
-
-msgid "Undetermined"
-msgstr "Indéterminé"
-
-msgid "Free"
-msgstr "Libre"
-
-msgid "To clarify"
-msgstr "À clarifier"
-
-msgid "Blocked"
-msgstr "Bloquée"
-
-msgid "Internal preservation copy"
-msgstr "Copie de conservation interne"
-
-msgid "Only PDF files are allowed"
-msgstr "Seuls les fichiers PDF sont autorisés"
-
-msgid "The uploaded file is not a valid PDF file"
-msgstr "Le fichier envoyé n'est pas un fichier PDF valide"
-
-msgid "No PDF file available for this score"
-msgstr "Aucun fichier PDF disponible pour cette partition"
-
-msgid "Invalid share type"
-msgstr "Type de partage non valide"
-
-msgid "Group not found"
-msgstr "Groupe introuvable"
-
-msgid "Already shared with this group"
-msgstr "Déjà partagé avec ce groupe"
-
-msgid "Share not found"
-msgstr "Partage introuvable"
-
-msgid "Invalid share target"
-msgstr "Cible de partage non valide"
-
-msgid "Zoom out"
-msgstr "Zoom arrière"
-
-msgid "Zoom in"
-msgstr "Zoom avant"
-
-msgid "Loading PDF…"
-msgstr "Chargement du PDF…"
-
-msgid "The PDF could not be displayed"
-msgstr "Le PDF n'a pas pu être affiché"
-
-msgid "%n page"
-msgid_plural "%n pages"
-msgstr[0] "%n page"
-msgstr[1] "%n pages"
-
-msgid "PDF"
-msgstr "PDF"
-
-msgid "Shares"
-msgstr "Partages"
-
-msgid "Share {title}"
-msgstr "Partager {title}"
-
-msgid "Failed to load shares: "
-msgstr "Impossible de charger les partages : "
-
-msgid "Failed to share: "
-msgstr "Échec du partage : "
-
-msgid "Failed to remove share: "
-msgstr "Impossible de supprimer le partage : "
-
-msgid "Link copied to the clipboard"
-msgstr "Lien copié dans le presse-papiers"
-
-msgid "Public links work without login and only show scores that are released for publication and whose rights allow it. Group shares show all scores, including PDFs, to the members of the group, except the files of internal preservation copies. Files cannot be downloaded from shares."
-msgstr "Les liens publics fonctionnent sans connexion et n'affichent que les partitions validées pour publication et dont les droits le permettent. Les partages de groupe montrent toutes les partitions aux membres du groupe, PDF compris, à l'exception des fichiers des copies de conservation internes. Aucun fichier ne peut être téléchargé depuis un partage."
-
-msgid "Public link"
-msgstr "Lien public"
-
-msgid "Copy link"
-msgstr "Copier le lien"
-
-msgid "Open link"
-msgstr "Ouvrir le lien"
-
-msgid "Remove share"
-msgstr "Supprimer le partage"
-
-msgid "Not shared yet"
-msgstr "Pas encore partagé"
-
-msgid "Title shown on the share (optional)"
-msgstr "Titre affiché sur le partage (facultatif)"
-
-msgid "Share with group"
-msgstr "Partager avec un groupe"
-
-msgid "Select group"
-msgstr "Sélectionner un groupe"
-
-msgid "Share"
-msgstr "Partager"
-
-msgid "Create public link"
-msgstr "Créer un lien public"
-
-msgid "No scores shared"
-msgstr "Aucune partition partagée"
-
-msgid "No PDF file uploaded yet."
-msgstr "Aucun fichier PDF envoyé pour le moment."
-
-msgid "Upload PDF"
-msgstr "Envoyer un PDF"
-
-msgid "File uploaded"
-msgstr "Fichier envoyé"
-
-msgid "File removed"
-msgstr "Fichier supprimé"
-
 msgid "Shared with me"
 msgstr "Partagé avec moi"
 
@@ -1379,11 +1404,321 @@ msgstr "Groupe : {group}"
 msgid "Edit shares of this item"
 msgstr "Modifier les partages de cet élément"
 
-msgid "Only scores released for publication are shown. Select a score to view the notes and listen to the individual voices."
+msgid "Last updated: {date}"
+msgstr "Dernière mise à jour : {date}"
+
+msgid "Freely available scores"
+msgstr "Partitions librement disponibles"
+
+msgid "These scores are in the public domain or may be provided digitally under a licence. Select a score to view the notes and listen to the individual voices."
+msgstr "Ces partitions appartiennent au domaine public ou peuvent être mises à disposition sous forme numérique dans le cadre d'une licence. Sélectionnez une partition pour afficher les notes et écouter chaque voix séparément."
+
+msgid "All content is provided as is, dated with its last update, without warranty and without any obligation to keep earlier versions available."
+msgstr "Tous les contenus sont fournis en l'état, datés de leur dernière mise à jour, sans garantie et sans aucune obligation de maintenir disponibles les versions antérieures."
+
+msgid "Search by title or composer"
+msgstr "Rechercher par titre ou compositeur"
+
+msgid "No freely available scores yet"
+msgstr "Aucune partition librement disponible pour le moment"
+
+msgid "No scores match your search"
+msgstr "Aucune partition ne correspond à votre recherche"
+
+msgid "Only scores approved for publication are shown. Select a score to view the notes and listen to the individual voices."
 msgstr "Seules les partitions validées pour publication sont affichées. Sélectionnez une partition pour afficher les notes et écouter chaque voix séparément."
 
 msgid "No published scores in this share"
 msgstr "Aucune partition publiée dans ce partage"
+
+msgid "Starting"
+msgstr "Depuis le"
+
+msgid "Present"
+msgstr "Aujourd'hui"
+
+msgid "Index must be a non-negative integer"
+msgstr "L'index doit être un entier positif ou nul"
+
+msgid "This index is already occupied"
+msgstr "Cet index est déjà occupé"
+
+msgid "Loading occupied indices…"
+msgstr "Chargement des index occupés…"
+
+msgid "Index is unchanged"
+msgstr "L'index n'a pas changé"
+
+msgid "Index is valid"
+msgstr "L'index est valide"
+
+msgid "Enter the position index in the collection"
+msgstr "Saisissez la position d'index dans la collection"
+
+msgid "Setlist"
+msgstr "Setlist"
+
+msgid "The file could not be read as MusicXML"
+msgstr "Le fichier n'a pas pu être lu comme MusicXML"
+
+msgid "Voice {number}"
+msgstr "Voix {number}"
+
+msgid "The score could not be displayed"
+msgstr "La partition n'a pas pu être affichée"
+
+msgid "Value must not be empty"
+msgstr "La valeur ne doit pas être vide"
+
+msgid "Contents"
+msgstr "Contenu"
+
+msgid "h"
+msgstr "h"
+
+msgid "Info"
+msgstr "Infos"
+
+msgid "Date"
+msgstr "Date"
+
+msgid "Playtime"
+msgstr "Temps de jeu"
+
+msgid "Moderation & Breaks"
+msgstr "Présentations et pauses"
+
+msgid "Overall Duration"
+msgstr "Durée totale"
+
+msgid "Retired"
+msgstr "Retirée"
+
+msgid "Missing"
+msgstr "Manquante"
+
+msgid "Lent"
+msgstr "Prêtée"
+
+msgid "Current"
+msgstr "Actuel"
+
+msgid "Dormant"
+msgstr "En sommeil"
+
+msgid "Earlier"
+msgstr "Ancien"
+
+msgid "Not documented"
+msgstr "Non documenté"
+
+msgid "Signature"
+msgstr "Cote"
+
+msgid "Inventory status"
+msgstr "Statut d'inventaire"
+
+msgid "Last performed"
+msgstr "Dernière interprétation"
+
+msgid "Lyricist"
+msgstr "Parolier"
+
+msgid "Voicing"
+msgstr "Effectif vocal"
+
+msgid "Language"
+msgstr "Langue"
+
+msgid "Public domain"
+msgstr "Domaine public"
+
+msgid "Licensed"
+msgstr "Sous licence"
+
+msgid "Protected"
+msgstr "Protégée"
+
+msgid "Unresolved"
+msgstr "En suspens"
+
+msgid "Approved"
+msgstr "Validée"
+
+msgid "To clarify"
+msgstr "À clarifier"
+
+msgid "Blocked"
+msgstr "Bloquée"
+
+msgid "Internal preservation copy"
+msgstr "Copie de conservation interne"
+
+msgid "Invalid duration format"
+msgstr "Format de durée non valide"
+
+#, php-format
+#~ msgid "Failed to add score to folder collection: %1$s"
+#~ msgstr "Impossible d'ajouter la partition à la collection de classeurs : %1$s"
+
+#, php-format
+#~ msgid "Failed to add score book to folder collection: %1$s"
+#~ msgstr "Impossible d'ajouter le recueil à la collection de classeurs : %1$s"
+
+#, php-format
+#~ msgid "Failed to remove score book from folder collection: %1$s"
+#~ msgstr "Impossible de retirer le recueil de la collection de classeurs : %1$s"
+
+#, php-format
+#~ msgid "Failed to add score to score book: %1$s"
+#~ msgstr "Impossible d'ajouter la partition au recueil : %1$s"
+
+#, php-format
+#~ msgid "Failed to add scores to score book: %1$s"
+#~ msgstr "Impossible d'ajouter les partitions au recueil : %1$s"
+
+#, php-format
+#~ msgid "Failed to remove score from score book: %1$s"
+#~ msgstr "Impossible de retirer la partition du recueil : %1$s"
+
+#~ msgid "The dormant threshold must not be smaller than the current threshold."
+#~ msgstr "Le seuil « en sommeil » ne doit pas être inférieur au seuil « actuel »."
+
+#~ msgid "A score counts as current or dormant repertoire if it was performed within the given number of years. Performances are taken from setlists that are not drafts."
+#~ msgstr "Une partition fait partie du répertoire actuel ou en sommeil si elle a été interprétée au cours du nombre d'années indiqué. Les interprétations sont tirées des setlists qui ne sont pas des brouillons."
+
+#~ msgid "Current repertoire (years)"
+#~ msgstr "Répertoire actuel (années)"
+
+#~ msgid "Dormant repertoire (years)"
+#~ msgstr "Répertoire en sommeil (années)"
+
+#~ msgid "Unable to determine current user"
+#~ msgstr "Impossible de déterminer l'utilisateur actuel"
+
+#~ msgid "Former"
+#~ msgstr "Ancien"
+
+#~ msgid "Not performed"
+#~ msgstr "Jamais interprétée"
+
+#~ msgid "Derived from the performances in setlists"
+#~ msgstr "Calculé à partir des interprétations dans les setlists"
+
+#~ msgid "Inventory"
+#~ msgstr "Inventaire"
+
+#~ msgid "No file uploaded"
+#~ msgstr "Aucun fichier envoyé"
+
+#~ msgid "The uploaded file is empty"
+#~ msgstr "Le fichier envoyé est vide"
+
+#, php-format
+#~ msgid "The uploaded file is too large (maximum %d MB)"
+#~ msgstr "Le fichier envoyé est trop volumineux (maximum %d Mo)"
+
+#~ msgid "The uploaded file could not be read"
+#~ msgstr "Le fichier envoyé n'a pas pu être lu"
+
+#~ msgid "This score is an internal preservation copy"
+#~ msgstr "Cette partition est une copie de conservation interne"
+
+#~ msgid "No MusicXML file available for this score"
+#~ msgstr "Aucun fichier MusicXML disponible pour cette partition"
+
+#~ msgid "The uploaded file is not a valid MusicXML file"
+#~ msgstr "Le fichier envoyé n'est pas un fichier MusicXML valide"
+
+#~ msgid "The uploaded file is not a valid compressed MusicXML file"
+#~ msgstr "Le fichier envoyé n'est pas un fichier MusicXML compressé valide"
+
+#~ msgid "The uploaded file is too large when uncompressed"
+#~ msgstr "Le fichier envoyé est trop volumineux une fois décompressé"
+
+#~ msgid "Invalid publication status. Must be \"free\", \"to_clarify\", \"blocked\" or \"internal_copy\"."
+#~ msgstr "Statut de publication non valide. Doit être \"free\", \"to_clarify\", \"blocked\" ou \"internal_copy\"."
+
+#~ msgid "Show all scores that are released for publication and whose rights allow it (public domain or licensed) on a page that can be opened without logging in. Visitors can view and play the MusicXML files of these scores. No other scores or internal details are shown."
+#~ msgstr "Afficher toutes les partitions validées pour publication et dont les droits le permettent (domaine public ou sous licence) sur une page accessible sans connexion. Les visiteurs peuvent consulter et écouter les fichiers MusicXML de ces partitions. Aucune autre partition ni aucun détail interne n'est affiché."
+
+#~ msgid "Rights"
+#~ msgstr "Droits"
+
+#~ msgid "Blocked until"
+#~ msgstr "Bloquée jusqu'au"
+
+#~ msgid "Rights Note"
+#~ msgstr "Note sur les droits"
+
+#~ msgid "The file is too large (maximum {size} MB)"
+#~ msgstr "Le fichier est trop volumineux (maximum {size} Mo)"
+
+#~ msgid "MusicXML file uploaded"
+#~ msgstr "Fichier MusicXML envoyé"
+
+#~ msgid "Uploading the file failed: "
+#~ msgstr "Échec de l'envoi du fichier : "
+
+#~ msgid "MusicXML file removed"
+#~ msgstr "Fichier MusicXML supprimé"
+
+#~ msgid "Removing the file failed: "
+#~ msgstr "Échec de la suppression du fichier : "
+
+#~ msgid "No MusicXML file uploaded yet."
+#~ msgstr "Aucun fichier MusicXML envoyé pour le moment."
+
+#~ msgid "Replace file"
+#~ msgstr "Remplacer le fichier"
+
+#~ msgid "Upload MusicXML"
+#~ msgstr "Envoyer un MusicXML"
+
+#~ msgid "Remove file"
+#~ msgstr "Supprimer le fichier"
+
+#~ msgid "This score is released for publication and its rights allow it, so it is shown on the public page if that page is enabled."
+#~ msgstr "Cette partition est validée pour publication et ses droits le permettent : elle apparaît donc sur la page publique si celle-ci est activée."
+
+#~ msgid "This score is an internal preservation copy. Only editors can view and play it."
+#~ msgstr "Cette partition est une copie de conservation interne. Seuls les éditeurs peuvent la consulter et l'écouter."
+
+#~ msgid "This score is an internal preservation copy. It can only be viewed by the music librarians."
+#~ msgstr "Cette partition est une copie de conservation interne. Seuls les bibliothécaires musicaux peuvent la consulter."
+
+#~ msgid "These scores are in the public domain or licensed for publication. Select a score to view the notes and listen to the individual voices."
+#~ msgstr "Ces partitions appartiennent au domaine public ou sont sous licence de publication. Sélectionnez une partition pour afficher les notes et écouter chaque voix séparément."
+
+#~ msgid "Undetermined"
+#~ msgstr "Indéterminé"
+
+#~ msgid "Free"
+#~ msgstr "Libre"
+
+#~ msgid "The uploaded file is not a valid PDF file"
+#~ msgstr "Le fichier envoyé n'est pas un fichier PDF valide"
+
+#~ msgid "No PDF file available for this score"
+#~ msgstr "Aucun fichier PDF disponible pour cette partition"
+
+#~ msgid "Public links work without login and only show scores that are released for publication and whose rights allow it. Group shares show all scores, including PDFs, to the members of the group, except the files of internal preservation copies. Files cannot be downloaded from shares."
+#~ msgstr "Les liens publics fonctionnent sans connexion et n'affichent que les partitions validées pour publication et dont les droits le permettent. Les partages de groupe montrent toutes les partitions aux membres du groupe, PDF compris, à l'exception des fichiers des copies de conservation internes. Aucun fichier ne peut être téléchargé depuis un partage."
+
+#~ msgid "No PDF file uploaded yet."
+#~ msgstr "Aucun fichier PDF envoyé pour le moment."
+
+#~ msgid "Upload PDF"
+#~ msgstr "Envoyer un PDF"
+
+#~ msgid "File uploaded"
+#~ msgstr "Fichier envoyé"
+
+#~ msgid "File removed"
+#~ msgstr "Fichier supprimé"
+
+#~ msgid "Only scores released for publication are shown. Select a score to view the notes and listen to the individual voices."
+#~ msgstr "Seules les partitions validées pour publication sont affichées. Sélectionnez une partition pour afficher les notes et écouter chaque voix séparément."
 
 #~ msgid "Archived"
 #~ msgstr "Archivée"

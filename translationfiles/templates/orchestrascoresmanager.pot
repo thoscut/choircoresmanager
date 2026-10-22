@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2026-10-21 23:53+0000\n"
+"POT-Creation-Date: 2026-10-22 13:01+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,8 +16,86 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "Public scores"
+msgstr ""
 
 msgid "Insufficient permissions"
+msgstr ""
+
+#, php-format
+msgid "The file is too large. The maximum size is %d MB."
+msgstr ""
+
+#, php-format
+msgid "The file has no column \"%s\"."
+msgstr ""
+
+msgid "Catalogue"
+msgstr ""
+
+msgid "Score not found"
+msgstr ""
+
+#, php-format
+msgid "The row has %1$d values, but the header has only %2$d columns."
+msgstr ""
+
+msgid "The signature is missing."
+msgstr ""
+
+msgid "The signature has leading or trailing spaces."
+msgstr ""
+
+msgid "The signature occurs more than once in the file."
+msgstr ""
+
+msgid "The signature is used by more than one existing score."
+msgstr ""
+
+#, php-format
+msgid "New scores need the column \"%s\"."
+msgstr ""
+
+msgid "The file is not valid UTF-8. Save it as \"CSV UTF-8\" and try again."
+msgstr ""
+
+msgid "The file is empty."
+msgstr ""
+
+#, php-format
+msgid "The quoted value starting in line %d is not closed."
+msgstr ""
+
+#, php-format
+msgid "Column %d of the header has no name."
+msgstr ""
+
+#, php-format
+msgid "The header contains the column \"%s\" more than once."
+msgstr ""
+
+#, php-format
+msgid "%1$s: The value is longer than %2$d characters."
+msgstr ""
+
+#, php-format
+msgid "%s: The value is not a date in the form YYYY-MM-DD."
+msgstr ""
+
+#, php-format
+msgid "%1$s: The value is not one of: %2$s."
+msgstr ""
+
+#, php-format
+msgid "%s: The value must not be empty."
+msgstr ""
+
+#, php-format
+msgid ""
+"The years for current repertoire must be at least 0 and less than the years "
+"for dormant repertoire, which must be at most %d."
 msgstr ""
 
 msgid "Folder collection not found"
@@ -36,9 +114,6 @@ msgid "Invalid collection type. Must be \"alphabetical\" or \"indexed\"."
 msgstr ""
 
 msgid "Collection type cannot be changed after creation."
-msgstr ""
-
-msgid "Score not found"
 msgstr ""
 
 msgid ""
@@ -97,6 +172,52 @@ msgstr ""
 msgid "New version must start at least one day after the current version"
 msgstr ""
 
+msgid "The selected file does not exist or you are not allowed to read it"
+msgstr ""
+
+msgid "No MusicXML file is linked to this score"
+msgstr ""
+
+msgid "The linked MusicXML file is missing or no longer accessible."
+msgstr ""
+
+msgid "Only MusicXML files (.musicxml, .xml, .mxl) are allowed"
+msgstr ""
+
+msgid "The file could not be read"
+msgstr ""
+
+#, php-format
+msgid "The file is too large (maximum %d MB)"
+msgstr ""
+
+msgid "The file is empty"
+msgstr ""
+
+msgid "The file is not a valid MusicXML file"
+msgstr ""
+
+msgid "MusicXML files with entity declarations are not supported"
+msgstr ""
+
+msgid "The file is not a valid compressed MusicXML file"
+msgstr ""
+
+msgid "The file is too large when uncompressed"
+msgstr ""
+
+msgid "No PDF file is linked to this score"
+msgstr ""
+
+msgid "The linked PDF file is missing or no longer accessible."
+msgstr ""
+
+msgid "Only PDF files are allowed"
+msgstr ""
+
+msgid "The file is not a valid PDF file"
+msgstr ""
+
 msgid "Cannot delete score book with linked scores. Remove all scores first."
 msgstr ""
 
@@ -141,6 +262,28 @@ msgstr ""
 msgid "Score is already part of another score book. Remove it first."
 msgstr ""
 
+msgid "Invalid date. Use the format YYYY-MM-DD."
+msgstr ""
+
+msgid ""
+"Invalid rights status. Must be \"public_domain\", \"licensed\", "
+"\"protected\" or \"open\"."
+msgstr ""
+
+msgid ""
+"Invalid publication status. Must be \"approved\", \"to_clarify\", "
+"\"blocked\" or \"internal_preservation_copy\"."
+msgstr ""
+
+#, php-format
+msgid ""
+"Use at most %d characters for the person who confirmed the rights, e.g. "
+"their initials."
+msgstr ""
+
+msgid "A \"blocked until\" date can only be set if the publication is blocked."
+msgstr ""
+
 msgid "Setlist entry not found"
 msgstr ""
 
@@ -164,6 +307,21 @@ msgid "Only one of scoreId or breakDuration can be set"
 msgstr ""
 
 msgid "An entry with this index already exists in the setlist"
+msgstr ""
+
+msgid "Invalid share type"
+msgstr ""
+
+msgid "Group not found"
+msgstr ""
+
+msgid "Already shared with this group"
+msgstr ""
+
+msgid "Share not found"
+msgstr ""
+
+msgid "Invalid share target"
 msgstr ""
 
 msgid "Orchestra Scores Manager"
@@ -204,6 +362,14 @@ msgstr ""
 msgid "Failed to update settings."
 msgstr ""
 
+msgid "Please enter whole numbers."
+msgstr ""
+
+msgid ""
+"The first number must be at least 0 and smaller than the second, which must "
+"be at most {max}."
+msgstr ""
+
 msgid "Group Permissions"
 msgstr ""
 
@@ -214,6 +380,42 @@ msgid "Allowed Groups"
 msgstr ""
 
 msgid "Select groups…"
+msgstr ""
+
+msgid "Repertoire"
+msgstr ""
+
+msgid ""
+"The repertoire class of a score is derived from its last documented "
+"performance (setlists and imported catalogue). A score is current if it was "
+"performed in the current year or the given number of years before, dormant "
+"within the second number of years, and earlier otherwise. Scores without a "
+"documented performance are shown as not documented."
+msgstr ""
+
+msgid "Years back for current repertoire"
+msgstr ""
+
+msgid "Years back for dormant repertoire"
+msgstr ""
+
+msgid "Save"
+msgstr ""
+
+msgid "Public page"
+msgstr ""
+
+msgid ""
+"Show all scores that are approved for publication and whose rights status "
+"(public domain or licensed) has been confirmed on a page that can be opened "
+"without logging in. Visitors can view and play the MusicXML files of these "
+"scores. No other scores or internal details are shown."
+msgstr ""
+
+msgid "Enable public page"
+msgstr ""
+
+msgid "Public address:"
 msgstr ""
 
 msgid "Invalid default moderation time format. Use (HH:)MM:SS"
@@ -241,9 +443,6 @@ msgid "Select folder collection"
 msgstr ""
 
 msgid "Saving …"
-msgstr ""
-
-msgid "Save"
 msgstr ""
 
 msgid "Score book assignment updated"
@@ -315,11 +514,64 @@ msgstr ""
 msgid "Export CSV"
 msgstr ""
 
+msgid "The score could not be loaded"
+msgstr ""
+
+msgid "Pause"
+msgstr ""
+
+msgid "Play"
+msgstr ""
+
+msgid "Stop"
+msgstr ""
+
+msgid "Tempo"
+msgstr ""
+
+msgid "Previous page"
+msgstr ""
+
+msgid "Page {page} of {count}"
+msgstr ""
+
+msgid "Next page"
+msgstr ""
+
+msgid "Solo"
+msgstr ""
+
+msgid "Mute"
+msgstr ""
+
+msgid "Volume of {voice}"
+msgstr ""
+
+msgid "Loading score…"
+msgstr ""
+
 msgid "Main app navigation"
 msgstr ""
 
 msgid "No folder collections yet"
 msgstr ""
+
+msgid "Zoom out"
+msgstr ""
+
+msgid "Zoom in"
+msgstr ""
+
+msgid "Loading PDF…"
+msgstr ""
+
+msgid "The PDF could not be displayed"
+msgstr ""
+
+msgid "%n page"
+msgid_plural "%n pages"
+msgstr[0] ""
+msgstr[1] ""
 
 msgid "Operation failed: "
 msgstr ""
@@ -352,6 +604,15 @@ msgid "Delete"
 msgstr ""
 
 msgid "Comments"
+msgstr ""
+
+msgid "Notes & Playback"
+msgstr ""
+
+msgid "PDF"
+msgstr ""
+
+msgid "Shares"
 msgstr ""
 
 msgid "Folder Collections"
@@ -429,10 +690,106 @@ msgstr ""
 msgid "Tags"
 msgstr ""
 
+msgid "Rights Status"
+msgstr ""
+
+msgid "Rights Reasoning"
+msgstr ""
+
+msgid "Rights Confirmed On"
+msgstr ""
+
+msgid "Rights Confirmed By"
+msgstr ""
+
+msgid ""
+"Who confirmed the rights status, e.g. initials. Changing the rights status "
+"removes the confirmation."
+msgstr ""
+
+msgid "Publication"
+msgstr ""
+
+msgid "Blocked Until"
+msgstr ""
+
+msgid "Publication Reasoning"
+msgstr ""
+
+msgid "MusicXML"
+msgstr ""
+
 msgid "Active"
 msgstr ""
 
 msgid "History"
+msgstr ""
+
+msgid "Share {title}"
+msgstr ""
+
+msgid "Failed to load shares: "
+msgstr ""
+
+msgid "Failed to share: "
+msgstr ""
+
+msgid "Failed to remove share: "
+msgstr ""
+
+msgid "Link copied to the clipboard"
+msgstr ""
+
+msgid ""
+"Public links work without login and only show scores that are approved for "
+"publication and whose rights are confirmed. Group shares show all scores, "
+"including PDFs, to the members of the group, but never the notes of internal "
+"preservation copies. Files cannot be downloaded from shares."
+msgstr ""
+
+msgid "Public link"
+msgstr ""
+
+msgid "Copy link"
+msgstr ""
+
+msgid "Open link"
+msgstr ""
+
+msgid "Remove share"
+msgstr ""
+
+msgid "Not shared yet"
+msgstr ""
+
+msgid "Title shown on the share (optional)"
+msgstr ""
+
+msgid "Share with group"
+msgstr ""
+
+msgid "Select group"
+msgstr ""
+
+msgid "Share"
+msgstr ""
+
+msgid "Create public link"
+msgstr ""
+
+msgid "No scores shared"
+msgstr ""
+
+msgid "arr. {arranger}"
+msgstr ""
+
+msgid "Close"
+msgstr ""
+
+msgid "Show & play"
+msgstr ""
+
+msgid "No digital notes"
 msgstr ""
 
 msgid "Remove score book from collection"
@@ -673,6 +1030,96 @@ msgstr ""
 msgid "Create score"
 msgstr ""
 
+msgid "Last performed according to the catalogue"
+msgstr ""
+
+msgid "Further catalogue data"
+msgstr ""
+
+msgid "No further catalogue data for this score."
+msgstr ""
+
+msgid "New"
+msgstr ""
+
+msgid "Changed"
+msgstr ""
+
+msgid "Error"
+msgstr ""
+
+msgid "Catalogue imported: {new} new, {changed} changed"
+msgstr ""
+
+msgid "Import catalogue"
+msgstr ""
+
+msgid ""
+"Select the catalogue as a CSV file (semicolon-separated, UTF-8). A dry run "
+"first shows what would change. Nothing is saved until you click Apply."
+msgstr ""
+
+msgid ""
+"Rows are matched to scores by their signature. Scores that are not in the "
+"file stay unchanged, nothing is deleted."
+msgstr ""
+
+msgid "Choose CSV file"
+msgstr ""
+
+msgid "The catalogue has been imported."
+msgstr ""
+
+msgid "Result"
+msgstr ""
+
+msgid "Dry run"
+msgstr ""
+
+msgid "New: {count}"
+msgstr ""
+
+msgid "Changed: {count}"
+msgstr ""
+
+msgid "Unchanged: {count}"
+msgstr ""
+
+msgid "With errors: {count}"
+msgstr ""
+
+msgid ""
+"Rows with errors are not applied. Correct them in the file and choose it "
+"again."
+msgstr ""
+
+msgid "How the columns are stored"
+msgstr ""
+
+msgid "In score fields:"
+msgstr ""
+
+msgid "Verbatim as further catalogue data:"
+msgstr ""
+
+msgid "Line {line}"
+msgstr ""
+
+msgid "Column"
+msgstr ""
+
+msgid "Before"
+msgstr ""
+
+msgid "After"
+msgstr ""
+
+msgid "Apply"
+msgstr ""
+
+msgid "Export catalogue"
+msgstr ""
+
 msgid "Delete Comment"
 msgstr ""
 
@@ -708,6 +1155,84 @@ msgid "Learn more"
 msgstr ""
 
 msgid "Submit comment"
+msgstr ""
+
+msgid "Downloading the file failed: "
+msgstr ""
+
+msgid "Choose a MusicXML file"
+msgstr ""
+
+msgid "Link file"
+msgstr ""
+
+msgid "MusicXML file linked"
+msgstr ""
+
+msgid "Linking the file failed: "
+msgstr ""
+
+msgid "MusicXML file unlinked"
+msgstr ""
+
+msgid "Unlinking the file failed: "
+msgstr ""
+
+msgid "Download MusicXML"
+msgstr ""
+
+msgid "Show in Files"
+msgstr ""
+
+msgid "No MusicXML file linked yet."
+msgstr ""
+
+msgid "Link another file"
+msgstr ""
+
+msgid "Link MusicXML file"
+msgstr ""
+
+msgid "Unlink file"
+msgstr ""
+
+msgid ""
+"The file stays in Files, where it is uploaded, replaced and backed up. "
+"Unlinking does not delete it."
+msgstr ""
+
+msgid "Check the file in Files or link it again."
+msgstr ""
+
+msgid ""
+"This score is an internal preservation copy. Its notes are neither displayed "
+"nor played back, and only members of the editing groups can download the "
+"file."
+msgstr ""
+
+msgid ""
+"This score is approved for publication and its rights are confirmed, so it "
+"is shown on the public page if that page is enabled."
+msgstr ""
+
+msgid "Choose a PDF file"
+msgstr ""
+
+msgid "PDF file linked"
+msgstr ""
+
+msgid "PDF file unlinked"
+msgstr ""
+
+msgid "No PDF file linked yet."
+msgstr ""
+
+msgid "Link PDF file"
+msgstr ""
+
+msgid ""
+"This score is an internal preservation copy. Its notes are neither displayed "
+"nor played back."
 msgstr ""
 
 msgid "Scores in this book"
@@ -893,488 +1418,6 @@ msgstr ""
 msgid "Are you sure you want to delete this setlist?"
 msgstr ""
 
-msgid "Starting"
-msgstr ""
-
-msgid "Present"
-msgstr ""
-
-msgid "Index must be a non-negative integer"
-msgstr ""
-
-msgid "This index is already occupied"
-msgstr ""
-
-msgid "Loading occupied indices…"
-msgstr ""
-
-msgid "Index is unchanged"
-msgstr ""
-
-msgid "Index is valid"
-msgstr ""
-
-msgid "Enter the position index in the collection"
-msgstr ""
-
-msgid "Setlist"
-msgstr ""
-
-msgid "Value must not be empty"
-msgstr ""
-
-msgid "Contents"
-msgstr ""
-
-msgid "h"
-msgstr ""
-
-msgid "Info"
-msgstr ""
-
-msgid "Date"
-msgstr ""
-
-msgid "Playtime"
-msgstr ""
-
-msgid "Moderation & Breaks"
-msgstr ""
-
-msgid "Overall Duration"
-msgstr ""
-
-msgid "Invalid duration format"
-msgstr ""
-
-#, php-format
-msgid "Failed to add score to folder collection: %1$s"
-msgstr ""
-
-#, php-format
-msgid "Failed to add score book to folder collection: %1$s"
-msgstr ""
-
-#, php-format
-msgid "Failed to remove score book from folder collection: %1$s"
-msgstr ""
-
-#, php-format
-msgid "Failed to add score to score book: %1$s"
-msgstr ""
-
-#, php-format
-msgid "Failed to add scores to score book: %1$s"
-msgstr ""
-
-#, php-format
-msgid "Failed to remove score from score book: %1$s"
-msgstr ""
-
-msgid "The dormant threshold must not be smaller than the current threshold."
-msgstr ""
-
-msgid "Repertoire"
-msgstr ""
-
-msgid ""
-"A score counts as current or dormant repertoire if it was performed within "
-"the given number of years. Performances are taken from setlists that are not "
-"drafts."
-msgstr ""
-
-msgid "Current repertoire (years)"
-msgstr ""
-
-msgid "Dormant repertoire (years)"
-msgstr ""
-
-msgid "Unable to determine current user"
-msgstr ""
-
-msgid "Retired"
-msgstr ""
-
-msgid "Missing"
-msgstr ""
-
-msgid "Lent"
-msgstr ""
-
-msgid "Current"
-msgstr ""
-
-msgid "Dormant"
-msgstr ""
-
-msgid "Former"
-msgstr ""
-
-msgid "Not performed"
-msgstr ""
-
-msgid "Signature"
-msgstr ""
-
-msgid "Derived from the performances in setlists"
-msgstr ""
-
-msgid "Last performed"
-msgstr ""
-
-msgid "Inventory"
-msgstr ""
-
-msgid "Lyricist"
-msgstr ""
-
-msgid "Voicing"
-msgstr ""
-
-msgid "Language"
-msgstr ""
-
-msgid "No file uploaded"
-msgstr ""
-
-msgid "Public scores"
-msgstr ""
-
-msgid "Only MusicXML files (.musicxml, .xml, .mxl) are allowed"
-msgstr ""
-
-msgid "The uploaded file is empty"
-msgstr ""
-
-#, php-format
-msgid "The uploaded file is too large (maximum %d MB)"
-msgstr ""
-
-msgid "The uploaded file could not be read"
-msgstr ""
-
-msgid "This score is an internal preservation copy"
-msgstr ""
-
-msgid "No MusicXML file available for this score"
-msgstr ""
-
-msgid "The uploaded file is not a valid MusicXML file"
-msgstr ""
-
-msgid "MusicXML files with entity declarations are not supported"
-msgstr ""
-
-msgid "The uploaded file is not a valid compressed MusicXML file"
-msgstr ""
-
-msgid "The uploaded file is too large when uncompressed"
-msgstr ""
-
-msgid ""
-"Invalid rights status. Must be \"public_domain\", \"licensed\", "
-"\"protected\" or \"open\"."
-msgstr ""
-
-msgid ""
-"Invalid publication status. Must be \"free\", \"to_clarify\", \"blocked\" or "
-"\"internal_copy\"."
-msgstr ""
-
-msgid "Public page"
-msgstr ""
-
-msgid ""
-"Show all scores that are released for publication and whose rights allow it "
-"(public domain or licensed) on a page that can be opened without logging in. "
-"Visitors can view and play the MusicXML files of these scores. No other "
-"scores or internal details are shown."
-msgstr ""
-
-msgid "Enable public page"
-msgstr ""
-
-msgid "Public address:"
-msgstr ""
-
-msgid "The score could not be loaded"
-msgstr ""
-
-msgid "Pause"
-msgstr ""
-
-msgid "Play"
-msgstr ""
-
-msgid "Stop"
-msgstr ""
-
-msgid "Tempo"
-msgstr ""
-
-msgid "Previous page"
-msgstr ""
-
-msgid "Page {page} of {count}"
-msgstr ""
-
-msgid "Next page"
-msgstr ""
-
-msgid "Solo"
-msgstr ""
-
-msgid "Mute"
-msgstr ""
-
-msgid "Volume of {voice}"
-msgstr ""
-
-msgid "Loading score…"
-msgstr ""
-
-msgid "Notes & Playback"
-msgstr ""
-
-msgid "Rights"
-msgstr ""
-
-msgid "Publication"
-msgstr ""
-
-msgid "Blocked until"
-msgstr ""
-
-msgid "Rights Note"
-msgstr ""
-
-msgid "MusicXML"
-msgstr ""
-
-msgid "Downloading the file failed: "
-msgstr ""
-
-msgid "The file is too large (maximum {size} MB)"
-msgstr ""
-
-msgid "MusicXML file uploaded"
-msgstr ""
-
-msgid "Uploading the file failed: "
-msgstr ""
-
-msgid "MusicXML file removed"
-msgstr ""
-
-msgid "Removing the file failed: "
-msgstr ""
-
-msgid "Download MusicXML"
-msgstr ""
-
-msgid "No MusicXML file uploaded yet."
-msgstr ""
-
-msgid "Replace file"
-msgstr ""
-
-msgid "Upload MusicXML"
-msgstr ""
-
-msgid "Remove file"
-msgstr ""
-
-msgid ""
-"This score is released for publication and its rights allow it, so it is "
-"shown on the public page if that page is enabled."
-msgstr ""
-
-msgid ""
-"This score is an internal preservation copy. Only editors can view and play "
-"it."
-msgstr ""
-
-msgid ""
-"This score is an internal preservation copy. It can only be viewed by the "
-"music librarians."
-msgstr ""
-
-msgid "arr. {arranger}"
-msgstr ""
-
-msgid "Freely available scores"
-msgstr ""
-
-msgid ""
-"These scores are in the public domain or licensed for publication. Select a "
-"score to view the notes and listen to the individual voices."
-msgstr ""
-
-msgid "Search by title or composer"
-msgstr ""
-
-msgid "Close"
-msgstr ""
-
-msgid "No freely available scores yet"
-msgstr ""
-
-msgid "No scores match your search"
-msgstr ""
-
-msgid "Show & play"
-msgstr ""
-
-msgid "No digital notes"
-msgstr ""
-
-msgid "The file could not be read as MusicXML"
-msgstr ""
-
-msgid "Voice {number}"
-msgstr ""
-
-msgid "The score could not be displayed"
-msgstr ""
-
-msgid "Public domain"
-msgstr ""
-
-msgid "Licensed"
-msgstr ""
-
-msgid "Protected"
-msgstr ""
-
-msgid "Undetermined"
-msgstr ""
-
-msgid "Free"
-msgstr ""
-
-msgid "To clarify"
-msgstr ""
-
-msgid "Blocked"
-msgstr ""
-
-msgid "Internal preservation copy"
-msgstr ""
-
-msgid "Only PDF files are allowed"
-msgstr ""
-
-msgid "The uploaded file is not a valid PDF file"
-msgstr ""
-
-msgid "No PDF file available for this score"
-msgstr ""
-
-msgid "Invalid share type"
-msgstr ""
-
-msgid "Group not found"
-msgstr ""
-
-msgid "Already shared with this group"
-msgstr ""
-
-msgid "Share not found"
-msgstr ""
-
-msgid "Invalid share target"
-msgstr ""
-
-msgid "Zoom out"
-msgstr ""
-
-msgid "Zoom in"
-msgstr ""
-
-msgid "Loading PDF…"
-msgstr ""
-
-msgid "The PDF could not be displayed"
-msgstr ""
-
-msgid "%n page"
-msgid_plural "%n pages"
-msgstr[0] ""
-msgstr[1] ""
-
-msgid "PDF"
-msgstr ""
-
-msgid "Shares"
-msgstr ""
-
-msgid "Share {title}"
-msgstr ""
-
-msgid "Failed to load shares: "
-msgstr ""
-
-msgid "Failed to share: "
-msgstr ""
-
-msgid "Failed to remove share: "
-msgstr ""
-
-msgid "Link copied to the clipboard"
-msgstr ""
-
-msgid ""
-"Public links work without login and only show scores that are released for "
-"publication and whose rights allow it. Group shares show all scores, "
-"including PDFs, to the members of the group, except the files of internal "
-"preservation copies. Files cannot be downloaded from shares."
-msgstr ""
-
-msgid "Public link"
-msgstr ""
-
-msgid "Copy link"
-msgstr ""
-
-msgid "Open link"
-msgstr ""
-
-msgid "Remove share"
-msgstr ""
-
-msgid "Not shared yet"
-msgstr ""
-
-msgid "Title shown on the share (optional)"
-msgstr ""
-
-msgid "Share with group"
-msgstr ""
-
-msgid "Select group"
-msgstr ""
-
-msgid "Share"
-msgstr ""
-
-msgid "Create public link"
-msgstr ""
-
-msgid "No scores shared"
-msgstr ""
-
-msgid "No PDF file uploaded yet."
-msgstr ""
-
-msgid "Upload PDF"
-msgstr ""
-
-msgid "File uploaded"
-msgstr ""
-
-msgid "File removed"
-msgstr ""
-
 msgid "Shared with me"
 msgstr ""
 
@@ -1418,10 +1461,162 @@ msgstr ""
 msgid "Edit shares of this item"
 msgstr ""
 
+msgid "Last updated: {date}"
+msgstr ""
+
+msgid "Freely available scores"
+msgstr ""
+
 msgid ""
-"Only scores released for publication are shown. Select a score to view the "
+"These scores are in the public domain or may be provided digitally under a "
+"licence. Select a score to view the notes and listen to the individual "
+"voices."
+msgstr ""
+
+msgid ""
+"All content is provided as is, dated with its last update, without warranty "
+"and without any obligation to keep earlier versions available."
+msgstr ""
+
+msgid "Search by title or composer"
+msgstr ""
+
+msgid "No freely available scores yet"
+msgstr ""
+
+msgid "No scores match your search"
+msgstr ""
+
+msgid ""
+"Only scores approved for publication are shown. Select a score to view the "
 "notes and listen to the individual voices."
 msgstr ""
 
 msgid "No published scores in this share"
+msgstr ""
+
+msgid "Starting"
+msgstr ""
+
+msgid "Present"
+msgstr ""
+
+msgid "Index must be a non-negative integer"
+msgstr ""
+
+msgid "This index is already occupied"
+msgstr ""
+
+msgid "Loading occupied indices…"
+msgstr ""
+
+msgid "Index is unchanged"
+msgstr ""
+
+msgid "Index is valid"
+msgstr ""
+
+msgid "Enter the position index in the collection"
+msgstr ""
+
+msgid "Setlist"
+msgstr ""
+
+msgid "The file could not be read as MusicXML"
+msgstr ""
+
+msgid "Voice {number}"
+msgstr ""
+
+msgid "The score could not be displayed"
+msgstr ""
+
+msgid "Value must not be empty"
+msgstr ""
+
+msgid "Contents"
+msgstr ""
+
+msgid "h"
+msgstr ""
+
+msgid "Info"
+msgstr ""
+
+msgid "Date"
+msgstr ""
+
+msgid "Playtime"
+msgstr ""
+
+msgid "Moderation & Breaks"
+msgstr ""
+
+msgid "Overall Duration"
+msgstr ""
+
+msgid "Retired"
+msgstr ""
+
+msgid "Missing"
+msgstr ""
+
+msgid "Lent"
+msgstr ""
+
+msgid "Current"
+msgstr ""
+
+msgid "Dormant"
+msgstr ""
+
+msgid "Earlier"
+msgstr ""
+
+msgid "Not documented"
+msgstr ""
+
+msgid "Signature"
+msgstr ""
+
+msgid "Inventory status"
+msgstr ""
+
+msgid "Last performed"
+msgstr ""
+
+msgid "Lyricist"
+msgstr ""
+
+msgid "Voicing"
+msgstr ""
+
+msgid "Language"
+msgstr ""
+
+msgid "Public domain"
+msgstr ""
+
+msgid "Licensed"
+msgstr ""
+
+msgid "Protected"
+msgstr ""
+
+msgid "Unresolved"
+msgstr ""
+
+msgid "Approved"
+msgstr ""
+
+msgid "To clarify"
+msgstr ""
+
+msgid "Blocked"
+msgstr ""
+
+msgid "Internal preservation copy"
+msgstr ""
+
+msgid "Invalid duration format"
 msgstr ""
