@@ -423,10 +423,7 @@ class PrintMirrorService {
 		try {
 			$file = $target->newFile($name, $handle);
 		} finally {
-			// newFile() may close the stream itself
-			if (is_resource($handle)) {
-				fclose($handle);
-			}
+			fclose($handle);
 		}
 		$row = new MirrorFile();
 		$row->setName($name);
@@ -456,7 +453,7 @@ class PrintMirrorService {
 			$existing->putContent($handle);
 		} finally {
 			// putContent() may close the stream itself
-			if (is_resource($handle)) {
+			if (get_resource_type($handle) === 'stream') {
 				fclose($handle);
 			}
 		}
@@ -602,7 +599,7 @@ class PrintMirrorService {
 			hash_update_stream($context, $handle);
 			return hash_final($context);
 		} finally {
-			if (is_resource($handle)) {
+			if (get_resource_type($handle) === 'stream') {
 				fclose($handle);
 			}
 		}
