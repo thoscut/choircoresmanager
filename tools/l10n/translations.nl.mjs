@@ -1581,7 +1581,6 @@ export const singular = {
 	"Text reference": "Tekstverwijzing",
 	"Percent of the tempo in the score.": "Procent van het tempo in de bladmuziek.",
 	"Playback is not available for this excerpt.": "Afspelen is voor dit fragment niet beschikbaar.",
-	"Voice and size": "Stem en grootte",
 	"Description of the excerpt": "Beschrijving van het fragment",
 	"Practice file": "Oefenbestand",
 	"MIDI": "MIDI",

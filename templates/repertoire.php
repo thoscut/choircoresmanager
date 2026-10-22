@@ -17,6 +17,14 @@ $texts = $_['texts'];
 ?>
 
 <style>
+	/* Nextcloud's public layout holds #content to the height of the window
+	   and clips it: the page scrolls in its own element */
+	.notenarchiv-repertoire-page {
+		flex: 1 1 auto;
+		min-width: 0;
+		overflow-y: auto;
+	}
+
 	/* A page of its own on the background picture of the public layout, as the
 	   page of a public link: the text needs the main background for contrast */
 	.notenarchiv-repertoire {
@@ -69,6 +77,7 @@ $texts = $_['texts'];
 	}
 </style>
 
+<main class="notenarchiv-repertoire-page">
 <div class="notenarchiv-repertoire">
 	<h2><?php p($texts['heading']); ?></h2>
 	<p><?php p($texts['intro']); ?></p>
@@ -107,3 +116,4 @@ $texts = $_['texts'];
 		</ul>
 	<?php endif; ?>
 </div>
+</main>

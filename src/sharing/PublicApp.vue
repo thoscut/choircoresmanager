@@ -40,7 +40,8 @@ const scanUrl = window.location.pathname.replace(/\/+$/, '') + '/scan'
 </script>
 
 <template>
-	<div class="public-excerpt">
+	<!-- The public layout of Nextcloud has no main landmark of its own -->
+	<main class="public-excerpt">
 		<template v-if="excerpt">
 			<h2 class="public-excerpt__title">
 				{{ excerpt.title }}
@@ -77,8 +78,20 @@ const scanUrl = window.location.pathname.replace(/\/+$/, '') + '/scan'
 				<NcIconSvgWrapper :path="mdiAlertCircleOutline" />
 			</template>
 		</NcEmptyContent>
-	</div>
+	</main>
 </template>
+
+<style>
+/* Nextcloud's public layout holds #content to the height of the window and
+   clips it: the app scrolls in its own element, as in the other apps.
+   Without this the page cannot be scrolled at all, on a phone not even to
+   the score. */
+#notenarchiv-public {
+	flex: 1 1 auto;
+	min-width: 0;
+	overflow-y: auto;
+}
+</style>
 
 <style scoped>
 .public-excerpt {

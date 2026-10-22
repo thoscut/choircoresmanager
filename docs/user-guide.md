@@ -1474,13 +1474,15 @@ long each is valid, whether it can be played (**Playback: yes** or
 
 1. Choose a piece in the list (a link sent to you opens it directly). The
    notes appear above the list, for a whole piece all pages of it.
-2. **Play**, **Pause** and **Stop**; under **Voices during playback**
-   choose **All equal**, **Focus voice louder** or **Focus voice only**, and
-   set the tempo. **Focus voice** chooses another voice; **Smaller** and
-   **Larger** change the size. Space plays and pauses. **Count-in** clicks
-   one or two bars before the music. A click on a note starts there; with
-   the keyboard, the arrow keys left and right in the score go to the
-   previous or next measure.
+2. **Play**, **Pause** and **Stop**, **Smaller** and **Larger** (the size)
+   and **Settings** are in a bar that stays at the top while you scroll
+   through the notes. **Settings** shows or hides the other choices; on a
+   phone they are hidden at first. Under **Voices during playback** choose
+   **All equal**, **Focus voice louder** or **Focus voice only**, and set
+   the tempo. **Focus voice** chooses another voice. Space plays and
+   pauses. **Count-in** clicks one or two bars before the music. A click or
+   a tap on a note starts there; with the keyboard, the arrow keys left and
+   right in the score go to the previous or next measure.
 3. To practise a passage, enter **From measure** and **To measure** and
    choose **Show**; **Loop** plays the shown measures again and again.
    **All measures** shows everything again.

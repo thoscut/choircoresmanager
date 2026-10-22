@@ -73,6 +73,8 @@ import { translateLabel } from '../format.ts'
 import { countInFor, slotAt, storeCountIn, storedCountIn } from '../score/countIn.ts'
 import { playbackTimeline, renderPages, selectMeasures, loadScore } from '../score/model.ts'
 import { markFocus } from '../score/emphasis.ts'
+import { followMeasure } from '../score/follow.ts'
+import { scoreTarget } from '../score/hit.ts'
 import { ArchiveLimitError, readScoreText } from '../score/mxl.ts'
 import { ScorePlayer, voiceGains } from '../score/player.ts'
 import { resolveRange, sameNumber } from '../score/range.ts'
@@ -899,14 +901,15 @@ async function playFrom(time: number): Promise<void> {
 }
 
 /**
- * A click into the score: on a note or a measure, the playback starts there
- * (at its next pass from the current position). One handler on the
+ * A click or a tap into the score: on a note or a measure (see
+ * scoreTarget), the playback starts there (at its next pass from the
+ * current position). One handler on the
  * container; the SVG itself carries no handlers.
  *
  * @param event - click event
  */
 function onScoreClick(event: MouseEvent): void {
-	const target = event.target instanceof Element ? event.target : null
+	const target = scoreTarget(event, pagesElement.value)
 	const loaded = model.value
 	if (!target || !loaded || !canPlay.value || status.value !== 'ready') {
 		return
@@ -1109,21 +1112,10 @@ function markMeasure(element: SVGGraphicsElement): void {
 }
 
 function scrollToMeasure(element: Element): void {
-	const container = scoreElement.value
-	if (!container) {
-		return
+	// The score scrolls in its box on a large screen, with the whole view on a small one
+	if (scoreElement.value) {
+		followMeasure(element, scoreElement.value)
 	}
-	const box = element.getBoundingClientRect()
-	const view = container.getBoundingClientRect()
-	const margin = Math.min(80, view.height / 5)
-	if (box.top >= view.top + margin && box.bottom <= view.bottom - margin) {
-		return
-	}
-	const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
-	container.scrollTo({
-		top: container.scrollTop + box.top - view.top - Math.max(margin, (view.height - box.height) / 4),
-		behavior: reduceMotion ? 'auto' : 'smooth',
-	})
 }
 
 // ---- announcements for screen readers --------------------------------------
@@ -1342,27 +1334,33 @@ onBeforeUnmount(() => {
 			</NcEmptyContent>
 
 			<template v-else>
+				<!-- Play and stop stay at the top while the view scrolls
+				     (on a phone the score is part of the scrolling view) -->
+				<div v-if="canPlay"
+					class="score-viewer__buttons score-viewer__playbar"
+					role="group"
+					:aria-label="t('notenarchiv', 'Playback')">
+					<NcButton variant="primary" @click="togglePlay">
+						<template #icon>
+							<NcIconSvgWrapper :path="playing ? mdiPause : mdiPlay" />
+						</template>
+						{{ playing ? t('notenarchiv', 'Pause') : t('notenarchiv', 'Play') }}
+					</NcButton>
+					<NcButton :disabled="!playing && position === 0" @click="stop">
+						<template #icon>
+							<NcIconSvgWrapper :path="mdiStop" />
+						</template>
+						{{ t('notenarchiv', 'Stop') }}
+					</NcButton>
+				</div>
 				<!-- Three compact bars, so that the score itself starts high up:
 				     playback, then measures and voice, then review and scan -->
 				<div class="score-viewer__controls">
 					<section v-if="canPlay"
 						class="score-viewer__bar"
 						:aria-label="t('notenarchiv', 'Playback')">
-						<div class="score-viewer__buttons">
-							<NcButton variant="primary" @click="togglePlay">
-								<template #icon>
-									<NcIconSvgWrapper :path="playing ? mdiPause : mdiPlay" />
-								</template>
-								{{ playing ? t('notenarchiv', 'Pause') : t('notenarchiv', 'Play') }}
-							</NcButton>
-							<NcButton :disabled="!playing && position === 0" @click="stop">
-								<template #icon>
-									<NcIconSvgWrapper :path="mdiStop" />
-								</template>
-								{{ t('notenarchiv', 'Stop') }}
-							</NcButton>
-							<NcButton v-if="canExportAudio"
-								ref="practiceButton"
+						<div v-if="canExportAudio" class="score-viewer__buttons">
+							<NcButton ref="practiceButton"
 								aria-haspopup="dialog"
 								@click="openPractice">
 								<template #icon>
@@ -1752,6 +1750,8 @@ onBeforeUnmount(() => {
 }
 
 .score-viewer__review summary {
+	/* a target of at least 24 pixels (WCAG 2.5.8) */
+	padding-block: var(--default-grid-baseline);
 	cursor: pointer;
 	font-weight: bold;
 }
@@ -1772,6 +1772,19 @@ onBeforeUnmount(() => {
 	display: flex;
 	flex-direction: column;
 	gap: calc(2 * var(--default-grid-baseline));
+}
+
+/* Play and stop: stay at the top while the view scrolls, so that pausing
+   is always at hand (room on the right for the close button of the modal) */
+.score-viewer__playbar {
+	position: sticky;
+	z-index: 1;
+	/* up into the padding of the view, so that nothing shows above the bar */
+	top: calc(-3 * var(--default-grid-baseline));
+	margin-block-start: calc(-2 * var(--default-grid-baseline));
+	padding-block: calc(3 * var(--default-grid-baseline)) var(--default-grid-baseline);
+	padding-inline-end: calc(var(--default-clickable-area) + var(--default-grid-baseline));
+	background-color: var(--color-main-background);
 }
 
 /* one bar of controls: wraps on narrow screens, hints take a line of their own */
@@ -1902,10 +1915,11 @@ onBeforeUnmount(() => {
 	min-width: 0;
 }
 
+/* As tall as the score: on a small screen a swipe moves the whole view, no
+   box inside it catches the finger (a large screen: see the media query) */
 .score-viewer__score {
 	flex: 3 1 28em;
 	box-sizing: border-box;
-	height: max(16em, min(70vh, 40em));
 	min-width: 0;
 	overflow: auto;
 	border: 1px solid var(--color-border);
@@ -2044,6 +2058,13 @@ onBeforeUnmount(() => {
 
 	.score-viewer__review-panel {
 		max-height: none;
+	}
+}
+
+/* Touch: targets of at least 44 pixels */
+@media (pointer: coarse) {
+	.score-viewer {
+		--default-clickable-area: 44px;
 	}
 }
 

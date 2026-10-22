@@ -1581,7 +1581,6 @@ export const singular = {
 	"Text reference": "Referencia en texto",
 	"Percent of the tempo in the score.": "Porcentaje del tempo de la partitura.",
 	"Playback is not available for this excerpt.": "La reproducción no está disponible para este fragmento.",
-	"Voice and size": "Voz y tamaño",
 	"Description of the excerpt": "Descripción del fragmento",
 	"Practice file": "Archivo de ensayo",
 	"MIDI": "MIDI",

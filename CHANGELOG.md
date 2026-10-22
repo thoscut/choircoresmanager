@@ -10,6 +10,32 @@ All notable changes to this app are documented in this file. The format follows
 
 ## [Unreleased]
 
+## [0.9.1] - 2026-10-23
+
+### Fixed
+
+- Phones and small screens: the page of a public link and the public
+  repertoire page could not be scrolled at all. Nextcloud's public layout
+  holds the content to the height of the window and clips it; the pages
+  now scroll in their own element (and are the main landmark of the page).
+- The score of a shared piece (page **Shared with me** and public links)
+  and the score viewer of the archive no longer sit in a box of their own
+  on small screens: a swipe on the notes moves the page, instead of
+  scrolling the box first, through all pages of a whole piece. On large
+  screens the box stays.
+- **Play**, **Pause** and **Stop** stay at the top while the notes scroll
+  past (shared pieces also with **Smaller** and **Larger**); on shared
+  pieces the other choices are under **Settings**, folded on phones, so
+  that the notes start high up. The measure being played is kept in view
+  below this bar.
+- A tap on a note on a phone starts the playback there: the browser may
+  name the whole score as the target of a tap, so the point is looked at
+  again and the nearest note within 12 pixels is taken.
+- Touch screens: buttons of the score views and of **Shared with me** are
+  at least 44 pixels; the summaries **MusicXML review** and **Description of
+  the piece** and the sort buttons and shelfmarks of the catalog table are
+  at least 24 pixels high.
+
 ## [0.9.0] - 2026-10-22
 
 Milestones 0.7 to 0.9 of the roadmap: sharing with choir members and the

@@ -29,7 +29,7 @@ import type { Timeline } from '../score/timeline.ts'
 import type { VerovioToolkit } from '../score/toolkit.ts'
 import type { Voice } from '../score/voices.ts'
 
-import { mdiAlertCircleOutline, mdiDownload, mdiMagnifyMinusOutline, mdiMagnifyPlusOutline, mdiPause, mdiPlay, mdiStop } from '@mdi/js'
+import { mdiAlertCircleOutline, mdiChevronUp, mdiDownload, mdiMagnifyMinusOutline, mdiMagnifyPlusOutline, mdiPause, mdiPlay, mdiStop, mdiTuneVariant } from '@mdi/js'
 import { n, t } from '../l10n.ts'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, useId, watch } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -44,6 +44,8 @@ import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import { countInFor, slotAt, storeCountIn, storedCountIn } from '../score/countIn.ts'
 import { markFocus } from '../score/emphasis.ts'
+import { followMeasure } from '../score/follow.ts'
+import { scoreTarget } from '../score/hit.ts'
 import { loadScore, playbackTimeline, renderPages, selectMeasures } from '../score/model.ts'
 import { ScorePlayer, voiceGains } from '../score/player.ts'
 import { partGains, practiceFileName, practiceMidi, SAMPLE_RATE } from '../score/practice.ts'
@@ -93,6 +95,13 @@ const tempoId = useId()
 const tempoHintId = useId()
 const exportStatusId = useId()
 const scoreHintId = useId()
+const settingsId = useId()
+
+/**
+ * The settings below the bar: shown on a large screen, folded on a phone,
+ * so that the score starts high up (the bar with play and size stays).
+ */
+const settingsShown = ref(window.matchMedia?.('(min-width: 1024px)').matches ?? true)
 
 // ---- loading ----------------------------------------------------------------
 
@@ -102,6 +111,7 @@ const model = shallowRef<ScoreModel | null>(null)
 const pages = shallowRef<string[]>([])
 const scoreElement = ref<HTMLElement | null>(null)
 const pagesElement = ref<HTMLElement | null>(null)
+const barElement = ref<HTMLElement | null>(null)
 
 let toolkit: VerovioToolkit | null = null
 let player: ScorePlayerType | null = null
@@ -408,14 +418,15 @@ function moveTo(time: number): void {
 }
 
 /**
- * A click into the score: on a note or a measure, the playback starts there
- * (at its next pass from the current position). One handler on the
+ * A click or a tap into the score: on a note or a measure (see
+ * scoreTarget), the playback starts there (at its next pass from the
+ * current position). One handler on the
  * container; the SVG itself carries no handlers.
  *
  * @param event - click event
  */
 function onScoreClick(event: MouseEvent): void {
-	const target = event.target instanceof Element ? event.target : null
+	const target = scoreTarget(event, pagesElement.value)
 	const loaded = model.value
 	if (!target || !loaded || !props.canPlay || status.value !== 'ready') {
 		return
@@ -574,21 +585,11 @@ function onMeasureChange(index: number): void {
 }
 
 function scrollToMeasure(element: Element): void {
-	const container = scoreElement.value
-	if (!container) {
-		return
+	// The score scrolls in its box on a large screen, with the page on a
+	// phone; the bar at the top stays and covers part of the view
+	if (scoreElement.value) {
+		followMeasure(element, scoreElement.value, barElement.value)
 	}
-	const box = element.getBoundingClientRect()
-	const view = container.getBoundingClientRect()
-	const margin = Math.min(80, view.height / 5)
-	if (box.top >= view.top + margin && box.bottom <= view.bottom - margin) {
-		return
-	}
-	const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
-	container.scrollTo({
-		top: container.scrollTop + box.top - view.top - Math.max(margin, (view.height - box.height) / 4),
-		behavior: reduceMotion ? 'auto' : 'smooth',
-	})
 }
 
 // ---- announcements for screen readers --------------------------------------
@@ -920,22 +921,60 @@ onBeforeUnmount(() => {
 		</NcEmptyContent>
 
 		<template v-else>
-			<div class="excerpt-viewer__controls">
+			<!-- The bar stays at the top while the score scrolls past (position: sticky) -->
+			<div ref="barElement" class="excerpt-viewer__bar">
+				<div v-if="canPlay"
+					class="excerpt-viewer__buttons"
+					role="group"
+					:aria-label="t('notenarchiv', 'Playback')">
+					<NcButton variant="primary" @click="togglePlay">
+						<template #icon>
+							<NcIconSvgWrapper :path="playing ? mdiPause : mdiPlay" />
+						</template>
+						{{ playing ? t('notenarchiv', 'Pause') : t('notenarchiv', 'Play') }}
+					</NcButton>
+					<NcButton :disabled="!playing && position === 0" @click="stop">
+						<template #icon>
+							<NcIconSvgWrapper :path="mdiStop" />
+						</template>
+						{{ t('notenarchiv', 'Stop') }}
+					</NcButton>
+				</div>
+				<div class="excerpt-viewer__buttons" role="group" :aria-label="t('notenarchiv', 'Size of the score')">
+					<NcButton variant="tertiary"
+						:aria-label="t('notenarchiv', 'Smaller')"
+						:disabled="zoomIndex === 0"
+						@click="zoomBy(-1)">
+						<template #icon>
+							<NcIconSvgWrapper :path="mdiMagnifyMinusOutline" />
+						</template>
+					</NcButton>
+					<span class="excerpt-viewer__zoom-value">{{ zoomPercent }} %</span>
+					<NcButton variant="tertiary"
+						:aria-label="t('notenarchiv', 'Larger')"
+						:disabled="zoomIndex === ZOOM_STEPS.length - 1"
+						@click="zoomBy(1)">
+						<template #icon>
+							<NcIconSvgWrapper :path="mdiMagnifyPlusOutline" />
+						</template>
+					</NcButton>
+				</div>
+				<NcButton variant="tertiary"
+					:aria-expanded="settingsShown ? 'true' : 'false'"
+					:aria-controls="settingsId"
+					@click="settingsShown = !settingsShown">
+					<template #icon>
+						<NcIconSvgWrapper :path="settingsShown ? mdiChevronUp : mdiTuneVariant" />
+					</template>
+					<span class="excerpt-viewer__settings-label">{{ t('notenarchiv', 'Settings') }}</span>
+				</NcButton>
+			</div>
+			<NcNoteCard v-if="!canPlay" type="info" class="excerpt-viewer__note">
+				{{ playReason || t('notenarchiv', 'Playback is not available for this excerpt.') }}
+			</NcNoteCard>
+
+			<div v-show="settingsShown" :id="settingsId" class="excerpt-viewer__controls">
 				<section v-if="canPlay" class="excerpt-viewer__group" :aria-label="t('notenarchiv', 'Playback')">
-					<div class="excerpt-viewer__buttons">
-						<NcButton variant="primary" @click="togglePlay">
-							<template #icon>
-								<NcIconSvgWrapper :path="playing ? mdiPause : mdiPlay" />
-							</template>
-							{{ playing ? t('notenarchiv', 'Pause') : t('notenarchiv', 'Play') }}
-						</NcButton>
-						<NcButton :disabled="!playing && position === 0" @click="stop">
-							<template #icon>
-								<NcIconSvgWrapper :path="mdiStop" />
-							</template>
-							{{ t('notenarchiv', 'Stop') }}
-						</NcButton>
-					</div>
 					<NcRadioGroup v-model="mode" :label="t('notenarchiv', 'Voices during playback')">
 						<NcRadioGroupButton value="all" :label="t('notenarchiv', 'All equal')" />
 						<NcRadioGroupButton value="focus"
@@ -971,37 +1010,13 @@ onBeforeUnmount(() => {
 						</NcCheckboxRadioSwitch>
 					</div>
 				</section>
-				<NcNoteCard v-else type="info" class="excerpt-viewer__note">
-					{{ playReason || t('notenarchiv', 'Playback is not available for this excerpt.') }}
-				</NcNoteCard>
 
-				<section class="excerpt-viewer__group" :aria-label="t('notenarchiv', 'Voice and size')">
-					<NcSelect v-model="focusOption"
-						class="excerpt-viewer__voice"
-						:input-label="t('notenarchiv', 'Focus voice')"
-						:options="voiceOptions"
-						:clearable="false"
-						:searchable="false" />
-					<div class="excerpt-viewer__buttons" role="group" :aria-label="t('notenarchiv', 'Size of the score')">
-						<NcButton variant="tertiary"
-							:aria-label="t('notenarchiv', 'Smaller')"
-							:disabled="zoomIndex === 0"
-							@click="zoomBy(-1)">
-							<template #icon>
-								<NcIconSvgWrapper :path="mdiMagnifyMinusOutline" />
-							</template>
-						</NcButton>
-						<span class="excerpt-viewer__zoom-value">{{ zoomPercent }} %</span>
-						<NcButton variant="tertiary"
-							:aria-label="t('notenarchiv', 'Larger')"
-							:disabled="zoomIndex === ZOOM_STEPS.length - 1"
-							@click="zoomBy(1)">
-							<template #icon>
-								<NcIconSvgWrapper :path="mdiMagnifyPlusOutline" />
-							</template>
-						</NcButton>
-					</div>
-				</section>
+				<NcSelect v-model="focusOption"
+					class="excerpt-viewer__voice"
+					:input-label="t('notenarchiv', 'Focus voice')"
+					:options="voiceOptions"
+					:clearable="false"
+					:searchable="false" />
 
 				<section class="excerpt-viewer__group" :aria-label="t('notenarchiv', 'Measures')">
 					<form class="excerpt-viewer__buttons" @submit.prevent="applyRange">
@@ -1137,6 +1152,21 @@ onBeforeUnmount(() => {
 	font-weight: bold;
 }
 
+/* Play, size and settings: stays at the top of the scrolling page (or
+   box) while the score scrolls past, so that pausing is always at hand */
+.excerpt-viewer__bar {
+	position: sticky;
+	z-index: 1;
+	top: 0;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--default-grid-baseline) calc(2 * var(--default-grid-baseline));
+	padding-block: var(--default-grid-baseline);
+	border-bottom: 1px solid var(--color-border);
+	background-color: var(--color-main-background);
+}
+
 .excerpt-viewer__controls {
 	display: flex;
 	flex-wrap: wrap;
@@ -1201,14 +1231,15 @@ onBeforeUnmount(() => {
 }
 
 .excerpt-viewer__zoom-value {
-	min-width: 4em;
+	min-width: 3em;
 	align-self: center;
 	text-align: center;
 }
 
+/* As tall as the score: a swipe on it moves the page, no box inside the
+   page catches the finger. A large screen: a box of its own, see below */
 .excerpt-viewer__score {
 	box-sizing: border-box;
-	height: max(16em, min(65vh, 40em));
 	min-width: 0;
 	overflow: auto;
 	border: 1px solid var(--color-border);
@@ -1218,6 +1249,8 @@ onBeforeUnmount(() => {
 }
 
 .excerpt-viewer__description summary {
+	/* a target of at least 24 pixels (WCAG 2.5.8) */
+	padding-block: var(--default-grid-baseline);
 	cursor: pointer;
 	font-weight: bold;
 }
@@ -1295,6 +1328,32 @@ onBeforeUnmount(() => {
 	transform: scale(1.3);
 	transform-box: fill-box;
 	transform-origin: center;
+}
+
+@media (min-width: 1024px) and (min-height: 640px) {
+	.excerpt-viewer__score {
+		height: max(16em, min(65vh, 40em));
+	}
+}
+
+/* Touch: targets of at least 44 pixels */
+@media (pointer: coarse) {
+	.excerpt-viewer {
+		--default-clickable-area: 44px;
+	}
+}
+
+/* The narrowest phones: the bar in two lines, "Settings" named by its icon
+   (the word stays for screen readers) */
+@media (max-width: 359px) {
+	.excerpt-viewer__settings-label {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
 }
 
 @media (max-width: 512px) {

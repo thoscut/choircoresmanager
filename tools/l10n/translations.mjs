@@ -2475,7 +2475,6 @@ export const singular = {
 	'Tempo: {percent} %': 'Tempo: {percent} %',
 	'Percent of the tempo in the score.': 'Prozent des Tempos in den Noten.',
 	'Playback is not available for this excerpt.': 'Für diesen Ausschnitt ist Abspielen nicht möglich.',
-	'Voice and size': 'Stimme und Größe',
 	'Description of the excerpt': 'Beschreibung des Ausschnitts',
 	'Excerpt of {title}': 'Ausschnitt aus {title}',
 	'Verse {verse}': 'Strophe {verse}',

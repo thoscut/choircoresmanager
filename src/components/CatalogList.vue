@@ -504,7 +504,9 @@ function statusText(entry: Entry): string {
 
 .catalog-table__sort,
 .catalog-table__open {
-	min-height: auto;
+	/* a target of at least 24 by 24 pixels (WCAG 2.5.8) */
+	min-width: 24px;
+	min-height: 24px;
 	margin: 0;
 	padding: 0;
 	border: none;

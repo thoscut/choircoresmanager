@@ -1582,13 +1582,17 @@ Stimme, der Notiz und wie lange jedes gilt, ob es sich abspielen lässt
 1. Wähle ein Stück in der Liste (ein Link, den du bekommen hast, öffnet es
    direkt). Die Noten erscheinen über der Liste, bei einem ganzen Stück alle
    seine Seiten.
-2. **Abspielen**, **Pause** und **Stopp**; wähle unter **Stimmen beim
-   Abspielen** **Alle gleich**, **Stimme betont** oder **Nur diese Stimme**
-   und stelle das Tempo ein. **Hervorgehobene Stimme** wählt eine andere
-   Stimme; **Kleiner** und **Größer** ändern die Größe. Die Leertaste spielt
+2. **Abspielen**, **Pause** und **Stopp**, **Kleiner** und **Größer** (die
+   Größe) und **Einstellungen** stehen in einer Leiste, die oben bleibt,
+   während du durch die Noten scrollst. **Einstellungen** zeigt oder
+   verbirgt die übrigen Einstellungen; auf dem Handy sind sie zuerst
+   verborgen. Wähle unter **Stimmen beim Abspielen** **Alle gleich**,
+   **Stimme betont** oder **Nur diese Stimme** und stelle das Tempo ein.
+   **Hervorgehobene Stimme** wählt eine andere Stimme. Die Leertaste spielt
    und hält an. **Einzähler** klickt einen oder zwei Takte vor der Musik. Ein
-   Klick auf eine Note startet dort; mit der Tastatur gehst du in den Noten
-   mit den Pfeiltasten links und rechts zum vorigen oder nächsten Takt.
+   Klick oder Tipp auf eine Note startet dort; mit der Tastatur gehst du in
+   den Noten mit den Pfeiltasten links und rechts zum vorigen oder nächsten
+   Takt.
 3. Um eine Stelle zu üben, gib **Von Takt** und **Bis Takt** an und wähle
    **Anzeigen**; **Wiederholen** spielt die gezeigten Takte immer wieder.
    **Alle Takte** zeigt wieder alles.

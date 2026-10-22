@@ -342,6 +342,7 @@ onMounted(() => {
 }
 
 .member-app__open {
+	min-height: var(--default-clickable-area);
 	margin: 0;
 	padding: 0;
 	border: none;
@@ -367,5 +368,12 @@ onMounted(() => {
 .member-app__open:focus-visible {
 	outline: 2px solid var(--color-main-text);
 	outline-offset: 2px;
+}
+
+/* Touch: targets of at least 44 pixels */
+@media (pointer: coarse) {
+	.member-app {
+		--default-clickable-area: 44px;
+	}
 }
 </style>
