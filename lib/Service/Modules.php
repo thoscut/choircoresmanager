@@ -70,6 +70,10 @@ class Modules {
 		self::PRINT_MIRROR];
 	/** The action "Open in music archive" in the Files app */
 	public const FILES_INTEGRATION = 'files_integration';
+	/** Copies in the search of Nextcloud (milestone 0.8) */
+	public const UNIFIED_SEARCH = 'unified_search';
+	/** Annual snapshots of the archive and their comparison (milestone 0.8) */
+	public const ANNUAL_SNAPSHOT = 'annual_snapshot';
 
 	/** Switches of the notifications: this prefix plus the subject (NotificationService) */
 	public const NOTIFY_PREFIX = 'notify_';
@@ -110,7 +114,7 @@ class Modules {
 	/** English labels and descriptions of the presets */
 	public const PRESET_LABELS = [
 		self::SIMPLE => ['label' => 'Simple', 'description' => 'Catalog, files and the score view with playback.'],
-		self::STANDARD => ['label' => 'Standard', 'description' => 'For most choirs: everything except practice audio files, the print station, the proposals inbox, checksums, the folder book and statistics.'],
+		self::STANDARD => ['label' => 'Standard', 'description' => 'For most choirs: everything except practice audio files, the print station, the proposals inbox, checksums, the folder book, annual snapshots and statistics.'],
 		self::COMPLETE => ['label' => 'Complete', 'description' => 'All functions. The interface for agents, the sharing with choir members and the public, and the mirror folder of the print station are switched on separately.'],
 	];
 
@@ -133,7 +137,7 @@ class Modules {
 			'description' => 'Persons with life dates and their contributions to versions (composer, lyrics, arrangement, translation); import of a research list.'],
 		'protection_terms' => ['group' => 'rights', 'requires' => ['persons'], 'simple' => false, 'standard' => true, 'planned' => false,
 			'label' => 'Protection terms',
-			'description' => 'Proposal for the end of the protection term from the life dates of all persons involved, with a resubmission list. A proposal only, no legal advice.'],
+			'description' => 'Proposal for the end of the protection term from the life dates of all persons involved, with the special cases scientific edition (§ 70 UrhG) and posthumous work (§ 71 UrhG) and a resubmission list. A proposal only, no legal advice.'],
 		'releases' => ['group' => 'releases', 'requires' => ['rights'], 'simple' => false, 'standard' => true, 'planned' => false,
 			'label' => 'Releases',
 			'description' => 'Separate releases of a version for the singers\' portal, the print station and publication, derived from the confirmed rights and the licenses.'],
@@ -203,12 +207,18 @@ class Modules {
 		'checksums' => ['group' => 'maintenance', 'requires' => [], 'simple' => false, 'standard' => false, 'planned' => false,
 			'label' => 'Checksums',
 			'description' => 'Reads the archive files hourly in the background and reports files that changed without a visible modification.'],
+		self::ANNUAL_SNAPSHOT => ['group' => 'maintenance', 'requires' => [], 'simple' => false, 'standard' => false, 'planned' => false,
+			'label' => 'Annual snapshots',
+			'description' => 'Freezes the state of the archive once a year, on request or at the turn of the year: the catalog as CSV and JSON and a list of checksums of the archive files, in a dated folder in the archive folder. Two snapshots can be compared and printed.'],
 		'statistics' => ['group' => 'overview', 'requires' => [], 'simple' => false, 'standard' => false, 'planned' => false,
 			'label' => 'Statistics and annual report',
 			'description' => 'Figures on stock, rights, repertoire and maintenance and the annual report, also as CSV.'],
 		'dashboard_widget' => ['group' => 'overview', 'requires' => [], 'simple' => false, 'standard' => true, 'planned' => false,
 			'label' => 'Dashboard widget',
 			'description' => 'The widget "Music archive – due" on the Nextcloud dashboard.'],
+		self::UNIFIED_SEARCH => ['group' => 'overview', 'requires' => [], 'simple' => false, 'standard' => true, 'planned' => false,
+			'label' => 'Nextcloud search',
+			'description' => 'Finds copies by shelf mark, title and person in the search of Nextcloud, for accounts with access to the music archive. Internal preservation copies only for the roles that may view them.'],
 		'notifications' => ['group' => 'notifications', 'requires' => [], 'simple' => true, 'standard' => true, 'planned' => false,
 			'label' => 'Notifications',
 			'description' => 'Notifications to the roles concerned (never to singers), also as an e-mail summary through Nextcloud. Each occasion can be switched off below.'],

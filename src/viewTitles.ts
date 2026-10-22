@@ -61,6 +61,10 @@ export function viewTitle(view: ViewName, librarian: boolean): string {
 		return t('notenarchiv', 'Checksums')
 	case 'folderBook':
 		return t('notenarchiv', 'Folder book')
+	case 'gaps':
+		return t('notenarchiv', 'Gaps in shelf marks')
+	case 'snapshots':
+		return t('notenarchiv', 'Annual snapshots')
 	}
 	return t('notenarchiv', 'Music archive')
 }

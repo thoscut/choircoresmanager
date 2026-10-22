@@ -21,12 +21,13 @@ namespace OCA\Notenarchiv\Service;
  * `max` is the column length from the migration (characters); text without
  * `max` is stored as TEXT. `decision` marks fields that record a decision
  * taken by a person: an import may fill them while empty but never
- * overwrites them.
+ * overwrites them. `hint` explains a field below its input (English source
+ * string).
  *
  * `hosts` limits a text field to an https link to one of these hosts (the
  * links to CPDL and IMSLP shown on the public repertoire page).
  *
- * @psalm-type FieldInfo = array{type: string, label: string, write: list<string>, options?: array<string, string>, max?: int, decision?: bool, hosts?: list<string>}
+ * @psalm-type FieldInfo = array{type: string, label: string, write: list<string>, options?: array<string, string>, max?: int, decision?: bool, hosts?: list<string>, hint?: string}
  */
 final class Fields {
 	public const WORK = 'work';
@@ -94,6 +95,19 @@ final class Fields {
 		'recording' => 'Recording',
 		'publication' => 'Publication',
 		'online_publication' => 'Online publication (public links)',
+		'successor' => 'Transfer to a legal successor',
+	];
+
+	/**
+	 * One-sentence explanations shown below the input of a field: when the
+	 * special cases of the protection term apply and what they need.
+	 */
+	public const HINTS = [
+		self::VERSION => [
+			'scientific_edition' => 'Switch on for an edition of works that are no longer protected, made by scholarly work and clearly different from earlier editions, e.g. an urtext or critical edition (§ 70 UrhG): it is protected for 25 years after it appeared.',
+			'posthumous_work' => 'Switch on for a work whose protection had already ended when it first appeared or was first performed in public, e.g. a rediscovered manuscript (§ 71 UrhG): it is protected for 25 years after that.',
+			'first_published_year' => 'Year in which the edition appeared (§ 70) or in which the work first appeared or was first performed in public (§ 71), e.g. 1998. Needed for both special cases.',
+		],
 	];
 
 	public const COPY_KIND = [
@@ -210,6 +224,9 @@ final class Fields {
 				if (in_array($field, self::DECISIONS[$level] ?? [], true)) {
 					$info['decision'] = true;
 				}
+				if (isset(self::HINTS[$level][$field])) {
+					$info['hint'] = self::HINTS[$level][$field];
+				}
 			}
 			unset($info);
 		}
@@ -287,6 +304,10 @@ final class Fields {
 				'scoring' => self::field(self::TYPE_TEXT, 'Scoring', $librarianConductor),
 				'language' => self::field(self::TYPE_TEXT, 'Language', $librarianConductor),
 				'duration' => self::field(self::TYPE_NUMBER, 'Duration (seconds)', $librarianConductor),
+				// Special cases of the protection term (milestone 0.8, module protection_terms)
+				'scientific_edition' => self::field(self::TYPE_BOOLEAN, 'Scientific edition (§ 70 UrhG)', $librarian),
+				'posthumous_work' => self::field(self::TYPE_BOOLEAN, 'Posthumous work (§ 71 UrhG)', $librarian),
+				'first_published_year' => self::field(self::TYPE_NUMBER, 'Year first published', $librarian),
 			],
 			self::COPY => [
 				'binder' => self::field(self::TYPE_NUMBER, 'Binder', $readOnly),

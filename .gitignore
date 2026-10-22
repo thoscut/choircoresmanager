@@ -14,6 +14,13 @@
 /tools/screenshots/node_modules/
 /tools/mcp/node_modules/
 /tools/mcp/dist/
+
+# Outreach templates: dependencies, generated files and each choir's own
+# sender file and logo, which belong to the choir, not to this repository
+/tools/outreach/node_modules/
+/tools/outreach/out/
+/tools/outreach/sender.json
+/tools/outreach/sender/
 /js/
 /css/
 

@@ -1,0 +1,58 @@
+<!-- SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors -->
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+<!-- Business card (85 × 55 mm), front and back. build.mjs fills the {{…}} values. -->
+<!doctype html>
+<html lang="{{lang}}">
+<head>
+<meta charset="utf-8">
+<title>{{project.name}} – {{t.kicker}}</title>
+<style>
+{{{base_css}}}
+.trim { flex-direction: row; align-items: center; gap: 4mm; padding: 0 4mm 0 5mm; }
+
+/* Front */
+.front .logo-box { width: 23mm; height: 23mm; }
+.front .text { flex: 1; min-width: 0; }
+h1 { font-size: 15pt; line-height: 1; color: var(--accent); }
+h1 .app-icon { margin-right: 1mm; }
+.short { margin-top: 2mm; font-size: 8pt; line-height: 1.3; color: var(--muted); }
+.front .staff { height: 4.6mm; margin: 3mm calc(-4mm - var(--bleed)) 0 0; }
+.front .staff i { height: 0.22mm; }
+.front .note { left: 24mm; top: 1.095mm; width: 1.91mm; height: 1.315mm; border-width: 0.32mm; }
+.sender { margin-top: 3mm; font-size: 8pt; font-weight: 700; line-height: 1.25; }
+
+/* Back */
+.back .qr { width: 25mm; height: 25mm; }
+.back .text { flex: 1; min-width: 0; color: var(--paper); font-size: 8pt; line-height: 1.3; }
+.call { font-size: 10.5pt; line-height: 1.15; color: var(--light); }
+.url { margin-top: 1.8mm; font-weight: 700; color: var(--light); }
+.contact { margin-top: 1.5mm; }
+.contact span { display: block; }
+.license { margin-top: 1.5mm; }
+</style>
+</head>
+<body>
+<section class="page">
+	<div class="trim front">
+		<div class="logo-box">{{{logo_img}}}</div>
+		<div class="text">
+			<h1>{{{app_icon}}}{{project.name}}</h1>
+			<p class="short">{{t.short}}</p>
+			<div class="staff" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><span class="note"></span></div>
+			<p class="sender">{{sender.name}}</p>
+		</div>
+	</div>
+</section>
+<section class="page dark">
+	<div class="trim back">
+		<div class="qr">{{{qr_svg}}}</div>
+		<div class="text">
+			<p class="call serif">{{t.call}}</p>
+			<p class="url">{{{url_html}}}</p>
+			<p class="contact">{{#each sender.contact}}<span>{{.}}</span>{{/each}}</p>
+			<p class="license">{{t.license_line}}</p>
+		</div>
+	</div>
+</section>
+</body>
+</html>

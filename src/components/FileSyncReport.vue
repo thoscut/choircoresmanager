@@ -105,6 +105,15 @@ const failedReports = computed(() => (reports.value?.failed ?? []).map((failure)
 				:items="failedReports" />
 		</template>
 
+		<!-- Rights notices of MusicXML files (milestone 0.8) -->
+		<p v-if="report.rightsNotices && !report.rightsNotices.switchedOff && report.rightsNotices.read > 0" class="file-sync-report__muted">
+			{{ t('notenarchiv', 'Rights notices: {read} MusicXML files read, {found} with a notice (not checked), {proposals} proposals in the inbox.', {
+				read: report.rightsNotices.read, found: report.rightsNotices.found, proposals: report.rightsNotices.proposals }) }}
+			<template v-if="report.rightsNotices.pending > 0">
+				{{ n('notenarchiv', '%n file follows with the next file sync.', '%n files follow with the next file sync.', report.rightsNotices.pending) }}
+			</template>
+		</p>
+
 		<div v-if="report.skippedFolders.length > 0">
 			<ReportList :summary="n('notenarchiv', '%n folder was skipped', '%n folders were skipped', report.skippedFolders.length)"
 				:items="report.skippedFolders"

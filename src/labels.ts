@@ -174,6 +174,17 @@ export function licenseUseLabel(use: string): string {
 	return label ? translateLabel(label) : use
 }
 
+/**
+ * Explanation of a license use, or '' for uses that explain themselves.
+ *
+ * @param use - use key
+ */
+export function licenseUseHint(use: string): string {
+	return use === 'successor'
+		? t('notenarchiv', 'The license may pass to a legal successor together with the archive, e.g. when choirs merge or another body takes over the archive.')
+		: ''
+}
+
 /** Words of text references in the UI language. */
 export function referenceWords(): ReferenceWords {
 	return {

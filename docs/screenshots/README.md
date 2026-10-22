@@ -61,6 +61,11 @@ The App Store shows the files marked with a number, in this order
 | `folder-take-back.png` | *Planned, not taken yet:* the dialog "Take back folder 12" with the day, the condition and the missing sheets filled in. |
 | `print-mirror-preview.png` | *Planned, not taken yet:* the list "Print station" with the section "Mirror folder for the print station" and the preview of the first sync (would be copied, would be skipped with the reason). |
 | `settings-print-mirror.png` | *Planned, not taken yet:* the settings (admins), section "Print station: mirror folder", after choosing a folder that fits. |
+| `unified-search.png` | Planned: the search of Nextcloud with the term "Mond" and the section "Music archive" with copies 1-1 and 3-1. |
+| `protection-special-case.png` | Planned: sidebar of copy 1-6, tab "Rights", with "Scientific edition (§ 70 UrhG)" switched on, the year first published and the suggestion with the line for the special case. |
+| `rights-notice.png` | Planned: sidebar of copy 1-1, tab "Files": the MusicXML file with its rights notice marked "Not checked". |
+| `shelfmark-gaps.png` | Planned: the view "Gaps in shelf marks" of the demo archive with binder 4 (4-4 used only by a file name). |
+| `annual-snapshots.png` | Planned: the view "Annual snapshots" with two snapshots and the comparison of a changed rights status and a new license. |
 
 ## German interface (informal)
 

@@ -346,20 +346,35 @@ dieselben Anforderungen auf einem anderen Weg umgesetzt hat):
   - Zwei Stände lassen sich takt- und stimmweise vergleichen. Daraus entsteht
     eine kurze Notiz für Chormitglieder.
   - Aufführungen merken sich den gesungenen Stand.
+*Umgesetzt: der Teil „Archiv“ (Schutzfrist-Sonderfälle, Nutzungsart,
+Nextcloud-Suche, Lückenbericht, Jahresstand, Lizenzvermerk, Vorlagen für
+Infomaterial; Beschreibung in `docs/api.md`, im Benutzerhandbuch und im
+Admin-Guide). Offen: die Stände einer Fassung, das Abspielen und weitere
+Sprachen.*
+
 - **Schutzfrist-Sonderfälle** als Schalter: wissenschaftliche Ausgaben
-  (§ 70 UrhG) und nachgelassene Werke (§ 71 UrhG).
-- **Lizenz-Nutzungsart „Weitergabe an Nachfolger“.**
-- **Nextcloud-Suche** nach Signatur, Titel und Person.
+  (§ 70 UrhG) und nachgelassene Werke (§ 71 UrhG). – *umgesetzt im Modul
+  „Schutzfristen“, mit dem Jahr des ersten Erscheinens; Herausgabe zählt
+  dann mit 25 Jahren statt 70 Jahren nach dem Tod.*
+- **Lizenz-Nutzungsart „Weitergabe an Nachfolger“.** – *umgesetzt als
+  „Weitergabe an die Rechtsnachfolge“, mit Erklärung.*
+- **Nextcloud-Suche** nach Signatur, Titel und Person. – *umgesetzt, Modul
+  `unified_search` (Standard und Vollständig).*
 - **Abspielen:**
   - Einzähler, A–B-Schleife, Klick auf eine Note als Startpunkt
   - Abgleich der Abspielfolge mit den dortigen Testfällen: dreifache Volte,
     `times="3"`, D.C. al Fine, D.S. al Coda, Sprungzeichen nur in einer Stimme
 - **Lückenbericht der Signaturen** je Mappe, nur zur Information; Nummern
-  werden weiter nie wiederverwendet.
+  werden weiter nie wiederverwendet. – *umgesetzt im Modul „Inventur“.*
 - **Jahresstand einfrieren** (CSV, JSON, Prüfsummen-Manifest) und mit dem
-  Vorjahr vergleichen.
+  Vorjahr vergleichen. – *umgesetzt, Modul `annual_snapshot` (Vollständig),
+  auf Knopfdruck und zum Jahreswechsel.*
 - **Lizenzvermerk aus der MusicXML** anzeigen (`<identification><rights>`).
+  – *umgesetzt: beim Dateiabgleich gelesen, als ungeprüft angezeigt,
+  höchstens ein Vorschlag im Eingang.*
 - **Vorlagen für Infomaterial** (Flyer, Banner) mit eigenem Absender je Chor.
+  – *umgesetzt als Werkzeug `tools/outreach` (Flyer DIN lang, Visitenkarte,
+  zwei Banner), nicht Teil der App.*
 - **Weitere Sprachen** (z. B. Französisch, Spanisch, Italienisch,
   Niederländisch, Polnisch), zuletzt, wenn die Texte stehen.
 

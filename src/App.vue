@@ -85,6 +85,8 @@ const MergesView = defineAsyncComponent(() => import('./components/MergesView.vu
 const InventoryView = defineAsyncComponent(() => import('./components/InventoryView.vue'))
 const ChecksumsView = defineAsyncComponent(() => import('./components/ChecksumsView.vue'))
 const FolderBookView = defineAsyncComponent(() => import('./components/FolderBookView.vue'))
+const ShelfmarkGapsView = defineAsyncComponent(() => import('./components/ShelfmarkGapsView.vue'))
+const AnnualSnapshotsView = defineAsyncComponent(() => import('./components/AnnualSnapshotsView.vue'))
 const PersonalViewDialog = defineAsyncComponent(() => import('./components/PersonalViewDialog.vue'))
 
 /**
@@ -415,6 +417,8 @@ const accessCheckUrl = adminSettingsUrl(SETTINGS_SECTIONS.access)
 					<InventoryView v-else-if="currentView === 'inventory'" />
 					<ChecksumsView v-else-if="currentView === 'checksums'" />
 					<FolderBookView v-else-if="currentView === 'folderBook' && canSeeFolderBook" />
+					<ShelfmarkGapsView v-else-if="currentView === 'gaps'" />
+					<AnnualSnapshotsView v-else-if="currentView === 'snapshots'" />
 					<DueView v-else />
 				</template>
 			</template>

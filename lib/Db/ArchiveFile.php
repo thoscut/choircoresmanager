@@ -58,6 +58,10 @@ use OCP\AppFramework\Db\Entity;
  * @method void setSha256At(?int $sha256At)
  * @method bool|null getSha256Mismatch()
  * @method void setSha256Mismatch(?bool $sha256Mismatch)
+ * @method string|null getRightsNotice()
+ * @method void setRightsNotice(?string $rightsNotice)
+ * @method int|null getRightsReadAt()
+ * @method void setRightsReadAt(?int $rightsReadAt)
  */
 class ArchiveFile extends Entity implements JsonSerializable {
 	use FieldAccess;
@@ -79,12 +83,16 @@ class ArchiveFile extends Entity implements JsonSerializable {
 	protected ?bool $linkedManually = false;
 	protected ?int $sha256At = null;
 	protected ?bool $sha256Mismatch = false;
+	/** Rights notice of a MusicXML file (`<identification><rights>`), unchecked; read by the file sync */
+	protected ?string $rightsNotice = null;
+	/** When the rights notice was read; null: not read yet, or the file changed since */
+	protected ?int $rightsReadAt = null;
 
 	public function __construct() {
-		foreach (['copyId', 'fileId', 'size', 'mtime', 'syncedAt', 'sha256At'] as $field) {
+		foreach (['copyId', 'fileId', 'size', 'mtime', 'syncedAt', 'sha256At', 'rightsReadAt'] as $field) {
 			$this->addType($field, 'integer');
 		}
-		foreach (['path', 'name', 'type', 'role', 'etag', 'sha256'] as $field) {
+		foreach (['path', 'name', 'type', 'role', 'etag', 'sha256', 'rightsNotice'] as $field) {
 			$this->addType($field, 'string');
 		}
 		foreach (['listed', 'musicxmlValid', 'found', 'linkedManually', 'sha256Mismatch'] as $field) {

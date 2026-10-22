@@ -231,6 +231,11 @@ expect file-sync.json reports.assigned 2
 expect file-sync.json reports.imported 2
 expect file-sync.json reports.failed '[]'
 expect file-sync.json reports.switchedOff false
+# The rights notices of the 7 MusicXML files (milestone 0.8): all name CC0 or
+# the public domain; only 3-1 is marked protected, so one proposal, no status.
+expect file-sync.json rightsNotices.read 7
+expect file-sync.json rightsNotices.found 7
+expect file-sync.json rightsNotices.proposals 1
 
 step "5b. Interface for agents"
 # Never part of a preset ("complete" leaves it off): switched on by itself.
@@ -301,6 +306,11 @@ run_test folder_book_test 2-1
 # vor dem Tore, confirmed as public domain inside the test): the target
 # folder and everything written are deleted, the rest rolled back.
 run_test print_mirror_test 2-3
+# Milestone 0.8, archive: special cases of the protection term, the search
+# of Nextcloud, gaps in the shelf marks, the rights notice of a MusicXML
+# file and two annual snapshots with their comparison. Finds its copies
+# itself; rolled back, module switches restored, snapshot folders deleted.
+run_test archive_extras_test
 run_test backup_test
 # Creates two accounts in two groups of its own (role "reader"), shares the
 # archive folder with the first group and gives the settings page to the

@@ -164,6 +164,20 @@ class MaintenanceController extends Controller {
 	}
 
 	/**
+	 * Gaps in the shelf marks of every binder (information only; numbers are
+	 * never reused).
+	 */
+	#[NoAdminRequired]
+	#[RequiresModule('inventory')]
+	#[FrontpageRoute(verb: 'GET', url: '/api/inventory/gaps')]
+	public function shelfmarkGaps(): JSONResponse {
+		return $this->run(function (string $uid) {
+			$this->roles->requireAccess($uid);
+			return ['binders' => $this->inventory->gaps()];
+		});
+	}
+
+	/**
 	 * @param list<mixed> $counts
 	 */
 	#[NoAdminRequired]

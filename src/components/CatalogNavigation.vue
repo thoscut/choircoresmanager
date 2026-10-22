@@ -13,6 +13,7 @@ import type { ViewName } from '../startParams.ts'
 
 import {
 	mdiAccountMultipleOutline,
+	mdiArchiveClockOutline,
 	mdiArchiveOutline,
 	mdiArchivePlusOutline,
 	mdiBookOpenPageVariantOutline,
@@ -34,6 +35,7 @@ import {
 	mdiHomeOutline,
 	mdiInboxArrowDownOutline,
 	mdiLinkVariant,
+	mdiNumericOff,
 	mdiPrinterOutline,
 	mdiWeb,
 } from '@mdi/js'
@@ -134,6 +136,7 @@ const archiveViews = computed<ViewEntry[]>(() => shown([
 	{ view: 'persons', icon: mdiAccountMultipleOutline },
 	{ view: 'protection', icon: mdiCalendarClockOutline },
 	{ view: 'statistics', icon: mdiChartBar },
+	{ view: 'snapshots', icon: mdiArchiveClockOutline },
 ]))
 
 const maintenanceViews = computed<ViewEntry[]>(() => shown([
@@ -142,6 +145,7 @@ const maintenanceViews = computed<ViewEntry[]>(() => shown([
 	{ view: 'inventory', icon: mdiClipboardCheckOutline },
 	// The folder book names choir members: only for the roles that read it
 	...(canSeeFolderBook.value ? [{ view: 'folderBook' as ViewName, icon: mdiFolderAccountOutline }] : []),
+	{ view: 'gaps', icon: mdiNumericOff },
 	{ view: 'checksums', icon: mdiFileCheckOutline },
 ]))
 

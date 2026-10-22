@@ -15,6 +15,7 @@ use OCA\Notenarchiv\Db\CopyMapper;
 use OCA\Notenarchiv\Db\Person;
 use OCA\Notenarchiv\Db\PersonMapper;
 use OCA\Notenarchiv\Db\WorkMapper;
+use OCA\Notenarchiv\Db\WorkVersion;
 use OCA\Notenarchiv\Db\WorkVersionMapper;
 use OCA\Notenarchiv\Exception\InvalidInputException;
 use OCA\Notenarchiv\Exception\NotFoundException;
@@ -257,13 +258,37 @@ class PersonService {
 	 */
 	public function protection(int $versionId, int $currentYear): array {
 		$persons = [];
+		$roles = [];
 		foreach ($this->contributions->findByVersion($versionId) as $contribution) {
 			try {
 				$persons[$contribution->getPersonId()] ??= $this->persons->find($contribution->getPersonId());
+				$roles[$contribution->getPersonId()][] = $contribution->getRole();
 			} catch (DoesNotExistException) {
 			}
 		}
-		return ProtectionTerm::propose(array_values($persons), $currentYear);
+		try {
+			$version = $this->versions->find($versionId);
+		} catch (DoesNotExistException) {
+			$version = null;
+		}
+		return self::propose($version, $persons, $roles, $currentYear);
+	}
+
+	/**
+	 * The proposal of a version with its special cases (§§ 70, 71 UrhG):
+	 * persons involved only as editors count with the special term instead.
+	 *
+	 * @param array<int, Person> $persons person id => person
+	 * @param array<int, list<string>> $roles person id => roles in the version
+	 * @return Proposal
+	 */
+	private static function propose(?WorkVersion $version, array $persons, array $roles, int $currentYear): array {
+		$cases = array_values(array_filter([
+			$version?->getScientificEdition() === true ? ProtectionTerm::SCIENTIFIC_EDITION : null,
+			$version?->getPosthumousWork() === true ? ProtectionTerm::POSTHUMOUS_WORK : null,
+		]));
+		$editors = array_keys(array_filter($roles, fn (array $list): bool => array_diff($list, [ProtectionTerm::EDITOR_ROLE]) === []));
+		return ProtectionTerm::propose(array_values($persons), $currentYear, $cases, $version?->getFirstPublishedYear(), $editors);
 	}
 
 	/**
@@ -276,15 +301,18 @@ class PersonService {
 	public function protectionForVersions(array $versionIds, int $currentYear): array {
 		$persons = $this->persons->findAllById();
 		$byVersion = $this->contributions->findAllByVersion();
+		$versions = $this->versions->findAllById();
 		$result = [];
 		foreach ($versionIds as $versionId) {
 			$involved = [];
+			$roles = [];
 			foreach ($byVersion[$versionId] ?? [] as $contribution) {
 				if (isset($persons[$contribution->getPersonId()])) {
 					$involved[$contribution->getPersonId()] = $persons[$contribution->getPersonId()];
+					$roles[$contribution->getPersonId()][] = $contribution->getRole();
 				}
 			}
-			$result[$versionId] = ProtectionTerm::propose(array_values($involved), $currentYear) + ['persons' => count($involved)];
+			$result[$versionId] = self::propose($versions[$versionId] ?? null, $involved, $roles, $currentYear) + ['persons' => count($involved)];
 		}
 		return $result;
 	}

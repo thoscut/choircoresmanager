@@ -120,7 +120,19 @@ sudo -u www-data php tests/Integration/files_integration_test.php /var/www/nextc
 sudo -u www-data php tests/Integration/settings_access_test.php /var/www/nextcloud <uid>
 sudo -u www-data php tests/Integration/folder_book_test.php   /var/www/nextcloud <uid> <shelfmark>
 sudo -u www-data php tests/Integration/print_mirror_test.php  /var/www/nextcloud <uid> <shelfmark-with-pdf>
+sudo -u www-data php tests/Integration/archive_extras_test.php /var/www/nextcloud <uid>
 ```
+
+`archive_extras_test.php` covers milestone 0.8, archive: the special cases
+of the protection term (§§ 70, 71 UrhG) with a person and an editor it
+creates, the search of Nextcloud (shelf mark, title, person, preservation
+copies, an account without a role, module off), the gaps in the shelf marks
+against the next free shelf mark, the rights notice of a MusicXML file
+(never a rights status) and two annual snapshots with their comparison. It
+finds its copies itself and runs on any catalog with a MusicXML file; the
+account must be able to write into the archive folder. Everything is rolled
+back, the module switches are restored and the snapshot folders it wrote
+are deleted again.
 
 `statistics_test.php` fixes no figures of a catalog, so it runs on any
 imported catalog: it checks that sums and states add up, compares the
@@ -231,6 +243,7 @@ missing arguments end with exit code 2.
 ### Integration tests in CI (demo data)
 
 The CI job `integration` runs all fifteen scripts against a freshly installed
+The CI job `integration` runs all fourteen scripts against a freshly installed
 Nextcloud 33 and 35 (release archives from download.nextcloud.com, checked
 against their SHA-512 checksum) with MariaDB 11.8 and PHP 8.3. The job
 installs the app with its built frontend, builds the public demo data
@@ -251,7 +264,9 @@ real) and runs the file sync. It checks the figures of
 3 MusicXML), 29 assigned, `Mappe_4/4-04_…pdf` not assignable, `LIESMICH.txt`
 ignored, `_Import` skipped, 4-3 without a file; the two transcription reports
 of the demo (1-1, 2-1) are counted apart (`reports`: 2 files, 2 assigned, 2
-imported; 32 new file rows). It switches every module on
+imported; 32 new file rows); the rights notices of the 7 MusicXML files are
+read (`rightsNotices`: 7 read, 7 with a notice, 1 proposal for 3-1, which is
+marked protected while its file names CC0). It switches every module on
 (`occ notenarchiv:modules preset complete`; a new installation starts with
 the preset "standard") and, after the import, the interface for agents
 (`occ notenarchiv:modules enable agent_api`, which no preset touches). Then
@@ -271,6 +286,7 @@ it runs the tests with these shelf marks of the demo catalog:
 | `api_v1_test.php` | `1-1 3-1` | 1-1 is public domain with MusicXML (and a demo report, which the test's own reports do not touch), 3-1 the internal preservation copy |
 | `review_test.php` | `1-2` | MXL with four staves and without a demo report, so the review points of the demo reports do not interfere |
 | `files_integration_test.php` | – | finds a MusicXML file and a PDF of copies itself; `LIESMICH.txt` is the unlisted file; creates and deletes a second account |
+| `archive_extras_test.php` | – | finds a copy with MusicXML and the preservation copy itself; writes two annual snapshots into the archive folder and deletes them again |
 | `backup_test.php` | – | |
 | `settings_access_test.php` | – | creates and removes its own accounts, groups, share and delegation |
 

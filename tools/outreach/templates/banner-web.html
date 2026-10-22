@@ -1,0 +1,39 @@
+<!-- SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors -->
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+<!-- Wide banner, 1500 × 500 px (website, header of a profile). build.mjs fills the {{…}} values. -->
+<!doctype html>
+<html lang="{{lang}}">
+<head>
+<meta charset="utf-8">
+<title>{{project.name}} – {{t.kicker}}</title>
+<style>
+{{{base_css}}}
+.trim { display: block; }
+.staff { position: absolute; left: 470px; right: 0; top: 330px; height: 60px; }
+.staff i { height: 2.5px; }
+.note { left: 760px; top: 14.4px; width: 24.5px; height: 16.9px; border-width: 4px; }
+.logo-box { position: absolute; left: 100px; top: 80px; width: 320px; height: 340px; }
+.text { position: absolute; left: 470px; right: 60px; top: 62px; }
+.kicker { font-size: 22px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+.kicker .app-icon { width: 1.5em; height: 1.5em; margin-right: 10px; vertical-align: -0.4em; }
+h1 { margin-top: 8px; font-size: 86px; line-height: 1; color: var(--accent); }
+.short { margin-top: 16px; font-size: 30px; line-height: 1.3; }
+.foot { position: absolute; left: 470px; right: 60px; top: 408px; font-size: 22px; line-height: 1.5; color: var(--muted); }
+.foot span { display: block; }
+</style>
+</head>
+<body>
+<section class="page">
+	<div class="trim">
+		<div class="staff" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><span class="note"></span></div>
+		<div class="logo-box">{{{logo_img}}}</div>
+		<div class="text">
+			<p class="kicker">{{{app_icon}}}{{t.kicker}}</p>
+			<h1>{{project.name}}</h1>
+			<p class="short">{{t.short}}</p>
+		</div>
+		<p class="foot"><span>{{project.url_short}} · {{t.license_line}}</span><span>{{sender.name}}</span></p>
+	</div>
+</section>
+</body>
+</html>

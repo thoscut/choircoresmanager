@@ -9,11 +9,13 @@ declare(strict_types=1);
 
 namespace OCA\Notenarchiv\Tests\Unit\Controller;
 
+use OCA\Notenarchiv\Controller\AnnualSnapshotController;
 use OCA\Notenarchiv\Controller\ApiController;
 use OCA\Notenarchiv\Controller\ApiV1StatusController;
 use OCA\Notenarchiv\Controller\CalendarController;
 use OCA\Notenarchiv\Controller\FilesIntegrationController;
 use OCA\Notenarchiv\Controller\FolderBookController;
+use OCA\Notenarchiv\Controller\MaintenanceController;
 use OCA\Notenarchiv\Controller\MemberController;
 use OCA\Notenarchiv\Controller\PageController;
 use OCA\Notenarchiv\Controller\PracticeAudioController;
@@ -38,6 +40,7 @@ use OCA\Notenarchiv\Exception\NotFoundException;
 use OCA\Notenarchiv\Exception\NotSharedException;
 use OCA\Notenarchiv\Exception\UnknownLinkException;
 use OCA\Notenarchiv\Middleware\ModuleMiddleware;
+use OCA\Notenarchiv\Service\AnnualSnapshotService;
 use OCA\Notenarchiv\Service\AppSettings;
 use OCA\Notenarchiv\Service\ArchiveAccess;
 use OCA\Notenarchiv\Service\AuditLog;
@@ -129,6 +132,7 @@ use Psr\Log\LoggerInterface;
 #[CoversClass(PublicRepertoireController::class)]
 #[CoversClass(FolderBookController::class)]
 #[CoversClass(PrintMirrorController::class)]
+#[CoversClass(AnnualSnapshotController::class)]
 final class ControllerSecurityTest extends TestCase {
 	use ModuleSwitches;
 
@@ -199,6 +203,8 @@ final class ControllerSecurityTest extends TestCase {
 		// the folder book writes, and the print station reads and writes files
 		'FolderBookController::createFolder', 'FolderBookController::updateFolder', 'FolderBookController::issue',
 		'FolderBookController::takeBack', 'PrintMirrorController::preview', 'PrintMirrorController::sync',
+		// reads every archive file for the checksums, or two complete backups
+		'AnnualSnapshotController::create', 'AnnualSnapshotController::compare',
 	];
 
 	/**
@@ -739,6 +745,62 @@ final class ControllerSecurityTest extends TestCase {
 		$response = $controller->authorize(3);
 		self::assertSame(Http::STATUS_NOT_FOUND, $response->getStatus());
 		self::assertSame(['error' => 'This function is switched off.'], $response->getData());
+	}
+
+	/**
+	 * Milestone 0.8: the annual snapshots are their own module, the report
+	 * of gaps in the shelf marks is part of the inventory. Switched off, the
+	 * routes answer 404 before the controller runs.
+	 */
+	public function testTheArchiveExtrasArePartOfTheirModules(): void {
+		foreach (['overview', 'create', 'compare', 'settings'] as $method) {
+			self::assertSame([Modules::ANNUAL_SNAPSHOT], ModuleMiddleware::required(AnnualSnapshotController::class, $method), $method);
+		}
+		self::assertSame(['inventory'], ModuleMiddleware::required(MaintenanceController::class, 'shelfmarkGaps'));
+		$routes = self::routes();
+		self::assertSame('POST', $routes['AnnualSnapshotController::create']['verb'] ?? null, 'writing keeps the CSRF check');
+		self::assertSame('PUT', $routes['AnnualSnapshotController::settings']['verb'] ?? null);
+
+		$controller = $this->snapshotController([]);
+		(new ModuleMiddleware($this->modulesWithout(), $this->l10n()))->beforeController($controller, 'compare');
+		$this->expectException(ModuleDisabledException::class);
+		(new ModuleMiddleware($this->modulesWithout([Modules::ANNUAL_SNAPSHOT]), $this->l10n()))->beforeController($controller, 'compare');
+	}
+
+	/**
+	 * Making a snapshot and its setting are for the catalog librarian;
+	 * reading them needs access to the archive.
+	 */
+	public function testAnnualSnapshotsCheckTheRolesOnTheServer(): void {
+		$reader = $this->snapshotController([Roles::READER]);
+		self::assertSame(Http::STATUS_FORBIDDEN, $reader->create()->getStatus());
+		self::assertSame(Http::STATUS_FORBIDDEN, $reader->settings(false)->getStatus());
+		$nobody = $this->snapshotController([]);
+		self::assertSame(Http::STATUS_FORBIDDEN, $nobody->overview()->getStatus());
+		self::assertSame(Http::STATUS_FORBIDDEN, $nobody->compare('2025_20260101-000000', '2026_20261022-120000')->getStatus());
+	}
+
+	/**
+	 * @param list<string> $roles roles of the account
+	 */
+	private function snapshotController(array $roles): AnnualSnapshotController {
+		$roleService = $this->createStub(Roles::class);
+		$roleService->method('requireAccess')->willReturnCallback(function () use ($roles): void {
+			if ($roles === []) {
+				throw new AccessDeniedException('You have no access to the music archive.');
+			}
+		});
+		$roleService->method('requireRole')->willReturnCallback(function (string $uid, array $allowed) use ($roles): void {
+			if (array_intersect($roles, $allowed) === []) {
+				throw new AccessDeniedException('This requires one of these roles: %s', ['x']);
+			}
+		});
+		$service = new AnnualSnapshotService($this->createStub(AppSettings::class), $this->createStub(ExportService::class),
+			$this->createStub(FullBackupService::class), $this->createStub(ArchiveFileMapper::class), $this->createStub(RightsService::class),
+			$roleService, $this->createStub(AuditLog::class), $this->createStub(IAppConfig::class), $this->createStub(ITimeFactory::class),
+			$this->createStub(IDateTimeZone::class));
+		return new AnnualSnapshotController($this->createStub(IRequest::class), 'carla', $service, $this->l10n(),
+			$this->createStub(LoggerInterface::class));
 	}
 
 	public function testTheFilesActionRouteIsPartOfItsModule(): void {

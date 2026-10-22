@@ -96,6 +96,12 @@ use OCP\AppFramework\Db\Entity;
  * @method void setLanguage(?string $language)
  * @method int|null getDuration()
  * @method void setDuration(?int $duration)
+ * @method bool|null getScientificEdition()
+ * @method void setScientificEdition(?bool $scientificEdition)
+ * @method bool|null getPosthumousWork()
+ * @method void setPosthumousWork(?bool $posthumousWork)
+ * @method int|null getFirstPublishedYear()
+ * @method void setFirstPublishedYear(?int $firstPublishedYear)
  * @method int getCreated()
  * @method void setCreated(int $created)
  * @method int getModified()
@@ -144,11 +150,15 @@ class WorkVersion extends Entity implements JsonSerializable {
 	protected ?string $scoring = null;
 	protected ?string $language = null;
 	protected ?int $duration = null;
+	/** Special cases of the protection term (§§ 70, 71 UrhG) and the year they count from */
+	protected ?bool $scientificEdition = false;
+	protected ?bool $posthumousWork = false;
+	protected ?int $firstPublishedYear = null;
 	protected int $created = 0;
 	protected int $modified = 0;
 
 	public function __construct() {
-		foreach (['workId', 'rule1Count', 'duration', 'created', 'modified'] as $field) {
+		foreach (['workId', 'rule1Count', 'duration', 'firstPublishedYear', 'created', 'modified'] as $field) {
 			$this->addType($field, 'integer');
 		}
 		foreach (['kind', 'arrangerText', 'relation', 'notes', 'rightsAssessment', 'rightsStatusImport',
@@ -160,7 +170,9 @@ class WorkVersion extends Entity implements JsonSerializable {
 			'language'] as $field) {
 			$this->addType($field, 'string');
 		}
-		$this->addType('preservationCopy', 'boolean');
+		foreach (['preservationCopy', 'scientificEdition', 'posthumousWork'] as $field) {
+			$this->addType($field, 'boolean');
+		}
 	}
 
 	public function isConfirmed(): bool {

@@ -39,6 +39,9 @@ Request bodies are checked strictly: unknown fields are refused with 400
 | `POST /api/folder-book/folders`, `PUT /api/folder-book/folders/{id}`, `POST /api/folder-book/folders/{id}/issue`, `POST /api/folder-book/loans/{id}/return` | 300 in 10 minutes |
 | `GET /api/print-mirror/preview` | 30 in 10 minutes |
 | `POST /api/print-mirror/sync` | 10 in 10 minutes |
+| `POST /api/annual-snapshots` | 5 in 60 minutes |
+| `GET /api/annual-snapshots/compare` | 30 in 10 minutes |
+| Search of Nextcloud (provider `notenarchiv`) | 300 in 10 minutes; at most 50 results per page |
 
 Files chosen by `fileId` for an import may be at most 20 MB, a backup for a
 restore at most 64 MB; larger files are refused with 400
@@ -364,7 +367,9 @@ New version fields (see `meta.fields`): `publication_status`, `review_status`,
 `scoring`, `language`, `duration`. License uses: `binder`, `portal`,
 `self_print`, `print_station`, `practice_audio`, `recording`, `publication`,
 `online_publication` (milestone 0.7: making an excerpt available online
-through a public link; keys and English labels in `meta.licenseUses`).
+through a public link) and `successor` (transfer to a legal successor
+together with the archive, milestone 0.8; it documents the license and
+decides no release) (keys and English labels in `meta.licenseUses`).
 
 Rules the UI should reflect (the server enforces them):
 
@@ -786,7 +791,27 @@ librarian) removes a manual link; afterwards the file name decides again. The
 file sync report additionally contains `linkedManually` (count).
 
 File rows (`files[]` of the entry) additionally contain `linked_manually`,
-`sha256`, `sha256_at` (Unix time of the last check) and `sha256_mismatch`.
+`sha256`, `sha256_at` (Unix time of the last check) and `sha256_mismatch`,
+and (milestone 0.8) `rights_notice` and `rights_read_at`.
+
+**Rights notice of MusicXML files (milestone 0.8, module `rights`).** After
+the file sync, the text of `<identification><rights>` of every MusicXML file
+of a copy that is new, changed or not read yet (at most 300 per sync) is read
+through the syncing account and stored as `rights_notice` (several joined
+with " · ", at most 1,000 characters, `null` without one); `rights_read_at`
+is the time it was read and is cleared when the file changes. Documents with
+an internal DTD subset are not read. The notice is unchecked information and
+never sets a rights status. When it names the public domain (also CC0) or a
+license and `proposals` is active, the sync makes at most one proposal per
+version (source "MusicXML rights notice"): `rights_status: public_domain`, or
+the notice as `license` while that field is empty; an open proposal with the
+same value is not repeated. The sync report contains
+
+```json
+"rightsNotices": { "read": 7, "found": 7, "proposals": 1, "failed": 0, "pending": 0, "switchedOff": false }
+```
+
+(`switchedOff: true` and nothing read while `rights` is off).
 
 ### Persons, contributions and the protection proposal
 
@@ -838,7 +863,33 @@ to the term for anonymous works.
 
 Reason keys: `no_persons`, `living`, `death_unknown`, `death_circa`,
 `identification_uncertain` (status `unknown`), `running` (`protected`),
-`ended` (`free`). The entry (`GET /api/entries/{id}`) additionally contains
+`ended` (`free`).
+
+**Special cases (milestone 0.8, module `protection_terms`).** The version
+fields `scientific_edition` (§ 70 UrhG) and `posthumous_work` (§ 71 UrhG)
+(boolean, librarian) and `first_published_year` (number, librarian; 1000 up
+to the current year, otherwise 400 `"%s" must be a year between 1000 and
+this year, e.g. 1998.`) add a term of 25 years after the end of that year.
+With a special case, persons whose only role in the version is `editor`
+count with this term instead of 70 years after their death; all other
+persons count as usual, and the later end decides. The proposal then
+contains `special` (one entry per case) and, translated, `specialTexts`:
+
+```json
+"protection": { "status": "protected", "until": "2035-12-31", "freeSince": "2036-01-01",
+  "reason": "scientific_edition_running", "parameters": [2010, 2035], "decisivePersonId": null, "blocking": [],
+  "special": [{ "case": "scientific_edition", "year": 2010, "until": "2035-12-31" }],
+  "specialTexts": ["translated, one line per case"], "reasonText": "…", "notice": "… plus a sentence on the special cases" }
+```
+
+Further reason keys: `scientific_edition_running`, `posthumous_work_running`
+(`protected`), `scientific_edition_ended`, `posthumous_work_ended` (`free`),
+`only_editors` (`unknown`: only editors are recorded) and `year_missing`
+(`unknown`: a special case without `first_published_year`; also listed in
+`blocking` with `personId: null` and an empty name). The fields carry a
+`hint` in `meta.fields` (English, one sentence on when the case applies).
+
+The entry (`GET /api/entries/{id}`) additionally contains
 `contributions` (of the copy's version, with persons), `protection` and
 `merges` (merges of this work or copy that can be undone).
 
@@ -955,6 +1006,77 @@ Rows are in shelf order, for an A4 list with columns to tick.
 `last_counted` and, where given, `originals_count`/`copies_count` through the
 catalog rules, all or nothing; returns `{ "recorded": 1 }`. At most 2,000
 entries per request (400 `Too many entries at once (at most %s).`).
+
+**Gaps in the shelf marks (milestone 0.8, module `inventory`).**
+`GET /api/inventory/gaps` (any role) lists, per binder, the numbers between
+1 and the highest number used (by a copy or a file name in the archive
+folder, as for the next free shelf mark) that no copy has. Information only:
+numbers are never reused.
+
+```json
+{ "binders": [{ "binder": 5, "highest": 12, "copies": 6, "missing": 6,
+  "ranges": [{ "from": 1, "to": 2 }, { "from": 5, "to": 7 }, { "from": 11, "to": 11 }], "withFile": [6, 11] }] }
+```
+
+`withFile`: missing numbers that a file name uses (probably a copy not in the
+catalog yet). The UI shows it as the printable view `?view=shelfmark-gaps`.
+
+### Annual snapshots (milestone 0.8, module `annual_snapshot`)
+
+A snapshot is a folder `_notenarchiv-app/annual-snapshots/<year>_<YYYYMMDD-HHMMSS>[-n]`
+in the archive folder with `catalog.csv` (extended CSV, as the export),
+`catalog.json` (the complete backup, as `GET /api/backup/full`) and
+`manifest.csv` (`sha256;size;path`, UTF-8 with BOM, one row per archive file
+the file sync knows, SHA-256 of the current content, sorted by path; cells
+that start like a formula get a leading `'`). The manifest is written last;
+a folder without one of the three files is listed as incomplete. Snapshots
+are never overwritten or deleted by the app. Files are read and written
+through the account's own view of the archive folder.
+
+| Method and path | Body | Role |
+|---|---|---|
+| `GET /api/annual-snapshots` | – | any role |
+| `POST /api/annual-snapshots` | – | librarian; 5 per hour |
+| `GET /api/annual-snapshots/compare?older=&newer=` | – | any role; 30 in 10 minutes |
+| `PUT /api/annual-snapshots/settings` | `{ auto }` | librarian |
+
+```json
+{ "snapshots": [{ "name": "2026_20261022-153000", "year": 2026, "created": "2026-10-22 15:30:00", "complete": true }],
+  "auto": true, "lastError": null,
+  "next": { "year": 2026, "folder": "Notenarchiv/_notenarchiv-app/annual-snapshots",
+            "files": ["catalog.csv", "catalog.json", "manifest.csv"], "archiveFiles": 128, "bytes": 52428800, "exists": true } }
+```
+
+`next` says what a new snapshot writes where (shown before writing);
+`lastError` is the translated message of the last failed automatic snapshot.
+`POST` freezes the current year and returns
+`{ "name", "folder", "files", "manifest": { "files", "bytes", "missing" } }`.
+`auto` (default `true`): the background job `AnnualSnapshotJob` writes, in
+January, once, the snapshot of the year before as the account that set the
+archive folder, while the module is active; it tries again daily until the
+end of January and stores the message of a failure.
+
+The comparison (older first) returns `older`, `newer` and
+
+```json
+{ "copies": { "added": [{ "shelfmark": "4-3", "title": "…" }], "removed": [],
+              "changed": [{ "shelfmark": "4-10", "title": "…", "changes": [{ "field": "status", "old": "active", "new": "retired" }] }] },
+  "rights": [{ "shelfmark": "4-1", "title": "…", "changes": [{ "field": "rights_status", "old": "open", "new": "public_domain" }] }],
+  "licenses": [{ "shelfmark": "4-1", "title": "…", "holder": "…", "uses": "binder,successor", "change": "added|changed|removed", "changes": [] }],
+  "files": { "added": [{ "path": "…", "size": 1 }], "removed": [], "changed": [], "compared": true } }
+```
+
+Copies are matched by shelf mark (fields `status`, `kind`, `originals_count`,
+`copies_count`, plus `title` and `version` when the copy moved), versions and
+licenses by id (rights fields `rights_status`, `confirmed_at`,
+`publication_status`, `preservation_copy`, `scientific_edition`,
+`posthumous_work`, `first_published_year`, `portal_since`, `valid_since`;
+license fields `holder`, `uses`, `quantity`, `valid_from`, `valid_until`),
+files by path and SHA-256 (`compared: false` when a manifest cannot be read).
+Booleans come as `0`/`1`. Errors (400/404) name what to do, e.g. an unknown
+or incomplete snapshot, the same snapshot twice, or an archive folder the
+account cannot see. The UI shows it as the printable view
+`?view=annual-snapshots`.
 
 ### Checksums
 
@@ -1143,8 +1265,10 @@ audio and preservation copies applies whatever is switched on.
 | `inventory` | – | on |
 | `folder_book` | – | off (on in "complete") |
 | `checksums` | – | off |
+| `annual_snapshot` | – | off (on in "complete") |
 | `statistics` | – | off |
 | `dashboard_widget` | – | on |
+| `unified_search` | – | on |
 | `notifications` | – | on |
 | `notify_{subject}` | `notifications` and the module of the subject | on |
 | `member_links` | `excerpt_links`, `playback`, `releases` | off, and part of no preset |
@@ -1207,10 +1331,11 @@ other check of the app. The routes and their modules:
 | `protection_terms` | `GET /api/protection/review` (and `persons`) |
 | `accession` | `GET /api/accession/next`, `POST /api/accession`, `PUT /api/accession/open-binders`, `GET /api/labels` |
 | `merge` | `/api/merges…` |
-| `inventory` | `GET /api/inventory`, `POST /api/inventory/count` |
+| `inventory` | `GET /api/inventory`, `POST /api/inventory/count`, `GET /api/inventory/gaps` |
 | `checksums` | `GET /api/checksums`, `POST /api/files/{id}/checksum-accept` |
 | `folder_book` | `/api/folder-book…`, `GET`/`PUT /api/settings/folder-book` |
 | `print_mirror` | `/api/print-mirror…`, `/api/settings/print-mirror…` (and `print_station`) |
+| `annual_snapshot` | `/api/annual-snapshots…` |
 | `statistics` | `/api/statistics…` |
 | `agent_api` | every route of the API for agents, `/ocs/v2.php/apps/notenarchiv/api/v1/…` (404 with the message in the OCS meta); each also needs the module of its function |
 
@@ -1218,7 +1343,9 @@ other check of the app. The routes and their modules:
 switch of the three releases (it gates `portal`, `print_station` and
 `publication`), `publication` only shows the publication status in the UI.
 Fields of a switched-off module stay in the catalog, in `meta.fields`, in
-the CSV and in the backup; the UI hides their maintenance.
+the CSV and in the backup; the UI hides their maintenance (`publication_*`:
+`publication`; `scientific_edition`, `posthumous_work`,
+`first_published_year`: `protection_terms`).
 
 What else follows the modules:
 
@@ -1246,12 +1373,16 @@ What else follows the modules:
   `concerts`: `concerts`).
 - Dashboard widget: only while `dashboard_widget` is on; its items are those
   of `GET /api/due` without the cards the account has hidden (personal view).
-- Background jobs: the checksum job does nothing without `checksums`; the
-  daily checks skip the parts whose notification is switched off and
-  withdraw their notifications, and sync the print station only while
-  `print_mirror` is active. The removal of personal data of the folder book
-  after the retention period runs also without `folder_book`: switching off
-  never makes anything less safe.
+- Background jobs: the checksum job does nothing without `checksums`, the
+  annual snapshot job nothing without `annual_snapshot`; the daily checks
+  skip the parts whose notification is switched off and withdraw their
+  notifications, and sync the print station only while `print_mirror` is
+  active. The removal of personal data of the folder book after the
+  retention period runs also without `folder_book`: switching off never
+  makes anything less safe. The file sync reads no rights notices without
+  `rights`.
+- Search of Nextcloud: without `unified_search` the provider is hidden and
+  answers no entries.
 - Notifications: a notification whose `notify_{subject}` is not active is
   not sent; one sent before is withdrawn when it is shown (the Nextcloud
   notifications app then deletes it).
@@ -1983,3 +2114,30 @@ the translated text with what to do.
 - A failed daily sync notifies the catalog librarians and the
   administrators (`notify_print_mirror_failed`); the next sync that works
   withdraws it.
+## Search of Nextcloud (module `unified_search`)
+
+`Search\CatalogSearchProvider` (`OCP\Search\IProvider`, id `notenarchiv`,
+registered in `Application::register`) lists copies in the search of
+Nextcloud, in a section named "Music archive":
+
+- **Who:** accounts with one of the roles `librarian`, `operations`,
+  `conductor`, `contributor`, `reader` and admins. The roles are listed by
+  name (`CATALOG_ROLES`), not taken from `Roles::hasAccess()`, so that a role
+  added later (e.g. for choir members, who see only excerpts released to
+  them) finds nothing until it is added on purpose. For everyone else, and
+  while the module is off, `getOrder()` returns `null` (the section is not
+  shown) and a search returns no entries.
+- **What:** the rules of the search field of the app
+  (`Service\CatalogSearch`, `src/catalog.ts`): a shelf mark finds that copy
+  whatever its status; other terms (at least two characters, at most 100,
+  ten words) find copies whose title, composer, arranger text or persons of
+  the register (while `persons` is active) contain every word, ignoring case
+  and accents. Active copies first, then in shelf order. Internal
+  preservation copies only for the roles that may view them
+  (`RightsPolicy::mayViewPreservationCopies`).
+- **Pages:** `limit` as asked by Nextcloud, at most 50; the cursor is the
+  offset of the next page. Each account may search 300 times in 10 minutes
+  (`ILimiter`); beyond that the section stays empty.
+- **Entry:** title `"<shelf mark> · <title>"`, subline composer · arranger ·
+  status (when not active) · "Internal preservation copy", link
+  `/apps/notenarchiv/?copy={id}` (attribute `copyId`).

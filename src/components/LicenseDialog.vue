@@ -18,7 +18,7 @@ import NcTextField from '@nextcloud/vue/components/NcTextField'
 import ActionDialog from './ActionDialog.vue'
 import DateField from './DateField.vue'
 import { createLicense, errorMessage, updateLicense } from '../api.ts'
-import { licenseUseLabel } from '../labels.ts'
+import { licenseUseHint, licenseUseLabel } from '../labels.ts'
 import { meta } from '../store.ts'
 
 const props = defineProps<{
@@ -110,6 +110,9 @@ async function save(): Promise<void> {
 				:value="use"
 				name="license-uses">
 				{{ licenseUseLabel(use) }}
+				<template v-if="licenseUseHint(use)" #description>
+					{{ licenseUseHint(use) }}
+				</template>
 			</NcCheckboxRadioSwitch>
 		</fieldset>
 		<NcTextField v-model="draft.quantity"

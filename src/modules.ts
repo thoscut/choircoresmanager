@@ -47,8 +47,10 @@ export const VIEW_MODULES: Readonly<Record<ViewName, string | null>> = {
 	accession: 'accession',
 	merges: 'merge',
 	inventory: 'inventory',
+	gaps: 'inventory',
 	checksums: 'checksums',
 	folderBook: 'folder_book',
+	snapshots: 'annual_snapshot',
 }
 
 /** The module of each card and list of the start page. */
@@ -75,6 +77,9 @@ export const FIELD_MODULES: Readonly<Record<string, string>> = {
 	public_repertoire: 'public_repertoire',
 	cpdl_url: 'public_repertoire',
 	imslp_url: 'public_repertoire',
+	scientific_edition: 'protection_terms',
+	posthumous_work: 'protection_terms',
+	first_published_year: 'protection_terms',
 }
 
 /** Views that cannot be hidden in the personal view. */
@@ -82,8 +87,8 @@ const ALWAYS_SHOWN: readonly ViewName[] = ['due', 'catalog']
 
 /** Views that the personal view can hide, in the order of the navigation. */
 export const HIDEABLE_VIEWS: readonly ViewName[] = [
-	'tasks', 'proposals', 'persons', 'protection', 'statistics', 'portal', 'printStation', 'licenses', 'links',
-	'concerts', 'songLists', 'ambiguous', 'accession', 'merges', 'inventory', 'folderBook', 'checksums',
+	'tasks', 'proposals', 'persons', 'protection', 'statistics', 'snapshots', 'portal', 'printStation', 'licenses', 'links',
+	'concerts', 'songLists', 'ambiguous', 'accession', 'merges', 'inventory', 'gaps', 'folderBook', 'checksums',
 ]
 
 /**

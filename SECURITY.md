@@ -234,6 +234,11 @@ account can do; it offers a stable, documented and limited contract.
   `X-Content-Type-Options: nosniff` and Nextcloud's strict policy for data
   responses (`default-src 'none'`), so it is never rendered on the Nextcloud
   origin.
+- The rights notice of a MusicXML file (`<identification><rights>`) is read
+  by the file sync with the same size limits, without loading anything and
+  without expanding entities; documents with an internal DTD subset are not
+  read. The notice is shown as unchecked text (Vue escapes it) and never sets
+  a rights status; at most it becomes a proposal.
 - Uploaded files for imports are limited to 20 MB, backups for a restore to
   64 MB, score files to 32 MB; the content is read with that limit, not only
   checked against the size in the file cache.
@@ -273,6 +278,27 @@ account can do; it offers a stable, documented and limited contract.
   ever makes to the audit log; it notes the removal without the name.
 - Backups made before still contain the names; the administration guide
   asks to keep them no longer than the retention period.
+  catalog including the audit log, tasks and the register of persons. Every
+  role holder may download it, as they may read all of it in the app anyway.
+  Share the archive folder (which holds the weekly backups in
+  `_notenarchiv-app/`) only with people who may read this.
+- Annual snapshots (module `annual_snapshot`) hold the same complete backup
+  plus a list of checksums and paths of the archive files, in
+  `_notenarchiv-app/annual-snapshots/`. Only the catalog librarian makes one
+  (rate limited, the job as the account that set the archive folder); the
+  app never overwrites or deletes them. A comparison reads them through the
+  requesting account's own view of the archive folder, so it grants no
+  access to files the account could not open otherwise.
+
+### Search of Nextcloud
+
+- The search provider (module `unified_search`) answers only accounts with a
+  role of the catalog, named one by one, and admins; a role added later
+  finds nothing until it is added on purpose. Internal preservation copies
+  are left out for roles that may not view them, as in the API for agents.
+- Results come in pages of at most 50; each account may search 300 times in
+  10 minutes. Results contain shelf mark, title, composer, arranger text and
+  status, no account names and no file contents.
 
 ### Exports and formula injection
 

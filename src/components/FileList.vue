@@ -248,6 +248,14 @@ function details(file: FileRef): string {
 						</span>
 					</span>
 					<span class="file-list__path">{{ file.path }}</span>
+					<!-- Rights notice of a MusicXML file (milestone 0.8): information, never a rights status -->
+					<span v-if="file.rights_notice && isModuleActive('rights')" class="file-list__notice">
+						<span class="file-flag">{{ t('notenarchiv', 'Not checked') }}</span>
+						{{ t('notenarchiv', 'Rights notice in the file: “{notice}”', { notice: file.rights_notice }) }}
+						<span class="file-list__path">
+							{{ t('notenarchiv', 'Taken from the MusicXML file as it is. It changes no rights status; the catalog librarian checks it and confirms the rights in the tab Rights.') }}
+						</span>
+					</span>
 					<NcButton v-if="isLibrarian && file.linked_manually"
 						class="file-list__unlink"
 						variant="tertiary"
@@ -340,6 +348,14 @@ a.file-list__name:focus-visible {
 .file-list__path {
 	color: var(--color-text-maxcontrast);
 	font-size: var(--font-size-small, 13px);
+	overflow-wrap: anywhere;
+}
+
+.file-list__notice {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 2px;
 	overflow-wrap: anywhere;
 }
 

@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\Notenarchiv\Tests\Unit\BackgroundJob;
 
+use OCA\Notenarchiv\BackgroundJob\AnnualSnapshotJob;
 use OCA\Notenarchiv\BackgroundJob\ChecksumJob;
 use OCA\Notenarchiv\BackgroundJob\DailyChecks;
 use OCA\Notenarchiv\Db\CopyMapper;
@@ -19,9 +20,11 @@ use OCA\Notenarchiv\Db\Work;
 use OCA\Notenarchiv\Db\WorkMapper;
 use OCA\Notenarchiv\Db\WorkVersion;
 use OCA\Notenarchiv\Db\WorkVersionMapper;
+use OCA\Notenarchiv\Service\AnnualSnapshotService;
 use OCA\Notenarchiv\Service\AppSettings;
 use OCA\Notenarchiv\Service\ChecksumService;
 use OCA\Notenarchiv\Service\FolderBookService;
+use OCA\Notenarchiv\Service\Modules;
 use OCA\Notenarchiv\Service\NotificationService;
 use OCA\Notenarchiv\Service\PersonService;
 use OCA\Notenarchiv\Service\PrintMirrorService;
@@ -41,6 +44,7 @@ use Psr\Log\LoggerInterface;
  */
 #[CoversClass(DailyChecks::class)]
 #[CoversClass(ChecksumJob::class)]
+#[CoversClass(AnnualSnapshotJob::class)]
 final class JobsTest extends TestCase {
 	use ModuleSwitches;
 
@@ -160,6 +164,53 @@ final class JobsTest extends TestCase {
 		$persons = $this->createMock(PersonService::class);
 		$persons->expects(self::once())->method('protectionForVersions')->willReturn([]);
 		self::runJob($this->daily([], $this->createStub(NotificationService::class), $persons));
+	}
+
+	/**
+	 * @param list<string> $off modules switched off
+	 */
+	private function annualJob(array $off, AnnualSnapshotService $snapshots, string $today): AnnualSnapshotJob {
+		$settings = $this->createStub(AppSettings::class);
+		$settings->method('archiveInfo')->willReturn(['id' => 1, 'path' => '/Notenarchiv', 'user' => 'lena']);
+		$rights = $this->createStub(RightsService::class);
+		$rights->method('today')->willReturn($today);
+		return new AnnualSnapshotJob($this->createStub(ITimeFactory::class), $this->modulesWithout($off), $settings, $snapshots, $rights,
+			$this->createStub(LoggerInterface::class));
+	}
+
+	public function testTheAnnualSnapshotIsMadeOnceInJanuaryForTheYearBefore(): void {
+		$snapshots = $this->createMock(AnnualSnapshotService::class);
+		$snapshots->method('isAuto')->willReturn(true);
+		$snapshots->method('hasYear')->willReturnOnConsecutiveCalls(false, true);
+		$snapshots->expects(self::once())->method('create')->with('lena', 2026, AnnualSnapshotService::TURN_OF_YEAR)
+			->willReturn(['name' => '2026_20270101-010000', 'folder' => 'x', 'files' => [], 'manifest' => ['files' => 0, 'bytes' => 0, 'missing' => 0]]);
+		$job = $this->annualJob([], $snapshots, '2027-01-01');
+		self::runJob($job);
+		self::runJob($job);
+	}
+
+	public function testNoAnnualSnapshotOutsideJanuaryWithoutTheSettingOrTheModule(): void {
+		$snapshots = $this->createMock(AnnualSnapshotService::class);
+		$snapshots->method('isAuto')->willReturn(true);
+		$snapshots->method('hasYear')->willReturn(false);
+		$snapshots->expects(self::never())->method('create');
+		self::runJob($this->annualJob([], $snapshots, '2026-10-22'));
+		self::runJob($this->annualJob([Modules::ANNUAL_SNAPSHOT], $snapshots, '2027-01-02'));
+
+		$off = $this->createMock(AnnualSnapshotService::class);
+		$off->method('isAuto')->willReturn(false);
+		$off->expects(self::never())->method('create');
+		self::runJob($this->annualJob([], $off, '2027-01-02'));
+	}
+
+	public function testAFailedAnnualSnapshotIsShownWithWhatToDo(): void {
+		$snapshots = $this->createMock(AnnualSnapshotService::class);
+		$snapshots->method('isAuto')->willReturn(true);
+		$snapshots->method('hasYear')->willReturn(false);
+		$snapshots->method('create')->willThrowException(new \RuntimeException('disk full'));
+		$snapshots->expects(self::once())->method('setLastError')
+			->with(self::stringStartsWith('The automatic snapshot failed.'), []);
+		self::runJob($this->annualJob([], $snapshots, '2027-01-03'));
 	}
 
 	public function testTheChecksumJobDoesNothingWhileItsModuleIsOff(): void {

@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\Notenarchiv\Service;
 
+use OCA\Notenarchiv\Db\ArchiveFileMapper;
 use OCA\Notenarchiv\Db\Copy;
 use OCA\Notenarchiv\Db\CopyMapper;
 use OCA\Notenarchiv\Db\WorkMapper;
@@ -23,6 +24,12 @@ use OCP\IDBConnection;
  * Counts are written through the catalog with its field rules (catalog or
  * operations librarian) and its audit log: originals, copies and the date of
  * the last count.
+ *
+ * The report of gaps in the shelf marks (milestone 0.8) lists, per binder,
+ * the numbers between 1 and the highest one ever used that no copy has. It
+ * is information only: numbers are never reused (CopyAssistantService).
+ *
+ * @psalm-type GapReport = array{binder: int, highest: int, copies: int, missing: int, ranges: list<array{from: int, to: int}>, withFile: list<int>}
  */
 class InventoryService {
 	/** Counted copies recorded in one request */
@@ -36,7 +43,69 @@ class InventoryService {
 		private CatalogService $catalog,
 		private RightsService $rights,
 		private Roles $roles,
+		private ArchiveFileMapper $files,
 	) {
+	}
+
+	/**
+	 * Gaps in the shelf mark numbers of every binder: the numbers between 1
+	 * and the highest number used, by a copy or by a file name in the archive
+	 * folder (as for the next free shelf mark), that no copy has. `withFile`
+	 * names those of them that a file name uses: probably a copy that is not
+	 * in the catalog yet.
+	 *
+	 * @return list<GapReport> in the order of the binders
+	 */
+	public function gaps(): array {
+		$used = [];
+		foreach ($this->copies->findAll() as $copy) {
+			$used[$copy->getBinder()][$copy->getNumber()] = true;
+		}
+		$named = [];
+		foreach ($this->files->findAllByFileId() as $file) {
+			if (preg_match('/^(\d+)-(\d+)(?!\d)/', $file->getName(), $m) === 1 && (int)$m[2] > 0) {
+				$named[(int)$m[1]][(int)$m[2]] = true;
+			}
+		}
+		$binders = array_keys($used + $named);
+		sort($binders);
+		$result = [];
+		foreach ($binders as $binder) {
+			$result[] = self::gapReport($binder, array_keys($used[$binder] ?? []), array_keys($named[$binder] ?? []));
+		}
+		return $result;
+	}
+
+	/**
+	 * The gaps of one binder.
+	 *
+	 * @param list<int> $copyNumbers numbers of the copies
+	 * @param list<int> $fileNumbers numbers in file names
+	 * @return GapReport
+	 */
+	public static function gapReport(int $binder, array $copyNumbers, array $fileNumbers): array {
+		$copies = array_fill_keys($copyNumbers, true);
+		$files = array_fill_keys($fileNumbers, true);
+		$highest = max([0, ...$copyNumbers, ...$fileNumbers]);
+		$ranges = [];
+		$withFile = [];
+		$missing = 0;
+		$start = null;
+		for ($number = 1; $number <= $highest + 1; $number++) {
+			$gap = $number <= $highest && !isset($copies[$number]);
+			if ($gap) {
+				$missing++;
+				$start ??= $number;
+				if (isset($files[$number])) {
+					$withFile[] = $number;
+				}
+			} elseif ($start !== null) {
+				$ranges[] = ['from' => $start, 'to' => $number - 1];
+				$start = null;
+			}
+		}
+		return ['binder' => $binder, 'highest' => $highest, 'copies' => count($copies), 'missing' => $missing, 'ranges' => $ranges,
+			'withFile' => $withFile];
 	}
 
 	/**

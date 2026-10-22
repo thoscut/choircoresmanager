@@ -140,7 +140,7 @@ final class RequestBoundaryTest extends TestCase {
 		$catalog->expects(self::never())->method('update');
 		$service = new InventoryService($this->createStub(IDBConnection::class), $this->createStub(CopyMapper::class),
 			$this->createStub(WorkVersionMapper::class), $this->createStub(WorkMapper::class), $catalog, $this->rights(),
-			$this->createStub(Roles::class));
+			$this->createStub(Roles::class), $this->createStub(ArchiveFileMapper::class));
 		$counts = array_fill(0, InventoryService::MAX_COUNTS + 1, ['copyId' => 1]);
 		$this->expectException(InvalidInputException::class);
 		$this->expectExceptionMessage('Too many entries at once (at most %s).');

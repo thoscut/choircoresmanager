@@ -238,7 +238,7 @@ final class ModulesTest extends TestCase {
 			array_keys(array_filter($simple)), fn (string $key): bool => !str_starts_with($key, Modules::NOTIFY_PREFIX))));
 		self::assertNotContains(false, Modules::presetValues(Modules::COMPLETE));
 		$standard = Modules::presetValues(Modules::STANDARD);
-		self::assertSame(['print_station', 'practice_audio', 'proposals', 'folder_book', 'checksums', 'statistics'],
+		self::assertSame(['print_station', 'practice_audio', 'proposals', 'folder_book', 'checksums', Modules::ANNUAL_SNAPSHOT, 'statistics'],
 			array_keys(array_filter($standard, fn (bool $on): bool => !$on)));
 		foreach (Modules::PRESETS as $preset) {
 			self::assertArrayNotHasKey(Modules::AGENT_API, Modules::presetValues($preset), 'never part of a preset');
@@ -279,6 +279,28 @@ final class ModulesTest extends TestCase {
 		self::assertTrue($modules->isEnabled(Modules::FILES_INTEGRATION), 'independent of the score view');
 		$modules->change([Modules::FILES_INTEGRATION => false]);
 		self::assertFalse($modules->isEnabled(Modules::FILES_INTEGRATION));
+	}
+
+	public function testTheExtrasOfTheArchiveHaveTheirPresets(): void {
+		$search = Modules::MODULES[Modules::UNIFIED_SEARCH];
+		self::assertSame('overview', $search['group']);
+		self::assertSame([], $search['requires']);
+		self::assertFalse(Modules::presetValues(Modules::SIMPLE)[Modules::UNIFIED_SEARCH]);
+		self::assertTrue(Modules::presetValues(Modules::STANDARD)[Modules::UNIFIED_SEARCH]);
+		self::assertTrue(Modules::presetValues(Modules::COMPLETE)[Modules::UNIFIED_SEARCH]);
+
+		$snapshot = Modules::MODULES[Modules::ANNUAL_SNAPSHOT];
+		self::assertSame('maintenance', $snapshot['group']);
+		self::assertSame([], $snapshot['requires']);
+		self::assertFalse(Modules::presetValues(Modules::SIMPLE)[Modules::ANNUAL_SNAPSHOT]);
+		self::assertFalse(Modules::presetValues(Modules::STANDARD)[Modules::ANNUAL_SNAPSHOT]);
+		self::assertTrue(Modules::presetValues(Modules::COMPLETE)[Modules::ANNUAL_SNAPSHOT]);
+
+		// An installation updated from 0.1.27 or later gets the default of the new modules.
+		$modules = $this->modules(['statistics' => true]);
+		$modules->writeBaseline(false);
+		self::assertTrue($modules->isEnabled(Modules::UNIFIED_SEARCH));
+		self::assertFalse($modules->isEnabled(Modules::ANNUAL_SNAPSHOT));
 	}
 
 	public function testUnknownPreset(): void {

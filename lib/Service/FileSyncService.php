@@ -14,6 +14,7 @@ use OCA\Notenarchiv\Db\ArchiveFileMapper;
 use OCA\Notenarchiv\Db\Copy;
 use OCA\Notenarchiv\Db\CopyMapper;
 use OCA\Notenarchiv\Db\TranscriptionReportMapper;
+use OCA\Notenarchiv\Db\WorkVersion;
 use OCA\Notenarchiv\Db\WorkVersionMapper;
 use OCA\Notenarchiv\Exception\InvalidInputException;
 use OCA\Notenarchiv\Exception\UserFacingException;
@@ -80,6 +81,7 @@ class FileSyncService {
 		private TranscriptionReportMapper $reports,
 		private IL10N $l,
 		private LoggerInterface $logger,
+		private RightsNoticeService $rightsNotices,
 	) {
 	}
 
@@ -132,6 +134,8 @@ class FileSyncService {
 		$copiesWithFile = [];
 		/** @var list<array{file: ArchiveFile, node: File, copy: ?Copy, path: string, changed: bool}> $reportFiles */
 		$reportFiles = [];
+		/** @var list<array{file: ArchiveFile, node: File, version: WorkVersion}> $unreadNotices MusicXML files whose rights notice is not read yet */
+		$unreadNotices = [];
 		$operation = $this->audit->newOperation();
 
 		$this->db->beginTransaction();
@@ -214,6 +218,11 @@ class FileSyncService {
 				$file->setSyncedAt($now);
 
 				$contentChanged = $isNew || array_intersect(array_keys($file->getUpdatedFields()), ['size', 'mtime', 'etag', 'fileId']) !== [];
+				if ($contentChanged && !$isNew && $file->getRightsReadAt() !== null) {
+					// The rights notice belongs to the old content: read it again.
+					$file->setRightsNotice(null);
+					$file->setRightsReadAt(null);
+				}
 				if ($isNew) {
 					$file = $this->files->insert($file);
 					$report['new']++;
@@ -225,6 +234,9 @@ class FileSyncService {
 				}
 				if ($isReport) {
 					$reportFiles[] = ['file' => $file, 'node' => $node, 'copy' => $copy, 'path' => $path, 'changed' => $contentChanged];
+				}
+				if ($role === 'musicxml' && $version !== null && $file->getRightsReadAt() === null) {
+					$unreadNotices[] = ['file' => $file, 'node' => $node, 'version' => $version];
 				}
 				unset($known[$node->getId()]);
 			}
@@ -275,6 +287,10 @@ class FileSyncService {
 		if ($reviewActive) {
 			$report['reports'] = $this->readReports($reportFiles, $report['reports'], $uid);
 		}
+		// Rights notices of MusicXML files (milestone 0.8), part of the module "rights"
+		$report['rightsNotices'] = $this->modules->isEnabled('rights')
+			? $this->rightsNotices->readAll($unreadNotices, $uid)
+			: ['read' => 0, 'found' => 0, 'proposals' => 0, 'failed' => 0, 'pending' => count($unreadNotices), 'switchedOff' => true];
 		return $report;
 	}
 

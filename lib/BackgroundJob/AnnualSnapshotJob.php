@@ -1,0 +1,74 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+namespace OCA\Notenarchiv\BackgroundJob;
+
+use OCA\Notenarchiv\Exception\InvalidInputException;
+use OCA\Notenarchiv\Exception\UserFacingException;
+use OCA\Notenarchiv\Service\AnnualSnapshotService;
+use OCA\Notenarchiv\Service\AppSettings;
+use OCA\Notenarchiv\Service\Modules;
+use OCA\Notenarchiv\Service\RightsService;
+use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\BackgroundJob\IJob;
+use OCP\BackgroundJob\TimedJob;
+use Psr\Log\LoggerInterface;
+
+/**
+ * Freezes the state of the archive at the turn of the year (module
+ * "annual_snapshot", milestone 0.8): in January, once, a snapshot for the
+ * year before, while the setting "at the turn of the year" is on. Written as
+ * the account that set the archive folder. A failure is logged and shown in
+ * the view of the snapshots; the job tries again the next day until the end
+ * of January.
+ */
+class AnnualSnapshotJob extends TimedJob {
+	public function __construct(
+		ITimeFactory $time,
+		private Modules $modules,
+		private AppSettings $settings,
+		private AnnualSnapshotService $snapshots,
+		private RightsService $rights,
+		private LoggerInterface $logger,
+	) {
+		parent::__construct($time);
+		$this->setInterval(6 * 3600);
+		$this->setTimeSensitivity(IJob::TIME_INSENSITIVE);
+	}
+
+	#[\Override]
+	protected function run(mixed $argument): void {
+		if (!$this->modules->isEnabled(Modules::ANNUAL_SNAPSHOT) || !$this->snapshots->isAuto()) {
+			return;
+		}
+		$uid = $this->settings->archiveInfo()['user'];
+		if ($uid === '') {
+			return;
+		}
+		$today = $this->rights->today($uid);
+		if (substr($today, 5, 2) !== '01') {
+			return;
+		}
+		$year = (int)substr($today, 0, 4) - 1;
+		try {
+			if ($this->snapshots->hasYear($uid, $year)) {
+				return;
+			}
+			$result = $this->snapshots->create($uid, $year, AnnualSnapshotService::TURN_OF_YEAR);
+			$this->snapshots->setLastError(null);
+			$this->logger->info('Notenarchiv: annual snapshot ' . $result['name'] . ' stored');
+		} catch (\Throwable $e) {
+			$this->logger->error('Notenarchiv: annual snapshot failed: ' . $e->getMessage(), ['exception' => $e]);
+			// Only messages meant for users are shown; internal details stay in the log.
+			$shown = $e instanceof UserFacingException ? $e
+				: new InvalidInputException('The automatic snapshot failed. Details are in the Nextcloud log; make a snapshot by hand or ask the administration.');
+			$this->snapshots->setLastError($shown->getMessage(), array_map('strval', $shown->getParameters()));
+		}
+	}
+}

@@ -26,6 +26,10 @@ const RIGHTS_ORDER = [
 	'rights_confirmed',
 	'rights_assessment',
 	'rights_status_import',
+	// special cases of the protection term (module protection_terms)
+	'scientific_edition',
+	'posthumous_work',
+	'first_published_year',
 	'preservation_copy',
 	'publication',
 	'publication_reason',

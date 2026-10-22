@@ -227,7 +227,9 @@ function hintFor(key: string): string {
 	if (key === 'status_reason' && needsStatusReason.value) {
 		return t('notenarchiv', 'Required for this status.')
 	}
-	return ''
+	// Explanations from the field registry (e.g. the special cases of the protection term)
+	const hint = fieldInfo(props.level, key)?.hint
+	return hint ? translateLabel(hint) : ''
 }
 </script>
 

@@ -1,0 +1,21 @@
+{
+  "name": "Beispielchor Musterstadt e. V.",
+  "tagline": "Gemischter Chor",
+  "logo": "logo.svg",
+  "logo_on_dark": "",
+  "web": "www.example.org",
+  "mail": "kontakt@example.org",
+  "phone": "",
+  "colors": {
+    "paper": "#fbfaf6",
+    "ink": "#1c2321",
+    "accent": "#1d5c58",
+    "deep": "#12302d",
+    "light": "#f0c75e",
+    "muted": "#4f5b58"
+  },
+  "fonts": {
+    "heading": "Georgia, \"DejaVu Serif\", \"Noto Serif\", serif",
+    "body": "\"Segoe UI\", \"Helvetica Neue\", Arial, \"Liberation Sans\", \"DejaVu Sans\", \"Noto Sans\", sans-serif"
+  }
+}

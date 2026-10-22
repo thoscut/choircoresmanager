@@ -119,6 +119,85 @@ final class ProtectionTermTest extends TestCase {
 		self::assertSame(['living', 'death_circa', 'identification_uncertain'], array_column($proposal['blocking'], 'reason'));
 	}
 
+	public function testWithoutSpecialCasesTheProposalHasNoSpecialPart(): void {
+		$proposal = ProtectionTerm::propose([self::person('Bach', '1750', 'year')], 2026, [], 2010);
+		self::assertArrayNotHasKey('special', $proposal);
+		self::assertSame('ended', $proposal['reason']);
+	}
+
+	public function testAScientificEditionIsProtectedForTwentyFiveYearsAfterItAppeared(): void {
+		$bach = self::person('Johann Sebastian Bach', '1750', 'year');
+		$editor = self::person('Editor', null, 'living');
+		$proposal = ProtectionTerm::propose([$bach, $editor], 2026, [ProtectionTerm::SCIENTIFIC_EDITION], 2010, [$editor->getId()]);
+		self::assertSame(ProtectionTerm::PROTECTED, $proposal['status']);
+		self::assertSame('2035-12-31', $proposal['until']);
+		self::assertSame('2036-01-01', $proposal['freeSince']);
+		self::assertSame('scientific_edition_running', $proposal['reason']);
+		self::assertSame([2010, 2035], $proposal['parameters']);
+		self::assertNull($proposal['decisivePersonId']);
+		self::assertSame([['case' => ProtectionTerm::SCIENTIFIC_EDITION, 'year' => 2010, 'until' => '2035-12-31']], $proposal['special']);
+
+		$proposal = ProtectionTerm::propose([$bach, $editor], 2036, [ProtectionTerm::SCIENTIFIC_EDITION], 2010, [$editor->getId()]);
+		self::assertSame(ProtectionTerm::FREE, $proposal['status']);
+		self::assertSame('scientific_edition_ended', $proposal['reason']);
+	}
+
+	public function testEditorsCountWithTheirLifeDatesWithoutASpecialCase(): void {
+		$bach = self::person('Johann Sebastian Bach', '1750', 'year');
+		$editor = self::person('Editor', null, 'living');
+		$proposal = ProtectionTerm::propose([$bach, $editor], 2026, [], 2010, [$editor->getId()]);
+		self::assertSame(ProtectionTerm::UNKNOWN, $proposal['status']);
+		self::assertSame('living', $proposal['reason']);
+	}
+
+	public function testThePersonsDecideWhenTheirProtectionEndsLater(): void {
+		$composer = self::person('Composer', '1990', 'year');
+		$proposal = ProtectionTerm::propose([$composer], 2026, [ProtectionTerm::POSTHUMOUS_WORK], 2000);
+		self::assertSame(ProtectionTerm::PROTECTED, $proposal['status']);
+		self::assertSame('running', $proposal['reason']);
+		self::assertSame('2060-12-31', $proposal['until']);
+		self::assertSame($composer->getId(), $proposal['decisivePersonId']);
+		self::assertSame('2025-12-31', $proposal['special'][0]['until'] ?? null);
+	}
+
+	public function testAPosthumousWorkIsProtectedAfterItsFirstAppearance(): void {
+		$proposal = ProtectionTerm::propose([self::person('Composer', '1850', 'year')], 2026, [ProtectionTerm::POSTHUMOUS_WORK], 2020);
+		self::assertSame(ProtectionTerm::PROTECTED, $proposal['status']);
+		self::assertSame('posthumous_work_running', $proposal['reason']);
+		self::assertSame('2045-12-31', $proposal['until']);
+	}
+
+	public function testWithoutTheYearASpecialCaseCountsAsProtected(): void {
+		$proposal = ProtectionTerm::propose([self::person('Composer', '1850', 'year')], 2026, [ProtectionTerm::SCIENTIFIC_EDITION]);
+		self::assertSame(ProtectionTerm::UNKNOWN, $proposal['status']);
+		self::assertSame('year_missing', $proposal['reason']);
+		self::assertSame([['personId' => null, 'name' => '', 'reason' => 'year_missing']], $proposal['blocking']);
+		self::assertSame([['case' => ProtectionTerm::SCIENTIFIC_EDITION, 'year' => null, 'until' => null]], $proposal['special']);
+
+		// A blocking person stays the main reason; the missing year is listed after it.
+		$living = self::person('Living', null, 'living');
+		$proposal = ProtectionTerm::propose([$living], 2026, [ProtectionTerm::POSTHUMOUS_WORK]);
+		self::assertSame('living', $proposal['reason']);
+		self::assertSame(['living', 'year_missing'], array_column($proposal['blocking'], 'reason'));
+
+		// Without persons, "no persons" stays the main reason.
+		$proposal = ProtectionTerm::propose([], 2026, [ProtectionTerm::POSTHUMOUS_WORK]);
+		self::assertSame('no_persons', $proposal['reason']);
+		self::assertSame(['year_missing'], array_column($proposal['blocking'], 'reason'));
+	}
+
+	public function testOnlyEditorsAreNotEnough(): void {
+		$editor = self::person('Editor', '1900', 'year');
+		$proposal = ProtectionTerm::propose([$editor], 2026, [ProtectionTerm::SCIENTIFIC_EDITION], 1950, [$editor->getId()]);
+		self::assertSame(ProtectionTerm::UNKNOWN, $proposal['status']);
+		self::assertSame('only_editors', $proposal['reason']);
+	}
+
+	public function testUnknownCasesAreIgnored(): void {
+		$proposal = ProtectionTerm::propose([self::person('Bach', '1750', 'year')], 2026, ['anonymous'], 2010);
+		self::assertArrayNotHasKey('special', $proposal);
+	}
+
 	public function testYearsBeforeChrist(): void {
 		$horace = self::person('Horaz', '-8', 'year');
 		$proposal = ProtectionTerm::propose([$horace], 2026);

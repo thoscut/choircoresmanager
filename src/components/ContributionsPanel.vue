@@ -180,9 +180,14 @@ const dialogTitle = computed(() => {
 				{{ protection.reasonText }}
 			</p>
 			<ul v-if="protection.blocking.length > 0" class="contributions__blocking">
-				<li v-for="blocker in protection.blocking" :key="blocker.personId">
+				<li v-for="(blocker, index) in protection.blocking" :key="`${blocker.personId ?? 'none'}-${index}`">
 					<NcIconSvgWrapper :path="mdiAlertOutline" :size="18" inline />
 					<span>{{ blocker.reasonText || blocker.name }}</span>
+				</li>
+			</ul>
+			<ul v-if="protection.specialTexts && protection.specialTexts.length > 0" class="contributions__special">
+				<li v-for="text in protection.specialTexts" :key="text">
+					{{ text }}
 				</li>
 			</ul>
 			<p class="contributions__notice">
@@ -336,6 +341,11 @@ const dialogTitle = computed(() => {
 	display: flex;
 	align-items: center;
 	gap: var(--default-grid-baseline);
+}
+
+.contributions__special {
+	padding-inline-start: 1.5em;
+	list-style: disc;
 }
 
 .contributions__blocking li {

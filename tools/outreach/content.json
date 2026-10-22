@@ -1,0 +1,114 @@
+{
+  "project": {
+    "name": "Notenarchiv",
+    "url": "https://github.com/thoscut/choircoresmanager",
+    "url_short": "github.com/thoscut/choircoresmanager",
+    "license": "AGPL-3.0-or-later"
+  },
+  "texts": {
+    "de": {
+      "as_of": "Stand: Oktober 2026",
+      "kicker": "Nextcloud-App für Chöre",
+      "subtitle": "Das Notenarchiv Ihres Chors in der eigenen Nextcloud: Werkverzeichnis, Rechte, Noten und Konzerte an einem Ort.",
+      "short": "Werkverzeichnis, Rechte, Noten und Konzerte – in der eigenen Nextcloud.",
+      "pillars": [
+        {
+          "chip": "Werkverzeichnis",
+          "title": "Werkverzeichnis",
+          "text": "Werk, Fassung und Exemplar mit Signatur, verknüpft mit den Scans und MusicXML-Dateien in Ihrer Nextcloud. Nichts wird gelöscht, jede Änderung wird protokolliert."
+        },
+        {
+          "chip": "Rechte je Fassung",
+          "title": "Rechte je Fassung",
+          "text": "Rechtestatus mit Begründung und Beleg, Lizenzen mit getrennten Nutzungen, eigene Freigaben. Die App schlägt vor, die Archivverwaltung bestätigt."
+        },
+        {
+          "chip": "Noten und Übe-Audio",
+          "title": "Noten ansehen und hören",
+          "text": "MusicXML im Browser, nach Taktnummern zugeschnitten, mit hervorgehobener Stimme. Übe-Dateien je Stimme, wenn die Rechte es erlauben."
+        },
+        {
+          "chip": "Konzerte",
+          "title": "Konzerte und Jahresbericht",
+          "text": "Programme mit Rechtewarnungen und Fristen, die Liederfolge als Export, Repertoirezahlen und ein druckbarer Jahresbericht."
+        }
+      ],
+      "closing": "Freie Software für Chöre – offen für alle.",
+      "facts_title": "Gut zu wissen",
+      "facts": [
+        "Für Archivverwaltung, Chorleitung, Vorstand und Revision. Die Rollen hängen an Nextcloud-Gruppen.",
+        "Keine fremden Server, keine Telemetrie: Die Daten bleiben in Ihrer Nextcloud.",
+        "Ihre Dateien bleiben, wo sie sind. Die App ändert und löscht keine.",
+        "Jede Funktion außerhalb des Werkverzeichnisses ist ein Modul, das sich abschalten lässt.",
+        "Barrierefrei (Ziel WCAG 2.2 AA), in inklusiver Sprache, auf Deutsch und Englisch.",
+        "Für Nextcloud 33 bis 35 mit MySQL oder MariaDB, auch ohne Shell-Zugang."
+      ],
+      "contribute_title": "Machen Sie mit",
+      "contribute_note": "Programmieren ist keine Voraussetzung.",
+      "contribute": [
+        "Ausprobieren, auch mit dem Demo-Archiv, und sagen, was fehlt",
+        "Erzählen, wie Ihr Chor seine Noten verwaltet",
+        "Übersetzen – in Ihre Sprache",
+        "Code, Tests und Ideen beitragen"
+      ],
+      "call": "Ausprobieren. Mitmachen. Weitersagen.",
+      "contact_label": "Kontakt",
+      "license_line": "Freie Software · AGPL-3.0",
+      "fineprint": "Notenarchiv ist freie Software unter der GNU AGPL 3.0 oder neuer. Die Rechte-Hilfen folgen deutschem Urheberrecht; sie unterstützen eine Entscheidung und sind keine Rechtsberatung.",
+      "qr_label": "QR-Code mit dem Link zu",
+      "logo_label": "Logo:"
+    },
+    "en": {
+      "as_of": "As of October 2026",
+      "kicker": "Nextcloud app for choirs",
+      "subtitle": "Your choir's sheet music archive in your own Nextcloud: catalog, rights, scores and concerts in one place.",
+      "short": "Catalog, rights, scores and concerts – in your own Nextcloud.",
+      "pillars": [
+        {
+          "chip": "Catalog",
+          "title": "Catalog",
+          "text": "Works, versions and copies with shelf marks, linked to the scans and MusicXML files in your Nextcloud. Nothing is deleted, every change is logged."
+        },
+        {
+          "chip": "Rights per version",
+          "title": "Rights per version",
+          "text": "Rights status with reasoning and evidence, licenses with separate uses, separate releases. The app suggests, the music librarians confirm."
+        },
+        {
+          "chip": "Scores and practice audio",
+          "title": "View and hear the scores",
+          "text": "MusicXML in the browser, cut to printed bar numbers, with the chosen voice highlighted. Practice files per voice where the rights allow it."
+        },
+        {
+          "chip": "Concerts",
+          "title": "Concerts and annual report",
+          "text": "Programmes with rights warnings and deadlines, the song order as an export, repertoire figures and a printable annual report."
+        }
+      ],
+      "closing": "Free software for choirs – open to everyone.",
+      "facts_title": "Good to know",
+      "facts": [
+        "For the music librarians, the conductor, the board and the auditors. Roles are given to Nextcloud groups.",
+        "No external servers, no telemetry: the data stays in your Nextcloud.",
+        "Your files stay where they are. The app never changes or deletes them.",
+        "Every function outside the catalog is a module that can be switched off.",
+        "Accessible (target WCAG 2.2 AA), with inclusive wording, in English and German.",
+        "For Nextcloud 33 to 35 with MySQL or MariaDB, also without shell access."
+      ],
+      "contribute_title": "Get involved",
+      "contribute_note": "No programming needed.",
+      "contribute": [
+        "Try it, also with the demo archive, and tell us what is missing",
+        "Tell us how your choir manages its music",
+        "Translate it into your language",
+        "Contribute code, tests and ideas"
+      ],
+      "call": "Try it. Join in. Pass it on.",
+      "contact_label": "Contact",
+      "license_line": "Free software · AGPL-3.0",
+      "fineprint": "Notenarchiv is free software under the GNU AGPL 3.0 or later. The rights helpers follow German copyright law; they support a decision and are no legal advice.",
+      "qr_label": "QR code with the link to",
+      "logo_label": "Logo:"
+    }
+  }
+}

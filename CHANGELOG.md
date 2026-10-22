@@ -104,6 +104,38 @@ All notable changes to this app are documented in this file. The format follows
   "Print station sync failed" to the catalog role and the administrators.
   New routes `/api/print-mirror…`, `/api/settings/print-mirror…`. Guideline
   4 of the roadmap names this exception.
+- Milestone 0.8, archive:
+  - Special cases of the protection term per version (module "Protection
+    terms"): scientific edition (§ 70 UrhG) and posthumous work (§ 71 UrhG)
+    with the year first published. The suggestion adds 25 years after that
+    year; editors count with this term instead of 70 years after their death;
+    without the year the version counts as protected. Each switch explains in
+    one sentence when it applies. A suggestion only; the rights status is
+    never set.
+  - License use "Transfer to a legal successor" with an explanation.
+  - Search of Nextcloud (new module "Nextcloud search", on in Standard and
+    Complete): copies by shelf mark, title and person, opening the app with
+    `?copy=`; only for accounts with a role of the catalog and admins,
+    preservation copies only for the roles that may view them; pages of at
+    most 50, 300 searches per account in 10 minutes.
+  - Gaps in the shelf marks per binder (module "Inventory",
+    `?view=shelfmark-gaps`, `GET /api/inventory/gaps`), printable in A4; for
+    information only, numbers are never reused.
+  - Annual snapshots (new module "Annual snapshots", on in Complete): the
+    catalog as CSV and JSON and a SHA-256 manifest of the archive files in a
+    dated folder `_notenarchiv-app/annual-snapshots/`, on request (the dialog
+    says what is written where) or in January for the year before
+    (`AnnualSnapshotJob`); comparison of two snapshots (copies, rights,
+    licenses, files), printable in A4 (`?view=annual-snapshots`,
+    `/api/annual-snapshots…`).
+  - Rights notice of MusicXML files (`<identification><rights>`), read by
+    the file sync and shown with the file as "Not checked"; when it names
+    the public domain or a license, at most a proposal in the inbox.
+  - Templates for outreach material (`tools/outreach`, not part of the app or
+    the release archive): flyer DIN lang, business card and two banners with
+    a sender per choir, built with Node and puppeteer-core.
+  - Migration `Version000810Date20261026100000`: five columns in existing
+    tables, no new table.
 
 ### Security
 

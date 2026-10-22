@@ -119,6 +119,31 @@ The **rights badge** always shows a text and a symbol, never only a colour:
 | *Internal preservation copy – do not share* | internal copy of a protected work: never shared or played |
 | *not assessed* | no rights status yet |
 
+### Finding a copy from the Nextcloud search
+
+With the module **Nextcloud search** you find copies without opening the
+app:
+
+1. Click the magnifier in the Nextcloud header and type a shelf mark
+   (`2-1`), a word of the title or the name of a person, at least two
+   characters.
+2. The section **Music archive** lists the copies, active ones first, with
+   composer, arranger and, for other copies, their status.
+3. Click a result: the app opens with that copy.
+
+The search works like the search field of the catalog and finds persons of
+the register as well. It shows only what your roles may see: internal
+preservation copies only to the catalog librarian and the conductor, and
+nothing to accounts without a role in the music archive.
+
+**Common problems**
+
+- *The section "Music archive" is missing:* the module is switched off, or
+  your account has no role in the music archive. Ask the administration.
+- *A copy is not found:* check the spelling; a shelf mark must be complete
+  (`2-1`, not `2-`). Internal preservation copies are hidden from roles that
+  may not view them.
+
 ### The details of a copy
 
 ![The sidebar of copy 1-1 on the tab "Overview": title, rights status, the button "Score", the tabs, and the fields of the work and the version, each section with an "Edit" button.](screenshots/copy-overview.png)
@@ -809,6 +834,13 @@ publication (public links). A license for
 printing does not allow the singers' portal. Licenses are never deleted; an
 ended license stays as a record. **Ending licenses** lists the licenses that
 end within the chosen period or have ended.
+print station, practice audio, recording, publication and **transfer to a
+legal successor**. The last one records that the license may pass to a legal
+successor together with the archive, for example when choirs merge or
+another body takes over the archive; tick it only when the license says so.
+A license for printing does not allow the singers' portal. Licenses are
+never deleted; an ended license stays as a record. **Ending licenses** lists
+the licenses that end within the chosen period or have ended.
 
 ### Releases: singers' portal and print station
 
@@ -959,6 +991,67 @@ recorded persons do not allow, and protected versions with a known end.
 > The suggestion never changes the rights status. A music librarian checks it
 > and confirms the rights.
 
+#### Special cases: scientific editions and posthumous works
+
+Two special cases of German law protect an edition for 25 years after the
+end of the year in which it appeared, independent of the life dates:
+
+- **Scientific edition (§ 70 UrhG):** an edition of works that are no longer
+  protected, made by scholarly work and clearly different from earlier
+  editions, for example an urtext or critical edition.
+- **Posthumous work (§ 71 UrhG):** a work whose protection had already ended
+  when it first appeared or was first performed in public, for example a
+  rediscovered manuscript.
+
+To use a special case:
+
+1. Open the copy → tab **Rights** → **Edit** in the section **Rights**.
+2. Switch on **Scientific edition (§ 70 UrhG)** or **Posthumous work (§ 71
+   UrhG)**; the hint below each switch says when it applies.
+3. Enter the **Year first published**: the year the edition appeared, or the
+   year the work first appeared or was first performed in public.
+4. **Save**. The box **Persons involved and protection** shows the new
+   suggestion and one line per special case.
+
+With a special case, persons recorded only as **Editor** count with the 25
+years instead of 70 years after their death; all other persons still count
+as usual, and the later end decides. The suggestion stays a suggestion: a
+music librarian decides whether a special case applies and confirms the
+rights.
+
+**Common problems**
+
+- *"The year in which it first appeared is missing":* enter the **Year first
+  published**; until then the version counts as protected.
+- *"Only editors are recorded for this version":* add the composer and the
+  other persons involved under **Add a person**.
+- *The year is refused:* it must be a year between 1000 and this year, with
+  four digits (e.g. 1998).
+- *The switches are missing:* the module **Protection terms** is switched off.
+
+### Rights notices in MusicXML files
+
+Many MusicXML files carry a rights notice, e.g. "Public domain" or "CC BY
+4.0". The file sync reads it, and the tab **Files** of the copy shows it
+below the file, marked **Not checked**. The notice is information from the
+file, not a decision:
+
+- It never changes the rights status (guideline 1).
+- If it names the public domain or a license and the proposals inbox is on,
+  the file sync puts at most one proposal into the **Inbox**: the rights
+  status "public domain", or the license text for an empty field
+  **License**. Accept it only after checking the rights yourself.
+
+**Common problems**
+
+- *No notice is shown:* the file has none, the module **Rights confirmation
+  and licenses** is off, or the file was not read yet; run the file sync
+  (**Archive management** → **File sync**). Large archives are read in parts
+  of 300 files per sync.
+- *The notice contradicts the catalog:* the notice often describes the
+  digital file (e.g. CC0 for a transcription), not the arrangement. Reject
+  the proposal in the inbox; the rights status stays as it is.
+
 ### Merging works and moving copies
 
 ![The view "Merge" with the three pairs of works listed twice in the demo archive: each pair with its copies, the choice of the work to keep and the button to merge into it.](screenshots/merge-proposals.png)
@@ -994,6 +1087,63 @@ backup into the archive folder; the app does this every week by itself.
 it into an empty catalog. See the
 [administration guide](admin-guide.md#5-backups-and-restore).
 
+### Annual snapshots
+
+With the module **Annual snapshots** the app freezes the state of the
+archive once a year, for the records of the board and the auditors. A
+snapshot is a dated folder in the archive folder
+(`_notenarchiv-app/annual-snapshots/<year>_<date-time>/`) with three files:
+
+| File | Content |
+|---|---|
+| `catalog.csv` | the catalog with all fields, as in the weekly backup |
+| `catalog.json` | the complete backup: catalog, licenses, persons, audit log |
+| `manifest.csv` | SHA-256 checksum, size and path of every archive file the file sync knows |
+
+The app never changes or deletes a snapshot.
+
+**How to freeze the annual state**
+
+1. Open **Annual snapshots**. The section **Freeze the state** says which
+   year and which folder the snapshot is for.
+2. Click **Freeze the state now …**. The dialog lists the three files and
+   how many archive files are read for the checksums.
+3. Click **Freeze** and keep the page open; with many files this takes a few
+   minutes. A message names the folder of the new snapshot.
+
+**At the turn of the year:** with **Freeze automatically at the turn of the
+year** switched on (the default), the app makes the snapshot of the past year
+by itself in January, as the account that set the archive folder.
+
+**How to compare two years**
+
+1. In **Compare two snapshots**, the newest snapshot and the newest one of the
+   year before are already chosen; change them if you like.
+2. Click **Compare**. The list shows new copies, copies no longer in the
+   catalog, changed copies (status, kind, counts, title), versions with
+   changed rights (status, confirmation, publication, special cases, valid
+   version), license changes and archive files that are new, gone or changed
+   by their checksum.
+3. **Print** prints the comparison on A4.
+
+**Common problems**
+
+- *"No write permission for exports in the archive folder":* the account
+  that set the archive folder needs write access to it; ask the
+  administration.
+- *"The snapshots lie in the archive folder, which is not shared with your
+  account":* the comparison reads the snapshots with your own access. Ask the
+  catalog librarian to share the archive folder with you, or to print the
+  comparison.
+- *A snapshot is listed as incomplete:* a file is missing, e.g. because the
+  page was closed while it was written. Freeze the state again; delete the
+  incomplete folder in the Files app if you like.
+- *"The last automatic snapshot failed":* the message says why; freeze the
+  state by hand. The automatic snapshot tries again daily until the end of
+  January.
+- *The comparison button is missing:* a comparison needs two complete
+  snapshots.
+
 ## For operations
 
 The role **Operations (music librarian)** looks after the copies on the
@@ -1020,6 +1170,25 @@ switched on, it issues and takes back the choir folders (see
 
 The list shows when each copy was last counted and how many copies of the
 binder were never counted.
+
+### Gaps in the shelf marks
+
+**Gaps in shelf marks** lists, for every binder, the numbers between 1 and
+the highest number used that no copy has, e.g. `5-3 – 5-6, 5-12`. Use it at
+the inventory or before an accession to find copies that were never entered
+or have gone missing.
+
+1. Open **Gaps in shelf marks** (with the inventory under maintaining the
+   catalog).
+2. Check each gap at the shelf. A note below the gaps names numbers that a
+   file in the archive folder uses: probably a copy that is not in the
+   catalog yet; enter it with **New accession**, which takes the file name
+   into account.
+3. **Print** prints the list on A4.
+
+The list is for information only. Gaps are never filled: a new accession
+always gets the next number after the highest, so a shelf mark always means
+the same copy.
 
 ## For conductors
 
@@ -1209,6 +1378,9 @@ and answers the tasks addressed to it. It changes nothing.
 - **Links** shows every active excerpt link with its circle, expiry and
   number of calls.
 - The tab **Audit log** of a copy shows who changed what, when and why.
+- **Annual snapshots** compares the frozen state of two years (see
+  [Annual snapshots](#annual-snapshots)); the comparison needs access to the
+  archive folder.
 
 ## For contributors and tools
 
@@ -1229,6 +1401,9 @@ persons, protection terms, the inventory of a binder, and the statistics. A
 licenses, internal links, concerts and song lists, unclear programme lines,
 persons, protection terms, the inventory of a binder, the folder book, and
 the statistics. A
+licenses, internal links, concerts and song lists, unclear programme lines,
+persons, protection terms, the inventory of a binder, the gaps in the shelf
+marks, the comparison of two annual snapshots, and the statistics. A
 programme prints as programme, concert binder list with columns to tick or
 song list; programmes, statistics and the annual report also in large print.
 Shelf labels print on label sheets (see

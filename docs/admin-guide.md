@@ -334,7 +334,10 @@ complete backup (JSON)** saves the backup on your computer.
 
 The files in `_notenarchiv-app` are part of the archive folder and are
 covered by your regular file backup of that folder. Keep yearly snapshots
-that are never overwritten. Open the CSV files in a spreadsheet program
+that are never overwritten: the module **Annual snapshots** writes one into
+`_notenarchiv-app/annual-snapshots/` at the turn of the year (catalog as CSV
+and JSON, SHA-256 checksums of every archive file), as the account that set
+the archive folder, which therefore needs write access to it. Open the CSV files in a spreadsheet program
 through its import dialog (all columns as text) rather than by double-click,
 or use the ODS file: the catalog CSV keeps every cell exactly as stored, so a
 cell starting with `=` could be read as a formula; the ODS file stores every
@@ -441,6 +444,23 @@ account can see in its own files (otherwise 404, the same as for a file that
 is not listed), so the action tells nobody whether a file of another account
 is in the archive. The score view checks the rights as always.
 
+### Nextcloud search
+
+With the module **Nextcloud search** (on in Standard and Complete) the search
+in the Nextcloud header lists copies by shelf mark, title and person, in a
+section "Music archive"; a result opens the copy in the app. Nothing needs
+to be set up. The section appears only for accounts with a role of the
+catalog (librarian, operations, conductor, contributor, reader) and for
+admins; other accounts, including a later role for choir members, get no
+section and no results. Internal preservation copies are listed only for the
+catalog librarian and the conductor. Each account may search 300 times in
+10 minutes, which is far more than typing needs; results come in pages of at
+most 50.
+
+If the section is missing for an account with a role: check that the module
+is on (**Settings → Modules**) and that the account's group holds a role
+(section 2).
+
 ## 8. Security settings of the instance
 
 The app works with Nextcloud's defaults; nothing has to be relaxed:
@@ -541,7 +561,7 @@ Every change of a switch is recorded in the audit log (object type
 | Preset | Switches on |
 |---|---|
 | **Simple** | the core, the score view with playback and the notifications (of the core only the one about a failed weekly backup is left) |
-| **Standard** | everything except practice audio files, the print station, the proposals inbox, checksums, the folder book and statistics |
+| **Standard** | everything except practice audio files, the print station, the proposals inbox, checksums, the folder book, annual snapshots and statistics |
 | **Complete** | everything except the interface for agents, the four sharing modules and the mirror folder for the print station |
 
 A preset sets every switch at once; the settings ask first and list what
@@ -563,6 +583,13 @@ its first year. Left off, and easy to switch on when needed:
 - *Statistics and annual report*: figures for the board of a larger archive.
 - *Folder book*: it stores names of choir members; the club decides first
   whether to keep it in the app (section 15).
+- *Annual snapshots*: a frozen yearly state with checksums of every archive
+  file, for archives that document their stock for the board or the
+  auditors; the weekly backup already covers restoring.
+
+*Nextcloud search* is on in **Standard**: it only finds what the account may
+see in the app anyway, and it spares opening the app to look up a shelf
+mark. **Simple** leaves it off.
 
 *Reviewing transcriptions* and *small corrections in the app* are on in
 **Standard**: they only show something where a transcription report or a
@@ -589,10 +616,10 @@ writes files into a folder others can open (see section 16).
 
 | Module | Needs | Standard | Switched off |
 |---|---|---|---|
-| Rights confirmation and licenses | – | on | No confirming, no licenses to add or change, no list of ending licenses, no license reminders. Existing licenses and confirmations still count for playback and releases. |
+| Rights confirmation and licenses | – | on | No confirming, no licenses to add or change, no list of ending licenses, no license reminders; the file sync does not read the rights notices of MusicXML files. Existing licenses and confirmations still count for playback and releases. |
 | Valid version | – | on | The conductor cannot choose or clear the valid version; no card "no valid version chosen". A chosen version stays recorded. |
 | Register of persons | – | on | No register, no contributions, no import of a research list. |
-| Protection terms | Register of persons | on | No protection proposal, no resubmission list, no notification about ended protection terms. |
+| Protection terms | Register of persons | on | No protection proposal (also none for the special cases scientific edition and posthumous work, whose switches are hidden), no resubmission list, no notification about ended protection terms. |
 | Releases | Rights confirmation and licenses | on | The three releases below are inactive. |
 | Singers' portal | Releases | on | No portal list, no adding to or removing from the portal, no cards and notification; song lists without the portal column. |
 | Print station | Releases | off | No print station list. |
@@ -613,11 +640,13 @@ writes files into a folder others can open (see section 16).
 | Concerts in the calendar | Concerts and song lists | on | No calendar files and entries. Entries in calendars stay there. |
 | New accessions and shelf labels | – | on | No accession assistant and no labels. The import still creates copies. |
 | Merging works | – | on | No merge proposals, no merging and no undo. Merges done stay. |
-| Inventory | – | on | No inventory lists. Recorded counts stay in the catalog. |
+| Inventory | – | on | No inventory lists and no list of gaps in the shelf marks. Recorded counts stay in the catalog. |
 | Folder book | – | off | No folder book. Folders and loans stay; names are still removed after the retention period. |
 | Checksums | – | off | The hourly job does nothing; no checksum list, no notification. |
+| Annual snapshots | – | off | No snapshots by hand or at the turn of the year, no comparison. Snapshots made before stay in the archive folder. |
 | Statistics and annual report | – | off | No statistics, no annual report. |
 | Dashboard widget | – | on | Nextcloud does not offer the widget. |
+| Nextcloud search | – | on | The search of Nextcloud has no section "Music archive". |
 | Notifications | – | on | The app sends no notifications; notifications sent before disappear when they are shown. |
 | One switch per occasion | Notifications and the module of the occasion | on | That notification is not sent; the daily checks withdraw it. Occasions: proposals waiting, remove from the singers' portal, license ends soon, license has ended, weekly backup failed, new question or task, question answered, concert deadlines, confirm what was sung, protection term ended, file changed unnoticed, new review points, correction received, print station sync failed. |
 | Links for choir members | Excerpt links, Playback, Releases | off (in no preset) | Choir members see neither the app nor "Shared with me"; their routes answer 404; no links for choir members can be made. Existing links are kept and expire as before. |

@@ -293,6 +293,10 @@ class CatalogService {
 			// A confirmation refers to one status; changing it removes the confirmation.
 			$new += RightsService::noConfirmation();
 		}
+		$year = $new['first_published_year'] ?? null;
+		if (is_int($year) && ($year < 1000 || $year > (int)substr($this->rights->today($uid), 0, 4))) {
+			throw new InvalidInputException('"%s" must be a year between 1000 and this year, e.g. 1998.', ['Year first published']);
+		}
 		if ($entity instanceof WorkVersion && array_key_exists('rule1_status', $new) && $new['rule1_status'] !== $entity->getValue('rule1_status')) {
 			$new['rule1_checked'] = $this->rights->today($uid) . ' ' . ($this->userManager->getDisplayName($uid) ?? $uid);
 		}

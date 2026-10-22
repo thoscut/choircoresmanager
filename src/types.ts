@@ -27,6 +27,8 @@ export interface FieldInfo {
 	max?: number
 	/** Decision field (e.g. rights confirmed): set by people, never by an import */
 	decision?: boolean
+	/** English source string explaining the field below its input */
+	hint?: string
 }
 
 export type FieldMap = Record<string, FieldInfo>
@@ -144,6 +146,8 @@ export interface FileRef {
 	/** linked by hand; the file sync never moves it */
 	linked_manually?: boolean | null
 	sha256_mismatch?: boolean | null
+	/** rights notice of a MusicXML file as read by the file sync, not checked */
+	rights_notice?: string | null
 }
 
 export interface Sibling {
@@ -668,6 +672,8 @@ export interface FileSyncReport {
 	skippedFolders: string[]
 	/** transcription reports (`…bericht.json`), counted apart from the score files (milestone 0.6) */
 	reports?: FileSyncReports
+	/** rights notices read from MusicXML files (milestone 0.8, module "rights") */
+	rightsNotices?: { read: number, found: number, proposals: number, failed: number, pending: number, switchedOff: boolean }
 }
 
 /** `GET /api/settings`: what the settings page needs, without the catalog. */
@@ -928,7 +934,8 @@ export interface PersonDetail {
 }
 
 export interface ProtectionBlocker {
-	personId: number
+	/** null: no person, e.g. the missing year of a special case */
+	personId: number | null
 	name: string
 	reason: string
 	reasonText: string
@@ -947,6 +954,10 @@ export interface Protection {
 	reasonText: string
 	/** translated: proposal only, no legal advice */
 	notice: string
+	/** special cases switched on (§§ 70, 71 UrhG), with their term */
+	special?: { case: string, year: number | null, until: string | null }[]
+	/** translated: one line per special case */
+	specialTexts?: string[]
 }
 
 export interface ProtectionReviewRow {

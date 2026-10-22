@@ -21,11 +21,13 @@ use OCP\IL10N;
 final class ProtectionText {
 	/**
 	 * Adds `reasonText` (and `reasonText` of every blocking person) plus the
-	 * `notice` that this is a proposal and no legal advice.
+	 * `notice` that this is a proposal and no legal advice; with special
+	 * cases also `specialTexts`, one line per case.
 	 *
 	 * @param Proposal $proposal result of ProtectionTerm::propose()
 	 * @return array{status: string, until: ?string, freeSince: ?string, reason: string, parameters: list<string|int>, decisivePersonId: ?int,
-	 *     blocking: list<array{personId: ?int, name: string, reason: string, reasonText: string}>, persons?: int, reasonText: string, notice: string}
+	 *     blocking: list<array{personId: ?int, name: string, reason: string, reasonText: string}>, persons?: int,
+	 *     special?: list<array{case: string, year: ?int, until: ?string}>, specialTexts?: list<string>, reasonText: string, notice: string}
 	 */
 	public static function apply(IL10N $l, array $proposal): array {
 		$blocking = [];
@@ -35,7 +37,25 @@ final class ProtectionText {
 		$proposal['blocking'] = $blocking;
 		$proposal['reasonText'] = self::reason($l, $proposal['reason'], $proposal['parameters']);
 		$proposal['notice'] = $l->t('Proposal only, based on German law (protection ends 70 years after the end of the year in which the last person involved died). It is no legal advice and does not change the rights status.');
+		if (isset($proposal['special'])) {
+			$proposal['specialTexts'] = array_map(fn (array $term): string => self::special($l, $term['case'], $term['year'], $term['until']),
+				$proposal['special']);
+			$proposal['notice'] .= ' ' . $l->t('With a special case (§§ 70, 71 UrhG) the edition or first publication is protected for 25 years after the end of the year in which it appeared; persons involved only as editors count with this term instead. The catalog librarian decides whether a special case applies.');
+		}
 		return $proposal;
+	}
+
+	private static function special(IL10N $l, string $case, ?int $year, ?string $until): string {
+		$scientific = $case === ProtectionTerm::SCIENTIFIC_EDITION;
+		if ($year === null || $until === null) {
+			return $scientific
+				? $l->t('Scientific edition (§ 70 UrhG): the year in which the edition appeared is missing.')
+				: $l->t('Posthumous work (§ 71 UrhG): the year in which the work first appeared is missing.');
+		}
+		$end = substr($until, 0, -6);
+		return $scientific
+			? $l->t('Scientific edition (§ 70 UrhG): appeared in %1$s, protected until the end of %2$s.', [(string)$year, $end])
+			: $l->t('Posthumous work (§ 71 UrhG): first appeared in %1$s, protected until the end of %2$s.', [(string)$year, $end]);
 	}
 
 	/**
@@ -51,6 +71,12 @@ final class ProtectionText {
 			'identification_uncertain' => $l->t('It is uncertain who %s is. Without a secured identification there is no "public domain" proposal.', [$p[0] ?? '']),
 			'ended' => $l->t('Protection ended at the end of %3$s: the last of the persons involved, %1$s, died in %2$s.', [$p[0] ?? '', $p[1] ?? '', $p[2] ?? '']),
 			'running' => $l->t('Protected until the end of %3$s: the last of the persons involved, %1$s, died in %2$s.', [$p[0] ?? '', $p[1] ?? '', $p[2] ?? '']),
+			'only_editors' => $l->t('Only editors are recorded for this version. Add the composer and the other persons involved; until then unknown means protected.'),
+			'year_missing' => $l->t('The year in which it first appeared is missing. Enter it in the field "Year first published" (tab Rights); until then the version counts as protected.'),
+			'scientific_edition_running' => $l->t('Protected as a scientific edition (§ 70 UrhG) until the end of %2$s: it appeared in %1$s.', [$p[0] ?? '', $p[1] ?? '']),
+			'scientific_edition_ended' => $l->t('The protection as a scientific edition (§ 70 UrhG) ended at the end of %2$s: it appeared in %1$s.', [$p[0] ?? '', $p[1] ?? '']),
+			'posthumous_work_running' => $l->t('Protected as a posthumous work (§ 71 UrhG) until the end of %2$s: it first appeared in %1$s.', [$p[0] ?? '', $p[1] ?? '']),
+			'posthumous_work_ended' => $l->t('The protection as a posthumous work (§ 71 UrhG) ended at the end of %2$s: it first appeared in %1$s.', [$p[0] ?? '', $p[1] ?? '']),
 			default => $key,
 		};
 	}
