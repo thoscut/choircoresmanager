@@ -20,7 +20,8 @@ import { dueCardLabel } from '../dueLabels.ts'
 import { dueTarget } from '../dueTargets.ts'
 import { formatDate } from '../format.ts'
 import { navigate, openDueTarget } from '../navigation.ts'
-import { canSeeProposals } from '../store.ts'
+import { DUE_CONCERTS, DUE_TASKS } from '../modules.ts'
+import { canSeeProposals, isCardShown, personalView, personalViewDialogOpen } from '../store.ts'
 
 const due = ref<DueResult | null>(null)
 const loading = ref(false)
@@ -47,6 +48,7 @@ onMounted(load)
  */
 const cards = computed(() => (due.value?.cards ?? [])
 	.filter((card) => dueTarget(card.key).view !== 'proposals' || canSeeProposals.value)
+	.filter((card) => isCardShown(card.key))
 	.map((card) => ({ ...card, label: dueCardLabel(card.key, card.count, card.label) })))
 
 /**
@@ -59,9 +61,15 @@ function openCard(card: DueCard): void {
 }
 
 /** Concerts with a deadline now, the next first. */
-const concerts = computed(() => due.value?.concerts ?? [])
+const concerts = computed(() => (isCardShown(DUE_CONCERTS) ? due.value?.concerts ?? [] : []))
 
-const nothingDue = computed(() => cards.value.length === 0 && concerts.value.length === 0 && (due.value?.tasks.length ?? 0) === 0)
+/** Tasks for the user's roles. */
+const tasks = computed(() => (isCardShown(DUE_TASKS) ? due.value?.tasks ?? [] : []))
+
+const nothingDue = computed(() => cards.value.length === 0 && concerts.value.length === 0 && tasks.value.length === 0)
+
+/** Whether the personal view hides something of this page. */
+const somethingHidden = computed(() => personalView.value.cards.length > 0)
 </script>
 
 <template>
@@ -136,12 +144,19 @@ const nothingDue = computed(() => cards.value.length === 0 && concerts.value.len
 					</template>
 				</NcEmptyContent>
 
-				<section v-if="due.tasks.length > 0" class="due-view__tasks" aria-labelledby="due-tasks-heading">
+				<section v-if="tasks.length > 0" class="due-view__tasks" aria-labelledby="due-tasks-heading">
 					<h3 id="due-tasks-heading">
 						{{ t('notenarchiv', 'Tasks for your roles') }}
 					</h3>
-					<TaskList :tasks="due.tasks" @changed="load" />
+					<TaskList :tasks="tasks" @changed="load" />
 				</section>
+
+				<p v-if="somethingHidden" class="due-view__hidden no-print">
+					{{ t('notenarchiv', 'Some parts of the start page are hidden in your view.') }}
+					<NcButton variant="tertiary" @click="personalViewDialogOpen = true">
+						{{ t('notenarchiv', 'Customize view') }}
+					</NcButton>
+				</p>
 			</template>
 		</div>
 	</div>
@@ -203,6 +218,15 @@ const nothingDue = computed(() => cards.value.length === 0 && concerts.value.len
 	margin: 0 0 calc(2 * var(--default-grid-baseline));
 	font-size: 1.2em;
 	font-weight: bold;
+}
+
+.due-view__hidden {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--default-grid-baseline);
+	margin: 0;
+	color: var(--color-text-maxcontrast);
 }
 
 .due-view__concert-list {

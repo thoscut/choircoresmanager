@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace OCA\Notenarchiv\Service;
 
 /**
- * What the UI needs on start: own roles, field registry, archive folder.
+ * What the UI needs on start: own roles, field registry, archive folder,
+ * the active modules and the personal view of the account.
  */
 class MetaService {
 	public function __construct(
 		private Roles $roles,
 		private AppSettings $settings,
+		private Modules $modules,
+		private PersonalView $personalView,
 	) {
 	}
 
@@ -28,6 +31,8 @@ class MetaService {
 			'personFields' => Fields::person(),
 			'contributionRoles' => Fields::CONTRIBUTION_ROLES,
 			'archive' => $this->settings->archiveInfo(),
+			'modules' => $this->modules->states(),
+			'personalView' => $this->personalView->get($uid),
 		];
 	}
 }

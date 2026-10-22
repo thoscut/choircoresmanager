@@ -34,6 +34,7 @@ class DueService {
 		private RepertoireService $repertoire,
 		private EventItemMapper $eventItems,
 		private EventMapper $events,
+		private Modules $modules,
 	) {
 	}
 
@@ -41,7 +42,8 @@ class DueService {
 	 * Cards with a number, the tasks for the user's roles and the concerts
 	 * with a deadline now (for conductor and catalog librarian, like the
 	 * notifications; confirming what was sung only for the conductor).
-	 * Labels are English source strings.
+	 * Labels are English source strings. Only cards, tasks and concerts of
+	 * active modules are listed (see docs/api.md).
 	 *
 	 * @return array{cards: list<array{key: string, count: int, label: string}>, tasks: list<array<string, mixed>>, concerts: list<array{id: int, title: string, date: string, stage: string, label: string}>}
 	 */
@@ -49,8 +51,9 @@ class DueService {
 		$roles = $this->roles->rolesOf($uid);
 		$isLibrarian = in_array(Roles::LIBRARIAN, $roles, true);
 		$isConductor = in_array(Roles::CONDUCTOR, $roles, true);
+		$active = $this->modules->states();
 		$cards = [];
-		$tasks = $this->tasks->forUser($uid);
+		$tasks = $active['tasks'] ? $this->tasks->forUser($uid) : [];
 		$open = count(array_filter($tasks, fn (array $t): bool => $t['status'] === 'open'));
 		$answered = count($tasks) - $open;
 		if ($open > 0) {
@@ -60,18 +63,19 @@ class DueService {
 			$cards[] = ['key' => 'tasks_answered', 'count' => $answered, 'label' => 'Answered tasks to apply'];
 		}
 
-		$current = $this->currentRepertoireVersions();
-		if ($isLibrarian || $isConductor) {
+		$current = ($isLibrarian && $active['rights']) || ($isConductor && $active['valid_version'])
+			? $this->currentRepertoireVersions() : [];
+		if (($isLibrarian || $isConductor) && $active['performance_import']) {
 			$ambiguous = count($this->eventItems->findByAssignment(EventItem::AMBIGUOUS));
 			if ($ambiguous > 0) {
 				$cards[] = ['key' => 'ambiguous_items', 'count' => $ambiguous, 'label' => 'Programme lines with an unclear shelf mark'];
 			}
 		}
-		if ($isLibrarian) {
-			$proposals = $this->proposals->countOpen();
-			if ($proposals > 0) {
-				$cards[] = ['key' => 'proposals', 'count' => $proposals, 'label' => 'Proposals in the inbox'];
-			}
+		$proposals = $isLibrarian && $active['proposals'] ? $this->proposals->countOpen() : 0;
+		if ($proposals > 0) {
+			$cards[] = ['key' => 'proposals', 'count' => $proposals, 'label' => 'Proposals in the inbox'];
+		}
+		if ($isLibrarian && $active['portal']) {
 			$portal = array_count_values(array_column($this->releaseLists->portal($uid), 'status'));
 			if (($portal['remove'] ?? 0) > 0) {
 				$cards[] = ['key' => 'portal_remove', 'count' => $portal['remove'], 'label' => 'Remove from the singers\' portal'];
@@ -79,6 +83,8 @@ class DueService {
 			if (($portal['add'] ?? 0) > 0) {
 				$cards[] = ['key' => 'portal_add', 'count' => $portal['add'], 'label' => 'Released, not yet in the singers\' portal'];
 			}
+		}
+		if ($isLibrarian && $active['rights']) {
 			$unconfirmed = 0;
 			$rule1 = 0;
 			foreach ($current as $version) {
@@ -110,7 +116,7 @@ class DueService {
 				$cards[] = ['key' => 'licenses_expiring', 'count' => $expiring, 'label' => 'Licenses ending or ended'];
 			}
 		}
-		if ($isConductor) {
+		if ($isConductor && $active['valid_version']) {
 			$withoutValid = [];
 			$valid = [];
 			foreach ($this->versions->findAllById() as $version) {
@@ -128,7 +134,7 @@ class DueService {
 			}
 		}
 		$concerts = [];
-		if ($isLibrarian || $isConductor) {
+		if (($isLibrarian || $isConductor) && $active['concerts']) {
 			$today = $this->rights->today($uid);
 			foreach ($this->events->findByKind(Event::CONCERT) as $event) {
 				$stage = ConcertDeadlines::stage($event, $today);

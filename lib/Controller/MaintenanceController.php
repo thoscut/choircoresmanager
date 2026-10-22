@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OCA\Notenarchiv\Controller;
 
 use OCA\Notenarchiv\AppInfo\Application;
+use OCA\Notenarchiv\Attribute\RequiresModule;
 use OCA\Notenarchiv\Service\ChecksumService;
 use OCA\Notenarchiv\Service\CopyAssistantService;
 use OCA\Notenarchiv\Service\InventoryService;
@@ -45,6 +46,7 @@ class MaintenanceController extends Controller {
 	}
 
 	#[NoAdminRequired]
+	#[RequiresModule('accession')]
 	#[FrontpageRoute(verb: 'GET', url: '/api/accession/next')]
 	public function nextShelfmark(?int $binder = null): JSONResponse {
 		return $this->run(function (string $uid) use ($binder) {
@@ -57,6 +59,7 @@ class MaintenanceController extends Controller {
 	 * @param list<mixed> $binders
 	 */
 	#[NoAdminRequired]
+	#[RequiresModule('accession')]
 	#[FrontpageRoute(verb: 'PUT', url: '/api/accession/open-binders')]
 	public function setOpenBinders(array $binders = []): JSONResponse {
 		return $this->run(fn (string $uid) => ['openBinders' => $this->assistant->setOpenBinders($binders, $uid)]);
@@ -66,6 +69,7 @@ class MaintenanceController extends Controller {
 	 * @param array<string, mixed> $copy
 	 */
 	#[NoAdminRequired]
+	#[RequiresModule('accession')]
 	#[FrontpageRoute(verb: 'POST', url: '/api/accession')]
 	public function createAccession(array $copy = [], ?int $fileId = null): JSONResponse {
 		return $this->run(fn (string $uid) => $this->assistant->create($copy, $fileId, $uid));
@@ -75,6 +79,7 @@ class MaintenanceController extends Controller {
 	 * @param string $ids comma-separated copy ids
 	 */
 	#[NoAdminRequired]
+	#[RequiresModule('accession')]
 	#[FrontpageRoute(verb: 'GET', url: '/api/labels')]
 	public function labels(string $ids = ''): JSONResponse {
 		return $this->run(function (string $uid) use ($ids) {
@@ -100,6 +105,7 @@ class MaintenanceController extends Controller {
 	}
 
 	#[NoAdminRequired]
+	#[RequiresModule('merge')]
 	#[FrontpageRoute(verb: 'GET', url: '/api/merges')]
 	public function merges(int $all = 0): JSONResponse {
 		return $this->run(function (string $uid) use ($all) {
@@ -109,6 +115,7 @@ class MaintenanceController extends Controller {
 	}
 
 	#[NoAdminRequired]
+	#[RequiresModule('merge')]
 	#[FrontpageRoute(verb: 'GET', url: '/api/merges/candidates')]
 	public function mergeCandidates(): JSONResponse {
 		return $this->run(function (string $uid) {
@@ -118,18 +125,21 @@ class MaintenanceController extends Controller {
 	}
 
 	#[NoAdminRequired]
+	#[RequiresModule('merge')]
 	#[FrontpageRoute(verb: 'POST', url: '/api/merges/works')]
 	public function mergeWorks(int $sourceWorkId = 0, int $targetWorkId = 0, ?string $reason = null): JSONResponse {
 		return $this->run(fn (string $uid) => $this->merges->mergeWorks($sourceWorkId, $targetWorkId, $uid, $reason));
 	}
 
 	#[NoAdminRequired]
+	#[RequiresModule('merge')]
 	#[FrontpageRoute(verb: 'POST', url: '/api/merges/copies')]
 	public function moveCopy(int $copyId = 0, int $targetVersionId = 0, ?string $reason = null): JSONResponse {
 		return $this->run(fn (string $uid) => $this->merges->moveCopy($copyId, $targetVersionId, $uid, $reason));
 	}
 
 	#[NoAdminRequired]
+	#[RequiresModule('merge')]
 	#[FrontpageRoute(verb: 'POST', url: '/api/merges/{id}/undo', requirements: ['id' => '\d+'])]
 	public function undoMerge(int $id, ?string $reason = null): JSONResponse {
 		return $this->run(function (string $uid) use ($id, $reason) {
@@ -139,6 +149,7 @@ class MaintenanceController extends Controller {
 	}
 
 	#[NoAdminRequired]
+	#[RequiresModule('inventory')]
 	#[FrontpageRoute(verb: 'GET', url: '/api/inventory')]
 	public function inventory(?int $binder = null, int $all = 0): JSONResponse {
 		return $this->run(function (string $uid) use ($binder, $all) {
@@ -151,12 +162,14 @@ class MaintenanceController extends Controller {
 	 * @param list<mixed> $counts
 	 */
 	#[NoAdminRequired]
+	#[RequiresModule('inventory')]
 	#[FrontpageRoute(verb: 'POST', url: '/api/inventory/count')]
 	public function recordCounts(array $counts = [], ?string $date = null): JSONResponse {
 		return $this->run(fn (string $uid) => ['recorded' => $this->inventory->recordCounts($counts, $date, $uid)]);
 	}
 
 	#[NoAdminRequired]
+	#[RequiresModule('checksums')]
 	#[FrontpageRoute(verb: 'GET', url: '/api/checksums')]
 	public function checksums(): JSONResponse {
 		return $this->run(function (string $uid) {
@@ -166,6 +179,7 @@ class MaintenanceController extends Controller {
 	}
 
 	#[NoAdminRequired]
+	#[RequiresModule('checksums')]
 	#[FrontpageRoute(verb: 'POST', url: '/api/files/{id}/checksum-accept', requirements: ['id' => '\d+'])]
 	public function acceptChecksum(int $id, ?string $reason = null): JSONResponse {
 		return $this->run(function (string $uid) use ($id, $reason) {

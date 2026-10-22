@@ -1,0 +1,496 @@
+<?php
+
+declare(strict_types=1);
+
+namespace OCA\Notenarchiv\Service;
+
+use OCA\Notenarchiv\AppInfo\Application;
+use OCA\Notenarchiv\Exception\InvalidInputException;
+use OCA\Notenarchiv\Exception\ModuleDisabledException;
+use OCP\IAppConfig;
+
+/**
+ * Functions outside the core that the administration can switch off
+ * (ROADMAP, guideline 12 and milestone 0.5.1).
+ *
+ * The core is always on: catalog (works, versions, copies, fields, search,
+ * status), start page, file sync, roles, audit log, CSV import and export,
+ * backup and restore, settings.
+ *
+ * Rules:
+ * - Switching off never makes anything less safe. The rights policy
+ *   (playback, practice audio, preservation copies) applies whatever is
+ *   switched on; a switched-off module only removes functions.
+ * - Switching off never deletes data. Switching on shows everything again.
+ * - A module is active when its own switch is on and every module it
+ *   requires is active. Switching a module off leaves the switches of the
+ *   modules that need it as they are: they are inactive until it is on
+ *   again. Switching a module on also switches on what it requires.
+ *
+ * Each switch is a typed boolean in the app config (`module_<key>`). The
+ * repair step ModuleDefaults writes all of them on installation and update,
+ * so that a later change of the defaults switches nothing at existing
+ * installations. A missing value falls back to the preset "standard".
+ */
+class Modules {
+	public const SIMPLE = 'simple';
+	public const STANDARD = 'standard';
+	public const COMPLETE = 'complete';
+	public const PRESETS = [self::SIMPLE, self::STANDARD, self::COMPLETE];
+
+	/** Planned interface for agents (milestone 0.6): not built yet, always off */
+	public const AGENT_API = 'agent_api';
+
+	/** Switches of the notifications: this prefix plus the subject (NotificationService) */
+	public const NOTIFY_PREFIX = 'notify_';
+
+	public const CONFIG_PREFIX = 'module_';
+
+	/** Reasons in the score view (English source strings, translated by the controller) */
+	public const PLAYBACK_OFF = 'Playback is switched off.';
+	public const PRACTICE_AUDIO_OFF = 'Practice audio files are switched off.';
+
+	/** Groups of the admin settings, in this order (English labels) */
+	public const GROUPS = [
+		'rights' => 'Rights and persons',
+		'releases' => 'Releases',
+		'scores' => 'Score view',
+		'collaboration' => 'Working together',
+		'concerts' => 'Concerts and repertoire',
+		'maintenance' => 'Maintaining the catalog',
+		'overview' => 'Overview',
+		'notifications' => 'Notifications',
+		'planned' => 'Planned',
+	];
+
+	/** The core, always on (English labels for the settings and the documentation) */
+	public const CORE = [
+		'Catalog: works, versions, copies, fields, search and status',
+		'Start page with what is due',
+		'File sync with the archive folder',
+		'Roles and groups',
+		'Audit log',
+		'CSV import and export',
+		'Backup and restore',
+		'Settings',
+	];
+
+	/** English labels and descriptions of the presets */
+	public const PRESET_LABELS = [
+		self::SIMPLE => ['label' => 'Simple', 'description' => 'Catalog, files and the score view with playback.'],
+		self::STANDARD => ['label' => 'Standard', 'description' => 'For most choirs: everything except practice audio files, the print station, the proposals inbox, checksums and statistics.'],
+		self::COMPLETE => ['label' => 'Complete', 'description' => 'All functions.'],
+	];
+
+	/**
+	 * The register, in the order of the settings. `requires`: modules that
+	 * must be active; `simple` and `standard`: switched on by these presets
+	 * ("complete" switches on everything); `planned`: not built yet.
+	 * Labels and descriptions are English source strings.
+	 */
+	public const MODULES = [
+		'rights' => ['group' => 'rights', 'requires' => [], 'simple' => false, 'standard' => true, 'planned' => false,
+			'label' => 'Rights confirmation and licenses',
+			'description' => 'Confirming the rights status of a version with reason and evidence, licenses with their uses and term, the list of ending licenses. Switched off, nothing is played or released without a license or confirmation all the same.'],
+		'valid_version' => ['group' => 'rights', 'requires' => [], 'simple' => false, 'standard' => true, 'planned' => false,
+			'label' => 'Valid version',
+			'description' => 'The conductor chooses the version that is valid for the choir, with its history.'],
+		'persons' => ['group' => 'rights', 'requires' => [], 'simple' => false, 'standard' => true, 'planned' => false,
+			'label' => 'Register of persons',
+			'description' => 'Persons with life dates and their contributions to versions (composer, lyrics, arrangement, translation); import of a research list.'],
+		'protection_terms' => ['group' => 'rights', 'requires' => ['persons'], 'simple' => false, 'standard' => true, 'planned' => false,
+			'label' => 'Protection terms',
+			'description' => 'Proposal for the end of the protection term from the life dates of all persons involved, with a resubmission list. A proposal only, no legal advice.'],
+		'releases' => ['group' => 'releases', 'requires' => ['rights'], 'simple' => false, 'standard' => true, 'planned' => false,
+			'label' => 'Releases',
+			'description' => 'Separate releases of a version for the singers\' portal, the print station and publication, derived from the confirmed rights and the licenses.'],
+		'portal' => ['group' => 'releases', 'requires' => ['releases'], 'simple' => false, 'standard' => true, 'planned' => false,
+			'label' => 'Singers\' portal',
+			'description' => 'Target and actual list of the singers\' portal: what to add and what to remove.'],
+		'print_station' => ['group' => 'releases', 'requires' => ['releases'], 'simple' => false, 'standard' => false, 'planned' => false,
+			'label' => 'Print station',
+			'description' => 'Target list of the print station.'],
+		'publication' => ['group' => 'releases', 'requires' => ['releases'], 'simple' => false, 'standard' => true, 'planned' => false,
+			'label' => 'Publication',
+			'description' => 'Publication status of a version with its reasoning.'],
+		'score_viewer' => ['group' => 'scores', 'requires' => [], 'simple' => true, 'standard' => true, 'planned' => false,
+			'label' => 'Score view',
+			'description' => 'Shows MusicXML in the browser with printed measure numbers, measure ranges, the chosen voice highlighted and a text description.'],
+		'playback' => ['group' => 'scores', 'requires' => ['score_viewer'], 'simple' => true, 'standard' => true, 'planned' => false,
+			'label' => 'Playback',
+			'description' => 'Plays the score in the browser with the chosen voice emphasised, only for versions whose rights allow it.'],
+		'practice_audio' => ['group' => 'scores', 'requires' => ['playback'], 'simple' => false, 'standard' => false, 'planned' => false,
+			'label' => 'Practice audio files',
+			'description' => 'Makes WAV or MIDI files per voice in the browser. The server checks and records every export; the files leave the app.'],
+		'excerpt_links' => ['group' => 'scores', 'requires' => ['score_viewer'], 'simple' => false, 'standard' => true, 'planned' => false,
+			'label' => 'Excerpt links',
+			'description' => 'Internal links to a range of measures and a voice for logged-in archive roles; they expire and can be revoked.'],
+		'tasks' => ['group' => 'collaboration', 'requires' => [], 'simple' => false, 'standard' => true, 'planned' => false,
+			'label' => 'Questions and tasks',
+			'description' => 'Questions and checks with a location in the score (page, measures, voice), addressed to a role.'],
+		'proposals' => ['group' => 'collaboration', 'requires' => [], 'simple' => false, 'standard' => false, 'planned' => false,
+			'label' => 'Proposals inbox',
+			'description' => 'Changes proposed by tools and transcription rounds wait in an inbox until the catalog librarian accepts them.'],
+		'concerts' => ['group' => 'concerts', 'requires' => [], 'simple' => false, 'standard' => true, 'planned' => false,
+			'label' => 'Concerts and song lists',
+			'description' => 'Programmes with rights warnings and deadlines, confirmation of what was sung, song order and lists.'],
+		'performance_import' => ['group' => 'concerts', 'requires' => ['concerts'], 'simple' => false, 'standard' => true, 'planned' => false,
+			'label' => 'Import of performance lists',
+			'description' => 'Imports an existing list of performances and song lists (.xlsx or .csv); unclear programme lines are resolved by hand.'],
+		'repertoire' => ['group' => 'concerts', 'requires' => ['concerts'], 'simple' => false, 'standard' => true, 'planned' => false,
+			'label' => 'Repertoire figures',
+			'description' => 'Derives the repertoire class, the number of performances and the last performance from the concerts confirmed as sung. Switched off, the values of the imported catalog apply.'],
+		'calendar' => ['group' => 'concerts', 'requires' => ['concerts'], 'simple' => false, 'standard' => true, 'planned' => false,
+			'label' => 'Concerts in the calendar',
+			'description' => 'Calendar files of the concerts and entries in the own Nextcloud calendars.'],
+		'accession' => ['group' => 'maintenance', 'requires' => [], 'simple' => false, 'standard' => true, 'planned' => false,
+			'label' => 'New accessions and shelf labels',
+			'description' => 'Assistant for new copies with the next free shelf mark and the required fields; shelf labels to print.'],
+		'merge' => ['group' => 'maintenance', 'requires' => [], 'simple' => false, 'standard' => true, 'planned' => false,
+			'label' => 'Merging works',
+			'description' => 'Proposals for works recorded twice; merging works and moving copies, with undo.'],
+		'inventory' => ['group' => 'maintenance', 'requires' => [], 'simple' => false, 'standard' => true, 'planned' => false,
+			'label' => 'Inventory',
+			'description' => 'Inventory lists per binder to tick on paper, and recording the counts.'],
+		'checksums' => ['group' => 'maintenance', 'requires' => [], 'simple' => false, 'standard' => false, 'planned' => false,
+			'label' => 'Checksums',
+			'description' => 'Reads the archive files hourly in the background and reports files that changed without a visible modification.'],
+		'statistics' => ['group' => 'overview', 'requires' => [], 'simple' => false, 'standard' => false, 'planned' => false,
+			'label' => 'Statistics and annual report',
+			'description' => 'Figures on stock, rights, repertoire and maintenance and the annual report, also as CSV.'],
+		'dashboard_widget' => ['group' => 'overview', 'requires' => [], 'simple' => false, 'standard' => true, 'planned' => false,
+			'label' => 'Dashboard widget',
+			'description' => 'The widget "Music archive – due" on the Nextcloud dashboard.'],
+		'notifications' => ['group' => 'notifications', 'requires' => [], 'simple' => true, 'standard' => true, 'planned' => false,
+			'label' => 'Notifications',
+			'description' => 'Notifications to the roles concerned (never to singers), also as an e-mail summary through Nextcloud. Each occasion can be switched off below.'],
+		'notify_proposals_waiting' => ['group' => 'notifications', 'requires' => ['notifications', 'proposals'], 'simple' => true, 'standard' => true, 'planned' => false,
+			'label' => 'Proposals are waiting',
+			'description' => 'To the catalog librarian: open proposals in the inbox.'],
+		'notify_portal_remove' => ['group' => 'notifications', 'requires' => ['notifications', 'portal'], 'simple' => true, 'standard' => true, 'planned' => false,
+			'label' => 'Remove from the singers\' portal',
+			'description' => 'To the catalog librarian, daily: a version is in the portal but no longer released.'],
+		'notify_license_expiring' => ['group' => 'notifications', 'requires' => ['notifications', 'rights'], 'simple' => true, 'standard' => true, 'planned' => false,
+			'label' => 'License ends soon',
+			'description' => 'To the catalog librarian, daily: a license ends within 30 days.'],
+		'notify_license_expired' => ['group' => 'notifications', 'requires' => ['notifications', 'rights'], 'simple' => true, 'standard' => true, 'planned' => false,
+			'label' => 'License has ended',
+			'description' => 'To the catalog librarian, daily: a license has ended.'],
+		'notify_export_failed' => ['group' => 'notifications', 'requires' => ['notifications'], 'simple' => true, 'standard' => true, 'planned' => false,
+			'label' => 'Weekly backup failed',
+			'description' => 'To the catalog librarian and the administrators.'],
+		'notify_task_new' => ['group' => 'notifications', 'requires' => ['notifications', 'tasks'], 'simple' => true, 'standard' => true, 'planned' => false,
+			'label' => 'New question or task',
+			'description' => 'To the role a question or task is addressed to.'],
+		'notify_task_answered' => ['group' => 'notifications', 'requires' => ['notifications', 'tasks'], 'simple' => true, 'standard' => true, 'planned' => false,
+			'label' => 'Question answered',
+			'description' => 'To the catalog librarian: an answer to apply.'],
+		'notify_concert_deadline' => ['group' => 'notifications', 'requires' => ['notifications', 'concerts'], 'simple' => true, 'standard' => true, 'planned' => false,
+			'label' => 'Concert deadlines',
+			'description' => 'To the conductor and the catalog librarian, 10, 8 and 6 weeks before a concert.'],
+		'notify_concert_confirm' => ['group' => 'notifications', 'requires' => ['notifications', 'concerts'], 'simple' => true, 'standard' => true, 'planned' => false,
+			'label' => 'Confirm what was sung',
+			'description' => 'To the conductor, after a concert.'],
+		'notify_protection_ended' => ['group' => 'notifications', 'requires' => ['notifications', 'protection_terms'], 'simple' => true, 'standard' => true, 'planned' => false,
+			'label' => 'Protection term ended',
+			'description' => 'To the catalog librarian, daily: a version marked as protected is public domain by the life dates of the persons involved.'],
+		'notify_checksum_mismatch' => ['group' => 'notifications', 'requires' => ['notifications', 'checksums'], 'simple' => true, 'standard' => true, 'planned' => false,
+			'label' => 'File changed unnoticed',
+			'description' => 'To the catalog librarian: an archive file changed without a visible modification.'],
+		self::AGENT_API => ['group' => 'planned', 'requires' => [], 'simple' => false, 'standard' => false, 'planned' => true,
+			'label' => 'Interface for agents',
+			'description' => 'A fixed interface for agents and tools (planned).'],
+	];
+
+	/** @var array<string, bool>|null active modules, computed once per request */
+	private ?array $active = null;
+
+	public function __construct(
+		private IAppConfig $appConfig,
+	) {
+	}
+
+	public static function exists(string $key): bool {
+		return isset(self::MODULES[$key]);
+	}
+
+	/**
+	 * Whether a module is planned but not built yet: always off, cannot be
+	 * switched and is not shown in the settings.
+	 */
+	public static function isPlanned(string $key): bool {
+		return (self::MODULES[$key]['planned'] ?? false) === true;
+	}
+
+	/**
+	 * Keys of the modules that can be switched, in the order of the settings.
+	 *
+	 * @return list<string>
+	 */
+	public static function switchable(): array {
+		return array_values(array_filter(array_keys(self::MODULES), fn (string $key): bool => !self::isPlanned($key)));
+	}
+
+	/**
+	 * English label of a module.
+	 */
+	public static function label(string $key): string {
+		return self::MODULES[$key]['label'] ?? $key;
+	}
+
+	/**
+	 * Modules a module needs, directly and indirectly (nearest first).
+	 *
+	 * @return list<string>
+	 */
+	public static function requirements(string $key): array {
+		$result = [];
+		$queue = self::MODULES[$key]['requires'] ?? [];
+		while ($queue !== []) {
+			$next = array_shift($queue);
+			if (!in_array($next, $result, true)) {
+				$result[] = $next;
+				array_push($queue, ...(self::MODULES[$next]['requires'] ?? []));
+			}
+		}
+		return $result;
+	}
+
+	/**
+	 * The switch of a module for a notification subject, or null when the
+	 * subject has none.
+	 */
+	public static function notificationKey(string $subject): ?string {
+		$key = self::NOTIFY_PREFIX . $subject;
+		return self::exists($key) ? $key : null;
+	}
+
+	/**
+	 * What a preset switches on and off (planned modules are not part of a
+	 * preset).
+	 *
+	 * @return array<string, bool>
+	 * @throws InvalidInputException for an unknown preset
+	 */
+	public static function presetValues(string $preset): array {
+		if (!in_array($preset, self::PRESETS, true)) {
+			throw new InvalidInputException('Unknown preset: %s', [$preset]);
+		}
+		$values = [];
+		foreach (self::switchable() as $key) {
+			$values[$key] = match ($preset) {
+				self::SIMPLE => self::MODULES[$key]['simple'],
+				self::STANDARD => self::MODULES[$key]['standard'],
+				default => true,
+			};
+		}
+		return $values;
+	}
+
+	/**
+	 * Whether a module is active: its own switch is on and every module it
+	 * requires is active.
+	 *
+	 * @throws \InvalidArgumentException for an unknown key (a programming error)
+	 */
+	public function isEnabled(string $key): bool {
+		if (!self::exists($key)) {
+			throw new \InvalidArgumentException('Unknown module: ' . $key);
+		}
+		return $this->states()[$key];
+	}
+
+	/**
+	 * @throws ModuleDisabledException when the module is not active
+	 */
+	public function requireEnabled(string $key): void {
+		if (!$this->isEnabled($key)) {
+			throw new ModuleDisabledException($key);
+		}
+	}
+
+	/**
+	 * Whether notifications of a subject are sent and shown. A subject
+	 * without a switch of its own follows the switch "notifications".
+	 */
+	public function notificationEnabled(string $subject): bool {
+		return $this->isEnabled(self::notificationKey($subject) ?? 'notifications');
+	}
+
+	/**
+	 * Active state of every module, planned ones included (always false).
+	 *
+	 * @return array<string, bool>
+	 */
+	public function states(): array {
+		if ($this->active === null) {
+			$active = [];
+			foreach (array_keys(self::MODULES) as $key) {
+				$this->resolve($key, $active);
+			}
+			$this->active = $active;
+		}
+		return $this->active;
+	}
+
+	/**
+	 * The module's own switch, regardless of what it requires.
+	 */
+	public function isSwitchedOn(string $key): bool {
+		if (!self::exists($key) || self::isPlanned($key)) {
+			return false;
+		}
+		$default = self::MODULES[$key]['standard'];
+		try {
+			return $this->appConfig->getValueBool(Application::APP_ID, self::CONFIG_PREFIX . $key, $default);
+		} catch (\Throwable) {
+			// A value of another type (e.g. set by hand): the default applies.
+			return $default;
+		}
+	}
+
+	/**
+	 * Switches modules on and off. Switching on also switches on what a
+	 * module requires; switching off leaves the modules that need it as they
+	 * are (they become inactive). Keys must be switchable.
+	 *
+	 * @param array<string, bool> $wanted key => on
+	 * @return array{enabled: list<string>, alsoEnabled: list<string>, disabled: list<string>, inactive: list<string>, activated: list<string>}
+	 * @throws InvalidInputException for an unknown or planned module, or when a module to switch on needs one to switch off
+	 */
+	public function change(array $wanted): array {
+		foreach (array_keys($wanted) as $key) {
+			self::assertSwitchable($key);
+		}
+		$on = array_keys(array_filter($wanted));
+		$off = array_keys(array_filter($wanted, fn (bool $value): bool => !$value));
+		$needed = [];
+		foreach ($on as $key) {
+			foreach (self::requirements($key) as $required) {
+				if (in_array($required, $off, true)) {
+					throw new InvalidInputException('"%1$s" needs "%2$s".', [self::label($key), self::label($required)]);
+				}
+				$needed[] = $required;
+			}
+		}
+		$also = array_values(array_diff(array_unique($needed), $on));
+		return $this->write($wanted + array_fill_keys($also, true), $also);
+	}
+
+	/**
+	 * Sets every switchable module as the preset says. A preset may leave a
+	 * switch on whose module it switches off (e.g. the notifications of
+	 * tasks in "simple"): it stays inactive until that module is on.
+	 *
+	 * @return array{enabled: list<string>, alsoEnabled: list<string>, disabled: list<string>, inactive: list<string>, activated: list<string>}
+	 * @throws InvalidInputException for an unknown preset
+	 */
+	public function applyPreset(string $preset): array {
+		return $this->write(self::presetValues($preset), []);
+	}
+
+	/**
+	 * Writes every switch that has no stored value yet, so that a later
+	 * change of the defaults switches nothing (repair step on installation
+	 * and update). An installation from before the modules (< 0.1.27) keeps
+	 * every function it had: all switches on, except planned modules. A new
+	 * installation gets the preset "standard".
+	 *
+	 * @return list<string> the keys written
+	 */
+	public function writeBaseline(bool $existingInstallation): array {
+		$standard = self::presetValues(self::STANDARD);
+		$written = [];
+		foreach (array_keys(self::MODULES) as $key) {
+			if ($this->appConfig->hasKey(Application::APP_ID, self::CONFIG_PREFIX . $key, null)) {
+				continue;
+			}
+			$value = !self::isPlanned($key) && ($existingInstallation || $standard[$key]);
+			$this->appConfig->setValueBool(Application::APP_ID, self::CONFIG_PREFIX . $key, $value);
+			$written[] = $key;
+		}
+		$this->active = null;
+		return $written;
+	}
+
+	/**
+	 * Adds a module and everything it requires to the active states.
+	 *
+	 * @param array<string, bool> $active modules resolved so far
+	 */
+	private function resolve(string $key, array &$active): void {
+		if (isset($active[$key])) {
+			return;
+		}
+		$on = $this->isSwitchedOn($key);
+		foreach (self::MODULES[$key]['requires'] as $required) {
+			$this->resolve($required, $active);
+			$on = $on && $active[$required];
+		}
+		$active[$key] = $on;
+	}
+
+	/**
+	 * Stores switches and reports what changed: `enabled`/`disabled` the
+	 * switches that changed, `alsoEnabled` the requirements switched on with
+	 * them, `inactive` the modules that stopped working without being
+	 * switched off themselves, `activated` those that work again without
+	 * being switched on themselves.
+	 *
+	 * @param array<string, bool> $values switchable key => on
+	 * @param list<string> $also keys of $values switched on as requirements
+	 * @return array{enabled: list<string>, alsoEnabled: list<string>, disabled: list<string>, inactive: list<string>, activated: list<string>}
+	 */
+	private function write(array $values, array $also): array {
+		$activeBefore = $this->states();
+		$switchedBefore = [];
+		foreach (self::switchable() as $key) {
+			$switchedBefore[$key] = $this->isSwitchedOn($key);
+		}
+		foreach ($values as $key => $on) {
+			$this->appConfig->setValueBool(Application::APP_ID, self::CONFIG_PREFIX . $key, $on);
+		}
+		$this->active = null;
+		$activeAfter = $this->states();
+
+		$on = array_values(array_diff(array_keys(array_filter($values)), $also));
+		$off = array_keys(array_filter($values, fn (bool $value): bool => !$value));
+		$enabled = self::changed($on, $switchedBefore, true);
+		$alsoEnabled = self::changed($also, $switchedBefore, true);
+		$disabled = self::changed($off, $switchedBefore, false);
+		$side = fn (bool $before, array $except): array => array_values(array_filter(array_keys(self::MODULES),
+			fn (string $key): bool => !in_array($key, $except, true) && $activeBefore[$key] === $before && $activeAfter[$key] !== $before));
+		return [
+			'enabled' => $enabled,
+			'alsoEnabled' => $alsoEnabled,
+			'disabled' => $disabled,
+			'inactive' => $side(true, $disabled),
+			'activated' => $side(false, [...$enabled, ...$alsoEnabled]),
+		];
+	}
+
+	/**
+	 * @throws InvalidInputException
+	 */
+	private static function assertSwitchable(string $key): void {
+		if (!self::exists($key)) {
+			throw new InvalidInputException('Unknown module: %s', [$key]);
+		}
+		if (self::isPlanned($key)) {
+			throw new InvalidInputException('This function is not available yet: %s', [self::label($key)]);
+		}
+	}
+
+	/**
+	 * The keys whose switch was not yet at the value, in the order of the
+	 * register.
+	 *
+	 * @param list<string> $keys
+	 * @param array<string, bool> $before switches before the change
+	 * @return list<string>
+	 */
+	private static function changed(array $keys, array $before, bool $value): array {
+		return array_values(array_filter(array_keys(self::MODULES),
+			fn (string $key): bool => in_array($key, $keys, true) && ($before[$key] ?? false) !== $value));
+	}
+}

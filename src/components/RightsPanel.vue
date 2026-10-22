@@ -36,7 +36,7 @@ import {
 import { displayValue, formatDate, isEmpty, toIsoDate, translateLabel } from '../format.ts'
 import { licenseUseLabel } from '../labels.ts'
 import { navigate } from '../navigation.ts'
-import { canSeeProposals, choiceLabel, entries, fieldInfo, fieldLabel, isConductor, isLibrarian } from '../store.ts'
+import { canSeeProposals, choiceLabel, entries, fieldInfo, fieldLabel, isConductor, isLibrarian, isModuleActive } from '../store.ts'
 
 const props = defineProps<{
 	detail: Detail
@@ -299,8 +299,8 @@ function onLicenseSaved(): void {
 
 <template>
 	<div class="rights-panel">
-		<!-- Confirmation -->
-		<section class="rights-panel__section" aria-labelledby="rights-panel-confirmation">
+		<!-- Confirmation (module "rights") -->
+		<section v-if="isModuleActive('rights')" class="rights-panel__section" aria-labelledby="rights-panel-confirmation">
 			<h3 id="rights-panel-confirmation">
 				{{ t('notenarchiv', 'Confirmation') }}
 			</h3>
@@ -328,13 +328,13 @@ function onLicenseSaved(): void {
 			</div>
 		</section>
 
-		<!-- Releases -->
-		<section class="rights-panel__section" aria-labelledby="rights-panel-releases">
+		<!-- Releases (modules "portal" and "print_station") -->
+		<section v-if="isModuleActive('portal') || isModuleActive('print_station')" class="rights-panel__section" aria-labelledby="rights-panel-releases">
 			<h3 id="rights-panel-releases">
 				{{ t('notenarchiv', 'Releases') }}
 			</h3>
 			<ul class="rights-panel__releases">
-				<li>
+				<li v-if="isModuleActive('portal')">
 					<span class="rights-panel__release-name">{{ t('notenarchiv', 'Singers\' portal') }}</span>
 					<span v-if="releases.portal === null" class="rights-panel__state rights-panel__state--success">
 						<NcIconSvgWrapper :path="mdiCheckCircleOutline" :size="20" inline />
@@ -345,7 +345,7 @@ function onLicenseSaved(): void {
 						{{ translateLabel(releases.portal) }}
 					</span>
 				</li>
-				<li>
+				<li v-if="isModuleActive('print_station')">
 					<span class="rights-panel__release-name">{{ t('notenarchiv', 'Print station') }}</span>
 					<span v-if="releases.printStation === null" class="rights-panel__state rights-panel__state--success">
 						<NcIconSvgWrapper :path="mdiCheckCircleOutline" :size="20" inline />
@@ -357,28 +357,30 @@ function onLicenseSaved(): void {
 					</span>
 				</li>
 			</ul>
-			<p v-if="releases.onPortal">
-				{{ t('notenarchiv', 'In the singers\' portal since {date}.', { date: formatDate(portalSince) }) }}
-			</p>
-			<p v-else-if="portalRemovedAt !== ''" class="rights-panel__muted">
-				{{ t('notenarchiv', 'Taken out of the singers\' portal on {date}: {reason}', { date: formatDate(portalRemovedAt), reason: portalRemovedReason }) }}
-			</p>
-			<div v-if="isLibrarian && !isPreservationCopy" class="rights-panel__actions">
-				<NcButton v-if="!releases.onPortal && releases.portal === null" @click="openDialog('portal-add')">
-					{{ t('notenarchiv', 'Provide in the singers\' portal') }}
-				</NcButton>
-				<NcButton v-if="releases.onPortal" @click="openDialog('portal-remove')">
-					{{ t('notenarchiv', 'Take out of the singers\' portal') }}
-				</NcButton>
-			</div>
-			<p v-if="releases.onPortal && releases.portal !== null" class="rights-panel__state rights-panel__state--error">
-				<NcIconSvgWrapper :path="mdiAlertOutline" :size="20" inline />
-				{{ t('notenarchiv', 'This version is in the singers\' portal but no longer released for it. Please take it out.') }}
-			</p>
+			<template v-if="isModuleActive('portal')">
+				<p v-if="releases.onPortal">
+					{{ t('notenarchiv', 'In the singers\' portal since {date}.', { date: formatDate(portalSince) }) }}
+				</p>
+				<p v-else-if="portalRemovedAt !== ''" class="rights-panel__muted">
+					{{ t('notenarchiv', 'Taken out of the singers\' portal on {date}: {reason}', { date: formatDate(portalRemovedAt), reason: portalRemovedReason }) }}
+				</p>
+				<div v-if="isLibrarian && !isPreservationCopy" class="rights-panel__actions">
+					<NcButton v-if="!releases.onPortal && releases.portal === null" @click="openDialog('portal-add')">
+						{{ t('notenarchiv', 'Provide in the singers\' portal') }}
+					</NcButton>
+					<NcButton v-if="releases.onPortal" @click="openDialog('portal-remove')">
+						{{ t('notenarchiv', 'Take out of the singers\' portal') }}
+					</NcButton>
+				</div>
+				<p v-if="releases.onPortal && releases.portal !== null" class="rights-panel__state rights-panel__state--error">
+					<NcIconSvgWrapper :path="mdiAlertOutline" :size="20" inline />
+					{{ t('notenarchiv', 'This version is in the singers\' portal but no longer released for it. Please take it out.') }}
+				</p>
+			</template>
 		</section>
 
-		<!-- Valid version -->
-		<section class="rights-panel__section" aria-labelledby="rights-panel-valid">
+		<!-- Valid version (module "valid_version") -->
+		<section v-if="isModuleActive('valid_version')" class="rights-panel__section" aria-labelledby="rights-panel-valid">
 			<h3 id="rights-panel-valid">
 				{{ t('notenarchiv', 'Valid for the choir') }}
 			</h3>
@@ -403,8 +405,8 @@ function onLicenseSaved(): void {
 			</div>
 		</section>
 
-		<!-- Licenses -->
-		<section class="rights-panel__section" aria-labelledby="rights-panel-licenses">
+		<!-- Licenses (module "rights") -->
+		<section v-if="isModuleActive('rights')" class="rights-panel__section" aria-labelledby="rights-panel-licenses">
 			<h3 id="rights-panel-licenses">
 				{{ t('notenarchiv', 'Licenses') }}
 			</h3>

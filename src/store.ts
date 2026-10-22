@@ -2,13 +2,15 @@
  * Shared state of the app: meta data, catalog entries, filters, selected
  * entry and open dialogs. Plain Vue refs, no store library.
  */
-import type { Detail, Entry, FieldInfo, FilterContext, Filters, Level, Meta, ReleaseRow, Role, SortOrder } from './types.ts'
+import type { ViewName } from './startParams.ts'
+import type { Detail, Entry, FieldInfo, FilterContext, Filters, Level, Meta, PersonalView, ReleaseRow, Role, SortOrder } from './types.ts'
 
 import { loadState } from '@nextcloud/initial-state'
 import { computed, reactive, ref, shallowRef } from 'vue'
 import { errorMessage, fetchEntries, fetchEntry, fetchMeta, fetchReleaseList, normalizeMeta } from './api.ts'
 import { DEFAULT_FILTERS, filterEntries, hasActiveFilters, searchText, sortEntries, worksWithValidVersion } from './catalog.ts'
 import { optionLabel, translateLabel } from './format.ts'
+import { cardShown, fieldActive, moduleActive, viewActive, viewShown } from './modules.ts'
 
 /** Role keys used by the UI (see docs/api.md). */
 export const ROLE_LIBRARIAN = 'librarian'
@@ -44,14 +46,72 @@ export function hasAnyRole(roles: Role[]): boolean {
 	return roles.some((role) => hasRole(role))
 }
 
-/** Roles that may create tasks and questions. */
-export const canCreateTasks = computed(() => hasAnyRole(['librarian', 'conductor', 'operations', 'contributor']))
-/** Roles that may create internal excerpt links. */
-export const canCreateLinks = computed(() => hasAnyRole(['librarian', 'conductor', 'operations']))
+// ---- modules and the personal view ---------------------------------------------
+
+/** Active modules; null from an older server (everything counts as active). */
+export const moduleStates = computed(() => meta.value?.modules ?? null)
+
+/**
+ * Whether a module is active (switched on by the administration together
+ * with everything it requires). The server checks again.
+ *
+ * @param key - module key (see docs/api.md)
+ */
+export function isModuleActive(key: string): boolean {
+	return moduleActive(moduleStates.value, key)
+}
+
+const NO_PERSONAL_VIEW: PersonalView = { navigation: [], cards: [] }
+
+/** What the account has hidden in its own view. */
+export const personalView = computed<PersonalView>(() => meta.value?.personalView ?? NO_PERSONAL_VIEW)
+
+/**
+ * Whether the module of a view is active (links may open it).
+ *
+ * @param view - the view
+ */
+export function isViewActive(view: ViewName): boolean {
+	return viewActive(view, moduleStates.value)
+}
+
+/**
+ * Whether a view has an entry in the navigation (module active, not hidden
+ * in the personal view).
+ *
+ * @param view - the view
+ */
+export function isViewShown(view: ViewName): boolean {
+	return viewShown(view, moduleStates.value, personalView.value)
+}
+
+/**
+ * Whether the start page shows a card or list (module active, not hidden in
+ * the personal view).
+ *
+ * @param key - card key, `concerts` or `tasks`
+ */
+export function isCardShown(key: string): boolean {
+	return cardShown(key, moduleStates.value, personalView.value)
+}
+
+/**
+ * Whether a catalog field belongs to an active module (or to none).
+ *
+ * @param key - field key
+ */
+export function isFieldActive(key: string): boolean {
+	return fieldActive(key, moduleStates.value)
+}
+
+/** Roles that may create tasks and questions (module "tasks"). */
+export const canCreateTasks = computed(() => isModuleActive('tasks') && hasAnyRole(['librarian', 'conductor', 'operations', 'contributor']))
+/** Roles that may create internal excerpt links (module "excerpt_links"). */
+export const canCreateLinks = computed(() => isModuleActive('excerpt_links') && hasAnyRole(['librarian', 'conductor', 'operations']))
 /** Roles that plan concerts and song lists. */
 export const canPlanEvents = computed(() => hasAnyRole(['conductor', 'librarian']))
-/** Roles that see the proposals inbox. */
-export const canSeeProposals = computed(() => hasAnyRole(['librarian', 'contributor', 'reader']))
+/** Roles that see the proposals inbox (module "proposals"). */
+export const canSeeProposals = computed(() => isModuleActive('proposals') && hasAnyRole(['librarian', 'contributor', 'reader']))
 
 export const hasArchiveFolder = computed(() => (meta.value?.archive.id ?? 0) > 0)
 
@@ -172,6 +232,11 @@ let portalRowsLoaded = false
 
 export async function loadPortalRows(): Promise<void> {
 	portalRowsLoaded = true
+	if (!isModuleActive('portal')) {
+		// The list is switched off; the song lists leave out the column
+		portalRows.value = []
+		return
+	}
 	try {
 		portalRows.value = await fetchReleaseList('portal', true)
 	} catch {
@@ -326,3 +391,4 @@ export const scoreRequest = shallowRef<ScoreRequest | null>(null)
 
 export const archiveDialogOpen = ref(false)
 export const settingsDialogOpen = ref(false)
+export const personalViewDialogOpen = ref(false)

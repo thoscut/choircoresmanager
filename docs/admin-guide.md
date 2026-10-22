@@ -172,3 +172,120 @@ sufficient contrast in light and dark themes, information never by colour
 alone, zoom to 200 %, reduced motion respected. The score viewer offers a text
 description of the excerpt, announces the current bar during playback and
 offers playback and text references as alternatives to the notation.
+
+## 11. Modules and presets
+
+Not every choir needs every function. Everything outside the core is a
+**module** that admins switch on and off in the app under **Settings →
+Modules**. The core is always on: the catalog (works, versions, copies,
+fields, search, status), the start page, the file sync with the archive
+folder, roles, the audit log, CSV import and export, backup and restore, and
+the settings.
+
+Rules:
+
+- **Off means off on the server, too.** The routes of a switched-off module
+  answer 404 ("This function is switched off."); background jobs,
+  notifications, start page cards and the dashboard widget leave it out, and
+  the navigation, sidebar tabs and buttons disappear. Links to it (e.g. from
+  older notifications) open the start page with a note.
+- **Nothing is deleted.** The data of a module stay in the catalog, the CSV
+  and the backups. Switching the module on again shows everything again.
+- **Switching off never makes anything less safe.** The rights checks for the
+  score view, playback, practice audio files and internal preservation copies
+  apply whatever is switched on. Without the module "Rights confirmation and
+  licenses" nothing can be confirmed or licensed, so nothing more is played or
+  released than before.
+- **Dependencies.** Some modules need others (e.g. playback needs the score
+  view, the calendar needs the concerts). Switching a module on also switches
+  on what it needs. Switching off a module that others need first lists them;
+  their own switches stay as they are, they stop working and come back with
+  the module. Each switch shows what it needs and why it is not working.
+
+Every change of a switch is recorded in the audit log (object type
+`settings`).
+
+### Presets
+
+| Preset | Switches on |
+|---|---|
+| **Simple** | the core, the score view with playback and the notifications (of the core only the one about a failed weekly backup is left) |
+| **Standard** | everything except practice audio files, the print station, the proposals inbox, checksums and statistics |
+| **Complete** | everything |
+
+A preset sets every switch at once; the settings ask first and list what
+changes.
+
+**New installations** start with the preset **Standard**. It is chosen for
+small choirs with one volunteer music librarian: catalog, rights, scores,
+questions, concerts and the care of the stock are what such a choir uses in
+its first year. Left off, and easy to switch on when needed:
+
+- *Practice audio files*: the files leave the app and are passed on; making
+  them is a decision of the choir about rights.
+- *Print station*: only for choirs that run one.
+- *Proposals inbox*: only useful with tools or transcription rounds (role
+  "Proposals (tools)").
+- *Checksums*: the job reads all archive files again and again in the
+  background; that is for large archives that must document their integrity.
+  The weekly backup is the safety net of every installation.
+- *Statistics and annual report*: figures for the board of a larger archive.
+
+**Existing installations** keep every function: an update from a version
+before 0.1.27 stores all switches as on. The switches are stored on every
+installation and update, so a later change of the defaults never switches
+anything at an existing installation; a module added by a later version gets
+its default. The **interface for agents** (planned for milestone 0.6) starts
+off everywhere and is not part of any preset.
+
+### The modules
+
+| Module | Needs | Standard | Switched off |
+|---|---|---|---|
+| Rights confirmation and licenses | – | on | No confirming, no licenses to add or change, no list of ending licenses, no license reminders. Existing licenses and confirmations still count for playback and releases. |
+| Valid version | – | on | The conductor cannot choose or clear the valid version; no card "no valid version chosen". A chosen version stays recorded. |
+| Register of persons | – | on | No register, no contributions, no import of a research list. |
+| Protection terms | Register of persons | on | No protection proposal, no resubmission list, no notification about ended protection terms. |
+| Releases | Rights confirmation and licenses | on | The three releases below are inactive. |
+| Singers' portal | Releases | on | No portal list, no adding to or removing from the portal, no cards and notification; song lists without the portal column. |
+| Print station | Releases | off | No print station list. |
+| Publication | Releases | on | The publication status is not shown. |
+| Score view | – | on | No score view; the server does not hand out the MusicXML. |
+| Playback | Score view | on | No playback. |
+| Practice audio files | Playback | off | The server refuses every export. |
+| Excerpt links | Score view | on | No new links, and existing links do not open (they are kept and expire as before). |
+| Questions and tasks | – | on | No questions and tasks, no task cards and notifications. Existing tasks are kept. |
+| Proposals inbox | – | off | No inbox; tools cannot propose. Open proposals are kept. |
+| Concerts and song lists | – | on | No concerts and song lists, no deadlines on the start page, in the dashboard or as notifications. |
+| Import of performance lists | Concerts and song lists | on | No import, no list of unclear programme lines. |
+| Repertoire figures | Concerts and song lists | on | The catalog shows the repertoire values of the imported catalog; no thresholds in the settings. |
+| Concerts in the calendar | Concerts and song lists | on | No calendar files and entries. Entries in calendars stay there. |
+| New accessions and shelf labels | – | on | No accession assistant and no labels. The import still creates copies. |
+| Merging works | – | on | No merge proposals, no merging and no undo. Merges done stay. |
+| Inventory | – | on | No inventory lists. Recorded counts stay in the catalog. |
+| Checksums | – | off | The hourly job does nothing; no checksum list, no notification. |
+| Statistics and annual report | – | off | No statistics, no annual report. |
+| Dashboard widget | – | on | Nextcloud does not offer the widget. |
+| Notifications | – | on | The app sends no notifications; notifications sent before disappear when they are shown. |
+| One switch per occasion | Notifications and the module of the occasion | on | That notification is not sent; the daily checks withdraw it. Occasions: proposals waiting, remove from the singers' portal, license ends soon, license has ended, weekly backup failed, new question or task, question answered, concert deadlines, confirm what was sung, protection term ended, file changed unnoticed. |
+
+### Command line
+
+On instances with shell access the same is possible with `occ`; the command
+resolves the dependencies and reports them:
+
+```sh
+occ notenarchiv:modules list            # table: switch, active, needs (--json for scripts)
+occ notenarchiv:modules enable calendar # also switches on "concerts" if needed
+occ notenarchiv:modules disable statistics practice_audio
+occ notenarchiv:modules preset standard # simple | standard | complete
+```
+
+Module keys are listed in `docs/api.md` ("Modules and the personal view").
+
+### Personal view
+
+Independently of the modules, every person can hide navigation areas and
+start page cards they do not need (**Customize view** in the navigation). It
+is stored on the server for the account and changes no permission; hidden
+areas still open through links and notifications.

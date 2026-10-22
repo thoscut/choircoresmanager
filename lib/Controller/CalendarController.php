@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OCA\Notenarchiv\Controller;
 
 use OCA\Notenarchiv\AppInfo\Application;
+use OCA\Notenarchiv\Attribute\RequiresModule;
 use OCA\Notenarchiv\Exception\AccessDeniedException;
 use OCA\Notenarchiv\Exception\UserFacingException;
 use OCA\Notenarchiv\Service\ConcertCalendarService;
@@ -28,6 +29,8 @@ use Psr\Log\LoggerInterface;
  *
  * @psalm-suppress UnusedClass
  */
+#[RequiresModule('concerts')]
+#[RequiresModule('calendar')]
 #[OpenAPI(OpenAPI::SCOPE_IGNORE)]
 class CalendarController extends Controller {
 	use RunsActions;

@@ -60,7 +60,7 @@ import { copyText } from '../clipboard.ts'
 import { focusAfterDialog } from '../focus.ts'
 import { referenceWords } from '../labels.ts'
 import { textReference } from '../references.ts'
-import { canCreateLinks, canCreateTasks, fieldInfo, fieldLabel } from '../store.ts'
+import { canCreateLinks, canCreateTasks, fieldInfo, fieldLabel, isModuleActive } from '../store.ts'
 
 /** Practice audio files: own chunk, loaded when the dialog is opened */
 const PracticeAudioDialog = defineAsyncComponent(() => import('./PracticeAudioDialog.vue'))
@@ -88,7 +88,9 @@ const tempoHintId = useId()
 const volumeId = useId()
 
 const score = computed(() => props.detail.score)
-const canPlay = computed(() => score.value?.canPlay === true)
+/** Playback (module "playback"); the server also refuses it when switched off. */
+const playbackOn = computed(() => isModuleActive('playback'))
+const canPlay = computed(() => playbackOn.value && score.value?.canPlay === true)
 
 // ---- header -----------------------------------------------------------------
 
@@ -590,9 +592,12 @@ watch(repeats, () => updateTimeline())
 
 const practiceOpen = ref(false)
 const practiceButton = ref(null)
-const canExportAudio = computed(() => score.value?.canExportAudio === true)
-// Why the button is missing although playback is allowed (translated by the server)
-const exportReason = computed(() => (score.value?.exportReason ? translateLabel(score.value.exportReason) : ''))
+/** Practice audio files (module "practice_audio"); the server checks every export. */
+const practiceAudioOn = computed(() => isModuleActive('practice_audio'))
+const canExportAudio = computed(() => practiceAudioOn.value && score.value?.canExportAudio === true)
+// Why the button is missing although playback is allowed (translated by the server);
+// nothing when the function is switched off
+const exportReason = computed(() => (practiceAudioOn.value && score.value?.exportReason ? translateLabel(score.value.exportReason) : ''))
 const tempoValue = computed(() => t('notenarchiv', '{percent} % ({mark})', { percent: tempoPercent.value, mark: tempoMark(tempoPercent.value / 100) }))
 
 function openPractice(): void {
@@ -986,7 +991,7 @@ onBeforeUnmount(() => {
 							{{ exportReason }}
 						</p>
 					</section>
-					<NcNoteCard v-else type="info" class="score-viewer__no-playback">
+					<NcNoteCard v-else-if="playbackOn" type="info" class="score-viewer__no-playback">
 						{{ playReason }}
 					</NcNoteCard>
 

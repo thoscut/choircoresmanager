@@ -95,6 +95,7 @@ sudo -u www-data php tests/Integration/practice_audio_test.php /var/www/nextclou
 sudo -u www-data php tests/Integration/statistics_test.php    /var/www/nextcloud <uid> [<programme-csv>]
 sudo -u www-data php tests/Integration/backup_test.php        /var/www/nextcloud <uid>
 sudo -u www-data php tests/Integration/calendar_test.php      /var/www/nextcloud <uid>
+sudo -u www-data php tests/Integration/modules_test.php       /var/www/nextcloud <uid> <shelfmark-protected>
 ```
 
 `statistics_test.php` fixes no figures of a catalog, so it runs on any
@@ -110,6 +111,14 @@ calendar interface, adds it again after a change and after the cancellation
 (updates instead of duplicates), checks the calendar files with Nextcloud's
 iCalendar parser (Sabre VObject) and the dashboard widget; the calendar is
 deleted and everything is rolled back.
+
+`modules_test.php` switches all modules on, then concerts, the dashboard
+widget and the rights off and on again: the routes answer 404, the daily
+checks, the start page and the widget leave the concerts out and withdraw
+their notification, the concert and its programme stay, and playback and
+practice audio of a protected version stay refused. Everything is rolled
+back, and at the end the module switches are exactly as before (also those
+that were not stored).
 
 `<uid>` must hold the role `librarian`; each script's header lists further
 requirements (CSV paths are relative to the user's files). `backup_test.php`
@@ -144,8 +153,10 @@ real) and runs the file sync. It checks the figures of
 `tools/demo/README.md`: 23 rows, 7 with MusicXML, 1 preservation copy,
 19 × public domain, 2 × protected, 2 × open; 30 files (23 PDF, 4 MXL,
 3 MusicXML), 29 assigned, `Mappe_4/4-04_…pdf` not assignable, `LIESMICH.txt`
-ignored, `_Import` skipped, 4-3 without a file. Then it runs the tests with
-these shelf marks of the demo catalog:
+ignored, `_Import` skipped, 4-3 without a file. It switches every module on
+(`occ notenarchiv:modules preset complete`; a new installation starts with
+the preset "standard"). Then it runs the tests with these shelf marks of the
+demo catalog:
 
 | Script | Arguments | Why |
 |---|---|---|
@@ -157,6 +168,7 @@ these shelf marks of the demo catalog:
 | `maintenance_test.php` | `_Import/persons.csv 2-4 3-2 2-1` | 2-4 and 3-2 are two copies of the same print with an uncertainly identified editor; all persons of 2-1 died more than 70 years ago |
 | `practice_audio_test.php` | `2-6 3-1 2-2` | 2-6 is protected without a license for practice audio, 3-1 an internal preservation copy, 2-2 public domain but not confirmed |
 | `statistics_test.php` | `_Import/performances.csv` | the performance list gives the statistics concerts to count; no fixed figures |
+| `modules_test.php` | `2-6` | 2-6 is protected without a license for practice audio |
 | `backup_test.php` | – | |
 
 The person and performance lists are imported only inside the tests'

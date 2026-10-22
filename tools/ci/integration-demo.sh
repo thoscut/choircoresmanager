@@ -139,6 +139,13 @@ step "2. Roles"
 occ notenarchiv:setup "$CI_USER" --role "librarian=$CI_GROUP" --role "reader=$CI_GROUP" \
 	--role conductor= --role operations= --role contributor=
 
+step "2b. Modules"
+# A new installation starts with the preset "standard"; the tests cover
+# every function, so all modules are switched on. modules_test switches
+# some off and on again and restores this state exactly.
+occ notenarchiv:modules list
+occ notenarchiv:modules preset complete
+
 step "3. Demo data in the files of $CI_USER"
 datadir="$(occ config:system:get datadirectory)"
 if [ -e "$datadir/$CI_USER/files/$FOLDER" ]; then
@@ -213,6 +220,10 @@ run_test practice_audio_test 2-6 3-1 2-2
 # Consistency of the statistics and the annual report with the performance
 # records imported inside the test (rolled back); no fixed figures.
 run_test statistics_test "$IMPORT/performances.csv"
+# Concerts, the dashboard widget and rights switched off and on again
+# (rolled back, module switches restored); 2-6 is protected without a
+# license for practice audio.
+run_test modules_test 2-6
 run_test backup_test
 
 echo

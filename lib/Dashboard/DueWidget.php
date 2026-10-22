@@ -6,6 +6,8 @@ namespace OCA\Notenarchiv\Dashboard;
 
 use OCA\Notenarchiv\AppInfo\Application;
 use OCA\Notenarchiv\Service\DueService;
+use OCA\Notenarchiv\Service\Modules;
+use OCA\Notenarchiv\Service\PersonalView;
 use OCA\Notenarchiv\Service\Roles;
 use OCP\Dashboard\IAPIWidgetV2;
 use OCP\Dashboard\IButtonWidget;
@@ -23,8 +25,10 @@ use OCP\IUserSession;
  * shows for the user's roles, in the same order (concerts with a deadline,
  * the cards with a number, the tasks), each with a link into the app.
  *
- * Only accounts with an archive role get the widget; the items are checked
- * again for the account that asks for them. Items contain no personal data:
+ * Only accounts with an archive role get the widget, and only while the
+ * module "dashboard_widget" is on; the items are checked again for the
+ * account that asks for them. Cards and lists the account has hidden in its
+ * personal view are left out here, too. Items contain no personal data:
  * concert titles and dates, card labels with their number, shelf mark and
  * title of the copy a task is about (as in the notifications), never the
  * text of a question or the name of a person.
@@ -41,6 +45,8 @@ class DueWidget implements IAPIWidgetV2, IIconWidget, IButtonWidget, IConditiona
 		private IUserSession $userSession,
 		private Roles $roles,
 		private DueService $due,
+		private Modules $modules,
+		private PersonalView $personalView,
 	) {
 	}
 
@@ -81,12 +87,13 @@ class DueWidget implements IAPIWidgetV2, IIconWidget, IButtonWidget, IConditiona
 	}
 
 	/**
-	 * Only for accounts with an archive role (not for admins without one).
+	 * Only for accounts with an archive role (not for admins without one),
+	 * while the module is on.
 	 */
 	#[\Override]
 	public function isEnabled(): bool {
 		$user = $this->userSession->getUser();
-		return $user !== null && $this->roles->rolesOf($user->getUID()) !== [];
+		return $user !== null && $this->modules->isEnabled('dashboard_widget') && $this->roles->rolesOf($user->getUID()) !== [];
 	}
 
 	#[\Override]
@@ -100,14 +107,18 @@ class DueWidget implements IAPIWidgetV2, IIconWidget, IButtonWidget, IConditiona
 	 */
 	#[\Override]
 	public function getItemsV2(string $userId, ?string $since = null, int $limit = 7): WidgetItems {
+		if (!$this->modules->isEnabled('dashboard_widget')) {
+			return new WidgetItems([], $this->l->t('This function is switched off.'));
+		}
 		if ($this->roles->rolesOf($userId) === []) {
 			return new WidgetItems([], $this->l->t('You have no role in the music archive.'));
 		}
 		$due = $this->due->forUser($userId);
+		$hidden = $this->personalView->get($userId)['cards'];
 		$base = $this->appUrl();
 		$icon = $this->url->getAbsoluteURL($this->url->imagePath(Application::APP_ID, 'dashboard-item.svg'));
 		$items = [];
-		foreach ($due['concerts'] as $concert) {
+		foreach (in_array('concerts', $hidden, true) ? [] : $due['concerts'] as $concert) {
 			$items[] = new WidgetItem(
 				$concert['title'] !== '' ? $concert['title'] : $this->l->t('(no title)'),
 				$this->formatDate($concert['date']) . ': ' . $this->l->t($concert['label']),
@@ -117,6 +128,9 @@ class DueWidget implements IAPIWidgetV2, IIconWidget, IButtonWidget, IConditiona
 			);
 		}
 		foreach ($due['cards'] as $card) {
+			if (in_array($card['key'], $hidden, true)) {
+				continue;
+			}
 			$items[] = new WidgetItem(
 				$this->l->t($card['label']),
 				$this->l->n('%n entry', '%n entries', $card['count']),
@@ -125,7 +139,7 @@ class DueWidget implements IAPIWidgetV2, IIconWidget, IButtonWidget, IConditiona
 				'card-' . $card['key'],
 			);
 		}
-		foreach ($due['tasks'] as $task) {
+		foreach (in_array('tasks', $hidden, true) ? [] : $due['tasks'] as $task) {
 			$id = $task['id'] ?? null;
 			$copyId = $task['copy_id'] ?? null;
 			if (!is_int($id) || !is_int($copyId)) {

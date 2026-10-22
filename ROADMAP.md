@@ -172,6 +172,10 @@ Meilensteinen.
 
 ### 0.5.1 Module und Voreinstellungen
 
+*Umgesetzt mit App-Version 0.1.27* (Register: `lib/Service/Modules.php`;
+Beschreibung im Admin-Guide, Abschnitt „Modules and presets“, und in
+`docs/api.md`).
+
 - **Modul-Schalter in den Admin-Einstellungen**, gruppiert und mit
   Beschreibung. Abhängigkeiten werden angezeigt (z. B. Übe-Audio braucht die
   Notenansicht, der Kalender die Konzerte). Dazu ein `occ`-Befehl.

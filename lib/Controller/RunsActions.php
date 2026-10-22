@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OCA\Notenarchiv\Controller;
 
 use OCA\Notenarchiv\Exception\AccessDeniedException;
+use OCA\Notenarchiv\Exception\ModuleDisabledException;
 use OCA\Notenarchiv\Exception\UnknownLinkException;
 use OCA\Notenarchiv\Exception\UserFacingException;
 use OCP\AppFramework\Http;
@@ -36,6 +37,9 @@ trait RunsActions {
 				$response->throttle(['reason' => 'unknown_token']);
 			}
 			return $response;
+		} catch (ModuleDisabledException) {
+			// A part of the action belongs to a module that is switched off.
+			return new JSONResponse(['error' => $this->l->t('This function is switched off.')], Http::STATUS_NOT_FOUND);
 		} catch (\Throwable $e) {
 			$this->logger->error('Notenarchiv: ' . $e->getMessage(), ['exception' => $e]);
 			return new JSONResponse(['error' => $this->l->t('Internal error. Details are in the Nextcloud log.')], Http::STATUS_INTERNAL_SERVER_ERROR);

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OCA\Notenarchiv\Controller;
 
 use OCA\Notenarchiv\AppInfo\Application;
+use OCA\Notenarchiv\Attribute\RequiresModule;
 use OCA\Notenarchiv\Exception\InvalidInputException;
 use OCA\Notenarchiv\Service\ExportService;
 use OCA\Notenarchiv\Service\FullBackupService;
@@ -58,6 +59,7 @@ class WorkflowController extends Controller {
 	}
 
 	#[NoAdminRequired]
+	#[RequiresModule('rights')]
 	#[FrontpageRoute(verb: 'POST', url: '/api/versions/{id}/confirm', requirements: ['id' => '\d+'])]
 	public function confirm(int $id, string $status = '', string $reason = '', string $evidence = ''): JSONResponse {
 		return $this->run(function (string $uid) use ($id, $status, $reason, $evidence) {
@@ -67,6 +69,7 @@ class WorkflowController extends Controller {
 	}
 
 	#[NoAdminRequired]
+	#[RequiresModule('rights')]
 	#[FrontpageRoute(verb: 'POST', url: '/api/versions/{id}/set-open', requirements: ['id' => '\d+'])]
 	public function setOpen(int $id, string $reason = ''): JSONResponse {
 		return $this->run(function (string $uid) use ($id, $reason) {
@@ -76,6 +79,7 @@ class WorkflowController extends Controller {
 	}
 
 	#[NoAdminRequired]
+	#[RequiresModule('portal')]
 	#[FrontpageRoute(verb: 'POST', url: '/api/versions/{id}/portal', requirements: ['id' => '\d+'])]
 	public function addToPortal(int $id, string $since = ''): JSONResponse {
 		return $this->run(function (string $uid) use ($id, $since) {
@@ -85,6 +89,7 @@ class WorkflowController extends Controller {
 	}
 
 	#[NoAdminRequired]
+	#[RequiresModule('portal')]
 	#[FrontpageRoute(verb: 'POST', url: '/api/versions/{id}/portal-remove', requirements: ['id' => '\d+'])]
 	public function removeFromPortal(int $id, string $reason = ''): JSONResponse {
 		return $this->run(function (string $uid) use ($id, $reason) {
@@ -94,6 +99,7 @@ class WorkflowController extends Controller {
 	}
 
 	#[NoAdminRequired]
+	#[RequiresModule('valid_version')]
 	#[FrontpageRoute(verb: 'POST', url: '/api/versions/{id}/valid', requirements: ['id' => '\d+'])]
 	public function setValid(int $id, ?string $reason = null): JSONResponse {
 		return $this->run(function (string $uid) use ($id, $reason) {
@@ -103,6 +109,7 @@ class WorkflowController extends Controller {
 	}
 
 	#[NoAdminRequired]
+	#[RequiresModule('valid_version')]
 	#[FrontpageRoute(verb: 'POST', url: '/api/versions/{id}/valid-clear', requirements: ['id' => '\d+'])]
 	public function clearValid(int $id, ?string $reason = null): JSONResponse {
 		return $this->run(function (string $uid) use ($id, $reason) {
@@ -115,6 +122,7 @@ class WorkflowController extends Controller {
 	 * @param array<string, mixed> $license
 	 */
 	#[NoAdminRequired]
+	#[RequiresModule('rights')]
 	#[FrontpageRoute(verb: 'POST', url: '/api/versions/{id}/licenses', requirements: ['id' => '\d+'])]
 	public function createLicense(int $id, array $license = []): JSONResponse {
 		return $this->run(fn (string $uid) => $this->licenses->create($id, $license, $uid));
@@ -124,12 +132,14 @@ class WorkflowController extends Controller {
 	 * @param array<string, mixed> $license
 	 */
 	#[NoAdminRequired]
+	#[RequiresModule('rights')]
 	#[FrontpageRoute(verb: 'PATCH', url: '/api/licenses/{id}', requirements: ['id' => '\d+'])]
 	public function updateLicense(int $id, array $license = []): JSONResponse {
 		return $this->run(fn (string $uid) => $this->licenses->update($id, $license, $uid));
 	}
 
 	#[NoAdminRequired]
+	#[RequiresModule('rights')]
 	#[FrontpageRoute(verb: 'GET', url: '/api/licenses/ending')]
 	public function licensesEnding(int $days = 30): JSONResponse {
 		return $this->run(function (string $uid) use ($days) {
@@ -139,6 +149,7 @@ class WorkflowController extends Controller {
 	}
 
 	#[NoAdminRequired]
+	#[RequiresModule('proposals')]
 	#[FrontpageRoute(verb: 'GET', url: '/api/proposals')]
 	public function proposals(): JSONResponse {
 		return $this->run(function (string $uid) {
@@ -151,12 +162,14 @@ class WorkflowController extends Controller {
 	 * @param array<string, mixed> $fields
 	 */
 	#[NoAdminRequired]
+	#[RequiresModule('proposals')]
 	#[FrontpageRoute(verb: 'POST', url: '/api/proposals')]
 	public function propose(string $level = '', int $id = 0, array $fields = [], ?string $reason = null, ?string $source = null): JSONResponse {
 		return $this->run(fn (string $uid) => $this->proposals->propose($level, $id, $fields, $uid, $reason, $source));
 	}
 
 	#[NoAdminRequired]
+	#[RequiresModule('proposals')]
 	#[FrontpageRoute(verb: 'POST', url: '/api/proposals/{id}/accept', requirements: ['id' => '\d+'])]
 	public function acceptProposal(int $id, ?string $reason = null): JSONResponse {
 		return $this->run(function (string $uid) use ($id, $reason) {
@@ -166,6 +179,7 @@ class WorkflowController extends Controller {
 	}
 
 	#[NoAdminRequired]
+	#[RequiresModule('proposals')]
 	#[FrontpageRoute(verb: 'POST', url: '/api/proposals/{id}/reject', requirements: ['id' => '\d+'])]
 	public function rejectProposal(int $id, ?string $reason = null): JSONResponse {
 		return $this->run(function (string $uid) use ($id, $reason) {
@@ -175,8 +189,23 @@ class WorkflowController extends Controller {
 	}
 
 	#[NoAdminRequired]
-	#[FrontpageRoute(verb: 'GET', url: '/api/lists/{target}', requirements: ['target' => 'portal|print-station'])]
-	public function releaseList(string $target, int $all = 0): JSONResponse {
+	#[RequiresModule('portal')]
+	#[FrontpageRoute(verb: 'GET', url: '/api/lists/portal')]
+	public function portalList(int $all = 0): JSONResponse {
+		return $this->releaseList('portal', $all);
+	}
+
+	#[NoAdminRequired]
+	#[RequiresModule('print_station')]
+	#[FrontpageRoute(verb: 'GET', url: '/api/lists/print-station')]
+	public function printStationList(int $all = 0): JSONResponse {
+		return $this->releaseList('print-station', $all);
+	}
+
+	/**
+	 * @param 'portal'|'print-station' $target
+	 */
+	private function releaseList(string $target, int $all): JSONResponse {
 		return $this->run(function (string $uid) use ($target, $all) {
 			$this->roles->requireAccess($uid);
 			$rows = $target === 'portal'

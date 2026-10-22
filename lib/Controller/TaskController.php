@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OCA\Notenarchiv\Controller;
 
 use OCA\Notenarchiv\AppInfo\Application;
+use OCA\Notenarchiv\Attribute\RequiresModule;
 use OCA\Notenarchiv\Service\DueService;
 use OCA\Notenarchiv\Service\LinkService;
 use OCA\Notenarchiv\Service\Roles;
@@ -61,6 +62,7 @@ class TaskController extends Controller {
 	}
 
 	#[NoAdminRequired]
+	#[RequiresModule('tasks')]
 	#[FrontpageRoute(verb: 'GET', url: '/api/tasks')]
 	public function tasks(int $closed = 0): JSONResponse {
 		return $this->run(function (string $uid) use ($closed) {
@@ -73,12 +75,14 @@ class TaskController extends Controller {
 	 * @param array<string, mixed> $task
 	 */
 	#[NoAdminRequired]
+	#[RequiresModule('tasks')]
 	#[FrontpageRoute(verb: 'POST', url: '/api/copies/{id}/tasks', requirements: ['id' => '\d+'])]
 	public function createTask(int $id, array $task = []): JSONResponse {
 		return $this->run(fn (string $uid) => $this->tasks->create($id, $task, $uid));
 	}
 
 	#[NoAdminRequired]
+	#[RequiresModule('tasks')]
 	#[FrontpageRoute(verb: 'POST', url: '/api/tasks/{id}/answer', requirements: ['id' => '\d+'])]
 	public function answer(int $id, string $answer = ''): JSONResponse {
 		return $this->run(function (string $uid) use ($id, $answer) {
@@ -88,6 +92,7 @@ class TaskController extends Controller {
 	}
 
 	#[NoAdminRequired]
+	#[RequiresModule('tasks')]
 	#[FrontpageRoute(verb: 'POST', url: '/api/tasks/{id}/close', requirements: ['id' => '\d+'])]
 	public function close(int $id, string $status = '', ?string $note = null): JSONResponse {
 		return $this->run(function (string $uid) use ($id, $status, $note) {
@@ -100,12 +105,14 @@ class TaskController extends Controller {
 	 * @param array<string, mixed> $link
 	 */
 	#[NoAdminRequired]
+	#[RequiresModule('excerpt_links')]
 	#[FrontpageRoute(verb: 'POST', url: '/api/copies/{id}/links', requirements: ['id' => '\d+'])]
 	public function createLink(int $id, array $link = []): JSONResponse {
 		return $this->run(fn (string $uid) => $this->links->create($id, $link, $uid));
 	}
 
 	#[NoAdminRequired]
+	#[RequiresModule('excerpt_links')]
 	#[FrontpageRoute(verb: 'GET', url: '/api/links')]
 	public function activeLinks(): JSONResponse {
 		return $this->run(function (string $uid) {
@@ -121,6 +128,7 @@ class TaskController extends Controller {
 	 */
 	#[NoAdminRequired]
 	#[BruteForceProtection(action: 'notenarchiv_link')]
+	#[RequiresModule('excerpt_links')]
 	#[FrontpageRoute(verb: 'GET', url: '/api/links/{token}', requirements: ['token' => '[A-Za-z0-9]{32}'])]
 	public function resolveLink(string $token): JSONResponse {
 		// An unknown token ends in UnknownLinkException; run() marks that
@@ -129,6 +137,7 @@ class TaskController extends Controller {
 	}
 
 	#[NoAdminRequired]
+	#[RequiresModule('excerpt_links')]
 	#[FrontpageRoute(verb: 'POST', url: '/api/links/{id}/revoke', requirements: ['id' => '\d+'])]
 	public function revokeLink(int $id): JSONResponse {
 		return $this->run(function (string $uid) use ($id) {

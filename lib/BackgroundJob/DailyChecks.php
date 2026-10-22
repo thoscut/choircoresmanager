@@ -14,6 +14,7 @@ use OCA\Notenarchiv\Db\WorkVersionMapper;
 use OCA\Notenarchiv\Service\AppSettings;
 use OCA\Notenarchiv\Service\ConcertDeadlines;
 use OCA\Notenarchiv\Service\FieldValue;
+use OCA\Notenarchiv\Service\Modules;
 use OCA\Notenarchiv\Service\NotificationService;
 use OCA\Notenarchiv\Service\PersonService;
 use OCA\Notenarchiv\Service\ProtectionTerm;
@@ -34,6 +35,10 @@ use OCP\IAppConfig;
  *
  * Each case is notified once (state kept in lazy app config) and withdrawn
  * when it is resolved.
+ *
+ * A part whose notification is switched off (module `notify_<subject>`) is
+ * not computed; its notifications are withdrawn and its state is cleared,
+ * so that the cases are notified again once it is switched on.
  */
 class DailyChecks extends TimedJob {
 	private const WARN_DAYS = 30;
@@ -50,6 +55,7 @@ class DailyChecks extends TimedJob {
 		private IAppConfig $appConfig,
 		private EventMapper $events,
 		private PersonService $persons,
+		private Modules $modules,
 	) {
 		parent::__construct($time);
 		$this->setInterval(24 * 3600);
@@ -106,8 +112,9 @@ class DailyChecks extends TimedJob {
 				$state === 'confirm' ? [Roles::CONDUCTOR] : [Roles::CONDUCTOR, Roles::LIBRARIAN]);
 		}
 
+		$portalOn = $this->modules->notificationEnabled(NotificationService::PORTAL_REMOVE);
 		foreach ($versions as $version) {
-			$onPortal = $this->rights->isOnPortal($version);
+			$onPortal = $portalOn && $this->rights->isOnPortal($version);
 			$denied = $onPortal && $this->rights->portalDenial($version, $licensesByVersion[$version->getId()] ?? [], $today) !== null;
 			$this->transition('notified_portal_' . $version->getId(), $denied ? 'remove' : '', 'version', (string)$version->getId(),
 				['remove' => NotificationService::PORTAL_REMOVE], $describe($version->getId()));
@@ -117,7 +124,9 @@ class DailyChecks extends TimedJob {
 		// involved the protection has ended. A task to check; nothing changes
 		// automatically.
 		$protected = array_keys(array_filter($versions, fn ($v): bool => $v->getRightsStatus() === 'protected'));
-		$proposals = $this->persons->protectionForVersions($protected, (int)substr($today, 0, 4));
+		$proposals = $this->modules->notificationEnabled(NotificationService::PROTECTION_ENDED)
+			? $this->persons->protectionForVersions($protected, (int)substr($today, 0, 4))
+			: [];
 		foreach ($versions as $version) {
 			$proposal = $proposals[$version->getId()] ?? null;
 			$ended = $proposal !== null && $proposal['status'] === ProtectionTerm::FREE;
@@ -128,7 +137,8 @@ class DailyChecks extends TimedJob {
 
 	/**
 	 * Notifies when a case enters a new state and withdraws the notification
-	 * of the previous state.
+	 * of the previous state. A state whose notification is switched off
+	 * counts as no state.
 	 *
 	 * @param array<array-key, string> $subjects state => notification subject
 	 * @param array<string, scalar|null> $parameters
@@ -136,6 +146,9 @@ class DailyChecks extends TimedJob {
 	 */
 	private function transition(string $key, string $state, string $objectType, string $objectId, array $subjects, array $parameters,
 		array $roles = [Roles::LIBRARIAN]): void {
+		if (isset($subjects[$state]) && !$this->modules->notificationEnabled($subjects[$state])) {
+			$state = '';
+		}
 		$previous = $this->appConfig->getValueString(Application::APP_ID, $key, '', true);
 		if ($previous === $state) {
 			return;

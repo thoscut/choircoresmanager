@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace OCA\Notenarchiv\Notification;
 
 use OCA\Notenarchiv\AppInfo\Application;
+use OCA\Notenarchiv\Service\Modules;
 use OCA\Notenarchiv\Service\NotificationService;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\L10N\IFactory;
+use OCP\Notification\AlreadyProcessedException;
 use OCP\Notification\INotification;
 use OCP\Notification\INotifier;
 use OCP\Notification\UnknownNotificationException;
@@ -16,11 +18,15 @@ use OCP\Notification\UnknownNotificationException;
 /**
  * Renders the app's notifications in the recipient's language and links them
  * to the app (opening the copy when the notification refers to one).
+ * Notifications whose switch has been turned off since they were sent are
+ * withdrawn when they are shown (AlreadyProcessedException: Nextcloud then
+ * deletes them).
  */
 class Notifier implements INotifier {
 	public function __construct(
 		private IFactory $l10nFactory,
 		private IURLGenerator $url,
+		private Modules $modules,
 	) {
 	}
 
@@ -38,6 +44,9 @@ class Notifier implements INotifier {
 	public function prepare(INotification $notification, string $languageCode): INotification {
 		if ($notification->getApp() !== Application::APP_ID) {
 			throw new UnknownNotificationException();
+		}
+		if (!$this->modules->notificationEnabled($notification->getSubject())) {
+			throw new AlreadyProcessedException();
 		}
 		$l = $this->l10nFactory->get(Application::APP_ID, $languageCode);
 		$p = $notification->getSubjectParameters();
