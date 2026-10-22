@@ -19,6 +19,7 @@ import {
 	mdiClipboardCheckOutline,
 	mdiClipboardTextOutline,
 	mdiCogOutline,
+	mdiEyeSettingsOutline,
 	mdiFileCertificateOutline,
 	mdiFileCheckOutline,
 	mdiFilterRemoveOutline,
@@ -61,6 +62,9 @@ import {
 	filtersActive,
 	isAdmin,
 	isLibrarian,
+	isModuleActive,
+	isViewShown,
+	personalViewDialogOpen,
 	resetFilters,
 	settingsDialogOpen,
 	visibleEntries,
@@ -90,37 +94,49 @@ interface ViewEntry {
 	icon: string
 }
 
-const workViews = computed<ViewEntry[]>(() => [
-	{ view: 'due', name: viewTitle('due', isLibrarian.value), icon: mdiHomeOutline },
-	{ view: 'tasks', name: viewTitle('tasks', isLibrarian.value), icon: mdiClipboardTextOutline },
-	...(canSeeProposals.value ? [{ view: 'proposals' as ViewName, name: viewTitle('proposals', isLibrarian.value), icon: mdiInboxArrowDownOutline }] : []),
-])
+/**
+ * Entries of a group of the navigation: views of switched-off modules and
+ * views the account has hidden (personal view) are left out.
+ *
+ * @param list - view and icon of each entry
+ */
+function shown(list: { view: ViewName, icon: string }[]): ViewEntry[] {
+	return list
+		.filter((entry) => isViewShown(entry.view))
+		.map((entry) => ({ ...entry, name: viewTitle(entry.view, isLibrarian.value) }))
+}
 
-const releaseViews = computed<ViewEntry[]>(() => [
-	{ view: 'portal', name: viewTitle('portal', isLibrarian.value), icon: mdiWeb },
-	{ view: 'printStation', name: viewTitle('printStation', isLibrarian.value), icon: mdiPrinterOutline },
-	{ view: 'licenses', name: viewTitle('licenses', isLibrarian.value), icon: mdiFileCertificateOutline },
-	{ view: 'links', name: viewTitle('links', isLibrarian.value), icon: mdiLinkVariant },
-])
+const workViews = computed<ViewEntry[]>(() => shown([
+	{ view: 'due', icon: mdiHomeOutline },
+	{ view: 'tasks', icon: mdiClipboardTextOutline },
+	...(canSeeProposals.value ? [{ view: 'proposals' as ViewName, icon: mdiInboxArrowDownOutline }] : []),
+]))
 
-const archiveViews = computed<ViewEntry[]>(() => [
-	{ view: 'persons', name: viewTitle('persons', isLibrarian.value), icon: mdiAccountMultipleOutline },
-	{ view: 'protection', name: viewTitle('protection', isLibrarian.value), icon: mdiCalendarClockOutline },
-	{ view: 'statistics', name: viewTitle('statistics', isLibrarian.value), icon: mdiChartBar },
-])
+const releaseViews = computed<ViewEntry[]>(() => shown([
+	{ view: 'portal', icon: mdiWeb },
+	{ view: 'printStation', icon: mdiPrinterOutline },
+	{ view: 'licenses', icon: mdiFileCertificateOutline },
+	{ view: 'links', icon: mdiLinkVariant },
+]))
 
-const maintenanceViews = computed<ViewEntry[]>(() => [
-	{ view: 'accession', name: viewTitle('accession', isLibrarian.value), icon: mdiArchivePlusOutline },
-	{ view: 'merges', name: viewTitle('merges', isLibrarian.value), icon: mdiCallMerge },
-	{ view: 'inventory', name: viewTitle('inventory', isLibrarian.value), icon: mdiClipboardCheckOutline },
-	{ view: 'checksums', name: viewTitle('checksums', isLibrarian.value), icon: mdiFileCheckOutline },
-])
+const archiveViews = computed<ViewEntry[]>(() => shown([
+	{ view: 'persons', icon: mdiAccountMultipleOutline },
+	{ view: 'protection', icon: mdiCalendarClockOutline },
+	{ view: 'statistics', icon: mdiChartBar },
+]))
 
-const programmeViews = computed<ViewEntry[]>(() => [
-	{ view: 'concerts', name: viewTitle('concerts', isLibrarian.value), icon: mdiCalendarStarOutline },
-	{ view: 'songLists', name: viewTitle('songLists', isLibrarian.value), icon: mdiFormatListNumbered },
-	{ view: 'ambiguous', name: viewTitle('ambiguous', isLibrarian.value), icon: mdiHelpRhombusOutline },
-])
+const maintenanceViews = computed<ViewEntry[]>(() => shown([
+	{ view: 'accession', icon: mdiArchivePlusOutline },
+	{ view: 'merges', icon: mdiCallMerge },
+	{ view: 'inventory', icon: mdiClipboardCheckOutline },
+	{ view: 'checksums', icon: mdiFileCheckOutline },
+]))
+
+const programmeViews = computed<ViewEntry[]>(() => shown([
+	{ view: 'concerts', icon: mdiCalendarStarOutline },
+	{ view: 'songLists', icon: mdiFormatListNumbered },
+	{ view: 'ambiguous', icon: mdiHelpRhombusOutline },
+]))
 
 /**
  * URL of a view, so that it can also be opened in a new tab.
@@ -209,12 +225,14 @@ const countText = computed(() => {
  * @param event - click on the navigation entry
  * @param open - what to open
  */
-function onFooterClick(event: Event, open: 'archive' | 'settings'): void {
+function onFooterClick(event: Event, open: 'archive' | 'settings' | 'view'): void {
 	event.preventDefault()
 	if (open === 'archive') {
 		archiveDialogOpen.value = true
-	} else {
+	} else if (open === 'settings') {
 		settingsDialogOpen.value = true
+	} else {
+		personalViewDialogOpen.value = true
 	}
 }
 </script>
@@ -284,10 +302,10 @@ function onFooterClick(event: Event, open: 'archive' | 'settings'): void {
 				<NcCheckboxRadioSwitch v-model="filters.preservationCopy">
 					{{ t('notenarchiv', 'Internal preservation copies only') }}
 				</NcCheckboxRadioSwitch>
-				<NcCheckboxRadioSwitch v-model="filters.unconfirmed">
+				<NcCheckboxRadioSwitch v-if="isModuleActive('rights')" v-model="filters.unconfirmed">
 					{{ t('notenarchiv', 'Public domain, not confirmed') }}
 				</NcCheckboxRadioSwitch>
-				<NcCheckboxRadioSwitch v-model="filters.noValidVersion">
+				<NcCheckboxRadioSwitch v-if="isModuleActive('valid_version')" v-model="filters.noValidVersion">
 					{{ t('notenarchiv', 'No version valid for the choir') }}
 				</NcCheckboxRadioSwitch>
 
@@ -312,7 +330,7 @@ function onFooterClick(event: Event, open: 'archive' | 'settings'): void {
 				</template>
 			</NcAppNavigationItem>
 
-			<NcAppNavigationCaption :name="t('notenarchiv', 'Releases')" />
+			<NcAppNavigationCaption v-if="releaseViews.length > 0" :name="t('notenarchiv', 'Releases')" />
 			<NcAppNavigationItem v-for="entry in releaseViews"
 				:key="entry.view"
 				:name="entry.name"
@@ -324,7 +342,7 @@ function onFooterClick(event: Event, open: 'archive' | 'settings'): void {
 				</template>
 			</NcAppNavigationItem>
 
-			<NcAppNavigationCaption :name="t('notenarchiv', 'Programmes')" />
+			<NcAppNavigationCaption v-if="programmeViews.length > 0" :name="t('notenarchiv', 'Programmes')" />
 			<NcAppNavigationItem v-for="entry in programmeViews"
 				:key="entry.view"
 				:name="entry.name"
@@ -336,7 +354,7 @@ function onFooterClick(event: Event, open: 'archive' | 'settings'): void {
 				</template>
 			</NcAppNavigationItem>
 
-			<NcAppNavigationCaption :name="t('notenarchiv', 'Maintaining the catalog')" />
+			<NcAppNavigationCaption v-if="maintenanceViews.length > 0" :name="t('notenarchiv', 'Maintaining the catalog')" />
 			<NcAppNavigationItem v-for="entry in maintenanceViews"
 				:key="entry.view"
 				:name="entry.name"
@@ -349,8 +367,14 @@ function onFooterClick(event: Event, open: 'archive' | 'settings'): void {
 			</NcAppNavigationItem>
 		</template>
 
-		<template v-if="isLibrarian || isAdmin" #footer>
+		<template #footer>
 			<NcAppNavigationList class="catalog-footer">
+				<NcAppNavigationItem :name="t('notenarchiv', 'Customize view')"
+					@click="onFooterClick($event, 'view')">
+					<template #icon>
+						<NcIconSvgWrapper :path="mdiEyeSettingsOutline" />
+					</template>
+				</NcAppNavigationItem>
 				<NcAppNavigationItem v-if="isLibrarian"
 					:name="t('notenarchiv', 'Archive management')"
 					@click="onFooterClick($event, 'archive')">

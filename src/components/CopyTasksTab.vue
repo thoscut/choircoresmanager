@@ -16,7 +16,7 @@ import LinkDialog from './LinkDialog.vue'
 import LinkList from './LinkList.vue'
 import TaskDialog from './TaskDialog.vue'
 import TaskItem from './TaskItem.vue'
-import { canCreateLinks, canCreateTasks, highlightedTaskId } from '../store.ts'
+import { canCreateLinks, canCreateTasks, highlightedTaskId, isModuleActive } from '../store.ts'
 
 const props = defineProps<{
 	detail: Detail
@@ -55,7 +55,7 @@ function onCreated(): void {
 
 <template>
 	<div class="copy-tasks">
-		<section aria-labelledby="copy-tasks-heading">
+		<section v-if="isModuleActive('tasks')" aria-labelledby="copy-tasks-heading">
 			<div class="copy-tasks__head">
 				<h3 id="copy-tasks-heading">
 					{{ t('notenarchiv', 'Questions and tasks') }}
@@ -83,7 +83,7 @@ function onCreated(): void {
 			</div>
 		</section>
 
-		<section aria-labelledby="copy-links-heading">
+		<section v-if="isModuleActive('excerpt_links')" aria-labelledby="copy-links-heading">
 			<div class="copy-tasks__head">
 				<h3 id="copy-links-heading">
 					{{ t('notenarchiv', 'Internal links') }}

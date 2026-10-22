@@ -26,7 +26,7 @@ import { focusAfterDialog, focusWhenPresent } from '../focus.ts'
 import { formatDate, toIsoDate } from '../format.ts'
 import { eventStatusLabel, ROLES } from '../labels.ts'
 import { navigate } from '../navigation.ts'
-import { canPlanEvents, hasAnyRole } from '../store.ts'
+import { canPlanEvents, hasAnyRole, isModuleActive } from '../store.ts'
 
 const props = defineProps<{
 	kind: EventKind
@@ -140,7 +140,7 @@ function onCreated(event: ChoirEvent): void {
 			</NcCheckboxRadioSwitch>
 		</div>
 
-		<section v-if="isConcert && upcoming.length > 0"
+		<section v-if="isConcert && upcoming.length > 0 && isModuleActive('calendar')"
 			class="events-view__calendar no-print"
 			aria-labelledby="events-calendar-heading">
 			<h3 id="events-calendar-heading">

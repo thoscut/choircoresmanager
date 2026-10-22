@@ -6,7 +6,9 @@ namespace OCA\Notenarchiv\Tests\Unit\Dashboard;
 
 use OCA\Notenarchiv\Dashboard\DueWidget;
 use OCA\Notenarchiv\Service\DueService;
+use OCA\Notenarchiv\Service\PersonalView;
 use OCA\Notenarchiv\Service\Roles;
+use OCA\Notenarchiv\Tests\Unit\Support\ModuleSwitches;
 use OCP\Dashboard\Model\WidgetButton;
 use OCP\Dashboard\Model\WidgetItem;
 use OCP\IL10N;
@@ -22,12 +24,18 @@ use PHPUnit\Framework\TestCase;
  */
 #[CoversClass(DueWidget::class)]
 final class DueWidgetTest extends TestCase {
+	use ModuleSwitches;
+
 	private const APP_URL = 'https://cloud.example.org/apps/notenarchiv/';
 
 	/** @var array<string, list<string>> */
 	private array $roles = ['carla' => ['conductor'], 'admin' => []];
 	private ?string $sessionUser = 'carla';
 	private int $dueCalls = 0;
+	/** @var list<string> modules switched off */
+	private array $off = [];
+	/** @var list<string> cards hidden in the personal view */
+	private array $hiddenCards = [];
 
 	/** @var array{cards: list<array{key: string, count: int, label: string}>, tasks: list<array<string, mixed>>, concerts: list<array{id: int, title: string, date: string, stage: string, label: string}>} */
 	private array $due = [
@@ -73,7 +81,9 @@ final class DueWidgetTest extends TestCase {
 			$this->dueCalls++;
 			return $this->due;
 		});
-		return new DueWidget($l, $url, $session, $roles, $due);
+		$personalView = $this->createStub(PersonalView::class);
+		$personalView->method('get')->willReturnCallback(fn (): array => ['navigation' => [], 'cards' => $this->hiddenCards]);
+		return new DueWidget($l, $url, $session, $roles, $due, $this->modulesWithout($this->off), $personalView);
 	}
 
 	public function testOnlyAccountsWithARoleGetTheWidget(): void {
@@ -84,6 +94,20 @@ final class DueWidgetTest extends TestCase {
 		self::assertFalse($this->widget()->isEnabled());
 		$this->sessionUser = null;
 		self::assertFalse($this->widget()->isEnabled(), 'nobody logged in');
+	}
+
+	public function testNoWidgetWhileTheModuleIsOff(): void {
+		$this->off = ['dashboard_widget'];
+		$widget = $this->widget();
+		self::assertFalse($widget->isEnabled());
+		self::assertSame([], $widget->getItemsV2('carla')->getItems());
+		self::assertSame(0, $this->dueCalls, 'the start page data are not even computed');
+	}
+
+	public function testLeavesOutWhatThePersonHides(): void {
+		$this->hiddenCards = ['concerts', 'valid_missing', 'tasks'];
+		$links = array_map(fn (WidgetItem $item): string => $item->getLink(), $this->widget()->getItemsV2('carla', null, 10)->getItems());
+		self::assertSame([self::APP_URL . '?due=tasks_open'], $links);
 	}
 
 	public function testDescribesItself(): void {

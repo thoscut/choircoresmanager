@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OCA\Notenarchiv\Controller;
 
 use OCA\Notenarchiv\AppInfo\Application;
+use OCA\Notenarchiv\Attribute\RequiresModule;
 use OCA\Notenarchiv\Db\AuditEntryMapper;
 use OCA\Notenarchiv\Exception\AccessDeniedException;
 use OCA\Notenarchiv\Exception\InvalidInputException;
@@ -112,7 +113,7 @@ class ApiController extends Controller {
 				$releases['printStation'] = $this->l->t($releases['printStation']);
 			}
 			$entry['releases'] = $releases;
-			$entry['protection'] = ProtectionText::apply($this->l, $entry['protection']);
+			$entry['protection'] = $entry['protection'] === null ? null : ProtectionText::apply($this->l, $entry['protection']);
 			return $entry;
 		});
 	}
@@ -121,6 +122,7 @@ class ApiController extends Controller {
 	 * Raw MusicXML of a score file for the score viewer.
 	 */
 	#[NoAdminRequired]
+	#[RequiresModule('score_viewer')]
 	#[FrontpageRoute(verb: 'GET', url: '/api/files/{id}/content', requirements: ['id' => '\d+'])]
 	public function fileContent(int $id): Response {
 		if ($this->userId === null) {

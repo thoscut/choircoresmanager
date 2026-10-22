@@ -6,21 +6,28 @@ namespace OCA\Notenarchiv\Tests\Unit\Notification;
 
 use OCA\Notenarchiv\Notification\Notifier;
 use OCA\Notenarchiv\Service\NotificationService;
+use OCA\Notenarchiv\Tests\Unit\Support\ModuleSwitches;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\L10N\IFactory;
+use OCP\Notification\AlreadyProcessedException;
 use OCP\Notification\INotification;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Notifications carry no internal error texts and link only into the app.
+ * Notifications carry no internal error texts and link only into the app;
+ * those of a switched-off occasion are withdrawn when shown.
  */
 #[CoversClass(Notifier::class)]
 final class NotifierTest extends TestCase {
+	use ModuleSwitches;
+
 	private string $parsedSubject = '';
 	private string $link = '';
+	/** @var list<string> modules switched off */
+	private array $off = [];
 
 	/**
 	 * @param array<string, mixed> $parameters
@@ -45,7 +52,7 @@ final class NotifierTest extends TestCase {
 			return $notification;
 		});
 		$notification->method('setIcon')->willReturnSelf();
-		(new Notifier($factory, $url))->prepare($notification, 'de');
+		(new Notifier($factory, $url, $this->modulesWithout($this->off)))->prepare($notification, 'de');
 	}
 
 	/**
@@ -70,6 +77,26 @@ final class NotifierTest extends TestCase {
 	public function testExportFailureShowsNoInternalDetails(array $parameters, string $expected): void {
 		$this->prepare(NotificationService::EXPORT_FAILED, $parameters);
 		self::assertSame($expected, $this->parsedSubject);
+	}
+
+	public function testASwitchedOffOccasionIsWithdrawn(): void {
+		$this->off = ['notify_task_new'];
+		$this->prepare(NotificationService::TASK_ANSWERED, ['shelfmark' => '5-1', 'title' => 'Ave']);
+		self::assertStringContainsString('has been answered', $this->parsedSubject, 'other occasions are still shown');
+		$this->expectException(AlreadyProcessedException::class);
+		$this->prepare(NotificationService::TASK_NEW, ['shelfmark' => '5-1', 'title' => 'Ave']);
+	}
+
+	public function testANotificationOfASwitchedOffModuleIsWithdrawn(): void {
+		$this->off = ['concerts'];
+		$this->expectException(AlreadyProcessedException::class);
+		$this->prepare(NotificationService::CONCERT_DEADLINE, ['eventId' => 3, 'title' => 'Advent', 'date' => '2026-12-06', 'weeks' => 8]);
+	}
+
+	public function testNoNotificationIsShownWithoutTheSwitchNotifications(): void {
+		$this->off = ['notifications'];
+		$this->expectException(AlreadyProcessedException::class);
+		$this->prepare(NotificationService::EXPORT_FAILED, []);
 	}
 
 	public function testLinksStayInsideTheApp(): void {

@@ -26,6 +26,19 @@ files, tasks and links, history (audit log). Sections you may edit show an
 delete button: a copy that leaves the archive gets the status *retired*,
 *missing* or *lent* with a reason.
 
+## Customize view
+
+**Customize view** at the bottom of the navigation hides the areas of the
+navigation and the parts of the start page you do not need, e.g. the
+statistics or the concert deadlines. The choice is stored with your account
+on the server, so it applies on every device. It only changes what you see:
+your permissions stay the same, and a hidden area still opens through a
+link or a notification. The start page and the catalog cannot be hidden.
+
+Functions that the administration has switched off (see the admin guide,
+"Modules and presets") are missing for everybody; a link to such a function
+opens the start page with the note *This function is switched off.*
+
 ## Rights (music librarian)
 
 - **Confirm** public domain or protection with a reason and evidence (e.g.

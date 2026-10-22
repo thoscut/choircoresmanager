@@ -33,6 +33,14 @@ export interface ArchiveInfo {
 	user: string
 }
 
+/** What an account has hidden (`meta.personalView`, `PUT /api/personal-view`). */
+export interface PersonalView {
+	/** views of the navigation */
+	navigation: string[]
+	/** cards of the start page, plus `concerts` and `tasks` for its lists */
+	cards: string[]
+}
+
 export interface Meta {
 	uid: string
 	admin: boolean
@@ -46,6 +54,13 @@ export interface Meta {
 	/** contribution role key => English label */
 	contributionRoles: Record<string, string>
 	archive: ArchiveInfo
+	/**
+	 * module key => active; null when the server sends none (older server:
+	 * every module counts as active)
+	 */
+	modules: Record<string, boolean> | null
+	/** what the account has hidden in its own view */
+	personalView: PersonalView
 }
 
 /** Role keys (see docs/api.md). */
@@ -548,6 +563,59 @@ export interface Settings {
 export interface SettingsUpdate {
 	roles?: Record<string, string[]>
 	archiveFolderId?: number
+}
+
+/** One module of `GET /api/settings/modules` (texts translated by the server). */
+export interface ModuleInfo {
+	key: string
+	group: string
+	label: string
+	description: string
+	/** direct requirements */
+	requires: string[]
+	/** the module's own switch */
+	enabled: boolean
+	/** whether it works: its switch and everything it requires is on */
+	active: boolean
+}
+
+export interface ModuleGroup {
+	key: string
+	label: string
+}
+
+export interface ModulePreset {
+	key: string
+	label: string
+	description: string
+	/** module key => on, as the preset sets it */
+	modules: Record<string, boolean>
+}
+
+/** `GET /api/settings/modules` */
+export interface ModuleSettings {
+	modules: ModuleInfo[]
+	groups: ModuleGroup[]
+	presets: ModulePreset[]
+	/** the core, always on (translated) */
+	core: string[]
+}
+
+/** What changed with `PUT /api/settings/modules`. */
+export interface ModuleChanges {
+	/** switches that changed as requested */
+	enabled: string[]
+	/** requirements switched on as well */
+	alsoEnabled: string[]
+	disabled: string[]
+	/** switch still on, but no longer working (needs a module switched off now) */
+	inactive: string[]
+	/** working again without being switched themselves */
+	activated: string[]
+}
+
+export interface ModuleSettingsResult extends ModuleSettings {
+	changes: ModuleChanges
 }
 
 /** Sort orders of the catalog list. */

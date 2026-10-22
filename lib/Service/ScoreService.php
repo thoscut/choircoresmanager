@@ -41,6 +41,7 @@ class ScoreService {
 		private RightsPolicy $policy,
 		private IRootFolder $rootFolder,
 		private ITempManager $tempManager,
+		private Modules $modules,
 	) {
 	}
 
@@ -49,6 +50,8 @@ class ScoreService {
 	 *
 	 * `exportReason` explains why practice audio files cannot be made while
 	 * playback is allowed (null otherwise; `reason` covers the rest).
+	 * Playback and practice audio of a switched-off module are not allowed;
+	 * the rights policy applies in any case.
 	 *
 	 * @param list<ArchiveFile> $files files of the copy
 	 * @return array{fileId: int, fileName: string, canView: bool, canPlay: bool, reason: ?string, canExportAudio: bool, exportReason: ?string}|null
@@ -59,8 +62,10 @@ class ScoreService {
 			return null;
 		}
 		$viewDenial = $this->policy->viewDenial($version, $uid);
-		$playDenial = $this->policy->playDenial($version, $uid);
-		$exportDenial = $playDenial === null ? $this->policy->practiceAudioDenial($version, $uid) : $playDenial;
+		$playDenial = $this->policy->playDenial($version, $uid)
+			?? ($this->modules->isEnabled('playback') ? null : Modules::PLAYBACK_OFF);
+		$exportDenial = $playDenial ?? ($this->policy->practiceAudioDenial($version, $uid)
+			?? ($this->modules->isEnabled('practice_audio') ? null : Modules::PRACTICE_AUDIO_OFF));
 		return [
 			'fileId' => $file->getId(),
 			'fileName' => $file->getName(),

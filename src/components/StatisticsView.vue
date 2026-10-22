@@ -39,7 +39,7 @@ import {
 	sumOf,
 	TASK_AGE_KEYS,
 } from '../statistics.ts'
-import { choiceLabel, openEntry } from '../store.ts'
+import { choiceLabel, isModuleActive, openEntry } from '../store.ts'
 
 const data = ref<Statistics | null>(null)
 const loading = ref(false)
@@ -150,10 +150,24 @@ onBeforeUnmount(() => window.removeEventListener('afterprint', afterPrint))
 
 // ---- sections ----
 
+/** Figures of switched-off modules are left out (the data stay). */
+const shows = computed(() => ({
+	validVersion: isModuleActive('valid_version'),
+	licenses: isModuleActive('rights'),
+	portal: isModuleActive('portal'),
+	printStation: isModuleActive('print_station'),
+	publication: isModuleActive('publication'),
+	concerts: isModuleActive('concerts'),
+	tasks: isModuleActive('tasks'),
+	proposals: isModuleActive('proposals'),
+	checksums: isModuleActive('checksums'),
+	protection: isModuleActive('protection_terms'),
+}))
+
 const sections = computed(() => [
 	{ id: 'statistics-stock', label: t('notenarchiv', 'Stock') },
 	{ id: 'statistics-rights', label: t('notenarchiv', 'Rights') },
-	{ id: 'statistics-repertoire', label: t('notenarchiv', 'Repertoire and performances') },
+	...(shows.value.concerts ? [{ id: 'statistics-repertoire', label: t('notenarchiv', 'Repertoire and performances') }] : []),
 	{ id: 'statistics-maintenance', label: t('notenarchiv', 'Maintenance') },
 	{ id: 'statistics-report', label: t('notenarchiv', 'Annual report') },
 ])
@@ -292,12 +306,20 @@ const inboxRows = computed(() => {
 		return []
 	}
 	return [
-		{ label: t('notenarchiv', 'Open proposals'), value: maintenance.proposals.open },
-		{ label: t('notenarchiv', 'Open proposals older than 30 days'), value: maintenance.proposals.olderThan30Days },
+		...(shows.value.proposals
+			? [
+				{ label: t('notenarchiv', 'Open proposals'), value: maintenance.proposals.open },
+				{ label: t('notenarchiv', 'Open proposals older than 30 days'), value: maintenance.proposals.olderThan30Days },
+			]
+			: []),
 		{ label: t('notenarchiv', 'Files in the archive folder'), value: maintenance.checksums.files },
-		{ label: t('notenarchiv', 'Files with a checksum'), value: maintenance.checksums.hashed },
-		{ label: t('notenarchiv', 'Files without a checksum yet'), value: maintenance.checksums.pending },
-		{ label: t('notenarchiv', 'Files changed without modification'), value: maintenance.checksums.mismatches },
+		...(shows.value.checksums
+			? [
+				{ label: t('notenarchiv', 'Files with a checksum'), value: maintenance.checksums.hashed },
+				{ label: t('notenarchiv', 'Files without a checksum yet'), value: maintenance.checksums.pending },
+				{ label: t('notenarchiv', 'Files changed without modification'), value: maintenance.checksums.mismatches },
+			]
+			: []),
 	]
 })
 
@@ -601,7 +623,7 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 							</tbody>
 						</table>
 
-						<table class="statistics-table statistics-table--narrow">
+						<table v-if="shows.validVersion" class="statistics-table statistics-table--narrow">
 							<caption>{{ t('notenarchiv', 'Valid version (chosen by the conductor)') }}</caption>
 							<thead>
 								<tr>
@@ -625,7 +647,7 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 							</tbody>
 						</table>
 
-						<table class="statistics-table statistics-table--narrow">
+						<table v-if="shows.licenses" class="statistics-table statistics-table--narrow">
 							<caption>{{ t('notenarchiv', 'Licenses') }}</caption>
 							<thead>
 								<tr>
@@ -659,17 +681,17 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 							</tfoot>
 						</table>
 
-						<table class="statistics-table">
+						<table v-if="shows.portal || shows.printStation" class="statistics-table">
 							<caption>{{ t('notenarchiv', 'Releases: versions per state of the lists') }}</caption>
 							<thead>
 								<tr>
 									<th scope="col">
 										{{ t('notenarchiv', 'State') }}
 									</th>
-									<th scope="col" class="statistics-table__number">
+									<th v-if="shows.portal" scope="col" class="statistics-table__number">
 										{{ t('notenarchiv', 'Singers\' portal') }}
 									</th>
-									<th scope="col" class="statistics-table__number">
+									<th v-if="shows.printStation" scope="col" class="statistics-table__number">
 										{{ t('notenarchiv', 'Print station') }}
 									</th>
 								</tr>
@@ -679,17 +701,17 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 									<th scope="row">
 										{{ row.label }}
 									</th>
-									<td class="statistics-table__number">
+									<td v-if="shows.portal" class="statistics-table__number">
 										{{ formatNumber(row.portal) }}
 									</td>
-									<td class="statistics-table__number">
+									<td v-if="shows.printStation" class="statistics-table__number">
 										{{ row.printStation === null ? '–' : formatNumber(row.printStation) }}
 									</td>
 								</tr>
 							</tbody>
 						</table>
 
-						<table class="statistics-table statistics-table--narrow">
+						<table v-if="shows.publication" class="statistics-table statistics-table--narrow">
 							<caption>{{ t('notenarchiv', 'Publication status') }}</caption>
 							<thead>
 								<tr>
@@ -715,7 +737,7 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 					</section>
 
 					<!-- Repertoire and performances -->
-					<section class="statistics-view__section" aria-labelledby="statistics-repertoire">
+					<section v-if="shows.concerts" class="statistics-view__section" aria-labelledby="statistics-repertoire">
 						<h3 id="statistics-repertoire">
 							{{ t('notenarchiv', 'Repertoire and performances') }}
 						</h3>
@@ -948,7 +970,7 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 						<h3 id="statistics-maintenance">
 							{{ t('notenarchiv', 'Maintenance') }}
 						</h3>
-						<table class="statistics-table">
+						<table v-if="shows.tasks" class="statistics-table">
 							<caption>{{ t('notenarchiv', 'Open tasks by role') }}</caption>
 							<thead>
 								<tr>
@@ -1029,7 +1051,7 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 							</tbody>
 						</table>
 
-						<table v-if="protection" class="statistics-table">
+						<table v-if="protection && shows.protection" class="statistics-table">
 							<caption>{{ t('notenarchiv', 'Protection terms ending {period}', { period: periodText }) }}</caption>
 							<thead>
 								<tr>

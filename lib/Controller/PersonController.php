@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace OCA\Notenarchiv\Controller;
 
 use OCA\Notenarchiv\AppInfo\Application;
+use OCA\Notenarchiv\Attribute\RequiresModule;
 use OCA\Notenarchiv\Exception\InvalidInputException;
+use OCA\Notenarchiv\Service\Modules;
 use OCA\Notenarchiv\Service\PersonImportService;
 use OCA\Notenarchiv\Service\PersonService;
 use OCA\Notenarchiv\Service\ProtectionText;
@@ -30,6 +32,7 @@ use Psr\Log\LoggerInterface;
  *
  * @psalm-suppress UnusedClass
  */
+#[RequiresModule('persons')]
 #[OpenAPI(OpenAPI::SCOPE_IGNORE)]
 class PersonController extends Controller {
 	use RunsActions;
@@ -42,6 +45,7 @@ class PersonController extends Controller {
 		private PersonImportService $personImport,
 		private RightsService $rights,
 		private UserFiles $userFiles,
+		private Modules $modules,
 		private IL10N $l,
 		private LoggerInterface $logger,
 	) {
@@ -107,7 +111,9 @@ class PersonController extends Controller {
 			$year = (int)substr($this->rights->today($uid), 0, 4);
 			return [
 				'contributions' => $this->persons->forVersion($id),
-				'protection' => ProtectionText::apply($this->l, $this->persons->protection($id, $year)),
+				'protection' => $this->modules->isEnabled('protection_terms')
+					? ProtectionText::apply($this->l, $this->persons->protection($id, $year))
+					: null,
 			];
 		});
 	}
@@ -137,6 +143,7 @@ class PersonController extends Controller {
 	}
 
 	#[NoAdminRequired]
+	#[RequiresModule('protection_terms')]
 	#[FrontpageRoute(verb: 'GET', url: '/api/protection/review')]
 	public function review(): JSONResponse {
 		return $this->run(function (string $uid) {

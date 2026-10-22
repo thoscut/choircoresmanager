@@ -45,6 +45,8 @@ import {
 	detailError,
 	detailLoading,
 	entries,
+	isFieldActive,
+	isModuleActive,
 	loadDetail,
 	loadEntries,
 	refreshPortalRows,
@@ -173,8 +175,19 @@ function sectionHeading(section: SectionDef): string {
  * @param section - section definition
  */
 function keysOf(section: SectionDef): string[] {
-	return sectionFields(section.id, meta.value?.fields[section.level] ?? {})
+	// Fields of switched-off modules (e.g. the publication status) are not shown
+	return sectionFields(section.id, meta.value?.fields[section.level] ?? {}).filter((key) => isFieldActive(key))
 }
+
+/** Tab with the questions and tasks and the internal links of the copy. */
+const tasksTabShown = computed(() => isModuleActive('tasks') || isModuleActive('excerpt_links'))
+
+const tasksTabName = computed(() => {
+	if (!isModuleActive('tasks')) {
+		return t('notenarchiv', 'Internal links')
+	}
+	return openTasks.value > 0 ? t('notenarchiv', 'Tasks ({count})', { count: openTasks.value }) : t('notenarchiv', 'Tasks')
+})
 
 /**
  * Siblings of the same version first, then by shelf mark.
@@ -224,7 +237,7 @@ async function onSaved(): Promise<void> {
 				<span v-if="status !== 'active'" class="copy-sidebar__status">
 					{{ t('notenarchiv', 'Status: {status}', { status: choiceLabel('copy', 'status', status) }) }}
 				</span>
-				<NcButton v-if="detail.score?.canView"
+				<NcButton v-if="detail.score?.canView && isModuleActive('score_viewer')"
 					variant="secondary"
 					:aria-label="t('notenarchiv', 'Show score of {shelfmark}', { shelfmark })"
 					@click="openScore">
@@ -338,7 +351,7 @@ async function onSaved(): Promise<void> {
 				</template>
 				<div :key="detail.copy.id" class="copy-sidebar__tab">
 					<RightsPanel :detail="detail" @saved="onSaved" />
-					<ContributionsPanel :detail="detail" @saved="onSaved" />
+					<ContributionsPanel v-if="isModuleActive('persons')" :detail="detail" @saved="onSaved" />
 					<FieldSection v-for="section in RIGHTS_SECTIONS"
 						:key="section.id"
 						:section-id="section.id"
@@ -359,8 +372,9 @@ async function onSaved(): Promise<void> {
 				</div>
 			</NcAppSidebarTab>
 
-			<NcAppSidebarTab id="tasks"
-				:name="openTasks > 0 ? t('notenarchiv', 'Tasks ({count})', { count: openTasks }) : t('notenarchiv', 'Tasks')"
+			<NcAppSidebarTab v-if="tasksTabShown"
+				id="tasks"
+				:name="tasksTabName"
 				:order="3">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiClipboardTextOutline" />

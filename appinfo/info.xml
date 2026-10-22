@@ -65,11 +65,22 @@ Barrierefrei (WCAG 2.2 AA) mit inklusiver Sprache, auf Deutsch und Englisch. Lä
 		<job>OCA\Notenarchiv\BackgroundJob\DailyChecks</job>
 		<job>OCA\Notenarchiv\BackgroundJob\ChecksumJob</job>
 	</background-jobs>
+	<repair-steps>
+		<!-- Stores the module switches: all on for installations from before
+		     0.1.27, the preset "standard" for new ones; never changes a stored switch. -->
+		<install>
+			<step>OCA\Notenarchiv\Migration\ModuleDefaults</step>
+		</install>
+		<post-migration>
+			<step>OCA\Notenarchiv\Migration\ModuleDefaults</step>
+		</post-migration>
+	</repair-steps>
 	<commands>
 		<command>OCA\Notenarchiv\Command\Setup</command>
 		<command>OCA\Notenarchiv\Command\Import</command>
 		<command>OCA\Notenarchiv\Command\Export</command>
 		<command>OCA\Notenarchiv\Command\FileSync</command>
 		<command>OCA\Notenarchiv\Command\Restore</command>
+		<command>OCA\Notenarchiv\Command\ModulesCommand</command>
 	</commands>
 </info>

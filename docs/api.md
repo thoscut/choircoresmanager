@@ -68,9 +68,14 @@ hides the inbox for them.
   "roles": ["librarian"],
   "roleLabels": { "librarian": "Catalog (music librarian)", "...": "..." },
   "fields": { "work": { "title": { "type": "text", "label": "Title", "write": ["librarian"] } }, "version": {}, "copy": {} },
-  "archive": { "id": 123, "path": "/Notenarchiv", "user": "admin" }
+  "archive": { "id": 123, "path": "/Notenarchiv", "user": "admin" },
+  "modules": { "rights": true, "concerts": true, "statistics": false, "agent_api": false, "...": "..." },
+  "personalView": { "navigation": ["statistics"], "cards": ["proposals"] }
 }
 ```
+
+`modules` tells which modules are active (see "Modules and the personal
+view" at the end); `personalView` what the account has hidden.
 
 Field types: `text`, `longtext`, `number`, `date` (YYYY-MM-DD), `choice`
 (with `options`: `{ "key": "English label" }`), `boolean`. A field may be
@@ -967,3 +972,177 @@ CSV file for people (UTF-8 with BOM, `;`, each table under its heading,
 texts in the user's language, cells that start like a formula get a leading
 `'`). Plain download links without CSRF token; errors as JSON
 (`{ "error" }`, 400/403).
+
+## Modules and the personal view (milestone 0.5.1)
+
+Every function outside the core is a module that admins can switch off
+(register: `lib/Service/Modules.php`). The core is always on: catalog
+(works, versions, copies, fields, search, status), start page, file sync,
+manual file links, roles, audit log, CSV import and export, backup and
+restore, settings.
+
+A module is **active** when its own switch is on and every module it
+requires is active. Switching a module on also switches on what it requires;
+switching it off leaves the switches of the modules that need it as they are
+(they are inactive until it is on again). Switching off never deletes data
+and never relaxes a check: the rights policy for viewing, playback, practice
+audio and preservation copies applies whatever is switched on.
+
+| Key | Requires | Default (preset "standard") |
+|---|---|---|
+| `rights` | – | on |
+| `valid_version` | – | on |
+| `persons` | – | on |
+| `protection_terms` | `persons` | on |
+| `releases` | `rights` | on |
+| `portal` | `releases` | on |
+| `print_station` | `releases` | off |
+| `publication` | `releases` | on |
+| `score_viewer` | – | on |
+| `playback` | `score_viewer` | on |
+| `practice_audio` | `playback` | off |
+| `excerpt_links` | `score_viewer` | on |
+| `tasks` | – | on |
+| `proposals` | – | off |
+| `concerts` | – | on |
+| `performance_import` | `concerts` | on |
+| `repertoire` | `concerts` | on |
+| `calendar` | `concerts` | on |
+| `accession` | – | on |
+| `merge` | – | on |
+| `inventory` | – | on |
+| `checksums` | – | off |
+| `statistics` | – | off |
+| `dashboard_widget` | – | on |
+| `notifications` | – | on |
+| `notify_{subject}` | `notifications` and the module of the subject | on |
+| `agent_api` | – | off (planned, cannot be switched yet) |
+
+`notify_{subject}` exists for every notification subject:
+`notify_proposals_waiting` (needs `proposals`), `notify_portal_remove`
+(`portal`), `notify_license_expiring` and `notify_license_expired`
+(`rights`), `notify_export_failed`, `notify_task_new` and
+`notify_task_answered` (`tasks`), `notify_concert_deadline` and
+`notify_concert_confirm` (`concerts`), `notify_protection_ended`
+(`protection_terms`), `notify_checksum_mismatch` (`checksums`).
+
+Presets: `simple` (core, `score_viewer`, `playback`, `notifications` with all
+`notify_*` switches), `standard` (the column above), `complete` (everything).
+A preset sets every switch; `agent_api` is never part of a preset.
+
+### Switched-off routes
+
+A route of a module that is not active answers **404** with
+`{ "error": "This function is switched off." }` (translated), before any
+other check of the app. The routes and their modules:
+
+| Module | Routes |
+|---|---|
+| `rights` | `POST /api/versions/{id}/confirm`, `…/set-open`, `…/licenses`, `PATCH /api/licenses/{id}`, `GET /api/licenses/ending` |
+| `valid_version` | `POST /api/versions/{id}/valid`, `…/valid-clear` |
+| `portal` | `POST /api/versions/{id}/portal`, `…/portal-remove`, `GET /api/lists/portal` |
+| `print_station` | `GET /api/lists/print-station` |
+| `score_viewer` | `GET /api/files/{id}/content` |
+| `practice_audio` | `POST /api/versions/{id}/practice-audio` |
+| `excerpt_links` | `POST /api/copies/{id}/links`, `GET /api/links`, `GET /api/links/{token}`, `POST /api/links/{id}/revoke` |
+| `tasks` | `GET /api/tasks`, `POST /api/copies/{id}/tasks`, `POST /api/tasks/{id}/answer`, `…/close` |
+| `proposals` | `GET /api/proposals`, `POST /api/proposals`, `…/accept`, `…/reject` |
+| `concerts` | `/api/events…`, `/api/event-items…` |
+| `performance_import` | `POST /api/performances/import`, `GET /api/event-items/ambiguous`, `POST /api/event-items/{id}/resolve` (and `concerts`) |
+| `repertoire` | `GET /api/repertoire`, `PUT /api/repertoire/thresholds` (and `concerts`) |
+| `calendar` | `GET /api/events/{id}/ics`, `GET /api/events/upcoming/ics`, `GET /api/calendars`, `POST /api/events/{id}/calendar`, `POST /api/events/upcoming/calendar` (and `concerts`) |
+| `persons` | `/api/persons…`, `/api/versions/{id}/contributions`, `/api/contributions/{id}` |
+| `protection_terms` | `GET /api/protection/review` (and `persons`) |
+| `accession` | `GET /api/accession/next`, `POST /api/accession`, `PUT /api/accession/open-binders`, `GET /api/labels` |
+| `merge` | `/api/merges…` |
+| `inventory` | `GET /api/inventory`, `POST /api/inventory/count` |
+| `checksums` | `GET /api/checksums`, `POST /api/files/{id}/checksum-accept` |
+| `statistics` | `/api/statistics…` |
+
+`releases` and `publication` have no routes of their own: `releases` is the
+switch of the three releases (it gates `portal`, `print_station` and
+`publication`), `publication` only shows the publication status in the UI.
+Fields of a switched-off module stay in the catalog, in `meta.fields`, in
+the CSV and in the backup; the UI hides their maintenance.
+
+What else follows the modules:
+
+- `GET /api/entries/{id}`: `score` is `null` without `score_viewer`;
+  `score.canPlay` is `false` with `reason` `Playback is switched off.`
+  without `playback`; `score.canExportAudio` is `false` with
+  `exportReason` `Practice audio files are switched off.` without
+  `practice_audio` (when playback is allowed otherwise). `licenses` is `[]`
+  without `rights`, `tasks` without `tasks`, `links` without
+  `excerpt_links`, `proposals` without `proposals`, `contributions` without
+  `persons`, `merges` without `merge`; `protection` is `null` without
+  `protection_terms`. `GET /api/versions/{id}/contributions` returns
+  `protection: null` without `protection_terms`.
+- `GET /api/entries`: without `repertoire` the repertoire figures are those
+  of the imported catalog (`repertoire_source: "import"`); without
+  `concerts`, `song_lists` is empty, too.
+- `GET /api/due`: only cards, tasks and concerts of active modules
+  (`tasks_open`, `tasks_answered` and `tasks`: `tasks`; `ambiguous_items`:
+  `performance_import`; `proposals`: `proposals`; `portal_remove`,
+  `portal_add`: `portal`; `confirm_current`, `rule1_current`,
+  `licenses_expiring`: `rights`; `valid_missing`: `valid_version`;
+  `concerts`: `concerts`).
+- Dashboard widget: only while `dashboard_widget` is on; its items are those
+  of `GET /api/due` without the cards the account has hidden (personal view).
+- Background jobs: the checksum job does nothing without `checksums`; the
+  daily checks skip the parts whose notification is switched off and
+  withdraw their notifications.
+- Notifications: a notification whose `notify_{subject}` is not active is
+  not sent; one sent before is withdrawn when it is shown (the Nextcloud
+  notifications app then deletes it).
+
+### Module settings (admins only)
+
+`GET /api/settings/modules` (texts translated):
+
+```json
+{ "modules": [{ "key": "playback", "group": "scores", "label": "Playback", "description": "…",
+                "requires": ["score_viewer"], "enabled": true, "active": false }],
+  "groups": [{ "key": "scores", "label": "Score view" }],
+  "presets": [{ "key": "simple", "label": "Simple", "description": "…", "modules": { "rights": false, "...": "..." } }],
+  "core": ["Catalog: works, versions, copies, fields, search and status", "…"] }
+```
+
+`enabled` is the module's own switch, `active` whether it works (its switch
+and everything it requires is on). `requires` lists the direct
+requirements. Planned modules (`agent_api`) are not listed.
+
+`PUT /api/settings/modules` with either `{ "modules": { "concerts": false } }`
+(one or more switches) or `{ "preset": "standard" }` returns the same plus
+
+```json
+"changes": { "enabled": ["calendar"], "alsoEnabled": ["concerts"], "disabled": [],
+             "inactive": [], "activated": ["repertoire"] }
+```
+
+`enabled`/`disabled`: switches that changed as requested; `alsoEnabled`:
+requirements switched on as well; `inactive`: modules whose switch stays on
+but that no longer work (they need a module switched off now);
+`activated`: modules that work again without being switched themselves.
+Errors (400): `Unknown module: %s`, `Unknown preset: %s`, `This function is
+not available yet: %s`, `"%1$s" needs "%2$s".` (a module to switch on needs
+one to switch off in the same request), `Please choose a module or a
+preset.` (none or both), `"%s" must be yes or no.`. Every changed switch is
+recorded in the audit log (object type `settings`, field `module_{key}`,
+`on`/`off`, reason `preset {name}` for a preset). No password confirmation,
+like the other settings.
+
+On the command line: `occ notenarchiv:modules list|enable|disable|preset`
+(see the admin guide).
+
+### Personal view
+
+`PUT /api/personal-view` `{ "navigation": ["statistics"], "cards": ["proposals", "concerts"] }`
+(any role) replaces what the account hides and returns it. Entries are the
+names the UI uses: views of the navigation (the `ViewName` values of
+`src/startParams.ts`, e.g. `tasks`, `statistics`, `songLists`) and cards of
+the start page (keys of `GET /api/due`, plus `concerts` and `tasks` for the
+two lists). Each list holds at most 50 distinct names of the form
+`[a-z][A-Za-z0-9_]{0,39}`; other values are refused with 400 (`"%s": value
+not allowed.`, `Too many entries at once (at most %s).`). Unknown names hide
+nothing. Stored on the server as the user setting `personal_view` of the
+app. It only hides: permissions stay the same.

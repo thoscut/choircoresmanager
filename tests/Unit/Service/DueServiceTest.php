@@ -17,18 +17,26 @@ use OCA\Notenarchiv\Service\RepertoireService;
 use OCA\Notenarchiv\Service\RightsService;
 use OCA\Notenarchiv\Service\Roles;
 use OCA\Notenarchiv\Service\TaskService;
+use OCA\Notenarchiv\Tests\Unit\Support\ModuleSwitches;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Concerts with a deadline on the start page "due" (and so in the dashboard
- * widget): for the roles the notifications go to.
+ * widget): for the roles the notifications go to, and only for the modules
+ * that are on.
  */
 #[CoversClass(DueService::class)]
 final class DueServiceTest extends TestCase {
+	use ModuleSwitches;
+
 	private const TODAY = '2026-10-22';
 
-	private function service(array $roles): DueService {
+	/**
+	 * @param list<string> $roles
+	 * @param list<string> $off modules switched off
+	 */
+	private function service(array $roles, array $off = [], ?TaskService $tasks = null): DueService {
 		$roleService = $this->createStub(Roles::class);
 		$roleService->method('rolesOf')->willReturn($roles);
 		$rights = $this->createStub(RightsService::class);
@@ -43,10 +51,16 @@ final class DueServiceTest extends TestCase {
 			self::concert(6, '2026-11-20', 'fixed', true),        // imported history
 			self::concert(7, '2027-06-01'),                       // far ahead
 		]);
-		return new DueService($roleService, $this->createStub(TaskService::class), $this->createStub(ProposalMapper::class),
+		if ($tasks === null) {
+			$tasks = $this->createStub(TaskService::class);
+			$tasks->method('forUser')->willReturn([['id' => 4, 'copy_id' => 35, 'status' => 'open']]);
+		}
+		$proposals = $this->createStub(ProposalMapper::class);
+		$proposals->method('countOpen')->willReturn(2);
+		return new DueService($roleService, $tasks, $proposals,
 			$this->createStub(ReleaseListService::class), $this->createStub(LicenseMapper::class), $this->createStub(WorkVersionMapper::class),
 			$this->createStub(WorkMapper::class), $rights, $this->createStub(RepertoireService::class), $this->createStub(EventItemMapper::class),
-			$events);
+			$events, $this->modulesWithout($off));
 	}
 
 	private static function concert(int $id, string $date, string $status = 'draft', bool $imported = false): Event {
@@ -72,6 +86,25 @@ final class DueServiceTest extends TestCase {
 	public function testTheLibrarianSeesTheDeadlinesOnly(): void {
 		$concerts = $this->service([Roles::LIBRARIAN])->forUser('lena')['concerts'];
 		self::assertSame([2, 1], array_column($concerts, 'id'));
+	}
+
+	public function testNothingOfASwitchedOffModule(): void {
+		$all = $this->service([Roles::CONDUCTOR, Roles::LIBRARIAN])->forUser('carla');
+		self::assertNotSame([], $all['concerts']);
+		self::assertContains('proposals', array_column($all['cards'], 'key'));
+
+		$due = $this->service([Roles::CONDUCTOR, Roles::LIBRARIAN], ['concerts', 'proposals'])->forUser('carla');
+		self::assertSame([], $due['concerts']);
+		self::assertNotContains('proposals', array_column($due['cards'], 'key'));
+		self::assertContains('tasks_open', array_column($due['cards'], 'key'), 'the other cards stay');
+	}
+
+	public function testTasksAreNotReadWithoutTheModule(): void {
+		$tasks = $this->createMock(TaskService::class);
+		$tasks->expects(self::never())->method('forUser');
+		$due = $this->service([Roles::CONDUCTOR], ['tasks'], $tasks)->forUser('carla');
+		self::assertSame([], $due['tasks']);
+		self::assertNotContains('tasks_open', array_column($due['cards'], 'key'));
 	}
 
 	public function testOtherRolesSeeNoConcerts(): void {

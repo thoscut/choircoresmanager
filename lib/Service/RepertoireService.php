@@ -32,6 +32,7 @@ class RepertoireService {
 		private EventItemMapper $items,
 		private IAppConfig $appConfig,
 		private ITimeFactory $time,
+		private Modules $modules,
 	) {
 	}
 
@@ -53,10 +54,24 @@ class RepertoireService {
 	}
 
 	/**
+	 * The figures of every work with documented performances or song lists.
+	 * Without the module "concerts" there are none; without "repertoire"
+	 * only the song lists, so that the values of the imported catalog apply
+	 * (CatalogService::repertoireFigures()).
+	 *
 	 * @return array<int, array{performances: int, first: ?string, last: ?string, class: string, songLists: list<string>}> keyed by work id
 	 */
 	public function perWork(): array {
-		return $this->perWorkFrom($this->events->findAllById(), $this->items->findAll());
+		if (!$this->modules->isEnabled('concerts')) {
+			return [];
+		}
+		$figures = $this->perWorkFrom($this->events->findAllById(), $this->items->findAll());
+		if (!$this->modules->isEnabled('repertoire')) {
+			foreach ($figures as $workId => $work) {
+				$figures[$workId] = ['performances' => 0, 'first' => null, 'last' => null, 'class' => 'none', 'songLists' => $work['songLists']];
+			}
+		}
+		return $figures;
 	}
 
 	/**

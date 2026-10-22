@@ -62,7 +62,7 @@ import { focusAfterDialog, focusAfterUpdate } from '../focus.ts'
 import { formatDate, toIsoDate } from '../format.ts'
 import { eventStatusLabel, ROLES } from '../labels.ts'
 import { navigate } from '../navigation.ts'
-import { canPlanEvents, entries, hasAnyRole, loadEntries, loadPortalRows, openEntry, versionsOnPortal } from '../store.ts'
+import { canPlanEvents, entries, hasAnyRole, isModuleActive, loadEntries, loadPortalRows, openEntry, versionsOnPortal } from '../store.ts'
 
 const props = defineProps<{
 	eventId: number
@@ -306,7 +306,10 @@ async function reopen(): Promise<void> {
 
 /** Accounts with a role may add entries to their own calendar. */
 const canAddToCalendar = computed(() => hasAnyRole(ROLES))
-const showCalendar = computed(() => event.value !== null && isCalendarConcert(event.value))
+const showCalendar = computed(() => event.value !== null && isCalendarConcert(event.value) && isModuleActive('calendar'))
+
+/** Column "singers' portal / paper only" of the printed song list (module "portal"). */
+const showPortalColumn = computed(() => isModuleActive('portal'))
 /** Deadlines are work of the planners; for them they are added by default. */
 const withDeadlines = ref(canPlanEvents.value)
 const calendarDialogOpen = ref(false)
@@ -667,7 +670,7 @@ const printedItems = computed(() => items.value.filter((item) => item.struck !==
 									{{ t('notenarchiv', 'Returned') }}
 								</th>
 							</template>
-							<th v-if="printMode === 'songlist'">
+							<th v-if="printMode === 'songlist' && showPortalColumn">
 								{{ t('notenarchiv', 'Singers\' portal / paper only') }}
 							</th>
 						</tr>
@@ -695,7 +698,7 @@ const printedItems = computed(() => items.value.filter((item) => item.struck !==
 									☐
 								</td>
 							</template>
-							<td v-if="printMode === 'songlist'">
+							<td v-if="printMode === 'songlist' && showPortalColumn">
 								{{ inPortal(item) ? t('notenarchiv', 'Singers\' portal') : t('notenarchiv', 'paper only') }}
 							</td>
 						</tr>

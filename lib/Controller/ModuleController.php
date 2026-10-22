@@ -1,0 +1,85 @@
+<?php
+
+declare(strict_types=1);
+
+namespace OCA\Notenarchiv\Controller;
+
+use OCA\Notenarchiv\AppInfo\Application;
+use OCA\Notenarchiv\Exception\InvalidInputException;
+use OCA\Notenarchiv\Service\ModuleSettings;
+use OCA\Notenarchiv\Service\PersonalView;
+use OCA\Notenarchiv\Service\Roles;
+use OCP\AppFramework\Controller;
+use OCP\AppFramework\Http\Attribute\FrontpageRoute;
+use OCP\AppFramework\Http\Attribute\NoAdminRequired;
+use OCP\AppFramework\Http\Attribute\OpenAPI;
+use OCP\AppFramework\Http\JSONResponse;
+use OCP\IL10N;
+use OCP\IRequest;
+use Psr\Log\LoggerInterface;
+
+/**
+ * Modules and presets (admins, like the other settings) and the personal
+ * view of an account (see docs/api.md). These routes belong to the core.
+ *
+ * @psalm-suppress UnusedClass
+ */
+#[OpenAPI(OpenAPI::SCOPE_IGNORE)]
+class ModuleController extends Controller {
+	use RunsActions;
+
+	public function __construct(
+		IRequest $request,
+		private ?string $userId,
+		private Roles $roles,
+		private ModuleSettings $moduleSettings,
+		private PersonalView $personalView,
+		private IL10N $l,
+		private LoggerInterface $logger,
+	) {
+		parent::__construct(Application::APP_ID, $request);
+	}
+
+	#[FrontpageRoute(verb: 'GET', url: '/api/settings/modules')]
+	public function settings(): JSONResponse {
+		return $this->run(function (string $uid) {
+			$this->roles->requireAdmin($uid);
+			return $this->moduleSettings->describe($this->l);
+		});
+	}
+
+	/**
+	 * Switches modules on and off, or applies a preset; one of both.
+	 *
+	 * @param array<array-key, mixed>|null $modules module key => on (request data)
+	 */
+	#[FrontpageRoute(verb: 'PUT', url: '/api/settings/modules')]
+	public function update(?array $modules = null, ?string $preset = null): JSONResponse {
+		return $this->run(function (string $uid) use ($modules, $preset) {
+			$this->roles->requireAdmin($uid);
+			if (($modules === null) === ($preset === null)) {
+				throw new InvalidInputException('Please choose a module or a preset.');
+			}
+			$changes = $preset !== null
+				? $this->moduleSettings->applyPreset($preset, $uid)
+				: $this->moduleSettings->change($modules ?? [], $uid);
+			return $this->moduleSettings->describe($this->l) + ['changes' => $changes];
+		});
+	}
+
+	/**
+	 * Replaces the personal view of the account (hidden navigation areas and
+	 * start page cards). Changes no permission.
+	 *
+	 * @param array<array-key, mixed> $navigation
+	 * @param array<array-key, mixed> $cards
+	 */
+	#[NoAdminRequired]
+	#[FrontpageRoute(verb: 'PUT', url: '/api/personal-view')]
+	public function personalView(array $navigation = [], array $cards = []): JSONResponse {
+		return $this->run(function (string $uid) use ($navigation, $cards) {
+			$this->roles->requireAccess($uid);
+			return $this->personalView->set($uid, $navigation, $cards);
+		});
+	}
+}

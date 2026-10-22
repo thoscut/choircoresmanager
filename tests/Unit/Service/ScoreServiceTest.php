@@ -16,6 +16,7 @@ use OCA\Notenarchiv\Service\BoundedZip;
 use OCA\Notenarchiv\Service\RightsPolicy;
 use OCA\Notenarchiv\Service\ScoreService;
 use OCA\Notenarchiv\Service\UserFiles;
+use OCA\Notenarchiv\Tests\Unit\Support\ModuleSwitches;
 use OCA\Notenarchiv\Tests\Unit\Support\TempFiles;
 use OCP\Files\File;
 use OCP\Files\Folder;
@@ -36,6 +37,7 @@ use PHPUnit\Framework\TestCase;
 #[RequiresPhpExtension('zip')]
 final class ScoreServiceTest extends TestCase {
 	use TempFiles;
+	use ModuleSwitches;
 
 	private const PARTWISE = '<?xml version="1.0" encoding="UTF-8"?>'
 		. '<!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 4.0 Partwise//EN" "http://www.musicxml.org/dtds/partwise.dtd">'
@@ -49,6 +51,9 @@ final class ScoreServiceTest extends TestCase {
 
 	private File $file;
 	private ?string $policyDenial = null;
+	private ?string $playDenial = null;
+	/** @var list<string> modules switched off */
+	private array $off = [];
 
 	private function service(): ScoreService {
 		$archiveFile = new ArchiveFile();
@@ -71,11 +76,13 @@ final class ScoreServiceTest extends TestCase {
 		$versions->method('find')->willReturn($version);
 		$policy = $this->createStub(RightsPolicy::class);
 		$policy->method('viewDenial')->willReturnCallback(fn (): ?string => $this->policyDenial);
+		$policy->method('playDenial')->willReturnCallback(fn (): ?string => $this->playDenial);
+		$policy->method('practiceAudioDenial')->willReturn(null);
 		$userFolder = $this->createStub(Folder::class);
 		$userFolder->method('getFirstNodeById')->willReturnCallback(fn (int $id): ?File => $id === 4711 ? $this->file : null);
 		$root = $this->createStub(IRootFolder::class);
 		$root->method('getUserFolder')->willReturn($userFolder);
-		return new ScoreService($files, $copies, $versions, $policy, $root, $this->tempManager());
+		return new ScoreService($files, $copies, $versions, $policy, $root, $this->tempManager(), $this->modulesWithout($this->off));
 	}
 
 	private function fileWith(string $content, ?int $size = null): File {
@@ -90,6 +97,52 @@ final class ScoreServiceTest extends TestCase {
 		});
 		$file->method('getName')->willReturn('5-01_Ave.musicxml');
 		return $file;
+	}
+
+	/**
+	 * @return array{fileId: int, fileName: string, canView: bool, canPlay: bool, reason: ?string, canExportAudio: bool, exportReason: ?string}|null
+	 */
+	private function describe(): ?array {
+		$file = new ArchiveFile();
+		$file->setId(7);
+		$file->setName('5-01_Ave.musicxml');
+		$file->setType('musicxml');
+		$file->setRole('musicxml');
+		$file->setFound(true);
+		return $this->service()->describe(new WorkVersion(), [$file], 'carla');
+	}
+
+	public function testPlaybackAndPracticeAudioFollowTheModules(): void {
+		$score = $this->describe();
+		self::assertNotNull($score);
+		self::assertTrue($score['canPlay']);
+		self::assertTrue($score['canExportAudio']);
+
+		$this->off = ['practice_audio'];
+		$score = $this->describe();
+		self::assertNotNull($score);
+		self::assertTrue($score['canPlay']);
+		self::assertFalse($score['canExportAudio']);
+		self::assertSame('Practice audio files are switched off.', $score['exportReason']);
+
+		$this->moduleConfig = [];
+		$this->off = ['playback'];
+		$score = $this->describe();
+		self::assertNotNull($score);
+		self::assertTrue($score['canView']);
+		self::assertFalse($score['canPlay']);
+		self::assertSame('Playback is switched off.', $score['reason']);
+		self::assertFalse($score['canExportAudio'], 'practice audio needs playback');
+		self::assertNull($score['exportReason']);
+	}
+
+	public function testTheRightsPolicyStaysWhenModulesAreOn(): void {
+		$this->playDenial = 'Protected version: playback needs a license for practice audio.';
+		$score = $this->describe();
+		self::assertNotNull($score);
+		self::assertFalse($score['canPlay']);
+		self::assertSame('Protected version: playback needs a license for practice audio.', $score['reason']);
+		self::assertFalse($score['canExportAudio']);
 	}
 
 	public function testDeliversAMusicXmlScore(): void {

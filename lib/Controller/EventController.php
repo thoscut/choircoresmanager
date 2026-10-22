@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OCA\Notenarchiv\Controller;
 
 use OCA\Notenarchiv\AppInfo\Application;
+use OCA\Notenarchiv\Attribute\RequiresModule;
 use OCA\Notenarchiv\Db\EventItem;
 use OCA\Notenarchiv\Db\EventItemMapper;
 use OCA\Notenarchiv\Exception\AccessDeniedException;
@@ -35,6 +36,7 @@ use Psr\Log\LoggerInterface;
  *
  * @psalm-suppress UnusedClass
  */
+#[RequiresModule('concerts')]
 #[OpenAPI(OpenAPI::SCOPE_IGNORE)]
 class EventController extends Controller {
 	use RunsActions;
@@ -167,6 +169,7 @@ class EventController extends Controller {
 	}
 
 	#[NoAdminRequired]
+	#[RequiresModule('performance_import')]
 	#[FrontpageRoute(verb: 'POST', url: '/api/event-items/{id}/resolve', requirements: ['id' => '\d+'])]
 	public function resolve(int $id, ?int $copyId = null): JSONResponse {
 		return $this->run(function (string $uid) use ($id, $copyId) {
@@ -176,6 +179,7 @@ class EventController extends Controller {
 	}
 
 	#[NoAdminRequired]
+	#[RequiresModule('performance_import')]
 	#[FrontpageRoute(verb: 'GET', url: '/api/event-items/ambiguous')]
 	public function ambiguous(): JSONResponse {
 		return $this->run(function (string $uid) {
@@ -204,6 +208,7 @@ class EventController extends Controller {
 	}
 
 	#[NoAdminRequired]
+	#[RequiresModule('repertoire')]
 	#[FrontpageRoute(verb: 'GET', url: '/api/repertoire')]
 	public function repertoire(): JSONResponse {
 		return $this->run(function (string $uid) {
@@ -212,6 +217,7 @@ class EventController extends Controller {
 		});
 	}
 
+	#[RequiresModule('repertoire')]
 	#[FrontpageRoute(verb: 'PUT', url: '/api/repertoire/thresholds')]
 	public function setThresholds(int $current = RepertoireService::DEFAULT_CURRENT_YEARS, int $dormant = RepertoireService::DEFAULT_DORMANT_YEARS): JSONResponse {
 		return $this->run(function (string $uid) use ($current, $dormant) {
@@ -223,6 +229,7 @@ class EventController extends Controller {
 
 	#[NoAdminRequired]
 	#[UserRateLimit(limit: 30, period: 600)]
+	#[RequiresModule('performance_import')]
 	#[FrontpageRoute(verb: 'POST', url: '/api/performances/import')]
 	public function importPerformances(int $fileId, bool $dryRun = true, ?string $ownChoir = null): JSONResponse {
 		return $this->run(function (string $uid) use ($fileId, $dryRun, $ownChoir) {

@@ -33,10 +33,13 @@ import type {
 	Merge,
 	MergeCandidateGroup,
 	Meta,
+	ModuleSettings,
+	ModuleSettingsResult,
 	PerformanceImportReport,
 	Person,
 	PersonDetail,
 	PersonImportReport,
+	PersonalView,
 	PracticeAudioInput,
 	Proposal,
 	ProtectionReviewRow,
@@ -118,7 +121,33 @@ export function normalizeMeta(meta: Meta): Meta {
 		personFields: normalizeFieldMap(meta.personFields),
 		contributionRoles: meta.contributionRoles && !Array.isArray(meta.contributionRoles) ? meta.contributionRoles : {},
 		archive: meta.archive ?? { id: 0, path: '', user: '' },
+		modules: normalizeModules(meta.modules),
+		personalView: normalizePersonalView(meta.personalView),
 	}
+}
+
+/**
+ * Active modules: only boolean values; null when the server sends none (an
+ * older server, every module counts as active).
+ *
+ * @param raw - `meta.modules` as delivered by the server
+ */
+function normalizeModules(raw: unknown): Record<string, boolean> | null {
+	if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
+		return null
+	}
+	return Object.fromEntries(Object.entries(raw as Record<string, unknown>).filter(([, value]) => typeof value === 'boolean')) as Record<string, boolean>
+}
+
+/**
+ * The personal view with two lists of names; empty lists when it is missing.
+ *
+ * @param raw - `meta.personalView` or the answer of `PUT /api/personal-view`
+ */
+export function normalizePersonalView(raw: unknown): PersonalView {
+	const value = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw as Record<string, unknown> : {}
+	const names = (entry: unknown): string[] => (Array.isArray(entry) ? entry.filter((name): name is string => typeof name === 'string') : [])
+	return { navigation: names(value.navigation), cards: names(value.cards) }
 }
 
 /**
@@ -261,6 +290,60 @@ export async function fetchSettings(): Promise<Settings> {
 export async function saveSettings(update: SettingsUpdate): Promise<Settings> {
 	const { data } = await axios.put<Settings>(apiUrl('/settings'), update)
 	return data
+}
+
+// ---- milestone 0.5.1: modules and the personal view -------------------------
+
+/**
+ * Lists of the module settings in a predictable shape.
+ *
+ * @param data - answer of the server
+ */
+function normalizeModuleSettings(data: ModuleSettings): ModuleSettings {
+	return {
+		modules: list<ModuleSettings['modules'][number]>(data.modules).map((module) => ({ ...module, requires: list<string>(module.requires) })),
+		groups: list(data.groups),
+		presets: list<ModuleSettings['presets'][number]>(data.presets)
+			.map((preset) => ({ ...preset, modules: preset.modules && !Array.isArray(preset.modules) ? preset.modules : {} })),
+		core: list(data.core),
+	}
+}
+
+/** Modules, groups, presets and the core (admins only). */
+export async function fetchModuleSettings(): Promise<ModuleSettings> {
+	const { data } = await axios.get<ModuleSettings>(apiUrl('/settings/modules'))
+	return normalizeModuleSettings(data)
+}
+
+/**
+ * Switch modules on or off, or apply a preset (admins only). Switching on
+ * also switches on what a module requires.
+ *
+ * @param change - `{ modules: { key: on } }` or `{ preset: name }`
+ */
+export async function saveModules(change: { modules: Record<string, boolean> } | { preset: string }): Promise<ModuleSettingsResult> {
+	const { data } = await axios.put<ModuleSettingsResult>(apiUrl('/settings/modules'), change)
+	const changes = data.changes ?? {}
+	return {
+		...normalizeModuleSettings(data),
+		changes: {
+			enabled: list(changes.enabled),
+			alsoEnabled: list(changes.alsoEnabled),
+			disabled: list(changes.disabled),
+			inactive: list(changes.inactive),
+			activated: list(changes.activated),
+		},
+	}
+}
+
+/**
+ * Save what the account hides in its own view. Changes no permission.
+ *
+ * @param view - hidden navigation areas and start page cards
+ */
+export async function savePersonalView(view: PersonalView): Promise<PersonalView> {
+	const { data } = await axios.put<PersonalView>(apiUrl('/personal-view'), view)
+	return normalizePersonalView(data)
 }
 
 // ---- milestone 0.2: rights, releases, valid version, proposals -------------

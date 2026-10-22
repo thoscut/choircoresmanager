@@ -1,7 +1,8 @@
 <script setup lang="ts">
 /**
  * Settings for administrators: archive folder, which Nextcloud groups hold
- * which role, and the thresholds of the repertoire classes.
+ * which role, the modules that can be switched off and the thresholds of
+ * the repertoire classes.
  */
 import type { Settings } from '../types.ts'
 
@@ -18,10 +19,11 @@ import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcSettingsSelectGroup from '@nextcloud/vue/components/NcSettingsSelectGroup'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import BackupRestore from './BackupRestore.vue'
+import ModuleSettings from './ModuleSettings.vue'
 import { errorMessage, fetchRepertoireThresholds, fetchSettings, saveRepertoireThresholds, saveSettings } from '../api.ts'
 import { focusAfterDialog, focusAfterUpdate } from '../focus.ts'
 import { translateLabel } from '../format.ts'
-import { loadEntries, meta, reloadMeta, settingsDialogOpen } from '../store.ts'
+import { isModuleActive, loadEntries, meta, reloadMeta, settingsDialogOpen } from '../store.ts'
 
 const open = computed({
 	get: () => settingsDialogOpen.value,
@@ -88,7 +90,13 @@ const thresholds = reactive({ current: '', dormant: '' })
 const thresholdsSaving = ref(false)
 const thresholdsError = ref('')
 
+/** The thresholds belong to the module "repertoire". */
+const repertoireActive = computed(() => isModuleActive('repertoire'))
+
 async function loadThresholds(): Promise<void> {
+	if (!repertoireActive.value) {
+		return
+	}
 	try {
 		const value = await fetchRepertoireThresholds()
 		thresholds.current = String(value.current)
@@ -139,6 +147,13 @@ watch(settingsDialogOpen, (isOpen) => {
 		load()
 	}
 }, { immediate: true })
+
+// The module "repertoire" switched on in the modules section above
+watch(repertoireActive, (active) => {
+	if (active && settingsDialogOpen.value) {
+		loadThresholds()
+	}
+})
 
 const archive = computed(() => settings.value?.archive ?? meta.value?.archive ?? { id: 0, path: '', user: '' })
 
@@ -308,7 +323,11 @@ async function saveRoles(): Promise<void> {
 			</div>
 		</NcAppSettingsSection>
 
-		<NcAppSettingsSection id="repertoire" :name="t('notenarchiv', 'Repertoire')">
+		<NcAppSettingsSection id="modules" :name="t('notenarchiv', 'Modules')">
+			<ModuleSettings v-if="settingsDialogOpen" />
+		</NcAppSettingsSection>
+
+		<NcAppSettingsSection v-if="repertoireActive" id="repertoire" :name="t('notenarchiv', 'Repertoire')">
 			<p class="settings-repertoire__text">
 				{{ t('notenarchiv', 'A work belongs to the current repertoire if it was sung within the last years given here, and is dormant up to the second limit. Earlier performances make it "earlier". Documented performances come from concerts confirmed as sung and from the imported history.') }}
 			</p>

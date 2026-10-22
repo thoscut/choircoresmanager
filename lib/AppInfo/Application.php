@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OCA\Notenarchiv\AppInfo;
 
 use OCA\Notenarchiv\Dashboard\DueWidget;
+use OCA\Notenarchiv\Middleware\ModuleMiddleware;
 use OCA\Notenarchiv\Notification\Notifier;
 use OCA\Notenarchiv\Service\Roles;
 use OCP\AppFramework\App;
@@ -27,8 +28,11 @@ class Application extends App implements IBootstrap {
 	#[\Override]
 	public function register(IRegistrationContext $context): void {
 		$context->registerNotifierService(Notifier::class);
-		// Shown only to accounts with an archive role (IConditionalWidget).
+		// Shown only to accounts with an archive role (IConditionalWidget)
+		// while the module "dashboard_widget" is on.
 		$context->registerDashboardWidget(DueWidget::class);
+		// Routes of switched-off modules answer 404 (attribute RequiresModule).
+		$context->registerMiddleware(ModuleMiddleware::class);
 	}
 
 	#[\Override]

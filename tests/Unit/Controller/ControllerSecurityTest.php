@@ -7,11 +7,14 @@ namespace OCA\Notenarchiv\Tests\Unit\Controller;
 use OCA\Notenarchiv\Controller\ApiController;
 use OCA\Notenarchiv\Controller\CalendarController;
 use OCA\Notenarchiv\Controller\PageController;
+use OCA\Notenarchiv\Controller\PracticeAudioController;
 use OCA\Notenarchiv\Controller\TaskController;
 use OCA\Notenarchiv\Db\AuditEntryMapper;
 use OCA\Notenarchiv\Exception\AccessDeniedException;
 use OCA\Notenarchiv\Exception\InvalidInputException;
+use OCA\Notenarchiv\Exception\ModuleDisabledException;
 use OCA\Notenarchiv\Exception\UnknownLinkException;
+use OCA\Notenarchiv\Middleware\ModuleMiddleware;
 use OCA\Notenarchiv\Service\AppSettings;
 use OCA\Notenarchiv\Service\CatalogService;
 use OCA\Notenarchiv\Service\ConcertCalendarService;
@@ -21,10 +24,13 @@ use OCA\Notenarchiv\Service\FileSyncService;
 use OCA\Notenarchiv\Service\ImportService;
 use OCA\Notenarchiv\Service\LinkService;
 use OCA\Notenarchiv\Service\MetaService;
+use OCA\Notenarchiv\Service\Modules;
+use OCA\Notenarchiv\Service\PracticeAudioService;
 use OCA\Notenarchiv\Service\Roles;
 use OCA\Notenarchiv\Service\ScoreService;
 use OCA\Notenarchiv\Service\TaskService;
 use OCA\Notenarchiv\Service\UserFiles;
+use OCA\Notenarchiv\Tests\Unit\Support\ModuleSwitches;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
@@ -48,17 +54,38 @@ use Psr\Log\LoggerInterface;
 
 /**
  * Security-relevant properties of the controllers: route attributes (who may
- * call what, CSRF, rate limits, brute-force protection), response headers of
- * user files and the content security policy of the app page.
+ * call what, CSRF, rate limits, brute-force protection, modules), response
+ * headers of user files and the content security policy of the app page.
  */
 #[CoversClass(ApiController::class)]
 #[CoversClass(CalendarController::class)]
 #[CoversClass(PageController::class)]
 #[CoversClass(TaskController::class)]
+#[CoversClass(ModuleMiddleware::class)]
 final class ControllerSecurityTest extends TestCase {
+	use ModuleSwitches;
+
 	/** Routes without #[NoAdminRequired]: instance settings, for admins only */
 	private const ADMIN_ONLY = [
 		'ApiController::settings', 'ApiController::updateSettings', 'EventController::setThresholds',
+		'ModuleController::settings', 'ModuleController::update',
+	];
+
+	/**
+	 * Routes of the core, always on (ROADMAP, guideline 12): catalog, start
+	 * page, file sync and manual file links, roles, audit log, import,
+	 * export, backup, settings and the personal view. Every other route
+	 * names its module (attribute RequiresModule).
+	 */
+	private const CORE = [
+		'PageController::index',
+		'ApiController::meta', 'ApiController::entries', 'ApiController::entry', 'ApiController::update',
+		'ApiController::import', 'ApiController::fileSync', 'ApiController::export', 'ApiController::exportStore',
+		'ApiController::audit', 'ApiController::settings', 'ApiController::updateSettings',
+		'WorkflowController::backup', 'WorkflowController::fullBackup', 'WorkflowController::restore',
+		'TaskController::due',
+		'MaintenanceController::linkFile', 'MaintenanceController::unlinkFile',
+		'ModuleController::settings', 'ModuleController::update', 'ModuleController::personalView',
 	];
 
 	/**
@@ -145,6 +172,70 @@ final class ControllerSecurityTest extends TestCase {
 			self::assertArrayHasKey($name, $routes);
 			self::assertContains(UserRateLimit::class, $routes[$name]['attributes'], $name);
 		}
+	}
+
+	public function testEveryRouteIsCoreOrBelongsToAModule(): void {
+		$routes = self::routes();
+		foreach (self::CORE as $name) {
+			self::assertArrayHasKey($name, $routes, 'core route exists');
+		}
+		foreach (array_keys($routes) as $name) {
+			[$class, $method] = explode('::', $name);
+			$modules = ModuleMiddleware::required('OCA\\Notenarchiv\\Controller\\' . $class, $method);
+			if (in_array($name, self::CORE, true)) {
+				self::assertSame([], $modules, $name . ' belongs to the core');
+				continue;
+			}
+			self::assertNotSame([], $modules, $name . ' is neither core nor part of a module');
+			foreach ($modules as $module) {
+				self::assertTrue(Modules::exists($module), $name . ': unknown module ' . $module);
+				self::assertFalse(Modules::isPlanned($module), $name . ': planned module ' . $module);
+			}
+		}
+	}
+
+	public function testRoutesOfASwitchedOffModuleAnswer404(): void {
+		$l = $this->l10n();
+		$controller = new PracticeAudioController($this->createStub(IRequest::class), 'carla', $this->createStub(PracticeAudioService::class),
+			$l, $this->createStub(LoggerInterface::class));
+
+		$middleware = new ModuleMiddleware($this->modulesWithout(), $l);
+		$middleware->beforeController($controller, 'authorize');
+
+		$middleware = new ModuleMiddleware($this->modulesWithout(['playback']), $l);
+		try {
+			$middleware->beforeController($controller, 'authorize');
+			self::fail('practice audio needs playback');
+		} catch (ModuleDisabledException $e) {
+			$response = $middleware->afterException($controller, 'authorize', $e);
+			self::assertSame(Http::STATUS_NOT_FOUND, $response->getStatus());
+			self::assertInstanceOf(JSONResponse::class, $response);
+			self::assertSame(['error' => 'This function is switched off.'], $response->getData());
+		}
+
+		$other = new \RuntimeException('not mine');
+		$this->expectExceptionObject($other);
+		$middleware->afterException($controller, 'authorize', $other);
+	}
+
+	public function testCoreRoutesStayOnWithEveryModuleOff(): void {
+		$middleware = new ModuleMiddleware($this->modules(array_fill_keys(Modules::switchable(), false)), $this->l10n());
+		$controller = new TaskController($this->createStub(IRequest::class), 'carla', $this->createStub(Roles::class),
+			$this->createStub(TaskService::class), $this->createStub(LinkService::class), $this->createStub(DueService::class), $this->l10n(),
+			$this->createStub(LoggerInterface::class));
+		$middleware->beforeController($controller, 'due');
+		$this->expectException(ModuleDisabledException::class);
+		$middleware->beforeController($controller, 'tasks');
+	}
+
+	public function testASwitchedOffPartOfAnActionAnswers404(): void {
+		$practiceAudio = $this->createStub(PracticeAudioService::class);
+		$practiceAudio->method('authorize')->willThrowException(new ModuleDisabledException('practice_audio'));
+		$controller = new PracticeAudioController($this->createStub(IRequest::class), 'carla', $practiceAudio, $this->l10n(),
+			$this->createStub(LoggerInterface::class));
+		$response = $controller->authorize(3);
+		self::assertSame(Http::STATUS_NOT_FOUND, $response->getStatus());
+		self::assertSame(['error' => 'This function is switched off.'], $response->getData());
 	}
 
 	#[CoversNothing]

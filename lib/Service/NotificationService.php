@@ -18,7 +18,8 @@ use Psr\Log\LoggerInterface;
  * to singers; they carry shelf marks and titles but no personal data; each
  * subject and object is notified once and withdrawn when the task is done.
  * Without the notifications app this is a no-op; the start page shows the
- * same tasks.
+ * same tasks. A subject whose switch (module `notify_<subject>`) is not
+ * active is not sent; withdrawing always works.
  */
 class NotificationService {
 	public const PROPOSALS_WAITING = 'proposals_waiting';
@@ -41,6 +42,7 @@ class NotificationService {
 		private Roles $roles,
 		private ITimeFactory $time,
 		private LoggerInterface $logger,
+		private Modules $modules,
 	) {
 	}
 
@@ -70,6 +72,9 @@ class NotificationService {
 	 * @param array<string, scalar|null> $parameters
 	 */
 	public function notifyRoles(array $roles, string $subject, string $objectType, string $objectId, array $parameters = [], bool $includeAdmins = false): void {
+		if (!$this->modules->notificationEnabled($subject)) {
+			return;
+		}
 		// A list, not keys: numeric account names would become integer keys.
 		$recipients = [];
 		foreach ($roles as $role) {

@@ -16,7 +16,7 @@ import {
 	mdiCogOutline,
 } from '@mdi/js'
 import { t } from './l10n.ts'
-import { computed, defineAsyncComponent, onMounted, ref } from 'vue'
+import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue'
 import NcAppContent from '@nextcloud/vue/components/NcAppContent'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcContent from '@nextcloud/vue/components/NcContent'
@@ -32,7 +32,8 @@ import DueView from './components/DueView.vue'
 import SettingsDialog from './components/SettingsDialog.vue'
 import { errorMessage, fetchTasks, resolveLink } from './api.ts'
 import { formatDate } from './format.ts'
-import { currentEventId, currentView, navigate, openDueTarget, startNavigation } from './navigation.ts'
+import { applyModules } from './modules.ts'
+import { currentEventId, currentView, navigate, openDueTarget, startNavigation, switchedOffNotice } from './navigation.ts'
 import { DEFAULT_VIEW, isMissingCopy, parseStartParams } from './startParams.ts'
 import {
 	archiveDialogOpen,
@@ -48,7 +49,9 @@ import {
 	loadEntries,
 	meta,
 	metaError,
+	moduleStates,
 	openEntry,
+	personalViewDialogOpen,
 	reloadMeta,
 	scoreRequest,
 	selectedId,
@@ -72,12 +75,25 @@ const StatisticsView = defineAsyncComponent(() => import('./components/Statistic
 const MergesView = defineAsyncComponent(() => import('./components/MergesView.vue'))
 const InventoryView = defineAsyncComponent(() => import('./components/InventoryView.vue'))
 const ChecksumsView = defineAsyncComponent(() => import('./components/ChecksumsView.vue'))
+const PersonalViewDialog = defineAsyncComponent(() => import('./components/PersonalViewDialog.vue'))
 
 /**
  * Message about a link or copy from the URL that could not be opened: an
  * error (role "alert") or a warning (role "status").
  */
 const startNotice = ref<{ text: string, type: 'error' | 'warning' } | null>(null)
+
+/** Tell that a link or the back button led to a function that is switched off. */
+function noticeSwitchedOff(): void {
+	startNotice.value = { text: t('notenarchiv', 'This function is switched off.'), type: 'warning' }
+}
+
+watch(switchedOffNotice, (value) => {
+	if (value) {
+		noticeSwitchedOff()
+		switchedOffNotice.value = false
+	}
+})
 
 /** The server hides the app from users without a role; this is a fallback. */
 const hasAccess = computed(() => meta.value !== null && (meta.value.admin || meta.value.roles.length > 0))
@@ -190,16 +206,23 @@ async function openLink(token: string): Promise<void> {
 onMounted(async () => {
 	await initMeta()
 	if (hasAccess.value) {
-		const params = parseStartParams(window.location.search)
+		const parsed = parseStartParams(window.location.search)
+		// Parts of the link that need a switched-off module lead to the start page
+		const { params, switchedOff } = applyModules(parsed, moduleStates.value)
+		if (switchedOff) {
+			noticeSwitchedOff()
+		}
 		currentView.value = allowedView(params)
 		currentEventId.value = params.eventId
 		startNavigation()
 		if (params.dueKey !== null && params.view === currentView.value) {
 			// A card of the start page from the dashboard widget: its view with its filters
 			openDueTarget(params.dueKey, { replace: true })
-		} else if ((new URLSearchParams(window.location.search).has('view') || params.dueKey !== null) && params.view !== currentView.value) {
-			// An unknown view or one the roles do not include: show the start page in the URL, too
-			navigate(currentView.value, { replace: true })
+		} else if (switchedOff
+			|| ((new URLSearchParams(window.location.search).has('view') || parsed.dueKey !== null) && params.view !== currentView.value)) {
+			// An unknown view, one the roles do not include or a switched-off
+			// function: show the start page in the URL, too
+			navigate(currentView.value, { eventId: currentEventId.value, replace: true })
 		}
 		await loadEntries()
 		await followStartParams(params)
@@ -370,6 +393,7 @@ function openSettings(): void {
 
 		<ArchiveManagement v-if="hasAccess && isLibrarian && archiveDialogOpen" />
 		<SettingsDialog v-if="isAdmin" />
+		<PersonalViewDialog v-if="hasAccess && personalViewDialogOpen" />
 	</NcContent>
 </template>
 

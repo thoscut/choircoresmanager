@@ -8,8 +8,9 @@ import type { ReleaseStatus } from './types.ts'
 
 import { reactive, ref, watch } from 'vue'
 import { dueTarget } from './dueTargets.ts'
+import { applyModules, viewActive } from './modules.ts'
 import { buildQuery, DEFAULT_VIEW, parseStartParams } from './startParams.ts'
-import { closeEntry, filters, openEntry, resetFilters, selectedId } from './store.ts'
+import { closeEntry, filters, moduleStates, openEntry, resetFilters, selectedId } from './store.ts'
 
 export const currentView = ref<ViewName>(DEFAULT_VIEW)
 export const currentEventId = ref<number | null>(null)
@@ -29,6 +30,12 @@ export const releaseFilter = ref<ReleaseStatus | ''>('')
 
 /** Person to show in the register (opened from a contribution). */
 export const selectedPersonId = ref<number | null>(null)
+
+/**
+ * Set when the URL (back button, link) led to a function that is switched
+ * off; the app shows the start page and a notice, then resets it.
+ */
+export const switchedOffNotice = ref(false)
 
 let listening = false
 
@@ -66,9 +73,13 @@ export function navigate(view: ViewName, options: { eventId?: number | null, rep
 
 /** Take over the URL after the back or forward button. */
 function onPopState(): void {
-	const params = parseStartParams(window.location.search)
+	const { params, switchedOff } = applyModules(parseStartParams(window.location.search), moduleStates.value)
 	currentView.value = params.view ?? DEFAULT_VIEW
 	currentEventId.value = params.eventId
+	if (switchedOff) {
+		switchedOffNotice.value = true
+		writeLocation(true)
+	}
 	if (params.copyId !== null && params.copyId !== selectedId.value) {
 		openEntry(params.copyId)
 	} else if (params.copyId === null && selectedId.value !== null) {
@@ -85,6 +96,12 @@ export function startNavigation(): void {
 	window.addEventListener('popstate', onPopState)
 	// The open copy is part of the URL, without a history entry of its own
 	watch(selectedId, () => writeLocation(true))
+	// A module switched off in the settings: leave its view
+	watch(moduleStates, (modules) => {
+		if (!viewActive(currentView.value, modules)) {
+			navigate(DEFAULT_VIEW, { replace: true })
+		}
+	})
 }
 
 /**

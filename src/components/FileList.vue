@@ -21,7 +21,7 @@ import { errorMessage, linkFile, unlinkFile } from '../api.ts'
 import { focusAfterDialog, focusAfterUpdate } from '../focus.ts'
 import { formatSize } from '../format.ts'
 import { navigate } from '../navigation.ts'
-import { hasArchiveFolder, isLibrarian } from '../store.ts'
+import { hasArchiveFolder, isLibrarian, isModuleActive } from '../store.ts'
 
 const props = defineProps<{
 	files: FileRef[]
@@ -173,7 +173,7 @@ function details(file: FileRef): string {
 
 		<NcNoteCard v-if="files.some((file) => file.sha256_mismatch)" type="warning">
 			<p>{{ t('notenarchiv', 'A file has changed without a visible modification and may be damaged.') }}</p>
-			<NcButton variant="secondary" @click="navigate('checksums')">
+			<NcButton v-if="isModuleActive('checksums')" variant="secondary" @click="navigate('checksums')">
 				{{ t('notenarchiv', 'Show checksums') }}
 			</NcButton>
 		</NcNoteCard>

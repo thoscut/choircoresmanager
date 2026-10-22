@@ -56,6 +56,7 @@ class CatalogService {
 		private RepertoireService $repertoire,
 		private PersonService $persons,
 		private MergeService $merges,
+		private Modules $modules,
 	) {
 	}
 
@@ -167,14 +168,15 @@ class CatalogService {
 	/**
 	 * Everything about one copy: work, version, files, other copies of the same
 	 * work, persons involved with the protection proposal (display only),
-	 * merges that can be undone, audit log.
+	 * merges that can be undone, audit log. Parts of switched-off modules are
+	 * empty (lists) or null, without being read.
 	 *
 	 * @return array{work: Work, version: WorkVersion, copy: Copy, files: list<ArchiveFile>,
 	 *     score: ?array{fileId: int, fileName: string, canView: bool, canPlay: bool, reason: ?string, canExportAudio: bool, exportReason: ?string},
 	 *     licenses: list<License>,
 	 *     releases: array{portal: ?string, onPortal: bool, printStation: ?string}, tasks: list<Task>, links: list<ExcerptLink>,
 	 *     proposals: list<Proposal>, siblings: list<array{id: int, shelfmark: string, version_id: int, status: string}>,
-	 *     contributions: list<array<string, string|int|bool|null|array<string, string|int|bool|null>>>, protection: ProtectionProposal,
+	 *     contributions: list<array<string, string|int|bool|null|array<string, string|int|bool|null>>>, protection: ?ProtectionProposal,
 	 *     merges: list<array<string, mixed>>, audit: list<AuditEntry>}
 	 */
 	public function entry(int $copyId, string $uid): array {
@@ -199,29 +201,31 @@ class CatalogService {
 		$files = $this->files->findByCopy($copy->getId());
 		$licenses = $this->licenses->findByVersion($version->getId());
 		$day = $this->rights->today($uid);
+		$active = $this->modules->states();
 		return [
 			'work' => $work,
 			'version' => $version,
 			'copy' => $copy,
 			'files' => $files,
-			'score' => $this->scores->describe($version, $files, $uid),
-			'licenses' => $licenses,
+			'score' => $active['score_viewer'] ? $this->scores->describe($version, $files, $uid) : null,
+			// Licenses still decide about releases and playback when their maintenance is switched off.
+			'licenses' => $active['rights'] ? $licenses : [],
 			'releases' => [
 				'portal' => $this->rights->portalDenial($version, $licenses, $day),
 				'onPortal' => $this->rights->isOnPortal($version),
 				'printStation' => $this->rights->printStationDenial($version, $licenses, $day),
 			],
-			'tasks' => $this->taskService->forCopy($copy->getId()),
-			'links' => $this->linkService->active($copy->getId(), $uid),
-			'proposals' => array_merge(
+			'tasks' => $active['tasks'] ? $this->taskService->forCopy($copy->getId()) : [],
+			'links' => $active['excerpt_links'] ? $this->linkService->active($copy->getId(), $uid) : [],
+			'proposals' => $active['proposals'] ? array_merge(
 				$this->proposals->findOpenForObject(Fields::WORK, $work->getId()),
 				$this->proposals->findOpenForObject(Fields::VERSION, $version->getId()),
 				$this->proposals->findOpenForObject(Fields::COPY, $copy->getId()),
-			),
+			) : [],
 			'siblings' => $siblings,
-			'contributions' => $this->persons->forVersion($version->getId()),
-			'protection' => $this->persons->protection($version->getId(), (int)substr($day, 0, 4)),
-			'merges' => $this->merges->openFor($work->getId(), $copy->getId()),
+			'contributions' => $active['persons'] ? $this->persons->forVersion($version->getId()) : [],
+			'protection' => $active['protection_terms'] ? $this->persons->protection($version->getId(), (int)substr($day, 0, 4)) : null,
+			'merges' => $active['merge'] ? $this->merges->openFor($work->getId(), $copy->getId()) : [],
 			'audit' => $this->auditEntries->findForObjects([
 				[Fields::WORK, $work->getId()],
 				[Fields::VERSION, $version->getId()],

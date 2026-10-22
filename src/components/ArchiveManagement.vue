@@ -30,7 +30,7 @@ import PerformanceImport from './PerformanceImport.vue'
 import PersonImport from './PersonImport.vue'
 import { errorMessage, exportUrl, runFileSync, runImport, storeBackup, storeExport } from '../api.ts'
 import { focusAfterDialog, focusAfterUpdate } from '../focus.ts'
-import { archiveDialogOpen, hasArchiveFolder, isAdmin, loadDetail, loadEntries, meta, settingsDialogOpen } from '../store.ts'
+import { archiveDialogOpen, hasArchiveFolder, isAdmin, isModuleActive, loadDetail, loadEntries, meta, settingsDialogOpen } from '../store.ts'
 
 // ---- import ----
 
@@ -250,8 +250,8 @@ function onUpdateOpen(open: boolean): void {
 			<ImportReport v-if="importReport && !importBusy" :report="importReport" />
 		</section>
 
-		<!-- Performances and song lists -->
-		<section class="archive-management__section" aria-labelledby="archive-performances">
+		<!-- Performances and song lists (module "performance_import") -->
+		<section v-if="isModuleActive('performance_import')" class="archive-management__section" aria-labelledby="archive-performances">
 			<h3 id="archive-performances">
 				{{ t('notenarchiv', 'Import performances and song lists') }}
 			</h3>
@@ -261,8 +261,8 @@ function onUpdateOpen(open: boolean): void {
 			<PerformanceImport @busy="performanceBusy = $event" />
 		</section>
 
-		<!-- Persons -->
-		<section class="archive-management__section" aria-labelledby="archive-persons">
+		<!-- Persons (module "persons") -->
+		<section v-if="isModuleActive('persons')" class="archive-management__section" aria-labelledby="archive-persons">
 			<h3 id="archive-persons">
 				{{ t('notenarchiv', 'Import persons') }}
 			</h3>

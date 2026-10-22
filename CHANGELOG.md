@@ -78,6 +78,22 @@ and 35.0.2 with MariaDB; the app requires MySQL or MariaDB.
   subscription link.
 - Concerts can be cancelled and reopened; the start page lists concerts with
   a deadline now.
+- Modules and presets (milestone 0.5.1): every function outside the core
+  (catalog, files, roles, audit log, import, export, backup, settings) is a
+  module that admins switch off in Settings → Modules or with
+  `occ notenarchiv:modules list|enable|disable|preset`, grouped, with
+  descriptions and dependencies (switching on also switches on what a module
+  needs; switching off names what stops working). A switched-off module is
+  off on the server, too: its routes answer 404 ("This function is switched
+  off."), background jobs, notifications, start page cards and the dashboard
+  widget leave it out. Data are never deleted and no rights check is relaxed.
+  Notifications can be switched off per occasion. Presets "Simple",
+  "Standard" (new installations) and "Complete"; installations updated from
+  before 0.1.27 keep every function. The interface for agents (0.6) is
+  planned as a module that starts off.
+- Personal view: every account hides navigation areas and start page cards
+  it does not need ("Customize view", stored on the server); permissions do
+  not change.
 
 ### Fixed
 
