@@ -157,6 +157,17 @@ All notable changes to this app are documented in this file. The format follows
   AI and need a review by native speakers; please open an issue or pull
   request. A missing translation of these languages falls back to English;
   German stays complete. `npm test` checks placeholders and plural forms.
+- The user guide and the administration guide in German
+  (`docs/de/benutzerhandbuch.md`, `docs/de/administrationshandbuch.md`),
+  complete and with the same sections as the English guides; each guide
+  links its counterpart at the top, and the German quick start leads to
+  both. In a German interface every link of the app ("Help", the **?** next
+  to a term, the hints and the settings page, the page "Access forbidden")
+  opens the matching section of the German guide, otherwise of the English
+  one; `src/docs.ts` holds both anchors of each section. `npm test` checks
+  that the anchors exist in both languages, that both versions have the same
+  headings in the same order, and that every link of the guides leads to an
+  existing file and section.
 
 ### Fixed
 

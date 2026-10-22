@@ -11,7 +11,7 @@
  */
 import type { GuideSection } from './docs.ts'
 
-import { BOTH_GUIDES } from './docs.ts'
+import { USER_GUIDE } from './docs.ts'
 import { t } from './l10n.ts'
 
 export type HelpTermKey =
@@ -43,46 +43,46 @@ export function helpTerm(term: HelpTermKey): HelpTermText {
 		return {
 			name: t('notenarchiv', 'Version'),
 			text: t('notenarchiv', 'A version is one edition or arrangement of a work. Rights, releases and the valid version belong to the version, not to the work.'),
-			section: BOTH_GUIDES.termVersion,
+			section: USER_GUIDE.termVersion,
 		}
 	case 'copy':
 		return {
 			name: t('notenarchiv', 'Copy'),
 			text: t('notenarchiv', 'A copy is one copy of a version on the shelf or in the archive folder, with its own shelf mark and status. A version can have several copies.'),
-			section: BOTH_GUIDES.termVersion,
+			section: USER_GUIDE.termVersion,
 		}
 	case 'shelfmark':
 		return {
 			name: t('notenarchiv', 'Shelf mark'),
 			text: t('notenarchiv', 'The shelf mark says where a copy is kept: archive binder and number, e.g. 5-12. File names start with it, so that the file sync links the files to the copy.'),
-			section: BOTH_GUIDES.termShelfmark,
+			section: USER_GUIDE.termShelfmark,
 		}
 	case 'rightsStatus':
 		return {
 			name: t('notenarchiv', 'Rights status'),
 			text: t('notenarchiv', 'Public domain, protected or open. The app proposes a status from the data; it counts for releases only after the music librarians have confirmed it. It is not legal advice.'),
-			section: BOTH_GUIDES.termRightsStatus,
+			section: USER_GUIDE.termRightsStatus,
 		}
 	case 'release':
 		return {
 			name: t('notenarchiv', 'Release'),
 			text: t('notenarchiv', 'A release says whether a version may be given out in a certain way, e.g. in the singers\' portal or at the print station. It follows from the confirmed rights or a valid license.'),
-			section: BOTH_GUIDES.termRelease,
+			section: USER_GUIDE.termRelease,
 		}
 	case 'validVersion':
 		return {
 			name: t('notenarchiv', 'Valid version'),
 			text: t('notenarchiv', 'The version the conductor has chosen for the choir, at most one per work. It says nothing about the rights.'),
-			section: BOTH_GUIDES.termValidVersion,
+			section: USER_GUIDE.termValidVersion,
 		}
 	case 'preservationCopy':
 		return {
 			name: t('notenarchiv', 'Internal preservation copy'),
 			text: t('notenarchiv', 'A copy kept only for the archive, e.g. the scan of a protected print. It is never shared, played or exported.'),
-			section: BOTH_GUIDES.termPreservationCopy,
+			section: USER_GUIDE.termPreservationCopy,
 		}
 	}
-	return { name: '', text: '', section: BOTH_GUIDES.termVersion }
+	return { name: '', text: '', section: USER_GUIDE.termVersion }
 }
 
 /** Sections of the sidebar whose heading is explained (FieldSection.vue). */

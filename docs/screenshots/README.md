@@ -70,7 +70,8 @@ The App Store shows the files marked with a number, in this order
 
 ## German interface (informal)
 
-Used in [`docs/de/schnellstart.md`](../de/schnellstart.md).
+Used in [`docs/de/schnellstart.md`](../de/schnellstart.md) and
+[`docs/de/benutzerhandbuch.md`](../de/benutzerhandbuch.md).
 
 | File | Shows |
 |---|---|

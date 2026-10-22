@@ -109,9 +109,14 @@ creates an account and refuses to run when the catalog is not empty.
 - A schema change or a new route needs a new version in `appinfo/info.xml`,
   `package.json` and `package-lock.json`; see [docs/release.md](docs/release.md).
 - Add user-visible changes to `CHANGELOG.md` under `[Unreleased]`.
-- Update the documentation in `docs/` when you change what users see. For new
-  screenshots use [tools/screenshots](tools/screenshots/README.md) with the
-  demo data.
+- Update the documentation in `docs/` when you change what users see, always
+  in both languages: the user guide and the administration guide exist in
+  English (`docs/user-guide.md`, `docs/admin-guide.md`) and German
+  (`docs/de/benutzerhandbuch.md`, `docs/de/administrationshandbuch.md`). Both
+  versions have the same headings in the same order; `npm test` compares them
+  and checks every link and anchor. The app links the sections listed in
+  `src/docs.ts`, with the English and the German anchor. For new screenshots
+  use [tools/screenshots](tools/screenshots/README.md) with the demo data.
 
 ## Commit messages
 

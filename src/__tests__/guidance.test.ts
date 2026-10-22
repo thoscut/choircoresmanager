@@ -9,7 +9,7 @@ import type { Entry, FieldInfo } from '../types.ts'
 import { getLanguage, setLanguage } from '@nextcloud/l10n'
 import { afterEach, describe, expect, it } from 'vitest'
 import { DEFAULT_FILTERS, moreFiltersActive, openChoices } from '../catalog.ts'
-import { BOTH_GUIDES, guideUrl } from '../docs.ts'
+import { USER_GUIDE, userGuideUrl } from '../docs.ts'
 import { displayValue, formatDate } from '../format.ts'
 import { helpTerm } from '../helpTerms.ts'
 import { VIEW_MODULES } from '../modules.ts'
@@ -60,15 +60,15 @@ describe('help at the place', () => {
 			const help = helpTerm(term)
 			expect(help.name, term).not.toBe('')
 			expect(help.text.length, term).toBeGreaterThan(20)
-			expect(Object.values(BOTH_GUIDES), term).toContain(help.section)
+			expect(Object.values(USER_GUIDE), term).toContain(help.section)
 		}
 	})
 
-	it('links the German quick start for German and the user guide otherwise', () => {
+	it('links the German user guide for German and the English one otherwise', () => {
 		setLanguage('de')
-		expect(guideUrl(BOTH_GUIDES.termRightsStatus)).toBe('https://github.com/thoscut/choircoresmanager/blob/main/docs/de/schnellstart.md#rechtestatus-und-best%C3%A4tigung')
+		expect(userGuideUrl(USER_GUIDE.termRightsStatus)).toBe('https://github.com/thoscut/choircoresmanager/blob/main/docs/de/benutzerhandbuch.md#rechtestatus-und-best%C3%A4tigung')
 		setLanguage('en')
-		expect(guideUrl(BOTH_GUIDES.termRightsStatus)).toBe('https://github.com/thoscut/choircoresmanager/blob/main/docs/user-guide.md#rights-status-and-confirmation')
+		expect(userGuideUrl(USER_GUIDE.termRightsStatus)).toBe('https://github.com/thoscut/choircoresmanager/blob/main/docs/user-guide.md#rights-status-and-confirmation')
 	})
 })
 

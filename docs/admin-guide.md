@@ -1,5 +1,7 @@
 # Administration guide
 
+**English** | [Deutsch](de/administrationshandbuch.md)
+
 This guide is for Nextcloud administrators who install and set up the
 Notenarchiv app, and for the music librarians who take it over afterwards.
 Daily work with the app is described in the [user guide](user-guide.md).

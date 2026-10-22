@@ -75,13 +75,13 @@ class PageController extends Controller {
 	}
 
 	/**
-	 * The section of the guide about a missing role: the German quick start
-	 * for German, otherwise the user guide (the anchors are those of
-	 * src/docs.ts, BOTH_GUIDES.noAccess; a unit test there checks them).
+	 * The section of the user guide about a missing role: the German guide
+	 * for German, otherwise the English one (the anchors are those of
+	 * src/docs.ts, USER_GUIDE.noAccess; a unit test there checks them).
 	 */
 	public static function noAccessGuideUrl(string $language): string {
 		return str_starts_with(strtolower($language), 'de')
-			? self::DOCS . 'de/schnellstart.md#kein-zugang-zum-notenarchiv'
+			? self::DOCS . 'de/benutzerhandbuch.md#kein-zugang-zum-notenarchiv'
 			: self::DOCS . 'user-guide.md#no-access-to-the-music-archive';
 	}
 

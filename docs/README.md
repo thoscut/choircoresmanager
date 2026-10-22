@@ -4,6 +4,15 @@ Notenarchiv is a Nextcloud app that keeps the catalog of a choir's sheet music
 archive. This page tells you where to start. The project overview, installation
 and requirements are in the [README](../README.md) of the repository.
 
+The guides for using and running the app are in English and German; the
+documentation for developers is in English.
+
+| Guide | English | Deutsch |
+|---|---|---|
+| Using the app | [User guide](user-guide.md) | [Benutzerhandbuch](de/benutzerhandbuch.md) |
+| Running the app | [Administration guide](admin-guide.md) | [Administrationshandbuch](de/administrationshandbuch.md) |
+| The essentials in a few minutes | – | [Schnellstart](de/schnellstart.md) |
+
 ## Using the app
 
 | You are … | Read |
@@ -11,7 +20,6 @@ and requirements are in the [README](../README.md) of the repository.
 | a music librarian who keeps the catalog, the rights and the backups | [User guide](user-guide.md) |
 | a conductor who chooses versions, answers questions and plans concerts | [User guide](user-guide.md) |
 | a board member or auditor who reads the catalog and the audit log | [User guide](user-guide.md) |
-| German-speaking and want the essentials in a few minutes | [Schnellstart](de/schnellstart.md) (German quick start for the archive management and the conductor) |
 
 ## Running the app
 
@@ -44,6 +52,18 @@ and requirements are in the [README](../README.md) of the repository.
 - [Screenshots](screenshots/README.md): the list of images and their captions.
 - [Roadmap](../ROADMAP.md) (German): principles and milestones.
 - [Changelog](../CHANGELOG.md).
+
+## Deutsch
+
+Die Anleitungen gibt es auf Englisch und auf Deutsch, die Unterlagen für die
+Entwicklung nur auf Englisch.
+
+| Du bist … | Lies |
+|---|---|
+| in der Archivverwaltung, in der Chorleitung, im Vorstand oder in der Revision | [Benutzerhandbuch](de/benutzerhandbuch.md) |
+| neu und willst das Wichtigste in wenigen Minuten | [Schnellstart](de/schnellstart.md) |
+| in der Administration und richtest die App ein | [Administrationshandbuch](de/administrationshandbuch.md) |
+| verantwortlich für Sicherung und Datenschutz | [Administrationshandbuch](de/administrationshandbuch.md) und [SECURITY.md](../SECURITY.md) (englisch) |
 
 ## Security
 

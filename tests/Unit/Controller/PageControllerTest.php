@@ -20,14 +20,14 @@ use PHPUnit\Framework\TestCase;
  */
 #[CoversClass(PageController::class)]
 final class PageControllerTest extends TestCase {
-	public function testLinksTheGermanQuickStartForGerman(): void {
+	public function testLinksTheGermanUserGuideForGerman(): void {
 		foreach (['de', 'de_DE'] as $language) {
-			self::assertSame('https://github.com/thoscut/choircoresmanager/blob/main/docs/de/schnellstart.md#kein-zugang-zum-notenarchiv',
+			self::assertSame('https://github.com/thoscut/choircoresmanager/blob/main/docs/de/benutzerhandbuch.md#kein-zugang-zum-notenarchiv',
 				PageController::noAccessGuideUrl($language));
 		}
 	}
 
-	public function testLinksTheUserGuideOtherwise(): void {
+	public function testLinksTheEnglishUserGuideOtherwise(): void {
 		self::assertSame('https://github.com/thoscut/choircoresmanager/blob/main/docs/user-guide.md#no-access-to-the-music-archive',
 			PageController::noAccessGuideUrl('en'));
 	}

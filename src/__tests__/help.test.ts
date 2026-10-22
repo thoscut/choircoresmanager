@@ -38,19 +38,25 @@ describe('documentation links', () => {
 		setLanguage(before)
 	})
 
-	it('opens the German quick start for a German interface', () => {
+	it('opens the German user guide for a German interface', () => {
 		setLanguage('de')
-		expect(helpUrl()).toBe('https://github.com/thoscut/choircoresmanager/blob/main/docs/de/schnellstart.md')
+		expect(helpUrl()).toBe('https://github.com/thoscut/choircoresmanager/blob/main/docs/de/benutzerhandbuch.md')
 		setLanguage('de_DE')
-		expect(helpUrl()).toBe('https://github.com/thoscut/choircoresmanager/blob/main/docs/de/schnellstart.md')
+		expect(helpUrl()).toBe('https://github.com/thoscut/choircoresmanager/blob/main/docs/de/benutzerhandbuch.md')
 	})
 
 	it('opens the English user guide otherwise', () => {
 		setLanguage('en')
 		expect(helpUrl()).toBe('https://github.com/thoscut/choircoresmanager/blob/main/docs/user-guide.md')
+		setLanguage('fr')
+		expect(helpUrl()).toBe('https://github.com/thoscut/choircoresmanager/blob/main/docs/user-guide.md')
 	})
 
-	it('links a section of the admin guide', () => {
+	it('links a section of the admin guide in the language of the interface', () => {
+		setLanguage('en')
 		expect(adminGuideUrl(ADMIN_GUIDE.archive)).toBe('https://github.com/thoscut/choircoresmanager/blob/main/docs/admin-guide.md#3-archive-folder')
+		setLanguage('de_DE')
+		expect(adminGuideUrl(ADMIN_GUIDE.archive)).toBe('https://github.com/thoscut/choircoresmanager/blob/main/docs/de/administrationshandbuch.md#3-archivordner')
+		expect(adminGuideUrl(ADMIN_GUIDE.setup)).toBe('https://github.com/thoscut/choircoresmanager/blob/main/docs/de/administrationshandbuch.md#einrichten-in-f%C3%BCnf-schritten')
 	})
 })

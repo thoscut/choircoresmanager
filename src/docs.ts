@@ -6,50 +6,50 @@
 /**
  * Links into the guides (the same place as `<documentation>` in
  * appinfo/info.xml). Messages that say what to do link the matching
- * section. A unit test checks that every anchor exists in the guide.
- * Opening a link is the person's own choice; the app itself never requests
- * anything from outside.
+ * section. Both guides exist in English and in German; a German interface
+ * links the German guide. A unit test checks that every anchor exists in
+ * both languages. Opening a link is the person's own choice; the app itself
+ * never requests anything from outside.
  */
 import { getLanguage } from '@nextcloud/l10n'
 
 const DOCS = 'https://github.com/thoscut/choircoresmanager/blob/main/docs/'
 
-/** Sections of docs/admin-guide.md (GitHub's anchors of the headings). */
-export const ADMIN_GUIDE = {
-	setup: 'setting-up-in-five-steps',
-	roles: '2-roles-and-groups',
-	delegation: 'giving-the-settings-to-a-group',
-	archive: '3-archive-folder',
-	sharing: 'sharing-the-archive-folder',
-	access: 'checking-who-can-open-the-archive-folder',
-	import: '4-first-import',
-	backup: '5-backups-and-restore',
-	modules: '12-modules-and-presets',
-	folderBook: '15-folder-book-retention-period',
-	printMirror: '16-mirror-folder-for-the-print-station',
-	problems: 'common-problems',
+/** The files of the guides, per language. */
+const FILES = {
+	admin: { en: 'admin-guide.md', de: 'de/administrationshandbuch.md' },
+	user: { en: 'user-guide.md', de: 'de/benutzerhandbuch.md' },
 } as const
 
-/** Sections of docs/user-guide.md. */
-export const USER_GUIDE = {
-	filesNotShared: 'files-you-cannot-open',
-	revisions: 'revisions-of-a-version',
-	validVersion: 'choosing-the-valid-version',
-} as const
-
-/**
- * A section in both guides: the English user guide and the German quick
- * start (docs/de/schnellstart.md). German readers get the quick start.
- */
+/** A section of a guide: GitHub's anchor of its heading in each language. */
 export interface GuideSection {
-	/** anchor in docs/user-guide.md */
+	/** anchor in the English guide */
 	en: string
-	/** anchor in docs/de/schnellstart.md */
+	/** anchor in the German guide */
 	de: string
 }
 
-/** Sections that exist in both guides. */
-export const BOTH_GUIDES = {
+/** Sections of the administration guide. */
+export const ADMIN_GUIDE = {
+	setup: { en: 'setting-up-in-five-steps', de: 'einrichten-in-fünf-schritten' },
+	roles: { en: '2-roles-and-groups', de: '2-rollen-und-gruppen' },
+	delegation: { en: 'giving-the-settings-to-a-group', de: 'die-einstellungen-einer-gruppe-übertragen' },
+	archive: { en: '3-archive-folder', de: '3-archivordner' },
+	sharing: { en: 'sharing-the-archive-folder', de: 'den-archivordner-freigeben' },
+	access: { en: 'checking-who-can-open-the-archive-folder', de: 'prüfen-wer-den-archivordner-öffnen-kann' },
+	import: { en: '4-first-import', de: '4-erster-import' },
+	backup: { en: '5-backups-and-restore', de: '5-sicherung-und-wiederherstellung' },
+	modules: { en: '12-modules-and-presets', de: '12-module-und-voreinstellungen' },
+	folderBook: { en: '15-folder-book-retention-period', de: '15-mappenbuch-löschfrist' },
+	printMirror: { en: '16-mirror-folder-for-the-print-station', de: '16-spiegelordner-für-die-druckstation' },
+	problems: { en: 'common-problems', de: 'häufige-probleme' },
+} as const satisfies Record<string, GuideSection>
+
+/** Sections of the user guide. */
+export const USER_GUIDE = {
+	filesNotShared: { en: 'files-you-cannot-open', de: 'dateien-die-sich-nicht-öffnen-lassen' },
+	revisions: { en: 'revisions-of-a-version', de: 'stände-einer-fassung' },
+	validVersion: { en: 'choosing-the-valid-version', de: 'die-geltende-fassung-festlegen' },
 	noAccess: { en: 'no-access-to-the-music-archive', de: 'kein-zugang-zum-notenarchiv' },
 	termVersion: { en: 'work-version-and-copy', de: 'werk-fassung-und-exemplar' },
 	termShelfmark: { en: 'shelf-mark', de: 'signatur' },
@@ -60,54 +60,54 @@ export const BOTH_GUIDES = {
 } as const satisfies Record<string, GuideSection>
 
 /**
- * Link to a section of the administration guide.
+ * Link to a section of the administration guide, in the language of the
+ * user.
  *
- * @param section - anchor, a value of ADMIN_GUIDE
+ * @param section - anchors of the section, a value of ADMIN_GUIDE
  */
-export function adminGuideUrl(section: typeof ADMIN_GUIDE[keyof typeof ADMIN_GUIDE]): string {
-	return `${DOCS}admin-guide.md#${section}`
+export function adminGuideUrl(section: GuideSection): string {
+	return guideLink('admin', section)
 }
 
 /**
- * Link to a section of the user guide.
+ * Link to a section of the user guide, in the language of the user.
  *
- * @param section - anchor, a value of USER_GUIDE
+ * @param section - anchors of the section, a value of USER_GUIDE
  */
-export function userGuideUrl(section: typeof USER_GUIDE[keyof typeof USER_GUIDE]): string {
-	return `${DOCS}user-guide.md#${section}`
+export function userGuideUrl(section: GuideSection): string {
+	return guideLink('user', section)
+}
+
+/** The guide behind "Help": the user guide in the language of the user. */
+export function helpUrl(): string {
+	return DOCS + (isGerman() ? FILES.user.de : FILES.user.en)
 }
 
 /**
- * Link to a section that exists in both guides, in the language of the
- * user: the German quick start or the English user guide.
+ * The German guide for a German interface (informal or formal), otherwise
+ * the English one.
  *
- * @param section - anchors of the section, a value of BOTH_GUIDES
+ * @param guide - the guide
+ * @param section - anchors of the section
  */
-export function guideUrl(section: GuideSection): string {
+function guideLink(guide: keyof typeof FILES, section: GuideSection): string {
 	return isGerman()
-		? `${DOCS}de/schnellstart.md#${encodeURIComponent(section.de)}`
-		: `${DOCS}user-guide.md#${section.en}`
+		? `${DOCS}${FILES[guide].de}#${encodeURIComponent(section.de)}`
+		: `${DOCS}${FILES[guide].en}#${encodeURIComponent(section.en)}`
 }
 
-/** Whether the user reads German (the quick start is German). */
+/** Whether the user reads German. */
 function isGerman(): boolean {
 	return getLanguage().toLowerCase().startsWith('de')
 }
 
 /**
  * The anchor GitHub gives a heading: lower case, without punctuation, spaces
- * as hyphens.
+ * as hyphens. Umlauts stay. A heading that occurs twice gets "-1" on the
+ * second anchor; the guides avoid that.
  *
  * @param heading - text of the heading without the leading #
  */
 export function headingAnchor(heading: string): string {
 	return heading.trim().toLowerCase().replace(/[^\p{L}\p{N}\s_-]/gu, '').replace(/\s/g, '-')
-}
-
-/**
- * The guide behind "Help": in German the quick start, otherwise the user
- * guide (the full guides are in English).
- */
-export function helpUrl(): string {
-	return isGerman() ? DOCS + 'de/schnellstart.md' : DOCS + 'user-guide.md'
 }

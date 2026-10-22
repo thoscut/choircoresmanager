@@ -18,3 +18,8 @@ declare module '*.php?raw' {
 	const text: string
 	export default text
 }
+
+// Vite's glob import: the files of the repository that match, by path.
+interface ImportMeta {
+	glob(pattern: string | string[], options?: { query?: string, import?: string, eager?: boolean }): Record<string, unknown>
+}

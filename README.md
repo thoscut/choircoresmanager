@@ -242,8 +242,10 @@ speakers; a missing text falls back to English. See
 - [Documentation overview](docs/README.md)
 - [User guide](docs/user-guide.md): daily work for music librarians,
   conductors, the board and auditors
+  ([Benutzerhandbuch](docs/de/benutzerhandbuch.md), German)
 - [Administration guide](docs/admin-guide.md): installation, roles, archive
   folder, import, backups and restore, managed hosting
+  ([Administrationshandbuch](docs/de/administrationshandbuch.md), German)
 - [Schnellstart](docs/de/schnellstart.md): German quick start for the archive
   management and the conductor
 - [API](docs/api.md): the internal JSON API of the user interface

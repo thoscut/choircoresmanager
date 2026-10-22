@@ -18,7 +18,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcPopover from '@nextcloud/vue/components/NcPopover'
 import GuideLink from './GuideLink.vue'
-import { guideUrl } from '../docs.ts'
+import { userGuideUrl } from '../docs.ts'
 import { helpTerm } from '../helpTerms.ts'
 import { t } from '../l10n.ts'
 
@@ -49,7 +49,7 @@ const headingId = useId()
 			</p>
 			<p>{{ help.text }}</p>
 			<p>
-				<GuideLink :href="guideUrl(help.section)" :label="t('notenarchiv', 'More in the guide')" />
+				<GuideLink :href="userGuideUrl(help.section)" :label="t('notenarchiv', 'More in the guide')" />
 			</p>
 		</div>
 	</NcPopover>

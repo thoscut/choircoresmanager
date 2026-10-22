@@ -1,5 +1,7 @@
 # User guide
 
+**English** | [Deutsch](de/benutzerhandbuch.md)
+
 This guide is for the people who look after a choir's sheet music: music
 librarians, the conductor, the board and the auditors. Choir members find
 their part in [Shared with me](#shared-with-me). It first explains a few
@@ -108,8 +110,8 @@ The navigation on the left lists the views of the app in groups:
 The conductor also finds **Choose valid versions** (see
 [Choosing the valid version](#choosing-the-valid-version)).
 
-At the bottom, everyone finds **Help** (this guide; in German the quick
-start) and **Customize view**, music librarians **Archive management**
+At the bottom, everyone finds **Help** (this guide, in a German interface
+the German one) and **Customize view**, music librarians **Archive management**
 (imports, file sync, exports, backups). **Settings** (for administrators and
 the groups they have given the settings) leads to **Administration → Music
 archive**, the settings page of the app in Nextcloud's administration.
@@ -795,7 +797,7 @@ score view.
 Shelf labels do not show a revision: they belong to the copy, not to the
 state of its MusicXML.
 
-#### Common problems
+#### Common problems with revisions
 
 - **"No revision has been recorded yet."** The module has just been switched
   on, or the copy has no MusicXML. Run the file sync (**Archive management**

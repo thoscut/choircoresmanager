@@ -1,9 +1,11 @@
 # Schnellstart
 
+[English](../user-guide.md) | **Deutsch**
+
 Diese Kurzanleitung zeigt der Archivverwaltung und der Chorleitung die ersten
-Schritte im Notenarchiv. Ausführlich beschreiben es der
-[User guide](../user-guide.md) und für die Einrichtung der
-[Administration guide](../admin-guide.md), beide auf Englisch.
+Schritte im Notenarchiv. Ausführlich beschreiben es das
+[Benutzerhandbuch](benutzerhandbuch.md) und für die Einrichtung das
+[Administrationshandbuch](administrationshandbuch.md).
 
 > [!NOTE]
 > Du siehst das Notenarchiv nur, wenn dein Konto in einer Gruppe mit einer
@@ -29,7 +31,8 @@ Schritte im Notenarchiv. Ausführlich beschreiben es der
 ## Begriffe
 
 Neben diesen Begriffen zeigt die App ein kleines **?**. Es öffnet eine kurze
-Erklärung mit einem Link hierher; Escape schließt sie wieder.
+Erklärung mit einem Link in das
+[Benutzerhandbuch](benutzerhandbuch.md#begriffe); Escape schließt sie wieder.
 
 ### Werk, Fassung und Exemplar
 
@@ -285,8 +288,9 @@ Die App erinnert dich 10, 8 und 6 Wochen vor dem Konzert an die Fristen.
 Notenarchiv; die App oder die Seite „Zugriff verboten“ sagt dir das. Rollen
 hängen an Nextcloud-Gruppen. Bitte die Administration, dein Konto in die
 Gruppe deiner Rolle aufzunehmen (siehe
-[Administration guide](../admin-guide.md#2-roles-and-groups)). Chormitglieder
-sehen nur **Für mich freigegeben**, und das nur, wenn es eingeschaltet ist.
+[Administrationshandbuch](administrationshandbuch.md#2-rollen-und-gruppen)).
+Chormitglieder sehen nur **Für mich freigegeben**, und das nur, wenn es
+eingeschaltet ist.
 
 ### Datei lässt sich nicht öffnen
 
@@ -319,10 +323,10 @@ Bitte die Administration darum.
 - **Auswertungen** zeigt Bestand, Rechte, Repertoire und Pflege in Zahlen;
   der **Jahresbericht** fasst ein Jahr für Vorstand und Mitgliederversammlung
   zusammen.
-- [User guide](../user-guide.md): alle Funktionen, nach Rollen und Aufgaben
-  geordnet, mit dem Abschnitt
-  [Common problems](../user-guide.md#common-problems)
-- [Administration guide](../admin-guide.md): Installation, Rollen,
-  Archivordner, Import, Sicherung
+- [Benutzerhandbuch](benutzerhandbuch.md): alle Funktionen, nach Rollen und
+  Aufgaben geordnet, mit dem Abschnitt
+  [Häufige Probleme](benutzerhandbuch.md#häufige-probleme)
+- [Administrationshandbuch](administrationshandbuch.md): Installation,
+  Rollen, Archivordner, Import, Sicherung
 - [Demo-Bestand](../../tools/demo/README.md): ein erfundenes Notenarchiv zum
   Ausprobieren

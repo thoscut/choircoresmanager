@@ -34,7 +34,7 @@ import CatalogNavigation from './components/CatalogNavigation.vue'
 import CopySidebar from './components/CopySidebar.vue'
 import DueView from './components/DueView.vue'
 import GuideLink from './components/GuideLink.vue'
-import { BOTH_GUIDES, guideUrl } from './docs.ts'
+import { USER_GUIDE, userGuideUrl } from './docs.ts'
 import { adminSettingsUrl, errorMessage, fetchTasks, resolveLink } from './api.ts'
 import { formatDate } from './format.ts'
 import { applyModules } from './modules.ts'
@@ -291,7 +291,7 @@ const settingsUrl = adminSettingsUrl()
 					<NcIconSvgWrapper :path="mdiAccountLockOutline" />
 				</template>
 				<template #action>
-					<GuideLink :href="guideUrl(BOTH_GUIDES.noAccess)" :label="t('notenarchiv', 'No access to the music archive (guide)')" />
+					<GuideLink :href="userGuideUrl(USER_GUIDE.noAccess)" :label="t('notenarchiv', 'No access to the music archive (guide)')" />
 				</template>
 			</NcEmptyContent>
 
