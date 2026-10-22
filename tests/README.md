@@ -121,7 +121,22 @@ sudo -u www-data php tests/Integration/settings_access_test.php /var/www/nextclo
 sudo -u www-data php tests/Integration/folder_book_test.php   /var/www/nextcloud <uid> <shelfmark>
 sudo -u www-data php tests/Integration/print_mirror_test.php  /var/www/nextcloud <uid> <shelfmark-with-pdf>
 sudo -u www-data php tests/Integration/archive_extras_test.php /var/www/nextcloud <uid>
+sudo -u www-data php tests/Integration/version_states_test.php /var/www/nextcloud <uid> <shelfmark-with-musicxml>
 ```
+
+`version_states_test.php` covers the revisions of a version (milestone 0.8,
+module `version_states`): the file sync records the score file of the copy
+with its checksum (the first revision of a version that has none), an
+unchanged file makes no new revision, a small correction in the app makes
+exactly one new revision with measure, voice, reason and changes, the
+catalog librarian sets the current revision (the conductor may not), the
+copy names the current revision and the one of the score shown, and a
+concert of today confirmed as sung keeps its revision, also in the song
+order. It switches the modules it needs on (and checks the module switched
+off), gives the account's groups the roles `librarian` and `conductor` for
+the time of the test, and runs on any catalog: the copy needs a MusicXML
+file the account may read, in a folder it may write to. The corrected file
+is deleted, roles and switches restored, everything else rolled back.
 
 `archive_extras_test.php` covers milestone 0.8, archive: the special cases
 of the protection term (§§ 70, 71 UrhG) with a person and an editor it
@@ -285,6 +300,7 @@ it runs the tests with these shelf marks of the demo catalog:
 | `modules_test.php` | `2-6` | 2-6 is protected without a license for practice audio |
 | `api_v1_test.php` | `1-1 3-1` | 1-1 is public domain with MusicXML (and a demo report, which the test's own reports do not touch), 3-1 the internal preservation copy |
 | `review_test.php` | `1-2` | MXL with four staves and without a demo report, so the review points of the demo reports do not interfere |
+| `version_states_test.php` | `1-2` | MXL in a folder the CI account may write to; the corrected file is deleted again |
 | `files_integration_test.php` | – | finds a MusicXML file and a PDF of copies itself; `LIESMICH.txt` is the unlisted file; creates and deletes a second account |
 | `archive_extras_test.php` | – | finds a copy with MusicXML and the preservation copy itself; writes two annual snapshots into the archive folder and deletes them again |
 | `backup_test.php` | – | |

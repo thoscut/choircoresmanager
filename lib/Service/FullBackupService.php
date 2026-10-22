@@ -56,7 +56,7 @@ class FullBackupService {
 
 	/** Tables in an order that satisfies the references on restore */
 	public const TABLES = [
-		'notarch_works', 'notarch_versions', 'notarch_copies', 'notarch_files', 'notarch_licenses',
+		'notarch_works', 'notarch_versions', 'notarch_copies', 'notarch_files', 'notarch_states', 'notarch_licenses',
 		'notarch_proposals', 'notarch_tasks', 'notarch_links', 'notarch_events', 'notarch_event_items',
 		'notarch_persons', 'notarch_contributions', 'notarch_merges', 'notarch_review_reports', 'notarch_review_points',
 		'notarch_folders', 'notarch_folder_loans', 'notarch_audit',

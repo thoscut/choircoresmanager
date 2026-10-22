@@ -371,6 +371,28 @@ function inPortal(item: EventItem): boolean {
 }
 
 const printedItems = computed(() => items.value.filter((item) => item.struck !== true))
+
+/** Column "Revision" of the printed lists (module "version_states"), when an item has one. */
+const showRevisionColumn = computed(() => printedItems.value.some((item) => typeof item.revision === 'number'))
+
+/**
+ * The revision of an item as text: the revision sung, or the current one
+ * with the day since when it is valid.
+ *
+ * @param item - event item with its revision
+ */
+function revisionText(item: EventItem): string {
+	const number = item.revision
+	if (typeof number !== 'number') {
+		return ''
+	}
+	if (item.revision_sung) {
+		return t('notenarchiv', 'Revision {number} sung', { number })
+	}
+	return item.revision_valid_since
+		? t('notenarchiv', 'Revision {number}, valid since {date}', { number, date: formatDate(item.revision_valid_since) })
+		: t('notenarchiv', 'Revision {number}', { number })
+}
 </script>
 
 <template>
@@ -521,6 +543,7 @@ const printedItems = computed(() => items.value.filter((item) => item.struck !==
 								</p>
 								<p class="event-item__facts">
 									<span>{{ t('notenarchiv', 'Duration: {duration}', { duration: formatDuration(item.duration) || '–' }) }}</span>
+									<span v-if="typeof item.revision === 'number'">{{ revisionText(item) }}</span>
 									<span v-if="item.note">{{ item.note }}</span>
 								</p>
 								<ul v-if="item.warnings && item.warnings.length > 0" class="event-item__warnings">
@@ -663,6 +686,9 @@ const printedItems = computed(() => items.value.filter((item) => item.struck !==
 							<th>{{ t('notenarchiv', 'Shelf mark') }}</th>
 							<th>{{ t('notenarchiv', 'Title') }}</th>
 							<th>{{ t('notenarchiv', 'Composer / arrangement') }}</th>
+							<th v-if="showRevisionColumn">
+								{{ t('notenarchiv', 'Revision') }}
+							</th>
 							<th v-if="printMode === 'programme'">
 								{{ t('notenarchiv', 'Duration') }}
 							</th>
@@ -691,6 +717,9 @@ const printedItems = computed(() => items.value.filter((item) => item.struck !==
 								</template>
 							</td>
 							<td>{{ itemPeople(item) }}</td>
+							<td v-if="showRevisionColumn">
+								{{ revisionText(item) }}
+							</td>
 							<td v-if="printMode === 'programme'">
 								{{ formatDuration(item.duration) }}
 							</td>

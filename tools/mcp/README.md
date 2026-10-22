@@ -151,6 +151,7 @@ app password into `.mcp.json` in the repository.
 | `statistics` | – | Figures of the archive |
 | `get_review` | – | Review of the transcription of a copy: reports, counts, review points with place, role and status |
 | `list_correction_orders` | – | Correction orders for the tool chain (what to change where), in pages |
+| `list_revisions` | – | Revisions of the version of a copy: number, origin, file and checksum, what changed, the current one |
 | `submit_transcription_report` | adds | Hand in the report of a transcription (`bericht/1`) for a copy; review points and proposals |
 
 The tools carry MCP annotations: the reading ones `readOnlyHint: true`, the

@@ -84,6 +84,7 @@ import { copyText } from '../clipboard.ts'
 import { focusAfterDialog } from '../focus.ts'
 import { referenceWords } from '../labels.ts'
 import { textReference } from '../references.ts'
+import { revisionLine, shownRevision } from '../revisionLabels.ts'
 import { canonicalVoice, matchVoice, pointPlace, pointRange } from '../review.ts'
 import { parsePage, scanFiles, storedScanPage, storeScanPage } from '../scan.ts'
 import { SETTINGS_SECTIONS } from '../settings.ts'
@@ -136,6 +137,12 @@ const title = computed(() => String(props.detail.work.title ?? ''))
 const composer = computed(() => String(props.detail.work.composer ?? ''))
 const heading = computed(() => [shelfmark.value, title.value].filter((part) => part !== '').join(' · '))
 const musicxmlReview = computed(() => String(props.detail.version.musicxml_review ?? '').trim())
+/** Revision of the file shown (module "version_states"), with "valid since" when it is the current one */
+const revision = computed(() => shownRevision(props.detail.revision))
+/** The version line: shelf mark · version · revision · valid since */
+const versionLineText = computed(() => (revision.value
+	? revisionLine(shelfmark.value, props.detail.version, revision.value.number, revision.value.validSince)
+	: ''))
 const reviewLabel = computed(() => fieldInfo('version', 'musicxml_review') ? fieldLabel('version', 'musicxml_review') : t('notenarchiv', 'MusicXML review'))
 
 // ---- loading ----------------------------------------------------------------
@@ -300,6 +307,7 @@ const focusLabel = computed(() => (focusVoice.value ? labelOf(focusVoice.value) 
 const reference = computed(() => textReference({
 	shelfmark: shelfmark.value,
 	title: title.value,
+	revision: revision.value ? t('notenarchiv', 'Revision {number}', { number: revision.value.number }) : null,
 	measureFrom: rangeNumbers.value?.from ?? null,
 	measureTo: rangeNumbers.value?.to ?? null,
 	voice: focusLabel.value,
@@ -1275,6 +1283,7 @@ onBeforeUnmount(() => {
 				<p v-if="composer || score" class="score-viewer__subtitle">
 					<span v-if="composer">{{ composer }}</span>
 					<span v-if="score" class="score-viewer__file">{{ t('notenarchiv', 'File: {name}', { name: score.fileName }) }}</span>
+					<span v-if="versionLineText" class="score-viewer__file">{{ versionLineText }}</span>
 				</p>
 				<div class="score-viewer__state">
 					<RightsBadge :rights-status="detail.version.rights_status"
@@ -1666,6 +1675,7 @@ onBeforeUnmount(() => {
 					:mode="mode"
 					:count-in-bars="countInBars"
 					:voice-name="labelOf"
+					:version-line="versionLineText"
 					@close="closePractice" />
 				<CorrectionDialog v-if="correction && model"
 					:detail="detail"

@@ -5,7 +5,9 @@
 
 /**
  * Writing WAV files: PCM, 16 bit, little endian, mono or stereo, with the
- * canonical 44-byte header (RIFF, "fmt " and "data" chunks).
+ * canonical 44-byte header (RIFF, "fmt " and "data" chunks) and optionally a
+ * comment after the samples (LIST/INFO chunk with ICMT), e.g. the version
+ * line of a practice file.
  */
 
 /** Bytes of the header before the samples */
@@ -59,17 +61,54 @@ export function wavHeader(frames: number, sampleRate: number, channels: number):
 }
 
 /**
+ * A LIST chunk of type INFO with a comment (ICMT). Characters outside
+ * printable ASCII become "?" (convert the text with `asciiText` first).
+ *
+ * @param comment - the comment
+ */
+export function infoChunk(comment: string): Uint8Array {
+	const text = [...comment].map((char) => {
+		const code = char.charCodeAt(0)
+		return code >= 0x20 && code < 0x7f ? code : 0x3f
+	})
+	// the text ends with a zero byte; a chunk has an even length
+	const size = text.length + 1
+	const padded = size + (size % 2)
+	const chunk = new Uint8Array(20 + padded)
+	const view = new DataView(chunk.buffer)
+	const ascii = (offset: number, value: string) => {
+		for (let i = 0; i < value.length; i++) {
+			chunk[offset + i] = value.charCodeAt(i)
+		}
+	}
+	ascii(0, 'LIST')
+	view.setUint32(4, 12 + padded, true)
+	ascii(8, 'INFO')
+	ascii(12, 'ICMT')
+	view.setUint32(16, size, true)
+	chunk.set(text, 20)
+	return chunk
+}
+
+/**
  * A WAV file from mono samples; for stereo both channels get the same signal
  * (the synthesizer plays in mono).
  *
  * @param samples - samples -1 … 1; values outside are clipped
  * @param sampleRate - samples per second
  * @param channels - 1 (mono) or 2 (stereo)
+ * @param comment - a comment stored after the samples, or '' for none
  */
-export function encodeWav(samples: Float32Array, sampleRate: number, channels: 1 | 2): Uint8Array {
-	const bytes = new Uint8Array(wavBytes(samples.length, channels))
+export function encodeWav(samples: Float32Array, sampleRate: number, channels: 1 | 2, comment = ''): Uint8Array {
+	const info = comment === '' ? new Uint8Array(0) : infoChunk(comment)
+	const bytes = new Uint8Array(wavBytes(samples.length, channels) + info.length)
 	bytes.set(wavHeader(samples.length, sampleRate, channels), 0)
 	const view = new DataView(bytes.buffer)
+	if (info.length > 0) {
+		// The RIFF chunk includes the comment.
+		view.setUint32(4, view.getUint32(4, true) + info.length, true)
+		bytes.set(info, wavBytes(samples.length, channels))
+	}
 	let offset = WAV_HEADER_BYTES
 	for (let i = 0; i < samples.length; i++) {
 		const value = Math.round(Math.max(-1, Math.min(1, samples[i])) * 32767)

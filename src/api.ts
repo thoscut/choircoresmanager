@@ -65,12 +65,14 @@ import type {
 	Settings,
 	SettingsUpdate,
 	ShelfLabel,
+	StateList,
 	Statistics,
 	Task,
 	TaskInput,
 	TranscriptionReport,
 	UserCalendar,
 	VersionReview,
+	VersionState,
 } from './types.ts'
 
 import axios, { isAxiosError } from '@nextcloud/axios'
@@ -1131,6 +1133,32 @@ export async function fetchCorrectionOrders(): Promise<CorrectionOrder[]> {
 export async function saveCorrection(versionId: number, correction: CorrectionInput): Promise<CorrectionResult> {
 	const { data } = await axios.post<CorrectionResult>(apiUrl('/versions/{id}/corrections', { id: versionId }), correction)
 	return { ...data, changes: list(data.changes), points: list(data.points) }
+}
+
+/**
+ * The revisions of a version, oldest first (module "version_states").
+ *
+ * @param versionId - version id
+ */
+export async function fetchStates(versionId: number): Promise<StateList> {
+	const { data } = await axios.get<StateList>(apiUrl('/versions/{id}/states', { id: versionId }))
+	return {
+		version_id: data.version_id,
+		states: list(data.states),
+		current_id: typeof data.current_id === 'number' ? data.current_id : null,
+		may: { setCurrent: data.may?.setCurrent === true },
+	}
+}
+
+/**
+ * Make a revision the current one of its version (catalog librarian).
+ *
+ * @param stateId - revision id
+ * @param reason - optional reason for the audit log
+ */
+export async function setCurrentState(stateId: number, reason: string | null): Promise<VersionState> {
+	const { data } = await axios.put<VersionState>(apiUrl('/states/{id}/current', { id: stateId }), { reason })
+	return data
 }
 
 /**

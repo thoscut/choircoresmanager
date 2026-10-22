@@ -19,8 +19,9 @@ declare(strict_types=1);
  * test first adds at least one record to every table through the services
  * (license, proposal, task, link, concert with an item, person with a
  * contribution, transcription report with a review point, merge, a folder
- * of the folder book issued to a name; the modules transcription_review and
- * folder_book are switched on inside the transaction if needed), so that the
+ * of the folder book issued to a name, the revisions of the versions with a
+ * MusicXML; the modules transcription_review, folder_book and version_states
+ * are switched on inside the transaction if needed), so that the
  * round trip covers every table with content. It then exports the complete backup, empties all app tables,
  * restores the backup and compares every table row by row; then everything
  * is rolled back.
@@ -43,6 +44,7 @@ use OCA\Notenarchiv\Service\PersonService;
 use OCA\Notenarchiv\Service\ProposalService;
 use OCA\Notenarchiv\Service\ReviewService;
 use OCA\Notenarchiv\Service\RightsService;
+use OCA\Notenarchiv\Service\StateService;
 use OCA\Notenarchiv\Service\TaskService;
 use OCP\IDBConnection;
 use OCP\Server;
@@ -109,6 +111,15 @@ try {
 			'contents' => [['copyId' => $first->getId(), 'count' => 2]]], $uid);
 		$folderBook->issue($folder['id'], ['holderName' => 'Backup Test Person', 'note' => 'backup test'], $uid);
 		Server::get(MergeService::class)->moveCopy($other->getId(), $versionId, $uid, 'backup test');
+		// A revision of a version (module version_states, milestone 0.8): the
+		// file sync records the first ones; switched on inside the transaction
+		if ($dump($db, 'notarch_states') === []) {
+			if (!$folderBookModules->isEnabled(Modules::VERSION_STATES)) {
+				$folderBookModules->change([Modules::VERSION_STATES => true]);
+			}
+			Server::get(StateService::class)->recordSync([], time(), $uid);
+		}
+		$check('a revision of a version exists', $dump($db, 'notarch_states') !== []);
 	}
 
 	$before = [];

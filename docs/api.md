@@ -41,6 +41,7 @@ Request bodies are checked strictly: unknown fields are refused with 400
 | `POST /api/print-mirror/sync` | 10 in 10 minutes |
 | `POST /api/annual-snapshots` | 5 in 60 minutes |
 | `GET /api/annual-snapshots/compare` | 30 in 10 minutes |
+| `PUT /api/states/{id}/current` | 60 in 10 minutes |
 | Search of Nextcloud (provider `notenarchiv`) | 300 in 10 minutes; at most 50 results per page |
 
 Files chosen by `fileId` for an import may be at most 20 MB, a backup for a
@@ -61,6 +62,7 @@ texts are English source strings translated via Nextcloud l10n (German first).
 | binder | Archivmappe | numbered archive binder |
 | preservation copy | Erhaltungskopie | internal copy of a protected work, never shared |
 | valid version | „gilt für den Chor“ | the version the conductor has chosen |
+| revision (code: state) | Stand | the MusicXML of a version at one point, with checksum; the catalog librarian sets the current one |
 | audit log | Protokoll | append-only change log |
 
 Roles: `librarian` (Notenwart Bestand), `operations` (Notenwart Betrieb),
@@ -1314,6 +1316,7 @@ other check of the app. The routes and their modules:
 | `score_viewer` | `GET /api/files/{id}/content`, `GET /api/files/{id}/scan` |
 | `transcription_review` | `GET /api/versions/{id}/review`, `POST /api/versions/{id}/transcription-reports`, `POST /api/review-points/{id}/decision`, `GET /api/review/orders` (and `score_viewer`) |
 | `corrections` | `POST /api/versions/{id}/corrections` (and `score_viewer`) |
+| `version_states` | `GET /api/versions/{id}/states`, `PUT /api/states/{id}/current` (and `score_viewer`) |
 | `practice_audio` | `POST /api/versions/{id}/practice-audio` |
 | `excerpt_links` | `POST /api/copies/{id}/links`, `GET /api/copies/{id}/link-options`, `GET /api/links`, `GET /api/links/{token}`, `POST /api/links/{id}/revoke` |
 | `member_links` | `GET /api/member/links/{token}/score`; `POST /api/copies/{id}/links` with `circle: "members"`; the page "Shared with me" (`GET /` answers 403 for choir members) |
@@ -1364,7 +1367,11 @@ What else follows the modules:
   `concerts`, `song_lists` is empty, too; without `transcription_review`,
   `review_open` and `review_orders` are `null`.
 - File sync: without `transcription_review` report files are registered and
-  counted, but not read (`reports.switchedOff: true`).
+  counted, but not read (`reports.switchedOff: true`); without
+  `version_states` no revisions are recorded (`states.switchedOff: true`).
+- `GET /api/entries/{id}`: `revision` is `null` without `version_states`;
+  `GET /api/events/{id}` has `revision: null` per item and the song order no
+  revision columns.
 - `GET /api/due`: only cards, tasks and concerts of active modules
   (`tasks_open`, `tasks_answered` and `tasks`: `tasks`; `ambiguous_items`:
   `performance_import`; `proposals`: `proposals`; `portal_remove`,
@@ -1736,8 +1743,11 @@ in the audit log (object `file` of the new file, action `corrected`, field
 { "file": { "id": 31, "copy_id": 5, "name": "5-01_Titel (korrigiert 2026-10-22).mxl", "path": "Mappe_5/…", "…": "file row" },
   "changes": [{ "measure": "12", "part": "Bass", "staff": "1", "voice": "1", "kind": "pitch|accidental|lyric",
                 "verse": null, "old": "C3", "new": "D3" }],
-  "points": [12, 13] }
+  "points": [12, 13], "state": 3 }
 ```
+
+`state`: the number of the new revision of the version (module
+`version_states`, see "Revisions of a version"), `null` while it is off.
 
 `old`/`new` of a pitch: step, `#`/`##`/`b`/`bb` (other alterations as
 `+0.5`) and octave, e.g. `F#4`; of an accidental: its value or `''`; of a
@@ -1774,6 +1784,101 @@ score.
 Switches: `notify_review_points` (requires `notifications` and
 `transcription_review`), `notify_correction_received` (requires
 `notifications` and `score_viewer`).
+
+## Revisions of a version (module `version_states`, milestone 0.8)
+
+A **revision** is a record of the MusicXML of a version at one point: it
+points to a file of a copy (`notarch_files.id`, with its name at the time),
+keeps its SHA-256, what changed, who and when (table `notarch_states`). The
+app copies no file and changes none (guideline 4). A revision is never
+changed afterwards, except for the mark of the current revision. Module
+`version_states` (needs `score_viewer`; on in "standard" and "complete").
+
+```json
+{ "id": 9, "version_id": 35, "copy_id": 35, "file_id": 31, "file_name": "2-35_Titel (korrigiert 2026-10-27).mxl",
+  "sha256": "…64 hex…", "number": 3, "source": "first|correction|sync",
+  "measures": "12, 14–15", "voices": "Tenor I/II, Bass",
+  "note": "Wrong note in the tenor\nReview point 12 (m. 12, Tenor II): …",
+  "changes": "[{\"measure\":\"12\",\"part\":\"Tenor I/II\",\"staff\":\"1\",\"voice\":\"2\",\"kind\":\"pitch\",\"verse\":null,\"old\":\"D4\",\"new\":\"E4\"}]",
+  "created_by": "anna", "created_by_name": "Anna Beispiel", "created": 1793000000,
+  "valid_since": "2026-10-27", "valid_set_by": "Anna Beispiel" }
+```
+
+`number` counts 1, 2, 3 … per version (unique per version). `measures` and
+`voices` name what a correction changed (measure runs joined, e.g.
+`12–14`); `changes` is the change list of the correction as JSON (see
+"Small corrections in the app"). `valid_since`/`valid_set_by` are set for
+the current revision only.
+
+**When revisions are recorded**
+
+- **Correction in the app** (`POST /api/versions/{id}/corrections`): the new
+  file becomes the next revision (`source: correction`) with the measures,
+  voices and changes, the reason and the review points it settled as
+  `note`. When no revision has the corrected file's content yet, that file
+  is recorded first (`first` for a version without revisions, else `sync`).
+  The response adds `"state": 3` (the number, `null` while the module is
+  off).
+- **File sync**: after the sync, for each copy the score file
+  (`ScoreService::pick`: the valid MusicXML, else an `.mxl`) is hashed when
+  the version has no revision yet, the file is new or changed, or no
+  revision points to it; it is recorded when its checksum differs from the
+  newest revision of the version and of the file (`source: sync`, the first
+  of a version `first`). The note names the transcription report read in
+  the same sync for this file (`Transcription report, round 3`), else none
+  (the UI shows "Change found by the file sync"). The sync report adds
+  `"states": { "recorded": 1, "first": 0, "failed": 0, "switchedOff": false }`;
+  a file that cannot be read counts as `failed` and is tried again by the
+  next sync.
+- The **first revision** of every version is therefore recorded by the
+  first file sync after the module is switched on (no repair step: it would
+  read every score during an update as no account, whether the module is
+  wanted or not).
+- Every recorded revision is in the audit log (object `version`, action
+  `state_recorded`, new value the number, reason the note or file name).
+
+| Method and path | Body | Role |
+|---|---|---|
+| `GET /api/versions/{id}/states` | – | every archive role (internal preservation copies: `librarian`, `conductor`); `{ version_id, states: [revision, …] (oldest first), current_id, may: { setCurrent } }` |
+| `PUT /api/states/{id}/current` | `{ reason? }` | `librarian`; 60 per 10 minutes; returns the revision |
+
+**Current revision.** Only the catalog librarian sets it (guideline 1; no
+automation does). `valid_since` becomes today in the account's time zone,
+`valid_set_by` its display name; the revision current before loses both.
+Audit: object `version`, action `state_current`, old → new number, the
+reason. 400 `This revision is already the current one.`, `"Reason" is too
+long.` (more than 10,000 characters).
+
+**Comparing two revisions** happens in the browser (`src/score/compare.ts`,
+no route of its own): the UI reads both files with `GET
+/api/files/{id}/content` (rights checked as for the score view), checks each
+against the recorded `sha256` (a file changed in place no longer has the
+content of its revision; the UI says so instead of comparing) and compares
+them with the XML parser of the score view: parts by id or name, measures by
+their printed number, voices by staff and `<voice>`. Result per difference:
+`{ measure, voice, kind: pitch|accidental|rhythm|lyric|notes|measure_added|measure_removed|part_added|part_removed, verse, old, new }`,
+at most 300. From it the UI makes the short plain-text note for choir
+members.
+
+**Version line** (shelf mark · version · revision · valid since): the UI
+builds it (`src/states.ts`). `GET /api/entries/{id}` adds
+`revision: { count, latest, current: { id, number, valid_since } | null, shown }`
+(`shown`: the newest revision of the score file shown; `null` without
+`version_states`). It appears in the score view, in the text reference
+copied there, as a comment in practice files (MIDI text event, WAV
+`LIST/INFO/ICMT`), in the programme and the printed lists of a concert and
+in the song order. Shelf labels show none.
+
+**Concerts.** `POST /api/events/{id}/sung` keeps for each sung item the
+revision sung in `notarch_event_items.state_id`: the current revision of the
+version, else the newest (none while the module is off). `GET
+/api/events/{id}` adds per item `revision` (number of the revision sung, else
+of the current one; `null` without), `revision_valid_since` and
+`revision_sung`; the song order adds the columns `Revision` and `Revision
+valid since` while the module is active.
+
+Switched off: the two routes answer 404, nothing is recorded, `revision` is
+`null`, outputs print no version line; revisions and `state_id` stay.
 ## Opening from the Files app (module `files_integration`)
 
 Files of the archive folder get the action **Open in music archive** in the

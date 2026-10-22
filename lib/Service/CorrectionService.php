@@ -37,7 +37,9 @@ use OCP\Lock\LockedException;
  * these changes as a NEW file next to the old one, with the account's own
  * Nextcloud permissions, and makes it the MusicXML of the copy. The old file
  * stays unchanged and linked; the changes are recorded in the audit log and
- * the review points the correction settles are set to corrected.
+ * the review points the correction settles are set to corrected. With the
+ * module "version_states" the corrected file becomes a new revision of the
+ * version (StateService).
  *
  * @psalm-import-type Change from MusicXmlCorrection
  */
@@ -59,6 +61,7 @@ class CorrectionService {
 		private Modules $modules,
 		private AuditLog $audit,
 		private ReviewService $review,
+		private StateService $states,
 		private IRootFolder $rootFolder,
 		private ITempManager $tempManager,
 		private ITimeFactory $time,
@@ -73,7 +76,7 @@ class CorrectionService {
 	 * @param int $archiveFileId the score file shown (notarch_files.id)
 	 * @param string $content the whole changed MusicXML
 	 * @param array<array-key, mixed> $pointIds review points the correction settles (request data)
-	 * @return array{file: ArchiveFile, changes: list<Change>, points: list<int>}
+	 * @return array{file: ArchiveFile, changes: list<Change>, points: list<int>, state: ?int} `state`: number of the new revision, if recorded
 	 * @throws InvalidInputException|AccessDeniedException
 	 */
 	public function correct(int $versionId, int $archiveFileId, string $content, array $pointIds, ?string $reason, string $uid): array {
@@ -163,6 +166,8 @@ class CorrectionService {
 			$this->versions->update($version);
 			$this->audit->record($operation, $uid, 'file', $new->getId(), 'corrected', 'changes', $file->getName(), $result['changes'], $reason);
 			$settled = $this->review->markCorrected($points, $version->getId(), $uid, $note, $operation);
+			$state = $this->states->recordCorrection($copy, $version, $file, hash('sha256', $oldContent), $new, (string)$new->getSha256(),
+				$result['changes'], $settled, $reason, $uid, $operation);
 			$this->db->commit();
 		} catch (\Throwable $e) {
 			$this->db->rollBack();
@@ -174,7 +179,7 @@ class CorrectionService {
 			throw $e;
 		}
 		$this->review->notifyCorrection($copy, $version, 'app', $uid);
-		return ['file' => $new, 'changes' => $result['changes'], 'points' => $settled];
+		return ['file' => $new, 'changes' => $result['changes'], 'points' => $settled, 'state' => $state?->getNumber()];
 	}
 
 	/**

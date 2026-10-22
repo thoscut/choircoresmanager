@@ -315,8 +315,8 @@ therefore writes, every week, into `_notenarchiv-app/`:
 - `…_backup_weekly.json`: the **complete** backup of all tables (works,
   versions, copies, files, licenses, proposals, tasks, links, concerts and
   song lists with their programme lines, persons, contributions, merges,
-  transcription reports and review points, the folder book with its loans,
-  audit log) for a lossless restore
+  transcription reports and review points, the revisions of the versions,
+  the folder book with its loans, audit log) for a lossless restore
 
 ![The backup sections of the archive management: storing a complete backup now, downloading the complete backup as JSON, and restoring a backup into an empty catalog.](screenshots/backup-restore.png)
 
@@ -598,6 +598,14 @@ files. **Simple** leaves them off: it keeps to reading the catalog and the
 scores. The corrections need only the score view, not the review, so that a
 choir without transcription reports can still correct a wrong note.
 
+*Revisions of a version* is on in **Standard** and **Complete**: it only
+records what the corrections and the file sync already do, adds no file and
+lets the choir know which state of a score it sings. **Simple** leaves it
+off. The first file sync after the module is switched on reads every
+MusicXML of the copies once to record revision 1 with its checksum; on a
+large archive that sync takes a little longer. It runs as the account that
+starts the file sync, which needs access to the archive folder.
+
 **Existing installations** keep every function: an update from a version
 before 0.1.27 stores all switches as on. The switches are stored on every
 installation and update, so a later change of the defaults never switches
@@ -631,6 +639,7 @@ writes files into a folder others can open (see section 16).
 | Excerpt links | Score view | on | No new links, and existing links do not open (they are kept and expire as before). |
 | Reviewing transcriptions | Score view | on | The file sync still recognises transcription reports, but does not read them; no review points, no correction orders, no review in the score view, no filter "open review points". Reports, points and decisions are kept. |
 | Small corrections | Score view | on | No corrections in the score view; files corrected before stay as they are. |
+| Revisions of a version | Score view | on | No new revisions from corrections or the file sync, no list, no comparison, no current revision to set; concerts confirmed as sung keep no revision and outputs print no version line. Revisions recorded before and the revisions of past concerts are kept. |
 | Opening from the Files app | – | on | The Files app has no action "Open in music archive"; a click on MusicXML in the archive folder does what it did before. Without the score view, MusicXML opens its copy instead. |
 | Questions and tasks | – | on | No questions and tasks, no task cards and notifications. Existing tasks are kept. |
 | Proposals inbox | – | off | No inbox; tools cannot propose. Open proposals are kept. |

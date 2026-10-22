@@ -114,6 +114,15 @@ const failedReports = computed(() => (reports.value?.failed ?? []).map((failure)
 			</template>
 		</p>
 
+		<!-- Revisions of the versions (milestone 0.8) -->
+		<p v-if="report.states && !report.states.switchedOff && (report.states.recorded + report.states.first + report.states.failed) > 0" class="file-sync-report__muted">
+			{{ t('notenarchiv', 'Revisions: {first} versions got their first revision, {recorded} new revisions were recorded.', {
+				first: report.states.first, recorded: report.states.recorded }) }}
+			<template v-if="report.states.failed > 0">
+				{{ n('notenarchiv', '%n score file could not be read; it follows with the next file sync.', '%n score files could not be read; they follow with the next file sync.', report.states.failed) }}
+			</template>
+		</p>
+
 		<div v-if="report.skippedFolders.length > 0">
 			<ReportList :summary="n('notenarchiv', '%n folder was skipped', '%n folders were skipped', report.skippedFolders.length)"
 				:items="report.skippedFolders"

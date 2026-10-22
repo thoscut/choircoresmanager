@@ -239,6 +239,15 @@ account can do; it offers a stable, documented and limited contract.
   without expanding entities; documents with an internal DTD subset are not
   read. The notice is shown as unchecked text (Vue escapes it) and never sets
   a rights status; at most it becomes a proposal.
+- Revisions of a version (module `version_states`) are records with a
+  checksum; the app copies no file for them. The file sync hashes score
+  files through the syncing account, as the checksum job does. Comparing two
+  revisions reads both files through the existing score route with the
+  requesting user's own access and the rights policy, and parses them in
+  the browser with the score view's own XML parser; nothing new reaches the
+  browser. Only the catalog librarian sets the current revision (rate
+  limited, audited); the API for agents only reads revisions, without
+  account names.
 - Uploaded files for imports are limited to 20 MB, backups for a restore to
   64 MB, score files to 32 MB; the content is read with that limit, not only
   checked against the size in the file cache.

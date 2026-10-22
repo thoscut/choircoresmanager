@@ -168,6 +168,9 @@ final class FullBackupServiceTest extends TestCase {
 		self::assertLessThan($position['notarch_event_items'], $position['notarch_events']);
 		self::assertLessThan($position['notarch_contributions'], $position['notarch_persons']);
 		self::assertLessThan($position['notarch_folder_loans'], $position['notarch_folders']);
+		// Revisions point to files; programme items to the revision sung (milestone 0.8)
+		self::assertLessThan($position['notarch_states'], $position['notarch_files']);
+		self::assertLessThan($position['notarch_event_items'], $position['notarch_states']);
 		self::assertNotContains('notarch_mirror_files', $tables, 'the manifest of the print station belongs to this instance');
 		self::assertSame(array_values(array_unique($tables)), $tables);
 	}

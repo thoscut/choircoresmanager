@@ -66,6 +66,7 @@ The App Store shows the files marked with a number, in this order
 | `rights-notice.png` | Planned: sidebar of copy 1-1, tab "Files": the MusicXML file with its rights notice marked "Not checked". |
 | `shelfmark-gaps.png` | Planned: the view "Gaps in shelf marks" of the demo archive with binder 4 (4-4 used only by a file name). |
 | `annual-snapshots.png` | Planned: the view "Annual snapshots" with two snapshots and the comparison of a changed rights status and a new license. |
+| `revisions.png` | Planned: sidebar of copy 1-2, tab "Files", section "Revisions of this version" with revision 1 (first recorded) and revision 2 (correction in the app, current since today), the comparison of both with its list of differences and the note for choir members. |
 
 ## German interface (informal)
 

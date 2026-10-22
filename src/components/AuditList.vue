@@ -104,6 +104,10 @@ function actionLabel(action: string): string {
 		return t('notenarchiv', 'Replaced')
 	case 'mirror_removed':
 		return t('notenarchiv', 'Removed')
+	case 'state_recorded':
+		return t('notenarchiv', 'Revision recorded')
+	case 'state_current':
+		return t('notenarchiv', 'Current revision set')
 	default:
 		return action
 	}

@@ -15,6 +15,8 @@
 export interface ScorePlace {
 	shelfmark: string
 	title?: string | null
+	/** revision of the score, e.g. "Revision 3" (milestone 0.8) */
+	revision?: string | null
 	page?: number | string | null
 	measureFrom?: string | null
 	measureTo?: string | null
@@ -73,7 +75,7 @@ export function measurePart(from: string | null | undefined, to: string | null |
  * @param place - the place
  * @param words - translated words
  */
-export function placeText(place: Omit<ScorePlace, 'shelfmark' | 'title' | 'note'>, words: ReferenceWords): string {
+export function placeText(place: Omit<ScorePlace, 'shelfmark' | 'title' | 'revision' | 'note'>, words: ReferenceWords): string {
 	const parts: string[] = []
 	if (text(place.page) !== '') {
 		parts.push(words.page(text(place.page)))
@@ -98,6 +100,6 @@ export function placeText(place: Omit<ScorePlace, 'shelfmark' | 'title' | 'note'
  * @param words - translated words
  */
 export function textReference(place: ScorePlace, words: ReferenceWords): string {
-	const parts = [text(place.shelfmark), text(place.title), placeText(place, words), text(place.note)]
+	const parts = [text(place.shelfmark), text(place.title), text(place.revision), placeText(place, words), text(place.note)]
 	return parts.filter((part) => part !== '').join(SEPARATOR)
 }

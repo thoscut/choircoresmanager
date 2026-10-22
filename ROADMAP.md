@@ -346,11 +346,20 @@ dieselben Anforderungen auf einem anderen Weg umgesetzt hat):
   - Zwei Stände lassen sich takt- und stimmweise vergleichen. Daraus entsteht
     eine kurze Notiz für Chormitglieder.
   - Aufführungen merken sich den gesungenen Stand.
+  - *Umgesetzt als Modul `version_states` (Standard und Vollständig): Ein
+    Stand ist ein Datensatz mit Verweis auf die MusicXML-Datei, Prüfsumme,
+    Notiz, wer und wann; die App kopiert keine Datei. Korrekturen in der App
+    und der Dateiabgleich erfassen neue Stände, der erste Dateiabgleich nach
+    dem Einschalten den ersten. Den geltenden Stand legt die
+    Archivverwaltung fest; der Vergleich läuft im Browser auf den beiden
+    Dateien. Beschreibung in `docs/api.md`, Abschnitt „Revisions of a
+    version“, und im Benutzerhandbuch.*
+
 *Umgesetzt: der Teil „Archiv“ (Schutzfrist-Sonderfälle, Nutzungsart,
 Nextcloud-Suche, Lückenbericht, Jahresstand, Lizenzvermerk, Vorlagen für
 Infomaterial; Beschreibung in `docs/api.md`, im Benutzerhandbuch und im
-Admin-Guide) und das Abspielen (Einzähler, Schleife, Startpunkt,
-Abspielfolge). Offen: die Stände einer Fassung und weitere Sprachen.*
+Admin-Guide), das Abspielen (Einzähler, Schleife, Startpunkt, Abspielfolge)
+und die Stände einer Fassung. Offen: weitere Sprachen.*
 
 - **Schutzfrist-Sonderfälle** als Schalter: wissenschaftliche Ausgaben
   (§ 70 UrhG) und nachgelassene Werke (§ 71 UrhG). – *umgesetzt im Modul

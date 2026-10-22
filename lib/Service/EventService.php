@@ -43,6 +43,10 @@ use OCP\IDBConnection;
  * For each item the rights situation is checked and shown as warnings; the
  * app warns, people decide.
  *
+ * With the module "version_states", confirming "sung" keeps the revision of
+ * each version that was sung (its current revision, else the newest), and
+ * the programme and the song order name the revision of each item.
+ *
  * @psalm-type Line = array{item: EventItem, copy: ?Copy, version: ?WorkVersion, work: ?Work, warnings: list<string>}
  */
 class EventService {
@@ -59,6 +63,7 @@ class EventService {
 		private WorkMapper $works,
 		private LicenseMapper $licenses,
 		private RightsService $rights,
+		private StateService $states,
 		private AuditLog $audit,
 		private Roles $roles,
 		private ITimeFactory $time,
@@ -248,6 +253,8 @@ class EventService {
 				$item->setValue('struck', $wasStruck);
 				$item->setValue('sung', !$wasStruck);
 				$item->setCounts(!$wasStruck && $item->getWorkId() !== null);
+				$versionId = $item->getVersionId();
+				$item->setStateId($wasStruck || $versionId === null ? null : $this->states->sungState($versionId)?->getId());
 				$this->items->update($item);
 			}
 			$event->setStatus('sung');
@@ -297,10 +304,16 @@ class EventService {
 	 * The event with its items, each with context and warnings (English
 	 * source strings).
 	 *
+	 * `revision` of an item: the number of the revision sung, or of the current
+	 * revision of its version (module "version_states"), null when there is
+	 * none; `revision_valid_since` the day since when it is the current one,
+	 * `revision_sung` whether it is the revision kept as sung.
+	 *
 	 * @return array{event: Event, items: list<array<string, string|int|bool|null|list<string>>>, totalDuration: int, missingDurations: int}
 	 */
 	public function detail(int $eventId, string $uid): array {
 		['event' => $event, 'lines' => $lines] = $this->lines($eventId, $uid);
+		$revisions = $this->states->forItems(array_map(fn (array $line): EventItem => $line['item'], $lines));
 		$items = [];
 		$total = 0;
 		$missingDurations = 0;
@@ -320,6 +333,9 @@ class EventService {
 				'arranger_text' => $version?->getArrangerText(),
 				'publisher' => $version?->getPublisher(),
 				'warnings' => $warnings,
+				'revision' => $revisions[$item->getId()]['number'] ?? null,
+				'revision_valid_since' => $revisions[$item->getId()]['valid_since'] ?? null,
+				'revision_sung' => $revisions[$item->getId()]['sung'] ?? false,
 			];
 		}
 		return ['event' => $event, 'items' => $items, 'totalDuration' => $total, 'missingDurations' => $missingDurations];
@@ -398,20 +414,31 @@ class EventService {
 	 * Song order for the collecting society, programme booklet and binders.
 	 */
 	public function songOrderCsv(int $eventId, string $uid): string {
+		$lines = $this->lines($eventId, $uid)['lines'];
+		// The revision of each piece (module "version_states"): two more columns
+		$withRevisions = $this->states->isActive();
+		$revisions = $withRevisions ? $this->states->forItems(array_map(fn (array $line): EventItem => $line['item'], $lines)) : [];
 		$rows = [];
-		foreach ($this->lines($eventId, $uid)['lines'] as ['item' => $item, 'copy' => $copy, 'version' => $version, 'work' => $work]) {
+		foreach ($lines as ['item' => $item, 'copy' => $copy, 'version' => $version, 'work' => $work]) {
 			if ($item->getStruck() === true) {
 				continue;
 			}
 			$duration = $item->getDuration();
-			$rows[] = [
+			$row = [
 				(string)$item->getPosition(), $copy?->getShelfmark() ?? '', $work?->getTitle() ?? $item->getTitleText() ?? '',
 				$work?->getComposer() ?? $item->getComposerText() ?? '', $version?->getArrangerText() ?? '', $version?->getPublisher() ?? '',
 				$duration === null ? '' : sprintf('%d:%02d', intdiv($duration, 60), $duration % 60),
 				$item->getEncore() === true ? 'encore' : '',
 			];
+			if ($withRevisions) {
+				$revision = $revisions[$item->getId()] ?? null;
+				$row[] = $revision === null ? '' : (string)$revision['number'];
+				$row[] = $revision['valid_since'] ?? '';
+			}
+			$rows[] = $row;
 		}
-		return CatalogCsv::writeForPeople(['Position', 'Shelf mark', 'Title', 'Composer', 'Arranger / lyrics', 'Publisher', 'Duration', 'Note'], $rows);
+		$header = ['Position', 'Shelf mark', 'Title', 'Composer', 'Arranger / lyrics', 'Publisher', 'Duration', 'Note'];
+		return CatalogCsv::writeForPeople($withRevisions ? [...$header, 'Revision', 'Revision valid since'] : $header, $rows);
 	}
 
 	private function editable(int $eventId, string $uid): Event {

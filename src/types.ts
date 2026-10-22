@@ -552,6 +552,14 @@ export interface EventItem {
 	publisher?: string | null
 	/** translated warnings */
 	warnings?: string[]
+	/** the revision sung (module "version_states"), set when the concert is confirmed as sung */
+	state_id?: number | null
+	/** added by the event detail: number of the revision sung, else of the current revision of the version */
+	revision?: number | null
+	/** YYYY-MM-DD since when that revision is the current one, null when it is not (or no longer) */
+	revision_valid_since?: string | null
+	/** the revision was kept when the concert was confirmed as sung */
+	revision_sung?: boolean
 }
 
 export interface EventDetail {
@@ -674,6 +682,8 @@ export interface FileSyncReport {
 	reports?: FileSyncReports
 	/** rights notices read from MusicXML files (milestone 0.8, module "rights") */
 	rightsNotices?: { read: number, found: number, proposals: number, failed: number, pending: number, switchedOff: boolean }
+	/** revisions recorded (milestone 0.8, module "version_states"): new ones, first ones, files that could not be read */
+	states?: { recorded: number, first: number, failed: number, switchedOff: boolean }
 }
 
 /** `GET /api/settings`: what the settings page needs, without the catalog. */
@@ -1260,6 +1270,58 @@ export interface AnnualReport {
 }
 
 /** Everything about one copy (GET /api/entries/{id}). */
+// ---- milestone 0.8: revisions of a version -------------------------------------
+
+/** Where a revision came from. */
+export type RevisionSource = 'first' | 'correction' | 'sync'
+
+/** A revision of the MusicXML of a version (GET /api/versions/{id}/states). */
+export interface VersionState {
+	id: number
+	version_id: number
+	copy_id: number | null
+	/** `files[].id` of the MusicXML file */
+	file_id: number
+	/** its name when the revision was recorded */
+	file_name: string
+	sha256: string | null
+	number: number
+	source: RevisionSource | string
+	/** measures changed, e.g. "12, 14–15" */
+	measures: string | null
+	/** voices changed, e.g. "Tenor II, Bass I" */
+	voices: string | null
+	note: string | null
+	/** JSON list of the changes of a correction in the app */
+	changes: string | null
+	created_by: string | null
+	created_by_name: string | null
+	/** Unix time */
+	created: number
+	/** YYYY-MM-DD for the current revision, else null */
+	valid_since: string | null
+	valid_set_by: string | null
+}
+
+export interface StateList {
+	version_id: number
+	states: VersionState[]
+	current_id: number | null
+	may: { setCurrent: boolean }
+}
+
+/** What the copy sidebar knows about the revisions of the version. */
+export interface RevisionSummary {
+	count: number
+	/** number of the newest revision */
+	latest: number | null
+	current: { id: number, number: number, valid_since: string } | null
+	/** revision of the score file shown, if recorded */
+	shown: number | null
+}
+
+// ---- everything about one copy -------------------------------------------------
+
 export interface Detail {
 	work: DataRecord
 	version: DataRecord
@@ -1277,6 +1339,8 @@ export interface Detail {
 	contributions: Contribution[]
 	protection: Protection | null
 	merges: Merge[]
+	/** revisions of the version (module "version_states"); null while it is off */
+	revision?: RevisionSummary | null
 }
 
 // ---- milestone 0.6: reviewing transcriptions and corrections -------------------
@@ -1461,4 +1525,6 @@ export interface CorrectionResult {
 	file: FileRef
 	changes: CorrectionChange[]
 	points: number[]
+	/** number of the new revision (module "version_states"), else null */
+	state?: number | null
 }

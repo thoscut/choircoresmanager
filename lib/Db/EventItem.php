@@ -24,6 +24,9 @@ use OCP\AppFramework\Db\Entity;
  * programme, not a draft, reserve piece or "encore if needed", and not sung by
  * another choir.
  *
+ * `state_id` is the revision of the version that was sung (module
+ * "version_states"), set when the concert is confirmed as sung.
+ *
  * @method int getEventId()
  * @method void setEventId(int $eventId)
  * @method int getPosition()
@@ -58,6 +61,8 @@ use OCP\AppFramework\Db\Entity;
  * @method void setDuration(?int $duration)
  * @method string|null getNote()
  * @method void setNote(?string $note)
+ * @method int|null getStateId()
+ * @method void setStateId(?int $stateId)
  */
 class EventItem extends Entity implements JsonSerializable {
 	use FieldAccess;
@@ -83,9 +88,10 @@ class EventItem extends Entity implements JsonSerializable {
 	protected ?bool $encore = false;
 	protected ?int $duration = null;
 	protected ?string $note = null;
+	protected ?int $stateId = null;
 
 	public function __construct() {
-		foreach (['eventId', 'position', 'copyId', 'versionId', 'workId', 'duration'] as $field) {
+		foreach (['eventId', 'position', 'copyId', 'versionId', 'workId', 'duration', 'stateId'] as $field) {
 			$this->addType($field, 'integer');
 		}
 		foreach (['titleText', 'composerText', 'participation', 'assignment', 'candidates', 'state', 'note'] as $field) {

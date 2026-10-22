@@ -24,6 +24,7 @@ use OCA\Notenarchiv\Controller\PublicLinkController;
 use OCA\Notenarchiv\Controller\PublicRepertoireController;
 use OCA\Notenarchiv\Controller\ReviewController;
 use OCA\Notenarchiv\Controller\SettingsController;
+use OCA\Notenarchiv\Controller\StateController;
 use OCA\Notenarchiv\Controller\TaskController;
 use OCA\Notenarchiv\Db\ArchiveFileMapper;
 use OCA\Notenarchiv\Db\AuditEntryMapper;
@@ -31,6 +32,10 @@ use OCA\Notenarchiv\Db\CopyMapper;
 use OCA\Notenarchiv\Db\FolderLoanMapper;
 use OCA\Notenarchiv\Db\FolderMapper;
 use OCA\Notenarchiv\Db\MirrorFileMapper;
+use OCA\Notenarchiv\Db\ReviewPointMapper;
+use OCA\Notenarchiv\Db\TranscriptionReportMapper;
+use OCA\Notenarchiv\Db\VersionState;
+use OCA\Notenarchiv\Db\VersionStateMapper;
 use OCA\Notenarchiv\Db\WorkMapper;
 use OCA\Notenarchiv\Db\WorkVersionMapper;
 use OCA\Notenarchiv\Exception\AccessDeniedException;
@@ -70,6 +75,7 @@ use OCA\Notenarchiv\Service\Roles;
 use OCA\Notenarchiv\Service\ScanService;
 use OCA\Notenarchiv\Service\ScoreService;
 use OCA\Notenarchiv\Service\SharedLinkService;
+use OCA\Notenarchiv\Service\StateService;
 use OCA\Notenarchiv\Service\TaskService;
 use OCA\Notenarchiv\Service\UserFiles;
 use OCA\Notenarchiv\Settings\Admin;
@@ -133,6 +139,7 @@ use Psr\Log\LoggerInterface;
 #[CoversClass(FolderBookController::class)]
 #[CoversClass(PrintMirrorController::class)]
 #[CoversClass(AnnualSnapshotController::class)]
+#[CoversClass(StateController::class)]
 final class ControllerSecurityTest extends TestCase {
 	use ModuleSwitches;
 
@@ -205,6 +212,8 @@ final class ControllerSecurityTest extends TestCase {
 		'FolderBookController::takeBack', 'PrintMirrorController::preview', 'PrintMirrorController::sync',
 		// reads every archive file for the checksums, or two complete backups
 		'AnnualSnapshotController::create', 'AnnualSnapshotController::compare',
+		// setting the current revision of a version writes
+		'StateController::setCurrent',
 	];
 
 	/**
@@ -258,6 +267,7 @@ final class ControllerSecurityTest extends TestCase {
 		'ApiV1ReviewController::review' => 'ReviewController::review',
 		'ApiV1ReviewController::orders' => 'ReviewController::orders',
 		'ApiV1ReviewController::submitReport' => 'ReviewController::ingest',
+		'ApiV1StateController::states' => 'StateController::list',
 	];
 
 	/**
@@ -266,7 +276,7 @@ final class ControllerSecurityTest extends TestCase {
 	 * path, so that no API route reaches them under another name.
 	 */
 	private const NEVER_FOR_AGENTS = [
-		'ReviewController::decide', 'ReviewController::correct',
+		'ReviewController::decide', 'ReviewController::correct', 'StateController::setCurrent',
 	];
 
 	/**
@@ -1100,5 +1110,46 @@ final class ControllerSecurityTest extends TestCase {
 			self::assertSame(Http::STATUS_OK, $controller->audit()->getStatus());
 		}
 		self::assertSame([FolderBookService::OBJECT_TYPES, []], $excluded, 'contributors do not see the names of the folder book');
+	}
+	private function stateController(string $uid): StateController {
+		$roles = $this->rolesByName();
+		$mapper = $this->createStub(VersionStateMapper::class);
+		$state = new VersionState();
+		$state->setId(7);
+		$state->setVersionId(3);
+		$mapper->method('find')->willReturn($state);
+		$service = new StateService($this->createStub(IDBConnection::class), $mapper, $this->createStub(WorkVersionMapper::class),
+			$this->createStub(CopyMapper::class), $this->createStub(ArchiveFileMapper::class), $this->createStub(ReviewPointMapper::class),
+			$this->createStub(TranscriptionReportMapper::class), $this->createStub(AuditLog::class), $roles, $this->modulesWithout(),
+			$this->createStub(AppSettings::class), $this->createStub(IUserManager::class), $this->createStub(ITimeFactory::class),
+			$this->createStub(IDateTimeZone::class), $this->l10n(), $this->createStub(LoggerInterface::class));
+		return new StateController($this->createStub(IRequest::class), $uid, $service, $this->l10n(), $this->createStub(LoggerInterface::class));
+	}
+
+	/**
+	 * Milestone 0.8: the revisions of a version are their own module. Every
+	 * archive role reads them; only the catalog librarian sets the current
+	 * revision. Choir members and accounts without a role get nothing.
+	 */
+	public function testRevisionsAreReadByTheArchiveRolesAndSetByTheLibrarian(): void {
+		foreach (['list', 'setCurrent'] as $method) {
+			self::assertSame([Modules::VERSION_STATES], ModuleMiddleware::required(StateController::class, $method), $method);
+		}
+		self::assertSame('PUT', self::routes()['StateController::setCurrent']['verb'], 'writing keeps the CSRF check');
+		self::assertNotContains(NoCSRFRequired::class, self::routes()['StateController::setCurrent']['attributes']);
+		foreach (['member', 'nobody'] as $uid) {
+			self::assertSame(Http::STATUS_FORBIDDEN, $this->stateController($uid)->list(3)->getStatus(), $uid . ' reads no revisions');
+		}
+		foreach (['operations', 'conductor', 'reader', 'contributor', 'member', 'admin'] as $uid) {
+			self::assertSame(Http::STATUS_FORBIDDEN, $this->stateController($uid)->setCurrent(7)->getStatus(), $uid . ' sets no current revision');
+		}
+		$response = $this->stateController('librarian')->setCurrent(7, str_repeat('x', 10001));
+		self::assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus(), 'the librarian passes the role check');
+		self::assertSame(['error' => '"Reason" is too long.'], $response->getData());
+
+		$controller = $this->stateController('librarian');
+		(new ModuleMiddleware($this->modulesWithout(), $this->l10n()))->beforeController($controller, 'list');
+		$this->expectException(ModuleDisabledException::class);
+		(new ModuleMiddleware($this->modulesWithout(['score_viewer']), $this->l10n()))->beforeController($controller, 'list');
 	}
 }

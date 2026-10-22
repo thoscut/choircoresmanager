@@ -44,6 +44,10 @@ use Psr\Log\LoggerInterface;
  * with the role `transcription_report` and counted apart from the score
  * files. While the module "transcription_review" is active, new and changed
  * reports are read into review points after the sync (ReviewService).
+ *
+ * While the module "version_states" is active, the score file of each copy
+ * becomes a new revision of its version after the sync when it is new or
+ * changed (StateService); the first sync records the first revisions.
  */
 class FileSyncService {
 	public const ROLE_REPORT = 'transcription_report';
@@ -82,6 +86,7 @@ class FileSyncService {
 		private IL10N $l,
 		private LoggerInterface $logger,
 		private RightsNoticeService $rightsNotices,
+		private StateService $states,
 	) {
 	}
 
@@ -136,6 +141,8 @@ class FileSyncService {
 		$reportFiles = [];
 		/** @var list<array{file: ArchiveFile, node: File, version: WorkVersion}> $unreadNotices MusicXML files whose rights notice is not read yet */
 		$unreadNotices = [];
+		/** @var list<int> $changedScores MusicXML files found new or changed (notarch_files.id) */
+		$changedScores = [];
 		$operation = $this->audit->newOperation();
 
 		$this->db->beginTransaction();
@@ -235,6 +242,9 @@ class FileSyncService {
 				if ($isReport) {
 					$reportFiles[] = ['file' => $file, 'node' => $node, 'copy' => $copy, 'path' => $path, 'changed' => $contentChanged];
 				}
+				if ($role === 'musicxml' && $contentChanged) {
+					$changedScores[] = $file->getId();
+				}
 				if ($role === 'musicxml' && $version !== null && $file->getRightsReadAt() === null) {
 					$unreadNotices[] = ['file' => $file, 'node' => $node, 'version' => $version];
 				}
@@ -291,6 +301,8 @@ class FileSyncService {
 		$report['rightsNotices'] = $this->modules->isEnabled('rights')
 			? $this->rightsNotices->readAll($unreadNotices, $uid)
 			: ['read' => 0, 'found' => 0, 'proposals' => 0, 'failed' => 0, 'pending' => count($unreadNotices), 'switchedOff' => true];
+		// Revisions of the versions (milestone 0.8), after the reports, which may name the change
+		$report['states'] = $this->states->recordSync($changedScores, $now, $uid);
 		return $report;
 	}
 

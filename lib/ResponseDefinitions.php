@@ -393,6 +393,41 @@ namespace OCA\Notenarchiv;
  *     warnings: list<string>,
  * }
  *
+ * @psalm-type NotenarchivRevisionChange = array{
+ *     measure: string,
+ *     part: string,
+ *     kind: string,
+ *     verse: ?string,
+ *     old: string,
+ *     new: string,
+ * }
+ *
+ * @psalm-type NotenarchivRevision = array{
+ *     id: int,
+ *     number: int,
+ *     source: string,
+ *     copy_id: ?int,
+ *     file_id: int,
+ *     file_name: string,
+ *     sha256: ?string,
+ *     measures: ?string,
+ *     voices: ?string,
+ *     note: ?string,
+ *     changes: list<NotenarchivRevisionChange>,
+ *     current: bool,
+ *     valid_since: ?string,
+ *     created_at: string,
+ *     own: bool,
+ * }
+ *
+ * @psalm-type NotenarchivRevisions = array{
+ *     copy_id: int,
+ *     shelfmark: string,
+ *     version_id: int,
+ *     current_number: ?int,
+ *     items: list<NotenarchivRevision>,
+ * }
+ *
  * @psalm-suppress UnusedClass
  */
 class ResponseDefinitions {

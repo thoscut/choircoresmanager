@@ -18,6 +18,7 @@ role does not include.
 - [Scores, practice files and questions](#scores-practice-files-and-questions)
 - [Sharing with choir members and the public](#sharing-with-choir-members-and-the-public)
 - [Reviewing transcriptions](#reviewing-transcriptions)
+- [Revisions of a version](#revisions-of-a-version)
 - [Concerts and song lists](#concerts-and-song-lists)
 - [Statistics and annual report](#statistics-and-annual-report)
 - [Folder book](#folder-book)
@@ -614,7 +615,116 @@ shows. The audit log lists every change (measure, voice, old → new), and the
 chosen review points are set to **Corrected**. The music librarians are
 notified of the correction. Without write permission in the folder of the
 score, the app says so and saves nothing. Internal preservation copies are
-not corrected in the app.
+not corrected in the app. With the module "Revisions of a version" the new
+file becomes the next [revision](#revisions-of-a-version) of the version.
+
+## Revisions of a version
+
+A version (an arrangement, an edition) changes over time: a wrong note is
+corrected, a syllable fixed, the tool chain delivers a better transcription.
+Each such change of the MusicXML is a **revision** of the version
+(module "Revisions of a version"; on in the presets "Standard" and
+"Complete"). A revision is a record in the catalog: which file, its
+checksum, which measures and voices changed, a note, who and when. The app
+makes no copies of files and changes none.
+
+Revisions are recorded by themselves:
+
+- **A correction in the app** becomes the next revision, with the measures,
+  voices and changes of the correction, its reason and the review points it
+  settled.
+- **The file sync** records a new or changed MusicXML of a copy, with the
+  note "Change found by the file sync" (or the round of the transcription
+  report read in the same sync). An unchanged file makes no new revision.
+- **The first revision** of a version is recorded by the first file sync
+  after the module is switched on (revision 1, "First recorded revision").
+
+Nobody has to number anything; the revisions count 1, 2, 3 … per version.
+
+### How to see the revisions of a version
+
+1. Open the copy and choose the tab **Files**.
+2. Under **Revisions of this version** the newest revision comes first:
+   number, where it came from, date and person, measures and voices
+   changed, the note, the file and the beginning of its checksum.
+3. The line above the list is the **version line** as outputs print it:
+   shelf mark · version · revision · valid since.
+
+Every archive role sees the revisions; choir members do not.
+
+### How to set the current revision
+
+Only the music librarians (role "Catalog") set the current revision. It is
+the revision that is valid for the choir within the version; the conductor
+chooses the valid version itself ([Choosing the valid
+version](#choosing-the-valid-version)). The app never sets a current
+revision by itself.
+
+1. Open the copy, tab **Files**, **Revisions of this version**.
+2. Compare the newest revision with the current one (see below) or open the
+   score.
+3. **Set as current** at the revision that is valid, optionally with a
+   reason, and confirm. From today on it is "current since" today; the
+   revision that was current before loses the mark. Both are in the audit
+   log.
+
+When a newer revision than the current one exists, the list says so.
+
+### How to compare two revisions and write a note for choir members
+
+1. Under **Compare two revisions** choose the **older revision** and the
+   **newer revision** (the newest and the current one are preselected) and
+   choose **Compare**.
+2. The app reads both files and lists the differences measure by measure
+   and voice by voice, for example "m. 12, Tenor II: D4 → E4", "m. 14, Bass,
+   verse 1: syllable "Lie-" → "Lieb-"", "m. 20: measure added". In German
+   the note names are German (H for B natural, B for B flat).
+3. Below the list is the **Note for choir members**: a heading with title,
+   shelf mark and both revisions, then one line per difference, as plain
+   text without notation. **Copy the note** and paste it into an e-mail or
+   a message.
+
+Notes, rests, note values, accidentals and lyrics are compared; layout,
+dynamics and slurs are not. The conductor and every other archive role can
+compare; the files are read with your own Nextcloud permissions, as in the
+score view.
+
+### Where the version line appears
+
+- On top of the score view, next to the name of the file, and in the text
+  reference you copy from the score view ("2-35 · Title · Revision 3 · m.
+  12 · Tenor II").
+- In practice files (WAV and MIDI) as a comment, so a file shows which
+  revision it was made from.
+- In the programme of a concert and its printed lists (column "Revision")
+  and in the song order (CSV, columns "Revision" and "Revision valid
+  since").
+- When a concert is confirmed as sung, each piece keeps the revision that
+  was sung: the current revision, or the newest when none is set. A later
+  revision does not change it.
+
+Shelf labels do not show a revision: they belong to the copy, not to the
+state of its MusicXML.
+
+### Common problems
+
+- **"No revision has been recorded yet."** The module has just been switched
+  on, or the copy has no MusicXML. Run the file sync (**Archive management**
+  → **Run file sync**, music librarians); it records the MusicXML of every
+  copy as revision 1.
+- **"The file of revision … has been changed since it was recorded."** The
+  file was overwritten in place (for example by the tool chain), so its
+  earlier content is no longer in the archive folder; the app keeps no
+  copies. Compare newer revisions, or look under **Versions** of the file in
+  the Files app of Nextcloud, which keeps earlier contents for a while. To
+  avoid it, let the tool chain write a corrected MusicXML as a new file.
+- **"No differences in notes and lyrics."** The two revisions differ only in
+  what is not compared (layout, dynamics, slurs, metadata).
+- **There is no "Set as current" button.** Only the music librarians (role
+  "Catalog") set the current revision; ask them.
+- **A score file could not be read during the file sync.** The archive
+  folder is not shared with the account that runs the file sync, or the file
+  is damaged. The next file sync tries again.
 
 ## Concerts and song lists
 
@@ -649,7 +759,10 @@ figures update by themselves, and the programme can no longer be changed.
 **Song order (CSV)** exports position, shelf mark, title, composer,
 arranger/lyrics, publisher and duration for the collecting society and the
 programme booklet. **Print** offers the programme, the concert binder list
-with columns to tick and the song list, also in large print.
+with columns to tick and the song list, also in large print. With the
+module "Revisions of a version" each piece keeps the
+[revision](#revisions-of-a-version) that was sung, and the programme, the
+printed lists and the song order name it.
 
 ### Concerts in your calendar
 
@@ -953,7 +1066,9 @@ Material findings and questions without a measure of a transcription report
 are yours, and you may decide every other review point, too (see
 [Reviewing transcriptions](#reviewing-transcriptions)). Correction orders wait
 for the tool chain until its next report closes them. You are notified when a
-correction arrives, from the app or with a new round.
+correction arrives, from the app or with a new round. Each correction is a
+new revision of the version; check it and [set it as
+current](#how-to-set-the-current-revision) when it is valid.
 
 ### Imports, file sync and exports
 
@@ -1242,6 +1357,11 @@ about the rights.
 > [!TIP]
 > The filter **No version valid for the choir** in the catalog and the start
 > page card for the current repertoire show where a decision is missing.
+
+Within the valid version the music librarians set the current
+[revision](#revisions-of-a-version) of its MusicXML. You see the revisions
+and [compare two of them](#how-to-compare-two-revisions-and-write-a-note-for-choir-members),
+with a short note for the choir to copy.
 
 ### Answering questions
 

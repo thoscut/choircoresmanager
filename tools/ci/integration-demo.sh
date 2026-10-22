@@ -288,6 +288,11 @@ run_test api_v1_test 1-1 3-1
 # demo reports (1-1, 2-1) do not interfere. The test writes its report
 # itself; the corrected file is deleted again, everything else rolled back.
 run_test review_test 1-2
+# Revisions of a version (milestone 0.8) on 1-2: the file sync records the
+# first revision, a correction in the app the next one; the current revision,
+# a concert confirmed as sung. The corrected file is deleted again, roles and
+# module switches restored, everything else rolled back.
+run_test version_states_test 1-2
 # Opening from the Files app: a listed MusicXML file and PDF, an unlisted
 # file (LIESMICH.txt), a file of a second account that the test creates and
 # deletes, and the module switched off (rolled back, switches restored).

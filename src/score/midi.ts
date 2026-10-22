@@ -72,6 +72,15 @@ function textBytes(text: string): number[] {
 }
 
 /**
+ * A text (meta event 0x01), e.g. the version line of a practice file.
+ *
+ * @param text - the text (ASCII; convert with `asciiText` first)
+ */
+export function textEvent(text: string): number[] {
+	return metaEvent(0x01, textBytes(text))
+}
+
+/**
  * Sequence or track name (meta event 0x03).
  *
  * @param name - ASCII name

@@ -28,6 +28,7 @@ import {
 	PPQ,
 	programChange,
 	tempoEvent,
+	textEvent,
 	timeSignatureEvent,
 	trackName,
 	writeMidi,
@@ -344,9 +345,10 @@ interface NoteSpan {
  * @param options.title - name of the first track
  * @param options.labelOf - display name of a voice
  * @param options.countIn - clicks before the music, on a drum track of their own
+ * @param options.text - a text in the first track, e.g. the version line (milestone 0.8)
  */
 export function practiceMidi(model: ScoreModel, timeline: Timeline, part: PracticePart,
-	options: { rate: number, title: string, labelOf: (voice: Voice) => string, countIn?: CountIn | null }): Uint8Array {
+	options: { rate: number, title: string, labelOf: (voice: Voice) => string, countIn?: CountIn | null, text?: string }): Uint8Array {
 	const countIn = options.countIn ?? null
 	const lead = countIn ? Math.round(countIn.lead / countIn.quarterSeconds * PPQ) : 0
 	const slots = slotsOf(model, timeline).map((slot) => ({ ...slot, tick: slot.tick + lead }))
@@ -355,6 +357,9 @@ export function practiceMidi(model: ScoreModel, timeline: Timeline, part: Practi
 
 	// Conductor track: tempo, time and key signature
 	const conductor: MidiEvent[] = [{ tick: 0, bytes: trackName(asciiText(options.title)) }]
+	if (options.text) {
+		conductor.push({ tick: 0, bytes: textEvent(asciiText(options.text)) })
+	}
 	if (model.signatures.fifths !== null && Math.abs(model.signatures.fifths) <= 7) {
 		conductor.push({ tick: 0, bytes: keySignatureEvent(model.signatures.fifths, model.signatures.mode === 'minor') })
 	}

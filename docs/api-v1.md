@@ -140,6 +140,7 @@ the table. Every route is rate limited per account.
 | `GET /api/v1/copies/{id}/review` | `transcription_review` | 300 | Review of the transcription of a copy: reports, counts, review points (pages) |
 | `GET /api/v1/correction_orders` | `transcription_review` | 120 | Correction orders for the tool chain |
 | `POST /api/v1/copies/{id}/transcription_reports` | `transcription_review` | 30 | Hand in the report of a transcription (`bericht/1`) |
+| `GET /api/v1/copies/{id}/states` | `version_states` | 300 | Revisions of the version of a copy, with the current one |
 
 Parameters and fields of every route are in `openapi.json`. The most
 important ones follow.
@@ -366,6 +367,34 @@ the routes take the **copy** (as every route of v1; a report belongs to the
 copy its `signatur` names), a report must name exactly that copy (the app
 route accepts any copy of the version), and internal preservation copies
 are refused or left out for roles that may not view them (principle 5).
+
+### Revisions of a version
+
+`GET /api/v1/copies/{id}/states` (every role; module `version_states`)
+lists the revisions of the MusicXML of the version the copy belongs to,
+oldest first (see "Revisions of a version" in `docs/api.md`):
+
+```json
+{ "copy_id": 2, "shelfmark": "1-2", "version_id": 2, "current_number": 2,
+  "items": [
+    { "id": 4, "number": 1, "source": "first", "copy_id": 2, "file_id": 3, "file_name": "1-02_Title.mxl",
+      "sha256": "…", "measures": null, "voices": null, "note": null, "changes": [],
+      "current": false, "valid_since": null, "created_at": "2026-10-27T09:00:00Z", "own": false },
+    { "id": 7, "number": 2, "source": "correction", "copy_id": 2, "file_id": 31,
+      "file_name": "1-02_Title (korrigiert 2026-10-27).mxl", "sha256": "…", "measures": "12", "voices": "Tenor I/II",
+      "note": "Wrong note in the tenor", "current": true, "valid_since": "2026-10-27",
+      "changes": [{ "measure": "12", "part": "Tenor I/II", "kind": "pitch", "verse": null, "old": "D4", "new": "E4" }],
+      "created_at": "2026-10-27T10:00:00Z", "own": false }
+  ] }
+```
+
+`source`: `first` (recorded when the recording of revisions started),
+`correction` (a correction in the app), `sync` (a new or changed MusicXML
+found by the file sync). Account names are left out; `own` tells whether
+the calling account recorded the revision. Setting the current revision
+(`PUT /api/states/{id}/current`, catalog librarian) has no counterpart here
+(principle 1). Comparing two revisions happens in the app; `sha256` tells
+whether a file still has the content of its revision.
 
 ## Versioning
 

@@ -74,6 +74,8 @@ class Modules {
 	public const UNIFIED_SEARCH = 'unified_search';
 	/** Annual snapshots of the archive and their comparison (milestone 0.8) */
 	public const ANNUAL_SNAPSHOT = 'annual_snapshot';
+	/** Revisions of a version: corrections and changed MusicXML, the current revision, comparing two (milestone 0.8) */
+	public const VERSION_STATES = 'version_states';
 
 	/** Switches of the notifications: this prefix plus the subject (NotificationService) */
 	public const NOTIFY_PREFIX = 'notify_';
@@ -171,6 +173,9 @@ class Modules {
 		'corrections' => ['group' => 'scores', 'requires' => ['score_viewer'], 'simple' => false, 'standard' => true, 'planned' => false,
 			'label' => 'Small corrections',
 			'description' => 'The catalog librarian and the conductor correct pitches, accidentals and syllables of a MusicXML file in the score view. The app saves the result as a new file next to the old one, which stays unchanged.'],
+		self::VERSION_STATES => ['group' => 'scores', 'requires' => ['score_viewer'], 'simple' => false, 'standard' => true, 'planned' => false,
+			'label' => 'Revisions of a version',
+			'description' => 'Every correction and every new or changed MusicXML found by the file sync becomes a revision with a checksum and a note. The catalog librarian sets the current revision; two revisions can be compared measure by measure and voice by voice, with a short note for choir members. Concerts keep the revision sung.'],
 		'files_integration' => ['group' => 'scores', 'requires' => [], 'simple' => false, 'standard' => true, 'planned' => false,
 			'label' => 'Opening from the Files app',
 			'description' => 'The action "Open in music archive" for files of the archive folder in the Files app: a click on MusicXML opens the score view, other files of a copy open the copy. Rights are checked as in the app.'],

@@ -39,6 +39,7 @@ import { formatSize } from '../format.ts'
 import { countInFor } from '../score/countIn.ts'
 import { playbackTimeline } from '../score/model.ts'
 import {
+	asciiText,
 	estimateBytes,
 	LONG_EXPORT_SECONDS,
 	partGains,
@@ -69,6 +70,8 @@ const props = defineProps<{
 	countInBars: CountInBars
 	/** display name of a voice */
 	voiceName: (voice: Voice) => string
+	/** the version line of the score (module "version_states"), stored in the files; '' for none */
+	versionLine?: string
 }>()
 
 const emit = defineEmits<{
@@ -247,12 +250,13 @@ async function makeFile(part: PracticePart, onProgress: (done: number) => void, 
 			title: [shelfmark.value, title.value].filter((text) => text !== '').join(' '),
 			labelOf: props.voiceName,
 			countIn: countIn.value,
+			text: props.versionLine || undefined,
 		})
 		onProgress(1)
 		return data
 	}
 	const samples = await renderTimeline(timeline.value, partGains(part), { rate: rate.value, sampleRate: SAMPLE_RATE, signal, onProgress, countIn: countIn.value })
-	return encodeWav(samples, SAMPLE_RATE, channels.value === '2' ? 2 : 1)
+	return encodeWav(samples, SAMPLE_RATE, channels.value === '2' ? 2 : 1, props.versionLine ? asciiText(props.versionLine) : '')
 }
 
 /**

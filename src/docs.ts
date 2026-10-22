@@ -33,6 +33,7 @@ export const ADMIN_GUIDE = {
 /** Sections of docs/user-guide.md. */
 export const USER_GUIDE = {
 	filesNotShared: 'files-you-cannot-open',
+	revisions: 'revisions-of-a-version',
 } as const
 
 /**

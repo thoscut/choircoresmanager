@@ -423,7 +423,9 @@ async function save(): Promise<void> {
 			pointIds: pointIds.value.filter((id) => candidatePoints.value.some((point) => point.id === id)),
 			reason: reason.value.trim() || null,
 		})
-		showSuccess(t('notenarchiv', 'Saved as a new file: {name}', { name: saved.file.name }))
+		showSuccess(typeof saved.state === 'number'
+			? t('notenarchiv', 'Saved as a new file: {name}. It is revision {number} of this version.', { name: saved.file.name, number: saved.state })
+			: t('notenarchiv', 'Saved as a new file: {name}', { name: saved.file.name }))
 		emit('saved', saved)
 	} catch (caught) {
 		error.value = errorMessage(caught)

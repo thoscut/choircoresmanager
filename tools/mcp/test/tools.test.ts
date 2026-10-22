@@ -14,7 +14,7 @@ import { connect, fakeFetch, ocs, text } from './helpers.js'
 
 const WRITING = ['answer_task', 'create_task', 'propose_change', 'submit_transcription_report']
 const EXPECTED = ['answer_task', 'create_task', 'get_concert', 'get_copy', 'get_review', 'list_concerts', 'list_correction_orders', 'list_due',
-	'list_my_proposals', 'list_tasks', 'modules', 'propose_change', 'search_catalog', 'statistics', 'submit_transcription_report',
+	'list_my_proposals', 'list_revisions', 'list_tasks', 'modules', 'propose_change', 'search_catalog', 'statistics', 'submit_transcription_report',
 	'text_reference']
 /** Writing tools whose repetition with the same arguments changes nothing (the same report is read once) */
 const IDEMPOTENT_WRITING = ['submit_transcription_report']

@@ -46,7 +46,8 @@ use OCP\IUserManager;
  *     releases: array{portal: ?string, onPortal: bool, printStation: ?string}, tasks: list<Task>, links: list<ExcerptLink>,
  *     proposals: list<Proposal>, siblings: list<array{id: int, shelfmark: string, version_id: int, status: string}>,
  *     contributions: list<array<string, string|int|bool|null|array<string, string|int|bool|null>>>, protection: ?ProtectionProposal,
- *     merges: list<array<string, mixed>>, audit: list<AuditEntry>}
+ *     merges: list<array<string, mixed>>, audit: list<AuditEntry>,
+ *     revision: ?array{count: int, latest: ?int, current: ?array{id: int, number: int, valid_since: string}, shown: ?int}}
  */
 class CatalogService {
 	public function __construct(
@@ -72,6 +73,7 @@ class CatalogService {
 		private MergeService $merges,
 		private Modules $modules,
 		private ReviewPointMapper $reviewPoints,
+		private StateService $states,
 	) {
 	}
 
@@ -227,12 +229,13 @@ class CatalogService {
 		$licenses = $this->licenses->findByVersion($version->getId());
 		$day = $this->rights->today($uid);
 		$active = $this->modules->states();
+		$score = $active['score_viewer'] ? $this->scores->describe($version, $files, $uid) : null;
 		return [
 			'work' => $work,
 			'version' => $version,
 			'copy' => $copy,
 			'files' => $files,
-			'score' => $active['score_viewer'] ? $this->scores->describe($version, $files, $uid) : null,
+			'score' => $score,
 			// Licenses still decide about releases and playback when their maintenance is switched off.
 			'licenses' => $active['rights'] ? $licenses : [],
 			'releases' => [
@@ -257,6 +260,8 @@ class CatalogService {
 				[Fields::COPY, $copy->getId()],
 				...$this->reviewObjects($copy->getId(), $active[ReviewService::MODULE]),
 			]),
+			// Revisions of the version (milestone 0.8): the newest, the current one, the one of the score shown
+			'revision' => $active[StateService::MODULE] ? $this->states->summary($version->getId(), $score['fileId'] ?? null) : null,
 		];
 	}
 

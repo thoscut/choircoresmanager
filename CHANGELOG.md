@@ -164,6 +164,34 @@ All notable changes to this app are documented in this file. The format follows
     part, not only from the first one; a D.C. or Coda written only in a
     lower voice was ignored before.
   - Printed segno and coda signs stand in for missing playback marks.
+- Milestone 0.8, revisions of a version (new module "Revisions of a
+  version", `version_states`, needs the score view, on in Standard and
+  Complete):
+  - Every correction in the app and every new or changed MusicXML found by
+    the file sync becomes a revision of the version: a record that points to
+    the file, with its SHA-256, the measures and voices changed, a note
+    (reason and review points of a correction, or the transcription report
+    of the sync), who and when. No file is copied or changed. The first file
+    sync after the module is switched on records revision 1 of every
+    version; there is no repair step.
+  - The catalog librarian sets the current revision of a version (tab
+    "Files", "Revisions of this version"), with a reason, recorded in the
+    audit log; nothing sets it automatically.
+  - Two revisions are compared in the browser on their files, measure by
+    measure and voice by voice (pitches, accidentals, note values, lyrics,
+    measures and parts added or removed), with a plain-text note for choir
+    members to copy; in German with German note names (H, B). A file that
+    was overwritten in place is recognised by its checksum.
+  - The version line (shelf mark · version · revision · valid since) in the
+    score view and its text reference, as a comment in practice files (MIDI
+    text event, WAV INFO chunk), in the programme, the printed lists and the
+    song order (columns "Revision", "Revision valid since"). Concerts keep
+    the revision sung when they are confirmed as sung.
+  - Routes `GET /api/versions/{id}/states`, `PUT /api/states/{id}/current`
+    (catalog librarian, rate limited); API for agents
+    `GET /api/v1/copies/{id}/states` and the MCP tool `list_revisions`.
+  - Migration `Version000820Date20261027100000`: table `notarch_states` (part
+    of the complete backup) and the column `notarch_event_items.state_id`.
 
 ### Security
 

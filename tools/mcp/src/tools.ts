@@ -319,6 +319,22 @@ export const TOOLS: ToolDefinition[] = [
 		},
 	},
 	{
+		name: 'list_revisions',
+		title: 'List the revisions of a version',
+		description: 'The revisions of the MusicXML of the version a copy belongs to, oldest first (module "version_states"). '
+			+ 'Each revision has a "number" (1, 2, 3 …), where it came from ("first" when the recording started, "correction" in '
+			+ 'the app, "sync" from the file sync), the file and its SHA-256, the measures and voices changed, a note and the '
+			+ 'changes of a correction (measure, part, kind, old, new). "current" marks the revision the catalog librarian set as '
+			+ 'current, with "valid_since"; "current_number" repeats it. Read only: setting the current revision stays with the '
+			+ 'catalog librarian in the app. Use the copy "id" from search_catalog.',
+		inputSchema: z.object({
+			copy_id: id('The copy "id" from search_catalog'),
+		}).strict(),
+		annotations: READ,
+		writes: false,
+		run: (client, args) => client.get(withId('/copies/{id}/states', args.copy_id)),
+	},
+	{
 		name: 'list_correction_orders',
 		title: 'List correction orders for the tool chain',
 		description: 'Correction orders: review points the conductor or the catalog librarian decided as "correct". Each says what '

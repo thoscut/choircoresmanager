@@ -6,8 +6,8 @@
 /**
  * Sidebar with everything about one copy: overview (work, version, copy,
  * merges), rights with confirmation, releases, licenses, persons involved
- * and the protection proposal, tasks and links, files and audit log. The
- * score view opens from here.
+ * and the protection proposal, tasks and links, files with the revisions of
+ * the version, and audit log. The score view opens from here.
  */
 import type { SectionDef } from '../fieldGroups.ts'
 import type { ScoreRequest } from '../store.ts'
@@ -39,6 +39,7 @@ import FileList from './FileList.vue'
 import MergeList from './MergeList.vue'
 import RightsBadge from './RightsBadge.vue'
 import RightsPanel from './RightsPanel.vue'
+import StatesPanel from './StatesPanel.vue'
 import { songListCount, songListNames } from '../catalog.ts'
 import { OVERVIEW_SECTIONS, RIGHTS_SECTIONS, sectionFields } from '../fieldGroups.ts'
 import { formatDate } from '../format.ts'
@@ -407,11 +408,13 @@ async function onSaved(): Promise<void> {
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiFileMultipleOutline" />
 				</template>
-				<FileList :key="detail.copy.id"
-					:files="detail.files"
-					:preservation-copy="preservationCopy"
-					:copy-id="detail.copy.id"
-					@changed="onSaved" />
+				<div :key="detail.copy.id" class="copy-sidebar__tab">
+					<FileList :files="detail.files"
+						:preservation-copy="preservationCopy"
+						:copy-id="detail.copy.id"
+						@changed="onSaved" />
+					<StatesPanel v-if="isModuleActive('version_states')" :detail="detail" @changed="onSaved" />
+				</div>
 			</NcAppSidebarTab>
 
 			<NcAppSidebarTab id="audit" :name="t('notenarchiv', 'Audit log')" :order="5">
