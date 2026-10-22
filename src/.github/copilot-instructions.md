@@ -136,7 +136,7 @@ const filesMsg = n('Delete %n file?', 'Delete %n files?', count)
 ### Adding Translations
 **WHENEVER** you add a new `t()` or `n()` call, add the translation to the `.po` file first:
 
-1. **Edit the PO file** at `translationfiles/de/orchestrascoresmanager.po`:
+1. **Edit the PO file** at `translationfiles/de/choirscores.po`:
    ```po
    msgid "Your English text"
    msgstr "Ihr deutscher Text"

@@ -116,7 +116,7 @@ export class Ocs<
    * @tags catalogue_api
    * @name CatalogueApiImportCatalogue
    * @summary Import the work catalogue from a CSV file
-   * @request POST:/ocs/v2.php/apps/orchestrascoresmanager/catalogue/import
+   * @request POST:/ocs/v2.php/apps/choirscores/catalogue/import
    * @secure
    */
   catalogueApiImportCatalogue = (
@@ -133,7 +133,7 @@ export class Ocs<
         }
       | string
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/catalogue/import`,
+      path: `/ocs/v2.php/apps/choirscores/catalogue/import`,
       method: "POST",
       body: data,
       secure: true,
@@ -147,7 +147,7 @@ export class Ocs<
    * @tags catalogue_api
    * @name CatalogueApiExportCatalogue
    * @summary Export all scores as a work catalogue CSV file
-   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/catalogue/export
+   * @request GET:/ocs/v2.php/apps/choirscores/catalogue/export
    * @secure
    */
   catalogueApiExportCatalogue = (params: RequestParams = {}) =>
@@ -160,7 +160,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/catalogue/export`,
+      path: `/ocs/v2.php/apps/choirscores/catalogue/export`,
       method: "GET",
       secure: true,
       format: "json",
@@ -172,7 +172,7 @@ export class Ocs<
    * @tags catalogue_api
    * @name CatalogueApiGetScoreCatalogueValues
    * @summary Get the catalogue values of a score that are not stored in a field
-   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/scores/{id}/catalogue
+   * @request GET:/ocs/v2.php/apps/choirscores/scores/{id}/catalogue
    * @secure
    */
   catalogueApiGetScoreCatalogueValues = (
@@ -188,7 +188,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/scores/${id}/catalogue`,
+      path: `/ocs/v2.php/apps/choirscores/scores/${id}/catalogue`,
       method: "GET",
       secure: true,
       format: "json",
@@ -200,7 +200,7 @@ export class Ocs<
    * @tags comment_api
    * @name CommentApiGetComment
    * @summary Get a specific comment by ID
-   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/comments/{id}
+   * @request GET:/ocs/v2.php/apps/choirscores/comments/{id}
    * @secure
    */
   commentApiGetComment = (id: number, params: RequestParams = {}) =>
@@ -213,7 +213,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/comments/${id}`,
+      path: `/ocs/v2.php/apps/choirscores/comments/${id}`,
       method: "GET",
       secure: true,
       format: "json",
@@ -225,7 +225,7 @@ export class Ocs<
    * @tags comment_api
    * @name CommentApiDeleteComment
    * @summary Delete a comment
-   * @request DELETE:/ocs/v2.php/apps/orchestrascoresmanager/comments/{id}
+   * @request DELETE:/ocs/v2.php/apps/choirscores/comments/{id}
    * @secure
    */
   commentApiDeleteComment = (id: number, params: RequestParams = {}) =>
@@ -238,7 +238,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/comments/${id}`,
+      path: `/ocs/v2.php/apps/choirscores/comments/${id}`,
       method: "DELETE",
       secure: true,
       format: "json",
@@ -250,7 +250,7 @@ export class Ocs<
    * @tags folder_collection_api
    * @name FolderCollectionApiGetFolderCollections
    * @summary Return all available folder collections
-   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/foldercollections
+   * @request GET:/ocs/v2.php/apps/choirscores/foldercollections
    * @secure
    */
   folderCollectionApiGetFolderCollections = (params: RequestParams = {}) =>
@@ -263,7 +263,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/foldercollections`,
+      path: `/ocs/v2.php/apps/choirscores/foldercollections`,
       method: "GET",
       secure: true,
       format: "json",
@@ -275,7 +275,7 @@ export class Ocs<
    * @tags folder_collection_api
    * @name FolderCollectionApiPostFolderCollection
    * @summary Create a new folder collection
-   * @request POST:/ocs/v2.php/apps/orchestrascoresmanager/foldercollections
+   * @request POST:/ocs/v2.php/apps/choirscores/foldercollections
    * @secure
    */
   folderCollectionApiPostFolderCollection = (
@@ -291,7 +291,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/foldercollections`,
+      path: `/ocs/v2.php/apps/choirscores/foldercollections`,
       method: "POST",
       body: data,
       secure: true,
@@ -305,7 +305,7 @@ export class Ocs<
    * @tags folder_collection_api
    * @name FolderCollectionApiGetFolderCollection
    * @summary Get a specific folder collection by ID
-   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/foldercollections/{id}
+   * @request GET:/ocs/v2.php/apps/choirscores/foldercollections/{id}
    * @secure
    */
   folderCollectionApiGetFolderCollection = (
@@ -321,7 +321,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/foldercollections/${id}`,
+      path: `/ocs/v2.php/apps/choirscores/foldercollections/${id}`,
       method: "GET",
       secure: true,
       format: "json",
@@ -333,7 +333,7 @@ export class Ocs<
    * @tags folder_collection_api
    * @name FolderCollectionApiPatchFolderCollection
    * @summary Update an existing folder collection
-   * @request PATCH:/ocs/v2.php/apps/orchestrascoresmanager/foldercollections/{id}
+   * @request PATCH:/ocs/v2.php/apps/choirscores/foldercollections/{id}
    * @secure
    */
   folderCollectionApiPatchFolderCollection = (
@@ -350,7 +350,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/foldercollections/${id}`,
+      path: `/ocs/v2.php/apps/choirscores/foldercollections/${id}`,
       method: "PATCH",
       body: data,
       secure: true,
@@ -364,7 +364,7 @@ export class Ocs<
    * @tags folder_collection_api
    * @name FolderCollectionApiDeleteFolderCollection
    * @summary Delete a folder collection
-   * @request DELETE:/ocs/v2.php/apps/orchestrascoresmanager/foldercollections/{id}
+   * @request DELETE:/ocs/v2.php/apps/choirscores/foldercollections/{id}
    * @secure
    */
   folderCollectionApiDeleteFolderCollection = (
@@ -380,7 +380,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/foldercollections/${id}`,
+      path: `/ocs/v2.php/apps/choirscores/foldercollections/${id}`,
       method: "DELETE",
       secure: true,
       format: "json",
@@ -392,7 +392,7 @@ export class Ocs<
    * @tags folder_collection_api
    * @name FolderCollectionApiGetFolderCollectionScores
    * @summary Get all scores in a specific folder collection (including scores from score books)
-   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/foldercollections/{id}/scores
+   * @request GET:/ocs/v2.php/apps/choirscores/foldercollections/{id}/scores
    * @secure
    */
   folderCollectionApiGetFolderCollectionScores = (
@@ -416,7 +416,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/foldercollections/${id}/scores`,
+      path: `/ocs/v2.php/apps/choirscores/foldercollections/${id}/scores`,
       method: "GET",
       query: query,
       secure: true,
@@ -429,7 +429,7 @@ export class Ocs<
    * @tags folder_collection_api
    * @name FolderCollectionApiPostFolderCollectionScore
    * @summary Add a score to a folder collection
-   * @request POST:/ocs/v2.php/apps/orchestrascoresmanager/foldercollections/{id}/scores
+   * @request POST:/ocs/v2.php/apps/choirscores/foldercollections/{id}/scores
    * @secure
    */
   folderCollectionApiPostFolderCollectionScore = (
@@ -446,7 +446,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/foldercollections/${id}/scores`,
+      path: `/ocs/v2.php/apps/choirscores/foldercollections/${id}/scores`,
       method: "POST",
       body: data,
       secure: true,
@@ -460,7 +460,7 @@ export class Ocs<
    * @tags folder_collection_api
    * @name FolderCollectionApiDeleteFolderCollectionScore
    * @summary Remove a score from a folder collection
-   * @request DELETE:/ocs/v2.php/apps/orchestrascoresmanager/foldercollections/{id}/scores/{scoreId}
+   * @request DELETE:/ocs/v2.php/apps/choirscores/foldercollections/{id}/scores/{scoreId}
    * @secure
    */
   folderCollectionApiDeleteFolderCollectionScore = (
@@ -477,7 +477,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/foldercollections/${id}/scores/${scoreId}`,
+      path: `/ocs/v2.php/apps/choirscores/foldercollections/${id}/scores/${scoreId}`,
       method: "DELETE",
       secure: true,
       format: "json",
@@ -489,7 +489,7 @@ export class Ocs<
    * @tags folder_collection_api
    * @name FolderCollectionApiGetFolderCollectionScoreBooks
    * @summary Get all score books in a folder collection
-   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/foldercollections/{id}/scorebooks
+   * @request GET:/ocs/v2.php/apps/choirscores/foldercollections/{id}/scorebooks
    * @secure
    */
   folderCollectionApiGetFolderCollectionScoreBooks = (
@@ -513,7 +513,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/foldercollections/${id}/scorebooks`,
+      path: `/ocs/v2.php/apps/choirscores/foldercollections/${id}/scorebooks`,
       method: "GET",
       query: query,
       secure: true,
@@ -526,7 +526,7 @@ export class Ocs<
    * @tags folder_collection_api
    * @name FolderCollectionApiPostFolderCollectionScoreBook
    * @summary Add a score book to a folder collection
-   * @request POST:/ocs/v2.php/apps/orchestrascoresmanager/foldercollections/{id}/scorebooks
+   * @request POST:/ocs/v2.php/apps/choirscores/foldercollections/{id}/scorebooks
    * @secure
    */
   folderCollectionApiPostFolderCollectionScoreBook = (
@@ -543,7 +543,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/foldercollections/${id}/scorebooks`,
+      path: `/ocs/v2.php/apps/choirscores/foldercollections/${id}/scorebooks`,
       method: "POST",
       body: data,
       secure: true,
@@ -557,7 +557,7 @@ export class Ocs<
    * @tags folder_collection_api
    * @name FolderCollectionApiDeleteFolderCollectionScoreBook
    * @summary Remove a score book from a folder collection
-   * @request DELETE:/ocs/v2.php/apps/orchestrascoresmanager/foldercollections/{id}/scorebooks/{scoreBookId}
+   * @request DELETE:/ocs/v2.php/apps/choirscores/foldercollections/{id}/scorebooks/{scoreBookId}
    * @secure
    */
   folderCollectionApiDeleteFolderCollectionScoreBook = (
@@ -574,7 +574,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/foldercollections/${id}/scorebooks/${scoreBookId}`,
+      path: `/ocs/v2.php/apps/choirscores/foldercollections/${id}/scorebooks/${scoreBookId}`,
       method: "DELETE",
       secure: true,
       format: "json",
@@ -586,7 +586,7 @@ export class Ocs<
    * @tags folder_collection_api
    * @name FolderCollectionApiGetFolderCollectionVersions
    * @summary Get all versions of a folder collection
-   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/foldercollections/{id}/versions
+   * @request GET:/ocs/v2.php/apps/choirscores/foldercollections/{id}/versions
    * @secure
    */
   folderCollectionApiGetFolderCollectionVersions = (
@@ -602,7 +602,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/foldercollections/${id}/versions`,
+      path: `/ocs/v2.php/apps/choirscores/foldercollections/${id}/versions`,
       method: "GET",
       secure: true,
       format: "json",
@@ -614,7 +614,7 @@ export class Ocs<
    * @tags folder_collection_api
    * @name FolderCollectionApiPostFolderCollectionVersion
    * @summary Create a new version for a folder collection
-   * @request POST:/ocs/v2.php/apps/orchestrascoresmanager/foldercollections/{id}/versions
+   * @request POST:/ocs/v2.php/apps/choirscores/foldercollections/{id}/versions
    * @secure
    */
   folderCollectionApiPostFolderCollectionVersion = (
@@ -631,7 +631,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/foldercollections/${id}/versions`,
+      path: `/ocs/v2.php/apps/choirscores/foldercollections/${id}/versions`,
       method: "POST",
       body: data,
       secure: true,
@@ -645,7 +645,7 @@ export class Ocs<
    * @tags folder_collection_api
    * @name FolderCollectionApiStartNewVersion
    * @summary Start a new version (deactivates current version, creates new one starting on specified date)
-   * @request POST:/ocs/v2.php/apps/orchestrascoresmanager/foldercollections/{id}/versions/new
+   * @request POST:/ocs/v2.php/apps/choirscores/foldercollections/{id}/versions/new
    * @secure
    */
   folderCollectionApiStartNewVersion = (
@@ -662,7 +662,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/foldercollections/${id}/versions/new`,
+      path: `/ocs/v2.php/apps/choirscores/foldercollections/${id}/versions/new`,
       method: "POST",
       body: data,
       secure: true,
@@ -676,7 +676,7 @@ export class Ocs<
    * @tags folder_collection_version_api
    * @name FolderCollectionVersionApiGetFolderCollectionVersion
    * @summary Get a folder collection version by ID
-   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/foldercollectionversions/{id}
+   * @request GET:/ocs/v2.php/apps/choirscores/foldercollectionversions/{id}
    * @secure
    */
   folderCollectionVersionApiGetFolderCollectionVersion = (
@@ -692,7 +692,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/foldercollectionversions/${id}`,
+      path: `/ocs/v2.php/apps/choirscores/foldercollectionversions/${id}`,
       method: "GET",
       secure: true,
       format: "json",
@@ -704,7 +704,7 @@ export class Ocs<
    * @tags folder_collection_version_api
    * @name FolderCollectionVersionApiPatchFolderCollectionVersion
    * @summary Update a folder collection version
-   * @request PATCH:/ocs/v2.php/apps/orchestrascoresmanager/foldercollectionversions/{id}
+   * @request PATCH:/ocs/v2.php/apps/choirscores/foldercollectionversions/{id}
    * @secure
    */
   folderCollectionVersionApiPatchFolderCollectionVersion = (
@@ -721,7 +721,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/foldercollectionversions/${id}`,
+      path: `/ocs/v2.php/apps/choirscores/foldercollectionversions/${id}`,
       method: "PATCH",
       body: data,
       secure: true,
@@ -735,7 +735,7 @@ export class Ocs<
    * @tags music_xml_api
    * @name MusicXmlApiGetMusicXml
    * @summary Download the MusicXML file of a score
-   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/scores/{id}/musicxml
+   * @request GET:/ocs/v2.php/apps/choirscores/scores/{id}/musicxml
    * @secure
    */
   musicXmlApiGetMusicXml = (id: number, params: RequestParams = {}) =>
@@ -748,7 +748,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/scores/${id}/musicxml`,
+      path: `/ocs/v2.php/apps/choirscores/scores/${id}/musicxml`,
       method: "GET",
       secure: true,
       ...params,
@@ -759,7 +759,7 @@ export class Ocs<
    * @tags music_xml_api
    * @name MusicXmlApiPostMusicXml
    * @summary Link a MusicXML file (.musicxml, .xml or .mxl) from the user's files to a score, replacing an existing link
-   * @request POST:/ocs/v2.php/apps/orchestrascoresmanager/scores/{id}/musicxml
+   * @request POST:/ocs/v2.php/apps/choirscores/scores/{id}/musicxml
    * @secure
    */
   musicXmlApiPostMusicXml = (
@@ -776,7 +776,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/scores/${id}/musicxml`,
+      path: `/ocs/v2.php/apps/choirscores/scores/${id}/musicxml`,
       method: "POST",
       body: data,
       secure: true,
@@ -790,7 +790,7 @@ export class Ocs<
    * @tags music_xml_api
    * @name MusicXmlApiDeleteMusicXml
    * @summary Remove the link to the MusicXML file of a score
-   * @request DELETE:/ocs/v2.php/apps/orchestrascoresmanager/scores/{id}/musicxml
+   * @request DELETE:/ocs/v2.php/apps/choirscores/scores/{id}/musicxml
    * @secure
    */
   musicXmlApiDeleteMusicXml = (id: number, params: RequestParams = {}) =>
@@ -803,7 +803,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/scores/${id}/musicxml`,
+      path: `/ocs/v2.php/apps/choirscores/scores/${id}/musicxml`,
       method: "DELETE",
       secure: true,
       format: "json",
@@ -815,7 +815,7 @@ export class Ocs<
    * @tags pdf_api
    * @name PdfApiGetPdf
    * @summary Get the PDF file of a score for display
-   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/scores/{id}/pdf
+   * @request GET:/ocs/v2.php/apps/choirscores/scores/{id}/pdf
    * @secure
    */
   pdfApiGetPdf = (id: number, params: RequestParams = {}) =>
@@ -828,7 +828,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/scores/${id}/pdf`,
+      path: `/ocs/v2.php/apps/choirscores/scores/${id}/pdf`,
       method: "GET",
       secure: true,
       ...params,
@@ -839,7 +839,7 @@ export class Ocs<
    * @tags pdf_api
    * @name PdfApiPostPdf
    * @summary Link a PDF file from the user's files to a score, replacing an existing link
-   * @request POST:/ocs/v2.php/apps/orchestrascoresmanager/scores/{id}/pdf
+   * @request POST:/ocs/v2.php/apps/choirscores/scores/{id}/pdf
    * @secure
    */
   pdfApiPostPdf = (
@@ -856,7 +856,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/scores/${id}/pdf`,
+      path: `/ocs/v2.php/apps/choirscores/scores/${id}/pdf`,
       method: "POST",
       body: data,
       secure: true,
@@ -870,7 +870,7 @@ export class Ocs<
    * @tags pdf_api
    * @name PdfApiDeletePdf
    * @summary Remove the link to the PDF file of a score
-   * @request DELETE:/ocs/v2.php/apps/orchestrascoresmanager/scores/{id}/pdf
+   * @request DELETE:/ocs/v2.php/apps/choirscores/scores/{id}/pdf
    * @secure
    */
   pdfApiDeletePdf = (id: number, params: RequestParams = {}) =>
@@ -883,7 +883,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/scores/${id}/pdf`,
+      path: `/ocs/v2.php/apps/choirscores/scores/${id}/pdf`,
       method: "DELETE",
       secure: true,
       format: "json",
@@ -895,7 +895,7 @@ export class Ocs<
    * @tags score_api
    * @name ScoreApiGetScores
    * @summary Return all available scores or a list of specific scores by IDs
-   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/scores
+   * @request GET:/ocs/v2.php/apps/choirscores/scores
    * @secure
    */
   scoreApiGetScores = (
@@ -917,7 +917,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/scores`,
+      path: `/ocs/v2.php/apps/choirscores/scores`,
       method: "GET",
       query: query,
       secure: true,
@@ -930,7 +930,7 @@ export class Ocs<
    * @tags score_api
    * @name ScoreApiPostScore
    * @summary Add a new score
-   * @request POST:/ocs/v2.php/apps/orchestrascoresmanager/scores
+   * @request POST:/ocs/v2.php/apps/choirscores/scores
    * @secure
    */
   scoreApiPostScore = (
@@ -947,7 +947,7 @@ export class Ocs<
         }
       | string
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/scores`,
+      path: `/ocs/v2.php/apps/choirscores/scores`,
       method: "POST",
       body: data,
       secure: true,
@@ -961,7 +961,7 @@ export class Ocs<
    * @tags score_api
    * @name ScoreApiPatchScore
    * @summary Update an existing score
-   * @request PATCH:/ocs/v2.php/apps/orchestrascoresmanager/scores/{id}
+   * @request PATCH:/ocs/v2.php/apps/choirscores/scores/{id}
    * @secure
    */
   scoreApiPatchScore = (
@@ -979,7 +979,7 @@ export class Ocs<
         }
       | string
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/scores/${id}`,
+      path: `/ocs/v2.php/apps/choirscores/scores/${id}`,
       method: "PATCH",
       body: data,
       secure: true,
@@ -993,7 +993,7 @@ export class Ocs<
    * @tags score_api
    * @name ScoreApiDeleteScore
    * @summary Delete a specific score
-   * @request DELETE:/ocs/v2.php/apps/orchestrascoresmanager/scores/{id}
+   * @request DELETE:/ocs/v2.php/apps/choirscores/scores/{id}
    * @secure
    */
   scoreApiDeleteScore = (id: number, params: RequestParams = {}) =>
@@ -1006,7 +1006,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/scores/${id}`,
+      path: `/ocs/v2.php/apps/choirscores/scores/${id}`,
       method: "DELETE",
       secure: true,
       ...params,
@@ -1017,7 +1017,7 @@ export class Ocs<
    * @tags score_api
    * @name ScoreApiGetScoreComments
    * @summary Get all comments for a specific score
-   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/scores/{id}/comments
+   * @request GET:/ocs/v2.php/apps/choirscores/scores/{id}/comments
    * @secure
    */
   scoreApiGetScoreComments = (id: number, params: RequestParams = {}) =>
@@ -1030,7 +1030,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/scores/${id}/comments`,
+      path: `/ocs/v2.php/apps/choirscores/scores/${id}/comments`,
       method: "GET",
       secure: true,
       format: "json",
@@ -1042,7 +1042,7 @@ export class Ocs<
    * @tags score_api
    * @name ScoreApiPostScoreComment
    * @summary Create a new comment for a specific score
-   * @request POST:/ocs/v2.php/apps/orchestrascoresmanager/scores/{id}/comments
+   * @request POST:/ocs/v2.php/apps/choirscores/scores/{id}/comments
    * @secure
    */
   scoreApiPostScoreComment = (
@@ -1059,7 +1059,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/scores/${id}/comments`,
+      path: `/ocs/v2.php/apps/choirscores/scores/${id}/comments`,
       method: "POST",
       body: data,
       secure: true,
@@ -1073,7 +1073,7 @@ export class Ocs<
    * @tags score_api
    * @name ScoreApiGetScoreFolderCollections
    * @summary Get all folder collections for a specific score
-   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/scores/{id}/foldercollections
+   * @request GET:/ocs/v2.php/apps/choirscores/scores/{id}/foldercollections
    * @secure
    */
   scoreApiGetScoreFolderCollections = (
@@ -1089,7 +1089,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/scores/${id}/foldercollections`,
+      path: `/ocs/v2.php/apps/choirscores/scores/${id}/foldercollections`,
       method: "GET",
       secure: true,
       format: "json",
@@ -1101,7 +1101,7 @@ export class Ocs<
    * @tags score_book_api
    * @name ScoreBookApiGetScoreBooks
    * @summary Return all available score books
-   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/scorebooks
+   * @request GET:/ocs/v2.php/apps/choirscores/scorebooks
    * @secure
    */
   scoreBookApiGetScoreBooks = (params: RequestParams = {}) =>
@@ -1114,7 +1114,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/scorebooks`,
+      path: `/ocs/v2.php/apps/choirscores/scorebooks`,
       method: "GET",
       secure: true,
       format: "json",
@@ -1126,7 +1126,7 @@ export class Ocs<
    * @tags score_book_api
    * @name ScoreBookApiPostScoreBook
    * @summary Create a new score book
-   * @request POST:/ocs/v2.php/apps/orchestrascoresmanager/scorebooks
+   * @request POST:/ocs/v2.php/apps/choirscores/scorebooks
    * @secure
    */
   scoreBookApiPostScoreBook = (
@@ -1142,7 +1142,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/scorebooks`,
+      path: `/ocs/v2.php/apps/choirscores/scorebooks`,
       method: "POST",
       body: data,
       secure: true,
@@ -1156,7 +1156,7 @@ export class Ocs<
    * @tags score_book_api
    * @name ScoreBookApiGetScoreBook
    * @summary Get a specific score book by ID
-   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/scorebooks/{id}
+   * @request GET:/ocs/v2.php/apps/choirscores/scorebooks/{id}
    * @secure
    */
   scoreBookApiGetScoreBook = (id: number, params: RequestParams = {}) =>
@@ -1169,7 +1169,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/scorebooks/${id}`,
+      path: `/ocs/v2.php/apps/choirscores/scorebooks/${id}`,
       method: "GET",
       secure: true,
       format: "json",
@@ -1181,7 +1181,7 @@ export class Ocs<
    * @tags score_book_api
    * @name ScoreBookApiPatchScoreBook
    * @summary Update an existing score book
-   * @request PATCH:/ocs/v2.php/apps/orchestrascoresmanager/scorebooks/{id}
+   * @request PATCH:/ocs/v2.php/apps/choirscores/scorebooks/{id}
    * @secure
    */
   scoreBookApiPatchScoreBook = (
@@ -1198,7 +1198,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/scorebooks/${id}`,
+      path: `/ocs/v2.php/apps/choirscores/scorebooks/${id}`,
       method: "PATCH",
       body: data,
       secure: true,
@@ -1212,7 +1212,7 @@ export class Ocs<
    * @tags score_book_api
    * @name ScoreBookApiDeleteScoreBook
    * @summary Delete a score book
-   * @request DELETE:/ocs/v2.php/apps/orchestrascoresmanager/scorebooks/{id}
+   * @request DELETE:/ocs/v2.php/apps/choirscores/scorebooks/{id}
    * @secure
    */
   scoreBookApiDeleteScoreBook = (id: number, params: RequestParams = {}) =>
@@ -1225,7 +1225,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/scorebooks/${id}`,
+      path: `/ocs/v2.php/apps/choirscores/scorebooks/${id}`,
       method: "DELETE",
       secure: true,
       format: "json",
@@ -1237,7 +1237,7 @@ export class Ocs<
    * @tags score_book_api
    * @name ScoreBookApiGetScoreBookScores
    * @summary Get all scores in a score book
-   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/scorebooks/{id}/scores
+   * @request GET:/ocs/v2.php/apps/choirscores/scorebooks/{id}/scores
    * @secure
    */
   scoreBookApiGetScoreBookScores = (id: number, params: RequestParams = {}) =>
@@ -1250,7 +1250,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/scorebooks/${id}/scores`,
+      path: `/ocs/v2.php/apps/choirscores/scorebooks/${id}/scores`,
       method: "GET",
       secure: true,
       format: "json",
@@ -1262,7 +1262,7 @@ export class Ocs<
    * @tags score_book_api
    * @name ScoreBookApiPostScoreBookScore
    * @summary Add a score to a score book
-   * @request POST:/ocs/v2.php/apps/orchestrascoresmanager/scorebooks/{id}/scores
+   * @request POST:/ocs/v2.php/apps/choirscores/scorebooks/{id}/scores
    * @secure
    */
   scoreBookApiPostScoreBookScore = (
@@ -1279,7 +1279,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/scorebooks/${id}/scores`,
+      path: `/ocs/v2.php/apps/choirscores/scorebooks/${id}/scores`,
       method: "POST",
       body: data,
       secure: true,
@@ -1293,7 +1293,7 @@ export class Ocs<
    * @tags score_book_api
    * @name ScoreBookApiPostScoreBookScoresBatch
    * @summary Add multiple scores to a score book in one request
-   * @request POST:/ocs/v2.php/apps/orchestrascoresmanager/scorebooks/{id}/scores/batch
+   * @request POST:/ocs/v2.php/apps/choirscores/scorebooks/{id}/scores/batch
    * @secure
    */
   scoreBookApiPostScoreBookScoresBatch = (
@@ -1310,7 +1310,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/scorebooks/${id}/scores/batch`,
+      path: `/ocs/v2.php/apps/choirscores/scorebooks/${id}/scores/batch`,
       method: "POST",
       body: data,
       secure: true,
@@ -1324,7 +1324,7 @@ export class Ocs<
    * @tags score_book_api
    * @name ScoreBookApiDeleteScoreBookScore
    * @summary Remove a score from a score book
-   * @request DELETE:/ocs/v2.php/apps/orchestrascoresmanager/scorebooks/{id}/scores/{scoreId}
+   * @request DELETE:/ocs/v2.php/apps/choirscores/scorebooks/{id}/scores/{scoreId}
    * @secure
    */
   scoreBookApiDeleteScoreBookScore = (
@@ -1341,7 +1341,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/scorebooks/${id}/scores/${scoreId}`,
+      path: `/ocs/v2.php/apps/choirscores/scorebooks/${id}/scores/${scoreId}`,
       method: "DELETE",
       secure: true,
       format: "json",
@@ -1353,7 +1353,7 @@ export class Ocs<
    * @tags score_book_api
    * @name ScoreBookApiGetScoreBookFolderCollections
    * @summary Get folder collections containing this score book
-   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/scorebooks/{id}/foldercollections
+   * @request GET:/ocs/v2.php/apps/choirscores/scorebooks/{id}/foldercollections
    * @secure
    */
   scoreBookApiGetScoreBookFolderCollections = (
@@ -1369,7 +1369,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/scorebooks/${id}/foldercollections`,
+      path: `/ocs/v2.php/apps/choirscores/scorebooks/${id}/foldercollections`,
       method: "GET",
       secure: true,
       format: "json",
@@ -1381,7 +1381,7 @@ export class Ocs<
    * @tags setlist_api
    * @name SetlistApiGetSetlists
    * @summary Return all setlists with optional filtering
-   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/setlists
+   * @request GET:/ocs/v2.php/apps/choirscores/setlists
    * @secure
    */
   setlistApiGetSetlists = (
@@ -1413,7 +1413,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/setlists`,
+      path: `/ocs/v2.php/apps/choirscores/setlists`,
       method: "GET",
       query: query,
       secure: true,
@@ -1426,7 +1426,7 @@ export class Ocs<
    * @tags setlist_api
    * @name SetlistApiPostSetlist
    * @summary Create a new setlist
-   * @request POST:/ocs/v2.php/apps/orchestrascoresmanager/setlists
+   * @request POST:/ocs/v2.php/apps/choirscores/setlists
    * @secure
    */
   setlistApiPostSetlist = (
@@ -1442,7 +1442,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/setlists`,
+      path: `/ocs/v2.php/apps/choirscores/setlists`,
       method: "POST",
       body: data,
       secure: true,
@@ -1456,7 +1456,7 @@ export class Ocs<
    * @tags setlist_api
    * @name SetlistApiGetSetlist
    * @summary Get a specific setlist by ID
-   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/setlists/{id}
+   * @request GET:/ocs/v2.php/apps/choirscores/setlists/{id}
    * @secure
    */
   setlistApiGetSetlist = (id: number, params: RequestParams = {}) =>
@@ -1469,7 +1469,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/setlists/${id}`,
+      path: `/ocs/v2.php/apps/choirscores/setlists/${id}`,
       method: "GET",
       secure: true,
       format: "json",
@@ -1481,7 +1481,7 @@ export class Ocs<
    * @tags setlist_api
    * @name SetlistApiPatchSetlist
    * @summary Update an existing setlist
-   * @request PATCH:/ocs/v2.php/apps/orchestrascoresmanager/setlists/{id}
+   * @request PATCH:/ocs/v2.php/apps/choirscores/setlists/{id}
    * @secure
    */
   setlistApiPatchSetlist = (
@@ -1498,7 +1498,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/setlists/${id}`,
+      path: `/ocs/v2.php/apps/choirscores/setlists/${id}`,
       method: "PATCH",
       body: data,
       secure: true,
@@ -1512,7 +1512,7 @@ export class Ocs<
    * @tags setlist_api
    * @name SetlistApiDeleteSetlist
    * @summary Delete a setlist
-   * @request DELETE:/ocs/v2.php/apps/orchestrascoresmanager/setlists/{id}
+   * @request DELETE:/ocs/v2.php/apps/choirscores/setlists/{id}
    * @secure
    */
   setlistApiDeleteSetlist = (id: number, params: RequestParams = {}) =>
@@ -1525,7 +1525,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/setlists/${id}`,
+      path: `/ocs/v2.php/apps/choirscores/setlists/${id}`,
       method: "DELETE",
       secure: true,
       format: "json",
@@ -1537,7 +1537,7 @@ export class Ocs<
    * @tags setlist_api
    * @name SetlistApiPostCloneSetlist
    * @summary Clone an existing setlist with a new title
-   * @request POST:/ocs/v2.php/apps/orchestrascoresmanager/setlists/{id}/clone
+   * @request POST:/ocs/v2.php/apps/choirscores/setlists/{id}/clone
    * @secure
    */
   setlistApiPostCloneSetlist = (
@@ -1554,7 +1554,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/setlists/${id}/clone`,
+      path: `/ocs/v2.php/apps/choirscores/setlists/${id}/clone`,
       method: "POST",
       body: data,
       secure: true,
@@ -1568,7 +1568,7 @@ export class Ocs<
    * @tags setlist_api
    * @name SetlistApiGetSetlistEntries
    * @summary Get all entries in a setlist
-   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/setlists/{id}/entries
+   * @request GET:/ocs/v2.php/apps/choirscores/setlists/{id}/entries
    * @secure
    */
   setlistApiGetSetlistEntries = (id: number, params: RequestParams = {}) =>
@@ -1581,7 +1581,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/setlists/${id}/entries`,
+      path: `/ocs/v2.php/apps/choirscores/setlists/${id}/entries`,
       method: "GET",
       secure: true,
       format: "json",
@@ -1593,7 +1593,7 @@ export class Ocs<
    * @tags setlist_api
    * @name SetlistApiPostSetlistEntry
    * @summary Add a new entry to a setlist
-   * @request POST:/ocs/v2.php/apps/orchestrascoresmanager/setlists/{id}/entries
+   * @request POST:/ocs/v2.php/apps/choirscores/setlists/{id}/entries
    * @secure
    */
   setlistApiPostSetlistEntry = (
@@ -1610,7 +1610,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/setlists/${id}/entries`,
+      path: `/ocs/v2.php/apps/choirscores/setlists/${id}/entries`,
       method: "POST",
       body: data,
       secure: true,
@@ -1624,7 +1624,7 @@ export class Ocs<
    * @tags setlist_entry_api
    * @name SetlistEntryApiGetSetlistEntry
    * @summary Get a specific setlist entry by ID
-   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/setlistentries/{id}
+   * @request GET:/ocs/v2.php/apps/choirscores/setlistentries/{id}
    * @secure
    */
   setlistEntryApiGetSetlistEntry = (id: number, params: RequestParams = {}) =>
@@ -1637,7 +1637,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/setlistentries/${id}`,
+      path: `/ocs/v2.php/apps/choirscores/setlistentries/${id}`,
       method: "GET",
       secure: true,
       format: "json",
@@ -1649,7 +1649,7 @@ export class Ocs<
    * @tags setlist_entry_api
    * @name SetlistEntryApiPatchSetlistEntry
    * @summary Update an existing setlist entry
-   * @request PATCH:/ocs/v2.php/apps/orchestrascoresmanager/setlistentries/{id}
+   * @request PATCH:/ocs/v2.php/apps/choirscores/setlistentries/{id}
    * @secure
    */
   setlistEntryApiPatchSetlistEntry = (
@@ -1666,7 +1666,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/setlistentries/${id}`,
+      path: `/ocs/v2.php/apps/choirscores/setlistentries/${id}`,
       method: "PATCH",
       body: data,
       secure: true,
@@ -1680,7 +1680,7 @@ export class Ocs<
    * @tags setlist_entry_api
    * @name SetlistEntryApiDeleteSetlistEntry
    * @summary Delete a setlist entry
-   * @request DELETE:/ocs/v2.php/apps/orchestrascoresmanager/setlistentries/{id}
+   * @request DELETE:/ocs/v2.php/apps/choirscores/setlistentries/{id}
    * @secure
    */
   setlistEntryApiDeleteSetlistEntry = (
@@ -1696,7 +1696,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/setlistentries/${id}`,
+      path: `/ocs/v2.php/apps/choirscores/setlistentries/${id}`,
       method: "DELETE",
       secure: true,
       format: "json",
@@ -1708,7 +1708,7 @@ export class Ocs<
    * @tags setlist_entry_api
    * @name SetlistEntryApiPostSetlistEntriesBatch
    * @summary Batch update multiple setlist entries
-   * @request POST:/ocs/v2.php/apps/orchestrascoresmanager/setlistentries/batch
+   * @request POST:/ocs/v2.php/apps/choirscores/setlistentries/batch
    * @secure
    */
   setlistEntryApiPostSetlistEntriesBatch = (
@@ -1724,7 +1724,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/setlistentries/batch`,
+      path: `/ocs/v2.php/apps/choirscores/setlistentries/batch`,
       method: "POST",
       body: data,
       secure: true,
@@ -1738,7 +1738,7 @@ export class Ocs<
    * @tags share_api
    * @name ShareApiGetShares
    * @summary Get all shares of a score or folder collection
-   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/shares
+   * @request GET:/ocs/v2.php/apps/choirscores/shares
    * @secure
    */
   shareApiGetShares = (
@@ -1762,7 +1762,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/shares`,
+      path: `/ocs/v2.php/apps/choirscores/shares`,
       method: "GET",
       query: query,
       secure: true,
@@ -1775,7 +1775,7 @@ export class Ocs<
    * @tags share_api
    * @name ShareApiPostShare
    * @summary Share a score or folder collection with a group or by a public link
-   * @request POST:/ocs/v2.php/apps/orchestrascoresmanager/shares
+   * @request POST:/ocs/v2.php/apps/choirscores/shares
    * @secure
    */
   shareApiPostShare = (
@@ -1791,7 +1791,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/shares`,
+      path: `/ocs/v2.php/apps/choirscores/shares`,
       method: "POST",
       body: data,
       secure: true,
@@ -1805,7 +1805,7 @@ export class Ocs<
    * @tags share_api
    * @name ShareApiGetAllShares
    * @summary Get all shares
-   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/shares/all
+   * @request GET:/ocs/v2.php/apps/choirscores/shares/all
    * @secure
    */
   shareApiGetAllShares = (params: RequestParams = {}) =>
@@ -1818,7 +1818,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/shares/all`,
+      path: `/ocs/v2.php/apps/choirscores/shares/all`,
       method: "GET",
       secure: true,
       format: "json",
@@ -1830,7 +1830,7 @@ export class Ocs<
    * @tags share_api
    * @name ShareApiDeleteShare
    * @summary Delete a share
-   * @request DELETE:/ocs/v2.php/apps/orchestrascoresmanager/shares/{id}
+   * @request DELETE:/ocs/v2.php/apps/choirscores/shares/{id}
    * @secure
    */
   shareApiDeleteShare = (id: number, params: RequestParams = {}) =>
@@ -1843,7 +1843,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/shares/${id}`,
+      path: `/ocs/v2.php/apps/choirscores/shares/${id}`,
       method: "DELETE",
       secure: true,
       format: "json",
@@ -1855,7 +1855,7 @@ export class Ocs<
    * @tags share_api
    * @name ShareApiGetShareGroups
    * @summary Get the groups items can be shared with
-   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/shares/groups
+   * @request GET:/ocs/v2.php/apps/choirscores/shares/groups
    * @secure
    */
   shareApiGetShareGroups = (params: RequestParams = {}) =>
@@ -1868,7 +1868,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/shares/groups`,
+      path: `/ocs/v2.php/apps/choirscores/shares/groups`,
       method: "GET",
       secure: true,
       format: "json",
@@ -1880,7 +1880,7 @@ export class Ocs<
    * @tags share_api
    * @name ShareApiGetSharedWithMe
    * @summary Get the items shared with the groups of the current user
-   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/shares/mine
+   * @request GET:/ocs/v2.php/apps/choirscores/shares/mine
    * @secure
    */
   shareApiGetSharedWithMe = (params: RequestParams = {}) =>
@@ -1893,7 +1893,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/shares/mine`,
+      path: `/ocs/v2.php/apps/choirscores/shares/mine`,
       method: "GET",
       secure: true,
       format: "json",
@@ -1905,7 +1905,7 @@ export class Ocs<
    * @tags tag_api
    * @name TagApiGetTags
    * @summary Return all available tags
-   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/tags
+   * @request GET:/ocs/v2.php/apps/choirscores/tags
    * @secure
    */
   tagApiGetTags = (params: RequestParams = {}) =>
@@ -1918,7 +1918,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/tags`,
+      path: `/ocs/v2.php/apps/choirscores/tags`,
       method: "GET",
       secure: true,
       format: "json",
@@ -1930,7 +1930,7 @@ export class Ocs<
    * @tags tag_api
    * @name TagApiPostTag
    * @summary Create a new tag
-   * @request POST:/ocs/v2.php/apps/orchestrascoresmanager/tags
+   * @request POST:/ocs/v2.php/apps/choirscores/tags
    * @secure
    */
   tagApiPostTag = (data: TagApiPostTagPayload, params: RequestParams = {}) =>
@@ -1943,7 +1943,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/tags`,
+      path: `/ocs/v2.php/apps/choirscores/tags`,
       method: "POST",
       body: data,
       secure: true,
@@ -1957,7 +1957,7 @@ export class Ocs<
    * @tags user_settings
    * @name UserSettingsGetSetlistSettings
    * @summary Get setlist settings for the authenticated user
-   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/settings/user/setlists
+   * @request GET:/ocs/v2.php/apps/choirscores/settings/user/setlists
    * @secure
    */
   userSettingsGetSetlistSettings = (params: RequestParams = {}) =>
@@ -1970,7 +1970,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/settings/user/setlists`,
+      path: `/ocs/v2.php/apps/choirscores/settings/user/setlists`,
       method: "GET",
       secure: true,
       format: "json",
@@ -1982,7 +1982,7 @@ export class Ocs<
    * @tags user_settings
    * @name UserSettingsPutSetlistSettings
    * @summary Update setlist settings for the authenticated user
-   * @request PUT:/ocs/v2.php/apps/orchestrascoresmanager/settings/user/setlists
+   * @request PUT:/ocs/v2.php/apps/choirscores/settings/user/setlists
    * @secure
    */
   userSettingsPutSetlistSettings = (
@@ -1998,7 +1998,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/settings/user/setlists`,
+      path: `/ocs/v2.php/apps/choirscores/settings/user/setlists`,
       method: "PUT",
       body: data,
       secure: true,

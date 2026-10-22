@@ -2,25 +2,25 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\unit\Service;
+namespace OCA\ChoirScores\Tests\unit\Service;
 
-use OCA\OrchestraScoresManager\Db\Enum\FolderCollectionType;
-use OCA\OrchestraScoresManager\Db\FolderCollection;
-use OCA\OrchestraScoresManager\Db\FolderCollectionMapper;
-use OCA\OrchestraScoresManager\Db\FolderCollectionVersion;
-use OCA\OrchestraScoresManager\Db\FolderCollectionVersionMapper;
-use OCA\OrchestraScoresManager\Db\Score;
-use OCA\OrchestraScoresManager\Db\ScoreBook;
-use OCA\OrchestraScoresManager\Db\ScoreBookMapper;
-use OCA\OrchestraScoresManager\Db\ScoreBookScoreLinkMapper;
-use OCA\OrchestraScoresManager\Db\ScoreFolderCollectionLinkMapper;
-use OCA\OrchestraScoresManager\Db\ScoreMapper;
-use OCA\OrchestraScoresManager\Db\ShareMapper;
-use OCA\OrchestraScoresManager\Policy\FolderCollectionPolicy;
-use OCA\OrchestraScoresManager\Policy\FolderCollectionVersionPolicy;
-use OCA\OrchestraScoresManager\Policy\PolicyInterface;
-use OCA\OrchestraScoresManager\Service\AuthorizationService;
-use OCA\OrchestraScoresManager\Service\FolderCollectionService;
+use OCA\ChoirScores\Db\Enum\FolderCollectionType;
+use OCA\ChoirScores\Db\FolderCollection;
+use OCA\ChoirScores\Db\FolderCollectionMapper;
+use OCA\ChoirScores\Db\FolderCollectionVersion;
+use OCA\ChoirScores\Db\FolderCollectionVersionMapper;
+use OCA\ChoirScores\Db\Score;
+use OCA\ChoirScores\Db\ScoreBook;
+use OCA\ChoirScores\Db\ScoreBookMapper;
+use OCA\ChoirScores\Db\ScoreBookScoreLinkMapper;
+use OCA\ChoirScores\Db\ScoreFolderCollectionLinkMapper;
+use OCA\ChoirScores\Db\ScoreMapper;
+use OCA\ChoirScores\Db\ShareMapper;
+use OCA\ChoirScores\Policy\FolderCollectionPolicy;
+use OCA\ChoirScores\Policy\FolderCollectionVersionPolicy;
+use OCA\ChoirScores\Policy\PolicyInterface;
+use OCA\ChoirScores\Service\AuthorizationService;
+use OCA\ChoirScores\Service\FolderCollectionService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\DB\Exception;
 use OCP\IDBConnection;

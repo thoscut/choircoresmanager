@@ -2,24 +2,24 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\integration\Db;
+namespace OCA\ChoirScores\Tests\integration\Db;
 
 use DateTimeImmutable;
-use OCA\OrchestraScoresManager\Db\Enum\FolderCollectionType;
-use OCA\OrchestraScoresManager\Db\FolderCollection;
-use OCA\OrchestraScoresManager\Db\FolderCollectionMapper;
-use OCA\OrchestraScoresManager\Db\FolderCollectionVersion;
-use OCA\OrchestraScoresManager\Db\FolderCollectionVersionMapper;
-use OCA\OrchestraScoresManager\Db\Score;
-use OCA\OrchestraScoresManager\Db\ScoreBook;
-use OCA\OrchestraScoresManager\Db\ScoreBookMapper;
-use OCA\OrchestraScoresManager\Db\ScoreBookScoreLinkMapper;
-use OCA\OrchestraScoresManager\Db\ScoreBookTagLinkMapper;
-use OCA\OrchestraScoresManager\Db\ScoreFolderCollectionLinkMapper;
-use OCA\OrchestraScoresManager\Db\ScoreMapper;
-use OCA\OrchestraScoresManager\Db\ScoreTagLinkMapper;
-use OCA\OrchestraScoresManager\Db\TagMapper;
-use OCA\OrchestraScoresManager\Service\RepertoireClassifier;
+use OCA\ChoirScores\Db\Enum\FolderCollectionType;
+use OCA\ChoirScores\Db\FolderCollection;
+use OCA\ChoirScores\Db\FolderCollectionMapper;
+use OCA\ChoirScores\Db\FolderCollectionVersion;
+use OCA\ChoirScores\Db\FolderCollectionVersionMapper;
+use OCA\ChoirScores\Db\Score;
+use OCA\ChoirScores\Db\ScoreBook;
+use OCA\ChoirScores\Db\ScoreBookMapper;
+use OCA\ChoirScores\Db\ScoreBookScoreLinkMapper;
+use OCA\ChoirScores\Db\ScoreBookTagLinkMapper;
+use OCA\ChoirScores\Db\ScoreFolderCollectionLinkMapper;
+use OCA\ChoirScores\Db\ScoreMapper;
+use OCA\ChoirScores\Db\ScoreTagLinkMapper;
+use OCA\ChoirScores\Db\TagMapper;
+use OCA\ChoirScores\Service\RepertoireClassifier;
 use OCP\DB\Exception;
 
 /**

@@ -4,7 +4,7 @@ import { markRaw } from 'vue'
 import { t } from './utils/l10n.ts'
 import { FolderCollectionIcon, ManageSharesIcon, ScoreBookIcon, ScoreIcon, SetlistIcon, ShareIcon } from '@/icons/vue-material'
 
-const APP_NAME = t('Orchestra Scores Manager')
+const APP_NAME = t('Choir Scores')
 
 /**
  * Centralized navigation configuration

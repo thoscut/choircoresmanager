@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Service\Catalogue;
+namespace OCA\ChoirScores\Service\Catalogue;
 
 /**
  * Reads and writes the CSV format of the work catalogue (Werkverzeichnis).

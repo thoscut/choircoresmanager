@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Controller;
+namespace OCA\ChoirScores\Controller;
 
-use OCA\OrchestraScoresManager\Db\FolderCollection;
-use OCA\OrchestraScoresManager\ResponseDefinitions;
-use OCA\OrchestraScoresManager\Service\FolderCollectionService;
-use OCA\OrchestraScoresManager\Service\FolderCollectionVersionService;
+use OCA\ChoirScores\Db\FolderCollection;
+use OCA\ChoirScores\ResponseDefinitions;
+use OCA\ChoirScores\Service\FolderCollectionService;
+use OCA\ChoirScores\Service\FolderCollectionVersionService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -19,12 +19,12 @@ use OCP\AppFramework\OCSController;
 use OCP\IRequest;
 
 /**
- * @psalm-import-type OrchestraScoresManagerFolderCollection from ResponseDefinitions
- * @psalm-import-type OrchestraScoresManagerFolderCollectionVersion from ResponseDefinitions
- * @psalm-import-type OrchestraScoresManagerScore from ResponseDefinitions
- * @psalm-import-type OrchestraScoresManagerScoreIndexed from ResponseDefinitions
- * @psalm-import-type OrchestraScoresManagerScoreBook from ResponseDefinitions
- * @psalm-import-type OrchestraScoresManagerScoreBookIndexed from ResponseDefinitions
+ * @psalm-import-type ChoirScoresFolderCollection from ResponseDefinitions
+ * @psalm-import-type ChoirScoresFolderCollectionVersion from ResponseDefinitions
+ * @psalm-import-type ChoirScoresScore from ResponseDefinitions
+ * @psalm-import-type ChoirScoresScoreIndexed from ResponseDefinitions
+ * @psalm-import-type ChoirScoresScoreBook from ResponseDefinitions
+ * @psalm-import-type ChoirScoresScoreBookIndexed from ResponseDefinitions
  * @psalm-suppress UnusedClass - Controller discovered by NextCloud framework
  */
 #[OpenAPI(scope: OpenAPI::SCOPE_DEFAULT)]
@@ -43,7 +43,7 @@ class FolderCollectionApiController extends OCSController {
 	/**
 	 * Return all available folder collections
 	 *
-	 * @return DataResponse<Http::STATUS_OK, list<OrchestraScoresManagerFolderCollection>, array{}> the list of folder collections
+	 * @return DataResponse<Http::STATUS_OK, list<ChoirScoresFolderCollection>, array{}> the list of folder collections
 	 *
 	 * 200: Successful response with the list of folder collections
 	 * @throws OCSBadRequestException Invalid request parameters
@@ -61,7 +61,7 @@ class FolderCollectionApiController extends OCSController {
 	 *
 	 * @param int $id The ID of the folder collection
 	 *
-	 * @return DataResponse<Http::STATUS_OK, OrchestraScoresManagerFolderCollection, array{}> the folder collection
+	 * @return DataResponse<Http::STATUS_OK, ChoirScoresFolderCollection, array{}> the folder collection
 	 *
 	 * 200: Successful response with the folder collection
 	 * @throws OCSBadRequestException Invalid request parameters
@@ -82,7 +82,7 @@ class FolderCollectionApiController extends OCSController {
 	 * @param string|null $description The description of the folder collection
 	 * @param string|null $validFrom The start date for the initial version (Y-m-d format), defaults to today
 	 *
-	 * @return DataResponse<Http::STATUS_CREATED, OrchestraScoresManagerFolderCollection, array{}> the created folder collection
+	 * @return DataResponse<Http::STATUS_CREATED, ChoirScoresFolderCollection, array{}> the created folder collection
 	 *
 	 * 201: Successful creation of the folder collection
 	 * @throws OCSBadRequestException Invalid request parameters
@@ -113,7 +113,7 @@ class FolderCollectionApiController extends OCSController {
 	 * @param string|null $title The title of the folder collection
 	 * @param string|null $description The description of the folder collection
 	 *
-	 * @return DataResponse<Http::STATUS_OK, OrchestraScoresManagerFolderCollection, array{}> the updated folder collection
+	 * @return DataResponse<Http::STATUS_OK, ChoirScoresFolderCollection, array{}> the updated folder collection
 	 *
 	 * 200: Successful update of the folder collection
 	 * @throws OCSBadRequestException Invalid request parameters
@@ -172,7 +172,7 @@ class FolderCollectionApiController extends OCSController {
 	 * @param int $id The ID of the folder collection
 	 * @param int|null $versionId Optional version ID, uses active version if not specified
 	 *
-	 * @return DataResponse<Http::STATUS_OK, list<OrchestraScoresManagerScoreIndexed>|list<OrchestraScoresManagerScore>, array{}> the list of scores (with index for indexed collections)
+	 * @return DataResponse<Http::STATUS_OK, list<ChoirScoresScoreIndexed>|list<ChoirScoresScore>, array{}> the list of scores (with index for indexed collections)
 	 *
 	 * 200: Successful response with the list of scores
 	 * @throws OCSBadRequestException Invalid request parameters
@@ -242,7 +242,7 @@ class FolderCollectionApiController extends OCSController {
 	 * @param int $id The ID of the folder collection
 	 * @param int|null $versionId Optional version ID, uses active version if not specified
 	 *
-	 * @return DataResponse<Http::STATUS_OK, list<OrchestraScoresManagerScoreBookIndexed>|list<OrchestraScoresManagerScoreBook>, array{}> the list of score books (with index for indexed collections)
+	 * @return DataResponse<Http::STATUS_OK, list<ChoirScoresScoreBookIndexed>|list<ChoirScoresScoreBook>, array{}> the list of score books (with index for indexed collections)
 	 *
 	 * 200: Successful response with the list of score books
 	 * @throws OCSBadRequestException Invalid request parameters
@@ -307,7 +307,7 @@ class FolderCollectionApiController extends OCSController {
 	 *
 	 * @param int $id The ID of the folder collection
 	 *
-	 * @return DataResponse<Http::STATUS_OK, list<OrchestraScoresManagerFolderCollectionVersion>, array{}> the list of versions
+	 * @return DataResponse<Http::STATUS_OK, list<ChoirScoresFolderCollectionVersion>, array{}> the list of versions
 	 *
 	 * 200: Successful response with the list of versions
 	 * @throws OCSBadRequestException Invalid request parameters
@@ -328,7 +328,7 @@ class FolderCollectionApiController extends OCSController {
 	 * @param string|null $validTo The end date of the version (Y-m-d format) or null for active version
 	 * @param int|null $copyFromVersionId Optional version ID to copy scores/scorebooks from
 	 *
-	 * @return DataResponse<Http::STATUS_CREATED, OrchestraScoresManagerFolderCollectionVersion, array{}> the created version
+	 * @return DataResponse<Http::STATUS_CREATED, ChoirScoresFolderCollectionVersion, array{}> the created version
 	 *
 	 * 201: Successful creation of the version
 	 * @throws OCSBadRequestException Invalid request parameters
@@ -352,7 +352,7 @@ class FolderCollectionApiController extends OCSController {
 	 * @param int $id The ID of the folder collection
 	 * @param string|null $validFrom The start date for the new version (Y-m-d format), defaults to today
 	 *
-	 * @return DataResponse<Http::STATUS_CREATED, OrchestraScoresManagerFolderCollectionVersion, array{}> the created version
+	 * @return DataResponse<Http::STATUS_CREATED, ChoirScoresFolderCollectionVersion, array{}> the created version
 	 *
 	 * 201: Successful creation of the new version
 	 * @throws OCSBadRequestException Invalid request parameters

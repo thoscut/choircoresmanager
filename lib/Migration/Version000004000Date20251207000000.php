@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Migration;
+namespace OCA\ChoirScores\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -11,7 +11,7 @@ use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
 /**
- * Migration to add digital_status column to osm_scores table.
+ * Migration to add digital_status column to chs_scores table.
  *
  * This column stores the digital status of a score (e.g., "Ja", "Nur digital", etc.).
  *
@@ -25,8 +25,8 @@ class Version000004000Date20251207000000 extends SimpleMigrationStep {
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		$schema = $schemaClosure();
 
-		if ($schema->hasTable('osm_scores')) {
-			$table = $schema->getTable('osm_scores');
+		if ($schema->hasTable('chs_scores')) {
+			$table = $schema->getTable('chs_scores');
 			if (!$table->hasColumn('digital_status')) {
 				$table->addColumn('digital_status', Types::STRING, [
 					'notnull' => false,

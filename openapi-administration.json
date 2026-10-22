@@ -1,7 +1,7 @@
 {
     "openapi": "3.0.3",
     "info": {
-        "title": "orchestrascoresmanager-administration",
+        "title": "choirscores-administration",
         "version": "0.0.1",
         "description": "Manage your orchestra's sheet music database directly within Nextcloud",
         "license": {
@@ -47,7 +47,7 @@
         }
     },
     "paths": {
-        "/ocs/v2.php/apps/orchestrascoresmanager/admin/editGroups": {
+        "/ocs/v2.php/apps/choirscores/admin/editGroups": {
             "get": {
                 "operationId": "admin-get-edit-groups",
                 "summary": "Get current list of groups allowed to edit scores",
@@ -351,7 +351,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/admin/repertoireThresholds": {
+        "/ocs/v2.php/apps/choirscores/admin/repertoireThresholds": {
             "get": {
                 "operationId": "admin-get-repertoire-thresholds",
                 "summary": "Get the thresholds used to derive the repertoire class of a score",
@@ -667,7 +667,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/admin/publicPage": {
+        "/ocs/v2.php/apps/choirscores/admin/publicPage": {
             "get": {
                 "operationId": "admin-get-public-page",
                 "summary": "Get whether the public page for freely available scores is enabled",

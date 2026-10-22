@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\integration\Db;
+namespace OCA\ChoirScores\Tests\integration\Db;
 
-use OCA\OrchestraScoresManager\Db\Enum\FolderCollectionType;
-use OCA\OrchestraScoresManager\Db\FolderCollection;
-use OCA\OrchestraScoresManager\Db\FolderCollectionMapper;
+use OCA\ChoirScores\Db\Enum\FolderCollectionType;
+use OCA\ChoirScores\Db\FolderCollection;
+use OCA\ChoirScores\Db\FolderCollectionMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
 use PHPUnit\Framework\Attributes\TestWith;
 

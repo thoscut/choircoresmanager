@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Controller;
+namespace OCA\ChoirScores\Controller;
 
-use OCA\OrchestraScoresManager\ResponseDefinitions;
-use OCA\OrchestraScoresManager\Service\SetlistEntryService;
+use OCA\ChoirScores\ResponseDefinitions;
+use OCA\ChoirScores\Service\SetlistEntryService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -17,7 +17,7 @@ use OCP\AppFramework\OCSController;
 use OCP\IRequest;
 
 /**
- * @psalm-import-type OrchestraScoresManagerSetlistEntry from ResponseDefinitions
+ * @psalm-import-type ChoirScoresSetlistEntry from ResponseDefinitions
  * @psalm-suppress UnusedClass - Controller discovered by Nextcloud framework
  */
 #[OpenAPI(scope: OpenAPI::SCOPE_DEFAULT)]
@@ -37,7 +37,7 @@ class SetlistEntryApiController extends OCSController {
 	 *
 	 * @param int $id The ID of the setlist entry
 	 *
-	 * @return DataResponse<Http::STATUS_OK, OrchestraScoresManagerSetlistEntry, array{}> the entry
+	 * @return DataResponse<Http::STATUS_OK, ChoirScoresSetlistEntry, array{}> the entry
 	 *
 	 * 200: Successful response with the entry
 	 * @throws OCSBadRequestException Invalid request parameters
@@ -60,7 +60,7 @@ class SetlistEntryApiController extends OCSController {
 	 * @param int|null $breakDuration Break duration in seconds
 	 * @param int|null $scoreId The ID of the score
 	 *
-	 * @return DataResponse<Http::STATUS_OK, OrchestraScoresManagerSetlistEntry, array{}> the updated entry
+	 * @return DataResponse<Http::STATUS_OK, ChoirScoresSetlistEntry, array{}> the updated entry
 	 *
 	 * 200: Successfully updated setlist entry
 	 * @throws OCSBadRequestException Invalid request parameters
@@ -121,7 +121,7 @@ class SetlistEntryApiController extends OCSController {
 	 *
 	 * @param list<array{id: int, index?: int, comment?: ?string, moderationDuration?: ?int, breakDuration?: ?int, scoreId?: ?int}> $entries Array of entry data with IDs
 	 *
-	 * @return DataResponse<Http::STATUS_OK, list<OrchestraScoresManagerSetlistEntry>, array{}> the updated entries
+	 * @return DataResponse<Http::STATUS_OK, list<ChoirScoresSetlistEntry>, array{}> the updated entries
 	 *
 	 * 200: Successfully updated entries
 	 * @throws OCSBadRequestException Invalid request parameters

@@ -1,5 +1,5 @@
 OC.L10N.register(
-    "orchestrascoresmanager",
+    "choirscores",
     {
     "Public scores" : "Openbare partituren",
     "Insufficient permissions" : "Onvoldoende rechten",
@@ -91,10 +91,10 @@ OC.L10N.register(
     "Already shared with this group" : "Al gedeeld met deze groep",
     "Share not found" : "Deling niet gevonden",
     "Invalid share target" : "Ongeldig doel voor deling",
-    "Orchestra Scores Manager" : "Bladmuziekbeheer voor orkesten",
+    "Choir Scores" : "Choir Scores",
     "Score must belong to the folder collection version specified in the setlist" : "Partituur moet horen bij de versie van de mapverzameling die in de setlist is opgegeven",
     "Manage your orchestra's sheet music database directly within Nextcloud" : "Beheer de bladmuziekdatabase van je orkest rechtstreeks in Nextcloud",
-    "⚠️ Early development phase – expect rough edges and breaking changes.\n\nOrchestra Scores Manager lets you maintain a structured database of your orchestra's sheet music (scores) inside Nextcloud.\n\nKey features:\n- Manage individual scores with rich metadata (composer, arranger, publisher, year, difficulty, and more)\n- Organize scores into score books and folder collections\n- Track version history of folder collections\n- Build and manage setlists\n- Categorize scores with tags\n- Add comments to scores" : "⚠️ Vroege ontwikkelingsfase – houd rekening met onvolkomenheden en ingrijpende wijzigingen.\n\nMet Orchestra Scores Manager beheer je een gestructureerde database van de bladmuziek van je orkest binnen Nextcloud.\n\nBelangrijkste functies:\n- Beheer afzonderlijke partituren met uitgebreide metadata (componist, arrangeur, uitgever, jaar, moeilijkheidsgraad en meer)\n- Orden partituren in muziekboeken en mapverzamelingen\n- Volg de versiegeschiedenis van mapverzamelingen\n- Maak en beheer setlists\n- Categoriseer partituren met tags\n- Voeg opmerkingen toe aan partituren",
+    "⚠️ Early development phase – expect rough edges and breaking changes.\n\nChoir Scores lets you maintain a structured database of your orchestra's sheet music (scores) inside Nextcloud.\n\nKey features:\n- Manage individual scores with rich metadata (composer, arranger, publisher, year, difficulty, and more)\n- Organize scores into score books and folder collections\n- Track version history of folder collections\n- Build and manage setlists\n- Categorize scores with tags\n- Add comments to scores" : "⚠️ Vroege ontwikkelingsfase – houd rekening met onvolkomenheden en ingrijpende wijzigingen.\n\nMet Choir Scores beheer je een gestructureerde database van de bladmuziek van je orkest binnen Nextcloud.\n\nBelangrijkste functies:\n- Beheer afzonderlijke partituren met uitgebreide metadata (componist, arrangeur, uitgever, jaar, moeilijkheidsgraad en meer)\n- Orden partituren in muziekboeken en mapverzamelingen\n- Volg de versiegeschiedenis van mapverzamelingen\n- Maak en beheer setlists\n- Categoriseer partituren met tags\n- Voeg opmerkingen toe aan partituren",
     "Cancel" : "Annuleren",
     "Create" : "Aanmaken",
     "Settings updated successfully." : "Instellingen bijgewerkt.",

@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Controller;
+namespace OCA\ChoirScores\Controller;
 
-use OCA\OrchestraScoresManager\AppInfo\Application;
-use OCA\OrchestraScoresManager\Db\ScoreMapper;
-use OCA\OrchestraScoresManager\Db\TagMapper;
-use OCA\OrchestraScoresManager\Service\ConfigService;
-use OCA\OrchestraScoresManager\Service\FolderCollectionService;
-use OCA\OrchestraScoresManager\Service\PermissionService;
-use OCA\OrchestraScoresManager\Service\ScoreBookService;
-use OCA\OrchestraScoresManager\Service\SetlistService;
-use OCA\OrchestraScoresManager\Utility\ResponseHelper;
+use OCA\ChoirScores\AppInfo\Application;
+use OCA\ChoirScores\Db\ScoreMapper;
+use OCA\ChoirScores\Db\TagMapper;
+use OCA\ChoirScores\Service\ConfigService;
+use OCA\ChoirScores\Service\FolderCollectionService;
+use OCA\ChoirScores\Service\PermissionService;
+use OCA\ChoirScores\Service\ScoreBookService;
+use OCA\ChoirScores\Service\SetlistService;
+use OCA\ChoirScores\Utility\ResponseHelper;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\FrontpageRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;

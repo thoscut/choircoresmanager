@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Service;
+namespace OCA\ChoirScores\Service;
 
 use InvalidArgumentException;
-use OCA\OrchestraScoresManager\Db\SetlistEntry;
-use OCA\OrchestraScoresManager\Db\SetlistEntryMapper;
-use OCA\OrchestraScoresManager\Policy\PolicyInterface;
-use OCA\OrchestraScoresManager\Policy\SetlistPolicy;
-use OCA\OrchestraScoresManager\Utility\SetlistValidationHelper;
+use OCA\ChoirScores\Db\SetlistEntry;
+use OCA\ChoirScores\Db\SetlistEntryMapper;
+use OCA\ChoirScores\Policy\PolicyInterface;
+use OCA\ChoirScores\Policy\SetlistPolicy;
+use OCA\ChoirScores\Utility\SetlistValidationHelper;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\DB\Exception;

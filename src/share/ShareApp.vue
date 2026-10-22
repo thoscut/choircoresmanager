@@ -24,8 +24,8 @@ import { generateUrl } from '@nextcloud/router'
 import SharedTargetView from '@/components/shares/SharedTargetView.vue'
 import { t } from '@/utils/l10n'
 
-const target = loadState<SharedTarget>('orchestrascoresmanager', 'sharedTarget')
-const token = loadState<string>('orchestrascoresmanager', 'shareToken')
+const target = loadState<SharedTarget>('choirscores', 'sharedTarget')
+const token = loadState<string>('choirscores', 'shareToken')
 
 /**
  * Load a file of a score in the share
@@ -34,7 +34,7 @@ const token = loadState<string>('orchestrascoresmanager', 'shareToken')
  * @param kind - The file type
  */
 async function loadFile(scoreId: number, kind: 'musicxml' | 'pdf'): Promise<ArrayBuffer> {
-	const response = await fetch(generateUrl('/apps/orchestrascoresmanager/s/{token}/scores/{id}/{kind}', { token, id: scoreId, kind }))
+	const response = await fetch(generateUrl('/apps/choirscores/s/{token}/scores/{id}/{kind}', { token, id: scoreId, kind }))
 	if (!response.ok) {
 		throw new Error(`HTTP ${response.status}`)
 	}

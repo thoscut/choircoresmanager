@@ -32,7 +32,7 @@ export const useScoreBooksStore = defineStore('scoreBooks', () => {
 
 		try {
 			// Try to load from initial state first
-			const initialData = loadState<ScoreBook[] | null>('orchestrascoresmanager', 'scoreBooks', null)
+			const initialData = loadState<ScoreBook[] | null>('choirscores', 'scoreBooks', null)
 			if (initialData && initialData.length > 0) {
 				scoreBooks.value = initialData
 				isLoaded.value = true

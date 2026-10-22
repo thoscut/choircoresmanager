@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\unit\Service;
+namespace OCA\ChoirScores\Tests\unit\Service;
 
-use OCA\OrchestraScoresManager\Policy\PolicyInterface;
-use OCA\OrchestraScoresManager\Service\AuthorizationService;
-use OCA\OrchestraScoresManager\Service\Exceptions\PermissionDeniedException;
+use OCA\ChoirScores\Policy\PolicyInterface;
+use OCA\ChoirScores\Service\AuthorizationService;
+use OCA\ChoirScores\Service\Exceptions\PermissionDeniedException;
 use OCP\IL10N;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -27,7 +27,7 @@ final class AuthorizationServiceTest extends TestCase {
 
 		$this->service = new AuthorizationService(
 			$this->logger,
-			'orchestrascoresmanager',
+			'choirscores',
 			$this->l10n
 		);
 	}
@@ -61,7 +61,7 @@ final class AuthorizationServiceTest extends TestCase {
 		$this->logger->expects($this->once())
 			->method('warning')
 			->with('Policy denied', $this->callback(function ($context) use ($policy) {
-				return $context['app'] === 'orchestrascoresmanager'
+				return $context['app'] === 'choirscores'
 					&& $context['policy'] === $policy::class
 					&& $context['action'] === PolicyInterface::ACTION_CREATE
 					&& $context['subject'] === null;

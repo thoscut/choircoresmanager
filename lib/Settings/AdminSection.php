@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Settings;
+namespace OCA\ChoirScores\Settings;
 
-use OCA\OrchestraScoresManager\AppInfo\Application;
+use OCA\ChoirScores\AppInfo\Application;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\Settings\IIconSection;
@@ -36,7 +36,7 @@ class AdminSection implements IIconSection {
 	 * @return string the translated name as it should be displayed
 	 */
 	public function getName(): string {
-		return $this->l10n->t('Orchestra Scores Manager');
+		return $this->l10n->t('Choir Scores');
 	}
 
 	/**

@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { routes } from './navigation.ts'
 
 const router = createRouter({
-	history: createWebHistory(generateUrl('/apps/orchestrascoresmanager')),
+	history: createWebHistory(generateUrl('/apps/choirscores')),
 	routes,
 })
 

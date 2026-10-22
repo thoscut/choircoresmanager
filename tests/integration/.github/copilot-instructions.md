@@ -279,7 +279,7 @@ private function createTestScore(): Score {
 // BAD - Direct QB access breaks abstraction
 private function createTestScore(): Score {
     $qb = $this->db->getQueryBuilder();
-    $qb->insert('osm_scores')->values([...])->executeStatement();
+    $qb->insert('chs_scores')->values([...])->executeStatement();
     // ...
 }
 ```

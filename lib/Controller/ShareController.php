@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Controller;
+namespace OCA\ChoirScores\Controller;
 
-use OCA\OrchestraScoresManager\AppInfo\Application;
-use OCA\OrchestraScoresManager\Service\Exceptions\NotFoundException;
-use OCA\OrchestraScoresManager\Service\ShareService;
-use OCA\OrchestraScoresManager\Utility\ResponseHelper;
+use OCA\ChoirScores\AppInfo\Application;
+use OCA\ChoirScores\Service\Exceptions\NotFoundException;
+use OCA\ChoirScores\Service\ShareService;
+use OCA\ChoirScores\Utility\ResponseHelper;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\AnonRateLimit;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
@@ -47,7 +47,7 @@ class ShareController extends Controller {
 	#[PublicPage]
 	#[NoCSRFRequired]
 	#[AnonRateLimit(limit: 60, period: 60)]
-	#[BruteForceProtection(action: 'osm_share')]
+	#[BruteForceProtection(action: 'chs_share')]
 	#[FrontpageRoute(verb: 'GET', url: '/s/{token}')]
 	public function show(string $token): PublicTemplateResponse|NotFoundResponse {
 		try {
@@ -76,7 +76,7 @@ class ShareController extends Controller {
 	#[PublicPage]
 	#[NoCSRFRequired]
 	#[AnonRateLimit(limit: 120, period: 60)]
-	#[BruteForceProtection(action: 'osm_share')]
+	#[BruteForceProtection(action: 'chs_share')]
 	#[FrontpageRoute(verb: 'GET', url: '/s/{token}/scores/{id}/{kind}', requirements: ['kind' => 'musicxml|pdf'])]
 	public function file(string $token, int $id, string $kind): DataDownloadResponse|NotFoundResponse {
 		try {

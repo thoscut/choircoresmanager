@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\integration\Db;
+namespace OCA\ChoirScores\Tests\integration\Db;
 
-use OCA\OrchestraScoresManager\Db\Setlist;
-use OCA\OrchestraScoresManager\Db\SetlistEntry;
-use OCA\OrchestraScoresManager\Db\SetlistEntryMapper;
-use OCA\OrchestraScoresManager\Db\SetlistMapper;
+use OCA\ChoirScores\Db\Setlist;
+use OCA\ChoirScores\Db\SetlistEntry;
+use OCA\ChoirScores\Db\SetlistEntryMapper;
+use OCA\ChoirScores\Db\SetlistMapper;
 use OCP\DB\Exception;
 
 /**

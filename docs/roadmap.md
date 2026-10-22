@@ -14,8 +14,9 @@ davon hat.
 1. **Upstream zuerst.** Was allgemein nützt, geht als kleiner PR an
    Upstream, vorher als Issue. Anknüpfungspunkte gibt es schon:
    #125 Setlist-Historie je Stück, #124 Audiobeispiele, #126 mehrere Aliasse
-   je Stück, #40 Spalten je Nutzer. Die App-ID bleibt
-   `orchestrascoresmanager`, damit der Fork mergebar bleibt.
+   je Stück, #40 Spalten je Nutzer. Seit dem 22.10.2026 ist der Fork eine
+   eigene App mit der ID `choirscores` (Vereinscloud bei Hetzner installiert
+   nur aus dem App Store); Upstream-PRs werden deshalb von Hand portiert.
 2. **Einstellbar statt vereinsspezifisch.** Statuslisten, Schwellen und
    Schutzfristen sind Einstellungen. Vereinsdaten, Personen und Ordnerpfade
    gehören nicht in den Code und nicht ins Repo.

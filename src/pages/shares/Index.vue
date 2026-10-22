@@ -153,7 +153,7 @@ function pick(share: Share): void {
  * @param share - A link share
  */
 function linkUrl(share: Share): string {
-	return generateUrl('/apps/orchestrascoresmanager/s/{token}', { token: share.token ?? '' })
+	return generateUrl('/apps/choirscores/s/{token}', { token: share.token ?? '' })
 }
 
 onMounted(() => {

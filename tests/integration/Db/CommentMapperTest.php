@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\integration\Db;
+namespace OCA\ChoirScores\Tests\integration\Db;
 
-use OCA\OrchestraScoresManager\Db\Comment;
-use OCA\OrchestraScoresManager\Db\CommentMapper;
-use OCA\OrchestraScoresManager\Db\Score;
-use OCA\OrchestraScoresManager\Db\ScoreBookScoreLinkMapper;
-use OCA\OrchestraScoresManager\Db\ScoreMapper;
-use OCA\OrchestraScoresManager\Db\ScoreTagLinkMapper;
-use OCA\OrchestraScoresManager\Db\TagMapper;
-use OCA\OrchestraScoresManager\Service\RepertoireClassifier;
+use OCA\ChoirScores\Db\Comment;
+use OCA\ChoirScores\Db\CommentMapper;
+use OCA\ChoirScores\Db\Score;
+use OCA\ChoirScores\Db\ScoreBookScoreLinkMapper;
+use OCA\ChoirScores\Db\ScoreMapper;
+use OCA\ChoirScores\Db\ScoreTagLinkMapper;
+use OCA\ChoirScores\Db\TagMapper;
+use OCA\ChoirScores\Service\RepertoireClassifier;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\DB\Exception;
 

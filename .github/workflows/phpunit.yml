@@ -83,7 +83,7 @@ jobs:
 
     steps:
       - name: Set app env
-        run: echo "APP_NAME=orchestrascoresmanager" >> $GITHUB_ENV
+        run: echo "APP_NAME=choirscores" >> $GITHUB_ENV
 
       - name: Checkout server
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2

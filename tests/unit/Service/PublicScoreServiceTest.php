@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\unit\Service;
+namespace OCA\ChoirScores\Tests\unit\Service;
 
-use OCA\OrchestraScoresManager\Db\Score;
-use OCA\OrchestraScoresManager\Db\ScoreMapper;
-use OCA\OrchestraScoresManager\Service\ConfigService;
-use OCA\OrchestraScoresManager\Service\MusicXmlService;
-use OCA\OrchestraScoresManager\Service\PublicScoreService;
+use OCA\ChoirScores\Db\Score;
+use OCA\ChoirScores\Db\ScoreMapper;
+use OCA\ChoirScores\Service\ConfigService;
+use OCA\ChoirScores\Service\MusicXmlService;
+use OCA\ChoirScores\Service\PublicScoreService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use PHPUnit\Framework\TestCase;
 

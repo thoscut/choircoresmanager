@@ -131,7 +131,7 @@ import { t } from '@/utils/l10n'
 const setlistsStore = useSetlistsStore()
 
 // Load initial state from the server
-const editable = ref<boolean>(!!loadState('orchestrascoresmanager', 'editable'))
+const editable = ref<boolean>(!!loadState('choirscores', 'editable'))
 
 // Track expanded state of each section
 const expandedSections = reactive({

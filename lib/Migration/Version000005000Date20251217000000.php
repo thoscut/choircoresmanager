@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Migration;
+namespace OCA\ChoirScores\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -11,7 +11,7 @@ use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
 /**
- * Migration to add duration column to osm_scores table.
+ * Migration to add duration column to chs_scores table.
  *
  * This column stores the expected duration of a score in seconds.
  *
@@ -25,8 +25,8 @@ class Version000005000Date20251217000000 extends SimpleMigrationStep {
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		$schema = $schemaClosure();
 
-		if ($schema->hasTable('osm_scores')) {
-			$table = $schema->getTable('osm_scores');
+		if ($schema->hasTable('chs_scores')) {
+			$table = $schema->getTable('chs_scores');
 			if (!$table->hasColumn('duration')) {
 				$table->addColumn('duration', Types::INTEGER, [
 					'notnull' => false,

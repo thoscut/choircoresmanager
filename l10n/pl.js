@@ -1,5 +1,5 @@
 OC.L10N.register(
-    "orchestrascoresmanager",
+    "choirscores",
     {
     "Public scores" : "Publiczne nuty",
     "Insufficient permissions" : "Niewystarczające uprawnienia",
@@ -91,10 +91,10 @@ OC.L10N.register(
     "Already shared with this group" : "Już udostępniono tej grupie",
     "Share not found" : "Nie znaleziono udostępnienia",
     "Invalid share target" : "Nieprawidłowy cel udostępnienia",
-    "Orchestra Scores Manager" : "Menedżer nut orkiestry",
+    "Choir Scores" : "Choir Scores",
     "Score must belong to the folder collection version specified in the setlist" : "Partytura musi należeć do wersji kolekcji teczek wskazanej w setliście",
     "Manage your orchestra's sheet music database directly within Nextcloud" : "Zarządzaj bazą nut swojej orkiestry bezpośrednio w Nextcloud",
-    "⚠️ Early development phase – expect rough edges and breaking changes.\n\nOrchestra Scores Manager lets you maintain a structured database of your orchestra's sheet music (scores) inside Nextcloud.\n\nKey features:\n- Manage individual scores with rich metadata (composer, arranger, publisher, year, difficulty, and more)\n- Organize scores into score books and folder collections\n- Track version history of folder collections\n- Build and manage setlists\n- Categorize scores with tags\n- Add comments to scores" : "⚠️ Wczesna faza rozwoju – możliwe są niedoskonałości i niekompatybilne zmiany.\n\nOrchestra Scores Manager pozwala prowadzić w Nextcloud uporządkowaną bazę nut Twojej orkiestry.\n\nNajważniejsze funkcje:\n- Zarządzanie pojedynczymi partyturami z bogatymi metadanymi (kompozytor, aranżer, wydawca, rok, poziom trudności i inne)\n- Porządkowanie partytur w zbiorach nut i kolekcjach teczek\n- Śledzenie historii wersji kolekcji teczek\n- Tworzenie setlist i zarządzanie nimi\n- Kategoryzowanie partytur za pomocą tagów\n- Dodawanie komentarzy do partytur",
+    "⚠️ Early development phase – expect rough edges and breaking changes.\n\nChoir Scores lets you maintain a structured database of your orchestra's sheet music (scores) inside Nextcloud.\n\nKey features:\n- Manage individual scores with rich metadata (composer, arranger, publisher, year, difficulty, and more)\n- Organize scores into score books and folder collections\n- Track version history of folder collections\n- Build and manage setlists\n- Categorize scores with tags\n- Add comments to scores" : "⚠️ Wczesna faza rozwoju – możliwe są niedoskonałości i niekompatybilne zmiany.\n\nChoir Scores pozwala prowadzić w Nextcloud uporządkowaną bazę nut Twojej orkiestry.\n\nNajważniejsze funkcje:\n- Zarządzanie pojedynczymi partyturami z bogatymi metadanymi (kompozytor, aranżer, wydawca, rok, poziom trudności i inne)\n- Porządkowanie partytur w zbiorach nut i kolekcjach teczek\n- Śledzenie historii wersji kolekcji teczek\n- Tworzenie setlist i zarządzanie nimi\n- Kategoryzowanie partytur za pomocą tagów\n- Dodawanie komentarzy do partytur",
     "Cancel" : "Anuluj",
     "Create" : "Utwórz",
     "Settings updated successfully." : "Ustawienia zostały zaktualizowane.",

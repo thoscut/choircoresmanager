@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <info xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	  xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
-	<id>orchestrascoresmanager</id>
-	<name>Orchestra Scores Manager</name>
+	<id>choirscores</id>
+	<name>Choir Scores</name>
 	<summary>Manage your orchestra's sheet music database directly within Nextcloud</summary>
 	<description><![CDATA[⚠️ Early development phase – expect rough edges and breaking changes.
 
-Orchestra Scores Manager lets you maintain a structured database of your orchestra's sheet music (scores) inside Nextcloud.
+Choir Scores lets you maintain a structured database of your orchestra's sheet music (scores) inside Nextcloud.
 
 Key features:
 - Manage individual scores with rich metadata (composer, arranger, publisher, year, difficulty, and more)
@@ -18,27 +18,28 @@ Key features:
 	<version>1.4.0</version>
 	<licence>AGPL-3.0-or-later</licence>
 	<author homepage="https://github.com/Bibo-Joshi">Hinrich Mahler</author>
-	<namespace>OrchestraScoresManager</namespace>
+	<author homepage="https://github.com/thoscut">thoscut</author>
+	<namespace>ChoirScores</namespace>
 	<category>office</category>
 	<category>organization</category>
-	<website>https://github.com/Bibo-Joshi/orchestrascoresmanager</website>
-	<bugs>https://github.com/Bibo-Joshi/orchestrascoresmanager/issues</bugs>
-	<repository>https://github.com/Bibo-Joshi/orchestrascoresmanager</repository>
-	<screenshot>https://raw.githubusercontent.com/Bibo-Joshi/orchestrascoresmanager/main/screenshots/scorestable.webp</screenshot>
-	<screenshot>https://raw.githubusercontent.com/Bibo-Joshi/orchestrascoresmanager/main/screenshots/setlist.webp</screenshot>
-	<screenshot>https://raw.githubusercontent.com/Bibo-Joshi/orchestrascoresmanager/main/screenshots/setlists.webp</screenshot>
+	<website>https://github.com/thoscut/choircoresmanager</website>
+	<bugs>https://github.com/thoscut/choircoresmanager/issues</bugs>
+	<repository>https://github.com/thoscut/choircoresmanager</repository>
+	<screenshot>https://raw.githubusercontent.com/thoscut/choircoresmanager/main/screenshots/scorestable.webp</screenshot>
+	<screenshot>https://raw.githubusercontent.com/thoscut/choircoresmanager/main/screenshots/setlist.webp</screenshot>
+	<screenshot>https://raw.githubusercontent.com/thoscut/choircoresmanager/main/screenshots/setlists.webp</screenshot>
 	<dependencies>
 		<nextcloud min-version="33" max-version="35"/>
 	</dependencies>
 	<settings>
-		<admin>OCA\OrchestraScoresManager\Settings\AdminSettings</admin>
-		<admin-section>OCA\OrchestraScoresManager\Settings\AdminSection</admin-section>
+		<admin>OCA\ChoirScores\Settings\AdminSettings</admin>
+		<admin-section>OCA\ChoirScores\Settings\AdminSection</admin-section>
 	</settings>
 	<navigations>
 		<navigation>
-			<id>orchestrascoresmanager</id>
-			<name>Orchestra Scores Manager</name>
-			<route>orchestrascoresmanager.page.index</route>
+			<id>choirscores</id>
+			<name>Choir Scores</name>
+			<route>choirscores.page.index</route>
 			<icon>app.svg</icon>
 			<type>link</type>
 		</navigation>

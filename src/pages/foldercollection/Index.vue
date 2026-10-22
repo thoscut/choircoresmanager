@@ -150,7 +150,7 @@ const loadError = ref(false)
 const scores = ref<(Score | ScoreIndexed)[]>([])
 const scoreBooks = ref<(ScoreBook | ScoreBookIndexed)[]>([])
 const scoreBookScoresMap = ref<Map<number, Score[]>>(new Map())
-const editable = ref<boolean>(!!loadState('orchestrascoresmanager', 'editable'))
+const editable = ref<boolean>(!!loadState('choirscores', 'editable'))
 const { buttonSize, buttonText } = useBreakpoints()
 
 // Ref to access ScoresTable and its tableRef

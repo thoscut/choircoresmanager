@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\integration\Db;
+namespace OCA\ChoirScores\Tests\integration\Db;
 
-use OCA\OrchestraScoresManager\Db\Share;
-use OCA\OrchestraScoresManager\Db\ShareMapper;
+use OCA\ChoirScores\Db\Share;
+use OCA\ChoirScores\Db\ShareMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
 
 /**

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Migration;
+namespace OCA\ChoirScores\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -14,9 +14,9 @@ use OCP\Migration\SimpleMigrationStep;
  * Migration to add folder collection versioning support - Step 1.
  *
  * This migration:
- * 1. Creates the osm_folder_collection_versions table
- * 2. Adds folder_collection_version_id column to osm_scores_fc
- * 3. Adds active_version_id column to osm_folder_collections
+ * 1. Creates the chs_folder_collection_versions table
+ * 2. Adds folder_collection_version_id column to chs_scores_fc
+ * 3. Adds active_version_id column to chs_folder_collections
  *
  * @psalm-suppress UnusedClass - Migration class discovered by NextCloud framework
  */
@@ -28,9 +28,9 @@ class Version000002000Date20251129000000 extends SimpleMigrationStep {
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		$schema = $schemaClosure();
 
-		// Create osm_folder_collection_versions table
-		if (!$schema->hasTable('osm_fc_versions')) {
-			$table = $schema->createTable('osm_fc_versions');
+		// Create chs_folder_collection_versions table
+		if (!$schema->hasTable('chs_fc_versions')) {
+			$table = $schema->createTable('chs_fc_versions');
 			$table->addColumn('id', Types::BIGINT, [
 				'autoincrement' => true,
 				'notnull' => true,
@@ -50,17 +50,17 @@ class Version000002000Date20251129000000 extends SimpleMigrationStep {
 			]);
 			$table->setPrimaryKey(['id']);
 			$table->addForeignKeyConstraint(
-				$schema->getTable('osm_folder_collections'),
+				$schema->getTable('chs_folder_collections'),
 				['folder_collection_id'],
 				['id'],
 				['onDelete' => 'CASCADE'],
-				'fk_osm_fcv_fc'
+				'fk_chs_fcv_fc'
 			);
-			$table->addIndex(['folder_collection_id'], 'idx_osm_fcv_fc_id');
+			$table->addIndex(['folder_collection_id'], 'idx_chs_fcv_fc_id');
 		}
 
-		// Add folder_collection_version_id to osm_scores_fc (nullable for now, will be populated in postSchemaChange)
-		$scoresFcTable = $schema->getTable('osm_scores_fc');
+		// Add folder_collection_version_id to chs_scores_fc (nullable for now, will be populated in postSchemaChange)
+		$scoresFcTable = $schema->getTable('chs_scores_fc');
 		if (!$scoresFcTable->hasColumn('folder_collection_version_id')) {
 			$scoresFcTable->addColumn('folder_collection_version_id', Types::BIGINT, [
 				'notnull' => false,
@@ -69,8 +69,8 @@ class Version000002000Date20251129000000 extends SimpleMigrationStep {
 			]);
 		}
 
-		// Add active_version_id to osm_folder_collections (nullable)
-		$folderCollectionsTable = $schema->getTable('osm_folder_collections');
+		// Add active_version_id to chs_folder_collections (nullable)
+		$folderCollectionsTable = $schema->getTable('chs_folder_collections');
 		if (!$folderCollectionsTable->hasColumn('active_version_id')) {
 			$folderCollectionsTable->addColumn('active_version_id', Types::BIGINT, [
 				'notnull' => false,

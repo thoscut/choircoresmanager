@@ -1,5 +1,5 @@
 {
-	"name": "nextcloud/orchestrascoresmanager",
+	"name": "nextcloud/choirscores",
 	"description": "Organize your orchestras scores database directly within NextCloud",
 	"license": "AGPL-3.0-or-later",
 	"authors": [
@@ -11,12 +11,12 @@
 	],
 	"autoload": {
 		"psr-4": {
-			"OCA\\OrchestraScoresManager\\": "lib/"
+			"OCA\\ChoirScores\\": "lib/"
 		}
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"OCA\\OrchestraScoresManager\\Tests\\": "tests/"
+			"OCA\\ChoirScores\\Tests\\": "tests/"
 		}
 	},
 	"scripts": {

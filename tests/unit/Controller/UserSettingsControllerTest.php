@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\unit\Controller;
+namespace OCA\ChoirScores\Tests\unit\Controller;
 
-use OCA\OrchestraScoresManager\Controller\UserSettingsController;
-use OCA\OrchestraScoresManager\Service\UserSettingsService;
+use OCA\ChoirScores\Controller\UserSettingsController;
+use OCA\ChoirScores\Service\UserSettingsService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCS\OCSForbiddenException;
@@ -43,7 +43,7 @@ final class UserSettingsControllerTest extends TestCase {
 		}
 
 		return new UserSettingsController(
-			'orchestrascoresmanager',
+			'choirscores',
 			$this->request,
 			$this->userSettingsService,
 			$this->userSession,

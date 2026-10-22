@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Migration;
+namespace OCA\ChoirScores\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -16,13 +16,13 @@ use OCP\ServerVersion;
  * Migration to create setlists and setlist_entries tables.
  *
  * Tables created:
- * - osm_setlists: Main setlists table
- * - osm_setlist_entries: Entries in a setlist (scores and breaks)
+ * - chs_setlists: Main setlists table
+ * - chs_setlist_entries: Entries in a setlist (scores and breaks)
  *
  * Constraints:
- * - Foreign key setlist_id -> osm_setlists.id (CASCADE on delete)
- * - Foreign key score_id -> osm_scores.id (RESTRICT on delete)
- * - Foreign key folder_collection_version_id -> osm_fc_versions.id (RESTRICT on delete)
+ * - Foreign key setlist_id -> chs_setlists.id (CASCADE on delete)
+ * - Foreign key score_id -> chs_scores.id (RESTRICT on delete)
+ * - Foreign key folder_collection_version_id -> chs_fc_versions.id (RESTRICT on delete)
  * - Unique constraint on (setlist_id, index) for entry ordering
  *
  * @psalm-suppress UnusedClass - Migration class discovered by Nextcloud framework
@@ -42,9 +42,9 @@ class Version000006000Date20251221000000 extends SimpleMigrationStep {
 		$majorVersion = $serverVersion->getMajorVersion();
 		$booleanNotNull = $majorVersion >= 33;
 
-		// Create osm_setlists table
-		if (!$schema->hasTable('osm_setlists')) {
-			$table = $schema->createTable('osm_setlists');
+		// Create chs_setlists table
+		if (!$schema->hasTable('chs_setlists')) {
+			$table = $schema->createTable('chs_setlists');
 			$table->addColumn('id', Types::BIGINT, [
 				'autoincrement' => true,
 				'notnull' => true,
@@ -84,19 +84,19 @@ class Version000006000Date20251221000000 extends SimpleMigrationStep {
 
 			// Add foreign key to folder_collection_versions (RESTRICT to prevent deleting a version that's referenced)
 			$table->addForeignKeyConstraint(
-				$schema->getTable('osm_fc_versions'),
+				$schema->getTable('chs_fc_versions'),
 				['folder_collection_version_id'],
 				['id'],
 				['onDelete' => 'RESTRICT'],
-				'fk_osm_setlists_fcv'
+				'fk_chs_setlists_fcv'
 			);
-			$table->addIndex(['folder_collection_version_id'], 'idx_osm_setlists_fcv_id');
-			$table->addIndex(['start_date_time'], 'idx_osm_setlists_start');
+			$table->addIndex(['folder_collection_version_id'], 'idx_chs_setlists_fcv_id');
+			$table->addIndex(['start_date_time'], 'idx_chs_setlists_start');
 		}
 
-		// Create osm_setlist_entries table
-		if (!$schema->hasTable('osm_setlist_entries')) {
-			$table = $schema->createTable('osm_setlist_entries');
+		// Create chs_setlist_entries table
+		if (!$schema->hasTable('chs_setlist_entries')) {
+			$table = $schema->createTable('chs_setlist_entries');
 			$table->addColumn('id', Types::BIGINT, [
 				'autoincrement' => true,
 				'notnull' => true,
@@ -130,25 +130,25 @@ class Version000006000Date20251221000000 extends SimpleMigrationStep {
 
 			// Add foreign key to setlists (CASCADE to auto-delete entries when setlist is deleted)
 			$table->addForeignKeyConstraint(
-				$schema->getTable('osm_setlists'),
+				$schema->getTable('chs_setlists'),
 				['setlist_id'],
 				['id'],
 				['onDelete' => 'CASCADE'],
-				'fk_osm_setlist_entries_sl'
+				'fk_chs_setlist_entries_sl'
 			);
 
 			// Add foreign key to scores (RESTRICT to prevent deleting a score that's in a setlist)
 			$table->addForeignKeyConstraint(
-				$schema->getTable('osm_scores'),
+				$schema->getTable('chs_scores'),
 				['score_id'],
 				['id'],
 				['onDelete' => 'RESTRICT'],
-				'fk_osm_setlist_entries_sc'
+				'fk_chs_setlist_entries_sc'
 			);
 
 			// Unique constraint: index must be unique per setlist
-			$table->addUniqueIndex(['setlist_id', 'index'], 'idx_osm_se_uniq_idx');
-			$table->addIndex(['setlist_id'], 'idx_osm_se_sl_id');
+			$table->addUniqueIndex(['setlist_id', 'index'], 'idx_chs_se_uniq_idx');
+			$table->addIndex(['setlist_id'], 'idx_chs_se_sl_id');
 		}
 
 		return $schema;

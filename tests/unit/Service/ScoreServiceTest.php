@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\unit\Service;
+namespace OCA\ChoirScores\Tests\unit\Service;
 
-use OCA\OrchestraScoresManager\Db\CommentMapper;
-use OCA\OrchestraScoresManager\Db\Score;
-use OCA\OrchestraScoresManager\Db\ScoreBookScoreLinkMapper;
-use OCA\OrchestraScoresManager\Db\ScoreFolderCollectionLinkMapper;
-use OCA\OrchestraScoresManager\Db\ScoreMapper;
-use OCA\OrchestraScoresManager\Db\ScoreTagLinkMapper;
-use OCA\OrchestraScoresManager\Db\ShareMapper;
-use OCA\OrchestraScoresManager\Db\Tag;
-use OCA\OrchestraScoresManager\Db\TagMapper;
-use OCA\OrchestraScoresManager\Policy\PolicyInterface;
-use OCA\OrchestraScoresManager\Policy\ScorePolicy;
-use OCA\OrchestraScoresManager\Service\AuthorizationService;
-use OCA\OrchestraScoresManager\Service\Exceptions\PermissionDeniedException;
-use OCA\OrchestraScoresManager\Service\ScoreService;
+use OCA\ChoirScores\Db\CommentMapper;
+use OCA\ChoirScores\Db\Score;
+use OCA\ChoirScores\Db\ScoreBookScoreLinkMapper;
+use OCA\ChoirScores\Db\ScoreFolderCollectionLinkMapper;
+use OCA\ChoirScores\Db\ScoreMapper;
+use OCA\ChoirScores\Db\ScoreTagLinkMapper;
+use OCA\ChoirScores\Db\ShareMapper;
+use OCA\ChoirScores\Db\Tag;
+use OCA\ChoirScores\Db\TagMapper;
+use OCA\ChoirScores\Policy\PolicyInterface;
+use OCA\ChoirScores\Policy\ScorePolicy;
+use OCA\ChoirScores\Service\AuthorizationService;
+use OCA\ChoirScores\Service\Exceptions\PermissionDeniedException;
+use OCA\ChoirScores\Service\ScoreService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\IDBConnection;
 use OCP\IL10N;

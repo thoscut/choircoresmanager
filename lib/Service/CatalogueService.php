@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Service;
+namespace OCA\ChoirScores\Service;
 
-use OCA\OrchestraScoresManager\Db\Score;
-use OCA\OrchestraScoresManager\Db\ScoreMapper;
-use OCA\OrchestraScoresManager\Policy\PolicyInterface;
-use OCA\OrchestraScoresManager\Policy\ScorePolicy;
-use OCA\OrchestraScoresManager\ResponseDefinitions;
-use OCA\OrchestraScoresManager\Service\Catalogue\CatalogueColumns;
-use OCA\OrchestraScoresManager\Service\Catalogue\CatalogueCsv;
-use OCA\OrchestraScoresManager\Service\Catalogue\CatalogueException;
-use OCA\OrchestraScoresManager\Service\Exceptions\NotFoundException;
-use OCA\OrchestraScoresManager\Utility\SignatureComparator;
+use OCA\ChoirScores\Db\Score;
+use OCA\ChoirScores\Db\ScoreMapper;
+use OCA\ChoirScores\Policy\PolicyInterface;
+use OCA\ChoirScores\Policy\ScorePolicy;
+use OCA\ChoirScores\ResponseDefinitions;
+use OCA\ChoirScores\Service\Catalogue\CatalogueColumns;
+use OCA\ChoirScores\Service\Catalogue\CatalogueCsv;
+use OCA\ChoirScores\Service\Catalogue\CatalogueException;
+use OCA\ChoirScores\Service\Exceptions\NotFoundException;
+use OCA\ChoirScores\Utility\SignatureComparator;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\AppFramework\Db\TTransactional;
@@ -29,11 +29,11 @@ use OCP\IL10N;
  * untouched, nothing is ever deleted. Columns without a matching field are kept verbatim per
  * score, so that exporting reproduces the imported table; see CatalogueColumns.
  *
- * @psalm-import-type OrchestraScoresManagerCatalogueImportResult from ResponseDefinitions
- * @psalm-import-type OrchestraScoresManagerCatalogueImportRow from ResponseDefinitions
- * @psalm-import-type OrchestraScoresManagerCatalogueChange from ResponseDefinitions
- * @psalm-import-type OrchestraScoresManagerCatalogueExport from ResponseDefinitions
- * @psalm-import-type OrchestraScoresManagerCatalogueValue from ResponseDefinitions
+ * @psalm-import-type ChoirScoresCatalogueImportResult from ResponseDefinitions
+ * @psalm-import-type ChoirScoresCatalogueImportRow from ResponseDefinitions
+ * @psalm-import-type ChoirScoresCatalogueChange from ResponseDefinitions
+ * @psalm-import-type ChoirScoresCatalogueExport from ResponseDefinitions
+ * @psalm-import-type ChoirScoresCatalogueValue from ResponseDefinitions
  *
  * @psalm-type CatalogueAnalysedRow = array{
  *     line: int,
@@ -41,7 +41,7 @@ use OCP\IL10N;
  *     title: string,
  *     status: 'new'|'changed'|'unchanged'|'error',
  *     score: Score|null,
- *     changes: list<OrchestraScoresManagerCatalogueChange>,
+ *     changes: list<ChoirScoresCatalogueChange>,
  *     errors: list<string>,
  *     fields: array<string, string|null>,
  *     extra: array<array-key, string>
@@ -72,7 +72,7 @@ class CatalogueService {
 	 *
 	 * @param string $content The CSV file content
 	 * @param bool $dryRun If true, nothing is saved
-	 * @return OrchestraScoresManagerCatalogueImportResult
+	 * @return ChoirScoresCatalogueImportResult
 	 * @throws \InvalidArgumentException If the file cannot be read as a catalogue
 	 * @throws Exception
 	 */
@@ -107,7 +107,7 @@ class CatalogueService {
 	 * Columns: the catalogue header in its order, then further columns of the last import and of
 	 * stored extra data in first-seen order. Rows are sorted by signature in natural order.
 	 *
-	 * @return OrchestraScoresManagerCatalogueExport
+	 * @return ChoirScoresCatalogueExport
 	 */
 	public function exportCatalogue(): array {
 		$this->authorizationService->authorizePolicy($this->scorePolicy, PolicyInterface::ACTION_READ);
@@ -162,7 +162,7 @@ class CatalogueService {
 	 * Get the catalogue values of a score that are not stored in a field.
 	 *
 	 * @param int $scoreId
-	 * @return list<OrchestraScoresManagerCatalogueValue> In catalogue column order, then further columns
+	 * @return list<ChoirScoresCatalogueValue> In catalogue column order, then further columns
 	 * @throws NotFoundException If the score does not exist
 	 */
 	public function getCatalogueValues(int $scoreId): array {
@@ -374,7 +374,7 @@ class CatalogueService {
 	 * @param list<string> $header
 	 * @param list<CatalogueAnalysedRow> $rows
 	 * @param bool $dryRun
-	 * @return OrchestraScoresManagerCatalogueImportResult
+	 * @return ChoirScoresCatalogueImportResult
 	 */
 	private function buildResult(array $header, array $rows, bool $dryRun): array {
 		$counts = ['new' => 0, 'changed' => 0, 'unchanged' => 0, 'errors' => 0];

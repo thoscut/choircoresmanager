@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Controller;
+namespace OCA\ChoirScores\Controller;
 
-use OCA\OrchestraScoresManager\AppInfo\Application;
-use OCA\OrchestraScoresManager\Service\Exceptions\NotFoundException;
-use OCA\OrchestraScoresManager\Service\PublicScoreService;
-use OCA\OrchestraScoresManager\Utility\ResponseHelper;
+use OCA\ChoirScores\AppInfo\Application;
+use OCA\ChoirScores\Service\Exceptions\NotFoundException;
+use OCA\ChoirScores\Service\PublicScoreService;
+use OCA\ChoirScores\Utility\ResponseHelper;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\AnonRateLimit;
 use OCP\AppFramework\Http\Attribute\FrontpageRoute;

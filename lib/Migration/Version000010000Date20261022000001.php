@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Migration;
+namespace OCA\ChoirScores\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -24,11 +24,11 @@ class Version000010000Date20261022000001 extends SimpleMigrationStep {
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		$schema = $schemaClosure();
 
-		if ($schema->hasTable('osm_shares')) {
+		if ($schema->hasTable('chs_shares')) {
 			return null;
 		}
 
-		$table = $schema->createTable('osm_shares');
+		$table = $schema->createTable('chs_shares');
 		$table->addColumn('id', Types::BIGINT, [
 			'autoincrement' => true,
 			'notnull' => true,
@@ -69,9 +69,9 @@ class Version000010000Date20261022000001 extends SimpleMigrationStep {
 			'default' => 0,
 		]);
 		$table->setPrimaryKey(['id']);
-		$table->addUniqueIndex(['token'], 'idx_osm_shares_token');
-		$table->addIndex(['target_type', 'target_id'], 'idx_osm_shares_target');
-		$table->addIndex(['group_id'], 'idx_osm_shares_group');
+		$table->addUniqueIndex(['token'], 'idx_chs_shares_token');
+		$table->addIndex(['target_type', 'target_id'], 'idx_chs_shares_target');
+		$table->addIndex(['group_id'], 'idx_chs_shares_group');
 
 		return $schema;
 	}

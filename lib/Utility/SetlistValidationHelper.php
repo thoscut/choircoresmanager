@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Utility;
+namespace OCA\ChoirScores\Utility;
 
 use InvalidArgumentException;
-use OCA\OrchestraScoresManager\Db\ScoreBookScoreLinkMapper;
-use OCA\OrchestraScoresManager\Db\ScoreFolderCollectionLinkMapper;
+use OCA\ChoirScores\Db\ScoreBookScoreLinkMapper;
+use OCA\ChoirScores\Db\ScoreFolderCollectionLinkMapper;
 use OCP\DB\Exception;
 use OCP\IL10N;
 

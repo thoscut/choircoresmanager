@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Db;
+namespace OCA\ChoirScores\Db;
 
 use DateTimeImmutable;
 use JsonSerializable;
-use OCA\OrchestraScoresManager\Service\RepertoireClassifier;
-use OCA\OrchestraScoresManager\Utility\DateTimeHelper;
+use OCA\ChoirScores\Service\RepertoireClassifier;
+use OCA\ChoirScores\Utility\DateTimeHelper;
 use OCP\AppFramework\Db\Entity;
 use OCP\DB\Types;
 

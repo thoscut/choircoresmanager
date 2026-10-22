@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\unit\Service;
+namespace OCA\ChoirScores\Tests\unit\Service;
 
-use OCA\OrchestraScoresManager\Service\ConfigService;
+use OCA\ChoirScores\Service\ConfigService;
 use OCP\AppFramework\Services\IAppConfig;
 use OCP\IL10N;
 use PHPUnit\Framework\Attributes\TestWith;

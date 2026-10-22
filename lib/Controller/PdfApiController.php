@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Controller;
+namespace OCA\ChoirScores\Controller;
 
-use OCA\OrchestraScoresManager\ResponseDefinitions;
-use OCA\OrchestraScoresManager\Service\PdfService;
-use OCA\OrchestraScoresManager\Utility\ResponseHelper;
+use OCA\ChoirScores\ResponseDefinitions;
+use OCA\ChoirScores\Service\PdfService;
+use OCA\ChoirScores\Utility\ResponseHelper;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -20,7 +20,7 @@ use OCP\AppFramework\OCSController;
 use OCP\IRequest;
 
 /**
- * @psalm-import-type OrchestraScoresManagerScore from ResponseDefinitions
+ * @psalm-import-type ChoirScoresScore from ResponseDefinitions
  * @psalm-suppress UnusedClass - Controller discovered by NextCloud framework
  */
 #[OpenAPI(scope: OpenAPI::SCOPE_DEFAULT)]
@@ -64,7 +64,7 @@ class PdfApiController extends OCSController {
 	 *
 	 * @param int $id The ID of the score
 	 * @param int $fileId The Nextcloud file id of the PDF file
-	 * @return DataResponse<Http::STATUS_OK, OrchestraScoresManagerScore, array{}> the updated score
+	 * @return DataResponse<Http::STATUS_OK, ChoirScoresScore, array{}> the updated score
 	 *
 	 * 200: The file was linked
 	 * @throws OCSBadRequestException if the score does not exist, the file cannot be read or is not a valid PDF file
@@ -83,7 +83,7 @@ class PdfApiController extends OCSController {
 	 * The file itself stays in Nextcloud Files.
 	 *
 	 * @param int $id The ID of the score
-	 * @return DataResponse<Http::STATUS_OK, OrchestraScoresManagerScore, array{}> the updated score
+	 * @return DataResponse<Http::STATUS_OK, ChoirScoresScore, array{}> the updated score
 	 *
 	 * 200: The link was removed
 	 * @throws OCSBadRequestException if the score does not exist

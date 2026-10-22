@@ -62,7 +62,7 @@ import { t } from '@/utils/l10n'
 const folderCollectionsStore = useFolderCollectionsStore()
 
 // Load initial state from the server
-const editable = !!loadState('orchestrascoresmanager', 'editable')
+const editable = !!loadState('choirscores', 'editable')
 
 // Use computed to maintain reactivity with the store
 const folderCollections = computed(() => folderCollectionsStore.folderCollections)

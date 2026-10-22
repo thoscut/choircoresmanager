@@ -90,9 +90,9 @@ const folderCollectionsStore = useFolderCollectionsStore()
 
 const showSettings = ref(false)
 // Load initial state from the server
-const editable = ref<boolean>(!!loadState('orchestrascoresmanager', 'editable'))
-const publicPageEnabled = loadState<boolean>('orchestrascoresmanager', 'publicPageEnabled', false)
-const publicPageUrl = generateUrl('/apps/orchestrascoresmanager/public')
+const editable = ref<boolean>(!!loadState('choirscores', 'editable'))
+const publicPageEnabled = loadState<boolean>('choirscores', 'publicPageEnabled', false)
+const publicPageUrl = generateUrl('/apps/choirscores/public')
 
 // Initialize folder collections store when navigation mounts
 onMounted(() => {

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\unit\Controller;
+namespace OCA\ChoirScores\Tests\unit\Controller;
 
-use OCA\OrchestraScoresManager\Controller\CommentApiController;
-use OCA\OrchestraScoresManager\Db\Comment;
-use OCA\OrchestraScoresManager\Service\CommentService;
-use OCA\OrchestraScoresManager\Service\Exceptions\NotFoundException;
-use OCA\OrchestraScoresManager\Service\Exceptions\PermissionDeniedException;
+use OCA\ChoirScores\Controller\CommentApiController;
+use OCA\ChoirScores\Db\Comment;
+use OCA\ChoirScores\Service\CommentService;
+use OCA\ChoirScores\Service\Exceptions\NotFoundException;
+use OCA\ChoirScores\Service\Exceptions\PermissionDeniedException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCS\OCSBadRequestException;
@@ -33,7 +33,7 @@ final class CommentApiControllerTest extends TestCase {
 		$this->request = $this->createMock(IRequest::class);
 
 		$this->controller = new CommentApiController(
-			'orchestrascoresmanager',
+			'choirscores',
 			$this->request,
 			$this->commentService
 		);

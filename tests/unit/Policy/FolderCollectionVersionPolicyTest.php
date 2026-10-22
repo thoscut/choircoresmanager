@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\unit\Policy;
+namespace OCA\ChoirScores\Tests\unit\Policy;
 
 use DateTimeImmutable;
-use OCA\OrchestraScoresManager\Db\FolderCollectionVersion;
-use OCA\OrchestraScoresManager\Policy\FolderCollectionVersionPolicy;
-use OCA\OrchestraScoresManager\Policy\PolicyInterface;
-use OCA\OrchestraScoresManager\Service\PermissionService;
+use OCA\ChoirScores\Db\FolderCollectionVersion;
+use OCA\ChoirScores\Policy\FolderCollectionVersionPolicy;
+use OCA\ChoirScores\Policy\PolicyInterface;
+use OCA\ChoirScores\Service\PermissionService;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 

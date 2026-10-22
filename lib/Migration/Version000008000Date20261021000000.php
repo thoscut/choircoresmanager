@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Migration;
+namespace OCA\ChoirScores\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -11,7 +11,7 @@ use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
 /**
- * Migration to add repertoire management columns to osm_scores.
+ * Migration to add repertoire management columns to chs_scores.
  *
  * Columns added:
  * - signature: catalogue number from the Werkverzeichnis (e.g. "5-22")
@@ -32,11 +32,11 @@ class Version000008000Date20261021000000 extends SimpleMigrationStep {
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		$schema = $schemaClosure();
 
-		if (!$schema->hasTable('osm_scores')) {
+		if (!$schema->hasTable('chs_scores')) {
 			return null;
 		}
 
-		$table = $schema->getTable('osm_scores');
+		$table = $schema->getTable('chs_scores');
 		$changed = false;
 
 		if (!$table->hasColumn('signature')) {
@@ -44,7 +44,7 @@ class Version000008000Date20261021000000 extends SimpleMigrationStep {
 				'notnull' => false,
 				'length' => 32,
 			]);
-			$table->addIndex(['signature'], 'idx_osm_scores_signature');
+			$table->addIndex(['signature'], 'idx_chs_scores_signature');
 			$changed = true;
 		}
 		if (!$table->hasColumn('lyricist')) {
@@ -74,7 +74,7 @@ class Version000008000Date20261021000000 extends SimpleMigrationStep {
 				'length' => 20,
 				'default' => 'active',
 			]);
-			$table->addIndex(['inventory_status'], 'idx_osm_scores_inv_status');
+			$table->addIndex(['inventory_status'], 'idx_chs_scores_inv_status');
 			$changed = true;
 		}
 		if (!$table->hasColumn('last_performed_imported')) {

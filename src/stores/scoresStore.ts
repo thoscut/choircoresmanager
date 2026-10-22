@@ -47,7 +47,7 @@ export const useScoresStore = defineStore('scores', () => {
 
 		try {
 			// Try to load from initial state first
-			const initialData = loadState<Score[] | null>('orchestrascoresmanager', 'scores', null)
+			const initialData = loadState<Score[] | null>('choirscores', 'scores', null)
 			if (initialData && initialData.length > 0) {
 				scores.value = initialData
 				isLoaded.value = true
@@ -274,7 +274,7 @@ export const useScoresStore = defineStore('scores', () => {
 	async function fetchScoreFile(id: number, kind: ScoreFileKind): Promise<ArrayBuffer> {
 		try {
 			const response = await ncAxios.get(
-				generateOcsUrl('/apps/orchestrascoresmanager/scores/{id}/{kind}', { id, kind }),
+				generateOcsUrl('/apps/choirscores/scores/{id}/{kind}', { id, kind }),
 				{ headers: { 'OCS-APIRequest': 'true', Accept: 'application/json' }, responseType: 'arraybuffer' },
 			)
 			return response.data as ArrayBuffer

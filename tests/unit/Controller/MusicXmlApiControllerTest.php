@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\unit\Controller;
+namespace OCA\ChoirScores\Tests\unit\Controller;
 
-use OCA\OrchestraScoresManager\Controller\MusicXmlApiController;
-use OCA\OrchestraScoresManager\Db\Score;
-use OCA\OrchestraScoresManager\Service\Exceptions\NotFoundException;
-use OCA\OrchestraScoresManager\Service\Exceptions\PermissionDeniedException;
-use OCA\OrchestraScoresManager\Service\MusicXmlService;
+use OCA\ChoirScores\Controller\MusicXmlApiController;
+use OCA\ChoirScores\Db\Score;
+use OCA\ChoirScores\Service\Exceptions\NotFoundException;
+use OCA\ChoirScores\Service\Exceptions\PermissionDeniedException;
+use OCA\ChoirScores\Service\MusicXmlService;
 use OCP\AppFramework\OCS\OCSBadRequestException;
 use OCP\AppFramework\OCS\OCSForbiddenException;
 use OCP\AppFramework\OCS\OCSNotFoundException;
@@ -28,7 +28,7 @@ final class MusicXmlApiControllerTest extends TestCase {
 		$this->musicXmlService = $this->createMock(MusicXmlService::class);
 
 		$this->controller = new MusicXmlApiController(
-			'orchestrascoresmanager',
+			'choirscores',
 			$this->createMock(IRequest::class),
 			$this->musicXmlService,
 		);

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Service;
+namespace OCA\ChoirScores\Service;
 
 use OCP\Config\IUserConfig;
 

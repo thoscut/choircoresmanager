@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\integration\Db;
+namespace OCA\ChoirScores\Tests\integration\Db;
 
-use OCA\OrchestraScoresManager\Db\ScoreBook;
-use OCA\OrchestraScoresManager\Db\ScoreBookMapper;
-use OCA\OrchestraScoresManager\Db\ScoreBookTagLinkMapper;
-use OCA\OrchestraScoresManager\Db\Tag;
-use OCA\OrchestraScoresManager\Db\TagMapper;
+use OCA\ChoirScores\Db\ScoreBook;
+use OCA\ChoirScores\Db\ScoreBookMapper;
+use OCA\ChoirScores\Db\ScoreBookTagLinkMapper;
+use OCA\ChoirScores\Db\Tag;
+use OCA\ChoirScores\Db\TagMapper;
 use OCP\DB\Exception;
 
 /**

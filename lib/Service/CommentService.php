@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Service;
+namespace OCA\ChoirScores\Service;
 
-use OCA\OrchestraScoresManager\Db\Comment;
-use OCA\OrchestraScoresManager\Db\CommentMapper;
-use OCA\OrchestraScoresManager\Policy\CommentPolicy;
-use OCA\OrchestraScoresManager\Policy\PolicyInterface;
-use OCA\OrchestraScoresManager\Service\Exceptions\NotFoundException;
-use OCA\OrchestraScoresManager\Service\Exceptions\PermissionDeniedException;
+use OCA\ChoirScores\Db\Comment;
+use OCA\ChoirScores\Db\CommentMapper;
+use OCA\ChoirScores\Policy\CommentPolicy;
+use OCA\ChoirScores\Policy\PolicyInterface;
+use OCA\ChoirScores\Service\Exceptions\NotFoundException;
+use OCA\ChoirScores\Service\Exceptions\PermissionDeniedException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\AppFramework\Utility\ITimeFactory;

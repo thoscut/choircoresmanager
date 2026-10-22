@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Controller;
+namespace OCA\ChoirScores\Controller;
 
-use OCA\OrchestraScoresManager\ResponseDefinitions;
-use OCA\OrchestraScoresManager\Service\MusicXmlService;
-use OCA\OrchestraScoresManager\Utility\ResponseHelper;
+use OCA\ChoirScores\ResponseDefinitions;
+use OCA\ChoirScores\Service\MusicXmlService;
+use OCA\ChoirScores\Utility\ResponseHelper;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -22,7 +22,7 @@ use OCP\IRequest;
 /**
  * MusicXML files of scores. The files live in Nextcloud Files; a score only links to one.
  *
- * @psalm-import-type OrchestraScoresManagerScore from ResponseDefinitions
+ * @psalm-import-type ChoirScoresScore from ResponseDefinitions
  * @psalm-suppress UnusedClass - Controller discovered by NextCloud framework
  */
 #[OpenAPI(scope: OpenAPI::SCOPE_DEFAULT)]
@@ -66,7 +66,7 @@ class MusicXmlApiController extends OCSController {
 	 *
 	 * @param int $id The ID of the score
 	 * @param int $fileId The Nextcloud file id of the MusicXML file
-	 * @return DataResponse<Http::STATUS_OK, OrchestraScoresManagerScore, array{}> the updated score
+	 * @return DataResponse<Http::STATUS_OK, ChoirScoresScore, array{}> the updated score
 	 *
 	 * 200: The file was linked
 	 * @throws OCSBadRequestException if the score does not exist, the file cannot be read or is not a valid MusicXML file
@@ -85,7 +85,7 @@ class MusicXmlApiController extends OCSController {
 	 * The file itself stays in Nextcloud Files.
 	 *
 	 * @param int $id The ID of the score
-	 * @return DataResponse<Http::STATUS_OK, OrchestraScoresManagerScore, array{}> the updated score
+	 * @return DataResponse<Http::STATUS_OK, ChoirScoresScore, array{}> the updated score
 	 *
 	 * 200: The link was removed
 	 * @throws OCSBadRequestException if the score does not exist

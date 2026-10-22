@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Controller;
+namespace OCA\ChoirScores\Controller;
 
-use OCA\OrchestraScoresManager\ResponseDefinitions;
-use OCA\OrchestraScoresManager\Service\ShareService;
+use OCA\ChoirScores\ResponseDefinitions;
+use OCA\ChoirScores\Service\ShareService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -17,9 +17,9 @@ use OCP\AppFramework\OCSController;
 use OCP\IRequest;
 
 /**
- * @psalm-import-type OrchestraScoresManagerShare from ResponseDefinitions
- * @psalm-import-type OrchestraScoresManagerShareGroup from ResponseDefinitions
- * @psalm-import-type OrchestraScoresManagerSharedTarget from ResponseDefinitions
+ * @psalm-import-type ChoirScoresShare from ResponseDefinitions
+ * @psalm-import-type ChoirScoresShareGroup from ResponseDefinitions
+ * @psalm-import-type ChoirScoresSharedTarget from ResponseDefinitions
  * @psalm-suppress UnusedClass - Controller discovered by NextCloud framework
  */
 #[OpenAPI(scope: OpenAPI::SCOPE_DEFAULT)]
@@ -39,7 +39,7 @@ class ShareApiController extends OCSController {
 	 *
 	 * @param 'score'|'folder_collection' $targetType The type of the shared item
 	 * @param int $targetId The ID of the shared item
-	 * @return DataResponse<Http::STATUS_OK, list<OrchestraScoresManagerShare>, array{}> the shares
+	 * @return DataResponse<Http::STATUS_OK, list<ChoirScoresShare>, array{}> the shares
 	 *
 	 * 200: The shares of the item
 	 * @throws OCSBadRequestException if the target type is invalid
@@ -54,7 +54,7 @@ class ShareApiController extends OCSController {
 	/**
 	 * Get all shares
 	 *
-	 * @return DataResponse<Http::STATUS_OK, list<OrchestraScoresManagerShare>, array{}> all shares, newest first
+	 * @return DataResponse<Http::STATUS_OK, list<ChoirScoresShare>, array{}> all shares, newest first
 	 *
 	 * 200: All shares
 	 * @throws OCSForbiddenException if the user may not manage shares
@@ -75,7 +75,7 @@ class ShareApiController extends OCSController {
 	 * @param int $targetId The ID of the shared item
 	 * @param string|null $groupId The group to share with, required for group shares
 	 * @param string|null $label Optional title shown instead of the item's title
-	 * @return DataResponse<Http::STATUS_OK, OrchestraScoresManagerShare, array{}> the new share
+	 * @return DataResponse<Http::STATUS_OK, ChoirScoresShare, array{}> the new share
 	 *
 	 * 200: The share was created
 	 * @throws OCSBadRequestException if the input is invalid
@@ -107,7 +107,7 @@ class ShareApiController extends OCSController {
 	/**
 	 * Get the groups items can be shared with
 	 *
-	 * @return DataResponse<Http::STATUS_OK, list<OrchestraScoresManagerShareGroup>, array{}> the groups
+	 * @return DataResponse<Http::STATUS_OK, list<ChoirScoresShareGroup>, array{}> the groups
 	 *
 	 * 200: The groups
 	 * @throws OCSForbiddenException if the user may not manage shares
@@ -121,7 +121,7 @@ class ShareApiController extends OCSController {
 	/**
 	 * Get the items shared with the groups of the current user
 	 *
-	 * @return DataResponse<Http::STATUS_OK, list<OrchestraScoresManagerSharedTarget>, array{}> the shared items
+	 * @return DataResponse<Http::STATUS_OK, list<ChoirScoresSharedTarget>, array{}> the shared items
 	 *
 	 * 200: The shared items
 	 * @throws OCSForbiddenException if nobody is logged in

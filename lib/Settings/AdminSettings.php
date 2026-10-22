@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Settings;
+namespace OCA\ChoirScores\Settings;
 
-use OCA\OrchestraScoresManager\Service\ConfigService;
+use OCA\ChoirScores\Service\ConfigService;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IURLGenerator;
@@ -47,11 +47,11 @@ class AdminSettings implements ISettings {
 		);
 		$this->initialStateService->provideInitialState(
 			'public_page_url',
-			$this->urlGenerator->linkToRouteAbsolute('orchestrascoresmanager.public.index')
+			$this->urlGenerator->linkToRouteAbsolute('choirscores.public.index')
 		);
 
 		return new TemplateResponse(
-			'orchestrascoresmanager',
+			'choirscores',
 			'admin-settings',
 			[],
 			''
@@ -62,7 +62,7 @@ class AdminSettings implements ISettings {
 	 * @return string the section ID, e.g. 'sharing'
 	 */
 	public function getSection(): string {
-		return 'orchestrascoresmanager';
+		return 'choirscores';
 	}
 
 	/**

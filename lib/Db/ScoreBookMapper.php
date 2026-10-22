@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Db;
+namespace OCA\ChoirScores\Db;
 
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
@@ -23,7 +23,7 @@ class ScoreBookMapper extends QBMapper {
 		protected readonly ScoreBookTagLinkMapper $scoreBookTagLinkMapper,
 		protected readonly TagMapper $tagMapper,
 	) {
-		parent::__construct($db, 'osm_score_books', ScoreBook::class);
+		parent::__construct($db, 'chs_score_books', ScoreBook::class);
 	}
 
 	/**

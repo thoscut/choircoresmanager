@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\unit\Db;
+namespace OCA\ChoirScores\Tests\unit\Db;
 
 use InvalidArgumentException;
-use OCA\OrchestraScoresManager\Db\Tag;
+use OCA\ChoirScores\Db\Tag;
 use PHPUnit\Framework\TestCase;
 
 /**

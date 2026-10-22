@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\integration\Db;
+namespace OCA\ChoirScores\Tests\integration\Db;
 
 use DateTimeImmutable;
-use OCA\OrchestraScoresManager\Db\Enum\FolderCollectionType;
-use OCA\OrchestraScoresManager\Db\FolderCollection;
-use OCA\OrchestraScoresManager\Db\FolderCollectionMapper;
-use OCA\OrchestraScoresManager\Db\FolderCollectionVersion;
-use OCA\OrchestraScoresManager\Db\FolderCollectionVersionMapper;
+use OCA\ChoirScores\Db\Enum\FolderCollectionType;
+use OCA\ChoirScores\Db\FolderCollection;
+use OCA\ChoirScores\Db\FolderCollectionMapper;
+use OCA\ChoirScores\Db\FolderCollectionVersion;
+use OCA\ChoirScores\Db\FolderCollectionVersionMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 

@@ -129,7 +129,7 @@ function exportAsCsv(fileName?: string): boolean {
 		.map((c) => String((c as ColDef).field))
 
 	gridApi.value.exportDataAsCsv({
-		fileName: fileName || 'orchestrascores.csv',
+		fileName: fileName || 'choirscores.csv',
 		columnKeys,
 	})
 	return true

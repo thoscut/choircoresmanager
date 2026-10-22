@@ -8,7 +8,7 @@ import { linkTo } from '@nextcloud/router'
 import { Workbook } from 'exceljs'
 import { isBreakEntry } from '@/utils/setlistScoreUtils'
 
-const TEMPLATE_URL = linkTo('orchestrascoresmanager', 'public/gema-template.xlsx')
+const TEMPLATE_URL = linkTo('choirscores', 'public/gema-template.xlsx')
 const DATA_START_ROW = 21
 
 interface PersonNameParts {

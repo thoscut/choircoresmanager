@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\unit\Controller;
+namespace OCA\ChoirScores\Tests\unit\Controller;
 
-use OCA\OrchestraScoresManager\Controller\ScoreApiController;
-use OCA\OrchestraScoresManager\Db\Comment;
-use OCA\OrchestraScoresManager\Db\Score;
-use OCA\OrchestraScoresManager\Db\ScoreMapper;
-use OCA\OrchestraScoresManager\Db\ScoreTagLinkMapper;
-use OCA\OrchestraScoresManager\Db\TagMapper;
-use OCA\OrchestraScoresManager\Service\CommentService;
-use OCA\OrchestraScoresManager\Service\Exceptions\NotFoundException;
-use OCA\OrchestraScoresManager\Service\Exceptions\PermissionDeniedException;
-use OCA\OrchestraScoresManager\Service\FolderCollectionService;
-use OCA\OrchestraScoresManager\Service\ScoreService;
+use OCA\ChoirScores\Controller\ScoreApiController;
+use OCA\ChoirScores\Db\Comment;
+use OCA\ChoirScores\Db\Score;
+use OCA\ChoirScores\Db\ScoreMapper;
+use OCA\ChoirScores\Db\ScoreTagLinkMapper;
+use OCA\ChoirScores\Db\TagMapper;
+use OCA\ChoirScores\Service\CommentService;
+use OCA\ChoirScores\Service\Exceptions\NotFoundException;
+use OCA\ChoirScores\Service\Exceptions\PermissionDeniedException;
+use OCA\ChoirScores\Service\FolderCollectionService;
+use OCA\ChoirScores\Service\ScoreService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCS\OCSBadRequestException;
@@ -49,7 +49,7 @@ final class ScoreApiControllerTest extends TestCase {
 		$this->request = $this->createMock(IRequest::class);
 
 		$this->controller = new ScoreApiController(
-			'orchestrascoresmanager',
+			'choirscores',
 			$this->request,
 			$this->scoreMapper,
 			$this->linkMapper,
@@ -280,7 +280,7 @@ final class ScoreApiControllerTest extends TestCase {
 		$this->mockDateParsing();
 		$this->request->method('getParams')->willReturn([
 			'id' => 1,
-			'_route' => 'ocs.orchestrascoresmanager.score_api.patch_score',
+			'_route' => 'ocs.choirscores.score_api.patch_score',
 			'rightsStatus' => 'public_domain',
 			'publicationStatus' => 'blocked',
 			'publicationBlockedUntil' => '2027-03-31',

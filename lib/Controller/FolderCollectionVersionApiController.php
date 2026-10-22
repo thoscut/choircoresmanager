@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Controller;
+namespace OCA\ChoirScores\Controller;
 
-use OCA\OrchestraScoresManager\ResponseDefinitions;
-use OCA\OrchestraScoresManager\Service\FolderCollectionVersionService;
+use OCA\ChoirScores\ResponseDefinitions;
+use OCA\ChoirScores\Service\FolderCollectionVersionService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -22,7 +22,7 @@ use OCP\IRequest;
  * Provides endpoints to access and modify folder collection versions
  * independently of their parent folder collection.
  *
- * @psalm-import-type OrchestraScoresManagerFolderCollectionVersion from ResponseDefinitions
+ * @psalm-import-type ChoirScoresFolderCollectionVersion from ResponseDefinitions
  * @psalm-suppress UnusedClass - Controller discovered by NextCloud framework
  */
 #[OpenAPI(scope: OpenAPI::SCOPE_DEFAULT)]
@@ -42,7 +42,7 @@ class FolderCollectionVersionApiController extends OCSController {
 	 *
 	 * @param int $id The ID of the version
 	 *
-	 * @return DataResponse<Http::STATUS_OK, OrchestraScoresManagerFolderCollectionVersion, array{}> the version
+	 * @return DataResponse<Http::STATUS_OK, ChoirScoresFolderCollectionVersion, array{}> the version
 	 *
 	 * 200: Successful response with the version
 	 * @throws OCSBadRequestException Invalid request parameters
@@ -64,7 +64,7 @@ class FolderCollectionVersionApiController extends OCSController {
 	 * @param int $id The ID of the version to update
 	 * @param string|null $validTo The new end date (Y-m-d format) to deactivate the version
 	 *
-	 * @return DataResponse<Http::STATUS_OK, OrchestraScoresManagerFolderCollectionVersion, array{}> the updated version
+	 * @return DataResponse<Http::STATUS_OK, ChoirScoresFolderCollectionVersion, array{}> the updated version
 	 *
 	 * 200: Successful update of the version
 	 * @throws OCSBadRequestException Invalid request parameters

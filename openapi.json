@@ -1,7 +1,7 @@
 {
     "openapi": "3.0.3",
     "info": {
-        "title": "orchestrascoresmanager",
+        "title": "choirscores",
         "version": "0.0.1",
         "description": "Manage your orchestra's sheet music database directly within Nextcloud",
         "license": {
@@ -1313,7 +1313,7 @@
         }
     },
     "paths": {
-        "/ocs/v2.php/apps/orchestrascoresmanager/catalogue/import": {
+        "/ocs/v2.php/apps/choirscores/catalogue/import": {
             "post": {
                 "operationId": "catalogue_api-import-catalogue",
                 "summary": "Import the work catalogue from a CSV file",
@@ -1493,7 +1493,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/catalogue/export": {
+        "/ocs/v2.php/apps/choirscores/catalogue/export": {
             "get": {
                 "operationId": "catalogue_api-export-catalogue",
                 "summary": "Export all scores as a work catalogue CSV file",
@@ -1611,7 +1611,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/scores/{id}/catalogue": {
+        "/ocs/v2.php/apps/choirscores/scores/{id}/catalogue": {
             "get": {
                 "operationId": "catalogue_api-get-score-catalogue-values",
                 "summary": "Get the catalogue values of a score that are not stored in a field",
@@ -1770,7 +1770,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/comments/{id}": {
+        "/ocs/v2.php/apps/choirscores/comments/{id}": {
             "get": {
                 "operationId": "comment_api-get-comment",
                 "summary": "Get a specific comment by ID",
@@ -2136,7 +2136,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/foldercollections": {
+        "/ocs/v2.php/apps/choirscores/foldercollections": {
             "get": {
                 "operationId": "folder_collection_api-get-folder-collections",
                 "summary": "Return all available folder collections",
@@ -2469,7 +2469,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/foldercollections/{id}": {
+        "/ocs/v2.php/apps/choirscores/foldercollections/{id}": {
             "get": {
                 "operationId": "folder_collection_api-get-folder-collection",
                 "summary": "Get a specific folder collection by ID",
@@ -2957,7 +2957,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/foldercollections/{id}/scores": {
+        "/ocs/v2.php/apps/choirscores/foldercollections/{id}/scores": {
             "get": {
                 "operationId": "folder_collection_api-get-folder-collection-scores",
                 "summary": "Get all scores in a specific folder collection (including scores from score books)",
@@ -3318,7 +3318,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/foldercollections/{id}/scores/{scoreId}": {
+        "/ocs/v2.php/apps/choirscores/foldercollections/{id}/scores/{scoreId}": {
             "delete": {
                 "operationId": "folder_collection_api-delete-folder-collection-score",
                 "summary": "Remove a score from a folder collection",
@@ -3484,7 +3484,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/foldercollections/{id}/scorebooks": {
+        "/ocs/v2.php/apps/choirscores/foldercollections/{id}/scorebooks": {
             "get": {
                 "operationId": "folder_collection_api-get-folder-collection-score-books",
                 "summary": "Get all score books in a folder collection",
@@ -3845,7 +3845,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/foldercollections/{id}/scorebooks/{scoreBookId}": {
+        "/ocs/v2.php/apps/choirscores/foldercollections/{id}/scorebooks/{scoreBookId}": {
             "delete": {
                 "operationId": "folder_collection_api-delete-folder-collection-score-book",
                 "summary": "Remove a score book from a folder collection",
@@ -4011,7 +4011,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/foldercollections/{id}/versions": {
+        "/ocs/v2.php/apps/choirscores/foldercollections/{id}/versions": {
             "get": {
                 "operationId": "folder_collection_api-get-folder-collection-versions",
                 "summary": "Get all versions of a folder collection",
@@ -4356,7 +4356,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/foldercollections/{id}/versions/new": {
+        "/ocs/v2.php/apps/choirscores/foldercollections/{id}/versions/new": {
             "post": {
                 "operationId": "folder_collection_api-start-new-version",
                 "summary": "Start a new version (deactivates current version, creates new one starting on specified date)",
@@ -4530,7 +4530,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/foldercollectionversions/{id}": {
+        "/ocs/v2.php/apps/choirscores/foldercollectionversions/{id}": {
             "get": {
                 "operationId": "folder_collection_version_api-get-folder-collection-version",
                 "summary": "Get a folder collection version by ID",
@@ -4858,7 +4858,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/scores/{id}/musicxml": {
+        "/ocs/v2.php/apps/choirscores/scores/{id}/musicxml": {
             "get": {
                 "operationId": "music_xml_api-get-music-xml",
                 "summary": "Download the MusicXML file of a score",
@@ -5357,7 +5357,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/scores/{id}/pdf": {
+        "/ocs/v2.php/apps/choirscores/scores/{id}/pdf": {
             "get": {
                 "operationId": "pdf_api-get-pdf",
                 "summary": "Get the PDF file of a score for display",
@@ -5850,7 +5850,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/scores": {
+        "/ocs/v2.php/apps/choirscores/scores": {
             "get": {
                 "operationId": "score_api-get-scores",
                 "summary": "Return all available scores or a list of specific scores by IDs",
@@ -6331,7 +6331,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/scores/{id}": {
+        "/ocs/v2.php/apps/choirscores/scores/{id}": {
             "patch": {
                 "operationId": "score_api-patch-score",
                 "summary": "Update an existing score",
@@ -6839,7 +6839,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/scores/{id}/comments": {
+        "/ocs/v2.php/apps/choirscores/scores/{id}/comments": {
             "get": {
                 "operationId": "score_api-get-score-comments",
                 "summary": "Get all comments for a specific score",
@@ -7171,7 +7171,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/scores/{id}/foldercollections": {
+        "/ocs/v2.php/apps/choirscores/scores/{id}/foldercollections": {
             "get": {
                 "operationId": "score_api-get-score-folder-collections",
                 "summary": "Get all folder collections for a specific score",
@@ -7358,7 +7358,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/scorebooks": {
+        "/ocs/v2.php/apps/choirscores/scorebooks": {
             "get": {
                 "operationId": "score_book_api-get-score-books",
                 "summary": "Return all available score books",
@@ -7736,7 +7736,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/scorebooks/{id}": {
+        "/ocs/v2.php/apps/choirscores/scorebooks/{id}": {
             "get": {
                 "operationId": "score_book_api-get-score-book",
                 "summary": "Get a specific score book by ID",
@@ -8284,7 +8284,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/scorebooks/{id}/scores": {
+        "/ocs/v2.php/apps/choirscores/scorebooks/{id}/scores": {
             "get": {
                 "operationId": "score_book_api-get-score-book-scores",
                 "summary": "Get all scores in a score book",
@@ -8623,7 +8623,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/scorebooks/{id}/scores/batch": {
+        "/ocs/v2.php/apps/choirscores/scorebooks/{id}/scores/batch": {
             "post": {
                 "operationId": "score_book_api-post-score-book-scores-batch",
                 "summary": "Add multiple scores to a score book in one request",
@@ -8815,7 +8815,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/scorebooks/{id}/scores/{scoreId}": {
+        "/ocs/v2.php/apps/choirscores/scorebooks/{id}/scores/{scoreId}": {
             "delete": {
                 "operationId": "score_book_api-delete-score-book-score",
                 "summary": "Remove a score from a score book",
@@ -8981,7 +8981,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/scorebooks/{id}/foldercollections": {
+        "/ocs/v2.php/apps/choirscores/scorebooks/{id}/foldercollections": {
             "get": {
                 "operationId": "score_book_api-get-score-book-folder-collections",
                 "summary": "Get folder collections containing this score book",
@@ -9140,7 +9140,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/setlists": {
+        "/ocs/v2.php/apps/choirscores/setlists": {
             "get": {
                 "operationId": "setlist_api-get-setlists",
                 "summary": "Return all setlists with optional filtering",
@@ -9529,7 +9529,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/setlists/{id}": {
+        "/ocs/v2.php/apps/choirscores/setlists/{id}": {
             "get": {
                 "operationId": "setlist_api-get-setlist",
                 "summary": "Get a specific setlist by ID",
@@ -10056,7 +10056,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/setlists/{id}/clone": {
+        "/ocs/v2.php/apps/choirscores/setlists/{id}/clone": {
             "post": {
                 "operationId": "setlist_api-post-clone-setlist",
                 "summary": "Clone an existing setlist with a new title",
@@ -10231,7 +10231,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/setlists/{id}/entries": {
+        "/ocs/v2.php/apps/choirscores/setlists/{id}/entries": {
             "get": {
                 "operationId": "setlist_api-get-setlist-entries",
                 "summary": "Get all entries in a setlist",
@@ -10591,7 +10591,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/setlistentries/{id}": {
+        "/ocs/v2.php/apps/choirscores/setlistentries/{id}": {
             "get": {
                 "operationId": "setlist_entry_api-get-setlist-entry",
                 "summary": "Get a specific setlist entry by ID",
@@ -11101,7 +11101,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/setlistentries/batch": {
+        "/ocs/v2.php/apps/choirscores/setlistentries/batch": {
             "post": {
                 "operationId": "setlist_entry_api-post-setlist-entries-batch",
                 "summary": "Batch update multiple setlist entries",
@@ -11304,7 +11304,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/shares": {
+        "/ocs/v2.php/apps/choirscores/shares": {
             "get": {
                 "operationId": "share_api-get-shares",
                 "summary": "Get all shares of a score or folder collection",
@@ -11670,7 +11670,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/shares/all": {
+        "/ocs/v2.php/apps/choirscores/shares/all": {
             "get": {
                 "operationId": "share_api-get-all-shares",
                 "summary": "Get all shares",
@@ -11791,7 +11791,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/shares/{id}": {
+        "/ocs/v2.php/apps/choirscores/shares/{id}": {
             "delete": {
                 "operationId": "share_api-delete-share",
                 "summary": "Delete a share",
@@ -11946,7 +11946,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/shares/groups": {
+        "/ocs/v2.php/apps/choirscores/shares/groups": {
             "get": {
                 "operationId": "share_api-get-share-groups",
                 "summary": "Get the groups items can be shared with",
@@ -12067,7 +12067,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/shares/mine": {
+        "/ocs/v2.php/apps/choirscores/shares/mine": {
             "get": {
                 "operationId": "share_api-get-shared-with-me",
                 "summary": "Get the items shared with the groups of the current user",
@@ -12188,7 +12188,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/tags": {
+        "/ocs/v2.php/apps/choirscores/tags": {
             "get": {
                 "operationId": "tag_api-get-tags",
                 "summary": "Return all available tags",
@@ -12472,7 +12472,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/orchestrascoresmanager/settings/user/setlists": {
+        "/ocs/v2.php/apps/choirscores/settings/user/setlists": {
             "get": {
                 "operationId": "user_settings-get-setlist-settings",
                 "summary": "Get setlist settings for the authenticated user",

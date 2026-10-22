@@ -29,7 +29,7 @@ export const useSetlistsStore = defineStore('setlists', () => {
 
 		try {
 			// Try to load from initial state first
-			const initialData = loadState<Setlist[] | null>('orchestrascoresmanager', 'setlists', null)
+			const initialData = loadState<Setlist[] | null>('choirscores', 'setlists', null)
 			if (initialData && initialData.length > 0) {
 				setlists.value = initialData
 				isLoaded.value = true

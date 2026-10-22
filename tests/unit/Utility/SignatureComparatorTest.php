@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\unit\Utility;
+namespace OCA\ChoirScores\Tests\unit\Utility;
 
-use OCA\OrchestraScoresManager\Utility\SignatureComparator;
+use OCA\ChoirScores\Utility\SignatureComparator;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 

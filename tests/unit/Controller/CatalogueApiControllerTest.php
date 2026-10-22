@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\unit\Controller;
+namespace OCA\ChoirScores\Tests\unit\Controller;
 
-use OCA\OrchestraScoresManager\Controller\CatalogueApiController;
-use OCA\OrchestraScoresManager\Service\CatalogueService;
-use OCA\OrchestraScoresManager\Service\Exceptions\PermissionDeniedException;
+use OCA\ChoirScores\Controller\CatalogueApiController;
+use OCA\ChoirScores\Service\CatalogueService;
+use OCA\ChoirScores\Service\Exceptions\PermissionDeniedException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\OCS\OCSBadRequestException;
 use OCP\AppFramework\OCS\OCSForbiddenException;
@@ -26,7 +26,7 @@ final class CatalogueApiControllerTest extends TestCase {
 
 		$this->catalogueService = $this->createMock(CatalogueService::class);
 		$this->controller = new CatalogueApiController(
-			'orchestrascoresmanager',
+			'choirscores',
 			$this->createMock(IRequest::class),
 			$this->catalogueService,
 		);

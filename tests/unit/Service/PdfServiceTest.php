@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\unit\Service;
+namespace OCA\ChoirScores\Tests\unit\Service;
 
-use OCA\OrchestraScoresManager\Db\Score;
-use OCA\OrchestraScoresManager\Db\ScoreMapper;
-use OCA\OrchestraScoresManager\Policy\PolicyInterface;
-use OCA\OrchestraScoresManager\Policy\ScorePolicy;
-use OCA\OrchestraScoresManager\Service\AuthorizationService;
-use OCA\OrchestraScoresManager\Service\Exceptions\NotFoundException;
-use OCA\OrchestraScoresManager\Service\Exceptions\PermissionDeniedException;
-use OCA\OrchestraScoresManager\Service\PdfService;
-use OCA\OrchestraScoresManager\Service\PermissionService;
+use OCA\ChoirScores\Db\Score;
+use OCA\ChoirScores\Db\ScoreMapper;
+use OCA\ChoirScores\Policy\PolicyInterface;
+use OCA\ChoirScores\Policy\ScorePolicy;
+use OCA\ChoirScores\Service\AuthorizationService;
+use OCA\ChoirScores\Service\Exceptions\NotFoundException;
+use OCA\ChoirScores\Service\Exceptions\PermissionDeniedException;
+use OCA\ChoirScores\Service\PdfService;
+use OCA\ChoirScores\Service\PermissionService;
 use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
@@ -87,7 +87,7 @@ final class PdfServiceTest extends TestCase {
 		$l10n->method('t')->willReturnArgument(0);
 
 		return $this->createService(
-			new AuthorizationService($this->createMock(LoggerInterface::class), 'orchestrascoresmanager', $l10n),
+			new AuthorizationService($this->createMock(LoggerInterface::class), 'choirscores', $l10n),
 			new ScorePolicy($permissionService),
 		);
 	}

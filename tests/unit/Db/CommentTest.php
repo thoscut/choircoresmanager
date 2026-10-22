@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\unit\Db;
+namespace OCA\ChoirScores\Tests\unit\Db;
 
-use OCA\OrchestraScoresManager\Db\Comment;
+use OCA\ChoirScores\Db\Comment;
 use PHPUnit\Framework\TestCase;
 
 /**

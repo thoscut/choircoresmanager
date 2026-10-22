@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Service;
+namespace OCA\ChoirScores\Service;
 
-use OCA\OrchestraScoresManager\Db\Enum\PublicationStatus;
-use OCA\OrchestraScoresManager\Db\Enum\ShareTargetType;
-use OCA\OrchestraScoresManager\Db\Enum\ShareType;
-use OCA\OrchestraScoresManager\Db\FolderCollectionMapper;
-use OCA\OrchestraScoresManager\Db\Score;
-use OCA\OrchestraScoresManager\Db\ScoreBookScoreLinkMapper;
-use OCA\OrchestraScoresManager\Db\ScoreFolderCollectionLinkMapper;
-use OCA\OrchestraScoresManager\Db\ScoreMapper;
-use OCA\OrchestraScoresManager\Db\Share;
-use OCA\OrchestraScoresManager\Db\ShareMapper;
-use OCA\OrchestraScoresManager\ResponseDefinitions;
-use OCA\OrchestraScoresManager\Service\Exceptions\PermissionDeniedException;
+use OCA\ChoirScores\Db\Enum\PublicationStatus;
+use OCA\ChoirScores\Db\Enum\ShareTargetType;
+use OCA\ChoirScores\Db\Enum\ShareType;
+use OCA\ChoirScores\Db\FolderCollectionMapper;
+use OCA\ChoirScores\Db\Score;
+use OCA\ChoirScores\Db\ScoreBookScoreLinkMapper;
+use OCA\ChoirScores\Db\ScoreFolderCollectionLinkMapper;
+use OCA\ChoirScores\Db\ScoreMapper;
+use OCA\ChoirScores\Db\Share;
+use OCA\ChoirScores\Db\ShareMapper;
+use OCA\ChoirScores\ResponseDefinitions;
+use OCA\ChoirScores\Service\Exceptions\PermissionDeniedException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -36,9 +36,9 @@ use OCP\Security\ISecureRandom;
  * Like PublicScoreService, this service does not reuse the other services or
  * policies, which require a login.
  *
- * @psalm-import-type OrchestraScoresManagerShare from ResponseDefinitions
- * @psalm-import-type OrchestraScoresManagerShareGroup from ResponseDefinitions
- * @psalm-import-type OrchestraScoresManagerSharedTarget from ResponseDefinitions
+ * @psalm-import-type ChoirScoresShare from ResponseDefinitions
+ * @psalm-import-type ChoirScoresShareGroup from ResponseDefinitions
+ * @psalm-import-type ChoirScoresSharedTarget from ResponseDefinitions
  */
 class ShareService {
 	public const TOKEN_LENGTH = 32;
@@ -64,7 +64,7 @@ class ShareService {
 	/**
 	 * Get all shares of a score or folder collection. Editors only.
 	 *
-	 * @return list<OrchestraScoresManagerShare>
+	 * @return list<ChoirScoresShare>
 	 * @throws PermissionDeniedException
 	 * @throws \InvalidArgumentException if the target type is invalid
 	 * @throws Exception
@@ -78,7 +78,7 @@ class ShareService {
 	/**
 	 * Get all shares with the titles of the shared items. Editors only.
 	 *
-	 * @return list<OrchestraScoresManagerShare>
+	 * @return list<ChoirScoresShare>
 	 * @throws PermissionDeniedException
 	 * @throws Exception
 	 */
@@ -90,7 +90,7 @@ class ShareService {
 	/**
 	 * Create a link or group share. Editors only.
 	 *
-	 * @return OrchestraScoresManagerShare
+	 * @return ChoirScoresShare
 	 * @throws PermissionDeniedException
 	 * @throws \InvalidArgumentException if the input is invalid or the target does not exist
 	 * @throws Exception
@@ -151,7 +151,7 @@ class ShareService {
 	/**
 	 * List the groups a share can be created for. Editors only.
 	 *
-	 * @return list<OrchestraScoresManagerShareGroup>
+	 * @return list<ChoirScoresShareGroup>
 	 * @throws PermissionDeniedException
 	 */
 	public function getGroups(): array {
@@ -167,7 +167,7 @@ class ShareService {
 	/**
 	 * Get everything shared with the groups of the current user, with all scores.
 	 *
-	 * @return list<OrchestraScoresManagerSharedTarget>
+	 * @return list<ChoirScoresSharedTarget>
 	 * @throws PermissionDeniedException if nobody is logged in
 	 * @throws Exception
 	 */
@@ -198,7 +198,7 @@ class ShareService {
 	/**
 	 * Get a link share for anonymous visitors, with public scores only.
 	 *
-	 * @return OrchestraScoresManagerSharedTarget
+	 * @return ChoirScoresSharedTarget
 	 * @throws \InvalidArgumentException if the token is unknown or the target does not exist
 	 */
 	public function getLinkShare(string $token): array {
@@ -252,7 +252,7 @@ class ShareService {
 	 * Resolve a share to its title and scores.
 	 *
 	 * @param bool $publicOnly Only include scores that may be shown publicly (for link shares)
-	 * @return OrchestraScoresManagerSharedTarget
+	 * @return ChoirScoresSharedTarget
 	 * @throws \InvalidArgumentException if the target does not exist
 	 */
 	private function resolveShare(Share $share, bool $publicOnly): array {
@@ -389,7 +389,7 @@ class ShareService {
 	}
 
 	/**
-	 * @return OrchestraScoresManagerShare
+	 * @return ChoirScoresShare
 	 */
 	private function serializeShare(Share $share): array {
 		$groupId = $share->getGroupId();

@@ -1,11 +1,14 @@
-# Orchestra Scores Manager
+# Choir Scores
 
 > ⚠️ **Early Development**: This app is in an early development phase. Expect rough edges and breaking changes.
 
 A [Nextcloud](https://nextcloud.com) app to manage an orchestra's sheet music database directly within your Nextcloud
 instance.
 
-Source code, issue tracker and releases: https://github.com/Bibo-Joshi/orchestrascoresmanager
+Source code, issue tracker and releases: https://github.com/thoscut/choircoresmanager
+
+Choir Scores is a fork of [Orchestra Scores Manager](https://github.com/Bibo-Joshi/orchestrascoresmanager)
+by Hinrich Mahler, licensed under AGPL-3.0-or-later.
 
 ## Features
 

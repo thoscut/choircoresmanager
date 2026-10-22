@@ -2,24 +2,24 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Service;
+namespace OCA\ChoirScores\Service;
 
-use OCA\OrchestraScoresManager\Db\Enum\FolderCollectionType;
-use OCA\OrchestraScoresManager\Db\Enum\ShareTargetType;
-use OCA\OrchestraScoresManager\Db\FolderCollection;
-use OCA\OrchestraScoresManager\Db\FolderCollectionMapper;
-use OCA\OrchestraScoresManager\Db\FolderCollectionVersion;
-use OCA\OrchestraScoresManager\Db\FolderCollectionVersionMapper;
-use OCA\OrchestraScoresManager\Db\ScoreBookMapper;
-use OCA\OrchestraScoresManager\Db\ScoreBookScoreLinkMapper;
-use OCA\OrchestraScoresManager\Db\ScoreFolderCollectionLinkMapper;
-use OCA\OrchestraScoresManager\Db\ScoreMapper;
-use OCA\OrchestraScoresManager\Db\ShareMapper;
-use OCA\OrchestraScoresManager\Policy\FolderCollectionPolicy;
-use OCA\OrchestraScoresManager\Policy\FolderCollectionVersionPolicy;
-use OCA\OrchestraScoresManager\Policy\PolicyInterface;
-use OCA\OrchestraScoresManager\Service\Exceptions\NotFoundException;
-use OCA\OrchestraScoresManager\Utility\DateTimeHelper;
+use OCA\ChoirScores\Db\Enum\FolderCollectionType;
+use OCA\ChoirScores\Db\Enum\ShareTargetType;
+use OCA\ChoirScores\Db\FolderCollection;
+use OCA\ChoirScores\Db\FolderCollectionMapper;
+use OCA\ChoirScores\Db\FolderCollectionVersion;
+use OCA\ChoirScores\Db\FolderCollectionVersionMapper;
+use OCA\ChoirScores\Db\ScoreBookMapper;
+use OCA\ChoirScores\Db\ScoreBookScoreLinkMapper;
+use OCA\ChoirScores\Db\ScoreFolderCollectionLinkMapper;
+use OCA\ChoirScores\Db\ScoreMapper;
+use OCA\ChoirScores\Db\ShareMapper;
+use OCA\ChoirScores\Policy\FolderCollectionPolicy;
+use OCA\ChoirScores\Policy\FolderCollectionVersionPolicy;
+use OCA\ChoirScores\Policy\PolicyInterface;
+use OCA\ChoirScores\Service\Exceptions\NotFoundException;
+use OCA\ChoirScores\Utility\DateTimeHelper;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\AppFramework\Db\TTransactional;

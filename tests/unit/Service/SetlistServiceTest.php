@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\unit\Service;
+namespace OCA\ChoirScores\Tests\unit\Service;
 
-use OCA\OrchestraScoresManager\Db\FolderCollection;
-use OCA\OrchestraScoresManager\Db\Setlist;
-use OCA\OrchestraScoresManager\Db\SetlistEntry;
-use OCA\OrchestraScoresManager\Db\SetlistEntryMapper;
-use OCA\OrchestraScoresManager\Db\SetlistMapper;
-use OCA\OrchestraScoresManager\Policy\PolicyInterface;
-use OCA\OrchestraScoresManager\Policy\SetlistPolicy;
-use OCA\OrchestraScoresManager\Service\AuthorizationService;
-use OCA\OrchestraScoresManager\Service\FolderCollectionService;
-use OCA\OrchestraScoresManager\Service\SetlistService;
-use OCA\OrchestraScoresManager\Service\UserSettingsService;
-use OCA\OrchestraScoresManager\Utility\SetlistValidationHelper;
+use OCA\ChoirScores\Db\FolderCollection;
+use OCA\ChoirScores\Db\Setlist;
+use OCA\ChoirScores\Db\SetlistEntry;
+use OCA\ChoirScores\Db\SetlistEntryMapper;
+use OCA\ChoirScores\Db\SetlistMapper;
+use OCA\ChoirScores\Policy\PolicyInterface;
+use OCA\ChoirScores\Policy\SetlistPolicy;
+use OCA\ChoirScores\Service\AuthorizationService;
+use OCA\ChoirScores\Service\FolderCollectionService;
+use OCA\ChoirScores\Service\SetlistService;
+use OCA\ChoirScores\Service\UserSettingsService;
+use OCA\ChoirScores\Utility\SetlistValidationHelper;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\IDBConnection;
 use OCP\IL10N;

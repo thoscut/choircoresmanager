@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Db;
+namespace OCA\ChoirScores\Db;
 
 use JsonSerializable;
 use OCP\AppFramework\Db\Entity;

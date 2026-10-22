@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\unit\Controller;
+namespace OCA\ChoirScores\Tests\unit\Controller;
 
-use OCA\OrchestraScoresManager\Controller\SetlistEntryApiController;
-use OCA\OrchestraScoresManager\Db\SetlistEntry;
-use OCA\OrchestraScoresManager\Service\SetlistEntryService;
+use OCA\ChoirScores\Controller\SetlistEntryApiController;
+use OCA\ChoirScores\Db\SetlistEntry;
+use OCA\ChoirScores\Service\SetlistEntryService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IRequest;
@@ -27,7 +27,7 @@ final class SetlistEntryApiControllerTest extends TestCase {
 		$this->request = $this->createMock(IRequest::class);
 
 		$this->controller = new SetlistEntryApiController(
-			'orchestrascoresmanager',
+			'choirscores',
 			$this->request,
 			$this->setlistEntryService
 		);

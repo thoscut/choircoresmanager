@@ -1,5 +1,5 @@
 <template>
-	<NcContent appName="orchestrascoresmanager">
+	<NcContent appName="choirscores">
 		<Navigation />
 
 		<NcAppContent>
@@ -44,7 +44,7 @@ interface Props {
 
 // Compute display title from prop or fallback to app name
 const displayTitle = computed((): string => {
-	return props.title || 'Orchestra Scores Manager'
+	return props.title || 'Choir Scores'
 })
 
 const fontSize = computed(() => {

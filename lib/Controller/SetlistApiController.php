@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Controller;
+namespace OCA\ChoirScores\Controller;
 
-use OCA\OrchestraScoresManager\Db\Setlist;
-use OCA\OrchestraScoresManager\Db\SetlistEntry;
-use OCA\OrchestraScoresManager\ResponseDefinitions;
-use OCA\OrchestraScoresManager\Service\SetlistService;
+use OCA\ChoirScores\Db\Setlist;
+use OCA\ChoirScores\Db\SetlistEntry;
+use OCA\ChoirScores\ResponseDefinitions;
+use OCA\ChoirScores\Service\SetlistService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -19,8 +19,8 @@ use OCP\AppFramework\OCSController;
 use OCP\IRequest;
 
 /**
- * @psalm-import-type OrchestraScoresManagerSetlist from ResponseDefinitions
- * @psalm-import-type OrchestraScoresManagerSetlistEntry from ResponseDefinitions
+ * @psalm-import-type ChoirScoresSetlist from ResponseDefinitions
+ * @psalm-import-type ChoirScoresSetlistEntry from ResponseDefinitions
  * @psalm-suppress UnusedClass - Controller discovered by Nextcloud framework
  */
 #[OpenAPI(scope: OpenAPI::SCOPE_DEFAULT)]
@@ -42,7 +42,7 @@ class SetlistApiController extends OCSController {
 	 * @param bool|null $isDraft Filter by draft status
 	 * @param bool|null $isPublished Filter by published status
 	 *
-	 * @return DataResponse<Http::STATUS_OK, list<OrchestraScoresManagerSetlist>, array{}> the list of setlists
+	 * @return DataResponse<Http::STATUS_OK, list<ChoirScoresSetlist>, array{}> the list of setlists
 	 *
 	 * 200: Successful response with the list of setlists
 	 * @throws OCSBadRequestException Invalid request parameters
@@ -60,7 +60,7 @@ class SetlistApiController extends OCSController {
 	 *
 	 * @param int $id The ID of the setlist
 	 *
-	 * @return DataResponse<Http::STATUS_OK, OrchestraScoresManagerSetlist, array{}> the setlist
+	 * @return DataResponse<Http::STATUS_OK, ChoirScoresSetlist, array{}> the setlist
 	 *
 	 * 200: Successful response with the setlist
 	 * @throws OCSBadRequestException Invalid request parameters
@@ -85,7 +85,7 @@ class SetlistApiController extends OCSController {
 	 * @param bool $isDraft Whether the setlist is a draft
 	 * @param bool $isPublished Whether the setlist is published
 	 *
-	 * @return DataResponse<Http::STATUS_CREATED, OrchestraScoresManagerSetlist, array{}> the created setlist
+	 * @return DataResponse<Http::STATUS_CREATED, ChoirScoresSetlist, array{}> the created setlist
 	 *
 	 * 201: Successful creation of the setlist
 	 * @throws OCSBadRequestException Invalid request parameters
@@ -136,7 +136,7 @@ class SetlistApiController extends OCSController {
 	 * @param bool|null $isDraft Whether the setlist is a draft
 	 * @param bool|null $isPublished Whether the setlist is published
 	 *
-	 * @return DataResponse<Http::STATUS_OK, OrchestraScoresManagerSetlist, array{}> the updated setlist
+	 * @return DataResponse<Http::STATUS_OK, ChoirScoresSetlist, array{}> the updated setlist
 	 *
 	 * 200: Successful update of the setlist
 	 * @throws OCSBadRequestException Invalid request parameters
@@ -189,7 +189,7 @@ class SetlistApiController extends OCSController {
 	 * @param int $id The ID of the setlist to clone
 	 * @param string $title The title for the cloned setlist
 	 *
-	 * @return DataResponse<Http::STATUS_CREATED, OrchestraScoresManagerSetlist, array{}> the cloned setlist
+	 * @return DataResponse<Http::STATUS_CREATED, ChoirScoresSetlist, array{}> the cloned setlist
 	 *
 	 * 201: Successful cloning of the setlist
 	 * @throws OCSBadRequestException Invalid request parameters
@@ -225,7 +225,7 @@ class SetlistApiController extends OCSController {
 	 *
 	 * @param int $id The ID of the setlist
 	 *
-	 * @return DataResponse<Http::STATUS_OK, list<OrchestraScoresManagerSetlistEntry>, array{}> the list of entries
+	 * @return DataResponse<Http::STATUS_OK, list<ChoirScoresSetlistEntry>, array{}> the list of entries
 	 *
 	 * 200: Successful response with the list of entries
 	 * @throws OCSBadRequestException Invalid request parameters
@@ -248,7 +248,7 @@ class SetlistApiController extends OCSController {
 	 * @param int|null $breakDuration Break duration in seconds (for break entries)
 	 * @param int|null $scoreId The ID of the score (for score entries)
 	 *
-	 * @return DataResponse<Http::STATUS_CREATED, OrchestraScoresManagerSetlistEntry, array{}> the created entry
+	 * @return DataResponse<Http::STATUS_CREATED, ChoirScoresSetlistEntry, array{}> the created entry
 	 *
 	 * 201: Successfully created setlist entry
 	 * @throws OCSBadRequestException Invalid request parameters

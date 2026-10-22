@@ -1,13 +1,13 @@
 <?php
 
-namespace OCA\OrchestraScoresManager;
+namespace OCA\ChoirScores;
 
 /**
- * @psalm-type OrchestraScoresManagerScoreBookInfo = array{
+ * @psalm-type ChoirScoresScoreBookInfo = array{
  *     id: int,
  *     index: int
  * }
- * @psalm-type OrchestraScoresManagerScore = array{
+ * @psalm-type ChoirScoresScore = array{
  *     id: int,
  *     title: string,
  *     titleShort: string|null,
@@ -43,10 +43,10 @@ namespace OCA\OrchestraScoresManager;
  *     pdfFileId: int|null,
  *     updatedAt: string|null,
  *     tags: list<string>|null,
- *     scoreBook: OrchestraScoresManagerScoreBookInfo|null,
+ *     scoreBook: ChoirScoresScoreBookInfo|null,
  *     viaScoreBook?: true
  * }
- * @psalm-type OrchestraScoresManagerScoreIndexed = array{
+ * @psalm-type ChoirScoresScoreIndexed = array{
  *     id: int,
  *     title: string,
  *     titleShort: string|null,
@@ -82,11 +82,11 @@ namespace OCA\OrchestraScoresManager;
  *     pdfFileId: int|null,
  *     updatedAt: string|null,
  *     tags: list<string>|null,
- *     scoreBook: OrchestraScoresManagerScoreBookInfo|null,
+ *     scoreBook: ChoirScoresScoreBookInfo|null,
  *     viaScoreBook?: true,
  *     index: int
  * }
- * @psalm-type OrchestraScoresManagerScoreBook = array{
+ * @psalm-type ChoirScoresScoreBook = array{
  *     id: int,
  *     title: string,
  *     titleShort: string|null,
@@ -101,7 +101,7 @@ namespace OCA\OrchestraScoresManager;
  *     tags: list<string>|null,
  *     scoreCount: int
  * }
- * @psalm-type OrchestraScoresManagerScoreBookIndexed = array{
+ * @psalm-type ChoirScoresScoreBookIndexed = array{
  *     id: int,
  *     title: string,
  *     titleShort: string|null,
@@ -117,28 +117,28 @@ namespace OCA\OrchestraScoresManager;
  *     scoreCount: int,
  *     index: int
  * }
- * @psalm-type OrchestraScoresManagerTag = array{
+ * @psalm-type ChoirScoresTag = array{
  *     id: int,
  *     name: string
  * }
- * @psalm-type OrchestraScoresManagerCommentAuthor = array{
+ * @psalm-type ChoirScoresCommentAuthor = array{
  *     userId: string,
  *     displayName: string|null
  * }
- * @psalm-type OrchestraScoresManagerComment = array{
+ * @psalm-type ChoirScoresComment = array{
  *     id: int,
  *     content: string,
  *     creationDate: int,
- *     author: OrchestraScoresManagerCommentAuthor,
+ *     author: ChoirScoresCommentAuthor,
  *     scoreId: int
  * }
- * @psalm-type OrchestraScoresManagerFolderCollectionVersion = array{
+ * @psalm-type ChoirScoresFolderCollectionVersion = array{
  *     id: int,
  *     folderCollectionId: int,
  *     validFrom: string,
  *     validTo: string|null
  * }
- * @psalm-type OrchestraScoresManagerFolderCollection = array{
+ * @psalm-type ChoirScoresFolderCollection = array{
  *     id: int,
  *     title: string,
  *     description: string|null,
@@ -146,18 +146,18 @@ namespace OCA\OrchestraScoresManager;
  *     activeVersionId: int|null,
  *     scoreCount: int
  * }
- * @psalm-type OrchestraScoresManagerFolderCollectionScore = array{
- *     folderCollection: OrchestraScoresManagerFolderCollection,
- *     version: OrchestraScoresManagerFolderCollectionVersion,
+ * @psalm-type ChoirScoresFolderCollectionScore = array{
+ *     folderCollection: ChoirScoresFolderCollection,
+ *     version: ChoirScoresFolderCollectionVersion,
  *     index: int|null,
  *     viaScoreBookId: int|null
  * }
- * @psalm-type OrchestraScoresManagerFolderCollectionScoreBook = array{
- *     folderCollection: OrchestraScoresManagerFolderCollection,
- *     version: OrchestraScoresManagerFolderCollectionVersion,
+ * @psalm-type ChoirScoresFolderCollectionScoreBook = array{
+ *     folderCollection: ChoirScoresFolderCollection,
+ *     version: ChoirScoresFolderCollectionVersion,
  *     index: int|null
  * }
- * @psalm-type OrchestraScoresManagerSetlist = array{
+ * @psalm-type ChoirScoresSetlist = array{
  *     id: int,
  *     title: string,
  *     description: string|null,
@@ -168,7 +168,7 @@ namespace OCA\OrchestraScoresManager;
  *     isDraft: bool,
  *     isPublished: bool
  * }
- * @psalm-type OrchestraScoresManagerSetlistEntry = array{
+ * @psalm-type ChoirScoresSetlistEntry = array{
  *     id: int,
  *     setlistId: int,
  *     index: int,
@@ -177,46 +177,46 @@ namespace OCA\OrchestraScoresManager;
  *     breakDuration: int|null,
  *     scoreId: int|null
  * }
- * @psalm-type OrchestraScoresManagerUserSetlistSettings = array{
+ * @psalm-type ChoirScoresUserSetlistSettings = array{
  *     defaultModerationTime: int|null,
  *     defaultFolderCollectionId: int|null
  * }
- * @psalm-type OrchestraScoresManagerCatalogueChange = array{
+ * @psalm-type ChoirScoresCatalogueChange = array{
  *     column: string,
  *     old: string,
  *     new: string
  * }
- * @psalm-type OrchestraScoresManagerCatalogueImportRow = array{
+ * @psalm-type ChoirScoresCatalogueImportRow = array{
  *     line: int,
  *     signature: string,
  *     title: string,
  *     status: 'new'|'changed'|'error',
  *     scoreId: int|null,
- *     changes: list<OrchestraScoresManagerCatalogueChange>,
+ *     changes: list<ChoirScoresCatalogueChange>,
  *     errors: list<string>
  * }
- * @psalm-type OrchestraScoresManagerCatalogueImportCounts = array{
+ * @psalm-type ChoirScoresCatalogueImportCounts = array{
  *     new: int,
  *     changed: int,
  *     unchanged: int,
  *     errors: int
  * }
- * @psalm-type OrchestraScoresManagerCatalogueImportResult = array{
+ * @psalm-type ChoirScoresCatalogueImportResult = array{
  *     dryRun: bool,
- *     counts: OrchestraScoresManagerCatalogueImportCounts,
+ *     counts: ChoirScoresCatalogueImportCounts,
  *     mappedColumns: list<string>,
  *     extraColumns: list<string>,
- *     rows: list<OrchestraScoresManagerCatalogueImportRow>
+ *     rows: list<ChoirScoresCatalogueImportRow>
  * }
- * @psalm-type OrchestraScoresManagerCatalogueExport = array{
+ * @psalm-type ChoirScoresCatalogueExport = array{
  *     fileName: string,
  *     content: string
  * }
- * @psalm-type OrchestraScoresManagerCatalogueValue = array{
+ * @psalm-type ChoirScoresCatalogueValue = array{
  *     column: string,
  *     value: string
  * }
- * @psalm-type OrchestraScoresManagerShare = array{
+ * @psalm-type ChoirScoresShare = array{
  *     id: int,
  *     shareType: 'link'|'group',
  *     targetType: 'score'|'folder_collection',
@@ -229,11 +229,11 @@ namespace OCA\OrchestraScoresManager;
  *     createdBy: string,
  *     createdAt: int
  * }
- * @psalm-type OrchestraScoresManagerShareGroup = array{
+ * @psalm-type ChoirScoresShareGroup = array{
  *     id: string,
  *     displayName: string
  * }
- * @psalm-type OrchestraScoresManagerSharedScore = array{
+ * @psalm-type ChoirScoresSharedScore = array{
  *     id: int,
  *     title: string,
  *     composer: string|null,
@@ -244,13 +244,13 @@ namespace OCA\OrchestraScoresManager;
  *     hasMusicXml: bool,
  *     hasPdf: bool
  * }
- * @psalm-type OrchestraScoresManagerSharedTarget = array{
+ * @psalm-type ChoirScoresSharedTarget = array{
  *     shareId: int,
  *     targetType: 'score'|'folder_collection',
  *     targetId: int,
  *     title: string,
  *     description: string|null,
- *     scores: list<OrchestraScoresManagerSharedScore>
+ *     scores: list<ChoirScoresSharedScore>
  * }
  * @psalm-suppress UnusedClass - Used for OpenAPI response type definitions
  */

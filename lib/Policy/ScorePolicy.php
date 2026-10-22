@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Policy;
+namespace OCA\ChoirScores\Policy;
 
-use OCA\OrchestraScoresManager\Db\Enum\PublicationStatus;
-use OCA\OrchestraScoresManager\Db\Score;
-use OCA\OrchestraScoresManager\Service\PermissionService;
+use OCA\ChoirScores\Db\Enum\PublicationStatus;
+use OCA\ChoirScores\Db\Score;
+use OCA\ChoirScores\Service\PermissionService;
 
 class ScorePolicy implements PolicyInterface {
 	/**

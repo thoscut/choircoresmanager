@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Controller;
+namespace OCA\ChoirScores\Controller;
 
-use OCA\OrchestraScoresManager\Db\Comment;
-use OCA\OrchestraScoresManager\Db\Enum\PublicationStatus;
-use OCA\OrchestraScoresManager\Db\Enum\RightsStatus;
-use OCA\OrchestraScoresManager\Db\Score;
-use OCA\OrchestraScoresManager\Db\ScoreMapper;
-use OCA\OrchestraScoresManager\Db\ScoreTagLinkMapper;
-use OCA\OrchestraScoresManager\Db\TagMapper;
-use OCA\OrchestraScoresManager\ResponseDefinitions;
-use OCA\OrchestraScoresManager\Service\CommentService;
-use OCA\OrchestraScoresManager\Service\FolderCollectionService;
-use OCA\OrchestraScoresManager\Service\ScoreService;
+use OCA\ChoirScores\Db\Comment;
+use OCA\ChoirScores\Db\Enum\PublicationStatus;
+use OCA\ChoirScores\Db\Enum\RightsStatus;
+use OCA\ChoirScores\Db\Score;
+use OCA\ChoirScores\Db\ScoreMapper;
+use OCA\ChoirScores\Db\ScoreTagLinkMapper;
+use OCA\ChoirScores\Db\TagMapper;
+use OCA\ChoirScores\ResponseDefinitions;
+use OCA\ChoirScores\Service\CommentService;
+use OCA\ChoirScores\Service\FolderCollectionService;
+use OCA\ChoirScores\Service\ScoreService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -28,10 +28,10 @@ use OCP\DB\Exception;
 use OCP\IRequest;
 
 /**
- * @psalm-import-type OrchestraScoresManagerScore from ResponseDefinitions
- * @psalm-import-type OrchestraScoresManagerComment from ResponseDefinitions
- * @psalm-import-type OrchestraScoresManagerFolderCollection from ResponseDefinitions
- * @psalm-import-type OrchestraScoresManagerFolderCollectionScore from ResponseDefinitions
+ * @psalm-import-type ChoirScoresScore from ResponseDefinitions
+ * @psalm-import-type ChoirScoresComment from ResponseDefinitions
+ * @psalm-import-type ChoirScoresFolderCollection from ResponseDefinitions
+ * @psalm-import-type ChoirScoresFolderCollectionScore from ResponseDefinitions
  * @psalm-suppress UnusedClass - Controller discovered by NextCloud framework
  */
 #[OpenAPI(scope: OpenAPI::SCOPE_DEFAULT)]
@@ -58,7 +58,7 @@ class ScoreApiController extends OCSController {
 	 * Return all available scores or a list of specific scores by IDs
 	 *
 	 * @param list<int>|null $ids Optional list of score IDs to fetch
-	 * @return DataResponse<Http::STATUS_OK, list<OrchestraScoresManagerScore>, array{}> the list of scores
+	 * @return DataResponse<Http::STATUS_OK, list<ChoirScoresScore>, array{}> the list of scores
 	 *
 	 * 200: Successful response with the list of scores
 	 * @throws OCSBadRequestException Invalid request parameters
@@ -106,7 +106,7 @@ class ScoreApiController extends OCSController {
 	 * @param list<int>|null $tagIds optional list of tag ids to link
 	 * @param array{id: int, index: int}|null $scoreBook Score book info with id and index (both required)
 	 *
-	 * @return DataResponse<Http::STATUS_CREATED, OrchestraScoresManagerScore, array{}> the created score
+	 * @return DataResponse<Http::STATUS_CREATED, ChoirScoresScore, array{}> the created score
 	 *
 	 * 201: Successful creation of the score
 	 *
@@ -221,7 +221,7 @@ class ScoreApiController extends OCSController {
 	 * @param list<int>|null $tagIds optional list of tag ids to link
 	 * @param array{id?: int, index?: int}|null $scoreBook Score book info (id and/or index). Set id to null to remove from book.
 	 *
-	 * @return DataResponse<Http::STATUS_OK, OrchestraScoresManagerScore, array{}> the updated score
+	 * @return DataResponse<Http::STATUS_OK, ChoirScoresScore, array{}> the updated score
 	 *
 	 * @throws OCSBadRequestException If the input is invalid
 	 * @throws OCSNotFoundException If the score is not found
@@ -364,7 +364,7 @@ class ScoreApiController extends OCSController {
 	 *
 	 * @param int $id The ID of the score
 	 *
-	 * @return DataResponse<Http::STATUS_OK, list<OrchestraScoresManagerComment>, array{}> the list of comments
+	 * @return DataResponse<Http::STATUS_OK, list<ChoirScoresComment>, array{}> the list of comments
 	 *
 	 * 200: Successful response with the list of comments
 	 * 400: Bad request
@@ -385,7 +385,7 @@ class ScoreApiController extends OCSController {
 	 * @param int $id The ID of the score
 	 * @param string $content The content of the comment
 	 *
-	 * @return DataResponse<Http::STATUS_CREATED, OrchestraScoresManagerComment, array{}> the created comment
+	 * @return DataResponse<Http::STATUS_CREATED, ChoirScoresComment, array{}> the created comment
 	 *
 	 * 201: Successful creation of the comment
 	 * 400: Bad request
@@ -411,7 +411,7 @@ class ScoreApiController extends OCSController {
 	 *
 	 * @param int $id The ID of the score
 	 *
-	 * @return DataResponse<Http::STATUS_OK, list<OrchestraScoresManagerFolderCollectionScore>, array{}> the list of folder collection information
+	 * @return DataResponse<Http::STATUS_OK, list<ChoirScoresFolderCollectionScore>, array{}> the list of folder collection information
 	 *
 	 * 200: Successful response with the list of folder collections
 	 * 400: Bad request

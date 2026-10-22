@@ -4,4 +4,4 @@ import PublicApp from './public/PublicApp.vue'
 import './types/nextcloud.d.ts'
 
 const app = createApp(PublicApp)
-app.mount('#orchestrascoresmanager-public')
+app.mount('#choirscores-public')

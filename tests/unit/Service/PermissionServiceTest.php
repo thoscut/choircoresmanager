@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\unit\Service;
+namespace OCA\ChoirScores\Tests\unit\Service;
 
-use OCA\OrchestraScoresManager\Service\ConfigService;
-use OCA\OrchestraScoresManager\Service\PermissionService;
+use OCA\ChoirScores\Service\ConfigService;
+use OCA\ChoirScores\Service\PermissionService;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IUser;

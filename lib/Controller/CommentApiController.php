@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Controller;
+namespace OCA\ChoirScores\Controller;
 
-use OCA\OrchestraScoresManager\ResponseDefinitions;
-use OCA\OrchestraScoresManager\Service\CommentService;
+use OCA\ChoirScores\ResponseDefinitions;
+use OCA\ChoirScores\Service\CommentService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -18,7 +18,7 @@ use OCP\AppFramework\OCSController;
 use OCP\IRequest;
 
 /**
- * @psalm-import-type OrchestraScoresManagerComment from ResponseDefinitions
+ * @psalm-import-type ChoirScoresComment from ResponseDefinitions
  * @psalm-suppress UnusedClass - Controller discovered by NextCloud framework
  */
 #[OpenAPI(scope: OpenAPI::SCOPE_DEFAULT)]
@@ -38,7 +38,7 @@ class CommentApiController extends OCSController {
 	 *
 	 * @param int $id The ID of the comment
 	 *
-	 * @return DataResponse<Http::STATUS_OK, OrchestraScoresManagerComment, array{}> the comment
+	 * @return DataResponse<Http::STATUS_OK, ChoirScoresComment, array{}> the comment
 	 *
 	 * 200: Successful response with the comment
 	 * 400: Bad request

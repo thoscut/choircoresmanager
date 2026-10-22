@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\integration\Service;
+namespace OCA\ChoirScores\Tests\integration\Service;
 
-use OCA\OrchestraScoresManager\Db\ScoreBookScoreLinkMapper;
-use OCA\OrchestraScoresManager\Db\ScoreMapper;
-use OCA\OrchestraScoresManager\Db\ScoreTagLinkMapper;
-use OCA\OrchestraScoresManager\Db\TagMapper;
-use OCA\OrchestraScoresManager\Policy\ScorePolicy;
-use OCA\OrchestraScoresManager\Service\AuthorizationService;
-use OCA\OrchestraScoresManager\Service\Catalogue\CatalogueCsv;
-use OCA\OrchestraScoresManager\Service\CatalogueService;
-use OCA\OrchestraScoresManager\Service\ConfigService;
-use OCA\OrchestraScoresManager\Service\RepertoireClassifier;
-use OCA\OrchestraScoresManager\Tests\integration\Db\MapperTestCase;
+use OCA\ChoirScores\Db\ScoreBookScoreLinkMapper;
+use OCA\ChoirScores\Db\ScoreMapper;
+use OCA\ChoirScores\Db\ScoreTagLinkMapper;
+use OCA\ChoirScores\Db\TagMapper;
+use OCA\ChoirScores\Policy\ScorePolicy;
+use OCA\ChoirScores\Service\AuthorizationService;
+use OCA\ChoirScores\Service\Catalogue\CatalogueCsv;
+use OCA\ChoirScores\Service\CatalogueService;
+use OCA\ChoirScores\Service\ConfigService;
+use OCA\ChoirScores\Service\RepertoireClassifier;
+use OCA\ChoirScores\Tests\integration\Db\MapperTestCase;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IL10N;
 

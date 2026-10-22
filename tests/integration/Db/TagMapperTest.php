@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\integration\Db;
+namespace OCA\ChoirScores\Tests\integration\Db;
 
-use OCA\OrchestraScoresManager\Db\Tag;
-use OCA\OrchestraScoresManager\Db\TagMapper;
+use OCA\ChoirScores\Db\Tag;
+use OCA\ChoirScores\Db\TagMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use PHPUnit\Framework\Attributes\DataProvider;

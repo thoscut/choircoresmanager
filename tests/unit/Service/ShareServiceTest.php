@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\unit\Service;
+namespace OCA\ChoirScores\Tests\unit\Service;
 
-use OCA\OrchestraScoresManager\Db\FolderCollection;
-use OCA\OrchestraScoresManager\Db\FolderCollectionMapper;
-use OCA\OrchestraScoresManager\Db\Score;
-use OCA\OrchestraScoresManager\Db\ScoreBookScoreLinkMapper;
-use OCA\OrchestraScoresManager\Db\ScoreFolderCollectionLinkMapper;
-use OCA\OrchestraScoresManager\Db\ScoreMapper;
-use OCA\OrchestraScoresManager\Db\Share;
-use OCA\OrchestraScoresManager\Db\ShareMapper;
-use OCA\OrchestraScoresManager\Service\Exceptions\PermissionDeniedException;
-use OCA\OrchestraScoresManager\Service\MusicXmlService;
-use OCA\OrchestraScoresManager\Service\PdfService;
-use OCA\OrchestraScoresManager\Service\PermissionService;
-use OCA\OrchestraScoresManager\Service\ShareService;
+use OCA\ChoirScores\Db\FolderCollection;
+use OCA\ChoirScores\Db\FolderCollectionMapper;
+use OCA\ChoirScores\Db\Score;
+use OCA\ChoirScores\Db\ScoreBookScoreLinkMapper;
+use OCA\ChoirScores\Db\ScoreFolderCollectionLinkMapper;
+use OCA\ChoirScores\Db\ScoreMapper;
+use OCA\ChoirScores\Db\Share;
+use OCA\ChoirScores\Db\ShareMapper;
+use OCA\ChoirScores\Service\Exceptions\PermissionDeniedException;
+use OCA\ChoirScores\Service\MusicXmlService;
+use OCA\ChoirScores\Service\PdfService;
+use OCA\ChoirScores\Service\PermissionService;
+use OCA\ChoirScores\Service\ShareService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IGroupManager;

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\unit\Service;
+namespace OCA\ChoirScores\Tests\unit\Service;
 
-use OCA\OrchestraScoresManager\Service\UserSettingsService;
+use OCA\ChoirScores\Service\UserSettingsService;
 use OCP\Config\IUserConfig;
 use PHPUnit\Framework\TestCase;
 
@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 final class UserSettingsServiceTest extends TestCase {
 	private IUserConfig $userConfig;
 	private UserSettingsService $service;
-	private const APP_NAME = 'orchestrascoresmanager';
+	private const APP_NAME = 'choirscores';
 	private const USER_ID = 'testuser';
 
 	protected function setUp(): void {

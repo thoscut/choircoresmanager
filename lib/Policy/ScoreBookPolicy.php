@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Policy;
+namespace OCA\ChoirScores\Policy;
 
-use OCA\OrchestraScoresManager\Service\PermissionService;
+use OCA\ChoirScores\Service\PermissionService;
 
 /**
  * Policy for ScoreBook authorization.

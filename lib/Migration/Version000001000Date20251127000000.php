@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Migration;
+namespace OCA\ChoirScores\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -11,18 +11,18 @@ use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
 /**
- * Initial migration that creates all tables for Orchestra Scores Manager.
+ * Initial migration that creates all tables for Choir Scores.
  *
  * Tables created:
- * - osm_scores: Main scores table
- * - osm_tags: Tags for categorization
- * - osm_scores_tags: Linking table between scores and tags
- * - osm_comments: Comments on scores
- * - osm_folder_collections: Folder collections for organizing scores
- * - osm_scores_fc: Linking table between scores/score books and folder collections
- * - osm_score_books: Score books containing multiple scores
- * - osm_score_book_scores: Linking table between score books and scores
- * - osm_scorebooks_tags: Linking table between score books and tags
+ * - chs_scores: Main scores table
+ * - chs_tags: Tags for categorization
+ * - chs_scores_tags: Linking table between scores and tags
+ * - chs_comments: Comments on scores
+ * - chs_folder_collections: Folder collections for organizing scores
+ * - chs_scores_fc: Linking table between scores/score books and folder collections
+ * - chs_score_books: Score books containing multiple scores
+ * - chs_score_book_scores: Linking table between score books and scores
+ * - chs_scorebooks_tags: Linking table between score books and tags
  *
  * @psalm-suppress UnusedClass - Migration class discovered by NextCloud framework
  */
@@ -34,9 +34,9 @@ class Version000001000Date20251127000000 extends SimpleMigrationStep {
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		$schema = $schemaClosure();
 
-		// Create osm_scores table
-		if (!$schema->hasTable('osm_scores')) {
-			$table = $schema->createTable('osm_scores');
+		// Create chs_scores table
+		if (!$schema->hasTable('chs_scores')) {
+			$table = $schema->createTable('chs_scores');
 			$table->addColumn('id', Types::BIGINT, [
 				'autoincrement' => true,
 				'notnull' => true,
@@ -84,9 +84,9 @@ class Version000001000Date20251127000000 extends SimpleMigrationStep {
 			$table->setPrimaryKey(['id']);
 		}
 
-		// Create osm_tags table
-		if (!$schema->hasTable('osm_tags')) {
-			$table = $schema->createTable('osm_tags');
+		// Create chs_tags table
+		if (!$schema->hasTable('chs_tags')) {
+			$table = $schema->createTable('chs_tags');
 			$table->addColumn('id', Types::BIGINT, [
 				'autoincrement' => true,
 				'notnull' => true,
@@ -100,9 +100,9 @@ class Version000001000Date20251127000000 extends SimpleMigrationStep {
 			$table->setPrimaryKey(['id']);
 		}
 
-		// Create osm_scores_tags linking table
-		if (!$schema->hasTable('osm_scores_tags')) {
-			$table = $schema->createTable('osm_scores_tags');
+		// Create chs_scores_tags linking table
+		if (!$schema->hasTable('chs_scores_tags')) {
+			$table = $schema->createTable('chs_scores_tags');
 			$table->addColumn('score_id', Types::BIGINT, [
 				'notnull' => true,
 				'length' => 20,
@@ -115,25 +115,25 @@ class Version000001000Date20251127000000 extends SimpleMigrationStep {
 			]);
 			$table->setPrimaryKey(['score_id', 'tag_id']);
 			$table->addForeignKeyConstraint(
-				$schema->getTable('osm_scores'),
+				$schema->getTable('chs_scores'),
 				['score_id'],
 				['id'],
 				['onDelete' => 'CASCADE'],
-				'fk_osm_scores_tags_sc'
+				'fk_chs_scores_tags_sc'
 			);
 			$table->addForeignKeyConstraint(
-				$schema->getTable('osm_tags'),
+				$schema->getTable('chs_tags'),
 				['tag_id'],
 				['id'],
 				['onDelete' => 'RESTRICT'],
-				'fk_osm_scores_tags_tag'
+				'fk_chs_scores_tags_tag'
 			);
-			$table->addIndex(['tag_id'], 'idx_osm_scores_tags_tid');
+			$table->addIndex(['tag_id'], 'idx_chs_scores_tags_tid');
 		}
 
-		// Create osm_comments table
-		if (!$schema->hasTable('osm_comments')) {
-			$table = $schema->createTable('osm_comments');
+		// Create chs_comments table
+		if (!$schema->hasTable('chs_comments')) {
+			$table = $schema->createTable('chs_comments');
 			$table->addColumn('id', Types::BIGINT, [
 				'autoincrement' => true,
 				'notnull' => true,
@@ -159,18 +159,18 @@ class Version000001000Date20251127000000 extends SimpleMigrationStep {
 			]);
 			$table->setPrimaryKey(['id']);
 			$table->addForeignKeyConstraint(
-				$schema->getTable('osm_scores'),
+				$schema->getTable('chs_scores'),
 				['score_id'],
 				['id'],
 				['onDelete' => 'CASCADE'],
-				'fk_osm_comments_score'
+				'fk_chs_comments_score'
 			);
-			$table->addIndex(['score_id'], 'idx_osm_comments_sc_id');
+			$table->addIndex(['score_id'], 'idx_chs_comments_sc_id');
 		}
 
-		// Create osm_score_books table
-		if (!$schema->hasTable('osm_score_books')) {
-			$table = $schema->createTable('osm_score_books');
+		// Create chs_score_books table
+		if (!$schema->hasTable('chs_score_books')) {
+			$table = $schema->createTable('chs_score_books');
 			$table->addColumn('id', Types::BIGINT, [
 				'autoincrement' => true,
 				'notnull' => true,
@@ -218,9 +218,9 @@ class Version000001000Date20251127000000 extends SimpleMigrationStep {
 			$table->setPrimaryKey(['id']);
 		}
 
-		// Create osm_score_book_scores linking table
-		if (!$schema->hasTable('osm_score_book_scores')) {
-			$table = $schema->createTable('osm_score_book_scores');
+		// Create chs_score_book_scores linking table
+		if (!$schema->hasTable('chs_score_book_scores')) {
+			$table = $schema->createTable('chs_score_book_scores');
 			$table->addColumn('score_book_id', Types::BIGINT, [
 				'notnull' => true,
 				'length' => 20,
@@ -236,28 +236,28 @@ class Version000001000Date20251127000000 extends SimpleMigrationStep {
 			]);
 			$table->setPrimaryKey(['score_book_id', 'score_id']);
 			$table->addForeignKeyConstraint(
-				$schema->getTable('osm_score_books'),
+				$schema->getTable('chs_score_books'),
 				['score_book_id'],
 				['id'],
 				['onDelete' => 'RESTRICT'],
-				'fk_osm_sbs_sb'
+				'fk_chs_sbs_sb'
 			);
 			$table->addForeignKeyConstraint(
-				$schema->getTable('osm_scores'),
+				$schema->getTable('chs_scores'),
 				['score_id'],
 				['id'],
 				['onDelete' => 'CASCADE'],
-				'fk_osm_sbs_sc'
+				'fk_chs_sbs_sc'
 			);
 			// Index must be unique per score_book_id
-			$table->addUniqueIndex(['score_book_id', 'index'], 'idx_osm_sbs_uniq_idx');
+			$table->addUniqueIndex(['score_book_id', 'index'], 'idx_chs_sbs_uniq_idx');
 			// Score can only be in ONE score book total
-			$table->addUniqueIndex(['score_id'], 'idx_osm_sbs_uniq_score');
+			$table->addUniqueIndex(['score_id'], 'idx_chs_sbs_uniq_score');
 		}
 
-		// Create osm_scorebooks_tags linking table
-		if (!$schema->hasTable('osm_scorebooks_tags')) {
-			$table = $schema->createTable('osm_scorebooks_tags');
+		// Create chs_scorebooks_tags linking table
+		if (!$schema->hasTable('chs_scorebooks_tags')) {
+			$table = $schema->createTable('chs_scorebooks_tags');
 			$table->addColumn('score_book_id', Types::BIGINT, [
 				'notnull' => true,
 				'length' => 20,
@@ -270,24 +270,24 @@ class Version000001000Date20251127000000 extends SimpleMigrationStep {
 			]);
 			$table->setPrimaryKey(['score_book_id', 'tag_id']);
 			$table->addForeignKeyConstraint(
-				$schema->getTable('osm_score_books'),
+				$schema->getTable('chs_score_books'),
 				['score_book_id'],
 				['id'],
 				['onDelete' => 'CASCADE'],
-				'fk_osm_sbt_sb'
+				'fk_chs_sbt_sb'
 			);
 			$table->addForeignKeyConstraint(
-				$schema->getTable('osm_tags'),
+				$schema->getTable('chs_tags'),
 				['tag_id'],
 				['id'],
 				['onDelete' => 'CASCADE'],
-				'fk_osm_sbt_t'
+				'fk_chs_sbt_t'
 			);
 		}
 
-		// Create osm_folder_collections table
-		if (!$schema->hasTable('osm_folder_collections')) {
-			$table = $schema->createTable('osm_folder_collections');
+		// Create chs_folder_collections table
+		if (!$schema->hasTable('chs_folder_collections')) {
+			$table = $schema->createTable('chs_folder_collections');
 			$table->addColumn('id', Types::BIGINT, [
 				'autoincrement' => true,
 				'notnull' => true,
@@ -308,10 +308,10 @@ class Version000001000Date20251127000000 extends SimpleMigrationStep {
 			$table->setPrimaryKey(['id']);
 		}
 
-		// Create osm_scores_fc linking table
+		// Create chs_scores_fc linking table
 		// Uses surrogate id key since score_id is nullable (XOR with score_book_id)
-		if (!$schema->hasTable('osm_scores_fc')) {
-			$table = $schema->createTable('osm_scores_fc');
+		if (!$schema->hasTable('chs_scores_fc')) {
+			$table = $schema->createTable('chs_scores_fc');
 			$table->addColumn('id', Types::BIGINT, [
 				'autoincrement' => true,
 				'notnull' => true,
@@ -338,33 +338,33 @@ class Version000001000Date20251127000000 extends SimpleMigrationStep {
 			]);
 			$table->setPrimaryKey(['id']);
 			$table->addForeignKeyConstraint(
-				$schema->getTable('osm_scores'),
+				$schema->getTable('chs_scores'),
 				['score_id'],
 				['id'],
 				['onDelete' => 'RESTRICT'],
-				'fk_osm_scores_fc_sc'
+				'fk_chs_scores_fc_sc'
 			);
 			$table->addForeignKeyConstraint(
-				$schema->getTable('osm_score_books'),
+				$schema->getTable('chs_score_books'),
 				['score_book_id'],
 				['id'],
 				['onDelete' => 'CASCADE'],
-				'fk_osm_sfc_sb'
+				'fk_chs_sfc_sb'
 			);
 			$table->addForeignKeyConstraint(
-				$schema->getTable('osm_folder_collections'),
+				$schema->getTable('chs_folder_collections'),
 				['folder_collection_id'],
 				['id'],
 				['onDelete' => 'CASCADE'],
-				'fk_osm_scores_fc_fc'
+				'fk_chs_scores_fc_fc'
 			);
-			$table->addIndex(['folder_collection_id'], 'idx_osm_scores_fc_fc_id');
+			$table->addIndex(['folder_collection_id'], 'idx_chs_scores_fc_fc_id');
 			// Unique constraint for score per folder_collection (when score_id is not NULL)
-			$table->addUniqueIndex(['folder_collection_id', 'score_id'], 'idx_osm_scores_fc_uniq_sc');
+			$table->addUniqueIndex(['folder_collection_id', 'score_id'], 'idx_chs_scores_fc_uniq_sc');
 			// Unique constraint for score_book per folder_collection (when score_book_id is not NULL)
-			$table->addUniqueIndex(['folder_collection_id', 'score_book_id'], 'idx_osm_sfc_uniq_sb');
+			$table->addUniqueIndex(['folder_collection_id', 'score_book_id'], 'idx_chs_sfc_uniq_sb');
 			// Index must be unique per folder_collection_id (when not NULL)
-			$table->addUniqueIndex(['folder_collection_id', 'index'], 'idx_osm_scores_fc_uniq');
+			$table->addUniqueIndex(['folder_collection_id', 'index'], 'idx_chs_scores_fc_uniq');
 		}
 
 		return $schema;

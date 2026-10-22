@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Db;
+namespace OCA\ChoirScores\Db;
 
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
@@ -17,7 +17,7 @@ use OCP\IDBConnection;
 class TagMapper extends QBMapper {
 	/** @psalm-suppress PossiblyUnusedMethod - Constructor used by DI container */
 	public function __construct(IDBConnection $db) {
-		parent::__construct($db, 'osm_tags', Tag::class);
+		parent::__construct($db, 'chs_tags', Tag::class);
 	}
 
 	/**

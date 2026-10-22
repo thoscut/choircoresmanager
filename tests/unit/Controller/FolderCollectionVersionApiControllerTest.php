@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\unit\Controller;
+namespace OCA\ChoirScores\Tests\unit\Controller;
 
-use OCA\OrchestraScoresManager\Controller\FolderCollectionVersionApiController;
-use OCA\OrchestraScoresManager\Service\Exceptions\PermissionDeniedException;
-use OCA\OrchestraScoresManager\Service\FolderCollectionVersionService;
+use OCA\ChoirScores\Controller\FolderCollectionVersionApiController;
+use OCA\ChoirScores\Service\Exceptions\PermissionDeniedException;
+use OCA\ChoirScores\Service\FolderCollectionVersionService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCS\OCSBadRequestException;
@@ -29,7 +29,7 @@ final class FolderCollectionVersionApiControllerTest extends TestCase {
 		$this->request = $this->createMock(IRequest::class);
 
 		$this->controller = new FolderCollectionVersionApiController(
-			'orchestrascoresmanager',
+			'choirscores',
 			$this->request,
 			$this->versionService
 		);

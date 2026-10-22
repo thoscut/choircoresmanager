@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\unit\Controller;
+namespace OCA\ChoirScores\Tests\unit\Controller;
 
-use OCA\OrchestraScoresManager\Controller\TagApiController;
-use OCA\OrchestraScoresManager\Db\Tag;
-use OCA\OrchestraScoresManager\Db\TagMapper;
-use OCA\OrchestraScoresManager\Service\Exceptions\PermissionDeniedException;
-use OCA\OrchestraScoresManager\Service\TagService;
+use OCA\ChoirScores\Controller\TagApiController;
+use OCA\ChoirScores\Db\Tag;
+use OCA\ChoirScores\Db\TagMapper;
+use OCA\ChoirScores\Service\Exceptions\PermissionDeniedException;
+use OCA\ChoirScores\Service\TagService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCS\OCSBadRequestException;
@@ -34,7 +34,7 @@ final class TagApiControllerTest extends TestCase {
 		$this->request = $this->createMock(IRequest::class);
 
 		$this->controller = new TagApiController(
-			'orchestrascoresmanager',
+			'choirscores',
 			$this->request,
 			$this->tagMapper,
 			$this->tagService

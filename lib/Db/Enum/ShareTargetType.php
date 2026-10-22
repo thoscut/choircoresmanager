@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Db\Enum;
+namespace OCA\ChoirScores\Db\Enum;
 
 /**
  * What a share points to.

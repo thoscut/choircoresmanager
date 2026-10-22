@@ -63,7 +63,7 @@ const tagsStore = useTagsStore()
 
 const loading = ref(false)
 const loadError = ref(false)
-const editable = ref<boolean>(!!loadState('orchestrascoresmanager', 'editable'))
+const editable = ref<boolean>(!!loadState('choirscores', 'editable'))
 
 // Define interface for ScoresTable exposed methods
 interface ScoresTableRef {

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\unit\Policy;
+namespace OCA\ChoirScores\Tests\unit\Policy;
 
-use OCA\OrchestraScoresManager\Db\Setlist;
-use OCA\OrchestraScoresManager\Policy\PolicyInterface;
-use OCA\OrchestraScoresManager\Policy\SetlistPolicy;
-use OCA\OrchestraScoresManager\Service\PermissionService;
+use OCA\ChoirScores\Db\Setlist;
+use OCA\ChoirScores\Policy\PolicyInterface;
+use OCA\ChoirScores\Policy\SetlistPolicy;
+use OCA\ChoirScores\Service\PermissionService;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 

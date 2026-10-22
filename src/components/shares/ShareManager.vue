@@ -185,7 +185,7 @@ async function removeShare(share: Share): Promise<void> {
  * @param share - A link share
  */
 function linkUrl(share: Share): string {
-	return window.location.origin + generateUrl('/apps/orchestrascoresmanager/s/{token}', { token: share.token ?? '' })
+	return window.location.origin + generateUrl('/apps/choirscores/s/{token}', { token: share.token ?? '' })
 }
 
 /**

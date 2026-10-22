@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Db\Enum;
+namespace OCA\ChoirScores\Db\Enum;
 
 /**
  * Publication status of a score, decided independently of its rights status.

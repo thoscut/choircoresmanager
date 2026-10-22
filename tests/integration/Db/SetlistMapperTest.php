@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\integration\Db;
+namespace OCA\ChoirScores\Tests\integration\Db;
 
-use OCA\OrchestraScoresManager\Db\Setlist;
-use OCA\OrchestraScoresManager\Db\SetlistMapper;
+use OCA\ChoirScores\Db\Setlist;
+use OCA\ChoirScores\Db\SetlistMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
 
 /**

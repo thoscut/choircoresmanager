@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Migration;
+namespace OCA\ChoirScores\Migration;
 
 use Closure;
 use OCP\DB\ISchemaWrapper;
@@ -13,7 +13,7 @@ use OCP\Migration\SimpleMigrationStep;
 /**
  * Migration to add rights and publication information and a link to a MusicXML file to scores.
  *
- * Columns added to osm_scores:
+ * Columns added to chs_scores:
  * - rights_status: rights status ('public_domain', 'licensed', 'protected', 'open')
  * - rights_note: free text explaining the rights status
  * - rights_confirmed_at: date on which a human confirmed the rights status (null if unconfirmed)
@@ -33,7 +33,7 @@ class Version000007000Date20261021000000 extends SimpleMigrationStep {
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		$schema = $schemaClosure();
 
-		$table = $schema->getTable('osm_scores');
+		$table = $schema->getTable('chs_scores');
 		$changed = false;
 
 		if (!$table->hasColumn('rights_status')) {
@@ -42,7 +42,7 @@ class Version000007000Date20261021000000 extends SimpleMigrationStep {
 				'length' => 32,
 				'default' => 'open',
 			]);
-			$table->addIndex(['rights_status'], 'idx_osm_scores_rights');
+			$table->addIndex(['rights_status'], 'idx_chs_scores_rights');
 			$changed = true;
 		}
 
@@ -74,7 +74,7 @@ class Version000007000Date20261021000000 extends SimpleMigrationStep {
 				'length' => 32,
 				'default' => 'to_clarify',
 			]);
-			$table->addIndex(['publication_status'], 'idx_osm_scores_publication');
+			$table->addIndex(['publication_status'], 'idx_chs_scores_publication');
 			$changed = true;
 		}
 

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Policy;
+namespace OCA\ChoirScores\Policy;
 
-use OCA\OrchestraScoresManager\Db\FolderCollectionVersion;
-use OCA\OrchestraScoresManager\Service\PermissionService;
+use OCA\ChoirScores\Db\FolderCollectionVersion;
+use OCA\ChoirScores\Service\PermissionService;
 
 /**
  * Policy for FolderCollectionVersion entity.

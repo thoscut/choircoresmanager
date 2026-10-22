@@ -1,4 +1,4 @@
-# GitHub Copilot Instructions for Orchestra Scores Manager
+# GitHub Copilot Instructions for Choir Scores
 
 ## Project Overview
 NextCloud application for managing orchestra score databases. Built with PHP backend and Vue3 frontend.

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Db;
+namespace OCA\ChoirScores\Db;
 
 use DateTimeImmutable;
 use DateTimeZone;
-use OCA\OrchestraScoresManager\Db\Enum\PublicationStatus;
-use OCA\OrchestraScoresManager\Db\Enum\RightsStatus;
-use OCA\OrchestraScoresManager\Service\RepertoireClassifier;
+use OCA\ChoirScores\Db\Enum\PublicationStatus;
+use OCA\ChoirScores\Db\Enum\RightsStatus;
+use OCA\ChoirScores\Service\RepertoireClassifier;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\Entity;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
@@ -29,7 +29,7 @@ class ScoreMapper extends QBMapper {
 		protected readonly ScoreBookScoreLinkMapper $scoreBookScoreLinkMapper,
 		protected readonly RepertoireClassifier $repertoireClassifier,
 	) {
-		parent::__construct($db, 'osm_scores', Score::class);
+		parent::__construct($db, 'chs_scores', Score::class);
 	}
 
 	/**
@@ -256,8 +256,8 @@ class ScoreMapper extends QBMapper {
 			$qb = $this->db->getQueryBuilder();
 			$qb->select('se.score_id')
 				->selectAlias($qb->func()->max('s.start_date_time'), 'last_performed')
-				->from('osm_setlist_entries', 'se')
-				->innerJoin('se', 'osm_setlists', 's', $qb->expr()->eq('se.setlist_id', 's.id'))
+				->from('chs_setlist_entries', 'se')
+				->innerJoin('se', 'chs_setlists', 's', $qb->expr()->eq('se.setlist_id', 's.id'))
 				->where($qb->expr()->in('se.score_id', $qb->createNamedParameter($chunk, IQueryBuilder::PARAM_INT_ARRAY)))
 				->andWhere($qb->expr()->eq('s.is_draft', $qb->createNamedParameter(false, IQueryBuilder::PARAM_BOOL)))
 				->andWhere($qb->expr()->isNotNull('s.start_date_time'))

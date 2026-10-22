@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\unit\Utility;
+namespace OCA\ChoirScores\Tests\unit\Utility;
 
 use InvalidArgumentException;
-use OCA\OrchestraScoresManager\Db\ScoreBookScoreLinkMapper;
-use OCA\OrchestraScoresManager\Db\ScoreFolderCollectionLinkMapper;
-use OCA\OrchestraScoresManager\Utility\SetlistValidationHelper;
+use OCA\ChoirScores\Db\ScoreBookScoreLinkMapper;
+use OCA\ChoirScores\Db\ScoreFolderCollectionLinkMapper;
+use OCA\ChoirScores\Utility\SetlistValidationHelper;
 use OCP\IL10N;
 use PHPUnit\Framework\TestCase;
 

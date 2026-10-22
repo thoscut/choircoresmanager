@@ -123,7 +123,7 @@ $message = $this->l->t('Updated %s records in %s seconds', [$count, $duration]);
 ### Adding Translations
 **WHENEVER** you add a new `$this->l->t()` call, add the translation to the `.po` file first:
 
-1. **Edit the PO file** at `translationfiles/de/orchestrascoresmanager.po`:
+1. **Edit the PO file** at `translationfiles/de/choirscores.po`:
    ```po
    msgid "Your English text"
    msgstr "Ihr deutscher Text"
@@ -172,7 +172,7 @@ Do NOT use translations for:
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\Unit\Db;
+namespace OCA\ChoirScores\Tests\Unit\Db;
 
 use PHPUnit\Framework\TestCase;
 

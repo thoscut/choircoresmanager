@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Controller;
+namespace OCA\ChoirScores\Controller;
 
-use OCA\OrchestraScoresManager\ResponseDefinitions;
-use OCA\OrchestraScoresManager\Service\CatalogueService;
+use OCA\ChoirScores\ResponseDefinitions;
+use OCA\ChoirScores\Service\CatalogueService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -21,9 +21,9 @@ use OCP\IRequest;
 /**
  * Import and export of the work catalogue (Werkverzeichnis) as CSV.
  *
- * @psalm-import-type OrchestraScoresManagerCatalogueImportResult from ResponseDefinitions
- * @psalm-import-type OrchestraScoresManagerCatalogueExport from ResponseDefinitions
- * @psalm-import-type OrchestraScoresManagerCatalogueValue from ResponseDefinitions
+ * @psalm-import-type ChoirScoresCatalogueImportResult from ResponseDefinitions
+ * @psalm-import-type ChoirScoresCatalogueExport from ResponseDefinitions
+ * @psalm-import-type ChoirScoresCatalogueValue from ResponseDefinitions
  * @psalm-suppress UnusedClass - Controller discovered by NextCloud framework
  */
 #[OpenAPI(scope: OpenAPI::SCOPE_DEFAULT)]
@@ -48,7 +48,7 @@ class CatalogueApiController extends OCSController {
 	 *
 	 * @param string $csv The content of the CSV file
 	 * @param bool $dryRun Only report the changes without saving them
-	 * @return DataResponse<Http::STATUS_OK, OrchestraScoresManagerCatalogueImportResult, array{}> Counts and changes per row
+	 * @return DataResponse<Http::STATUS_OK, ChoirScoresCatalogueImportResult, array{}> Counts and changes per row
 	 * @throws OCSBadRequestException If the file cannot be read as a catalogue
 	 * @throws OCSForbiddenException If the user may not edit scores
 	 * @throws Exception If saving fails
@@ -67,7 +67,7 @@ class CatalogueApiController extends OCSController {
 	/**
 	 * Export all scores as a work catalogue CSV file
 	 *
-	 * @return DataResponse<Http::STATUS_OK, OrchestraScoresManagerCatalogueExport, array{}> File name and content (UTF-8 with BOM)
+	 * @return DataResponse<Http::STATUS_OK, ChoirScoresCatalogueExport, array{}> File name and content (UTF-8 with BOM)
 	 * @throws OCSForbiddenException If the user may not read scores
 	 *
 	 * 200: The catalogue as CSV
@@ -84,7 +84,7 @@ class CatalogueApiController extends OCSController {
 	 * Get the catalogue values of a score that are not stored in a field
 	 *
 	 * @param int $id The ID of the score
-	 * @return DataResponse<Http::STATUS_OK, list<OrchestraScoresManagerCatalogueValue>, array{}> Column names and values
+	 * @return DataResponse<Http::STATUS_OK, list<ChoirScoresCatalogueValue>, array{}> Column names and values
 	 * @throws OCSNotFoundException If the score does not exist
 	 * @throws OCSForbiddenException If the user may not read scores
 	 *

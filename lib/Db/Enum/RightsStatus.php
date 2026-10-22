@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Db\Enum;
+namespace OCA\ChoirScores\Db\Enum;
 
 /**
  * Rights status of a score: may the club provide the work digitally?

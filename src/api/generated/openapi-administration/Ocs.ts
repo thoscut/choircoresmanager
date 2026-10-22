@@ -33,7 +33,7 @@ export class Ocs<
    * @tags admin
    * @name AdminGetEditGroups
    * @summary Get current list of groups allowed to edit scores
-   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/admin/editGroups
+   * @request GET:/ocs/v2.php/apps/choirscores/admin/editGroups
    * @secure
    */
   adminGetEditGroups = (params: RequestParams = {}) =>
@@ -46,7 +46,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/admin/editGroups`,
+      path: `/ocs/v2.php/apps/choirscores/admin/editGroups`,
       method: "GET",
       secure: true,
       format: "json",
@@ -58,7 +58,7 @@ export class Ocs<
    * @tags admin
    * @name AdminPostEditGroups
    * @summary Update which groups are allowed to edit scores
-   * @request POST:/ocs/v2.php/apps/orchestrascoresmanager/admin/editGroups
+   * @request POST:/ocs/v2.php/apps/choirscores/admin/editGroups
    * @secure
    */
   adminPostEditGroups = (
@@ -74,7 +74,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/admin/editGroups`,
+      path: `/ocs/v2.php/apps/choirscores/admin/editGroups`,
       method: "POST",
       body: data,
       secure: true,
@@ -88,7 +88,7 @@ export class Ocs<
    * @tags admin
    * @name AdminGetRepertoireThresholds
    * @summary Get the thresholds used to derive the repertoire class of a score
-   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/admin/repertoireThresholds
+   * @request GET:/ocs/v2.php/apps/choirscores/admin/repertoireThresholds
    * @secure
    */
   adminGetRepertoireThresholds = (params: RequestParams = {}) =>
@@ -101,7 +101,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/admin/repertoireThresholds`,
+      path: `/ocs/v2.php/apps/choirscores/admin/repertoireThresholds`,
       method: "GET",
       secure: true,
       format: "json",
@@ -113,7 +113,7 @@ export class Ocs<
    * @tags admin
    * @name AdminPostRepertoireThresholds
    * @summary Update the thresholds used to derive the repertoire class of a score
-   * @request POST:/ocs/v2.php/apps/orchestrascoresmanager/admin/repertoireThresholds
+   * @request POST:/ocs/v2.php/apps/choirscores/admin/repertoireThresholds
    * @secure
    */
   adminPostRepertoireThresholds = (
@@ -129,7 +129,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/admin/repertoireThresholds`,
+      path: `/ocs/v2.php/apps/choirscores/admin/repertoireThresholds`,
       method: "POST",
       body: data,
       secure: true,
@@ -143,7 +143,7 @@ export class Ocs<
    * @tags admin
    * @name AdminGetPublicPage
    * @summary Get whether the public page for freely available scores is enabled
-   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/admin/publicPage
+   * @request GET:/ocs/v2.php/apps/choirscores/admin/publicPage
    * @secure
    */
   adminGetPublicPage = (params: RequestParams = {}) =>
@@ -156,7 +156,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/admin/publicPage`,
+      path: `/ocs/v2.php/apps/choirscores/admin/publicPage`,
       method: "GET",
       secure: true,
       format: "json",
@@ -168,7 +168,7 @@ export class Ocs<
    * @tags admin
    * @name AdminPostPublicPage
    * @summary Enable or disable the public page for freely available scores
-   * @request POST:/ocs/v2.php/apps/orchestrascoresmanager/admin/publicPage
+   * @request POST:/ocs/v2.php/apps/choirscores/admin/publicPage
    * @secure
    */
   adminPostPublicPage = (
@@ -184,7 +184,7 @@ export class Ocs<
         };
       }
     >({
-      path: `/ocs/v2.php/apps/orchestrascoresmanager/admin/publicPage`,
+      path: `/ocs/v2.php/apps/choirscores/admin/publicPage`,
       method: "POST",
       body: data,
       secure: true,

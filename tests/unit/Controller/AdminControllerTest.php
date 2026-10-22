@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\unit\Controller;
+namespace OCA\ChoirScores\Tests\unit\Controller;
 
-use OCA\OrchestraScoresManager\Controller\AdminController;
-use OCA\OrchestraScoresManager\Service\ConfigService;
+use OCA\ChoirScores\Controller\AdminController;
+use OCA\ChoirScores\Service\ConfigService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCS\OCSBadRequestException;
@@ -28,7 +28,7 @@ final class AdminControllerTest extends TestCase {
 		$this->request = $this->createMock(IRequest::class);
 
 		$this->controller = new AdminController(
-			'orchestrascoresmanager',
+			'choirscores',
 			$this->request,
 			$this->configService
 		);

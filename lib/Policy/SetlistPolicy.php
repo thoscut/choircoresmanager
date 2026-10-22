@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Policy;
+namespace OCA\ChoirScores\Policy;
 
-use OCA\OrchestraScoresManager\Db\Setlist;
-use OCA\OrchestraScoresManager\Service\PermissionService;
+use OCA\ChoirScores\Db\Setlist;
+use OCA\ChoirScores\Service\PermissionService;
 
 class SetlistPolicy implements PolicyInterface {
 	/** @psalm-suppress PossiblyUnusedMethod - Constructor used by DI container */

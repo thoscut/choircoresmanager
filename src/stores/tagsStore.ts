@@ -32,7 +32,7 @@ export const useTagsStore = defineStore('tags', () => {
 
 		try {
 			// Try to load from initial state first
-			const initialData = loadState<Tag[] | null>('orchestrascoresmanager', 'tags', null)
+			const initialData = loadState<Tag[] | null>('choirscores', 'tags', null)
 			if (initialData && initialData.length > 0) {
 				tags.value = initialData
 				isLoaded.value = true

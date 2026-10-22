@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\unit\Service;
+namespace OCA\ChoirScores\Tests\unit\Service;
 
-use OCA\OrchestraScoresManager\Db\Score;
-use OCA\OrchestraScoresManager\Db\ScoreMapper;
-use OCA\OrchestraScoresManager\Policy\ScorePolicy;
-use OCA\OrchestraScoresManager\Service\AuthorizationService;
-use OCA\OrchestraScoresManager\Service\Catalogue\CatalogueColumns;
-use OCA\OrchestraScoresManager\Service\Catalogue\CatalogueCsv;
-use OCA\OrchestraScoresManager\Service\CatalogueService;
-use OCA\OrchestraScoresManager\Service\ConfigService;
-use OCA\OrchestraScoresManager\Service\Exceptions\NotFoundException;
-use OCA\OrchestraScoresManager\Service\Exceptions\PermissionDeniedException;
+use OCA\ChoirScores\Db\Score;
+use OCA\ChoirScores\Db\ScoreMapper;
+use OCA\ChoirScores\Policy\ScorePolicy;
+use OCA\ChoirScores\Service\AuthorizationService;
+use OCA\ChoirScores\Service\Catalogue\CatalogueColumns;
+use OCA\ChoirScores\Service\Catalogue\CatalogueCsv;
+use OCA\ChoirScores\Service\CatalogueService;
+use OCA\ChoirScores\Service\ConfigService;
+use OCA\ChoirScores\Service\Exceptions\NotFoundException;
+use OCA\ChoirScores\Service\Exceptions\PermissionDeniedException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IDBConnection;

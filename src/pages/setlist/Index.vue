@@ -109,7 +109,7 @@ const { buttonSize, buttonText, isDesktop } = useBreakpoints()
 
 const loading = ref(false)
 const loadError = ref(false)
-const editable = ref<boolean>(!!loadState('orchestrascoresmanager', 'editable'))
+const editable = ref<boolean>(!!loadState('choirscores', 'editable'))
 const viewMode = ref<'full' | 'compact'>(isDesktop.value ? 'full' : 'compact')
 const showCloneDialog = ref(false)
 const fcvScoresMap = ref<Map<number, number>>(new Map())

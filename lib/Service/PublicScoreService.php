@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Service;
+namespace OCA\ChoirScores\Service;
 
 use DateTimeImmutable;
 use DateTimeZone;
-use OCA\OrchestraScoresManager\Db\Score;
-use OCA\OrchestraScoresManager\Db\ScoreMapper;
+use OCA\ChoirScores\Db\Score;
+use OCA\ChoirScores\Db\ScoreMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\DB\Exception;
@@ -21,7 +21,7 @@ use OCP\DB\Exception;
  * has confirmed (filtered in SQL), only while the public page is enabled, and only
  * a whitelisted set of fields.
  *
- * @psalm-type OrchestraScoresManagerPublicScore = array{
+ * @psalm-type ChoirScoresPublicScore = array{
  *     id: int,
  *     title: string,
  *     composer: string|null,
@@ -48,7 +48,7 @@ class PublicScoreService {
 	/**
 	 * Get all scores that may be shown publicly.
 	 *
-	 * @return list<OrchestraScoresManagerPublicScore>
+	 * @return list<ChoirScoresPublicScore>
 	 * @throws \InvalidArgumentException if the public page is disabled
 	 * @throws Exception
 	 */
@@ -84,7 +84,7 @@ class PublicScoreService {
 	 * The date of the last update is the later one of the last change of the score
 	 * and the last modification of its MusicXML file, as a Y-m-d date in UTC.
 	 *
-	 * @return OrchestraScoresManagerPublicScore
+	 * @return ChoirScoresPublicScore
 	 */
 	private function toPublicArray(Score $score): array {
 		$fileMTime = $this->musicXmlService->getFileMTime($score);

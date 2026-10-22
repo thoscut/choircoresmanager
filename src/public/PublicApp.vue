@@ -104,7 +104,7 @@ interface PublicScore {
 	lastUpdated: string | null
 }
 
-const scores = loadState<PublicScore[]>('orchestrascoresmanager', 'publicScores', [])
+const scores = loadState<PublicScore[]>('choirscores', 'publicScores', [])
 const search = ref('')
 const selectedScore = ref<PublicScore | null>(null)
 const playerSection = ref<HTMLElement | null>(null)
@@ -122,7 +122,7 @@ const filteredScores = computed(() => {
  * @param id - The score ID
  */
 function musicXmlUrl(id: number): string {
-	return generateUrl('/apps/orchestrascoresmanager/public/scores/{id}/musicxml', { id })
+	return generateUrl('/apps/choirscores/public/scores/{id}/musicxml', { id })
 }
 
 /**

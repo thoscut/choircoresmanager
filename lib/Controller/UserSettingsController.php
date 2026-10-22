@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Controller;
+namespace OCA\ChoirScores\Controller;
 
-use OCA\OrchestraScoresManager\ResponseDefinitions;
-use OCA\OrchestraScoresManager\Service\UserSettingsService;
+use OCA\ChoirScores\ResponseDefinitions;
+use OCA\ChoirScores\Service\UserSettingsService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -17,7 +17,7 @@ use OCP\IRequest;
 use OCP\IUserSession;
 
 /**
- * @psalm-import-type OrchestraScoresManagerUserSetlistSettings from ResponseDefinitions
+ * @psalm-import-type ChoirScoresUserSetlistSettings from ResponseDefinitions
  * @psalm-suppress UnusedClass - Controller discovered by NextCloud framework
  */
 #[OpenAPI(scope: OpenAPI::SCOPE_DEFAULT)]
@@ -36,7 +36,7 @@ class UserSettingsController extends OCSController {
 	/**
 	 * Get setlist settings for the authenticated user
 	 *
-	 * @return DataResponse<Http::STATUS_OK, OrchestraScoresManagerUserSetlistSettings, array{}>
+	 * @return DataResponse<Http::STATUS_OK, ChoirScoresUserSetlistSettings, array{}>
 	 *
 	 * 200: User setlist settings
 	 * 403: Not authenticated
@@ -60,7 +60,7 @@ class UserSettingsController extends OCSController {
 	 * @param int|null $defaultModerationTime Time (e.g. 60 seconds) or null to clear.
 	 * @param int|null $defaultFolderCollectionId Folder collection ID or null to clear.
 	 *
-	 * @return DataResponse<Http::STATUS_OK, OrchestraScoresManagerUserSetlistSettings, array{}>
+	 * @return DataResponse<Http::STATUS_OK, ChoirScoresUserSetlistSettings, array{}>
 	 *
 	 * 200: Updated user setlist settings
 	 * 403: Not authenticated

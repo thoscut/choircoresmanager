@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Service;
+namespace OCA\ChoirScores\Service;
 
-use OCA\OrchestraScoresManager\Policy\PolicyInterface;
-use OCA\OrchestraScoresManager\Service\Exceptions\PermissionDeniedException;
+use OCA\ChoirScores\Policy\PolicyInterface;
+use OCA\ChoirScores\Service\Exceptions\PermissionDeniedException;
 use OCP\IL10N;
 use Psr\Log\LoggerInterface;
 

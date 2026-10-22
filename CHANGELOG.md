@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.4.0] - Unreleased
 
+### Changed
+
+- Separate app instead of a fork under the old name: app ID `choirscores`, PHP namespace `OCA\ChoirScores`, table prefix `chs_`. Data of an installed `orchestrascoresmanager` is not migrated.
+- Support Nextcloud 33 again
+
 ### Added
 
 - PDF file per score, linked from Nextcloud Files like the MusicXML file, with an in-browser viewer (no download or print button)

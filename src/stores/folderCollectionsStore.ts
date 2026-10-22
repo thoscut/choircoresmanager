@@ -29,7 +29,7 @@ export const useFolderCollectionsStore = defineStore('folderCollections', () => 
 
 		try {
 			// Try to load from initial state first
-			const initialData = loadState<FolderCollection[] | null>('orchestrascoresmanager', 'folderCollections', null)
+			const initialData = loadState<FolderCollection[] | null>('choirscores', 'folderCollections', null)
 			if (initialData && initialData.length > 0) {
 				folderCollections.value = initialData
 				isLoaded.value = true

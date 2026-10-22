@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Controller;
+namespace OCA\ChoirScores\Controller;
 
-use OCA\OrchestraScoresManager\Db\ScoreBook;
-use OCA\OrchestraScoresManager\ResponseDefinitions;
-use OCA\OrchestraScoresManager\Service\FolderCollectionService;
-use OCA\OrchestraScoresManager\Service\ScoreBookService;
+use OCA\ChoirScores\Db\ScoreBook;
+use OCA\ChoirScores\ResponseDefinitions;
+use OCA\ChoirScores\Service\FolderCollectionService;
+use OCA\ChoirScores\Service\ScoreBookService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -19,9 +19,9 @@ use OCP\AppFramework\OCSController;
 use OCP\IRequest;
 
 /**
- * @psalm-import-type OrchestraScoresManagerScoreBook from ResponseDefinitions
- * @psalm-import-type OrchestraScoresManagerScore from ResponseDefinitions
- * @psalm-import-type OrchestraScoresManagerFolderCollectionScoreBook from ResponseDefinitions
+ * @psalm-import-type ChoirScoresScoreBook from ResponseDefinitions
+ * @psalm-import-type ChoirScoresScore from ResponseDefinitions
+ * @psalm-import-type ChoirScoresFolderCollectionScoreBook from ResponseDefinitions
  * @psalm-suppress UnusedClass - Controller discovered by NextCloud framework
  */
 #[OpenAPI(scope: OpenAPI::SCOPE_DEFAULT)]
@@ -40,7 +40,7 @@ class ScoreBookApiController extends OCSController {
 	/**
 	 * Return all available score books
 	 *
-	 * @return DataResponse<Http::STATUS_OK, list<OrchestraScoresManagerScoreBook>, array{}> the list of score books
+	 * @return DataResponse<Http::STATUS_OK, list<ChoirScoresScoreBook>, array{}> the list of score books
 	 *
 	 * 200: Successful response with the list of score books
 	 * @throws OCSBadRequestException Invalid request parameters
@@ -58,7 +58,7 @@ class ScoreBookApiController extends OCSController {
 	 *
 	 * @param int $id The ID of the score book
 	 *
-	 * @return DataResponse<Http::STATUS_OK, OrchestraScoresManagerScoreBook, array{}> the score book
+	 * @return DataResponse<Http::STATUS_OK, ChoirScoresScoreBook, array{}> the score book
 	 *
 	 * 200: Successful response with the score book
 	 * @throws OCSBadRequestException Invalid request parameters
@@ -86,7 +86,7 @@ class ScoreBookApiController extends OCSController {
 	 * @param string|null $physicalCopiesStatus The status of physical copies
 	 * @param list<int>|null $tagIds optional list of tag ids to link
 	 *
-	 * @return DataResponse<Http::STATUS_CREATED, OrchestraScoresManagerScoreBook, array{}> the created score book
+	 * @return DataResponse<Http::STATUS_CREATED, ChoirScoresScoreBook, array{}> the created score book
 	 *
 	 * 201: Successful creation of the score book
 	 * @throws OCSBadRequestException Invalid request parameters
@@ -140,7 +140,7 @@ class ScoreBookApiController extends OCSController {
 	 * @param string|null $physicalCopiesStatus The status of physical copies
 	 * @param list<int>|null $tagIds optional list of tag ids to link
 	 *
-	 * @return DataResponse<Http::STATUS_OK, OrchestraScoresManagerScoreBook, array{}> the updated score book
+	 * @return DataResponse<Http::STATUS_OK, ChoirScoresScoreBook, array{}> the updated score book
 	 *
 	 * 200: Successful update of the score book
 	 * @throws OCSBadRequestException Invalid request parameters
@@ -208,7 +208,7 @@ class ScoreBookApiController extends OCSController {
 	 *
 	 * @param int $id The ID of the score book
 	 *
-	 * @return DataResponse<Http::STATUS_OK, list<OrchestraScoresManagerScore>, array{}> the list of scores
+	 * @return DataResponse<Http::STATUS_OK, list<ChoirScoresScore>, array{}> the list of scores
 	 *
 	 * 200: Successful response with the list of scores
 	 * @throws OCSBadRequestException Invalid request parameters
@@ -301,7 +301,7 @@ class ScoreBookApiController extends OCSController {
 	 *
 	 * @param int $id The ID of the score book
 	 *
-	 * @return DataResponse<Http::STATUS_OK, list<OrchestraScoresManagerFolderCollectionScoreBook>, array{}> the list of folder collections
+	 * @return DataResponse<Http::STATUS_OK, list<ChoirScoresFolderCollectionScoreBook>, array{}> the list of folder collections
 	 *
 	 * 200: Successful response with the list of folder collections
 	 * @throws OCSBadRequestException Invalid request parameters

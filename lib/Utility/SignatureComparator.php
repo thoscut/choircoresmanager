@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Utility;
+namespace OCA\ChoirScores\Utility;
 
 /**
  * Compares signatures in natural order, so that "1-9" sorts before "1-10" and "10-1".

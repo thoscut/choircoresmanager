@@ -14,6 +14,6 @@ if (file_exists($ncBootstrap)) {
 }
 
 if (class_exists('OC_App')) {
-	\OC_App::loadApp(OCA\OrchestraScoresManager\AppInfo\Application::APP_ID);
+	\OC_App::loadApp(OCA\ChoirScores\AppInfo\Application::APP_ID);
 	OC_Hook::clear();
 }

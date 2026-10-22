@@ -48,7 +48,7 @@ const scoreBooksStore = useScoreBooksStore()
 const tagsStore = useTagsStore()
 
 // Load initial state from the server
-const editable = ref<boolean>(!!loadState('orchestrascoresmanager', 'editable'))
+const editable = ref<boolean>(!!loadState('choirscores', 'editable'))
 
 // Ref to access ScoresTable and its tableRef
 const scoresTableRef = ref<{ tableRef: { exportAsCsv?: (fileName?: string) => boolean } | null } | null>(null)

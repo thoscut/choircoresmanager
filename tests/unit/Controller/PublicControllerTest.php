@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\unit\Controller;
+namespace OCA\ChoirScores\Tests\unit\Controller;
 
-use OCA\OrchestraScoresManager\Controller\PublicController;
-use OCA\OrchestraScoresManager\Service\Exceptions\NotFoundException;
-use OCA\OrchestraScoresManager\Service\MusicXmlService;
-use OCA\OrchestraScoresManager\Service\PublicScoreService;
+use OCA\ChoirScores\Controller\PublicController;
+use OCA\ChoirScores\Service\Exceptions\NotFoundException;
+use OCA\ChoirScores\Service\MusicXmlService;
+use OCA\ChoirScores\Service\PublicScoreService;
 use OCP\AppFramework\Http\DataDownloadResponse;
 use OCP\AppFramework\Http\NotFoundResponse;
 use OCP\AppFramework\Http\Template\PublicTemplateResponse;
@@ -33,7 +33,7 @@ final class PublicControllerTest extends TestCase {
 		$l10n->method('t')->willReturnArgument(0);
 
 		$this->controller = new PublicController(
-			'orchestrascoresmanager',
+			'choirscores',
 			$this->createMock(IRequest::class),
 			$this->publicScoreService,
 			$this->initialState,

@@ -1,5 +1,5 @@
 OC.L10N.register(
-    "orchestrascoresmanager",
+    "choirscores",
     {
     "Public scores" : "Partitions publiques",
     "Insufficient permissions" : "Autorisations insuffisantes",
@@ -91,10 +91,10 @@ OC.L10N.register(
     "Already shared with this group" : "Déjà partagé avec ce groupe",
     "Share not found" : "Partage introuvable",
     "Invalid share target" : "Cible de partage non valide",
-    "Orchestra Scores Manager" : "Gestionnaire de partitions d'orchestre",
+    "Choir Scores" : "Choir Scores",
     "Score must belong to the folder collection version specified in the setlist" : "La partition doit appartenir à la version de la collection de classeurs indiquée dans la setlist",
     "Manage your orchestra's sheet music database directly within Nextcloud" : "Gérez la base de données des partitions de votre orchestre directement dans Nextcloud",
-    "⚠️ Early development phase – expect rough edges and breaking changes.\n\nOrchestra Scores Manager lets you maintain a structured database of your orchestra's sheet music (scores) inside Nextcloud.\n\nKey features:\n- Manage individual scores with rich metadata (composer, arranger, publisher, year, difficulty, and more)\n- Organize scores into score books and folder collections\n- Track version history of folder collections\n- Build and manage setlists\n- Categorize scores with tags\n- Add comments to scores" : "⚠️ Phase de développement précoce – attendez-vous à des imperfections et à des changements incompatibles.\n\nOrchestra Scores Manager vous permet de tenir une base de données structurée des partitions de votre orchestre dans Nextcloud.\n\nFonctionnalités principales :\n- Gérer chaque partition avec des métadonnées détaillées (compositeur, arrangeur, éditeur, année, difficulté, etc.)\n- Organiser les partitions en recueils et en collections de classeurs\n- Suivre l'historique des versions des collections de classeurs\n- Créer et gérer des setlists\n- Classer les partitions à l'aide d'étiquettes\n- Ajouter des commentaires aux partitions",
+    "⚠️ Early development phase – expect rough edges and breaking changes.\n\nChoir Scores lets you maintain a structured database of your orchestra's sheet music (scores) inside Nextcloud.\n\nKey features:\n- Manage individual scores with rich metadata (composer, arranger, publisher, year, difficulty, and more)\n- Organize scores into score books and folder collections\n- Track version history of folder collections\n- Build and manage setlists\n- Categorize scores with tags\n- Add comments to scores" : "⚠️ Phase de développement précoce – attendez-vous à des imperfections et à des changements incompatibles.\n\nChoir Scores vous permet de tenir une base de données structurée des partitions de votre orchestre dans Nextcloud.\n\nFonctionnalités principales :\n- Gérer chaque partition avec des métadonnées détaillées (compositeur, arrangeur, éditeur, année, difficulté, etc.)\n- Organiser les partitions en recueils et en collections de classeurs\n- Suivre l'historique des versions des collections de classeurs\n- Créer et gérer des setlists\n- Classer les partitions à l'aide d'étiquettes\n- Ajouter des commentaires aux partitions",
     "Cancel" : "Annuler",
     "Create" : "Créer",
     "Settings updated successfully." : "Paramètres mis à jour avec succès.",

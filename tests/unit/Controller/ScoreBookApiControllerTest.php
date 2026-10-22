@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\unit\Controller;
+namespace OCA\ChoirScores\Tests\unit\Controller;
 
-use OCA\OrchestraScoresManager\Controller\ScoreBookApiController;
-use OCA\OrchestraScoresManager\Db\ScoreBook;
-use OCA\OrchestraScoresManager\Service\Exceptions\PermissionDeniedException;
-use OCA\OrchestraScoresManager\Service\FolderCollectionService;
-use OCA\OrchestraScoresManager\Service\ScoreBookService;
+use OCA\ChoirScores\Controller\ScoreBookApiController;
+use OCA\ChoirScores\Db\ScoreBook;
+use OCA\ChoirScores\Service\Exceptions\PermissionDeniedException;
+use OCA\ChoirScores\Service\FolderCollectionService;
+use OCA\ChoirScores\Service\ScoreBookService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCS\OCSBadRequestException;
@@ -33,7 +33,7 @@ final class ScoreBookApiControllerTest extends TestCase {
 		$this->request = $this->createMock(IRequest::class);
 
 		$this->controller = new ScoreBookApiController(
-			'orchestrascoresmanager',
+			'choirscores',
 			$this->request,
 			$this->scoreBookService,
 			$this->folderCollectionService

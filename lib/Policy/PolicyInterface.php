@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Policy;
+namespace OCA\ChoirScores\Policy;
 
 interface PolicyInterface {
 	public const ACTION_CREATE = 'CREATE';

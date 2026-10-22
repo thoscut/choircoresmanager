@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\unit\Policy;
+namespace OCA\ChoirScores\Tests\unit\Policy;
 
-use OCA\OrchestraScoresManager\Policy\PolicyInterface;
-use OCA\OrchestraScoresManager\Policy\ScoreBookPolicy;
-use OCA\OrchestraScoresManager\Service\PermissionService;
+use OCA\ChoirScores\Policy\PolicyInterface;
+use OCA\ChoirScores\Policy\ScoreBookPolicy;
+use OCA\ChoirScores\Service\PermissionService;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Controller;
+namespace OCA\ChoirScores\Controller;
 
-use OCA\OrchestraScoresManager\Db\Tag;
-use OCA\OrchestraScoresManager\Db\TagMapper;
-use OCA\OrchestraScoresManager\ResponseDefinitions;
-use OCA\OrchestraScoresManager\Service\TagService;
+use OCA\ChoirScores\Db\Tag;
+use OCA\ChoirScores\Db\TagMapper;
+use OCA\ChoirScores\ResponseDefinitions;
+use OCA\ChoirScores\Service\TagService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -19,7 +19,7 @@ use OCP\AppFramework\OCSController;
 use OCP\IRequest;
 
 /**
- * @psalm-import-type OrchestraScoresManagerTag from ResponseDefinitions
+ * @psalm-import-type ChoirScoresTag from ResponseDefinitions
  * @psalm-suppress UnusedClass - Controller discovered by NextCloud framework
  */
 #[OpenAPI(scope: OpenAPI::SCOPE_DEFAULT)]
@@ -38,7 +38,7 @@ class TagApiController extends OCSController {
 	/**
 	 * Return all available tags
 	 *
-	 * @return DataResponse<Http::STATUS_OK, list<OrchestraScoresManagerTag>, array{}> the list of tags
+	 * @return DataResponse<Http::STATUS_OK, list<ChoirScoresTag>, array{}> the list of tags
 	 *
 	 * 200: Successful response with the list of tags
 	 * @throws OCSBadRequestException Invalid request parameters
@@ -56,7 +56,7 @@ class TagApiController extends OCSController {
 	 *
 	 * @param string $name The name of the new tag
 	 *
-	 * @return DataResponse<Http::STATUS_CREATED, OrchestraScoresManagerTag, array{}> the created tag
+	 * @return DataResponse<Http::STATUS_CREATED, ChoirScoresTag, array{}> the created tag
 	 *
 	 * 201: Successful creation of the tag
 	 * 403: Forbidden

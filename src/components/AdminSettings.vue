@@ -80,10 +80,10 @@ interface RepertoireThresholds {
 const MAX_REPERTOIRE_YEARS = 100
 
 // Reactive data
-const allowedGroups = ref<string[]>(loadState('orchestrascoresmanager', 'allowed_groups'))
+const allowedGroups = ref<string[]>(loadState('choirscores', 'allowed_groups'))
 const loading = ref(false)
-const publicPageEnabled = ref<boolean>(loadState('orchestrascoresmanager', 'public_page_enabled', false))
-const publicPageUrl = loadState<string>('orchestrascoresmanager', 'public_page_url', '')
+const publicPageEnabled = ref<boolean>(loadState('choirscores', 'public_page_enabled', false))
+const publicPageUrl = loadState<string>('choirscores', 'public_page_url', '')
 const publicPageLoading = ref(false)
 
 /**
@@ -109,7 +109,7 @@ async function onPublicPageChanged(enabled: boolean) {
 	}
 }
 
-const initialThresholds = loadState<RepertoireThresholds>('orchestrascoresmanager', 'repertoire_thresholds', { currentYears: 3, dormantYears: 10 })
+const initialThresholds = loadState<RepertoireThresholds>('choirscores', 'repertoire_thresholds', { currentYears: 3, dormantYears: 10 })
 const currentYears = ref<string | number>(initialThresholds.currentYears)
 const dormantYears = ref<string | number>(initialThresholds.dormantYears)
 const thresholdsLoading = ref(false)

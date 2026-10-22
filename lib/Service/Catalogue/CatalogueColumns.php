@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Service\Catalogue;
+namespace OCA\ChoirScores\Service\Catalogue;
 
-use OCA\OrchestraScoresManager\Db\Score;
+use OCA\ChoirScores\Db\Score;
 
 /**
  * The columns of the work catalogue (Werkverzeichnis) and how they map to score fields.

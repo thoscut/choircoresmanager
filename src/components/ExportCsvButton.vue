@@ -35,7 +35,7 @@ function onExportClick() {
 
 	tryShowError(
 		async () => {
-			props.tableRef.exportAsCsv('orchestrascores.csv')
+			props.tableRef.exportAsCsv('choirscores.csv')
 		},
 		t('Export failed: '),
 	)

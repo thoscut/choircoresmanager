@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Service\Catalogue;
+namespace OCA\ChoirScores\Service\Catalogue;
 
 /**
  * A problem with a catalogue CSV file or one of its values.

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Utility;
+namespace OCA\ChoirScores\Utility;
 
 /**
  * Helper class for Date and DateTime operations.

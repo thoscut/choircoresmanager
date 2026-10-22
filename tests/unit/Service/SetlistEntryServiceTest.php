@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\unit\Service;
+namespace OCA\ChoirScores\Tests\unit\Service;
 
-use OCA\OrchestraScoresManager\Db\Setlist;
-use OCA\OrchestraScoresManager\Db\SetlistEntry;
-use OCA\OrchestraScoresManager\Db\SetlistEntryMapper;
-use OCA\OrchestraScoresManager\Policy\PolicyInterface;
-use OCA\OrchestraScoresManager\Policy\SetlistPolicy;
-use OCA\OrchestraScoresManager\Service\AuthorizationService;
-use OCA\OrchestraScoresManager\Service\SetlistEntryService;
-use OCA\OrchestraScoresManager\Service\SetlistService;
-use OCA\OrchestraScoresManager\Utility\SetlistValidationHelper;
+use OCA\ChoirScores\Db\Setlist;
+use OCA\ChoirScores\Db\SetlistEntry;
+use OCA\ChoirScores\Db\SetlistEntryMapper;
+use OCA\ChoirScores\Policy\PolicyInterface;
+use OCA\ChoirScores\Policy\SetlistPolicy;
+use OCA\ChoirScores\Service\AuthorizationService;
+use OCA\ChoirScores\Service\SetlistEntryService;
+use OCA\ChoirScores\Service\SetlistService;
+use OCA\ChoirScores\Utility\SetlistValidationHelper;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\IL10N;
 use PHPUnit\Framework\TestCase;

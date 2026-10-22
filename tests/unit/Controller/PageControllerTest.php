@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\unit\Controller;
+namespace OCA\ChoirScores\Tests\unit\Controller;
 
-use OCA\OrchestraScoresManager\AppInfo\Application;
-use OCA\OrchestraScoresManager\Controller\PageController;
-use OCA\OrchestraScoresManager\Db\ScoreMapper;
-use OCA\OrchestraScoresManager\Db\TagMapper;
-use OCA\OrchestraScoresManager\Service\ConfigService;
-use OCA\OrchestraScoresManager\Service\FolderCollectionService;
-use OCA\OrchestraScoresManager\Service\PermissionService;
-use OCA\OrchestraScoresManager\Service\ScoreBookService;
-use OCA\OrchestraScoresManager\Service\SetlistService;
+use OCA\ChoirScores\AppInfo\Application;
+use OCA\ChoirScores\Controller\PageController;
+use OCA\ChoirScores\Db\ScoreMapper;
+use OCA\ChoirScores\Db\TagMapper;
+use OCA\ChoirScores\Service\ConfigService;
+use OCA\ChoirScores\Service\FolderCollectionService;
+use OCA\ChoirScores\Service\PermissionService;
+use OCA\ChoirScores\Service\ScoreBookService;
+use OCA\ChoirScores\Service\SetlistService;
 use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
@@ -67,17 +67,17 @@ final class PageControllerTest extends TestCase {
 	}
 
 	public function testIndexRedirectsToScoresPage(): void {
-		$expectedUrl = '/apps/orchestrascoresmanager/scores';
+		$expectedUrl = '/apps/choirscores/scores';
 
 		$this->urlGenerator->expects($this->once())
 			->method('linkToRoute')
 			->with(Application::APP_ID . '.page.pages')
-			->willReturn('/apps/orchestrascoresmanager/');
+			->willReturn('/apps/choirscores/');
 
 		$response = $this->controller->index();
 
 		$this->assertInstanceOf(RedirectResponse::class, $response);
-		$this->assertEquals('/apps/orchestrascoresmanager/scores', $response->getRedirectURL());
+		$this->assertEquals('/apps/choirscores/scores', $response->getRedirectURL());
 	}
 
 	public function testPagesReturnsTemplateResponse(): void {
@@ -155,7 +155,7 @@ final class PageControllerTest extends TestCase {
 	}
 
 	public function testPagesProvidesScoresState(): void {
-		$mockScore = $this->createMock(\OCA\OrchestraScoresManager\Db\Score::class);
+		$mockScore = $this->createMock(\OCA\ChoirScores\Db\Score::class);
 		$mockScore->expects($this->once())
 			->method('jsonSerialize')
 			->willReturn(['id' => 1, 'title' => 'Test Score']);
@@ -182,7 +182,7 @@ final class PageControllerTest extends TestCase {
 	}
 
 	public function testPagesProvidesTagsState(): void {
-		$mockTag = $this->createMock(\OCA\OrchestraScoresManager\Db\Tag::class);
+		$mockTag = $this->createMock(\OCA\ChoirScores\Db\Tag::class);
 		$mockTag->expects($this->once())
 			->method('jsonSerialize')
 			->willReturn(['id' => 1, 'name' => 'Classical']);

@@ -17,7 +17,7 @@ This directory contains translation files in gettext format.
 
 To add a new language:
 1. Create a new directory with the language code (e.g., `fr/` for French)
-2. Copy the `.pot` file from `templates/` and rename it to `orchestrascoresmanager.po`
+2. Copy the `.pot` file from `templates/` and rename it to `choirscores.po`
 3. Translate the strings in the `.po` file
 4. Run `convert-po-files` to generate the final translation files
 

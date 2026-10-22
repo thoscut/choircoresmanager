@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\unit\Service\Catalogue;
+namespace OCA\ChoirScores\Tests\unit\Service\Catalogue;
 
-use OCA\OrchestraScoresManager\Service\Catalogue\CatalogueColumns;
-use OCA\OrchestraScoresManager\Service\Catalogue\CatalogueCsv;
-use OCA\OrchestraScoresManager\Service\Catalogue\CatalogueException;
+use OCA\ChoirScores\Service\Catalogue\CatalogueColumns;
+use OCA\ChoirScores\Service\Catalogue\CatalogueCsv;
+use OCA\ChoirScores\Service\Catalogue\CatalogueException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Db;
+namespace OCA\ChoirScores\Db;
 
 use OCP\AppFramework\Db\QBMapper;
 use OCP\DB\Exception;
@@ -18,7 +18,7 @@ use OCP\IDBConnection;
 class ScoreBookScoreLinkMapper extends QBMapper {
 	/** @psalm-suppress PossiblyUnusedMethod - Constructor used by DI container */
 	public function __construct(IDBConnection $db) {
-		parent::__construct($db, 'osm_score_book_scores', null);
+		parent::__construct($db, 'chs_score_book_scores', null);
 	}
 
 	/**

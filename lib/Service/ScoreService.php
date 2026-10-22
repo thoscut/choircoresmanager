@@ -2,24 +2,24 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Service;
+namespace OCA\ChoirScores\Service;
 
 use DateTimeImmutable;
 use DateTimeZone;
-use OCA\OrchestraScoresManager\Db\CommentMapper;
-use OCA\OrchestraScoresManager\Db\Enum\PublicationStatus;
-use OCA\OrchestraScoresManager\Db\Enum\RightsStatus;
-use OCA\OrchestraScoresManager\Db\Enum\ShareTargetType;
-use OCA\OrchestraScoresManager\Db\Score;
-use OCA\OrchestraScoresManager\Db\ScoreBookScoreLinkMapper;
-use OCA\OrchestraScoresManager\Db\ScoreFolderCollectionLinkMapper;
-use OCA\OrchestraScoresManager\Db\ScoreMapper;
-use OCA\OrchestraScoresManager\Db\ScoreTagLinkMapper;
-use OCA\OrchestraScoresManager\Db\ShareMapper;
-use OCA\OrchestraScoresManager\Db\TagMapper;
-use OCA\OrchestraScoresManager\Policy\PolicyInterface;
-use OCA\OrchestraScoresManager\Policy\ScorePolicy;
-use OCA\OrchestraScoresManager\Service\Exceptions\NotFoundException;
+use OCA\ChoirScores\Db\CommentMapper;
+use OCA\ChoirScores\Db\Enum\PublicationStatus;
+use OCA\ChoirScores\Db\Enum\RightsStatus;
+use OCA\ChoirScores\Db\Enum\ShareTargetType;
+use OCA\ChoirScores\Db\Score;
+use OCA\ChoirScores\Db\ScoreBookScoreLinkMapper;
+use OCA\ChoirScores\Db\ScoreFolderCollectionLinkMapper;
+use OCA\ChoirScores\Db\ScoreMapper;
+use OCA\ChoirScores\Db\ScoreTagLinkMapper;
+use OCA\ChoirScores\Db\ShareMapper;
+use OCA\ChoirScores\Db\TagMapper;
+use OCA\ChoirScores\Policy\PolicyInterface;
+use OCA\ChoirScores\Policy\ScorePolicy;
+use OCA\ChoirScores\Service\Exceptions\NotFoundException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\AppFramework\Db\TTransactional;

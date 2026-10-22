@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\Tests\unit\Db;
+namespace OCA\ChoirScores\Tests\unit\Db;
 
 use DateTimeImmutable;
-use OCA\OrchestraScoresManager\Db\FolderCollectionVersion;
+use OCA\ChoirScores\Db\FolderCollectionVersion;
 use PHPUnit\Framework\TestCase;
 
 /**

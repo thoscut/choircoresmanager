@@ -19,7 +19,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  APP_NAME: orchestrascoresmanager
+  APP_NAME: choirscores
 
 jobs:
   # Job 0: Determine which jobs need to run based on changed files
@@ -121,8 +121,8 @@ jobs:
 
           echo "Preprocessing TypeScript/JavaScript files..."
           find src -type f \( -name "*.ts" -o -name "*.js" -o -name "*.vue" \) | while read file; do
-            # Transform t('text') to t('orchestrascoresmanager', 'text')
-            # Transform n('singular', 'plural', count) to n('orchestrascoresmanager', 'singular', 'plural', count)
+            # Transform t('text') to t('choirscores', 'text')
+            # Transform n('singular', 'plural', count) to n('choirscores', 'singular', 'plural', count)
             # Use pattern that avoids matching method calls like obj.t() - only match standalone t() or after non-identifier chars
             # Handle single quotes
             sed -i -E "s/(^|[^a-zA-Z0-9_.])t\(\s*'([^']+)'/\1t('$APP_NAME', '\2'/g" "$file"

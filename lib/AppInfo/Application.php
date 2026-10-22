@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace OCA\OrchestraScoresManager\AppInfo;
+namespace OCA\ChoirScores\AppInfo;
 
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
@@ -11,7 +11,7 @@ use OCP\AppFramework\Bootstrap\IRegistrationContext;
 
 /** @psalm-suppress UnusedClass - Entry point for NextCloud app framework */
 class Application extends App implements IBootstrap {
-	public const APP_ID = 'orchestrascoresmanager';
+	public const APP_ID = 'choirscores';
 
 	/** @psalm-suppress PossiblyUnusedMethod */
 	public function __construct(array $urlParams = []) {
