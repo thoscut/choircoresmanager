@@ -10,11 +10,12 @@ declare(strict_types=1);
  * Usage (as the web server user):
  *   php tests/Integration/practice_audio_test.php <nextcloud-root> <uid> <shelfmark-protected> <shelfmark-preservation-copy> <shelfmark-public-domain>
  *
- * <uid> must hold the role "librarian". The first shelf mark is a protected
- * version without a license for practice audio, the second an internal
- * preservation copy, the third an unconfirmed public domain version. The
- * test temporarily takes the user's groups out of the role "librarian".
- * Database changes are rolled back.
+ * <uid> must hold the role "librarian". The first shelf mark is a version
+ * without a license for practice audio, the second a preservation copy and
+ * the third an unconfirmed public domain version, all three of different
+ * versions. A catalog without a protected version or a preservation copy
+ * gets them inside the transaction. The test temporarily takes the user's
+ * groups out of the role "librarian". Database changes are rolled back.
  */
 
 require __DIR__ . '/harness.php';
@@ -26,6 +27,7 @@ use OCA\Notenarchiv\Db\AuditEntryMapper;
 use OCA\Notenarchiv\Db\CopyMapper;
 use OCA\Notenarchiv\Db\WorkVersionMapper;
 use OCA\Notenarchiv\Exception\AccessDeniedException;
+use OCA\Notenarchiv\Service\CatalogService;
 use OCA\Notenarchiv\Service\LicenseService;
 use OCA\Notenarchiv\Service\PracticeAudioService;
 use OCA\Notenarchiv\Service\RightsService;
@@ -81,6 +83,15 @@ $refusal = function (int $versionId, array $data) use ($practiceAudio, $uid): ?s
 
 $db->beginTransaction();
 try {
+	// Preconditions, so that the test also runs on a catalog where everything is public domain
+	$catalog = Server::get(CatalogService::class);
+	if ($versions->find($protected->getVersionId())->getRightsStatus() !== 'protected') {
+		$catalog->update('version', $protected->getVersionId(), ['rights_status' => 'protected'], $uid, 'integration test');
+	}
+	if ($versions->find($preservation->getVersionId())->getPreservationCopy() !== true) {
+		$catalog->update('version', $preservation->getVersionId(), ['preservation_copy' => true], $uid, 'integration test');
+	}
+
 	// Protected without a license: refused with the reason, nothing recorded
 	$versionId = $protected->getVersionId();
 	$before = count($entries($versionId));
