@@ -26,7 +26,31 @@ export interface NoteEvent {
  */
 export type NoteVoiceMap = Map<string, string>
 
+/**
+ * A measure of Verovio's MEI output
+ */
+export interface MeiMeasure {
+	id: string
+	/** The measure number, taken from the MusicXML measure's number */
+	n: string
+}
+
+/**
+ * Time span of a measure, in milliseconds at the score's original tempo
+ */
+export interface MeasureSpan {
+	start: number
+	end: number
+}
+
 const XML_ID = 'xml:id'
+
+/**
+ * @param mei - MEI document as returned by the Verovio toolkit
+ */
+export function parseMei(mei: string): Document {
+	return new DOMParser().parseFromString(mei, 'application/xml')
+}
 
 /**
  * Read the voices of a score and the voice of every note from Verovio's MEI output.
@@ -35,12 +59,10 @@ const XML_ID = 'xml:id'
  * name from MusicXML), numbered when the staff contains more than one layer,
  * e.g. "Tenor 1" and "Tenor 2" for a TTBB score on two staves.
  *
- * @param mei - MEI document as returned by the Verovio toolkit
+ * @param doc - MEI document, see parseMei
  * @param fallbackLabel - Function creating a label for staves without a name
  */
-export function extractVoices(mei: string, fallbackLabel: (staffN: string) => string): { voices: Voice[], noteVoices: NoteVoiceMap } {
-	const doc = new DOMParser().parseFromString(mei, 'application/xml')
-
+export function extractVoices(doc: Document, fallbackLabel: (staffN: string) => string): { voices: Voice[], noteVoices: NoteVoiceMap } {
 	const staffLabels = new Map<string, string>()
 	for (const staffDef of Array.from(doc.getElementsByTagName('staffDef'))) {
 		const n = staffDef.getAttribute('n')
@@ -84,6 +106,79 @@ export function extractVoices(mei: string, fallbackLabel: (staffN: string) => st
 	}
 
 	return { voices, noteVoices }
+}
+
+/**
+ * Read the measures of Verovio's MEI output in score order
+ *
+ * @param doc - MEI document, see parseMei
+ */
+export function extractMeasures(doc: Document): MeiMeasure[] {
+	return Array.from(doc.getElementsByTagName('measure')).map((measure) => ({
+		id: measure.getAttribute(XML_ID) ?? '',
+		n: measure.getAttribute('n') ?? '',
+	}))
+}
+
+/**
+ * Compute the time span of every measure from the measure onsets in Verovio's timemap.
+ *
+ * The timemap must be rendered without expansion (Verovio option expandNever) and with
+ * includeMeasures and includeRests, so that each measure appears once and the last entry
+ * marks the end of the score. Measures missing from the timemap, e.g. the measures Verovio
+ * merges into a multi-measure rest, get an empty span.
+ *
+ * @param measures - The measures of the MEI output, see extractMeasures
+ * @param timemap - Timemap as returned by the Verovio toolkit
+ * @return The spans in the order of the measures, or null if the timemap has no measure onsets
+ */
+export function measureSpansFromTimemap(measures: MeiMeasure[], timemap: VerovioTimemapEntry[]): MeasureSpan[] | null {
+	const onsets = new Map<string, number>()
+	let end = 0
+	for (const entry of timemap) {
+		if (entry.measureOn && !onsets.has(entry.measureOn)) {
+			onsets.set(entry.measureOn, entry.tstamp)
+		}
+		end = Math.max(end, entry.tstamp)
+	}
+	if (onsets.size === 0) {
+		return null
+	}
+
+	const spans: MeasureSpan[] = new Array(measures.length)
+	let following = end
+	for (let index = measures.length - 1; index >= 0; index--) {
+		const start = Math.min(onsets.get(measures[index].id) ?? following, following)
+		spans[index] = { start, end: following }
+		following = start
+	}
+	return spans
+}
+
+/**
+ * Find the MEI measure of every MusicXML measure.
+ *
+ * Verovio creates one MEI measure per MusicXML measure, except for multi-measure rests, which
+ * become a single measure. If the counts differ, the measures are matched by their numbers.
+ *
+ * @param numbers - Numbers of the MusicXML measures in score order
+ * @param measures - The measures of the MEI output, see extractMeasures
+ * @return Index of the MEI measure for each MusicXML measure, null for measures without one
+ */
+export function matchMeasureNumbers(numbers: string[], measures: MeiMeasure[]): (number | null)[] {
+	if (numbers.length === measures.length) {
+		return numbers.map((_, index) => index)
+	}
+	let next = 0
+	return numbers.map((number) => {
+		for (let index = next; index < measures.length; index++) {
+			if (measures[index].n === number) {
+				next = index + 1
+				return index
+			}
+		}
+		return null
+	})
 }
 
 /**
