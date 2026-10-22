@@ -1,0 +1,37 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/* Shared layout of the blocks on the settings page (scoped in each component) */
+.settings-block {
+	display: flex;
+	flex-direction: column;
+	gap: calc(2 * var(--default-grid-baseline));
+}
+
+.settings-block p {
+	margin: 0;
+	overflow-wrap: anywhere;
+}
+
+.settings-block__text {
+	max-width: 70ch;
+}
+
+.settings-block__muted {
+	color: var(--color-text-maxcontrast);
+}
+
+.settings-block__actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: calc(2 * var(--default-grid-baseline));
+}
+
+.settings-block__busy {
+	display: flex;
+	align-items: center;
+	gap: calc(2 * var(--default-grid-baseline));
+}

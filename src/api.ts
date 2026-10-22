@@ -7,6 +7,7 @@
  * All calls to the server API (see docs/api.md) in one place.
  */
 import type {
+	AccessReport,
 	AccessionInput,
 	AccessionProposal,
 	AccessionResult,
@@ -32,6 +33,7 @@ import type {
 	FieldMap,
 	FieldValue,
 	FileSyncReport,
+	GroupOption,
 	ImportReport,
 	Inventory,
 	Level,
@@ -74,6 +76,7 @@ import axios, { isAxiosError } from '@nextcloud/axios'
 import { t } from './l10n.ts'
 import { generateRemoteUrl, generateUrl } from '@nextcloud/router'
 import { davUrl } from './calendar.ts'
+import { normalizeAccessReport, normalizeGroups, normalizeSettings } from './settings.ts'
 import { LEVELS } from './types.ts'
 
 const APP = 'notenarchiv'
@@ -96,9 +99,13 @@ export function apiUrl(path: string, params?: Record<string, string | number>): 
  */
 export function errorMessage(error: unknown): string {
 	if (isAxiosError(error)) {
-		const data = error.response?.data as { error?: unknown } | undefined
+		const data = error.response?.data as { error?: unknown, message?: unknown } | undefined
 		if (data && typeof data.error === 'string' && data.error !== '') {
 			return data.error
+		}
+		if (data && typeof data.message === 'string' && data.message !== '') {
+			// Nextcloud's own checks before the app (e.g. "must be an admin")
+			return data.message
 		}
 		if (error.response?.status === 429) {
 			// rate limit of Nextcloud: no `{ error }` in the response
@@ -115,6 +122,54 @@ export function errorMessage(error: unknown): string {
 	return t('notenarchiv', 'An unexpected error occurred.')
 }
 
+/** `reason` of an error response: the archive folder is not shared with the account. */
+export const REASON_NOT_SHARED = 'not_shared'
+
+/**
+ * An error of the server with its message and, for some errors, a machine
+ * readable `reason` (e.g. `not_shared`).
+ */
+export class ApiError extends Error {
+
+	readonly reason: string | null
+
+	/**
+	 * @param message - message for the user
+	 * @param reason - `reason` of the response, if any
+	 */
+	constructor(message: string, reason: string | null = null) {
+		super(message)
+		this.name = 'ApiError'
+		this.reason = reason
+	}
+
+}
+
+/**
+ * The `reason` of a failed request, if the server sent one.
+ *
+ * @param error - whatever was thrown
+ */
+export function errorReason(error: unknown): string | null {
+	if (error instanceof ApiError) {
+		return error.reason
+	}
+	if (isAxiosError(error)) {
+		const data = error.response?.data as { reason?: unknown } | undefined
+		return data && typeof data.reason === 'string' ? data.reason : null
+	}
+	return null
+}
+
+/**
+ * Page of the settings under Administration → Music archive.
+ *
+ * @param section - id of a section to jump to (SETTINGS_SECTIONS of settings.ts)
+ */
+export function adminSettingsUrl(section?: string): string {
+	return generateUrl('/settings/admin/{section}', { section: APP }) + (section ? '#' + section : '')
+}
+
 /**
  * PHP serializes empty associative arrays as `[]`. Bring the field
  * directory into a predictable shape.
@@ -129,6 +184,8 @@ export function normalizeMeta(meta: Meta): Meta {
 	return {
 		uid: meta.uid ?? '',
 		admin: meta.admin === true,
+		// An older server sends no flag: the settings were for admins only
+		canChangeSettings: typeof meta.canChangeSettings === 'boolean' ? meta.canChangeSettings : meta.admin === true,
 		roles: Array.isArray(meta.roles) ? meta.roles : [],
 		roleLabels: meta.roleLabels && !Array.isArray(meta.roleLabels) ? meta.roleLabels : {},
 		fields,
@@ -136,6 +193,7 @@ export function normalizeMeta(meta: Meta): Meta {
 		personFields: normalizeFieldMap(meta.personFields),
 		contributionRoles: meta.contributionRoles && !Array.isArray(meta.contributionRoles) ? meta.contributionRoles : {},
 		archive: meta.archive ?? { id: 0, path: '', user: '' },
+		archiveAccessible: typeof meta.archiveAccessible === 'boolean' ? meta.archiveAccessible : null,
 		modules: normalizeModules(meta.modules),
 		personalView: normalizePersonalView(meta.personalView),
 	}
@@ -231,7 +289,9 @@ export async function fetchEntry(id: number): Promise<Detail> {
 
 /**
  * Raw content of a linked file (e.g. the MusicXML of the score view). The
- * server checks the rights policy and the user's access to the file.
+ * server checks the rights policy and the user's access to the file. An
+ * error is an ApiError; its `reason` is `not_shared` when the archive folder
+ * is not shared with the account.
  *
  * @param id - id from `files[]` (not the Nextcloud file id)
  */
@@ -244,9 +304,9 @@ export async function fetchFileContent(id: number): Promise<ArrayBuffer> {
 		const body = isAxiosError(error) ? error.response?.data : undefined
 		if (body instanceof ArrayBuffer) {
 			try {
-				const parsed = JSON.parse(new TextDecoder().decode(body)) as { error?: unknown }
+				const parsed = JSON.parse(new TextDecoder().decode(body)) as { error?: unknown, reason?: unknown }
 				if (typeof parsed.error === 'string' && parsed.error !== '') {
-					throw new Error(parsed.error)
+					throw new ApiError(parsed.error, typeof parsed.reason === 'string' ? parsed.reason : null)
 				}
 			} catch (decoded) {
 				if (decoded instanceof Error && !(decoded instanceof SyntaxError)) {
@@ -254,7 +314,7 @@ export async function fetchFileContent(id: number): Promise<ArrayBuffer> {
 				}
 			}
 		}
-		throw new Error(errorMessage(error))
+		throw new ApiError(errorMessage(error))
 	}
 }
 
@@ -297,14 +357,40 @@ export async function storeExport(): Promise<string> {
 	return data.path
 }
 
+/** Settings of the app (admins and the groups given the settings page). */
 export async function fetchSettings(): Promise<Settings> {
-	const { data } = await axios.get<Settings>(apiUrl('/settings'))
-	return data
+	const { data } = await axios.get<unknown>(apiUrl('/settings'))
+	return normalizeSettings(data)
 }
 
+/**
+ * Change the role groups and/or the archive folder.
+ *
+ * @param update - the parts to change
+ */
 export async function saveSettings(update: SettingsUpdate): Promise<Settings> {
-	const { data } = await axios.put<Settings>(apiUrl('/settings'), update)
-	return data
+	const { data } = await axios.put<unknown>(apiUrl('/settings'), update)
+	return normalizeSettings(data)
+}
+
+/**
+ * Groups to choose for a role, at most 25.
+ *
+ * @param search - part of the id or the display name; '' for the first ones
+ */
+export async function searchGroups(search: string): Promise<GroupOption[]> {
+	const { data } = await axios.get<unknown>(apiUrl('/settings/groups'), { params: { search } })
+	return normalizeGroups(data)
+}
+
+/**
+ * Who of the role groups can open the archive folder (only reads).
+ *
+ * @param folderId - a folder just chosen as the new archive folder, checked before it is saved
+ */
+export async function fetchArchiveAccess(folderId?: number): Promise<AccessReport> {
+	const { data } = await axios.get<unknown>(apiUrl('/settings/access'), { params: folderId === undefined ? {} : { folderId } })
+	return normalizeAccessReport(data)
 }
 
 // ---- milestone 0.5.1: modules and the personal view -------------------------
@@ -657,11 +743,12 @@ export async function writeCalendarObject(path: string, ics: string): Promise<vo
 	})
 }
 
-export async function fetchRepertoireThresholds(): Promise<RepertoireThresholds> {
-	const { data } = await axios.get<{ thresholds: RepertoireThresholds }>(apiUrl('/repertoire'))
-	return data.thresholds
-}
-
+/**
+ * Change the thresholds of the repertoire classes (a setting; read them
+ * with `fetchSettings`).
+ *
+ * @param thresholds - years for "current" and "dormant"
+ */
 export async function saveRepertoireThresholds(thresholds: RepertoireThresholds): Promise<RepertoireThresholds> {
 	const { data } = await axios.put<RepertoireThresholds>(apiUrl('/repertoire/thresholds'), thresholds)
 	return data

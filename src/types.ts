@@ -49,6 +49,11 @@ export interface PersonalView {
 export interface Meta {
 	uid: string
 	admin: boolean
+	/**
+	 * May change the settings (Administration → Music archive): admins and
+	 * the groups the administration has given the page. No role.
+	 */
+	canChangeSettings: boolean
 	roles: string[]
 	roleLabels: Record<string, string>
 	fields: Record<Level, FieldMap>
@@ -59,6 +64,12 @@ export interface Meta {
 	/** contribution role key => English label */
 	contributionRoles: Record<string, string>
 	archive: ArchiveInfo
+	/**
+	 * Whether the account can open the archive folder in its own Nextcloud
+	 * (the app reads files only with the account's permissions); null without
+	 * an archive folder
+	 */
+	archiveAccessible: boolean | null
 	/**
 	 * module key => active; null when the server sends none (older server:
 	 * every module counts as active)
@@ -580,9 +591,73 @@ export interface FileSyncReport {
 	reports?: FileSyncReports
 }
 
+/** `GET /api/settings`: what the settings page needs, without the catalog. */
 export interface Settings {
+	/** role key => group ids */
 	roles: Record<string, string[]>
+	/** group id => display name, for the groups in `roles` */
+	groupNames: Record<string, string>
+	/** groups in `roles` that no longer exist */
+	groupsMissing: string[]
+	/** imported copies and files found by the file sync (setup steps) */
+	catalog: { copies: number, files: number }
+	/** role key => English label */
+	roleLabels: Record<string, string>
 	archive: ArchiveInfo
+	/** null while the module "repertoire" is not active */
+	repertoire: RepertoireThresholds | null
+	/** a real admin: complete backup and restore are only for them on this page */
+	admin: boolean
+	/** whether a restore is possible (every app table empty); null for others than admins */
+	catalogEmpty: boolean | null
+}
+
+/** A Nextcloud group to choose for a role (`GET /api/settings/groups`). */
+export interface GroupOption {
+	id: string
+	displayName: string
+}
+
+/** An account in the access check. */
+export interface AccessAccount {
+	uid: string
+	displayName: string
+}
+
+/** Members of a group (or the admins without a role) in the access check. */
+export interface AccessMembers {
+	/** accounts in the group */
+	members: number
+	/** accounts checked */
+	checked: number
+	/** checked accounts that can open the archive folder */
+	canOpen: number
+	/** checked accounts that cannot */
+	cannotOpen: AccessAccount[]
+	/** not checked: disabled, never logged in, or beyond the limit */
+	notChecked: number
+}
+
+export interface AccessGroup extends AccessMembers {
+	id: string
+	displayName: string
+	/** false: the group was deleted after it was given the role */
+	exists: boolean
+}
+
+/** `GET /api/settings/access`: who can open the archive folder. */
+export interface AccessReport {
+	archive: ArchiveInfo
+	/** the person who asked */
+	self: AccessAccount & { canOpen: boolean }
+	roles: { role: string, groups: AccessGroup[] }[]
+	adminsWithoutRole: AccessMembers
+	/** accounts checked in all */
+	checked: number
+	/** at most this many accounts are checked */
+	limit: number
+	/** false when accounts were left out because of the limit */
+	complete: boolean
 }
 
 export interface SettingsUpdate {

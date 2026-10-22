@@ -136,8 +136,10 @@ holds the role "Catalog (music librarian)".
 
 1. **Upload** the folder `build/demo/Notenarchiv-Demo` to your Nextcloud files
    (e.g. by drag and drop in the Files app).
-2. **Settings** (admin): assign groups to the roles and choose
-   `Notenarchiv-Demo` as archive folder.
+2. **Administration → Music archive** (admin): assign groups to the roles
+   and choose `Notenarchiv-Demo` as archive folder. If other accounts are to
+   open the files, share the folder with the groups of the roles; **Access to
+   the archive folder** on the same page shows who cannot open it.
 3. **Import the catalog**: Archive management → Import → `_Import/catalog.csv`.
    The dry run reports 23 rows, 7 with MusicXML, 1 preservation copy and the
    rights status 19 × public domain, 2 × protected, 2 × open. Then import.

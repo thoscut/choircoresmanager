@@ -6,9 +6,10 @@ Daily work with the app is described in the [user guide](user-guide.md).
 
 **Contents**
 
+- [Setting up in five steps](#setting-up-in-five-steps) – the short way
 1. [Installation](#1-installation)
-2. [Roles and groups](#2-roles-and-groups)
-3. [Archive folder](#3-archive-folder)
+2. [Roles and groups](#2-roles-and-groups) – the settings page, giving it to a group
+3. [Archive folder](#3-archive-folder) – sharing it, the access check
 4. [First import](#4-first-import)
 5. [Backups and restore](#5-backups-and-restore)
 6. [Notifications](#6-notifications)
@@ -19,6 +20,34 @@ Daily work with the app is described in the [user guide](user-guide.md).
 11. [Accessibility](#11-accessibility)
 12. [Modules and presets](#12-modules-and-presets)
 13. [Agents and the API](#13-agents-and-the-api)
+- [Common problems](#common-problems) – a message, its cause and what to do
+
+## Setting up in five steps
+
+After the [installation](#1-installation), open **Administration → Music
+archive**. The list **Setting up** at the top of the page shows these five
+steps, each as *done*, *missing* or *problem*, with a link to the place where
+it is done.
+
+1. **Archive folder** – choose the folder with the score files
+   ([section 3](#3-archive-folder)). Right after choosing, before you save,
+   the page shows which accounts of the role groups cannot open it.
+2. **Roles and groups** – give each role its groups, at least the catalog
+   role (music librarians) ([section 2](#2-roles-and-groups)). Before you
+   save, the page lists which groups get or lose a role.
+3. **Access to the archive folder** – share the folder with the groups of the
+   roles (reading is enough) and **Check access** until nobody is listed
+   ([Sharing the archive folder](#sharing-the-archive-folder)).
+4. **Import the catalog** – a music librarian, in the app: **Archive
+   management → Import catalog**, a dry run first
+   ([section 4](#4-first-import)).
+5. **File sync** – a music librarian, in the app: **Archive management →
+   Run file sync**; it links the files of the archive folder to the copies.
+
+Steps 1 to 3 can also be done by a group you give the settings page
+([Giving the settings to a group](#giving-the-settings-to-a-group)); steps 4
+and 5 need the catalog role. To try the app first, use the
+[demo data](../tools/demo/README.md).
 
 ## 1. Installation
 
@@ -73,11 +102,23 @@ change of group membership.
 
 1. Create the groups under Users, for example "Music librarians",
    "Conductor", "Board".
-2. Open the app → **Settings** at the bottom of the navigation (admins only)
-   → **Roles and groups**.
-3. Choose the groups for each role and **Save roles**.
+2. Open **Administration → Music archive** (the section of the app in
+   Nextcloud's administration settings). In the app, **Settings** at the
+   bottom of the navigation leads there.
+3. Under **Roles and groups**, choose the groups for each role. Before you
+   save, the page lists which groups get or lose a role, and warns when the
+   catalog role would have no group. **Save roles**.
+4. Check access to the archive folder: new role holders need it, too
+   ([section 3](#checking-who-can-open-the-archive-folder)).
 
-![The settings of the app: the archive folder with the button to choose it, and the roles, each with a short description and the groups assigned to it, for example "Music librarians" for the catalog role.](screenshots/settings-roles.png)
+![The settings of the app under Administration: the archive folder with the button to choose it, and the roles, each with a short description and the groups assigned to it, for example "Music librarians" for the catalog role.](screenshots/settings-roles.png)
+
+The page **Administration → Music archive** holds all settings of the app:
+archive folder, roles and groups, access to the archive folder (see
+[section 3](#3-archive-folder)), modules ([section 12](#12-modules-and-presets)),
+repertoire and, for admins, the complete backup and restore
+([section 5](#5-backups-and-restore)). How each person sees the app
+(**Customize view**) stays in the app.
 
 | Role (German interface) | Typical holder | May |
 |---|---|---|
@@ -97,11 +138,32 @@ these two may view internal preservation copies, and nobody plays them.
 > programmes and change the settings. The proposals inbox and internal
 > preservation copies stay closed to them, and they write catalog data only
 > if they also hold a role. To do that, add yourself to a group with the role
-> you need.
+> you need. To open scores and scans, their account needs access to the
+> archive folder like everybody else ([section 3](#sharing-the-archive-folder)).
 
 **Repertoire** in the same settings sets when a work counts as current
 repertoire (sung within the last 3 years by default) and when as dormant
 (within 10 years); earlier performances make it "earlier".
+
+### Giving the settings to a group
+
+Admins can give the settings page to a group, for example to the archive
+management, so that changing a setting does not need an admin:
+
+1. **Administration → Administration privileges**.
+2. At **Music archive**, add the group.
+
+Members of that group then see **Administration → Music archive** and may
+change the archive folder, the roles and groups, the modules and the
+repertoire thresholds, and run the access check. This gives them **no role**:
+they see the app only if they hold a role as well. Complete backup and
+restore stay with admins (and with the catalog role in the archive
+management of the app); the page does not show them to the group.
+
+> [!WARNING]
+> Whoever may change the settings can give any group any role, also a group
+> of their own. Give the page only to people you would also entrust with the
+> catalog role.
 
 On self-hosted instances the roles can also be set with
 `occ notenarchiv:setup <account> --role librarian=<group>,<group> --role conductor=<group> …`
@@ -112,8 +174,11 @@ On self-hosted instances the roles can also be set with
 The archive folder holds the score files, for example one subfolder per
 binder.
 
-1. **Settings** → **Archive folder** → **Choose folder …**.
-2. Choose the folder and **Save archive folder**.
+1. **Administration → Music archive** → **Archive folder** → **Choose folder …**.
+2. Choose the folder. Before you save, the page says what saving does and
+   lists the accounts of the role groups that cannot open the chosen folder;
+   share it with their groups (see below).
+3. **Save archive folder**.
 
 It should be a group folder or a share that every role holder can open in
 their own Nextcloud. The app reads files through the account of the person
@@ -137,7 +202,53 @@ transcription: the file sync counts it as a report, not as a score file, and
 reads it into review points (module "Reviewing transcriptions").
 
 With shell access: `occ notenarchiv:setup <account> <folder>` (the folder
-relative to the account's files).
+relative to the account's files). With an archive folder set, the command
+ends with the access check below in short and names the accounts of the
+role groups that cannot open the folder.
+
+### Sharing the archive folder
+
+The app reads files only with the permissions of the person who uses it. A
+role holder whose account cannot open the archive folder sees the catalog,
+but no scores, scans or practice files; the score view then says
+"The file lies in a folder that is not shared with your account". Admins
+without a role are no exception: to open scores they need access to the
+folder, too.
+
+- Share the archive folder with the **groups of the roles**, or keep it in a
+  **team folder** (group folder) that these groups can open. Sharing with
+  single persons works, but a group follows a change of office by itself.
+- **Read permission is enough.** Permission to edit is only needed by those
+  who put corrected files into the folder, and by those who store exports and
+  backups in its subfolder `_notenarchiv-app`: the catalog role (archive
+  management) and the account that chose the folder, through which the
+  weekly backups are written.
+- Never share the folder with all singers: the backups in it contain the
+  whole catalog including the audit log (see [section 5](#5-backups-and-restore)).
+
+### Checking who can open the archive folder
+
+**Administration → Music archive → Access to the archive folder → Check
+access** looks at every member of the role groups and at the admins without
+a role:
+
+![The access check: per role and group how many accounts can open the archive folder, the accounts that cannot, and what to do.](screenshots/admin-settings.png)
+
+- For each role and group it says, in words and with an icon, whether every
+  checked member can open the folder, and names the accounts that cannot
+  (display name and account name). A group that was deleted after it was
+  given a role is marked as well.
+- It also tells whether you can open the folder yourself.
+- Disabled accounts and accounts that have never logged in are not checked
+  (Nextcloud would first have to set up their file storage); their access
+  follows from their groups like that of the others. At most 500 accounts
+  are checked; the page says so when it stopped there.
+- The check only reads. It shares nothing and changes nothing; share the
+  folder in **Files** (the page has a link to open it) and check again.
+
+In the app, the link **Check access to the archive folder** in the score
+view and in the notes about the archive folder leads straight to the check,
+for everybody who may change the settings.
 
 ## 4. First import
 
@@ -225,7 +336,8 @@ A backup can only be restored into an **empty** catalog, for example after
 reinstalling the app. Nothing existing is overwritten.
 
 1. **Archive management** → **Complete backup and restore** → **Restore from
-   a backup …** (admins find the same in **Settings**).
+   a backup …** (admins find the same under **Administration → Music
+   archive**; giving the settings page to a group does not include it).
 2. Choose a `…_backup_….json` file.
 3. Confirm that it is the right and most recent backup and **Restore now**.
 
@@ -338,12 +450,13 @@ vulnerability.
 ## 9. Managed hosting
 
 On instances without shell access everything is done in the web interface:
-installation from the App Store, settings, imports and restore. The `occ`
+installation from the App Store, settings (Administration → Music archive),
+imports and restore. The `occ`
 commands are a convenience for self-hosted instances:
 
 | Command | Does |
 |---|---|
-| `occ notenarchiv:setup <account> [<folder>] [--role role=groups]` | sets the archive folder and the role groups |
+| `occ notenarchiv:setup <account> [<folder>] [--role role=groups]` | sets the archive folder and the role groups; with an archive folder it names the accounts of the role groups that cannot open it |
 | `occ notenarchiv:import <account> <file> [--execute]` | imports the catalog CSV; a dry run unless `--execute` is given |
 | `occ notenarchiv:export [--extended] [--full]` | writes the catalog CSV, all fields, or the complete backup (JSON) to standard output |
 | `occ notenarchiv:file-sync <account>` | runs the file sync |
@@ -380,8 +493,8 @@ are only an addition.
 ## 12. Modules and presets
 
 Not every choir needs every function. Everything outside the core is a
-**module** that admins switch on and off in the app under **Settings →
-Modules**. The core is always on: the catalog (works, versions, copies,
+**module** that admins switch on and off under **Administration → Music
+archive → Modules** (also the groups the settings page was given to). The core is always on: the catalog (works, versions, copies,
 fields, search, status), the start page, the file sync with the archive
 folder, roles, the audit log, CSV import and export, backup and restore, and
 the settings.
@@ -559,3 +672,87 @@ Note: Nextcloud lets every client with an app password also call the
 internal interface of the app's user interface (with the same role checks).
 The module does not open more than the roles allow; it offers a stable,
 documented contract that stays the same across updates of the app.
+## Common problems
+
+Each entry gives the message (in the German interface in brackets), its
+cause and what to do.
+
+### The score cannot be shown
+
+*"The file lies in a folder that is not shared with your account"*
+(*Die Noten können nicht angezeigt werden – Die Datei liegt in einem Ordner,
+der für dein Konto nicht freigegeben ist*). The same account also gets a note
+at the top of the app and on the tab "Files".
+
+- **Cause:** the app reads files only with the permissions of the person who
+  uses it, and the archive folder is not shared with this account. This also
+  happens to admins without a role.
+- **To do:** share the archive folder with the group of the person's role,
+  or keep it in a team folder; reading is enough. Then
+  **Administration → Music archive → Access to the archive folder → Check
+  access** must list nobody
+  ([Sharing the archive folder](#sharing-the-archive-folder)). People who may
+  change the settings get a button to the check right in the message.
+
+### File sync or export: the archive folder is not accessible
+
+*"The archive folder is not accessible for this account."* (*Der
+Archivordner ist für dieses Konto nicht erreichbar.*) or *"No write
+permission for exports in the archive folder."* (*Keine Schreibberechtigung
+für Exporte im Archivordner.*)
+
+- **Cause:** the music librarian who runs the file sync or stores an export
+  or backup cannot open the folder, or may only read it. The weekly backup
+  writes through the account that chose the folder, so it fails the same way
+  when that account loses access (the catalog role and admins are notified).
+- **To do:** give the catalog role permission to edit the folder (at least
+  its subfolder `_notenarchiv-app`), and make sure the account shown as
+  "chosen by" under **Archive folder** still has access, or choose the folder
+  again with an account that has.
+
+### No access to the music archive
+
+*"You have no access to the music archive."* (*Du hast keinen Zugang zum
+Notenarchiv.*)
+
+- **Cause:** the account is in no group with a role (and is no admin).
+- **To do:** add the person to the group of their role, or give that group
+  the role under **Roles and groups** ([section 2](#2-roles-and-groups)).
+
+### A role has a group that no longer exists
+
+The setup list shows **Roles and groups** as a problem; the access check
+says *"The group no longer exists"*.
+
+- **Cause:** the group was deleted or renamed after it was given the role.
+- **To do:** choose the right group for the role under **Roles and groups**
+  and save.
+
+### Music librarians do not see "Administration → Music archive"
+
+- **Cause:** the settings page is for admins only, unless it was given to a
+  group.
+- **To do:** an admin gives it to the group under **Administration →
+  Administration privileges**
+  ([Giving the settings to a group](#giving-the-settings-to-a-group)).
+  Complete backup and restore stay with admins; music librarians find them
+  in the archive management of the app.
+
+### A restore is refused
+
+*"A backup can only be restored into an empty catalog."* (*Eine Sicherung
+lässt sich nur in einen leeren Bestand zurückspielen.*)
+
+- **Cause:** nothing is ever overwritten; already one row in a table of the
+  app (also an audit log entry) counts.
+- **To do:** restore only into a new installation of the app; see
+  [section 5](#5-backups-and-restore).
+
+### Too many requests
+
+*"Too many requests. Please wait a moment and try again."* (*Zu viele
+Anfragen …*)
+
+- **Cause:** expensive functions are limited per account, e.g. the access
+  check to 20 runs in 10 minutes.
+- **To do:** wait a few minutes.

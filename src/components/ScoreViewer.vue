@@ -55,11 +55,12 @@ import NcRadioGroup from '@nextcloud/vue/components/NcRadioGroup'
 import NcRadioGroupButton from '@nextcloud/vue/components/NcRadioGroupButton'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
+import GuideLink from './GuideLink.vue'
 import LinkDialog from './LinkDialog.vue'
 import ReviewPanel from './ReviewPanel.vue'
 import RightsBadge from './RightsBadge.vue'
 import TaskDialog from './TaskDialog.vue'
-import { errorMessage, fetchFileContent, fetchReview, scanUrl } from '../api.ts'
+import { adminSettingsUrl, errorMessage, errorReason, fetchFileContent, fetchReview, REASON_NOT_SHARED, scanUrl } from '../api.ts'
 import { translateLabel } from '../format.ts'
 import { playbackTimeline, renderPages, selectMeasures, loadScore } from '../score/model.ts'
 import { markFocus } from '../score/emphasis.ts'
@@ -75,7 +76,9 @@ import { referenceWords } from '../labels.ts'
 import { textReference } from '../references.ts'
 import { canonicalVoice, matchVoice, pointPlace, pointRange } from '../review.ts'
 import { parsePage, scanFiles, storedScanPage, storeScanPage } from '../scan.ts'
-import { canCreateLinks, canCreateTasks, fieldInfo, fieldLabel, hasAnyRole, isModuleActive } from '../store.ts'
+import { SETTINGS_SECTIONS } from '../settings.ts'
+import { USER_GUIDE, userGuideUrl } from '../docs.ts'
+import { canChangeSettings, canCreateLinks, canCreateTasks, fieldInfo, fieldLabel, hasAnyRole, isModuleActive } from '../store.ts'
 
 /** Practice audio files: own chunk, loaded when the dialog is opened */
 const PracticeAudioDialog = defineAsyncComponent(() => import('./PracticeAudioDialog.vue'))
@@ -127,6 +130,10 @@ const reviewLabel = computed(() => fieldInfo('version', 'musicxml_review') ? fie
 const status = ref<'loading' | 'ready' | 'error'>('loading')
 const loadingText = ref('')
 const errorText = ref('')
+/** The archive folder is not shared with the account (the server says so) */
+const notShared = ref(false)
+/** The access check of the settings, for those who may change them */
+const accessCheckUrl = adminSettingsUrl(SETTINGS_SECTIONS.access)
 const model = shallowRef<ScoreModel | null>(null)
 /** MusicXML text of the score shown, for the correction form */
 const scoreText = ref('')
@@ -158,6 +165,7 @@ async function load(keep = false): Promise<void> {
 	const kept = keep ? { from: rangeFrom.value, to: rangeTo.value, ranged: range.value !== null, focus: focusKey.value } : null
 	status.value = 'loading'
 	errorText.value = ''
+	notShared.value = false
 	loadingText.value = t('notenarchiv', 'Loading the score …')
 	// Fetch the file and load Verovio at the same time. A toolkit created after
 	// the viewer was closed is destroyed right away.
@@ -175,6 +183,7 @@ async function load(keep = false): Promise<void> {
 		await toolkitPromise
 	} catch (error) {
 		status.value = 'error'
+		notShared.value = errorReason(error) === REASON_NOT_SHARED
 		errorText.value = error instanceof Error && error.message !== '' ? error.message : t('notenarchiv', 'The score could not be loaded.')
 		return
 	}
@@ -1147,9 +1156,18 @@ onBeforeUnmount(() => {
 					<NcIconSvgWrapper :path="mdiAlertCircleOutline" />
 				</template>
 				<template #action>
-					<NcButton @click="load()">
-						{{ t('notenarchiv', 'Try again') }}
-					</NcButton>
+					<div class="score-viewer__error-actions">
+						<!-- The archive folder is not shared with the account: the way to the access check -->
+						<NcButton v-if="notShared && canChangeSettings" variant="primary" :href="accessCheckUrl">
+							{{ t('notenarchiv', 'Check access to the archive folder') }}
+						</NcButton>
+						<NcButton @click="load()">
+							{{ t('notenarchiv', 'Try again') }}
+						</NcButton>
+					</div>
+					<p v-if="notShared" class="score-viewer__error-help">
+						<GuideLink :href="userGuideUrl(USER_GUIDE.filesNotShared)" :label="t('notenarchiv', 'Files you cannot open (user guide)')" />
+					</p>
 				</template>
 			</NcEmptyContent>
 
@@ -1580,6 +1598,18 @@ onBeforeUnmount(() => {
 
 .score-viewer__error {
 	color: var(--color-error-text, var(--color-error));
+}
+
+.score-viewer__error-actions {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: calc(2 * var(--default-grid-baseline));
+}
+
+.score-viewer__error-help {
+	margin: calc(2 * var(--default-grid-baseline)) 0 0;
+	text-align: center;
 }
 
 .score-viewer__zoom-value {

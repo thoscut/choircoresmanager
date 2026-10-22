@@ -21,8 +21,10 @@ use OCA\Notenarchiv\Service\PerformanceImportService;
 use OCA\Notenarchiv\Service\RepertoireService;
 use OCA\Notenarchiv\Service\Roles;
 use OCA\Notenarchiv\Service\UserFiles;
+use OCA\Notenarchiv\Settings\Admin;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
 use OCP\AppFramework\Http\Attribute\FrontpageRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
@@ -222,11 +224,15 @@ class EventController extends Controller {
 		});
 	}
 
+	/**
+	 * A setting: admins and the groups given the settings page (Administration privileges).
+	 */
+	#[AuthorizedAdminSetting(settings: Admin::class)]
 	#[RequiresModule('repertoire')]
 	#[FrontpageRoute(verb: 'PUT', url: '/api/repertoire/thresholds')]
 	public function setThresholds(int $current = RepertoireService::DEFAULT_CURRENT_YEARS, int $dormant = RepertoireService::DEFAULT_DORMANT_YEARS): JSONResponse {
 		return $this->run(function (string $uid) use ($current, $dormant) {
-			$this->roles->requireAdmin($uid);
+			$this->roles->requireSettingsAccess($uid);
 			$this->repertoire->setThresholds($current, $dormant);
 			return $this->repertoire->thresholds();
 		});

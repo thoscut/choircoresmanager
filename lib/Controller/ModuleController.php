@@ -14,7 +14,9 @@ use OCA\Notenarchiv\Exception\InvalidInputException;
 use OCA\Notenarchiv\Service\ModuleSettings;
 use OCA\Notenarchiv\Service\PersonalView;
 use OCA\Notenarchiv\Service\Roles;
+use OCA\Notenarchiv\Settings\Admin;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
 use OCP\AppFramework\Http\Attribute\FrontpageRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
@@ -24,8 +26,9 @@ use OCP\IRequest;
 use Psr\Log\LoggerInterface;
 
 /**
- * Modules and presets (admins, like the other settings) and the personal
- * view of an account (see docs/api.md). These routes belong to the core.
+ * Modules and presets (a setting like the others: admins and the groups the
+ * administration has given the settings page) and the personal view of an
+ * account (see docs/api.md). These routes belong to the core.
  *
  * @psalm-suppress UnusedClass
  */
@@ -45,10 +48,11 @@ class ModuleController extends Controller {
 		parent::__construct(Application::APP_ID, $request);
 	}
 
+	#[AuthorizedAdminSetting(settings: Admin::class)]
 	#[FrontpageRoute(verb: 'GET', url: '/api/settings/modules')]
 	public function settings(): JSONResponse {
 		return $this->run(function (string $uid) {
-			$this->roles->requireAdmin($uid);
+			$this->roles->requireSettingsAccess($uid);
 			return $this->moduleSettings->describe($this->l);
 		});
 	}
@@ -58,10 +62,11 @@ class ModuleController extends Controller {
 	 *
 	 * @param array<array-key, mixed>|null $modules module key => on (request data)
 	 */
+	#[AuthorizedAdminSetting(settings: Admin::class)]
 	#[FrontpageRoute(verb: 'PUT', url: '/api/settings/modules')]
 	public function update(?array $modules = null, ?string $preset = null): JSONResponse {
 		return $this->run(function (string $uid) use ($modules, $preset) {
-			$this->roles->requireAdmin($uid);
+			$this->roles->requireSettingsAccess($uid);
 			if (($modules === null) === ($preset === null)) {
 				throw new InvalidInputException('Please choose a module or a preset.');
 			}

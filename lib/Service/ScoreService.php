@@ -17,6 +17,7 @@ use OCA\Notenarchiv\Db\WorkVersionMapper;
 use OCA\Notenarchiv\Exception\AccessDeniedException;
 use OCA\Notenarchiv\Exception\InvalidInputException;
 use OCA\Notenarchiv\Exception\NotFoundException;
+use OCA\Notenarchiv\Exception\NotSharedException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\Files\File;
 use OCP\Files\IRootFolder;
@@ -48,6 +49,7 @@ class ScoreService {
 		private IRootFolder $rootFolder,
 		private ITempManager $tempManager,
 		private Modules $modules,
+		private ArchiveAccess $archiveAccess,
 	) {
 	}
 
@@ -110,6 +112,10 @@ class ScoreService {
 		}
 		$node = $this->rootFolder->getUserFolder($uid)->getFirstNodeById($file->getFileId());
 		if (!$node instanceof File) {
+			if (!$this->archiveAccess->canOpen($uid)) {
+				// The usual case: the archive folder is not shared with the account.
+				throw new NotSharedException('The file lies in a folder that is not shared with your account. Please ask the music librarians to share the archive folder with you or your group.');
+			}
 			throw new AccessDeniedException('The file is not accessible for this account.');
 		}
 		$content = UserFiles::content($node, self::MAX_BYTES, new AccessDeniedException('The file is not accessible for this account.'));

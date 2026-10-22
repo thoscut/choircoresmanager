@@ -91,6 +91,28 @@ class FullBackupService {
 	}
 
 	/**
+	 * Whether a restore is possible: every table of the app is empty (the
+	 * same check as the restore itself, which repeats it in its transaction).
+	 */
+	public function isEmpty(): bool {
+		return array_sum($this->counts()) === 0;
+	}
+
+	/**
+	 * Rows per table of the app (installed tables only), e.g. for the setup
+	 * steps of the settings page.
+	 *
+	 * @return array<string, int> table => rows
+	 */
+	public function counts(): array {
+		$counts = [];
+		foreach ($this->existingTables() as $table) {
+			$counts[$table] = $this->count($table);
+		}
+		return $counts;
+	}
+
+	/**
 	 * Restores a backup into an empty catalog. Rows are inserted with their
 	 * original ids; the whole restore runs in one transaction.
 	 *
@@ -111,10 +133,8 @@ class FullBackupService {
 			// Checked inside the transaction, right before writing, so that a
 			// second restore or an import started meanwhile cannot slip in
 			// between; rows with the same ids then collide on the primary key.
-			foreach ($existing as $table) {
-				if ($this->count($table) > 0) {
-					throw new InvalidInputException('A backup can only be restored into an empty catalog.');
-				}
+			if (!$this->isEmpty()) {
+				throw new InvalidInputException('A backup can only be restored into an empty catalog.');
 			}
 			$schema = $this->db->createSchema();
 			foreach (self::TABLES as $table) {

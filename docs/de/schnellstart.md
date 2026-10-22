@@ -11,6 +11,12 @@ Schritte im Notenarchiv. Ausführlich beschreiben es der
 > deutsche Oberfläche gibt es in der Du- und in der Sie-Form; du wählst sie
 > mit der Sprache in deinen persönlichen Nextcloud-Einstellungen.
 
+> [!TIP]
+> Die App öffnet Dateien nur mit den Rechten deines eigenen Kontos. Meldet
+> sie „Die Datei liegt in einem Ordner, der für dein Konto nicht freigegeben
+> ist“, bitte die Archivverwaltung, den Archivordner für dich oder deine
+> Gruppe freizugeben; Leserechte genügen.
+
 ## Zurechtfinden
 
 ### Startseite „Fällig“

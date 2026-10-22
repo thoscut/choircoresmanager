@@ -5,7 +5,8 @@
 <script setup lang="ts">
 /**
  * Files linked to a copy. The app only reads files; a click opens the file
- * in Nextcloud in a new tab. The librarian can link a file of the archive
+ * in Nextcloud in a new tab, with the permissions of the account: when the
+ * archive folder is not shared with it, a note says so and what to do. The librarian can link a file of the archive
  * folder by hand (the file sync then never moves it) and remove such a link.
  */
 import type { FileRef } from '../types.ts'
@@ -21,11 +22,12 @@ import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import ActionDialog from './ActionDialog.vue'
-import { errorMessage, linkFile, unlinkFile } from '../api.ts'
+import { adminSettingsUrl, errorMessage, linkFile, unlinkFile } from '../api.ts'
 import { focusAfterDialog, focusAfterUpdate } from '../focus.ts'
 import { formatSize } from '../format.ts'
 import { navigate } from '../navigation.ts'
-import { hasArchiveFolder, isLibrarian, isModuleActive } from '../store.ts'
+import { SETTINGS_SECTIONS } from '../settings.ts'
+import { archiveNotShared, canChangeSettings, hasArchiveFolder, isLibrarian, isModuleActive } from '../store.ts'
 
 const props = defineProps<{
 	files: FileRef[]
@@ -173,6 +175,13 @@ function details(file: FileRef): string {
 	<div class="file-list">
 		<NcNoteCard v-if="preservationCopy" type="error">
 			{{ t('notenarchiv', 'Internal preservation copy – do not share. Do not pass these files on.') }}
+		</NcNoteCard>
+
+		<NcNoteCard v-if="archiveNotShared && files.length > 0" type="warning">
+			<p>{{ t('notenarchiv', 'The files lie in the archive folder, which is not shared with your account, so they do not open for you. Please ask the music librarians to share the archive folder with you or your group.') }}</p>
+			<NcButton v-if="canChangeSettings" variant="secondary" :href="adminSettingsUrl(SETTINGS_SECTIONS.access)">
+				{{ t('notenarchiv', 'Check access to the archive folder') }}
+			</NcButton>
 		</NcNoteCard>
 
 		<NcNoteCard v-if="files.some((file) => file.sha256_mismatch)" type="warning">

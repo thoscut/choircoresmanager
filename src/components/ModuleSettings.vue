@@ -4,11 +4,13 @@
 -->
 <script setup lang="ts">
 /**
- * Settings "Modules" for administrators: the core that is always on, the
- * presets and one switch per module, grouped. Labels and descriptions come
- * translated from the server. Switching a module on also switches on what
- * it requires (the server does it); switching off a module that others
- * need asks first and lists them. The server checks everything again.
+ * Settings "Modules" (Administration → Music archive): the core that is
+ * always on, the presets and one switch per module, grouped. Labels and
+ * descriptions come translated from the server. Switching a module on also
+ * switches on what it requires (the server does it); switching off a module
+ * that others need asks first and lists them. The server checks everything
+ * again. Needs no catalog: it loads its own data and tells the page about
+ * each change (`changed`).
  */
 import type { ModuleChanges, ModuleInfo, ModulePreset, ModuleSettings } from '../types.ts'
 
@@ -23,7 +25,11 @@ import ActionDialog from './ActionDialog.vue'
 import { errorMessage, fetchModuleSettings, saveModules } from '../api.ts'
 import { focusAfterDialog } from '../focus.ts'
 import { inactiveBecause, moduleLabels, presetChanges, stopsWorking, switchedOnWith } from '../modules.ts'
-import { reloadMeta } from '../store.ts'
+
+const emit = defineEmits<{
+	/** modules were switched: what depends on them may have changed */
+	changed: [modules: ModuleInfo[]]
+}>()
 
 const settings = ref<ModuleSettings | null>(null)
 const loading = ref(false)
@@ -121,8 +127,8 @@ async function apply(change: { modules: Record<string, boolean> } | { preset: st
 		const result = await saveModules(change)
 		settings.value = { modules: result.modules, groups: result.groups, presets: result.presets, core: result.core }
 		announce(result.changes)
-		// Navigation, start page and buttons follow the new state
-		await reloadMeta()
+		// E.g. the repertoire thresholds of the page follow the new state
+		emit('changed', result.modules)
 		return true
 	} catch (error) {
 		showError(errorMessage(error))

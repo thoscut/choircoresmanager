@@ -43,7 +43,9 @@ The navigation on the left lists the views of the app in groups:
   **Shelf labels**), **Merge**, **Inventory** and **Checksums**
 
 At the bottom, music librarians find **Archive management** (imports, file
-sync, exports, backups) and administrators **Settings**.
+sync, exports, backups). **Settings** (for administrators and the groups they
+have given the settings) leads to **Administration → Music archive**, the
+settings page of the app in Nextcloud's administration.
 
 Every view has its own address, so the browser's back button works and a
 view can be bookmarked.
@@ -128,7 +130,7 @@ The tabs:
   the rights and MusicXML fields.
 - **Tasks:** questions and tasks of the copy and its internal links.
 - **Files:** the files linked from the archive folder, each opening in
-  Nextcloud in a new tab.
+  Nextcloud in a new tab (see [Files you cannot open](#files-you-cannot-open)).
 - **Audit log:** every change with who, when, old and new value and reason.
 
 A section you may change shows **Edit**. Change the fields, optionally enter
@@ -137,6 +139,28 @@ a **Reason for the change**, which is stored in the audit log, and **Save**.
 > [!NOTE]
 > Nothing is ever deleted. A copy that leaves the archive gets the status
 > *retired*, *missing* or *lent*, and the status needs a reason.
+
+### Files you cannot open
+
+The app opens files only with the permissions of your own account, the same
+as the **Files** app. The scores, scans and practice files lie in the
+archive folder; if that folder is not shared with you, you see the catalog,
+but no file opens. The app then says so:
+
+- at the top of the page: *The archive folder is not shared with your
+  account, so its files (scores, scans, practice files) do not open for you.*
+- on the tab **Files** of a copy, and
+- in the score view: *The score cannot be shown – The file lies in a folder
+  that is not shared with your account. Please ask the music librarians to
+  share the archive folder with you or your group.*
+
+Nothing is wrong with the file or with your role. Ask the music librarians
+(or the administration) to share the archive folder with you or, better,
+with the group of your role; reading is enough. Afterwards reload the page.
+If you may change the settings yourself, the button **Check access to the
+archive folder** opens the access check under Administration → Music
+archive, which lists everybody who cannot open the folder (see the
+[administration guide](admin-guide.md#checking-who-can-open-the-archive-folder)).
 
 ### Notifications
 

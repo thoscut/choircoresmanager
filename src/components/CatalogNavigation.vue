@@ -7,7 +7,7 @@
  * Left navigation: the views of the app (start page, catalog, tasks, inbox,
  * release lists, programmes, links, maintaining the catalog), the search and
  * – in the catalog – the filters, and the entries for archive management and
- * settings.
+ * settings (a link to Administration → Music archive).
  */
 import type { ViewName } from '../startParams.ts'
 
@@ -48,6 +48,7 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwit
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
+import { adminSettingsUrl } from '../api.ts'
 import { REPERTOIRE_CLASSES } from '../catalog.ts'
 import { translateLabel } from '../format.ts'
 import { repertoireClassLabel } from '../labels.ts'
@@ -57,6 +58,7 @@ import { viewTitle } from '../viewTitles.ts'
 import {
 	archiveDialogOpen,
 	binderOptions,
+	canChangeSettings,
 	canSeeProposals,
 	choiceLabel,
 	entries,
@@ -64,15 +66,16 @@ import {
 	fieldInfo,
 	filters,
 	filtersActive,
-	isAdmin,
 	isLibrarian,
 	isModuleActive,
 	isViewShown,
 	personalViewDialogOpen,
 	resetFilters,
-	settingsDialogOpen,
 	visibleEntries,
 } from '../store.ts'
+
+/** The settings are a page under Administration → Music archive. */
+const settingsUrl = adminSettingsUrl()
 
 const isMobile = useIsMobile()
 
@@ -224,17 +227,15 @@ const countText = computed(() => {
 })
 
 /**
- * Footer entries are buttons, not links.
+ * Footer entries that open a dialog are buttons, not links.
  *
  * @param event - click on the navigation entry
  * @param open - what to open
  */
-function onFooterClick(event: Event, open: 'archive' | 'settings' | 'view'): void {
+function onFooterClick(event: Event, open: 'archive' | 'view'): void {
 	event.preventDefault()
 	if (open === 'archive') {
 		archiveDialogOpen.value = true
-	} else if (open === 'settings') {
-		settingsDialogOpen.value = true
 	} else {
 		personalViewDialogOpen.value = true
 	}
@@ -389,9 +390,10 @@ function onFooterClick(event: Event, open: 'archive' | 'settings' | 'view'): voi
 						<NcIconSvgWrapper :path="mdiArchiveOutline" />
 					</template>
 				</NcAppNavigationItem>
-				<NcAppNavigationItem v-if="isAdmin"
+				<!-- A link: the settings are a page under Administration -->
+				<NcAppNavigationItem v-if="canChangeSettings"
 					:name="t('notenarchiv', 'Settings')"
-					@click="onFooterClick($event, 'settings')">
+					:href="settingsUrl">
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiCogOutline" />
 					</template>

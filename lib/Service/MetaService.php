@@ -10,8 +10,9 @@ declare(strict_types=1);
 namespace OCA\Notenarchiv\Service;
 
 /**
- * What the UI needs on start: own roles, field registry, archive folder,
- * the active modules and the personal view of the account.
+ * What the UI needs on start: own roles, field registry, archive folder
+ * (and whether the account can open it), the active modules and the personal
+ * view of the account.
  */
 class MetaService {
 	public function __construct(
@@ -19,6 +20,7 @@ class MetaService {
 		private AppSettings $settings,
 		private Modules $modules,
 		private PersonalView $personalView,
+		private ArchiveAccess $archiveAccess,
 	) {
 	}
 
@@ -26,16 +28,20 @@ class MetaService {
 	 * @return array<string, mixed>
 	 */
 	public function forUser(string $uid): array {
+		$archive = $this->settings->archiveInfo();
 		return [
 			'uid' => $uid,
 			'admin' => $this->roles->isAdmin($uid),
+			'canChangeSettings' => $this->roles->canChangeSettings($uid),
 			'roles' => $this->roles->rolesOf($uid),
 			'roleLabels' => Roles::LABELS,
 			'fields' => Fields::all(),
 			'licenseUses' => Fields::LICENSE_USES,
 			'personFields' => Fields::person(),
 			'contributionRoles' => Fields::CONTRIBUTION_ROLES,
-			'archive' => $this->settings->archiveInfo(),
+			'archive' => $archive,
+			// null without an archive folder
+			'archiveAccessible' => $archive['id'] === 0 ? null : $this->archiveAccess->canOpen($uid),
 			'modules' => $this->modules->states(),
 			'personalView' => $this->personalView->get($uid),
 		];

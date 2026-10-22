@@ -12,6 +12,7 @@ namespace OCA\Notenarchiv\Controller;
 use OCA\Notenarchiv\Exception\AccessDeniedException;
 use OCA\Notenarchiv\Exception\ModuleDisabledException;
 use OCA\Notenarchiv\Exception\NotFoundException;
+use OCA\Notenarchiv\Exception\NotSharedException;
 use OCA\Notenarchiv\Exception\UnknownLinkException;
 use OCA\Notenarchiv\Exception\UserFacingException;
 use OCP\AppFramework\Http;
@@ -37,12 +38,7 @@ trait RunsActions {
 		try {
 			return new JSONResponse($action($this->userId));
 		} catch (UserFacingException $e) {
-			$status = match (true) {
-				$e instanceof AccessDeniedException => Http::STATUS_FORBIDDEN,
-				$e instanceof NotFoundException => Http::STATUS_NOT_FOUND,
-				default => Http::STATUS_BAD_REQUEST,
-			};
-			$response = new JSONResponse(['error' => $this->translate($e->getMessage(), $e->getParameters())], $status);
+			$response = $this->errorResponse($e);
 			if ($e instanceof UnknownLinkException) {
 				// A guessed token: counts for Nextcloud's brute-force protection
 				// (only on methods with #[BruteForceProtection]).
@@ -56,6 +52,24 @@ trait RunsActions {
 			$this->logger->error('Notenarchiv: ' . $e->getMessage(), ['exception' => $e]);
 			return new JSONResponse(['error' => $this->l->t('Internal error. Details are in the Nextcloud log.')], Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
+	}
+
+	/**
+	 * `{ error }` with 403 for a refused permission, 404 for something not
+	 * there (or not for this account), 400 otherwise. A file or folder that is
+	 * not shared with the account adds `reason: "not_shared"`.
+	 */
+	private function errorResponse(UserFacingException $e): JSONResponse {
+		$status = match (true) {
+			$e instanceof AccessDeniedException => Http::STATUS_FORBIDDEN,
+			$e instanceof NotFoundException => Http::STATUS_NOT_FOUND,
+			default => Http::STATUS_BAD_REQUEST,
+		};
+		$data = ['error' => $this->translate($e->getMessage(), $e->getParameters())];
+		if ($e instanceof NotSharedException) {
+			$data['reason'] = NotSharedException::REASON;
+		}
+		return new JSONResponse($data, $status);
 	}
 
 	/**

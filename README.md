@@ -180,12 +180,16 @@ figures to expect.
 
 1. Create Nextcloud groups for the offices, e.g. "Music librarians",
    "Conductor", "Board".
-2. Open the app as an admin → **Settings** and assign the groups to the
-   roles: Catalog (music librarian), Operations (music librarian), Conductor,
-   Proposals (tools), Read only (board, auditors). Other accounts do not see
-   the app; admins without a role may read it and change the settings.
-3. Choose the **archive folder** with the score files. File names start with
-   the shelf mark, e.g. `5-01_Title_Composer.pdf`.
+2. As an admin, open **Administration → Music archive** and assign the
+   groups to the roles: Catalog (music librarian), Operations (music
+   librarian), Conductor, Proposals (tools), Read only (board, auditors).
+   Other accounts do not see the app; admins without a role may read it and
+   change the settings. Admins can give this page to a group (e.g. the
+   music librarians) under Administration privileges.
+3. Choose the **archive folder** with the score files and share it with the
+   groups of the roles (reading is enough); **Access to the archive folder**
+   on the same page shows who cannot open it. File names start with the
+   shelf mark, e.g. `5-01_Title_Composer.pdf`.
 4. A music librarian imports the existing catalog from CSV (always a dry run
    first) and runs the file sync.
 

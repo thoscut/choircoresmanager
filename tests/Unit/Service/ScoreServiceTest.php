@@ -17,6 +17,8 @@ use OCA\Notenarchiv\Db\WorkVersion;
 use OCA\Notenarchiv\Db\WorkVersionMapper;
 use OCA\Notenarchiv\Exception\AccessDeniedException;
 use OCA\Notenarchiv\Exception\InvalidInputException;
+use OCA\Notenarchiv\Exception\NotSharedException;
+use OCA\Notenarchiv\Service\ArchiveAccess;
 use OCA\Notenarchiv\Service\BoundedZip;
 use OCA\Notenarchiv\Service\RightsPolicy;
 use OCA\Notenarchiv\Service\ScoreService;
@@ -54,11 +56,13 @@ final class ScoreServiceTest extends TestCase {
 	private const CONTAINER = '<?xml version="1.0" encoding="UTF-8"?><container><rootfiles>'
 		. '<rootfile full-path="score.xml" media-type="application/vnd.recordare.musicxml+xml"/></rootfiles></container>';
 
-	private File $file;
+	private ?File $file = null;
 	private ?string $policyDenial = null;
 	private ?string $playDenial = null;
 	/** @var list<string> modules switched off */
 	private array $off = [];
+	/** Whether the account can open the archive folder */
+	private bool $archiveShared = true;
 
 	private function service(): ScoreService {
 		$archiveFile = new ArchiveFile();
@@ -87,7 +91,34 @@ final class ScoreServiceTest extends TestCase {
 		$userFolder->method('getFirstNodeById')->willReturnCallback(fn (int $id): ?File => $id === 4711 ? $this->file : null);
 		$root = $this->createStub(IRootFolder::class);
 		$root->method('getUserFolder')->willReturn($userFolder);
-		return new ScoreService($files, $copies, $versions, $policy, $root, $this->tempManager(), $this->modulesWithout($this->off));
+		$access = $this->createStub(ArchiveAccess::class);
+		$access->method('canOpen')->willReturnCallback(fn (): bool => $this->archiveShared);
+		return new ScoreService($files, $copies, $versions, $policy, $root, $this->tempManager(), $this->modulesWithout($this->off), $access);
+	}
+
+	public function testAScoreInAnArchiveFolderThatIsNotSharedSaysWhatToDo(): void {
+		// The account does not see the file because the archive folder is not shared with it.
+		$this->file = null;
+		$this->archiveShared = false;
+		try {
+			$this->service()->content(7, 'carla');
+			self::fail('not shared');
+		} catch (NotSharedException $e) {
+			self::assertInstanceOf(AccessDeniedException::class, $e);
+			self::assertStringContainsString('share the archive folder with you or your group', $e->getMessage());
+		}
+	}
+
+	public function testAFileMissingFromASharedArchiveFolderIsNoSharingQuestion(): void {
+		$this->file = null;
+		$this->archiveShared = true;
+		try {
+			$this->service()->content(7, 'carla');
+			self::fail('not accessible');
+		} catch (AccessDeniedException $e) {
+			self::assertNotInstanceOf(NotSharedException::class, $e);
+			self::assertSame('The file is not accessible for this account.', $e->getMessage());
+		}
 	}
 
 	private function fileWith(string $content, ?int $size = null): File {

@@ -21,7 +21,7 @@ import {
 } from '@mdi/js'
 import { FilePickerClosed, FilePickerType, getFilePickerBuilder, showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '../l10n.ts'
-import { ref, useTemplateRef } from 'vue'
+import { computed, ref, useTemplateRef } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
@@ -32,9 +32,31 @@ import FileSyncReportView from './FileSyncReport.vue'
 import ImportReport from './ImportReport.vue'
 import PerformanceImport from './PerformanceImport.vue'
 import PersonImport from './PersonImport.vue'
-import { errorMessage, exportUrl, runFileSync, runImport, storeBackup, storeExport } from '../api.ts'
+import { adminSettingsUrl, errorMessage, exportUrl, runFileSync, runImport, storeBackup, storeExport } from '../api.ts'
 import { focusAfterDialog, focusAfterUpdate } from '../focus.ts'
-import { archiveDialogOpen, hasArchiveFolder, isAdmin, isModuleActive, loadDetail, loadEntries, meta, settingsDialogOpen } from '../store.ts'
+import {
+	archiveDialogOpen,
+	canChangeSettings,
+	entries,
+	entriesStatus,
+	hasArchiveFolder,
+	isModuleActive,
+	loadDetail,
+	loadEntries,
+	meta,
+	refreshPortalRows,
+	reloadMeta,
+} from '../store.ts'
+
+/** The catalog has copies: a restore would be refused. */
+const catalogFilled = computed(() => entriesStatus.value === 'ready' && entries.value.length > 0)
+
+/** After a restore: the app shows the restored catalog. */
+async function onRestored(): Promise<void> {
+	await reloadMeta()
+	await loadEntries()
+	await refreshPortalRows()
+}
 
 // ---- import ----
 
@@ -175,11 +197,6 @@ const performanceBusy = ref(false)
 const personBusy = ref(false)
 const restoreBusy = ref(false)
 
-function openSettings(): void {
-	archiveDialogOpen.value = false
-	settingsDialogOpen.value = true
-}
-
 /**
  * The dialog asks to close.
  *
@@ -200,7 +217,7 @@ function onUpdateOpen(open: boolean): void {
 		@update:open="onUpdateOpen">
 		<NcNoteCard v-if="!hasArchiveFolder" type="warning">
 			<p>{{ t('notenarchiv', 'No archive folder has been chosen yet. File sync and stored exports need it; an administrator sets it in the settings.') }}</p>
-			<NcButton v-if="isAdmin" @click="openSettings">
+			<NcButton v-if="canChangeSettings" :href="adminSettingsUrl()">
 				{{ t('notenarchiv', 'Open settings') }}
 			</NcButton>
 		</NcNoteCard>
@@ -365,7 +382,7 @@ function onUpdateOpen(open: boolean): void {
 			<h3 id="archive-restore">
 				{{ t('notenarchiv', 'Complete backup and restore') }}
 			</h3>
-			<BackupRestore @busy="restoreBusy = $event" />
+			<BackupRestore :catalog-filled="catalogFilled" @busy="restoreBusy = $event" @restored="onRestored" />
 		</section>
 
 		<template #actions>

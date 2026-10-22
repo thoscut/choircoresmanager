@@ -12,15 +12,12 @@ namespace OCA\Notenarchiv\Controller;
 use OCA\Notenarchiv\AppInfo\Application;
 use OCA\Notenarchiv\Attribute\RequiresModule;
 use OCA\Notenarchiv\Db\AuditEntryMapper;
-use OCA\Notenarchiv\Exception\AccessDeniedException;
 use OCA\Notenarchiv\Exception\InvalidInputException;
 use OCA\Notenarchiv\Exception\UserFacingException;
-use OCA\Notenarchiv\Service\AppSettings;
 use OCA\Notenarchiv\Service\CatalogService;
 use OCA\Notenarchiv\Service\ExportService;
 use OCA\Notenarchiv\Service\FileSyncService;
 use OCA\Notenarchiv\Service\ImportService;
-use OCA\Notenarchiv\Service\Input;
 use OCA\Notenarchiv\Service\MetaService;
 use OCA\Notenarchiv\Service\ProtectionText;
 use OCA\Notenarchiv\Service\Roles;
@@ -46,8 +43,9 @@ use Psr\Log\LoggerInterface;
 /**
  * JSON API for the UI (see docs/api.md).
  *
- * Every method checks the required role itself. Admins may read and change
- * settings, but may only write catalog data if they also hold a role.
+ * Every method checks the required role itself. Admins may read the catalog,
+ * but may only write catalog data if they also hold a role. The settings are
+ * in SettingsController.
  *
  * @psalm-suppress UnusedClass
  */
@@ -64,7 +62,6 @@ class ApiController extends Controller {
 		private ImportService $import,
 		private ExportService $export,
 		private FileSyncService $fileSync,
-		private AppSettings $settings,
 		private AuditEntryMapper $auditEntries,
 		private UserFiles $userFiles,
 		private ITimeFactory $time,
@@ -137,8 +134,7 @@ class ApiController extends Controller {
 			$this->roles->requireAccess($this->userId);
 			$score = $this->scores->content($id, $this->userId);
 		} catch (UserFacingException $e) {
-			$status = $e instanceof AccessDeniedException ? Http::STATUS_FORBIDDEN : Http::STATUS_BAD_REQUEST;
-			return new JSONResponse(['error' => $this->translate($e->getMessage(), $e->getParameters())], $status);
+			return $this->errorResponse($e);
 		}
 		// The viewer fetches the file with a script. Opened directly, the
 		// browser must neither render the XML on the Nextcloud origin nor guess
@@ -222,46 +218,5 @@ class ApiController extends Controller {
 			$this->roles->requireAccess($uid);
 			return $this->auditEntries->findLatest(max(1, min($limit, 1000)));
 		});
-	}
-
-	#[FrontpageRoute(verb: 'GET', url: '/api/settings')]
-	public function settings(): JSONResponse {
-		return $this->run(function (string $uid) {
-			$this->roles->requireAdmin($uid);
-			return $this->settingsData();
-		});
-	}
-
-	/**
-	 * @param array<array-key, mixed>|null $roles role => list of group ids (request data)
-	 */
-	#[FrontpageRoute(verb: 'PUT', url: '/api/settings')]
-	public function updateSettings(?array $roles = null, ?int $archiveFolderId = null): JSONResponse {
-		return $this->run(function (string $uid) use ($roles, $archiveFolderId) {
-			$this->roles->requireAdmin($uid);
-			$roles ??= [];
-			foreach (array_keys($roles) as $role) {
-				$role = (string)$role;
-				if (!in_array($role, Roles::ALL, true)) {
-					throw new InvalidInputException('Unknown role: %s', [$role]);
-				}
-				$this->roles->setGroups($role, Input::stringList($roles[$role], 'Groups'));
-			}
-			if ($archiveFolderId !== null) {
-				$this->settings->setArchiveFolder($uid, $archiveFolderId);
-			}
-			return $this->settingsData();
-		});
-	}
-
-	/**
-	 * @return array<string, mixed>
-	 */
-	private function settingsData(): array {
-		$roles = [];
-		foreach (Roles::ALL as $role) {
-			$roles[$role] = $this->roles->groups($role);
-		}
-		return ['roles' => $roles, 'archive' => $this->settings->archiveInfo()];
 	}
 }

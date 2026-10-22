@@ -21,6 +21,9 @@ export default process.env.VITEST
 			main: resolve(join('src', 'main.ts')),
 			// Action "Open in music archive" in the Files app (small: no score viewer, no Vue)
 			files: resolve(join('src', 'files.ts')),
+			// Administration → Music archive: only the settings, without the
+			// catalog and the score viewer
+			'admin-settings': resolve(join('src', 'adminSettings.ts')),
 		},
 		{
 			createEmptyCSSEntryPoints: true,

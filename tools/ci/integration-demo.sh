@@ -288,6 +288,10 @@ run_test review_test 1-2
 # deletes, and the module switched off (rolled back, switches restored).
 run_test files_integration_test
 run_test backup_test
+# Creates two accounts in two groups of its own (role "reader"), shares the
+# archive folder with the first group and gives the settings page to the
+# second; all of it is removed again.
+run_test settings_access_test
 
 step "7. An agent without a language model: MCP server over stdio against the API for agents"
 agent_failed=0

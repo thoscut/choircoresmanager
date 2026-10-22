@@ -41,10 +41,15 @@ possible and mentioned in the changelog.
 - Every API request checks the caller's role on the server; the user
   interface only hides what the server would refuse anyway. There are no
   public pages: every route needs a logged-in Nextcloud account.
-- Only instance settings (role groups, archive folder, repertoire
-  thresholds) are restricted to admins by Nextcloud itself. Admins write
-  catalog data only if they also hold a role; restoring a backup into an
-  empty catalog is the one exception (after a reinstall).
+- Only instance settings (role groups, archive folder, modules, repertoire
+  thresholds, the access check of the archive folder) are restricted by
+  Nextcloud itself: to admins and to the groups the administration has given
+  the page "Administration → Music archive" under Administration privileges
+  (`#[AuthorizedAdminSetting]`, checked again by the app). That gives no
+  role, and the settings give nothing to Nextcloud's generic app config API.
+  Admins write catalog data only if they also hold a role; restoring a
+  backup into an empty catalog is the one exception (after a reinstall). It
+  stays with admins and the catalog role and cannot be delegated.
 - Each field has its write roles in one registry (`lib/Service/Fields.php`);
   unknown fields are refused, read-only fields (decisions such as a rights
   confirmation, the valid version or the portal release) can only be set
@@ -56,7 +61,7 @@ possible and mentioned in the changelog.
   not change state. Adding concerts to a calendar keeps the check.
 - A unit test (`tests/Unit/Controller/ControllerSecurityTest`) checks these
   route attributes, so that a new route cannot silently become public, skip
-  the CSRF check or lose its admin restriction; for the API for agents also
+  the CSRF check or lose its restriction to the settings; for the API for agents also
   its modules and rate limit.
 
 ### Interface for agents

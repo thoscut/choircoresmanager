@@ -32,6 +32,7 @@ Request bodies are checked strictly: unknown fields are refused with 400
 | `GET /api/events/{id}/ics`, `GET /api/events/upcoming/ics` | 60 in 10 minutes |
 | `POST /api/events/{id}/calendar`, `POST /api/events/upcoming/calendar` | 30 in 10 minutes |
 | `GET /api/nextcloud-files/{fileId}/copy` | 120 in 10 minutes |
+| `GET /api/settings/access` | 20 in 10 minutes |
 
 Files chosen by `fileId` for an import may be at most 20 MB, a backup for a
 restore at most 64 MB; larger files are refused with 400
@@ -58,7 +59,8 @@ Roles: `librarian` (Notenwart Bestand), `operations` (Notenwart Betrieb),
 (Vorstand, Revision). Admins may read and change settings; they may only write
 catalog data if they also hold a role. Without a role they get 403 for the
 proposals (`GET /api/proposals`) and cannot view preservation copies; the UI
-hides the inbox for them.
+hides the inbox for them. The administration can give the settings (not a
+role) to further groups, see "Settings" below.
 
 ## Page
 
@@ -72,10 +74,12 @@ hides the inbox for them.
 {
   "uid": "thomas",
   "admin": true,
+  "canChangeSettings": true,
   "roles": ["librarian"],
   "roleLabels": { "librarian": "Catalog (music librarian)", "...": "..." },
   "fields": { "work": { "title": { "type": "text", "label": "Title", "write": ["librarian"] } }, "version": {}, "copy": {} },
   "archive": { "id": 123, "path": "/Notenarchiv", "user": "admin" },
+  "archiveAccessible": true,
   "modules": { "rights": true, "concerts": true, "statistics": false, "agent_api": false, "...": "..." },
   "personalView": { "navigation": ["statistics"], "cards": ["proposals"] }
 }
@@ -83,6 +87,12 @@ hides the inbox for them.
 
 `modules` tells which modules are active (see "Modules and the personal
 view" at the end); `personalView` what the account has hidden.
+`canChangeSettings` is true for admins and for members of the groups the
+administration has given the settings page (see "Settings"); it gives no
+role. `archiveAccessible` tells whether the account can open the archive
+folder in its own Nextcloud (`null` without an archive folder): the app reads
+files only with the account's permissions, so without access no score, scan
+or practice file opens. The UI then says so.
 
 Field types: `text`, `longtext`, `number`, `date` (YYYY-MM-DD), `choice`
 (with `options`: `{ "key": "English label" }`), `boolean`. A field may be
@@ -145,7 +155,12 @@ why not when playback is allowed, otherwise it is `null` and `reason` applies.
 
 `GET /api/files/{id}/content` returns the raw score file (`.mxl` is a ZIP,
 `.musicxml` is XML) after checking the rights policy and the user's own
-access to the file in Nextcloud; otherwise 403 with `{ "error" }`. Fetch it
+access to the file in Nextcloud; otherwise 403 with `{ "error" }`. When the
+account cannot open the archive folder at all, the 403 carries
+`"reason": "not_shared"` and the message `The file lies in a folder that is
+not shared with your account. Please ask the music librarians to share the
+archive folder with you or your group.`; the UI adds a link to the access
+check for those who may change the settings. Fetch it
 with a script (`responseType: 'arraybuffer'`): the response is sent as an
 attachment (`Content-Disposition: attachment; filename="score.<type>"`) with
 `X-Content-Type-Options: nosniff`, so a browser never renders it as a page.
@@ -227,17 +242,93 @@ schema are written; others are left out.
 
 `GET /api/audit?limit=200` returns the newest entries first.
 
-## Settings (admins only)
+## Settings
+
+The settings are the page **Administration → Music archive** (settings
+section `notenarchiv`, `OCA\Notenarchiv\Settings\Admin`, an
+`IDelegatedSettings`). Admins may use them, and the members of the groups
+the administration has given the page under **Administration privileges**;
+that gives no role and no access to the catalog. The routes below, the module
+settings and `PUT /api/repertoire/thresholds` carry
+`#[AuthorizedAdminSetting(settings: Admin::class)]` (Nextcloud refuses
+everybody else before the app, with its own 403) and check again in the app
+(403 `Only administrators may change this.`). Restoring a backup
+(`POST /api/backup/restore`) is **not** part of it: it stays with admins and
+the role `librarian`. The settings give no app config to Nextcloud's generic
+config API (`getAuthorizedAppConfig()` is empty).
 
 `GET /api/settings`
 
 ```json
-{ "roles": { "librarian": ["Notenwart"], "operations": [], "conductor": [], "contributor": [], "reader": ["Vorstand"] },
-  "archive": { "id": 123, "path": "/Notenarchiv", "user": "admin" } }
+{ "roles": { "librarian": ["archive-team"], "operations": [], "conductor": [], "contributor": [], "reader": ["board"] },
+  "groupNames": { "archive-team": "Archive team", "board": "Board" },
+  "groupsMissing": [],
+  "roleLabels": { "librarian": "Catalog (music librarian)", "...": "..." },
+  "archive": { "id": 123, "path": "/Notenarchiv", "user": "admin" },
+  "repertoire": { "current": 3, "dormant": 10 },
+  "catalog": { "copies": 23, "files": 30 },
+  "admin": true,
+  "catalogEmpty": false }
 ```
 
+`groupNames` are the display names of the groups in `roles` (the id for a
+group that no longer exists); `groupsMissing` lists the groups in `roles`
+that no longer exist. `roleLabels` are English source strings.
+`repertoire` is `null` while the module `repertoire` is not active.
+`catalog` counts the imported copies and the files found by the file sync;
+with the archive folder, the groups of the role `librarian` and the access
+check, the page derives the setup steps from it (nothing of it is stored).
+`admin` tells whether the caller is an admin; only then does the page offer
+the complete backup and restore, and only then is `catalogEmpty` (whether a
+restore is possible: every table of the app is empty) a boolean, otherwise
+`null`.
+
 `PUT /api/settings` `{ "roles": { "librarian": ["…"] }, "archiveFolderId": 123 }`;
-both parts are optional. The response is the same as for `GET`.
+both parts are optional. The response is the same as for `GET`. The archive
+folder is saved as seen by the caller, who becomes the archive user
+(background jobs read through this account).
+
+`GET /api/settings/groups?search=boa` returns at most 25 groups whose id or
+display name matches, `[{ "id": "board", "displayName": "Board" }]`, for
+choosing the groups of a role. (Nextcloud's own group list with display names
+needs the administration privileges for sharing or accounts.)
+
+`GET /api/settings/access` checks who can open the archive folder in their
+own Nextcloud (`getUserFolder($uid)->getFirstNodeById($archiveFolderId)`
+is a folder). It only reads: it shares nothing and changes nothing. Each
+account is checked once, at most 500; disabled accounts and accounts that
+have never logged in are not checked (Nextcloud would first set up the file
+storage of such an account). Without an archive folder: 400
+`No archive folder has been set yet.`
+
+`GET /api/settings/access?folderId=456` checks a folder the caller has just
+chosen as the new archive folder, before it is saved; `archive` then
+describes that folder as the caller sees it. The caller must be able to open
+it, otherwise 400 `The selected archive folder is not a folder or not
+accessible.`
+
+```json
+{ "archive": { "id": 123, "path": "/Notenarchiv", "user": "admin" },
+  "self": { "uid": "admin", "displayName": "Admin", "canOpen": true },
+  "roles": [
+    { "role": "librarian", "groups": [
+      { "id": "archive-team", "displayName": "Archive team", "exists": true, "members": 3, "checked": 3,
+        "canOpen": 2, "cannotOpen": [{ "uid": "demo-conductor", "displayName": "Demo Conductor" }], "notChecked": 0 } ] },
+    { "role": "operations", "groups": [] } ],
+  "adminsWithoutRole": { "members": 1, "checked": 1, "canOpen": 1, "cannotOpen": [], "notChecked": 0 },
+  "checked": 4, "limit": 500, "complete": true }
+```
+
+`roles` lists every role in the order of `Roles::ALL` with its groups;
+`exists: false` marks a group that was deleted after it was given the role.
+`members` counts the accounts of a group, `checked` those checked,
+`canOpen` those that can open the folder; `cannotOpen` names the others
+(sorted by display name), `notChecked` counts the accounts left out
+(disabled, never logged in, beyond the limit). `self` is the caller,
+`adminsWithoutRole` the admins who hold no role (they read the catalog and
+need access to the folder to open scores). `complete` is false when
+accounts were left out because of the limit. `occ notenarchiv:setup` prints
+the same check in short when an archive folder is set.
 
 ## Rights, releases and valid version (milestone 0.2)
 
@@ -543,7 +634,7 @@ valid version).
 | `POST /api/event-items/{id}/resolve` | `{ copyId }` or `{ copyId: null }` (= not in the catalog) | conductor, librarian |
 | `GET /api/events/{id}/song-order` | – | download CSV (position, shelf mark, title, composer, arranger/lyrics, publisher, duration); cells starting with `=`, `+`, `-`, `@`, tab or carriage return get a leading `'` so that spreadsheet programs do not evaluate them |
 | `GET /api/repertoire` | – | `{ thresholds: { current, dormant }, works: { workId: { performances, first, last, class, songLists } } }` |
-| `PUT /api/repertoire/thresholds` | `{ current, dormant }` (years) | admin |
+| `PUT /api/repertoire/thresholds` | `{ current, dormant }` (years) | settings (admins and the groups given the settings page); the current values are in `GET /api/settings` |
 | `POST /api/performances/import` | `{ fileId, dryRun, ownChoir? }` | librarian; `.xlsx` or `.csv` |
 
 Performance import report: `{ dryRun, source, sha256, snapshot, events,
@@ -1131,7 +1222,10 @@ What else follows the modules:
   without `score_viewer` the route answers `score: false` and `?score=1`
   only opens the copy.
 
-### Module settings (admins only)
+### Module settings (settings rights)
+
+Like the other settings: admins and the groups given the settings page
+(see "Settings").
 
 `GET /api/settings/modules` (texts translated):
 

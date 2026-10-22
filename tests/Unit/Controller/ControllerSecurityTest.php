@@ -16,15 +16,18 @@ use OCA\Notenarchiv\Controller\FilesIntegrationController;
 use OCA\Notenarchiv\Controller\PageController;
 use OCA\Notenarchiv\Controller\PracticeAudioController;
 use OCA\Notenarchiv\Controller\ReviewController;
+use OCA\Notenarchiv\Controller\SettingsController;
 use OCA\Notenarchiv\Controller\TaskController;
 use OCA\Notenarchiv\Db\AuditEntryMapper;
 use OCA\Notenarchiv\Exception\AccessDeniedException;
 use OCA\Notenarchiv\Exception\InvalidInputException;
 use OCA\Notenarchiv\Exception\ModuleDisabledException;
 use OCA\Notenarchiv\Exception\NotFoundException;
+use OCA\Notenarchiv\Exception\NotSharedException;
 use OCA\Notenarchiv\Exception\UnknownLinkException;
 use OCA\Notenarchiv\Middleware\ModuleMiddleware;
 use OCA\Notenarchiv\Service\AppSettings;
+use OCA\Notenarchiv\Service\ArchiveAccess;
 use OCA\Notenarchiv\Service\CatalogService;
 use OCA\Notenarchiv\Service\ConcertCalendarService;
 use OCA\Notenarchiv\Service\CorrectionService;
@@ -32,11 +35,13 @@ use OCA\Notenarchiv\Service\DueService;
 use OCA\Notenarchiv\Service\ExportService;
 use OCA\Notenarchiv\Service\FilesIntegrationService;
 use OCA\Notenarchiv\Service\FileSyncService;
+use OCA\Notenarchiv\Service\FullBackupService;
 use OCA\Notenarchiv\Service\ImportService;
 use OCA\Notenarchiv\Service\LinkService;
 use OCA\Notenarchiv\Service\MetaService;
 use OCA\Notenarchiv\Service\Modules;
 use OCA\Notenarchiv\Service\PracticeAudioService;
+use OCA\Notenarchiv\Service\RepertoireService;
 use OCA\Notenarchiv\Service\ReviewService;
 use OCA\Notenarchiv\Service\RightsPolicy;
 use OCA\Notenarchiv\Service\Roles;
@@ -44,16 +49,19 @@ use OCA\Notenarchiv\Service\ScanService;
 use OCA\Notenarchiv\Service\ScoreService;
 use OCA\Notenarchiv\Service\TaskService;
 use OCA\Notenarchiv\Service\UserFiles;
+use OCA\Notenarchiv\Settings\Admin;
 use OCA\Notenarchiv\Tests\Unit\Support\ModuleSwitches;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
+use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\Attribute\CORS;
 use OCP\AppFramework\Http\Attribute\FrontpageRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\Attribute\PublicPage;
+use OCP\AppFramework\Http\Attribute\SubAdminRequired;
 use OCP\AppFramework\Http\Attribute\UserRateLimit;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\Http\Response;
@@ -64,6 +72,8 @@ use OCP\AppFramework\Services\IInitialState;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Files\File;
 use OCP\IDateTimeZone;
+use OCP\IGroup;
+use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IRequest;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -80,6 +90,7 @@ use Psr\Log\LoggerInterface;
 #[CoversClass(CalendarController::class)]
 #[CoversClass(FilesIntegrationController::class)]
 #[CoversClass(PageController::class)]
+#[CoversClass(SettingsController::class)]
 #[CoversClass(TaskController::class)]
 #[CoversClass(ApiV1StatusController::class)]
 #[CoversClass(ModuleMiddleware::class)]
@@ -87,10 +98,15 @@ use Psr\Log\LoggerInterface;
 final class ControllerSecurityTest extends TestCase {
 	use ModuleSwitches;
 
-	/** Routes without #[NoAdminRequired]: instance settings, for admins only */
-	private const ADMIN_ONLY = [
-		'ApiController::settings', 'ApiController::updateSettings', 'EventController::setThresholds',
-		'ModuleController::settings', 'ModuleController::update',
+	/**
+	 * Routes without #[NoAdminRequired]: the settings of the instance. Each
+	 * carries #[AuthorizedAdminSetting(settings: Admin::class)]: admins, and
+	 * the groups the administration has given the page "Administration →
+	 * Music archive" (Administration privileges), nobody else.
+	 */
+	private const SETTINGS = [
+		'SettingsController::index', 'SettingsController::update', 'SettingsController::groups', 'SettingsController::access',
+		'EventController::setThresholds', 'ModuleController::settings', 'ModuleController::update',
 	];
 
 	/**
@@ -103,7 +119,8 @@ final class ControllerSecurityTest extends TestCase {
 		'PageController::index',
 		'ApiController::meta', 'ApiController::entries', 'ApiController::entry', 'ApiController::update',
 		'ApiController::import', 'ApiController::fileSync', 'ApiController::export', 'ApiController::exportStore',
-		'ApiController::audit', 'ApiController::settings', 'ApiController::updateSettings',
+		'ApiController::audit',
+		'SettingsController::index', 'SettingsController::update', 'SettingsController::groups', 'SettingsController::access',
 		'WorkflowController::backup', 'WorkflowController::fullBackup', 'WorkflowController::restore',
 		'TaskController::due',
 		'MaintenanceController::linkFile', 'MaintenanceController::unlinkFile',
@@ -134,7 +151,7 @@ final class ControllerSecurityTest extends TestCase {
 		'StatisticsController::overview', 'StatisticsController::report', 'StatisticsController::csv',
 		'StatisticsController::reportCsv',
 		'CalendarController::concertFile', 'CalendarController::upcomingFile', 'CalendarController::addConcert',
-		'CalendarController::addUpcoming',
+		'CalendarController::addUpcoming', 'SettingsController::access',
 		'ReviewController::ingest', 'ReviewController::correct', 'ReviewController::scan',
 		// answers only for files the account sees; limited against trying file ids all the same
 		'FilesIntegrationController::copyOfFile',
@@ -179,7 +196,7 @@ final class ControllerSecurityTest extends TestCase {
 	];
 
 	/**
-	 * @return array<string, array{verb: string, url: string, ocs: bool, attributes: list<class-string>}> "Class::method" => route
+	 * @return array<string, array{verb: string, url: string, ocs: bool, attributes: list<class-string>, settings: list<string>}> "Class::method" => route
 	 */
 	private static function routes(): array {
 		$routes = [];
@@ -196,6 +213,9 @@ final class ControllerSecurityTest extends TestCase {
 					'url' => $route->newInstance()->getUrl(),
 					'ocs' => $route->getName() === ApiRoute::class,
 					'attributes' => array_map(fn (\ReflectionAttribute $a): string => $a->getName(), $method->getAttributes()),
+					// The settings whose holders may call the route besides admins
+					'settings' => array_map(fn (\ReflectionAttribute $a): string => $a->newInstance()->getSettings(),
+						$method->getAttributes(AuthorizedAdminSetting::class)),
 				];
 			}
 		}
@@ -301,12 +321,81 @@ final class ControllerSecurityTest extends TestCase {
 	}
 
 	#[CoversNothing]
-	public function testOnlyAdminSettingsLackNoAdminRequired(): void {
-		$adminOnly = array_keys(array_filter(self::routes(), fn (array $r): bool => !in_array(NoAdminRequired::class, $r['attributes'], true)));
-		sort($adminOnly);
-		$expected = self::ADMIN_ONLY;
+	public function testOnlyTheSettingsLackNoAdminRequired(): void {
+		$routes = self::routes();
+		$withoutNoAdmin = array_keys(array_filter($routes, fn (array $r): bool => !in_array(NoAdminRequired::class, $r['attributes'], true)));
+		sort($withoutNoAdmin);
+		$expected = self::SETTINGS;
 		sort($expected);
-		self::assertSame($expected, $adminOnly);
+		self::assertSame($expected, $withoutNoAdmin);
+	}
+
+	#[CoversNothing]
+	public function testTheSettingsCanBeDelegatedAndNothingElse(): void {
+		foreach (self::routes() as $name => $route) {
+			if (in_array($name, self::SETTINGS, true)) {
+				// Admins and the holders of the settings page, nobody else
+				self::assertSame([Admin::class], $route['settings'], $name);
+				self::assertNotContains(NoAdminRequired::class, $route['attributes'], $name);
+				self::assertNotContains(SubAdminRequired::class, $route['attributes'], $name);
+				continue;
+			}
+			self::assertSame([], $route['settings'], $name . ' is no setting');
+		}
+		// Restoring a backup stays with admins and the catalog role: giving the
+		// settings page to a group does not include it.
+		self::assertSame([], self::routes()['WorkflowController::restore']['settings']);
+	}
+
+	public function testTheSettingsRefuseWhomTheyWereNotGiven(): void {
+		$roles = $this->createStub(Roles::class);
+		$roles->method('requireSettingsAccess')->willThrowException(new AccessDeniedException('Only administrators may change this.'));
+		$controller = new SettingsController($this->createStub(IRequest::class), 'carla', $roles, $this->createStub(AppSettings::class),
+			$this->createStub(ArchiveAccess::class), $this->modulesWithout(), $this->createStub(RepertoireService::class),
+			$this->createStub(FullBackupService::class), $this->createStub(IGroupManager::class), $this->l10n(),
+			$this->createStub(LoggerInterface::class));
+		$responses = [$controller->index(), $controller->update(['librarian' => ['everyone']]), $controller->groups('a'), $controller->access()];
+		foreach ($responses as $response) {
+			self::assertSame(Http::STATUS_FORBIDDEN, $response->getStatus());
+			self::assertSame(['error' => 'Only administrators may change this.'], $response->getData());
+		}
+	}
+
+	public function testTheSettingsTellWhetherARestoreIsPossibleOnlyToAdmins(): void {
+		$roles = $this->createStub(Roles::class);
+		$roles->method('groups')->willReturnCallback(fn (string $role): array => $role === Roles::READER ? ['board', 'deleted'] : []);
+		$roles->method('isAdmin')->willReturnCallback(fn (string $uid): bool => $uid === 'root');
+		$backup = $this->createStub(FullBackupService::class);
+		$backup->method('counts')->willReturn(['notarch_copies' => 0, 'notarch_files' => 0, 'notarch_audit' => 0]);
+		$board = $this->createStub(IGroup::class);
+		$board->method('getGID')->willReturn('board');
+		$board->method('getDisplayName')->willReturn('Board');
+		$groups = $this->createStub(IGroupManager::class);
+		$groups->method('get')->willReturnCallback(fn (string $id): ?IGroup => $id === 'board' ? $board : null);
+		$groups->method('search')->willReturn([$board]);
+		$controller = fn (string $uid): SettingsController => new SettingsController($this->createStub(IRequest::class), $uid, $roles,
+			$this->createStub(AppSettings::class), $this->createStub(ArchiveAccess::class), $this->modulesWithout(['repertoire']),
+			$this->createStub(RepertoireService::class), $backup, $groups, $this->l10n(), $this->createStub(LoggerInterface::class));
+
+		$data = $controller('root')->index()->getData();
+		self::assertIsArray($data);
+		self::assertTrue($data['admin']);
+		self::assertTrue($data['catalogEmpty']);
+		self::assertNull($data['repertoire'], 'the thresholds belong to the module "repertoire"');
+		self::assertSame(Roles::LABELS, $data['roleLabels']);
+		self::assertSame(['board', 'deleted'], $data['roles'][Roles::READER] ?? null);
+		self::assertEquals((object)['board' => 'Board', 'deleted' => 'deleted'], $data['groupNames']);
+		// For the setup steps of the page
+		self::assertSame(['deleted'], $data['groupsMissing']);
+		self::assertSame(['copies' => 0, 'files' => 0], $data['catalog']);
+
+		$delegated = $controller('anna')->index()->getData();
+		self::assertIsArray($delegated);
+		self::assertFalse($delegated['admin']);
+		self::assertNull($delegated['catalogEmpty']);
+
+		// Groups to choose, also for the groups given the settings page
+		self::assertSame([['id' => 'board', 'displayName' => 'Board']], $controller('anna')->groups('bo')->getData());
 	}
 
 	#[CoversNothing]
@@ -493,18 +582,36 @@ final class ControllerSecurityTest extends TestCase {
 		return $headers;
 	}
 
+	private function apiController(ScoreService $scores): ApiController {
+		return new ApiController($this->createStub(IRequest::class), 'reader', $this->createStub(Roles::class), $this->createStub(MetaService::class),
+			$this->createStub(CatalogService::class), $this->createStub(ImportService::class), $this->createStub(ExportService::class),
+			$this->createStub(FileSyncService::class), $this->createStub(AuditEntryMapper::class),
+			$this->createStub(UserFiles::class), $this->createStub(ITimeFactory::class), $this->createStub(IDateTimeZone::class), $scores,
+			$this->l10n(), $this->createStub(LoggerInterface::class));
+	}
+
+	public function testAScoreInAFolderThatIsNotSharedSaysSo(): void {
+		$scores = $this->createStub(ScoreService::class);
+		$scores->method('content')->willThrowException(new NotSharedException('The file lies in a folder that is not shared with your account.'));
+		$response = $this->apiController($scores)->fileContent(7);
+		self::assertSame(Http::STATUS_FORBIDDEN, $response->getStatus());
+		self::assertInstanceOf(JSONResponse::class, $response);
+		// The UI adds the way to the access check for those who may change the settings
+		self::assertSame(['error' => 'The file lies in a folder that is not shared with your account.', 'reason' => 'not_shared'], $response->getData());
+
+		$other = $this->createStub(ScoreService::class);
+		$other->method('content')->willThrowException(new AccessDeniedException('Internal preservation copy.'));
+		$response = $this->apiController($other)->fileContent(7);
+		self::assertInstanceOf(JSONResponse::class, $response);
+		self::assertSame(['error' => 'Internal preservation copy.'], $response->getData());
+	}
+
 	public function testScoreFilesAreNeverShownInline(): void {
-		$roles = $this->createStub(Roles::class);
 		$scores = $this->createStub(ScoreService::class);
 		$scores->method('content')->willReturn(['content' => '<score-partwise/>', 'mime' => 'application/vnd.recordare.musicxml+xml',
 			'name' => '5-01_<script>.musicxml', 'type' => 'musicxml']);
-		$controller = new ApiController($this->createStub(IRequest::class), 'reader', $roles, $this->createStub(MetaService::class),
-			$this->createStub(CatalogService::class), $this->createStub(ImportService::class), $this->createStub(ExportService::class),
-			$this->createStub(FileSyncService::class), $this->createStub(AppSettings::class), $this->createStub(AuditEntryMapper::class),
-			$this->createStub(UserFiles::class), $this->createStub(ITimeFactory::class), $this->createStub(IDateTimeZone::class), $scores,
-			$this->l10n(), $this->createStub(LoggerInterface::class));
 
-		$response = $controller->fileContent(7);
+		$response = $this->apiController($scores)->fileContent(7);
 		$headers = self::headers($response);
 		self::assertSame(Http::STATUS_OK, $response->getStatus());
 		self::assertIsString($headers['Content-Disposition'] ?? null);

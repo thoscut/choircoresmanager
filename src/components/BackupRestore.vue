@@ -6,12 +6,15 @@
 /**
  * Complete backup as a download (JSON with all tables of the app) and the
  * restore of such a backup – only into an empty catalog, e.g. after a
- * reinstallation. Used in the archive management and in the settings.
+ * reinstallation. Used in the archive management and on the settings page
+ * (Administration → Music archive, admins only). Needs no catalog: the page
+ * tells whether the catalog is filled and reloads what it shows after a
+ * restore (`restored`).
  */
 import { mdiAlertOutline, mdiBackupRestore, mdiDownload } from '@mdi/js'
 import { FilePickerClosed, FilePickerType, getFilePickerBuilder, showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '../l10n.ts'
-import { computed, ref, useTemplateRef } from 'vue'
+import { ref, useTemplateRef } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
@@ -19,14 +22,17 @@ import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import ActionDialog from './ActionDialog.vue'
 import { errorMessage, fullBackupUrl, restoreBackup } from '../api.ts'
 import { focusAfterDialog } from '../focus.ts'
-import { entries, entriesStatus, loadEntries, refreshPortalRows, reloadMeta } from '../store.ts'
+
+defineProps<{
+	/** The catalog holds data: a restore would be refused. */
+	catalogFilled: boolean
+}>()
 
 const emit = defineEmits<{
 	busy: [busy: boolean]
+	/** a backup was restored; the page reloads what it shows */
+	restored: []
 }>()
-
-/** The catalog has copies: a restore would be refused. */
-const catalogFilled = computed(() => entriesStatus.value === 'ready' && entries.value.length > 0)
 
 const file = ref<{ id: number, name: string } | null>(null)
 const understood = ref(false)
@@ -76,9 +82,7 @@ async function restore(): Promise<void> {
 		restored.value = await restoreBackup(file.value.id)
 		file.value = null
 		showSuccess(t('notenarchiv', 'The backup has been restored.'))
-		await reloadMeta()
-		await loadEntries()
-		await refreshPortalRows()
+		emit('restored')
 		// The button to restore is disabled now (the catalog is filled)
 		await focusAfterDialog(restoredNote)
 	} catch (caught) {

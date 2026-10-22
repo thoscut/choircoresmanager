@@ -10,6 +10,40 @@ All notable changes to this app are documented in this file. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- Settings under **Administration → Music archive** instead of a dialog in
+  the app: archive folder, roles and groups, modules, repertoire and (for
+  admins) complete backup and restore, on a page with its own small bundle
+  (no catalog, no score viewer). "Settings" in the app links there. Admins
+  can give the page to a group under Administration privileges; the
+  settings routes accept admins and that group
+  (`#[AuthorizedAdminSetting]`, checked again by the app). This gives no
+  role; restoring a backup stays with admins and the catalog role. New route
+  `GET /api/settings/groups` to choose groups, also for that group.
+- The settings page guides through the setup: a list "Setting up" at the
+  top shows the five steps (archive folder, roles and groups, access to the
+  archive folder, import, file sync) as done, still to do or needing
+  attention, derived from data the server already has, with a link to each
+  place. Mistakes are caught before saving: a chosen archive folder is
+  checked at once for role holders who cannot open it, the page says what
+  saving does, the roles form lists which groups get or lose a role and
+  warns when the catalog role would have no group. Each section and each
+  hint links its part of the administration guide, which has new sections
+  "Setting up in five steps" and "Common problems".
+- Access to the archive folder: the settings page checks who of the role
+  groups and of the admins without a role can open the archive folder in
+  their own Nextcloud, names those who cannot and says what to do (share
+  with the groups of the roles or use a team folder; reading is enough). It
+  only reads (`GET /api/settings/access`, at most 500 accounts).
+  `occ notenarchiv:setup` prints the same in short.
+- When the archive folder is not shared with an account, the app says so at
+  the top of the page, on the tab "Files" and in the score view ("The file
+  lies in a folder that is not shared with your account …", response
+  `reason: "not_shared"`), with a link to the access check for those who may
+  change the settings. The meta data tell the UI `archiveAccessible` and
+  `canChangeSettings`.
+
 ## [0.6.0] - 2026-10-22
 
 Milestones 0.1 to 0.6 of the roadmap; not yet published in the app store.
@@ -88,7 +122,8 @@ numbered 0.1.x.
   a deadline now.
 - Modules and presets (milestone 0.5.1): every function outside the core
   (catalog, files, roles, audit log, import, export, backup, settings) is a
-  module that admins switch off in Settings → Modules or with
+  module that admins switch off under Administration → Music archive →
+  Modules or with
   `occ notenarchiv:modules list|enable|disable|preset`, grouped, with
   descriptions and dependencies (switching on also switches on what a module
   needs; switching off names what stops working). A switched-off module is

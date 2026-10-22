@@ -11,15 +11,22 @@ namespace OCA\Notenarchiv\Service;
 
 use OCA\Notenarchiv\AppInfo\Application;
 use OCA\Notenarchiv\Exception\AccessDeniedException;
+use OCA\Notenarchiv\Settings\Admin;
+use OCA\Notenarchiv\Settings\AdminSection;
 use OCP\IAppConfig;
 use OCP\IGroupManager;
+use OCP\IUserManager;
+use OCP\Settings\IManager as ISettingsManager;
+use Psr\Log\LoggerInterface;
 
 /**
  * App roles and their mapping to Nextcloud groups.
  *
  * Permissions are bound to groups, never to persons, so a change of office is
  * a change of group membership. Admins may read and change settings, but may
- * only write catalog data if they also hold a role.
+ * only write catalog data if they also hold a role. The administration can
+ * give the settings (not a role) to further groups under Administration
+ * privileges.
  */
 class Roles {
 	/** Music librarian (catalog): works, versions, rights, import, file sync */
@@ -45,10 +52,15 @@ class Roles {
 
 	/** @var array<string, list<string>> */
 	private array $cache = [];
+	/** @var array<string, bool> uid => settings given by the administration */
+	private array $delegated = [];
 
 	public function __construct(
 		private IAppConfig $appConfig,
 		private IGroupManager $groupManager,
+		private IUserManager $userManager,
+		private ISettingsManager $settingsManager,
+		private LoggerInterface $logger,
 	) {
 	}
 
@@ -121,9 +133,54 @@ class Roles {
 		}
 	}
 
-	public function requireAdmin(string $uid): void {
-		if (!$this->isAdmin($uid)) {
+	/**
+	 * Whether the account may change the settings of the app: admins, and
+	 * members of the groups that the administration has given the page
+	 * "Administration → Music archive" under Administration privileges. This
+	 * gives no role and no access to the catalog.
+	 */
+	public function canChangeSettings(string $uid): bool {
+		if ($this->isAdmin($uid)) {
+			return true;
+		}
+		if (!isset($this->delegated[$uid])) {
+			$this->delegated[$uid] = $this->isDelegated($uid);
+		}
+		return $this->delegated[$uid];
+	}
+
+	/**
+	 * Second check of the settings routes: they carry
+	 * #[AuthorizedAdminSetting(settings: Admin::class)], so Nextcloud checks
+	 * the same before the app.
+	 */
+	public function requireSettingsAccess(string $uid): void {
+		if (!$this->canChangeSettings($uid)) {
 			throw new AccessDeniedException('Only administrators may change this.');
 		}
+	}
+
+	/**
+	 * Whether the administration has given the settings of the app to one of
+	 * the account's groups. Nextcloud keeps that list; it is read through the
+	 * public settings API. Fails closed.
+	 */
+	private function isDelegated(string $uid): bool {
+		$user = $this->userManager->get($uid);
+		if ($user === null) {
+			return false;
+		}
+		try {
+			foreach ($this->settingsManager->getAllowedAdminSettings(AdminSection::ID, $user) as $settings) {
+				foreach ($settings as $setting) {
+					if ($setting instanceof Admin) {
+						return true;
+					}
+				}
+			}
+		} catch (\Exception $e) {
+			$this->logger->warning('Notenarchiv: the delegated settings could not be read: ' . $e->getMessage(), ['exception' => $e]);
+		}
+		return false;
 	}
 }

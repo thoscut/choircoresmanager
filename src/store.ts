@@ -28,6 +28,12 @@ export const metaError = ref('')
 export const isAdmin = computed(() => meta.value?.admin === true)
 
 /**
+ * May open the settings under Administration → Music archive: admins and
+ * the groups the administration has given the page. The server checks again.
+ */
+export const canChangeSettings = computed(() => meta.value?.canChangeSettings === true)
+
+/**
  * Whether the current user holds a role.
  *
  * @param role - role key
@@ -119,6 +125,13 @@ export const canPlanEvents = computed(() => hasAnyRole(['conductor', 'librarian'
 export const canSeeProposals = computed(() => isModuleActive('proposals') && hasAnyRole(['librarian', 'contributor', 'reader']))
 
 export const hasArchiveFolder = computed(() => (meta.value?.archive.id ?? 0) > 0)
+
+/**
+ * The archive folder is set, but not shared with this account: the app
+ * reads files only with the account's own permissions, so its files do not
+ * open (scores, scans, practice files).
+ */
+export const archiveNotShared = computed(() => hasArchiveFolder.value && meta.value?.archiveAccessible === false)
 
 /**
  * Whether the current user may change a field: one of the field's write
@@ -397,5 +410,4 @@ export const scoreRequest = shallowRef<ScoreRequest | null>(null)
 // ---- dialogs --------------------------------------------------------------
 
 export const archiveDialogOpen = ref(false)
-export const settingsDialogOpen = ref(false)
 export const personalViewDialogOpen = ref(false)

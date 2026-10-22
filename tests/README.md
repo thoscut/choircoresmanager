@@ -60,9 +60,12 @@ What is covered:
 | `Service/StatisticsServiceTest` | aggregation of the statistics without a database: period, copies per binder, new copies per year (audit log or creation date, time zone of the user), rights states, valid versions, license groups, concerts and pieces per year, most performed works and composers, repertoire classes, works not sung for a long time, tasks by age, protection terms, open rights questions, licenses and accessions of the annual report; 2,000 copies aggregated in well under a second |
 | `Service/StatisticsCsvTest` | CSV of the statistics and the annual report: every table under its heading, translated labels, formula cells neutralized |
 | `Service/InputTest`, `Service/SortTest`, `Db/MergeTest` | request data checks, typed sorting, what a merge recorded |
-| `Controller/ControllerSecurityTest` | route attributes of every controller (no public page, CSRF skipped only for plain downloads, admin-only settings, brute-force and rate limits), headers of the score file response and of the scan beside the score (PDF viewer only, framed by the app only), the app page's content security policy; every route of the API for agents is an OCS route under `/api/v1/` with `agent_api` plus the module of the same function in the UI, `NoAdminRequired`, a rate limit, no `NoCSRFRequired` and no CORS, and answers 404 with OCS meta when switched off |
+| `Controller/ControllerSecurityTest` | route attributes of every controller (no public page, CSRF skipped only for plain downloads, the settings only for admins and the groups given the settings page, restore not delegable, brute-force and rate limits), headers of the score file response and of the scan beside the score (PDF viewer only, framed by the app only), `reason: not_shared`, the app page's content security policy; every route of the API for agents is an OCS route under `/api/v1/` with `agent_api` plus the module of the same function in the UI, `NoAdminRequired`, a rate limit, no `NoCSRFRequired` and no CORS, and answers 404 with OCS meta when switched off |
 | `Controller/ApiV1ControllerTest` | the API for agents with the services as test doubles: search with filters and cursor pages in shelf order, the fixed fields, preservation copies only for the roles that may view them, no account names, errors as OCS exceptions (400, 403, 404, 500 without internal details), tasks and proposals answer 201, own proposals, concerts by date, module status and permissions |
 | `Service/ApiV1ViewsTest`, `Service/TextReferenceTest` | cursors (opaque, checked, stable when entries are added), snake_case statistics, values without JSON; the server's text reference follows the rules and examples of the UI (`src/__tests__/references.test.ts`) |
+| `Settings/AdminTest`, `Settings/AdminSectionTest` | the page Administration → Music archive: delegable setting without generic app config, its section, template and registration in `appinfo/info.xml` |
+| `Service/RolesTest` | who may change the settings: admins and the groups given the settings page, without a role; fails closed |
+| `Service/ArchiveAccessTest` | the access check of the archive folder: per role and group, accounts named that cannot open it, disabled and never logged-in accounts left out, the limit, admins without a role, the person who asks |
 | `Service/ScoreServiceTest` | only real MusicXML reaches the browser (root element, document type declarations, `.mxl` contents, size limit) |
 | `Service/UserFilesTest`, `Service/RequestBoundaryTest` | reading uploaded files with a size limit, limits of request data (unknown fields, list sizes) |
 | `Notification/NotifierTest` | notification texts, no internal error texts |
@@ -111,6 +114,7 @@ sudo -u www-data php tests/Integration/modules_test.php       /var/www/nextcloud
 sudo -u www-data php tests/Integration/api_v1_test.php        /var/www/nextcloud <uid> <shelfmark> <shelfmark-preservation-copy>
 sudo -u www-data php tests/Integration/review_test.php        /var/www/nextcloud <uid> <shelfmark-with-musicxml>
 sudo -u www-data php tests/Integration/files_integration_test.php /var/www/nextcloud <uid>
+sudo -u www-data php tests/Integration/settings_access_test.php /var/www/nextcloud <uid>
 ```
 
 `statistics_test.php` fixes no figures of a catalog, so it runs on any
@@ -174,6 +178,15 @@ the module is off, and only an account with a role gets the script. It
 creates a second account without a role (random password, never printed)
 with one file and deletes it at the end; everything else is rolled back and
 the module switches are restored exactly.
+`settings_access_test.php` needs the settings app of Nextcloud
+(Administration privileges) and `<uid>` as the archive user. It creates two
+accounts in two groups of its own, gives both groups the role `reader`,
+shares the archive folder (read only) with the first group and gives the
+settings page to the second. The access check must name the second account
+and add no share; the meta data, the score view (message "not shared") and
+the settings routes (403 without the settings page) must agree. The share,
+the delegation, the accounts and the groups are removed and the role groups
+set back afterwards.
 
 `<uid>` must hold the role `librarian`; each script's header lists further
 requirements (CSV paths are relative to the user's files). `backup_test.php`
@@ -232,6 +245,7 @@ it runs the tests with these shelf marks of the demo catalog:
 | `review_test.php` | `1-2` | MXL with four staves and without a demo report, so the review points of the demo reports do not interfere |
 | `files_integration_test.php` | – | finds a MusicXML file and a PDF of copies itself; `LIESMICH.txt` is the unlisted file; creates and deletes a second account |
 | `backup_test.php` | – | |
+| `settings_access_test.php` | – | creates and removes its own accounts, groups, share and delegation |
 
 Finally (step 7) an **agent without a language model** uses the MCP server
 (`tools/mcp`, built by the CI job; the script builds it when

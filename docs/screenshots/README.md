@@ -46,7 +46,8 @@ The App Store shows the files marked with a number, in this order
 | `backup-restore.png` | Archive management: file sync, export, backup, complete backup and restore. |
 | `import-report.png` | The report of a repeated dry run of the catalog import. |
 | `file-sync-report.png` | The report of the file sync: 30 files, 29 linked, one file not assignable, one copy without a file. |
-| `settings-roles.png` | The settings (admins): archive folder and the roles with their groups. |
+| `settings-roles.png` | The settings (admins): archive folder and the roles with their groups. To be taken again on the page Administration → Music archive (the picture still shows the former dialog). |
+| `admin-settings.png` | Planned: Administration → Music archive, section "Access to the archive folder" with the result of the check (per role and group, the accounts that cannot open the folder, what to do). |
 | `protection-terms.png` | The list "Protection terms" with copy 1-7. |
 | `merge-proposals.png` | The proposals to merge the three works listed twice. |
 | `annual-report.png` | The annual report 2026: the year in figures, concerts and new accessions. |

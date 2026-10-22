@@ -20,7 +20,9 @@ use OCP\EventDispatcher\Event;
 use OCP\IAppConfig;
 use OCP\IGroupManager;
 use OCP\IUser;
+use OCP\IUserManager;
 use OCP\IUserSession;
+use OCP\Settings\IManager as ISettingsManager;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -72,7 +74,7 @@ final class FilesScriptListenerTest extends TestCase {
 		$groupManager = $this->createStub(IGroupManager::class);
 		$groupManager->method('isInGroup')->willReturnCallback(fn (string $uid, string $group): bool => in_array($group, $this->groups[$uid] ?? [], true));
 		$groupManager->method('isAdmin')->willReturnCallback(fn (string $uid): bool => in_array('admin', $this->groups[$uid] ?? [], true));
-		$roles = new Roles($config, $groupManager);
+		$roles = new Roles($config, $groupManager, $this->createStub(IUserManager::class), $this->createStub(ISettingsManager::class), $this->createStub(LoggerInterface::class));
 
 		$filesIntegration = $this->createStub(FilesIntegrationService::class);
 		$filesIntegration->method('clientState')->willReturnCallback(function (): ?array {

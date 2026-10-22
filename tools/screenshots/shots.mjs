@@ -239,24 +239,24 @@ export const SHOTS = [
 		after: escape,
 	},
 	{
+		// Administration → Music archive: archive folder, then roles and groups
 		name: 'settings-roles', file: 'settings-roles.png', account: 'admin', ...en,
 		run: async (h) => {
-			await h.app('')
-			await h.click('.app-navigation a, .app-navigation button', h.t('Settings'))
-			await h.page.waitForSelector('.modal-container', { visible: true })
+			await h.goto('/settings/admin/notenarchiv')
+			await h.page.waitForSelector('#notenarchiv-roles', { visible: true, timeout: 30000 })
 			await h.settle(1200)
-			// Start at the first section: archive folder, then roles and groups
-			await h.page.evaluate(() => {
-				for (const el of document.querySelectorAll('.modal-container, .modal-container *')) {
-					if (el.scrollHeight > el.clientHeight + 4) {
-						el.scrollTop = 0
-					}
-				}
-			})
-			await h.settle(1000)
-			return h.rect('.modal-container', { pad: 0 })
+			return h.rect(['#notenarchiv-archive-folder', '#notenarchiv-roles'], { pad: 0 })
 		},
-		after: escape,
+	},
+	{
+		// The access check of the archive folder, opened like the link of the app does
+		name: 'admin-settings', file: 'admin-settings.png', account: 'admin', ...en,
+		run: async (h) => {
+			await h.goto('/settings/admin/notenarchiv#notenarchiv-access')
+			await h.page.waitForSelector('#notenarchiv-access .access-check__table', { visible: true, timeout: 60000 })
+			await h.settle(1200)
+			return h.rect('#notenarchiv-access', { pad: 0 })
+		},
 	},
 	{
 		name: 'protection-terms', file: 'protection-terms.png', account: 'librarian', ...en,

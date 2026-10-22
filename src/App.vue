@@ -18,6 +18,7 @@ import {
 	mdiArchiveOutline,
 	mdiBookshelf,
 	mdiCogOutline,
+	mdiFolderAccountOutline,
 } from '@mdi/js'
 import { t } from './l10n.ts'
 import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue'
@@ -33,14 +34,18 @@ import CatalogList from './components/CatalogList.vue'
 import CatalogNavigation from './components/CatalogNavigation.vue'
 import CopySidebar from './components/CopySidebar.vue'
 import DueView from './components/DueView.vue'
-import SettingsDialog from './components/SettingsDialog.vue'
-import { errorMessage, fetchTasks, resolveLink } from './api.ts'
+import GuideLink from './components/GuideLink.vue'
+import { USER_GUIDE, userGuideUrl } from './docs.ts'
+import { adminSettingsUrl, errorMessage, fetchTasks, resolveLink } from './api.ts'
 import { formatDate } from './format.ts'
 import { applyModules } from './modules.ts'
 import { currentEventId, currentView, navigate, openDueTarget, startNavigation, switchedOffNotice } from './navigation.ts'
+import { SETTINGS_SECTIONS } from './settings.ts'
 import { DEFAULT_VIEW, isMissingCopy, parseStartParams } from './startParams.ts'
 import {
 	archiveDialogOpen,
+	archiveNotShared,
+	canChangeSettings,
 	canSeeProposals,
 	entries,
 	entriesError,
@@ -59,7 +64,6 @@ import {
 	reloadMeta,
 	scoreRequest,
 	selectedId,
-	settingsDialogOpen,
 } from './store.ts'
 import { viewTitle } from './viewTitles.ts'
 
@@ -253,9 +257,10 @@ function openArchive(): void {
 	archiveDialogOpen.value = true
 }
 
-function openSettings(): void {
-	settingsDialogOpen.value = true
-}
+/** The settings are a page under Administration → Music archive. */
+const settingsUrl = adminSettingsUrl()
+/** The access check on that page, opened right away. */
+const accessCheckUrl = adminSettingsUrl(SETTINGS_SECTIONS.access)
 </script>
 
 <template>
@@ -294,16 +299,16 @@ function openSettings(): void {
 			</NcEmptyContent>
 
 			<template v-else>
-				<div v-if="hasNoRoleAsAdmin || !hasArchiveFolder || startNotice !== null" class="app-notices">
+				<div v-if="hasNoRoleAsAdmin || !hasArchiveFolder || archiveNotShared || startNotice !== null" class="app-notices">
 					<NcNoteCard v-if="startNotice !== null" :type="startNotice.type" :role="startNotice.type === 'error' ? 'alert' : 'status'">
 						<p>{{ startNotice.text }}</p>
 						<NcButton @click="startNotice = null">
 							{{ t('notenarchiv', 'Close') }}
 						</NcButton>
 					</NcNoteCard>
-					<NcNoteCard v-if="isAdmin && !hasArchiveFolder" type="warning">
+					<NcNoteCard v-if="canChangeSettings && !hasArchiveFolder" type="warning">
 						<p>{{ t('notenarchiv', 'No archive folder has been chosen yet. Without it files cannot be linked and exports cannot be stored.') }}</p>
-						<NcButton @click="openSettings">
+						<NcButton :href="settingsUrl">
 							<template #icon>
 								<NcIconSvgWrapper :path="mdiCogOutline" />
 							</template>
@@ -312,6 +317,18 @@ function openSettings(): void {
 					</NcNoteCard>
 					<NcNoteCard v-else-if="!hasArchiveFolder" type="info">
 						{{ t('notenarchiv', 'No archive folder has been chosen yet. An administrator sets it in the settings of the music archive.') }}
+					</NcNoteCard>
+					<NcNoteCard v-if="archiveNotShared" type="warning">
+						<p>{{ t('notenarchiv', 'The archive folder is not shared with your account, so its files (scores, scans, practice files) do not open for you. Please ask the music librarians to share the archive folder with you or your group.') }}</p>
+						<NcButton v-if="canChangeSettings" :href="accessCheckUrl">
+							<template #icon>
+								<NcIconSvgWrapper :path="mdiFolderAccountOutline" />
+							</template>
+							{{ t('notenarchiv', 'Check access to the archive folder') }}
+						</NcButton>
+						<p>
+							<GuideLink :href="userGuideUrl(USER_GUIDE.filesNotShared)" :label="t('notenarchiv', 'Files you cannot open (user guide)')" />
+						</p>
 					</NcNoteCard>
 					<NcNoteCard v-if="hasNoRoleAsAdmin" type="info">
 						{{ t('notenarchiv', 'You are an administrator without a role: you can read the music archive and change the settings. The proposals inbox and internal preservation copies are only open to the roles concerned. To edit the catalog, add yourself to a group with a role.') }}
@@ -357,7 +374,7 @@ function openSettings(): void {
 							{{ t('notenarchiv', 'The music librarian has not imported the catalog yet.') }}
 						</template>
 					</template>
-					<template v-if="isLibrarian || isAdmin" #action>
+					<template v-if="isLibrarian || canChangeSettings" #action>
 						<div class="app-actions">
 							<NcButton v-if="isLibrarian" variant="primary" @click="openArchive">
 								<template #icon>
@@ -365,7 +382,7 @@ function openSettings(): void {
 								</template>
 								{{ t('notenarchiv', 'Open archive management') }}
 							</NcButton>
-							<NcButton v-if="isAdmin" @click="openSettings">
+							<NcButton v-if="canChangeSettings" :href="settingsUrl">
 								<template #icon>
 									<NcIconSvgWrapper :path="mdiCogOutline" />
 								</template>
@@ -403,7 +420,6 @@ function openSettings(): void {
 		<CopySidebar v-if="hasAccess && selectedId !== null" />
 
 		<ArchiveManagement v-if="hasAccess && isLibrarian && archiveDialogOpen" />
-		<SettingsDialog v-if="isAdmin" />
 		<PersonalViewDialog v-if="hasAccess && personalViewDialogOpen" />
 	</NcContent>
 </template>
