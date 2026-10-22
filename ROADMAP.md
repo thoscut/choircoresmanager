@@ -291,7 +291,8 @@ gebaut: als Module, die anfangs aus sind. Was etwas nach außen öffnet, steht i
 keiner Voreinstellung. Ob eine Funktion genutzt wird, entscheidet der Verein
 mit dem Schalter.
 
-*Umgesetzt: das Teilen über die Archivrollen hinaus, als Module
+*Umgesetzt mit Version 0.9.0: das Teilen über die Archivrollen hinaus (ganze
+Stücke und Ausschnitte, auf Wunsch mit Scan), als Module
 `member_links`, `member_practice_audio`, `public_links` und
 `public_repertoire` in der Gruppe „Teilen über die Archivrollen hinaus“, alle
 in keiner Voreinstellung (Beschreibung in `docs/api.md`, Abschnitt „Sharing
@@ -355,7 +356,7 @@ dieselben Anforderungen auf einem anderen Weg umgesetzt hat):
     Dateien. Beschreibung in `docs/api.md`, Abschnitt „Revisions of a
     version“, und im Benutzerhandbuch.*
 
-*Umgesetzt: der Teil „Archiv“ (Schutzfrist-Sonderfälle, Nutzungsart,
+*Umgesetzt mit Version 0.9.0: der Teil „Archiv“ (Schutzfrist-Sonderfälle, Nutzungsart,
 Nextcloud-Suche, Lückenbericht, Jahresstand, Lizenzvermerk, Vorlagen für
 Infomaterial; Beschreibung in `docs/api.md`, im Benutzerhandbuch und im
 Admin-Guide), das Abspielen (Einzähler, Schleife, Startpunkt, Abspielfolge)
@@ -401,11 +402,12 @@ Prüfung offen).*
 
 ### 0.9 Benutzerführung
 
-*Umgesetzt (Stand `0.7.0-dev.5`): Hilfe am Ort an den Fachbegriffen,
+*Umgesetzt mit Version 0.9.0: Hilfe am Ort an den Fachbegriffen,
 Meldungen und leere Ansichten mit nächstem Schritt, Folgen vor dem Bestätigen
 der Rechte, Sammelliste „Geltende Fassungen festlegen“, gefaltete Filter,
 Doku nach Aufgaben je Rolle mit „Häufige Probleme“, Durchgang ohne Vorwissen
-im Testaufbau. Die geführte Einrichtung kam schon mit den Einstellungen.*
+im Testaufbau und Abnahme im Browser auf Nextcloud 33; Handbücher auf Deutsch
+und Englisch. Die geführte Einrichtung kam schon mit den Einstellungen.*
 
 - **Geführte Einrichtung** unter Administration → Notenarchiv: Archivordner,
   Rollen und Gruppen, Zugriffsprüfung, Import, Dateiabgleich, mit Status je

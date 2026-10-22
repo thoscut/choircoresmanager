@@ -10,6 +10,17 @@ All notable changes to this app are documented in this file. The format follows
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-10-22
+
+Milestones 0.7 to 0.9 of the roadmap: sharing with choir members and the
+public (whole pieces and excerpts), folder book and print station mirror,
+archive extras, revisions of a version, playback additions, user guidance,
+settings under Administration, the Files app action, guides in German and
+English and the interface in seven languages. New functions that open the
+archive or write files are modules that start switched off. Not yet
+published in the app store; tested against Nextcloud 33.0.9 and 35.0.2
+with MariaDB.
+
 ### Added
 
 - Whole pieces in links for choir members and public links: the dialog
