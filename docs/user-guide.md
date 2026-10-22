@@ -203,9 +203,11 @@ the register as well. It shows only what your roles may see: internal
 preservation copies only to the catalog librarian and the conductor, and
 nothing to accounts without a role in the music archive.
 
+![The search of Nextcloud with the term "Mond": below the files the section "Music archive" with the copies 1-1 and 3-1 "Der Mond ist aufgegangen", each with composer and arrangement.](screenshots/unified-search.png)
+
 ### The details of a copy
 
-![The sidebar of copy 1-1 on the tab "Overview": title, rights status, the button "Score", the tabs, and the fields of the work and the version, each section with an "Edit" button.](screenshots/copy-overview.png)
+![The sidebar of copy 1-1 on the tab "Details": title, rights status, the button "Score", the number of open review points, the tabs Details, Rights, Queries, Files and History, and the fields of the work with the button "Edit".](screenshots/copy-overview.png)
 
 Click a row to open the sidebar. Its head shows the rights badge, the status
 if the copy is not active, and **Score** if there is MusicXML you may view.
@@ -288,7 +290,7 @@ question or a person's name.
 
 ### Opening from the Files app
 
-<!-- Screenshot planned: screenshots/files-action.png (docs/screenshots/README.md) -->
+![The Files app in the folder Mappe_2 of the demo archive with the actions menu of the MusicXML file of copy 2-1 open; among the actions "Open in music archive".](screenshots/files-action.png)
 
 The archive folder is an ordinary folder in Nextcloud, so you can also find a
 file there in the **Files** app. Files of the archive folder have the action
@@ -378,7 +380,7 @@ The music librarian then applies the answer to the catalog or discards it.
 
 ### Score viewer
 
-![The score viewer with measures 1 to 8 of the TTBB setting of copy 2-1: the focus voice Tenor II, the buttons to copy a text reference, create an internal link or add a task, and the notation, in which the notes of Tenor II are drawn in colour with bolder note heads and the other voices in a lighter grey.](screenshots/score-excerpt.png)
+![The score viewer with measures 1 to 8 of the TTBB setting of copy 2-1: the fields "From measure" and "To measure", the switch "Loop", the focus voice Tenor II, the opened section "This passage" with its version line and the buttons to copy a text reference, share the excerpt or add a task, and the notation, in which the notes of Tenor II are drawn in colour with bolder note heads and the other voices in a lighter grey.](screenshots/score-excerpt.png)
 
 **Score** opens the MusicXML of a copy in the browser. Notation, fonts and
 sounds are part of the app; nothing is loaded from other servers.
@@ -473,7 +475,7 @@ their voice of a piece or excerpt shared with them (see
 
 ### Asking a question or giving a task
 
-![The tab "Tasks" of copy 2-1 with an open question to the conductor about measures 5 to 8 of Tenor II, and below it an internal link to the same place.](screenshots/task-question.png)
+![The tab "Queries" of copy 2-1 with an open question to the conductor about measures 5 to 8 of Tenor II, and below it an internal link to the same place.](screenshots/task-question.png)
 
 A question or task always belongs to a copy and may name a place in the
 score: page, measures, voice and verse.
@@ -585,6 +587,8 @@ number of calls; **Revoke link** stops a link at once for everyone.
 > piece: measures 1 to 7 of "Der Mond ist aufgegangen" (1-1) sound there as
 > 1–6, 1–5, 7, in a shared excerpt of these measures as 1–7.
 
+![The dialog "Share excerpt of 1-1" over the score viewer: "Who can open the link?" with "Choir members" chosen, measures 1 to 4, the voice Alt, a note and the validity, and the box "What the recipients see" with measures, focus voice, tempo, validity, playback yes and practice files yes.](screenshots/share-dialog.png)
+
 #### Public links
 
 A public link shows and plays a whole piece or an excerpt to anyone who has
@@ -604,6 +608,8 @@ title, composer, the whole piece or the measures, the focus voice and a text
 description, plays it with the voice emphasised and, if included, links to
 the scan. When the link expires, is revoked or the version is no longer
 released, the page and the scan show "not found" without a reason.
+
+![The page of a public link in Nextcloud's public layout, without signing in: title and composer of "Freude, schöner Götterfunken", the note that playback comes from a simple synthesizer, the playback controls with count-in and loop, and measures 1 to 8 of the score.](screenshots/public-link.png)
 
 ### Reviewing transcriptions
 
@@ -691,6 +697,8 @@ screen readers. The catalog shows the number of open review points per copy,
 and the filter **Open review points** lists the copies that still need a
 decision. The responsible roles are notified of new review points (one
 notification per report).
+
+![The score viewer of copy 2-1 with the panel "Review of the transcription": the list of open review points and, chosen, the point at measure 7, Tenor II, with its note, the buttons "Play this passage" and "Correct in the app …" and the decisions; on the left measure 7 with Tenor II highlighted.](screenshots/review-points.png)
 
 #### Small corrections in the app
 
@@ -791,6 +799,8 @@ When a newer revision than the current one exists, the list says so.
    text without notation. **Copy the note** and paste it into an e-mail or
    a message.
 
+![The tab "Files" of copy 2-2, section "Revisions of this version": revision 2, a correction in the app, current since today, with measures, voices and reason; revision 1, the first recorded revision; below the comparison of both with one difference in measure 3 and the note for choir members.](screenshots/revisions.png)
+
 Notes, rests, note values, accidentals and lyrics are compared; layout,
 dynamics and slurs are not. The conductor and every other archive role can
 compare; the files are read with your own Nextcloud permissions, as in the
@@ -871,7 +881,7 @@ printed lists and the song order name it.
 
 ### Concerts in your calendar
 
-![The dialog "Add to my calendar" with the account's calendar "Choir" to choose and the notes that the preparation deadlines are added as all-day entries and that an existing entry is updated, not added twice.](screenshots/calendar-dialog.png)
+![The dialog "Add to my calendar" with the account's calendar "Personal" to choose and the notes that the preparation deadlines are added as all-day entries and that an existing entry is updated, not added twice.](screenshots/calendar-dialog.png)
 
 In a concert, and for all upcoming concerts in the concert list:
 
@@ -985,6 +995,8 @@ files are called `<shelf mark> <title>.pdf`; a file `LIESMICH.txt` in the
 folder says when it was last changed and that the scores are only for the
 choir.
 
+![The list "Print station" with the section "Mirror folder for the print station" and the dialog "Preview of the sync": five files would be copied, one would be skipped because a file of that name, not written by the app, is in the target folder.](screenshots/print-mirror-preview.png)
+
 **How to start the first sync** (catalog role):
 
 1. **Print station** → section **Mirror folder for the print station** →
@@ -1024,6 +1036,8 @@ dates, scoring and links to CPDL and IMSLP:
 The page loads nothing from CPDL or IMSLP; it only links to them. Life dates
 come from the register of persons. A work leaves the page as soon as no
 version is confirmed public domain any more.
+
+![The public repertoire page in Nextcloud's public layout: three works in the public domain, each with composer and lyricist and their life dates, the scoring and a link to the score library CPDL or IMSLP.](screenshots/public-repertoire.png)
 
 ### Deciding proposals in the inbox
 
@@ -1149,6 +1163,8 @@ as usual, and the later end decides. The suggestion stays a suggestion: a
 music librarian decides whether a special case applies and confirms the
 rights.
 
+![The tab "Rights" of copy 1-6 with the section "Persons involved and protection": public domain by the life dates, because the protection as a scientific edition (§ 70 UrhG) that appeared in 1991 ended at the end of 2016.](screenshots/protection-special-case.png)
+
 ### Rights notices in MusicXML files
 
 Many MusicXML files carry a rights notice, e.g. "Public domain" or "CC BY
@@ -1161,6 +1177,8 @@ file, not a decision:
   the file sync puts at most one proposal into the **Inbox**: the rights
   status "public domain", or the license text for an empty field
   **License**. Accept it only after checking the rights yourself.
+
+![The tab "Files" of copy 1-1: the MusicXML file with the mark "Not checked" and the rights notice taken from the file, "Melodie und Text gemeinfrei. Satz: CC0 1.0", with the note that it changes no rights status.](screenshots/rights-notice.png)
 
 
 ### Merging works and moving copies
@@ -1237,6 +1255,8 @@ by itself in January, as the account that set the archive folder.
    by their checksum.
 3. **Print** prints the comparison on A4.
 
+![The view "Annual snapshots": what a new snapshot writes where, the switch for the automatic snapshot in January, two snapshots of 2026 and their comparison: one version with a confirmation added and one new license.](screenshots/annual-snapshots.png)
+
 ## As operations
 
 The role **Operations (music librarian)** looks after the copies on the
@@ -1275,6 +1295,8 @@ the highest number used that no copy has, e.g. `5-3 – 5-6, 5-12`. Use it at
 the inventory or before an accession to find copies that were never entered
 or have gone missing.
 
+![The view "Gaps in shelf marks" of the demo archive: per binder the highest number, the copies and the numbers without a copy; in binder 4 the shelf mark 4-4, used only by a file name.](screenshots/shelfmark-gaps.png)
+
 1. Open **Gaps in shelf marks** (with the inventory under maintaining the
    catalog).
 2. Check each gap at the shelf. A note below the gaps names numbers that a
@@ -1294,6 +1316,8 @@ when, what it holds and what is missing. Music librarians (catalog and
 operations) keep it; the conductor and the board read it. Choir members and
 tools never see it. The administration switches it on (module "Folder
 book"); it is part of the preset "Complete".
+
+![The folder book with three folders: folder 12 out with an invented name since 14 Sept 2026, folders 14 and 21 available, folder 21 worn with a missing sheet and the hint that it contains a copy retired in the catalog.](screenshots/folder-book.png)
 
 The folder book only records who has which folder. Attendance and handing
 out at the door on rehearsal evenings are not part of the app.
@@ -1330,6 +1354,8 @@ Two folders in service cannot have the same number or name.
    remove missing sheets.
 3. **Take back**. The condition and the missing sheets become those of the
    folder; the folder is available again.
+
+![The dialog "Take back folder 12": since when and with whom it was out, the day it came back, the condition "Worn" chosen, the missing sheets and a note.](screenshots/folder-take-back.png)
 
 #### Taking a folder out of service
 
@@ -1443,6 +1469,8 @@ Choir members sign in to Nextcloud and open **Music archive**. They see
 title, composer, **Whole piece** or the measures, voice, the note and how
 long each is valid, whether it can be played (**Playback: yes** or
 **Playback: no**) and whether the scan is included (**with scan (PDF)**).
+
+![The page "Shared with me" of a choir member: the excerpt of "Der Mond ist aufgegangen", measures 1 to 4, with the note of the conductor, the validity, the playback controls with count-in and loop, and the score with the alto highlighted.](screenshots/shared-with-me.png)
 
 1. Choose a piece in the list (a link sent to you opens it directly). The
    notes appear above the list, for a whole piece all pages of it.

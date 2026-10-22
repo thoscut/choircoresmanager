@@ -116,7 +116,7 @@ change of group membership.
 4. Check access to the archive folder: new role holders need it, too
    ([section 3](#checking-who-can-open-the-archive-folder)).
 
-![The settings of the app under Administration: the archive folder with the button to choose it, and the roles, each with a short description and the groups assigned to it, for example "Music librarians" for the catalog role.](screenshots/settings-roles.png)
+![The section "Roles and groups" under Administration → Music archive: each role with the groups assigned to it and a short description, for example "Music librarians" for the catalog role and "Choir members" for the role that sees only shared excerpts, and the button "Save roles".](screenshots/settings-roles.png)
 
 The page **Administration → Music archive** holds all settings of the app:
 archive folder, roles and groups, access to the archive folder (see
@@ -854,6 +854,8 @@ station and keeps it up to date (see the
 only function besides small corrections that writes files, and it writes
 only into this folder, never into the archive folder (guideline 4 of the
 [roadmap](../ROADMAP.md)). It is part of no preset; switch it on on purpose.
+
+![The section "Print station: mirror folder" under Administration → Music archive: what the mirror folder does, the warning that everyone who can open it can print the scans, the current target folder and, after choosing a folder, the message that it fits, with the buttons to cancel or save.](screenshots/settings-print-mirror.png)
 
 Setting up:
 

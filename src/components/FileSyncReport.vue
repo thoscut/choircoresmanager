@@ -155,11 +155,14 @@ const failedReports = computed(() => (reports.value?.failed ?? []).map((failure)
 }
 
 .file-sync-report__counts dt {
+	/* the label above its number: the core styles set dt and dd inline */
+	display: block;
 	color: var(--color-text-maxcontrast);
 	font-size: var(--font-size-small, 13px);
 }
 
 .file-sync-report__counts dd {
+	display: block;
 	margin: 0;
 	font-size: 1.4em;
 	font-weight: bold;

@@ -3,7 +3,8 @@
 `shoot.mjs` recreates every picture in [`docs/screenshots`](../../docs/screenshots/README.md)
 from a Nextcloud that holds the public demo data of [`tools/demo`](../demo/README.md).
 It logs in as the demo accounts in a headless Chromium-based browser, opens
-each view and saves the window or a cropped part of it.
+each view and saves the window or a cropped part of it. The public link and
+the public repertoire page are taken without signing in.
 
 - **Window:** fixed at 1600 × 1000 pixels, device scale 1.
 - **Themes:** light, and dark where the file name says so (`*-dark.png`).
@@ -50,18 +51,20 @@ tests.
    php occ group:add --display-name="Conductors" demo-conductors
    php occ group:add --display-name="Board" demo-board
    php occ group:add --display-name="Transcription tools" demo-tools
+   php occ group:add --display-name="Choir members" demo-members
    export OC_PASS='…'
    php occ user:add --password-from-env --display-name="Demo Librarian" --group=demo-librarians demo-librarian
    php occ user:add --password-from-env --display-name="Demo Conductor" --group=demo-conductors demo-conductor
    php occ user:add --password-from-env --display-name="Demo Contributor" --group=demo-tools demo-contributor
    php occ user:add --password-from-env --display-name="Demo Administrator" --group=admin demo-admin
+   php occ user:add --password-from-env --display-name="Demo Choir Member" --group=demo-members demo-member
    ```
 
 3. For each account: English as language, no first-run wizard; the dashboard
    of the librarian shows only the widget of the app:
 
    ```sh
-   for uid in demo-librarian demo-conductor demo-contributor demo-admin; do
+   for uid in demo-librarian demo-conductor demo-contributor demo-admin demo-member; do
      php occ user:setting "$uid" core lang en
      php occ user:setting "$uid" core locale en_GB
      php occ user:setting "$uid" core timezone Europe/Berlin
@@ -74,12 +77,17 @@ tests.
    (for example `data/demo-librarian/files/Notenarchiv-Demo`) and run
    `php occ files:scan --path=/demo-librarian/files/Notenarchiv-Demo`, or
    upload the folder in the Files app.
-5. Roles and archive folder:
+5. Roles, archive folder and the modules of the newer pictures (sharing,
+   folder book, mirror folder of the print station, annual snapshots; they
+   are part of no preset or not of Standard):
 
    ```sh
    php occ notenarchiv:setup demo-librarian Notenarchiv-Demo \
      -r librarian=demo-librarians -r operations=demo-librarians \
-     -r conductor=demo-conductors -r contributor=demo-tools -r reader=demo-board
+     -r conductor=demo-conductors -r contributor=demo-tools -r reader=demo-board \
+     -r member=demo-members
+   php occ notenarchiv:modules enable member_links member_practice_audio public_links \
+     public_repertoire folder_book print_mirror annual_snapshot
    ```
 
 6. Import the catalog and link the files:
@@ -94,10 +102,18 @@ tests.
 
 Everything else is done by `--prepare` through the app's own API, as the
 account that may do each step: it shares the demo folder read-only with the
-conductors, imports persons, performances and song lists, confirms rights,
-adds a license, chooses valid versions, asks questions, makes a proposal and
-an internal link, and plans the concert "Adventskonzert 2026". It skips
-what is done already, so it can run again.
+conductors and the administrators, imports persons, performances and song
+lists, confirms rights, adds licenses, chooses valid versions, asks
+questions, makes a proposal and an internal link, and plans the concert
+"Adventskonzert 2026". For the newer pictures it releases 1-1 for the
+singers' portal and 1-2 for publication, makes a link for choir members and
+a public link, puts three works on the public repertoire page, creates three
+folders of the folder book (one out with an invented name), chooses the
+folder "Print station" of the administrator as mirror folder (with a file of
+the same name as a scan, which the sync skips), corrects one note of 2-2 so
+that it has a second revision, marks 1-6 as a scientific edition and writes
+two annual snapshots with a confirmation and a license between them. It
+skips what is done already, so it can run again.
 
 ## Running
 
@@ -122,8 +138,9 @@ Passwords come from the environment only and are never printed:
 `NC_PASSWORD` for all accounts, or `NC_PASSWORD_<UID>` per account
 (upper case, other characters as `_`, e.g. `NC_PASSWORD_DEMO_ADMIN`). Other
 account names can be set with `NC_USER_LIBRARIAN`, `NC_USER_CONDUCTOR`,
-`NC_USER_CONTRIBUTOR` and `NC_USER_ADMIN`, and the conductors' group for the
-share with `NC_GROUP_CONDUCTORS`.
+`NC_USER_CONTRIBUTOR`, `NC_USER_ADMIN` and `NC_USER_MEMBER`, and the groups
+for the shares of the demo folder with `NC_GROUP_CONDUCTORS` and
+`NC_GROUP_ADMINS` (default `admin`).
 
 The script changes the language of the accounts while it runs and sets them
 back to English at the end. Dates, "last performed" and the repertoire

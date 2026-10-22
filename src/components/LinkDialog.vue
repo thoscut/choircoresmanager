@@ -188,7 +188,7 @@ const preview = computed(() => {
 		measures: (from, to) => t('notenarchiv', 'Measures {from} to {to}', { from, to }),
 		missing: t('notenarchiv', 'measures still missing'),
 		voice: t('notenarchiv', 'Focus voice'),
-		none: t('notenarchiv', 'none'),
+		none: t('notenarchiv', 'No focus voice'),
 		verse: t('notenarchiv', 'Verse'),
 		tempo: t('notenarchiv', 'Tempo'),
 		asInScore: t('notenarchiv', 'as in the score'),
@@ -473,10 +473,13 @@ async function copyLink(): Promise<void> {
 }
 
 .link-dialog__preview-list dt {
+	/* Nextcloud's styles put dt and dd on one line: the value goes below the label */
+	display: block;
 	color: var(--color-text-maxcontrast);
 }
 
 .link-dialog__preview-list dd {
+	display: block;
 	margin: 0;
 	font-weight: bold;
 }

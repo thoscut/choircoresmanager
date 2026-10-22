@@ -128,6 +128,15 @@ onBeforeUnmount(() => clearTimeout(timer))
 </template>
 
 <style scoped>
+/* One width for every role, whatever the groups chosen */
+.group-select {
+	max-width: 40em;
+}
+
+.group-select :deep(.v-select.select) {
+	width: 100%;
+}
+
 .group-select__error {
 	margin: var(--default-grid-baseline) 0 0;
 	color: var(--color-error-text, var(--color-error));

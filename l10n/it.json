@@ -639,7 +639,6 @@
         "Take back folder {label}": "Ritira la cartellina {label}",
         "Issue folder {label}": "Consegna la cartellina {label}",
         "Edit folder {label}": "Modifica la cartellina {label}",
-        "Loans of folder {label}": "Prestiti della cartellina {label}",
         "from {from} to {to}": "dal {from} al {to}",
         "since {from}": "dal {from}",
         "came back: {condition}": "restituita: {condition}",
@@ -764,6 +763,7 @@
         "Whole piece": "Brano intero",
         "measures still missing": "battute ancora mancanti",
         "Focus voice": "Voce in evidenza",
+        "No focus voice": "Nessuna voce in evidenza",
         "Verse": "Strofa",
         "Tempo": "Tempo",
         "as in the score": "come nello spartito",
@@ -1171,7 +1171,6 @@
         "There is no measure {number} in this score.": "In questo spartito non c'è la battuta {number}.",
         "{part}, voice {number}": "{part}, voce {number}",
         "Staff {staff}, voice {number}": "Pentagramma {staff}, voce {number}",
-        "No focus voice": "Nessuna voce in evidenza",
         "Playback is not available for this version.": "Questa versione non può essere riprodotta.",
         "Tempo: {percent} % ({mark})": "Tempo: {percent} % ({mark})",
         "Tempo in the score: {mark}": "Tempo nello spartito: {mark}",
@@ -1476,7 +1475,7 @@
         "Every work of the current repertoire with several versions has a valid version.": "Ogni opera del repertorio attuale con più versioni ha una versione valida.",
         "Every work with several versions has a valid version.": "Ogni opera con più versioni ha una versione valida.",
         "Show all works": "Mostra tutte le opere",
-        "Set {shelfmarks} as valid for the choir": "Imposta {shelfmarks} come valida per il coro",
+        "Set as valid for the choir: {shelfmarks}": "Imposta come valida per il coro: {shelfmarks}",
         "{shelfmarks} becomes the version of “{title}” valid for the choir. It says nothing about the rights.": "{shelfmarks} diventa la versione di “{title}” valida per il coro. Non dice nulla sui diritti.",
         "Reload": "Ricarica",
         "Open in music archive": "Apri nell'archivio di spartiti",
@@ -2344,6 +2343,10 @@
         "_%n folder_::_%n folders_": [
             "%n cartellina",
             "%n cartelline"
+        ],
+        "_%n loan of folder {label}_::_%n loans of folder {label}_": [
+            "%n prestito della cartellina {label}",
+            "%n prestiti della cartellina {label}"
         ],
         "_%n loan_::_%n loans_": [
             "%n prestito",

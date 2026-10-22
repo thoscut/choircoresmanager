@@ -145,7 +145,7 @@ async function confirm(): Promise<void> {
 									:preservation-copy="version.copies[0]?.preservation_copy" />
 								<span v-if="version.copies.some((copy) => copy.has_musicxml)" class="valid-versions__tag">MusicXML</span>
 								<NcButton class="valid-versions__set no-print"
-									:aria-label="t('notenarchiv', 'Set {shelfmarks} as valid for the choir', { shelfmarks: version.copies.map((copy) => copy.shelfmark).join(', ') })"
+									:aria-label="t('notenarchiv', 'Set as valid for the choir: {shelfmarks}', { shelfmarks: version.copies.map((copy) => copy.shelfmark).join(', ') })"
 									@click="choose(work, version.versionId)">
 									<template #icon>
 										<NcIconSvgWrapper :path="mdiCheckDecagramOutline" />

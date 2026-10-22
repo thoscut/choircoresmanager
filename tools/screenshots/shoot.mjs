@@ -48,6 +48,9 @@ const ACCOUNTS = {
 	conductor: process.env.NC_USER_CONDUCTOR ?? 'demo-conductor',
 	contributor: process.env.NC_USER_CONTRIBUTOR ?? 'demo-contributor',
 	admin: process.env.NC_USER_ADMIN ?? 'demo-admin',
+	member: process.env.NC_USER_MEMBER ?? 'demo-member',
+	// the public: no account, no login
+	public: null,
 }
 
 /**
@@ -128,6 +131,10 @@ class Session {
 			}
 		})
 		page.on('dialog', (dialog) => dialog.dismiss())
+		this.page = page
+		if (this.uid === null) {
+			return this
+		}
 		await page.goto(`${BASE}/index.php/login`, { waitUntil: 'networkidle2' })
 		if (page.url().includes('/login')) {
 			await page.waitForSelector('input[name=user]')
@@ -169,7 +176,8 @@ class Session {
 	 * account's own setting (changed like in the personal settings).
 	 */
 	async use({ lang, theme }) {
-		if (lang !== this.lang) {
+		// Without an account the browser's language counts (English)
+		if (lang !== this.lang && this.uid !== null) {
 			const locale = lang === 'de' ? 'de_DE' : 'en_GB'
 			for (const [key, value] of [['language', lang], ['locale', locale]]) {
 				const result = await this.request('PUT', `/ocs/v2.php/cloud/users/${encodeURIComponent(this.uid)}`, {
@@ -423,7 +431,8 @@ try {
 		await prepare({ session, sleep, demoFolder: args['demo-folder'], log: (...text) => console.log('prepare:', ...text) })
 	}
 	const only = args.only ? args.only.split(',').map((name) => name.trim()) : null
-	const state = { demoFolder: args['demo-folder'] }
+	// session(role) lets a recipe ask another account, e.g. for the token of a link
+	const state = { demoFolder: args['demo-folder'], session }
 	for (const shot of SHOTS) {
 		if (only && !only.includes(shot.name) && !only.includes(shot.file)) {
 			continue
@@ -433,7 +442,9 @@ try {
 		const h = helpers(s)
 		try {
 			const clip = await shot.run(h, state)
-			await h.calm()
+			if (!h.keepOpen) {
+				await h.calm()
+			}
 			const buffer = await s.page.screenshot({ type: 'png', captureBeyondViewport: false, ...(clip ? { clip } : {}) })
 			const file = resolve(args.out, shot.file)
 			const size = await writePng(file, buffer)

@@ -639,7 +639,6 @@
         "Take back folder {label}": "Registrar la devolución de la carpeta de coro {label}",
         "Issue folder {label}": "Prestar la carpeta de coro {label}",
         "Edit folder {label}": "Editar la carpeta de coro {label}",
-        "Loans of folder {label}": "Préstamos de la carpeta de coro {label}",
         "from {from} to {to}": "del {from} al {to}",
         "since {from}": "desde el {from}",
         "came back: {condition}": "devuelta: {condition}",
@@ -764,6 +763,7 @@
         "Whole piece": "Pieza completa",
         "measures still missing": "todavía faltan los compases",
         "Focus voice": "Voz destacada",
+        "No focus voice": "Sin voz destacada",
         "Verse": "Estrofa",
         "Tempo": "Tempo",
         "as in the score": "como en la partitura",
@@ -1171,7 +1171,6 @@
         "There is no measure {number} in this score.": "No hay ningún compás {number} en esta partitura.",
         "{part}, voice {number}": "{part}, voz {number}",
         "Staff {staff}, voice {number}": "Pentagrama {staff}, voz {number}",
-        "No focus voice": "Sin voz destacada",
         "Playback is not available for this version.": "La reproducción no está disponible para esta versión.",
         "Tempo: {percent} % ({mark})": "Tempo: {percent} % ({mark})",
         "Tempo in the score: {mark}": "Tempo en la partitura: {mark}",
@@ -1476,7 +1475,7 @@
         "Every work of the current repertoire with several versions has a valid version.": "Todas las obras del repertorio actual con varias versiones tienen una versión vigente.",
         "Every work with several versions has a valid version.": "Todas las obras con varias versiones tienen una versión vigente.",
         "Show all works": "Mostrar todas las obras",
-        "Set {shelfmarks} as valid for the choir": "Marcar {shelfmarks} como vigente para el coro",
+        "Set as valid for the choir: {shelfmarks}": "Marcar como vigente para el coro: {shelfmarks}",
         "{shelfmarks} becomes the version of “{title}” valid for the choir. It says nothing about the rights.": "{shelfmarks} pasa a ser la versión de “{title}” vigente para el coro. No dice nada sobre los derechos.",
         "Reload": "Recargar",
         "Open in music archive": "Abrir en el archivo de partituras",
@@ -2344,6 +2343,10 @@
         "_%n folder_::_%n folders_": [
             "%n carpeta de coro",
             "%n carpetas de coro"
+        ],
+        "_%n loan of folder {label}_::_%n loans of folder {label}_": [
+            "%n préstamo de la carpeta de coro {label}",
+            "%n préstamos de la carpeta de coro {label}"
         ],
         "_%n loan_::_%n loans_": [
             "%n préstamo",

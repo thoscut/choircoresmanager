@@ -17,10 +17,15 @@ $texts = $_['texts'];
 ?>
 
 <style>
+	/* A page of its own on the background picture of the public layout, as the
+	   page of a public link: the text needs the main background for contrast */
 	.notenarchiv-repertoire {
 		max-width: 50em;
-		margin: 0 auto;
+		margin: calc(4 * var(--default-grid-baseline, 4px)) auto;
 		padding: calc(4 * var(--default-grid-baseline, 4px));
+		border-radius: var(--border-radius-container-large, var(--border-radius-large, 12px));
+		background-color: var(--color-main-background, #fff);
+		color: var(--color-main-text, #222);
 	}
 
 	.notenarchiv-repertoire h2 {
@@ -74,16 +79,16 @@ $texts = $_['texts'];
 			<?php foreach ($_['entries'] as $entry): ?>
 				<li class="notenarchiv-repertoire__item">
 					<h3><?php p($entry['title']); ?></h3>
-					<?php if ($entry['persons'] !== []): ?>
-						<?php foreach ($entry['persons'] as $person): ?>
-							<p>
-								<?php p($person['role'] === 'lyricist' ? $texts['lyricist'] : $texts['composer']); ?>:
-								<?php p($person['name']); ?><?php if ($person['lifeDates'] !== null): ?> (<?php p($person['lifeDates']); ?>)<?php endif; ?>
-							</p>
-						<?php endforeach; ?>
-					<?php elseif ($entry['composer'] !== ''): ?>
+					<?php /* The composer as written, unless the register names one (e.g. "Volksweise") */ ?>
+					<?php if ($entry['composer'] !== '' && !in_array('composer', array_column($entry['persons'], 'role'), true)): ?>
 						<p><?php p($texts['composer']); ?>: <?php p($entry['composer']); ?></p>
 					<?php endif; ?>
+					<?php foreach ($entry['persons'] as $person): ?>
+						<p>
+							<?php p($person['role'] === 'lyricist' ? $texts['lyricist'] : $texts['composer']); ?>:
+							<?php p($person['name']); ?><?php if ($person['lifeDates'] !== null): ?> (<?php p($person['lifeDates']); ?>)<?php endif; ?>
+						</p>
+					<?php endforeach; ?>
 					<?php if ($entry['scoring'] !== []): ?>
 						<p><?php p($texts['scoring']); ?>: <?php p(implode(', ', $entry['scoring'])); ?></p>
 					<?php endif; ?>

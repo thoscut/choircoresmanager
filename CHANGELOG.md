@@ -199,6 +199,16 @@ All notable changes to this app are documented in this file. The format follows
   headings in the same order, and that every link of the guides leads to an
   existing file and section.
 
+### Changed
+
+- The description in the App Store names the functions of milestones 0.7
+  to 0.9, the modules that start switched off and the seven languages.
+- Screenshots of the documentation and the App Store taken again with the
+  demo data, among them the new pictures of sharing, the folder book, the
+  mirror folder, revisions, the review of transcriptions, annual snapshots
+  and the Nextcloud search; `tools/screenshots --prepare` creates their
+  state.
+
 ### Fixed
 
 - Cleaner sound of the playback and the practice audio files (it sounded
@@ -214,6 +224,19 @@ All notable changes to this app are documented in this file. The format follows
   - Softer tone: fewer upper harmonics, the vibrato sets in after the
     attack; the count-in click starts in 4 ms; notes end at silence.
   - A late timer no longer plays notes that are already over.
+- Found in the browser acceptance of milestones 0.7 to 0.9 in Nextcloud 33:
+  - The public repertoire page has a background of its own: its text stood
+    directly on the background picture of the public layout with too little
+    contrast. A composer written in the catalog (e.g. "Volksweise") is shown
+    when the register of persons names none.
+  - Buttons whose accessible name did not contain their visible text (WCAG
+    2.5.3): "Set as valid" in "Choose valid versions" and the loans of a
+    folder in the folder book.
+  - Folder book: the buttons of a folder stay in its table row.
+  - Labels and values no longer run together in the box "What the
+    recipients see" of the share dialog and in the figures of the import and
+    file sync reports; without a voice the box says "No focus voice".
+  - The role selects in the settings have one width.
 - Playing order checked against the test cases of the parallel development
   (own MusicXML test files, `src/__tests__/playOrder.test.ts`):
   - A backward repeat goes back to the last forward repeat or the beginning,

@@ -75,8 +75,10 @@ export async function prepare({ session, demoFolder, log }) {
 		check('song list import', await librarian.api('POST', '/api/performances/import', { fileId: fileIds['song-lists.csv'], dryRun: false }))
 		log('performances and song lists imported')
 	}
+	const context = { session, librarian, conductor, copy, versionOf, check, log, demoFolder, ocs, sharesPath }
 	if (concerts.some((event) => event.title === CONCERT)) {
-		log(`"${CONCERT}" exists: the demo state is complete`)
+		log(`"${CONCERT}" exists: the base state is complete`)
+		await extras(context)
 		return
 	}
 
@@ -137,4 +139,167 @@ export async function prepare({ session, demoFolder, log }) {
 		check('duration', await librarian.api('PATCH', `/api/event-items/${item.id}`, { item: { duration: durations[index] ?? 120 } }))
 	}
 	log(`demo state created (concert ${event.id})`)
+	await extras(context)
+}
+
+/**
+ * Share the demo folder read-only with a group, unless it is shared already.
+ *
+ * @param {object} librarian session of the account that owns the demo folder
+ * @param {string} demoFolder folder of the demo data
+ * @param {string} group group id
+ * @param {object} options ocs headers, sharesPath and log
+ */
+async function shareWith(librarian, demoFolder, group, { ocs, sharesPath, log }) {
+	const shares = await librarian.request('GET', `${sharesPath}?path=${encodeURIComponent('/' + demoFolder)}`, { headers: ocs })
+	if (JSON.parse(shares.text).ocs?.data?.some((share) => share.share_with === group)) {
+		return
+	}
+	const shared = await librarian.request('POST', sharesPath, {
+		headers: { ...ocs, 'Content-Type': 'application/x-www-form-urlencoded' },
+		body: new URLSearchParams({ path: '/' + demoFolder, shareType: '1', shareWith: group, permissions: '1' }).toString(),
+	})
+	if (shared.status !== 200) {
+		throw new Error(`Sharing ${demoFolder} with ${group} failed: HTTP ${shared.status}`)
+	}
+	log(`${demoFolder} shared with ${group} (read only)`)
+}
+
+/**
+ * The state of the pictures of milestones 0.7 to 0.9: links for choir
+ * members and the public, the public repertoire page, the folder book, the
+ * mirror folder of the print station, a revision made by a correction, a
+ * special case of the protection term and two annual snapshots. Needs the
+ * modules member_links, public_links, public_repertoire, folder_book,
+ * print_mirror and annual_snapshot (see README.md). Each part is skipped
+ * when it is done already.
+ *
+ * @param {object} context sessions and helpers of prepare()
+ */
+async function extras({ session, librarian, copy, versionOf, check, log, demoFolder, ocs, sharesPath }) {
+	const admin = await session('admin')
+	const entry = async (shelfmark) => check('entry ' + shelfmark, await librarian.api('GET', `/api/entries/${copy[shelfmark].id}`))
+
+	// Links for choir members need the release for the singers' portal
+	if (!(await entry('1-1')).releases?.onPortal) {
+		check('portal 1-1', await librarian.api('POST', `/api/versions/${await versionOf('1-1')}/portal`, { since: '2025-09-01' }))
+	}
+	const links = check('links', await librarian.api('GET', '/api/links'))
+	if (!links.some((link) => link.circle === 'members')) {
+		check('member link 1-1', await librarian.api('POST', `/api/copies/${copy['1-1'].id}/links`, {
+			link: { measure_from: '1', measure_to: '4', voice: 'Alt', note: 'Please practise the alto until Thursday.', circle: 'members' },
+		}))
+		log('link for choir members created (1-1)')
+	}
+	if (!links.some((link) => link.circle === 'public')) {
+		if ((await entry('1-2')).version.publication_status !== 'free') {
+			check('publication 1-2', await librarian.api('PATCH', `/api/version/${await versionOf('1-2')}`, { fields: { publication_status: 'free' }, reason: 'Public domain, own setting under CC0' }))
+		}
+		check('public link 1-2', await librarian.api('POST', `/api/copies/${copy['1-2'].id}/links`, {
+			link: { measure_from: '1', measure_to: '8', circle: 'public' },
+		}))
+		log('public link created (1-2)')
+	}
+
+	// The public repertoire page: works with a version confirmed public domain
+	const repertoire = {
+		'1-1': { cpdl_url: 'https://www.cpdl.org/wiki/index.php/Der_Mond_ist_aufgegangen_(Johann_Abraham_Peter_Schulz)' },
+		'1-2': { imslp_url: 'https://imslp.org/wiki/Symphony_No.9,_Op.125_(Beethoven,_Ludwig_van)' },
+		'2-1': { cpdl_url: 'https://www.cpdl.org/wiki/index.php/%C3%84nnchen_von_Tharau_(Friedrich_Silcher)' },
+	}
+	for (const [shelfmark, urls] of Object.entries(repertoire)) {
+		const detail = await entry(shelfmark)
+		if (!detail.work.public_repertoire) {
+			check('repertoire ' + shelfmark, await librarian.api('PATCH', `/api/work/${detail.work.id}`, { fields: { public_repertoire: true, ...urls } }))
+		}
+		// The page names composer and lyricist with their life dates: the
+		// person import leaves the role of a contribution open
+		for (const contribution of detail.contributions ?? []) {
+			const name = contribution.person?.name ?? ''
+			const role = name === detail.work.composer ? 'composer' : (detail.version.arranger_text ?? '').includes(`Text: ${name}`) ? 'lyricist' : null
+			if (contribution.role === 'unspecified' && role) {
+				check('contribution ' + shelfmark, await librarian.api('PATCH', `/api/contributions/${contribution.id}`, { contribution: { role } }))
+			}
+		}
+	}
+
+	// Folder book: one folder out (an invented name), one in the cupboard,
+	// one with missing sheets and a version that no longer applies
+	if (check('folder book', await librarian.api('GET', '/api/folder-book')).folders.length === 0) {
+		const folder = async (label, voice, items, extra = {}) => check('folder ' + label, await librarian.api('POST', '/api/folder-book/folders', {
+			folder: { label, voice, contents: items.map(([shelfmark, count]) => ({ copyId: copy[shelfmark].id, count })), wear: 'good', ...extra },
+		}))
+		const out = await folder('12', 'Tenor II', [['2-1', 1], ['2-2', 1], ['1-6', 1]])
+		await folder('14', 'Alto', [['1-1', 1], ['1-4', 1], ['4-1', 1]])
+		await folder('21', 'Bass', [['1-5', 1], ['2-3', 1], ['1-6', 1]], { wear: 'worn', missing: '1-6, page 2' })
+		check('issue 12', await librarian.api('POST', `/api/folder-book/folders/${out.id}/issue`, { loan: { holderName: 'Kim Beispiel', issuedOn: '2026-09-14' } }))
+		log('folder book created')
+	}
+
+	// Mirror folder of the print station: the administrator reads the archive
+	// folder and chooses a folder of their own; a file of their own in it is
+	// skipped, never overwritten
+	const groupAdmins = process.env.NC_GROUP_ADMINS ?? 'admin'
+	await shareWith(librarian, demoFolder, groupAdmins, { ocs, sharesPath, log })
+	const mirror = check('print mirror', await admin.api('GET', '/api/settings/print-mirror'))
+	if (!mirror.folder) {
+		const dav = `/remote.php/dav/files/${encodeURIComponent(admin.uid)}/Print%20station`
+		await admin.request('MKCOL', dav)
+		await admin.request('PUT', `${dav}/${encodeURIComponent('2-1 Ännchen von Tharau.pdf')}`, { body: 'Placed here by hand (demo).', headers: { 'Content-Type': 'application/pdf' } })
+		const found = await admin.request('PROPFIND', dav, {
+			headers: { Depth: '0', 'Content-Type': 'application/xml' },
+			body: '<?xml version="1.0"?><d:propfind xmlns:d="DAV:" xmlns:oc="http://owncloud.org/ns"><d:prop><oc:fileid/></d:prop></d:propfind>',
+		})
+		const folderId = Number(found.text.match(/<oc:fileid>(\d+)<\/oc:fileid>/)?.[1])
+		check('mirror target', await admin.api('PUT', '/api/settings/print-mirror', { folderId }))
+		log('mirror folder of the print station chosen: Print station')
+	}
+
+	// Revision 2 of 2-2: a correction of one pitch in the app, made current
+	const versionId = await versionOf('2-2')
+	let states = check('revisions 2-2', await librarian.api('GET', `/api/versions/${versionId}/states`)).states
+	if (states.length < 2) {
+		const fileId = (await entry('2-2')).score.fileId
+		const original = await librarian.request('GET', `/index.php/apps/notenarchiv/api/files/${fileId}/content`)
+		// The first note of measure 3 in the second part, one step higher
+		const parts = original.text.split('<part id=')
+		const measure = parts[2].match(/<measure number="3"[\s\S]*?<\/measure>/)[0]
+		const step = measure.match(/<step>([A-G])<\/step>/)[1]
+		const higher = 'CDEFGAB'['CDEFGAB'.indexOf(step) + 1] ?? 'C'
+		parts[2] = parts[2].replace(measure, measure.replace(`<step>${step}</step>`, `<step>${higher}</step>`))
+		check('correction 2-2', await librarian.api('POST', `/api/versions/${versionId}/corrections`, {
+			fileId, content: parts.join('<part id='), pointIds: [], reason: 'Wrong note in bar 3, compared with the printed edition',
+		}))
+		states = check('revisions 2-2', await librarian.api('GET', `/api/versions/${versionId}/states`)).states
+		check('current revision', await librarian.api('PUT', `/api/states/${states.at(-1).id}/current`, { reason: 'The choir sings the corrected note.' }))
+		log('revision 2 of 2-2 recorded and made current')
+	}
+
+	// Special case of the protection term: a scientific edition
+	const ros = await entry('1-6')
+	if (!ros.version.scientific_edition) {
+		check('special case 1-6', await librarian.api('PATCH', `/api/version/${ros.version.id}`, { fields: { scientific_edition: true, first_published_year: 1991 }, reason: 'Critical edition (demo)' }))
+	}
+
+	// Two annual snapshots with a confirmed version and a new license between them
+	const snapshots = check('annual snapshots', await librarian.api('GET', '/api/annual-snapshots')).snapshots
+	if (snapshots.length < 2) {
+		if (snapshots.length === 0) {
+			check('snapshot 1', await librarian.api('POST', '/api/annual-snapshots'))
+			// The list names snapshots by the minute: the second one in another minute
+			await new Promise((done) => setTimeout(done, 61000))
+		}
+		if (!(await entry('4-2')).version.confirmed_at) {
+			check('confirm 4-2', await librarian.api('POST', `/api/versions/${await versionOf('4-2')}/confirm`, {
+				status: 'public_domain', reason: 'Bruckner died in 1896; the text is liturgical.', evidence: 'Life dates in the register of persons',
+			}))
+		}
+		if (!(await entry('2-6')).licenses.some((license) => String(license.uses).includes('recording'))) {
+			check('license 2-6', await librarian.api('POST', `/api/versions/${await versionOf('2-6')}/licenses`, {
+				license: { holder: 'Demo-Musikverlag', uses: ['recording'], quantity: null, valid_from: '2026-10-01', valid_until: '2027-09-30', evidence: 'Contract 2026-041 (demo)', notes: '' },
+			}))
+		}
+		check('snapshot 2', await librarian.api('POST', '/api/annual-snapshots'))
+		log('annual snapshots written')
+	}
 }

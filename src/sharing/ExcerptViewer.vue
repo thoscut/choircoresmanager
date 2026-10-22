@@ -1038,7 +1038,7 @@ onBeforeUnmount(() => {
 			<p :id="summaryId" class="excerpt-viewer__summary">
 				{{ summary }}
 				<template v-if="canPlay">
-					{{ t('notenarchiv', 'Click a note to play from there.') }}
+					· {{ t('notenarchiv', 'Click a note to play from there.') }}
 				</template>
 			</p>
 			<p v-if="canPlay" :id="scoreHintId" class="hidden-visually">

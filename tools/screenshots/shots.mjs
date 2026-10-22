@@ -245,13 +245,14 @@ export const SHOTS = [
 		after: escape,
 	},
 	{
-		// Administration → Music archive: archive folder, then roles and groups
+		// Administration → Music archive: the roles and their groups
 		name: 'settings-roles', file: 'settings-roles.png', account: 'admin', ...en,
 		run: async (h) => {
 			await h.goto('/settings/admin/notenarchiv')
 			await h.page.waitForSelector('#notenarchiv-roles', { visible: true, timeout: 30000 })
+			await h.page.evaluate(() => document.querySelector('#notenarchiv-roles')?.scrollIntoView({ block: 'start' }))
 			await h.settle(1200)
-			return h.rect(['#notenarchiv-archive-folder', '#notenarchiv-roles'], { pad: 0 })
+			return h.rect('#notenarchiv-roles', { pad: 0 })
 		},
 	},
 	{
@@ -259,7 +260,12 @@ export const SHOTS = [
 		name: 'admin-settings', file: 'admin-settings.png', account: 'admin', ...en,
 		run: async (h) => {
 			await h.goto('/settings/admin/notenarchiv#notenarchiv-access')
+			await h.page.waitForSelector('#notenarchiv-access button', { visible: true, timeout: 30000 })
+			if (!(await h.page.$('#notenarchiv-access .access-check__table'))) {
+				await h.click('#notenarchiv-access button', h.t('Check access'))
+			}
 			await h.page.waitForSelector('#notenarchiv-access .access-check__table', { visible: true, timeout: 60000 })
+			await h.page.evaluate(() => document.querySelector('#notenarchiv-access')?.scrollIntoView({ block: 'start' }))
 			await h.settle(1200)
 			return h.rect('#notenarchiv-access', { pad: 0 })
 		},
@@ -297,6 +303,196 @@ export const SHOTS = [
 			return dialogClip(h)
 		},
 		after: escape,
+	},
+
+	// ---- milestones 0.7 to 0.9 ----
+	{
+		// The review point at measure 7, Tenor II, of the demo report of 2-1
+		name: 'review-points', file: 'review-points.png', account: 'librarian', ...en,
+		run: async (h) => {
+			await h.app(`?copy=${await h.copyId('2-1')}&review=1`)
+			await h.page.waitForSelector('.review-panel__point', { visible: true, timeout: 60000 })
+			await h.page.waitForSelector('.score-viewer__page svg', { timeout: 60000 })
+			await h.page.evaluate(() => {
+				const points = [...document.querySelectorAll('.review-panel__point')]
+				const point = points.find((p) => /\b7\b/.test(p.querySelector('.review-panel__place')?.innerText ?? '')) ?? points[0]
+				point?.click()
+			})
+			await h.settle(1500)
+			// The chosen point with its decisions at the end of the panel
+			await h.page.evaluate(() => document.querySelector('.review-panel')?.lastElementChild?.scrollIntoView({ block: 'end' }))
+			await h.settle(600)
+		},
+	},
+	{
+		name: 'files-action', file: 'files-action.png', account: 'librarian', ...en,
+		run: async (h, state) => {
+			await h.goto(`/apps/files/files?dir=/${encodeURIComponent(state.demoFolder)}/Mappe_2`)
+			const row = 'tr[data-cy-files-list-row-name="2-01_Aennchen-von-Tharau_Silcher.mxl"]'
+			await h.page.waitForSelector(row, { visible: true, timeout: 30000 })
+			await h.settle(800)
+			await h.page.click(`${row} .files-list__row-actions button[aria-label="Actions"]`)
+			await h.page.waitForFunction(() => [...document.querySelectorAll('[role=menuitem]')].some((item) => item.innerText.includes('Open in music archive')), { timeout: 15000 })
+			await h.sleep(600)
+			// Keep the menu open: no mouse move, no blur afterwards
+			h.keepOpen = true
+		},
+		after: escape,
+	},
+	{
+		name: 'share-dialog', file: 'share-dialog.png', account: 'librarian', ...en,
+		run: async (h) => {
+			await score(h, '1-1', 'Alt', 'focus', ['1', '4'])
+			if (!(await h.page.evaluate(() => [...document.querySelectorAll('.score-viewer button')].some((b) => b.getClientRects().length > 0 && b.innerText.includes('Share excerpt'))))) {
+				await h.click('.score-viewer button', h.t('This passage'))
+			}
+			await h.click('.score-viewer button', h.t('Share excerpt …'))
+			await h.page.waitForSelector('.dialog__modal .modal-container', { visible: true })
+			await h.settle(600)
+			await h.page.evaluate((label) => [...document.querySelectorAll('.dialog__modal .checkbox-radio-switch')]
+				.find((choice) => choice.innerText.trim() === label)?.querySelector('input')?.click(), h.t('Choir members'))
+			await h.settle(1500)
+		},
+		after: async (h) => {
+			await escape(h)
+			await escape(h)
+		},
+	},
+	{
+		name: 'shared-with-me', file: 'shared-with-me.png', account: 'member', ...en,
+		run: async (h) => {
+			await h.goto('/apps/notenarchiv/')
+			await h.page.waitForSelector('.excerpt-viewer svg', { timeout: 60000 })
+			await h.settle(1500)
+		},
+	},
+	{
+		name: 'public-link', file: 'public-link.png', account: 'public', ...en,
+		run: async (h, state) => {
+			const librarian = await state.session('librarian')
+			const link = ((await librarian.api('GET', '/api/links')).json ?? []).find((candidate) => candidate.circle === 'public')
+			if (!link) {
+				throw new Error('No public link: run with --prepare')
+			}
+			await h.goto(`/apps/notenarchiv/p/${link.token}`)
+			await h.page.waitForSelector('.excerpt-viewer svg', { timeout: 60000 })
+			await h.settle(1500)
+		},
+	},
+	{
+		name: 'public-repertoire', file: 'public-repertoire.png', account: 'public', ...en,
+		run: async (h) => h.goto('/apps/notenarchiv/repertoire'),
+	},
+	{
+		name: 'folder-book', file: 'folder-book.png', account: 'librarian', ...en,
+		run: async (h) => {
+			await h.app('?view=folder-book')
+			return h.rect('#app-content-vue', { pad: 0, fit: true })
+		},
+	},
+	{
+		name: 'folder-take-back', file: 'folder-take-back.png', account: 'librarian', ...en,
+		run: async (h) => {
+			await h.app('?view=folder-book')
+			await h.click('#app-content-vue button', h.t('Take back'))
+			await h.page.waitForSelector('.modal-container', { visible: true })
+			await h.settle(600)
+			await h.page.evaluate((label) => [...document.querySelectorAll('.modal-container .checkbox-radio-switch')]
+				.find((choice) => choice.innerText.trim() === label)?.querySelector('input')?.click(), h.t('Worn'))
+			await h.fill(h.t('Missing sheets'), '2-2, page 1', '.modal-container')
+			await h.settle(400)
+			return dialogClip(h)
+		},
+		after: escape,
+	},
+	{
+		name: 'print-mirror-preview', file: 'print-mirror-preview.png', account: 'librarian', ...en,
+		run: async (h) => {
+			await h.app('?view=print-station')
+			await h.click('#app-content-vue button', h.t('Preview and first sync …'))
+			await h.page.waitForSelector('.modal-container', { visible: true, timeout: 30000 })
+			await h.settle(1500)
+		},
+		after: escape,
+	},
+	{
+		name: 'settings-print-mirror', file: 'settings-print-mirror.png', account: 'admin', ...en,
+		run: async (h) => {
+			await h.goto('/settings/admin/notenarchiv#notenarchiv-print-mirror')
+			await h.page.waitForSelector('#notenarchiv-print-mirror', { visible: true, timeout: 30000 })
+			await h.settle(1000)
+			await h.click('#notenarchiv-print-mirror button', h.t('Choose folder …'))
+			await pickFolder(h, 'Print station')
+			await h.page.waitForFunction(() => document.querySelector('#notenarchiv-print-mirror')?.innerText.includes('fits'), { timeout: 30000 })
+			await h.page.evaluate(() => document.querySelector('#notenarchiv-print-mirror')?.scrollIntoView({ block: 'start' }))
+			await h.settle(800)
+			return h.rect('#notenarchiv-print-mirror', { pad: 0, fit: true })
+		},
+	},
+	{
+		name: 'unified-search', file: 'unified-search.png', account: 'librarian', ...en,
+		run: async (h) => {
+			await h.goto('/apps/files/')
+			await h.page.evaluate(() => [...document.querySelectorAll('header button')].find((b) => /search|such/i.test(b.getAttribute('aria-label') ?? ''))?.click())
+			await h.page.waitForSelector('[data-cy-unified-search-input]', { visible: true, timeout: 15000 })
+			await h.page.type('[data-cy-unified-search-input]', 'Mond')
+			await h.page.waitForFunction(() => document.querySelector('.unified-search-modal')?.innerText.includes('Music archive'), { timeout: 30000 })
+			await h.settle(1500)
+			return dialogClip(h)
+		},
+		after: escape,
+	},
+	{
+		name: 'protection-special-case', file: 'protection-special-case.png', account: 'librarian', ...en,
+		run: async (h) => {
+			await sidebar(h, '1-6', 'rights')
+			await h.page.evaluate((label) => {
+				const field = [...document.querySelectorAll('.app-sidebar label, .app-sidebar .checkbox-radio-switch')].find((el) => el.innerText.includes(label))
+				field?.scrollIntoView({ block: 'start' })
+			}, h.t('Scientific edition (§ 70 UrhG)'))
+			await h.settle(600)
+			return sidebarClip(h, 1000)
+		},
+	},
+	{
+		name: 'rights-notice', file: 'rights-notice.png', account: 'librarian', ...en,
+		run: async (h) => {
+			await sidebar(h, '1-1', 'files')
+			await h.page.waitForSelector('.file-list__notice', { visible: true, timeout: 20000 })
+			await h.page.evaluate(() => document.querySelector('.file-list__notice')?.closest('li')?.scrollIntoView({ block: 'center' }))
+			await h.settle(600)
+			return sidebarClip(h, 1000)
+		},
+	},
+	{
+		name: 'shelfmark-gaps', file: 'shelfmark-gaps.png', account: 'librarian', ...en,
+		run: async (h) => {
+			await h.app('?view=shelfmark-gaps')
+			return h.rect('#app-content-vue', { pad: 0, fit: true })
+		},
+	},
+	{
+		name: 'annual-snapshots', file: 'annual-snapshots.png', account: 'librarian', ...en,
+		run: async (h) => {
+			await h.app('?view=annual-snapshots')
+			await h.click('#app-content-vue button', h.t('Compare'))
+			await h.page.waitForFunction(() => document.querySelector('#app-content-vue')?.innerText.includes('Locus iste'), { timeout: 30000 })
+			await h.settle(800)
+			return h.rect('#app-content-vue', { pad: 0, fit: true })
+		},
+	},
+	{
+		// Revision 2 of 2-2 (a correction in the app) compared with revision 1
+		name: 'revisions', file: 'revisions.png', account: 'librarian', ...en,
+		run: async (h) => {
+			await sidebar(h, '2-2', 'files')
+			await h.page.waitForSelector('.states__compare-form', { visible: true, timeout: 20000 })
+			await h.click('.states__compare-form button', h.t('Compare'))
+			await h.page.waitForSelector('.states__changes', { visible: true, timeout: 30000 })
+			await h.page.evaluate(() => document.querySelector('.states')?.scrollIntoView({ block: 'start' }))
+			await h.settle(600)
+			return sidebarClip(h, 1000)
+		},
 	},
 
 	// ---- German interface (informal) ----
@@ -393,5 +589,20 @@ async function pickFile(h, path) {
 		await h.page.click(`${row} .row-name`)
 		await h.sleep(1200)
 	}
+	await h.click('.file-picker button', ['Choose', 'Auswählen'])
+}
+
+/**
+ * Choose a folder of the account's files in Nextcloud's file picker.
+ *
+ * @param {object} h helpers
+ * @param {string} name folder name in the root of the account's files
+ */
+async function pickFolder(h, name) {
+	await h.page.waitForSelector('.file-picker', { visible: true, timeout: 20000 })
+	const row = `.file-picker tr[data-filename="${name}"]`
+	await h.page.waitForSelector(row, { visible: true, timeout: 20000 })
+	await h.page.click(`${row} .row-name`)
+	await h.sleep(1200)
 	await h.click('.file-picker button', ['Choose', 'Auswählen'])
 }

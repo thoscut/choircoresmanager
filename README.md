@@ -30,8 +30,9 @@ Notenarchiv keeps the catalog of a choir's sheet music archive: works,
 versions (settings, arrangements, editions), copies with their shelf marks,
 and the scans, MusicXML and MuseScore files that already live in your
 Nextcloud. It is made for the people who look after the music: the music
-librarians, the conductor, the board and the auditors. Singers keep using the
-choir's own practice system; the archive itself is not shown to them.
+librarians, the conductor, the board and the auditors. If you switch it on,
+choir members get excerpts to view, play and practise; the catalog itself is
+never shown to them.
 
 The screenshots show the invented demo archive from [tools/demo](tools/demo/README.md).
 
@@ -40,7 +41,7 @@ The screenshots show the invented demo archive from [tools/demo](tools/demo/READ
 <table>
   <tr>
     <td width="33%" valign="top">
-      <a href="docs/screenshots/copy-overview.png"><img src="docs/screenshots/copy-overview.png" width="280" alt="The sidebar of copy 1-1: title, rights status, the tabs Overview, Rights, Tasks, Files and Audit log, and the fields of the work and the version."></a>
+      <a href="docs/screenshots/copy-overview.png"><img src="docs/screenshots/copy-overview.png" width="280" alt="The sidebar of copy 1-1: title, rights status, the button Score, the tabs Details, Rights, Queries, Files and History, and the fields of the work."></a>
       <h3>Catalog</h3>
       <p>Works, versions and copies as separate levels, with the files of the archive folder matched by the shelf mark at the start of each file name. Search by shelf mark, title or composer and filter by binder, rights status, repertoire and status. Nothing is deleted: a copy gets a status (active, retired, missing, lent), and every change goes into the audit log.</p>
     </td>
@@ -50,9 +51,9 @@ The screenshots show the invented demo archive from [tools/demo](tools/demo/READ
       <p>The rights belong to the version. An imported assessment stays a recommendation until a music librarian confirms public domain or protection with reason and evidence. Licenses list each use separately, and the singers' portal, the print station and publication are released separately. Internal preservation copies are never shared or played. Only the conductor chooses the version valid for the choir.</p>
     </td>
     <td width="33%" valign="top">
-      <a href="docs/screenshots/score-excerpt.png"><img src="docs/screenshots/score-excerpt.png" width="280" alt="The score viewer with bars 1 to 8 of a setting for men's choir: the focus voice Tenor II in colour, and buttons to copy a text reference, create an internal link or ask about the place."></a>
+      <a href="docs/screenshots/score-excerpt.png"><img src="docs/screenshots/score-excerpt.png" width="280" alt="The score viewer with bars 1 to 8 of a setting for men's choir: the switch Loop, the focus voice Tenor II in colour, and buttons to copy a text reference, share the excerpt or add a task."></a>
       <h3>Score viewer with voice focus and playback</h3>
-      <p>MusicXML is rendered in the browser and cut to a range of printed bar numbers. The chosen voice is highlighted, also when it shares a staff, and can be played louder or alone. Repeats and endings are played in order. Space plays and pauses, the current bar is announced to screen readers, and a text description of the excerpt is available. Playback is offered for public domain and licensed versions only.</p>
+      <p>MusicXML is rendered in the browser and cut to a range of printed bar numbers. The chosen voice is highlighted, also when it shares a staff, and can be played louder or alone. Repeats and endings are played in order; a count-in of one or two bars, a loop over the shown bars and a click on any note to start there help when practising. Space plays and pauses, the arrow keys go from bar to bar, the current bar is announced to screen readers, and a text description of the excerpt is available. Playback is offered for public domain and licensed versions only.</p>
     </td>
   </tr>
   <tr>
@@ -64,7 +65,7 @@ The screenshots show the invented demo archive from [tools/demo](tools/demo/READ
     <td width="33%" valign="top">
       <a href="docs/screenshots/task-question.png"><img src="docs/screenshots/task-question.png" width="280" alt="A question about bars 5 to 8 of Tenor II, addressed to the conductor, and an internal link to the same place."></a>
       <h3>Questions and sharing</h3>
-      <p>Questions and tasks point to a place in the score (page, bars, voice, verse) and go to a role. A place can be shared as a text reference without notation or as an internal link for people with an archive role. Links expire after at most six months, can be revoked, are checked on every call and say when the score has changed. The start page shows what is due for each role.</p>
+      <p>Questions and tasks point to a place in the score (page, bars, voice, verse) and go to a role. A place can be shared as a text reference without notation or as an internal link for people with an archive role. Links expire after at most six months, can be revoked, are checked on every call and say when the score has changed. The start page shows what is due for each role, and the conductor chooses the valid versions of several works in one list.</p>
     </td>
     <td width="33%" valign="top">
       <a href="docs/screenshots/concert-warnings.png"><img src="docs/screenshots/concert-warnings.png" width="280" alt="Pieces of a concert programme in order with their durations and warnings about rights and preservation copies."></a>
@@ -107,6 +108,40 @@ The screenshots show the invented demo archive from [tools/demo](tools/demo/READ
       <p>An optional interface for agents: a stable, versioned API (OCS, v1, with an OpenAPI description) and an MCP server for Claude Desktop, Claude Code and other clients. With an account and app password of its own, an agent searches the catalog, reads copies, concerts and statistics, asks questions and proposes changes. It never decides: rights, the valid version and every proposal stay with people, and the server checks every request against the agent's role. Off until the administration switches it on.</p>
     </td>
   </tr>
+  <tr>
+    <td width="33%" valign="top">
+      <a href="docs/screenshots/shared-with-me.png"><img src="docs/screenshots/shared-with-me.png" width="280" alt="The page Shared with me of a choir member: an excerpt of four measures with the note of the conductor, the playback controls with count-in and loop, and the score with the alto highlighted."></a>
+      <h3>Sharing with choir members and the public</h3>
+      <p>If the administration switches it on, the conductor or the music librarians share an excerpt from the score viewer: choir members see it under "Shared with me", play it with their voice emphasised and make a practice file; a public link shows it without signing in; a public repertoire page lists the works in the public domain with links to CPDL and IMSLP. The dialog says beforehand what the recipients will see. The server cuts the score to the shared bars and checks the rights on every call; choir members and the public never receive a file of the archive. These modules are off until switched on.</p>
+    </td>
+    <td width="33%" valign="top">
+      <a href="docs/screenshots/revisions.png"><img src="docs/screenshots/revisions.png" width="280" alt="The revisions of a version: revision 2, a correction in the app, current since today, revision 1 as first recorded, and their comparison with one changed note and a note for choir members."></a>
+      <h3>Revisions, review and corrections</h3>
+      <p>Every correction in the app and every changed MusicXML found by the file sync becomes a revision of the version with its checksum; the music librarians choose the current one. Two revisions are compared bar by bar and voice by voice, with a short plain-text note for the choir, and concerts keep the revision sung. Reports of transcription rounds become review points that the conductor and the librarians decide in the score view; small corrections of pitches, accidentals and syllables are saved as a new file next to the old one.</p>
+    </td>
+    <td width="33%" valign="top">
+      <a href="docs/screenshots/folder-book.png"><img src="docs/screenshots/folder-book.png" width="280" alt="The folder book: three choir folders with voice, who has them since when, contents, condition and missing sheets, and a hint that one folder holds a copy retired in the catalog."></a>
+      <h3>Folder book and print station</h3>
+      <p>The folder book records which choir folder is out with whom, what it holds, its condition and the missing sheets, and points out folders with a copy that was retired or a version that no longer applies; names are removed automatically after a retention period. Optionally, a mirror folder for the print station receives the scans released for printing, kept up to date every day, with a preview before the first sync. Both are modules.</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="33%" valign="top">
+      <a href="docs/screenshots/admin-settings.png"><img src="docs/screenshots/admin-settings.png" width="280" alt="The access check under Administration, Music archive: per role and group how many accounts can open the archive folder, who cannot, and how to give access."></a>
+      <h3>Easy to set up</h3>
+      <p>Administration → Music archive guides through five steps (archive folder, roles and groups, access, import, file sync) and shows what is done and what needs attention. It checks who of the role groups cannot open the archive folder and says what to do. Admins can give the page to a group, such as the music librarians. In the app, a "?" next to the terms explains them, empty views name the next step, and accounts without a role learn whom to ask.</p>
+    </td>
+    <td width="33%" valign="top">
+      <a href="docs/screenshots/files-action.png"><img src="docs/screenshots/files-action.png" width="280" alt="The Files app with the actions menu of a MusicXML file and the action Open in music archive."></a>
+      <h3>Part of your Nextcloud</h3>
+      <p>"Open in music archive" in the Files app opens a MusicXML file in the score viewer and any other file of a copy in the catalog. The search of Nextcloud finds copies by shelf mark, title and person. Concerts go into your calendar, the dashboard widget shows what is due, and notifications reach the people responsible. Rights are checked as in the app.</p>
+    </td>
+    <td width="33%" valign="top">
+      <a href="docs/screenshots/annual-snapshots.png"><img src="docs/screenshots/annual-snapshots.png" width="280" alt="Annual snapshots: two frozen states of the catalog and their comparison, one confirmation added and one new license."></a>
+      <h3>Annual snapshots and gaps</h3>
+      <p>Once a year, in January or on request, the app freezes the catalog as CSV and JSON with a checksum list of the archive files in a dated folder; two snapshots are compared and printed for the general meeting or the auditors. The gaps in the shelf marks of each binder are listed for the inventory, and the protection-term suggestion also knows scientific editions and posthumous works.</p>
+    </td>
+  </tr>
 </table>
 
 ## Principles
@@ -121,10 +156,12 @@ fallback, and no external server is involved. The rights helpers model German
 copyright law; they support a decision and are no legal advice. The interface
 aims at WCAG 2.2 AA and uses plain, inclusive language.
 
-Every function outside the core is a module that admins can switch off.
-Milestone 0.6 adds an interface for agents (built: the API v1 and the MCP
-server) and the review of transcriptions (planned). All principles and
-milestones are in [ROADMAP.md](ROADMAP.md) (German).
+Every function outside the core is a module that admins can switch off,
+with the presets Simple, Standard and Complete. Sharing with choir members
+and the public, the public pages, the mirror folder of the print station and
+the interface for agents belong to no preset: they stay off until an admin
+switches them on. All principles and milestones are in
+[ROADMAP.md](ROADMAP.md) (German).
 
 ## Trying it out
 
@@ -182,7 +219,9 @@ figures to expect.
    "Conductor", "Board".
 2. As an admin, open **Administration → Music archive** and assign the
    groups to the roles: Catalog (music librarian), Operations (music
-   librarian), Conductor, Proposals (tools), Read only (board, auditors).
+   librarian), Conductor, Proposals (tools), Read only (board, auditors) and,
+   if you share excerpts with them, Choir members. The list "Setting up" at
+   the top of the page shows what is done and what is still to do.
    Other accounts do not see the app; admins without a role may read it and
    change the settings. Admins can give this page to a group (e.g. the
    music librarians) under Administration privileges.
@@ -203,11 +242,17 @@ instances can also use `occ notenarchiv:setup`.
 - **Files stay where they are.** The app reads the archive folder through each
   user's own view of Nextcloud and never changes, moves or deletes a file; it
   only writes exports and backups into its own sub folder `_notenarchiv-app`.
-- **Server-side checks.** Every request checks the caller's role; there are no
-  public pages.
-- **No data about singers.** The audit log records which account holder
+- **Server-side checks.** Every request checks the caller's role. The only
+  pages without login are a public link and the public repertoire page, and
+  only while their modules are switched on (they start off); they are
+  limited per address, protected against guessing and show only what the
+  rights allow, never a file of the archive.
+- **Little data about singers.** The audit log records which account holder
   changed what; the register of persons holds composers, arrangers, lyricists
-  and publishers for the rights assessment.
+  and publishers for the rights assessment. Choir members appear only as
+  accounts of the role "Choir members" and, if you use the folder book, as
+  holders of a folder; their names are removed automatically after a
+  retention period.
 
 Please report vulnerabilities privately, as described in
 [SECURITY.md](SECURITY.md), which also explains the security design. The
@@ -224,18 +269,23 @@ description of the excerpt, announced bar numbers and playback.
 Before the first release, an end-to-end acceptance test in Nextcloud 33
 covered all roles with axe-core, keyboard-only operation, 320 px width, 200 %
 zoom, increased text spacing and a catalog of 2,000 copies; the
-[changelog](CHANGELOG.md) lists what was found and fixed. This is a self-check,
-not a formal audit. Please report barriers as issues.
+[changelog](CHANGELOG.md) lists what was found and fixed. The views added
+since then (settings page, sharing, public pages, folder book, revisions,
+annual snapshots) were checked again in Nextcloud 33 with axe-core in the
+light and the dark theme. This is a self-check, not a formal audit. Please
+report barriers as issues.
 
 ## Translations
 
-English is the source language. The German translation comes in an informal
-("du") and a formal ("Sie") variant, with neutral, inclusive wording. The
-texts live in `tools/l10n/translations.mjs`; `npm run l10n` writes `l10n/` and
-fails when a German text has no translation. French, Spanish, Italian, Dutch
-and Polish were made with the help of AI and need a review by native
-speakers; a missing text falls back to English. See
-[CONTRIBUTING.md](CONTRIBUTING.md#translations) if you would like to help.
+The interface is available in seven languages. English is the source
+language. The German translation comes in an informal ("du") and a formal
+("Sie") variant, with neutral, inclusive wording. French, Spanish, Italian,
+Dutch and Polish are machine translations that still wait for a review by
+native speakers. The texts live in `tools/l10n/translations.mjs`;
+`npm run l10n` writes `l10n/` and fails when a German text has no
+translation; a missing text of another language falls back to English. See
+[CONTRIBUTING.md](CONTRIBUTING.md#translations) if you would like to review
+or add a language.
 
 ## Documentation
 

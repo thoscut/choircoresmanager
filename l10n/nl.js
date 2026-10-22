@@ -640,7 +640,6 @@ OC.L10N.register(
         "Take back folder {label}": "Koormap {label} terugnemen",
         "Issue folder {label}": "Koormap {label} uitlenen",
         "Edit folder {label}": "Koormap {label} bewerken",
-        "Loans of folder {label}": "Uitleningen van koormap {label}",
         "from {from} to {to}": "van {from} tot {to}",
         "since {from}": "sinds {from}",
         "came back: {condition}": "teruggebracht: {condition}",
@@ -765,6 +764,7 @@ OC.L10N.register(
         "Whole piece": "Hele stuk",
         "measures still missing": "maten ontbreken nog",
         "Focus voice": "Uitgelichte stem",
+        "No focus voice": "Geen uitgelichte stem",
         "Verse": "Couplet",
         "Tempo": "Tempo",
         "as in the score": "zoals in de bladmuziek",
@@ -1172,7 +1172,6 @@ OC.L10N.register(
         "There is no measure {number} in this score.": "Er is geen maat {number} in deze bladmuziek.",
         "{part}, voice {number}": "{part}, stem {number}",
         "Staff {staff}, voice {number}": "Notenbalk {staff}, stem {number}",
-        "No focus voice": "Geen uitgelichte stem",
         "Playback is not available for this version.": "Afspelen is voor deze versie niet beschikbaar.",
         "Tempo: {percent} % ({mark})": "Tempo: {percent} % ({mark})",
         "Tempo in the score: {mark}": "Tempo in de bladmuziek: {mark}",
@@ -1477,7 +1476,7 @@ OC.L10N.register(
         "Every work of the current repertoire with several versions has a valid version.": "Elk werk uit het actuele repertoire met meerdere versies heeft een geldende versie.",
         "Every work with several versions has a valid version.": "Elk werk met meerdere versies heeft een geldende versie.",
         "Show all works": "Alle werken tonen",
-        "Set {shelfmarks} as valid for the choir": "{shelfmarks} als geldig voor het koor vastleggen",
+        "Set as valid for the choir: {shelfmarks}": "Als geldig voor het koor vastleggen: {shelfmarks}",
         "{shelfmarks} becomes the version of “{title}” valid for the choir. It says nothing about the rights.": "{shelfmarks} wordt de versie van “{title}” die voor het koor geldt. Over de rechten zegt dat niets.",
         "Reload": "Opnieuw laden",
         "Open in music archive": "Openen in Bladmuziekarchief",
@@ -2345,6 +2344,10 @@ OC.L10N.register(
         "_%n folder_::_%n folders_": [
             "%n koormap",
             "%n koormappen"
+        ],
+        "_%n loan of folder {label}_::_%n loans of folder {label}_": [
+            "%n uitlening van koormap {label}",
+            "%n uitleningen van koormap {label}"
         ],
         "_%n loan_::_%n loans_": [
             "%n uitlening",

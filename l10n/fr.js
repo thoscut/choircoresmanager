@@ -640,7 +640,6 @@ OC.L10N.register(
         "Take back folder {label}": "Reprendre le classeur {label}",
         "Issue folder {label}": "Prêter le classeur {label}",
         "Edit folder {label}": "Modifier le classeur {label}",
-        "Loans of folder {label}": "Prêts du classeur {label}",
         "from {from} to {to}": "du {from} au {to}",
         "since {from}": "depuis le {from}",
         "came back: {condition}": "rendu : {condition}",
@@ -765,6 +764,7 @@ OC.L10N.register(
         "Whole piece": "Morceau entier",
         "measures still missing": "mesures encore manquantes",
         "Focus voice": "Voix mise en évidence",
+        "No focus voice": "Aucune voix mise en évidence",
         "Verse": "Couplet",
         "Tempo": "Tempo",
         "as in the score": "comme dans la partition",
@@ -1172,7 +1172,6 @@ OC.L10N.register(
         "There is no measure {number} in this score.": "Il n'y a pas de mesure {number} dans cette partition.",
         "{part}, voice {number}": "{part}, voix {number}",
         "Staff {staff}, voice {number}": "Portée {staff}, voix {number}",
-        "No focus voice": "Aucune voix mise en évidence",
         "Playback is not available for this version.": "La lecture n'est pas disponible pour cette version.",
         "Tempo: {percent} % ({mark})": "Tempo : {percent} % ({mark})",
         "Tempo in the score: {mark}": "Tempo de la partition : {mark}",
@@ -1477,7 +1476,7 @@ OC.L10N.register(
         "Every work of the current repertoire with several versions has a valid version.": "Chaque œuvre du répertoire actuel ayant plusieurs versions a une version en vigueur.",
         "Every work with several versions has a valid version.": "Chaque œuvre ayant plusieurs versions a une version en vigueur.",
         "Show all works": "Afficher toutes les œuvres",
-        "Set {shelfmarks} as valid for the choir": "Définir {shelfmarks} comme en vigueur pour le chœur",
+        "Set as valid for the choir: {shelfmarks}": "Définir comme en vigueur pour le chœur : {shelfmarks}",
         "{shelfmarks} becomes the version of “{title}” valid for the choir. It says nothing about the rights.": "{shelfmarks} devient la version de « {title} » en vigueur pour le chœur. Cela ne dit rien sur les droits.",
         "Reload": "Recharger",
         "Open in music archive": "Ouvrir dans les Archives de partitions",
@@ -2345,6 +2344,10 @@ OC.L10N.register(
         "_%n folder_::_%n folders_": [
             "%n classeur",
             "%n classeurs"
+        ],
+        "_%n loan of folder {label}_::_%n loans of folder {label}_": [
+            "%n prêt du classeur {label}",
+            "%n prêts du classeur {label}"
         ],
         "_%n loan_::_%n loans_": [
             "%n prêt",

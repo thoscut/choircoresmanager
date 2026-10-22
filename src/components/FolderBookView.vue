@@ -266,36 +266,39 @@ function hints(folder: Folder): string[] {
 											{{ t('notenarchiv', 'Missing: {sheets}', { sheets: folder.missing }) }}
 										</span>
 									</td>
-									<td class="folder-book__actions no-print">
-										<template v-if="canEdit && folder.status === 'active'">
-											<NcButton v-if="folder.loan"
-												variant="primary"
-												:aria-label="t('notenarchiv', 'Take back folder {label}', { label: folder.label })"
-												@click="loanDialog = { folder, mode: 'return' }">
-												{{ t('notenarchiv', 'Take back') }}
-											</NcButton>
-											<NcButton v-else
-												variant="primary"
-												:aria-label="t('notenarchiv', 'Issue folder {label}', { label: folder.label })"
-												@click="loanDialog = { folder, mode: 'issue' }">
-												{{ t('notenarchiv', 'Issue') }}
-											</NcButton>
-										</template>
-										<NcButton v-if="canEdit"
-											:aria-label="t('notenarchiv', 'Edit folder {label}', { label: folder.label })"
-											@click="editing = folder">
-											{{ t('notenarchiv', 'Edit') }}
-										</NcButton>
-										<NcButton v-if="folder.history.length > 0"
-											variant="tertiary"
-											:aria-expanded="openHistory.has(folder.id) ? 'true' : 'false'"
-											:aria-label="t('notenarchiv', 'Loans of folder {label}', { label: folder.label })"
-											@click="toggleHistory(folder)">
-											<template #icon>
-												<NcIconSvgWrapper :path="mdiHistory" />
+									<td class="no-print">
+										<!-- flex inside the cell: a flex table cell would leave the table layout -->
+										<div class="folder-book__actions">
+											<template v-if="canEdit && folder.status === 'active'">
+												<NcButton v-if="folder.loan"
+													variant="primary"
+													:aria-label="t('notenarchiv', 'Take back folder {label}', { label: folder.label })"
+													@click="loanDialog = { folder, mode: 'return' }">
+													{{ t('notenarchiv', 'Take back') }}
+												</NcButton>
+												<NcButton v-else
+													variant="primary"
+													:aria-label="t('notenarchiv', 'Issue folder {label}', { label: folder.label })"
+													@click="loanDialog = { folder, mode: 'issue' }">
+													{{ t('notenarchiv', 'Issue') }}
+												</NcButton>
 											</template>
-											{{ n('notenarchiv', '%n loan', '%n loans', folder.history.length) }}
-										</NcButton>
+											<NcButton v-if="canEdit"
+												:aria-label="t('notenarchiv', 'Edit folder {label}', { label: folder.label })"
+												@click="editing = folder">
+												{{ t('notenarchiv', 'Edit') }}
+											</NcButton>
+											<NcButton v-if="folder.history.length > 0"
+												variant="tertiary"
+												:aria-expanded="openHistory.has(folder.id) ? 'true' : 'false'"
+												:aria-label="n('notenarchiv', '%n loan of folder {label}', '%n loans of folder {label}', folder.history.length, { label: folder.label })"
+												@click="toggleHistory(folder)">
+												<template #icon>
+													<NcIconSvgWrapper :path="mdiHistory" />
+												</template>
+												{{ n('notenarchiv', '%n loan', '%n loans', folder.history.length) }}
+											</NcButton>
+										</div>
 									</td>
 								</tr>
 								<tr v-if="openHistory.has(folder.id)" class="folder-book__history no-print">

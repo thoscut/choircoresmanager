@@ -640,7 +640,6 @@ OC.L10N.register(
         "Take back folder {label}": "Przyjmij zwrot teczki {label}",
         "Issue folder {label}": "Wypożycz teczkę {label}",
         "Edit folder {label}": "Edytuj teczkę {label}",
-        "Loans of folder {label}": "Wypożyczenia teczki {label}",
         "from {from} to {to}": "od {from} do {to}",
         "since {from}": "od {from}",
         "came back: {condition}": "zwrócona: {condition}",
@@ -765,6 +764,7 @@ OC.L10N.register(
         "Whole piece": "Cały utwór",
         "measures still missing": "jeszcze brakuje taktów",
         "Focus voice": "Wyróżniony głos",
+        "No focus voice": "Żaden głos nie jest wyróżniony",
         "Verse": "Zwrotka",
         "Tempo": "Tempo",
         "as in the score": "jak w nutach",
@@ -1172,7 +1172,6 @@ OC.L10N.register(
         "There is no measure {number} in this score.": "W tych nutach nie ma taktu {number}.",
         "{part}, voice {number}": "{part}, głos {number}",
         "Staff {staff}, voice {number}": "Pięciolinia {staff}, głos {number}",
-        "No focus voice": "Żaden głos nie jest wyróżniony",
         "Playback is not available for this version.": "Odtwarzanie tej wersji jest niedostępne.",
         "Tempo: {percent} % ({mark})": "Tempo: {percent} % ({mark})",
         "Tempo in the score: {mark}": "Tempo w nutach: {mark}",
@@ -1477,7 +1476,7 @@ OC.L10N.register(
         "Every work of the current repertoire with several versions has a valid version.": "Każdy utwór z bieżącego repertuaru mający kilka wersji ma obowiązującą wersję.",
         "Every work with several versions has a valid version.": "Każdy utwór z kilkoma wersjami ma obowiązującą wersję.",
         "Show all works": "Pokaż wszystkie utwory",
-        "Set {shelfmarks} as valid for the choir": "Ustaw {shelfmarks} jako obowiązującą w chórze",
+        "Set as valid for the choir: {shelfmarks}": "Ustaw jako obowiązującą w chórze: {shelfmarks}",
         "{shelfmarks} becomes the version of “{title}” valid for the choir. It says nothing about the rights.": "{shelfmarks} staje się wersją utworu „{title}” obowiązującą w chórze. Nie mówi to nic o prawach.",
         "Reload": "Wczytaj ponownie",
         "Open in music archive": "Otwórz w Archiwum nut",
@@ -2385,6 +2384,11 @@ OC.L10N.register(
             "%n teczka",
             "%n teczki",
             "%n teczek"
+        ],
+        "_%n loan of folder {label}_::_%n loans of folder {label}_": [
+            "%n wypożyczenie teczki {label}",
+            "%n wypożyczenia teczki {label}",
+            "%n wypożyczeń teczki {label}"
         ],
         "_%n loan_::_%n loans_": [
             "%n wypożyczenie",

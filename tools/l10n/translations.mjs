@@ -1078,7 +1078,6 @@ export const singular = {
 	'Issue folder {label}': 'Mappe {label} ausgeben',
 	Issue: 'Ausgeben',
 	'Edit folder {label}': 'Mappe {label} bearbeiten',
-	'Loans of folder {label}': 'Ausgaben der Mappe {label}',
 	'from {from} to {to}': 'vom {from} bis {to}',
 	'since {from}': 'seit {from}',
 	'came back: {condition}': 'zurück: {condition}',
@@ -2757,7 +2756,7 @@ export const singular = {
 	'Every work of the current repertoire with several versions has a valid version.': 'Jedes Werk des aktuellen Repertoires mit mehreren Fassungen hat eine geltende Fassung.',
 	'Every work with several versions has a valid version.': 'Jedes Werk mit mehreren Fassungen hat eine geltende Fassung.',
 	'Show all works': 'Alle Werke zeigen',
-	'Set {shelfmarks} as valid for the choir': '{shelfmarks} als geltend für den Chor festlegen',
+	'Set as valid for the choir: {shelfmarks}': 'Als geltend festlegen: {shelfmarks}',
 	'{shelfmarks} becomes the version of “{title}” valid for the choir. It says nothing about the rights.': '{shelfmarks} wird die für den Chor geltende Fassung von „{title}“. Über die Rechte sagt das nichts.',
 	'Valid for the choir now: {shelfmarks}.': 'Gilt jetzt für den Chor: {shelfmarks}.',
 
@@ -2876,6 +2875,7 @@ export const plural = {
 	],
 	'%n folder|%n folders': ['%n Mappe', '%n Mappen'],
 	'%n loan|%n loans': ['%n Ausgabe', '%n Ausgaben'],
+	'%n loan of folder {label}|%n loans of folder {label}': ['%n Ausgabe der Mappe {label}', '%n Ausgaben der Mappe {label}'],
 	'%n file in the folder.|%n files in the folder.': ['%n Datei im Ordner.', '%n Dateien im Ordner.'],
 	'Names, Nextcloud accounts and notes of a loan are removed automatically %n month after the folder came back. The loan itself stays as "former loan".|Names, Nextcloud accounts and notes of a loan are removed automatically %n months after the folder came back. The loan itself stays as "former loan".': [
 		'Namen, Nextcloud-Konten und Notizen einer Ausgabe werden %n Monat nach der Rücknahme der Mappe automatisch entfernt. Die Ausgabe selbst bleibt als „ehemalige Ausgabe“ stehen.',
