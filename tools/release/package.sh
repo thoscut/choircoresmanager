@@ -4,7 +4,9 @@
 #
 # The archive contains only what the app needs at runtime (appinfo, lib,
 # templates, img, js, css, l10n, LICENSE, README, CHANGELOG). Tests, sources,
-# tooling, internal documents and dependencies for development stay out.
+# tooling (including tools/screenshots), the documentation with its
+# screenshots (docs/), the GitHub templates (.github/), internal documents
+# and dependencies for development stay out.
 #
 # With --sign (KEY = private key of the app store certificate request, CERT =
 # the certificate issued by Nextcloud, OCC = path to `occ` of any Nextcloud
@@ -55,7 +57,7 @@ cp -r appinfo lib templates img js css l10n LICENSE README.md CHANGELOG.md "$STA
 find "$STAGE/$APP_ID/js" -name '*.map' -delete
 
 # Refuse to package anything internal or development-only.
-for forbidden in _intern node_modules tests src tools vendor-bin; do
+for forbidden in _intern node_modules tests src tools vendor-bin docs .github; do
 	if [ -e "$STAGE/$APP_ID/$forbidden" ]; then
 		echo "refusing to package $forbidden" >&2
 		exit 1

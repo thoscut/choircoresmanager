@@ -5,32 +5,36 @@
 	<name>Notenarchiv</name>
 	<summary lang="en">Sheet music archive for choirs: catalog, rights, scores, concerts</summary>
 	<summary lang="de">Notenarchiv für Chöre: Bestand, Rechte, Noten, Konzerte</summary>
-	<description lang="en"><![CDATA[Keep the catalog of your choir's sheet music archive inside Nextcloud, from the binder on the shelf to the concert programme.
+	<description lang="en"><![CDATA[Keep the catalog of your choir's sheet music archive in Nextcloud, from the binder on the shelf to the concert programme. Made for the music librarians, the conductor, the board and the auditors; singers keep using the choir's own practice system.
 
-- **Catalog:** works, versions (arrangements, editions) and copies (shelf marks) as separate levels. Nothing is deleted, every change is logged.
-- **Rights:** copyright status per version with reasoning, confirmation and evidence; licenses with separate uses; separate releases for the singers' portal, the print station and publication. Preservation copies are never shared or played.
-- **Files:** links to the scans, MusicXML and MuseScore files that already live in your Nextcloud. The app only reads them.
-- **Score viewer:** MusicXML shown in the browser with bar ranges and voice focus, playback with the chosen voice emphasised, a text description for screen readers.
-- **Working together:** questions with a location in the score, internal excerpt links, a proposals inbox and a start page with what is due.
-- **Concerts and song lists:** rights warnings and deadlines, confirmation of what was sung, derived repertoire figures.
-- **Care of the archive:** accession with label printing, register of persons with a protection-term suggestion, merging with undo, inventory, checksums.
-- **Safety:** weekly backups (CSV, ODS and a complete JSON backup) into the archive folder, restore, notifications to the people responsible (never to singers).
-- **Access by groups,** e.g. the music librarian writes, the board and the conductor read.
+- **Catalog:** works, versions (settings, arrangements, editions) and copies with shelf marks as separate levels, linked to the scans, MusicXML and MuseScore files that already live in your Nextcloud. The app only reads the files. Nothing is deleted, every change is logged.
+- **Rights per version:** status with reasoning, confirmation and evidence; licenses with separate uses; separate releases for the singers' portal, the print station and publication. Internal preservation copies are never shared or played. Only the conductor chooses the version valid for the choir.
+- **Score viewer:** MusicXML in the browser, cut to printed bar numbers, with the chosen voice highlighted and emphasised in playback; keyboard operation, announced bars and a text description of the excerpt.
+- **Practice audio:** music librarians and the conductor make practice files per voice (WAV or MIDI, one file or a ZIP with every voice) for versions whose rights allow it. Every export is recorded.
+- **Working together:** questions and tasks with a place in the score, text references, internal excerpt links that expire, a proposals inbox and a start page with what is due.
+- **Concerts and song lists:** rights warnings and deadline reminders, confirmation of what was sung, repertoire figures, song order export. Concerts go into your Nextcloud calendar or into a calendar file.
+- **Statistics and annual report:** stock, rights, licenses, performances and open tasks at a glance, a printable annual report and CSV downloads.
+- **Dashboard widget** with what is due for your roles.
+- **Care of the archive:** accession with the next free shelf mark and label printing, register of persons with a protection-term suggestion, merging with undo, inventory, checksums.
+- **Safety:** weekly backups (CSV, ODS and a complete JSON backup) into the archive folder, restore into an empty catalog, notifications to the people responsible (never to singers).
+- **Access by groups:** roles are given to Nextcloud groups, e.g. the music librarians write, the board reads. Other accounts do not see the app; admins without a role may read it and change the settings.
 
-Accessible (WCAG 2.2 AA) with inclusive wording, in English and German. Works on managed hosting without shell access; an existing catalog can be imported from CSV.]]></description>
-	<description lang="de"><![CDATA[Führt das Werkverzeichnis des Notenarchivs eines Chors in Nextcloud, von der Mappe im Regal bis zum Konzertprogramm.
+No external requests and no telemetry: notation, fonts and sounds are part of the app. Accessible (target WCAG 2.2 AA) with inclusive wording, in English and German. Works on managed hosting without shell access; an existing catalog can be imported from CSV. Requires MySQL or MariaDB. The rights helpers follow German copyright law; they support a decision and are no legal advice.]]></description>
+	<description lang="de"><![CDATA[Führt das Werkverzeichnis des Notenarchivs eines Chors in Nextcloud, von der Mappe im Regal bis zum Konzertprogramm. Für Archivverwaltung, Chorleitung, Vorstand und Revision; Chormitglieder üben weiter im Übesystem des Chors.
 
-- **Bestand:** Werk, Fassung (Satz, Bearbeitung, Ausgabe) und Exemplar (Signatur) als getrennte Ebenen. Nichts wird gelöscht, jede Änderung wird protokolliert.
-- **Rechte:** Rechtestatus je Fassung mit Begründung, Bestätigung und Beleg; Lizenzen mit getrennten Nutzungen; getrennte Freigaben für Chorportal, Druckstation und Veröffentlichung. Erhaltungskopien werden nie geteilt oder abgespielt.
-- **Dateien:** Verweise auf die Scans, MusicXML- und MuseScore-Dateien, die schon in der Nextcloud liegen. Die App liest sie nur.
-- **Notenansicht:** MusicXML im Browser mit Taktbereichen und Stimmfokus, Abspielen mit hervorgehobener Stimme, Textbeschreibung für Screenreader.
-- **Zusammenarbeit:** Rückfragen mit Stelle in den Noten, interne Ausschnitt-Links, Vorschlagseingang und eine Startseite mit allem, was ansteht.
-- **Konzerte und Liederlisten:** Rechtewarnungen und Fristen, Bestätigung des Gesungenen, abgeleitete Repertoirezahlen.
-- **Pflege des Archivs:** Neuzugang mit Etikettendruck, Personenregister mit Vorschlag zur Schutzfrist, Zusammenführen mit Rücknahme, Inventur, Prüfsummen.
-- **Sicherheit:** wöchentliche Sicherungen (CSV, ODS und vollständige JSON-Sicherung) in den Archivordner, Wiederherstellung, Benachrichtigungen an die Zuständigen (nie an Singende).
-- **Zugriff über Gruppen,** z. B. die Archivverwaltung schreibt, Vorstand und Chorleitung lesen.
+- **Werkverzeichnis:** Werk, Fassung (Satz, Bearbeitung, Ausgabe) und Exemplar (Signatur) als getrennte Ebenen, verknüpft mit den Scans, MusicXML- und MuseScore-Dateien, die schon in der Nextcloud liegen. Die App liest die Dateien nur. Nichts wird gelöscht, jede Änderung wird protokolliert.
+- **Rechte je Fassung:** Rechtestatus mit Begründung, Bestätigung und Beleg; Lizenzen mit getrennten Nutzungen; getrennte Freigaben für Chorportal, Druckstation und Veröffentlichung. Interne Erhaltungskopien werden nie weitergegeben oder abgespielt. Welche Fassung für den Chor gilt, legt nur die Chorleitung fest.
+- **Notenansicht:** MusicXML im Browser, zugeschnitten nach gedruckten Taktnummern, mit hervorgehobener Stimme, die beim Abspielen betont wird; Bedienung per Tastatur, Ansage des Takts und Textbeschreibung des Ausschnitts.
+- **Übe-Audio:** Archivverwaltung und Chorleitung erstellen Übe-Dateien je Stimme (WAV oder MIDI, eine Datei oder ein ZIP mit allen Stimmen) für Fassungen, deren Rechte es erlauben. Jeder Export wird protokolliert.
+- **Zusammenarbeit:** Rückfragen und Aufgaben mit Stelle in den Noten, Textverweise, interne Ausschnitt-Links mit Ablaufdatum, Vorschlagseingang und eine Startseite mit allem, was fällig ist.
+- **Konzerte und Liederlisten:** Rechtewarnungen und Fristen, Bestätigung des Gesungenen, Repertoirezahlen, Liederfolge als Export. Konzerte lassen sich in den eigenen Nextcloud-Kalender eintragen oder als Kalenderdatei laden.
+- **Auswertungen und Jahresbericht:** Bestand, Rechte, Lizenzen, Aufführungen und offene Aufgaben im Überblick, ein druckbarer Jahresbericht und CSV-Downloads.
+- **Dashboard-Widget** mit allem, was für die eigenen Rollen fällig ist.
+- **Pflege des Archivs:** Neuzugang mit der nächsten freien Signatur und Etikettendruck, Personenregister mit Vorschlag zum Schutzfristende, Zusammenführen mit Rücknahme, Inventur, Prüfsummen.
+- **Sicherheit:** wöchentliche Sicherungen (CSV, ODS und vollständige JSON-Sicherung) in den Archivordner, Wiederherstellung in ein leeres Werkverzeichnis, Benachrichtigungen an die Zuständigen (nie an Chormitglieder).
+- **Zugriff über Gruppen:** Rollen werden Nextcloud-Gruppen zugeordnet, z. B. schreibt die Archivverwaltung und der Vorstand liest. Andere Konten sehen die App nicht; die Administration ohne Rolle darf lesen und die Einstellungen ändern.
 
-Barrierefrei (WCAG 2.2 AA) mit inklusiver Sprache, auf Deutsch und Englisch. Läuft auch bei gehosteten Nextclouds ohne Shell-Zugang; ein vorhandenes Verzeichnis lässt sich aus CSV übernehmen.]]></description>
+Keine fremden Server und keine Telemetrie: Notensatz, Schriften und Klänge sind in der App enthalten. Barrierefrei (Ziel WCAG 2.2 AA) mit inklusiver Sprache, auf Deutsch und Englisch. Läuft auch bei gehosteten Nextclouds ohne Shell-Zugang; ein vorhandenes Verzeichnis lässt sich aus CSV übernehmen. Benötigt MySQL oder MariaDB. Die Rechte-Hilfen bilden deutsches Urheberrecht ab; sie unterstützen eine Entscheidung und sind keine Rechtsberatung.]]></description>
 	<version>0.1.26</version>
 	<licence>AGPL-3.0-or-later</licence>
 	<author homepage="https://github.com/thoscut">Thomas Scheel</author>
@@ -45,13 +49,16 @@ Barrierefrei (WCAG 2.2 AA) mit inklusiver Sprache, auf Deutsch und Englisch. Lä
 	<website>https://github.com/thoscut/choircoresmanager</website>
 	<bugs>https://github.com/thoscut/choircoresmanager/issues</bugs>
 	<repository type="git">https://github.com/thoscut/choircoresmanager.git</repository>
-	<screenshot>https://raw.githubusercontent.com/thoscut/choircoresmanager/main/docs/screenshots/01-catalog-with-filters.png</screenshot>
-	<screenshot>https://raw.githubusercontent.com/thoscut/choircoresmanager/main/docs/screenshots/02-copy-rights.png</screenshot>
-	<screenshot>https://raw.githubusercontent.com/thoscut/choircoresmanager/main/docs/screenshots/03-score-voice-focus.png</screenshot>
-	<screenshot>https://raw.githubusercontent.com/thoscut/choircoresmanager/main/docs/screenshots/04-concert-planning.png</screenshot>
-	<screenshot>https://raw.githubusercontent.com/thoscut/choircoresmanager/main/docs/screenshots/05-start-page-due.png</screenshot>
-	<screenshot>https://raw.githubusercontent.com/thoscut/choircoresmanager/main/docs/screenshots/06-merge-proposals-german.png</screenshot>
-	<screenshot>https://raw.githubusercontent.com/thoscut/choircoresmanager/main/docs/screenshots/07-score-dark-theme.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/thoscut/choircoresmanager/main/docs/screenshots/catalog.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/thoscut/choircoresmanager/main/docs/screenshots/copy-rights.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/thoscut/choircoresmanager/main/docs/screenshots/score-voice-focus.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/thoscut/choircoresmanager/main/docs/screenshots/practice-audio.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/thoscut/choircoresmanager/main/docs/screenshots/start-page-due.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/thoscut/choircoresmanager/main/docs/screenshots/concert-planning.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/thoscut/choircoresmanager/main/docs/screenshots/statistics.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/thoscut/choircoresmanager/main/docs/screenshots/dashboard-widget.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/thoscut/choircoresmanager/main/docs/screenshots/score-dark.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/thoscut/choircoresmanager/main/docs/screenshots/de/catalog.png</screenshot>
 	<dependencies>
 		<php min-version="8.2"/>
 		<!-- Tested with MySQL/MariaDB only; PostgreSQL, SQLite and Oracle are not tested.

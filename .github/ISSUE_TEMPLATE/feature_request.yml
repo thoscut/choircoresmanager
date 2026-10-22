@@ -1,0 +1,41 @@
+name: Feature request
+description: Suggest an idea or an improvement for the Notenarchiv app.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for your idea. Please check the [roadmap](https://github.com/thoscut/choircoresmanager/blob/main/ROADMAP.md)
+        (German) first: it lists what is planned and what the app deliberately does not do, for example
+        the functions of a choir's practice system.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What do you want to achieve?
+      description: Describe the task in your choir's archive work and what makes it hard today.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Your proposal
+      description: How could the app help? Who would use it (music librarian, conductor, board, auditors)?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives
+      description: Other solutions or workarounds you have considered.
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Rights questions, accessibility needs, screenshots or examples with invented data.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I searched the existing issues and the roadmap for this idea.
+          required: true

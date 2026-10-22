@@ -1,0 +1,98 @@
+name: Bug report
+description: Something in the Notenarchiv app does not work as described.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a bug. Please do **not** report security issues here; use a
+        [private security advisory](https://github.com/thoscut/choircoresmanager/security/advisories/new) instead.
+
+        Do not post data of a real choir, names of members, account names or server addresses. If you
+        can, reproduce the problem with the public demo data from `tools/demo`.
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the problem and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: The steps that lead to the problem, ideally with the demo data.
+      placeholder: |
+        1. Open the catalog as a music librarian
+        2. Open copy 2-1
+        3. …
+    validations:
+      required: true
+  - type: input
+    id: app-version
+    attributes:
+      label: Notenarchiv version
+      description: Apps → Notenarchiv, or `occ app:list | grep notenarchiv`.
+      placeholder: e.g. 0.1.26
+    validations:
+      required: true
+  - type: input
+    id: nextcloud-version
+    attributes:
+      label: Nextcloud version
+      description: Administration settings → Overview, or `occ status`.
+      placeholder: e.g. 33.0.9
+    validations:
+      required: true
+  - type: input
+    id: php-version
+    attributes:
+      label: PHP version
+      description: Administration settings → System, or `php --version`.
+      placeholder: e.g. 8.3
+    validations:
+      required: true
+  - type: dropdown
+    id: database
+    attributes:
+      label: Database
+      options:
+        - MariaDB
+        - MySQL
+        - other
+    validations:
+      required: true
+  - type: dropdown
+    id: role
+    attributes:
+      label: Role of the account
+      description: Which role or roles the account has in the app.
+      multiple: true
+      options:
+        - Catalog (music librarian)
+        - Operations (music librarian)
+        - Conductor
+        - Proposals (tools)
+        - Read only (board, auditors)
+        - Administrator without a role
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and assistive technology
+      description: Browser and version; screen reader or other assistive technology, if used.
+      placeholder: e.g. Firefox 140, NVDA 2025.1
+  - type: textarea
+    id: logs
+    attributes:
+      label: Log entries and console errors
+      description: Relevant entries of the Nextcloud log and of the browser console. Remove personal data first.
+      render: text
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I searched the existing issues for this problem.
+          required: true
+        - label: The report contains no personal data and no data of a real choir.
+          required: true
