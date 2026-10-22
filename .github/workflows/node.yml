@@ -67,6 +67,9 @@ jobs:
           npm run build --if-present 2>&1 | tee /tmp/build-output.txt
           exit ${PIPESTATUS[0]}
 
+      - name: Run player tests
+        run: npm run test:player
+
       - name: Check build changes
         id: check-changes
         run: |

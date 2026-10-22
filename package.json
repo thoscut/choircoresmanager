@@ -16,6 +16,7 @@
     "watch": "vite --mode development build --watch",
     "lint": "eslint src",
     "stylelint": "stylelint src/**/*.vue src/**/*.scss src/**/*.css",
+    "test:player": "node --test \"src/player/*.test.ts\"",
     "generate:api": "node scripts/generate-api.mjs"
   },
   "type": "module",
@@ -56,6 +57,7 @@
     "@types/lodash.debounce": "^4.0.9",
     "@types/node": "^26.6.3",
     "@vue/tsconfig": "^0.9.1",
+    "@xmldom/xmldom": "^0.9.12",
     "ag-mcp": "^1.0.0",
     "eslint": "^10.12.0",
     "glob": "^13.0.0",
