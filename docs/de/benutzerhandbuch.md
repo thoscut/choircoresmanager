@@ -503,7 +503,7 @@ Der Klang ist synthetisch und ersetzt keine Einspielung. Die Dateien sind nur
 zum Üben im Chor, soweit die Rechte oder die Lizenz es erlauben. Lade sie
 selbst in das Übe-System hoch. Hat die Administration Übe-Audio für
 Chormitglieder eingeschaltet, können diese auch selbst eine Datei ihrer
-Stimme aus einem mit ihnen geteilten Ausschnitt erstellen (siehe
+Stimme aus einem mit ihnen geteilten Stück oder Ausschnitt erstellen (siehe
 [Mit Chormitgliedern und der Öffentlichkeit teilen](#mit-chormitgliedern-und-der-öffentlichkeit-teilen)).
 
 ### Eine Rückfrage stellen oder eine Aufgabe geben
@@ -544,80 +544,98 @@ Notenansicht:
   lässt sich überall weitergeben.
 - **Internen Link erstellen** (Archivverwaltung, Betrieb und Chorleitung)
   erstellt einen Link für Personen mit einer Rolle im Notenarchiv. Er zeigt
-  die Takte mit allen Stimmen und hebt die gewählte Stimme hervor. Ein Link
-  gilt höchstens sechs Monate, lässt sich jederzeit von der Person, die ihn
-  erstellt hat, oder von der Archivverwaltung widerrufen und sagt, wenn sich
-  die Noten seitdem geändert haben. Der Server prüft bei jedem Aufruf die
-  Rechte; Aufrufe werden ohne Namen gezählt. **Links** in der Navigation
-  zeigt alle aktiven Links und sagt bei jedem, wer ihn öffnen kann. Sind
-  Links für Chormitglieder oder öffentliche Links eingeschaltet, heißt die
-  Schaltfläche **Ausschnitt teilen …**, und derselbe Dialog fragt, wer den
-  Link öffnen kann (siehe
+  das ganze Stück oder die Takte mit allen Stimmen und hebt die gewählte
+  Stimme hervor. Ein Link gilt höchstens sechs Monate, lässt sich jederzeit
+  von der Person, die ihn erstellt hat, oder von der Archivverwaltung
+  widerrufen und sagt, wenn sich die Noten seitdem geändert haben. Der
+  Server prüft bei jedem Aufruf die Rechte; Aufrufe werden ohne Namen
+  gezählt. **Links** in der Navigation zeigt alle aktiven Links und sagt bei
+  jedem, wer ihn öffnen kann und was er teilt. Sind Links für Chormitglieder
+  oder öffentliche Links eingeschaltet, heißt die Schaltfläche **Teilen …**,
+  und derselbe Dialog fragt, wer den Link öffnen kann (siehe
   [Mit Chormitgliedern und der Öffentlichkeit teilen](#mit-chormitgliedern-und-der-öffentlichkeit-teilen)).
 
 ### Mit Chormitgliedern und der Öffentlichkeit teilen
 
-Hat die Administration es eingeschaltet, lässt sich ein Ausschnitt über die
-Archivrollen hinaus teilen: mit den **Chormitgliedern** (sie melden sich an
-und sehen ihn unter „Für mich freigegeben“) oder mit **allen** über einen
-öffentlichen Link ohne Anmeldung. Beide bekommen nur die Takte des
-Ausschnitts, nie die Datei; der Server schneidet die Noten zu und prüft bei
-jedem Aufruf die Rechte.
+Hat die Administration es eingeschaltet, lässt sich ein ganzes Stück oder ein
+Ausschnitt über die Archivrollen hinaus teilen: mit den **Chormitgliedern**
+(sie melden sich an und sehen es unter „Für mich freigegeben“) oder mit
+**allen** über einen öffentlichen Link ohne Anmeldung. Beide bekommen nur,
+was du teilst, das ganze Stück oder die gewählten Takte, nie die Notendatei;
+der Server sendet nur das und prüft bei jedem Aufruf die Rechte. Auf Wunsch
+gibt der Link auch den **Scan (PDF)** des Exemplars mit.
 
-#### Einen Ausschnitt mit dem Chor teilen
+#### So teilst du ein ganzes Stück mit dem Chor
 
-Archivverwaltung, Betrieb und Chorleitung teilen einen Ausschnitt aus der
-Notenansicht:
+Archivverwaltung, Betrieb und Chorleitung teilen aus der Notenansicht (oder
+mit **Neuer Link** im Reiter für Aufgaben und Links eines Exemplars):
 
-1. Öffne die Noten, wähle die Takte (**Von Takt**, **Bis Takt**) und die
-   **Hervorgehobene Stimme** und stelle bei Bedarf das Tempo ein.
-2. Wähle **Ausschnitt teilen …**.
+1. Öffne die Noten und wähle die **Hervorgehobene Stimme**; stelle bei Bedarf
+   das Tempo ein.
+2. Wähle **Teilen …**.
 3. Wähle unter **Wer kann den Link öffnen?** **Chormitglieder**
    (oder **Archivrollen (intern)**, **Öffentlich (ohne Anmeldung)**).
-4. Prüfe Takte, Stimme, Strophe und Tempo sowie das Datum **Gültig bis**
-   (höchstens sechs Monate). **Notiz (optional)**: Die Chormitglieder sehen
-   diese Notiz, zum Beispiel „Bitte bis Donnerstag üben“.
-5. **Das ist beim Öffnen des Links zu sehen** nennt die Takte, die
-   hervorgehobene Stimme, Strophe, Tempo, wie lange der Link gilt, ob sich
-   der Ausschnitt abspielen lässt und ob sich Übe-Dateien erstellen lassen.
-6. Wähle **Link erstellen** und dann **Link kopieren**, wenn du ihn
-   verschicken willst. Chormitglieder finden den Ausschnitt ohnehin unter
-   „Für mich freigegeben“, bis er abläuft.
+4. Lass unter **Was wird geteilt?** **Ganzes Stück** gewählt: alle Seiten des
+   Stücks, mit Wiederholungen und Sprüngen wie in den Noten. Für eine Stelle
+   wähle **Ausschnitt (Takte)** und gib **Von Takt** und **Bis Takt** an.
+   Zeigt die Notenansicht einen Bereich von Takten, beginnt der Dialog mit
+   dem Ausschnitt.
+5. Prüfe Stimme, Strophe und Tempo sowie das Datum **Gültig bis** (höchstens
+   sechs Monate). **Notiz (optional)**: Die Chormitglieder sehen diese Notiz,
+   zum Beispiel „Bitte bis Donnerstag üben“.
+6. Hat das Exemplar einen Scan, gibt **Scan (PDF) mitgeben** ihn ebenfalls
+   mit (bei mehreren Scans wählst du einen unter **Welcher Scan?**). Wer den
+   Link hat, öffnet ihn im PDF-Betrachter des Browsers. Wer den Scan sieht,
+   kann ihn auch speichern; gib ihn nur mit, wo das in Ordnung ist.
+7. **Das ist beim Öffnen des Links zu sehen** nennt, was geteilt wird
+   (**Ganzes Stück** oder die Takte), die hervorgehobene Stimme, Strophe,
+   Tempo, ob es sich abspielen lässt, ob sich Übe-Dateien erstellen lassen,
+   ob der Scan dabei ist und wie lange der Link gilt.
+8. Wähle **Link erstellen** und dann **Link kopieren**, wenn du ihn
+   verschicken willst. Chormitglieder finden es ohnehin unter „Für mich
+   freigegeben“, bis der Link abläuft.
 
-Ein Link für Chormitglieder braucht beide Takte, und sie müssen in den Noten
-vorkommen. Er ist nur für eine Fassung möglich, die **für das Chorportal
-freigegeben** ist: bestätigt gemeinfrei oder mit einer gültigen Lizenz für
-die Nutzung „Chorportal“; nie für eine interne Erhaltungskopie. Geht es
-nicht, sagt der Dialog statt **Link erstellen**, warum und was zu tun ist,
-zum Beispiel *Die Gemeinfreiheit ist noch nicht bestätigt. Die
-Archivverwaltung bestätigt sie im Reiter „Rechte“; danach lässt sich die
-Fassung mit den Chormitgliedern teilen.*
+Ein Link für Chormitglieder ist nur für eine Fassung möglich, die **für das
+Chorportal freigegeben** ist: bestätigt gemeinfrei oder mit einer gültigen
+Lizenz für die Nutzung „Chorportal“; nie für eine interne Erhaltungskopie.
+Das gilt für das ganze Stück, einen Ausschnitt und den Scan gleichermaßen:
+Rechtlich zählt ein Ausschnitt so viel wie das Ganze. Geht es nicht, sagt
+der Dialog statt **Link erstellen**, warum und was zu tun ist, zum Beispiel
+*Die Gemeinfreiheit ist noch nicht bestätigt. Die Archivverwaltung bestätigt
+sie im Reiter „Rechte“; danach lässt sich die Fassung mit den
+Chormitgliedern teilen.* Ein Ausschnitt braucht beide Takte, und sie müssen
+in den Noten vorkommen.
 
 Für das Abspielen gelten dieselben Regeln wie im Archiv (gemeinfrei oder
 eine Lizenz für Übe-Audio). Übe-Dateien für Chormitglieder brauchen
 zusätzlich das Modul „Übe-Audio für Chormitglieder“ und einen bestätigten
-Status oder eine Lizenz für Übe-Audio.
+Status oder eine Lizenz für Übe-Audio; sie gehen für das ganze Stück wie für
+einen Ausschnitt.
 
 **Links** in der Navigation zeigt jeden aktiven Link mit seinem Kreis
-(**Intern**, **Für Chormitglieder**, **Öffentlich**), seiner Gültigkeit und
-der Zahl der Aufrufe; **Link widerrufen** sperrt einen Link sofort für alle.
+(**Intern**, **Für Chormitglieder**, **Öffentlich**), mit dem, was er teilt
+(**Ganzes Stück** oder die Takte, dazu **mit Scan (PDF)**), seiner
+Gültigkeit und der Zahl der Aufrufe; **Link widerrufen** sperrt einen Link
+sofort für alle.
 
 > [!NOTE]
-> Wiederholungen und Sprünge, die aus dem Ausschnitt herausführen, entfallen,
-> damit der Ausschnitt vom ersten bis zum letzten Takt spielt. Eine
-> Wiederholung zurück zu einem Takt vor dem Ausschnitt, ihre erste und
-> zweite Klammer und ein D.C. in einem Ausschnitt, der nicht am Anfang
-> beginnt, werden deshalb nicht gespielt. Die Notenansicht im Archiv spielt
-> einen Bereich als Teil des ganzen Stücks; zum Beispiel klingen die Takte 1
-> bis 7 von „Der Mond ist aufgegangen“ (1-1) dort als 1–6, 1–5, 7, in einem
-> geteilten Ausschnitt als 1–7.
+> Das ganze Stück spielt in der vollen Reihenfolge der Noten, mit allen
+> Wiederholungen, Klammern und Sprüngen. In einem Ausschnitt entfallen
+> Wiederholungen und Sprünge, die aus ihm herausführen, damit er vom ersten
+> bis zum letzten Takt spielt. Eine Wiederholung zurück zu einem Takt vor dem
+> Ausschnitt, ihre erste und zweite Klammer und ein D.C. in einem Ausschnitt,
+> der nicht am Anfang beginnt, werden deshalb nicht gespielt. Die
+> Notenansicht im Archiv und die Ansicht eines geteilten ganzen Stücks
+> spielen einen Bereich von Takten als Teil des ganzen Stücks: Die Takte 1
+> bis 7 von „Der Mond ist aufgegangen“ (1-1) klingen dort als 1–6, 1–5, 7,
+> in einem geteilten Ausschnitt dieser Takte als 1–7.
 
 #### Öffentliche Links
 
-Ein öffentlicher Link zeigt einen Ausschnitt allen, die den Link haben, und
-spielt ihn ab, ohne Anmeldung: nur seine Takte, ohne Download, ohne Namen und
-ohne Notiz. Wähle im selben Dialog **Öffentlich (ohne Anmeldung)**. Das geht
-nur, wenn
+Ein öffentlicher Link zeigt ein ganzes Stück oder einen Ausschnitt allen, die
+den Link haben, und spielt es ab, ohne Anmeldung: ohne die Notendatei, ohne
+Namen und ohne Notiz. Wähle im selben Dialog **Öffentlich (ohne Anmeldung)**.
+Das geht nur, wenn
 
 - die Fassung **zur Veröffentlichung freigegeben** ist: Die Rolle „Bestand“
   setzt den Veröffentlichungsstatus der Fassung auf „Zur Veröffentlichung
@@ -627,10 +645,12 @@ nur, wenn
   „Veröffentlichung“ genügt nicht),
 - und sie keine interne Erhaltungskopie ist.
 
-Die Seite zeigt Titel, Komposition, Takte, die hervorgehobene Stimme und eine
-Textbeschreibung des Ausschnitts und spielt ihn mit betonter Stimme ab. Läuft
-der Link ab, wird er widerrufen oder ist die Fassung nicht mehr freigegeben,
-zeigt die Seite „nicht gefunden“ ohne Grund.
+Unter denselben Bedingungen lässt sich der Scan (PDF) mitgeben. Die Seite
+zeigt Titel, Komposition, das ganze Stück oder die Takte, die hervorgehobene
+Stimme und eine Textbeschreibung, spielt es mit betonter Stimme ab und
+verlinkt, falls mitgegeben, den Scan. Läuft der Link ab, wird er widerrufen
+oder ist die Fassung nicht mehr freigegeben, zeigen die Seite und der Scan
+„nicht gefunden“ ohne Grund.
 
 ### Übertragungen prüfen
 
@@ -1322,7 +1342,7 @@ Archivmappen und beantwortet und schließt die Prüfaufträge, die an sie
 gerichtet sind. Wo das Mappenbuch eingeschaltet ist, gibt sie die Chormappen
 aus und nimmt sie zurück (siehe [Mappenbuch](#mappenbuch)).
 
-Der Betrieb teilt auch Ausschnitte (siehe
+Der Betrieb teilt auch Stücke und Ausschnitte (siehe
 [Mit Chormitgliedern und der Öffentlichkeit teilen](#mit-chormitgliedern-und-der-öffentlichkeit-teilen))
 und beantwortet Prüfaufträge (siehe
 [Eine Rückfrage beantworten](#eine-rückfrage-beantworten)).
@@ -1518,34 +1538,41 @@ Schrift; **Jahresbericht als CSV** lädt seine Tabellen herunter.
 
 Chormitglieder haben keine Rolle im Notenarchiv. Wo die Administration
 Links für Chormitglieder eingeschaltet hat, sehen sie nur die Seite **Für
-mich freigegeben** mit den Ausschnitten, die mit dem Chor geteilt sind.
-Siehst du gar kein Notenarchiv, lies
+mich freigegeben** mit den Stücken und Ausschnitten, die mit dem Chor geteilt
+sind. Siehst du gar kein Notenarchiv, lies
 [Kein Zugang zum Notenarchiv](#kein-zugang-zum-notenarchiv).
 
 ### Für mich freigegeben
 
 Chormitglieder melden sich bei Nextcloud an und öffnen **Notenarchiv**. Sie
-sehen **Für mich freigegeben**: die mit dem Chor geteilten Ausschnitte mit
-Titel, Komposition, Takten, Stimme, der Notiz und wie lange jeder gilt,
-und ob er sich abspielen lässt (**Abspielen: ja** oder **Abspielen: nein**).
+sehen **Für mich freigegeben**: die mit dem Chor geteilten Stücke und
+Ausschnitte mit Titel, Komposition, **Ganzes Stück** oder den Takten,
+Stimme, der Notiz und wie lange jedes gilt, ob es sich abspielen lässt
+(**Abspielen: ja** oder **Abspielen: nein**) und ob der Scan dabei ist
+(**mit Scan (PDF)**).
 
-1. Wähle einen Ausschnitt in der Liste (ein Link, den du bekommen hast,
-   öffnet ihn direkt). Die Noten erscheinen über der Liste.
+1. Wähle ein Stück in der Liste (ein Link, den du bekommen hast, öffnet es
+   direkt). Die Noten erscheinen über der Liste, bei einem ganzen Stück alle
+   seine Seiten.
 2. **Abspielen**, **Pause** und **Stopp**; wähle unter **Stimmen beim
    Abspielen** **Alle gleich**, **Stimme betont** oder **Nur diese Stimme**
    und stelle das Tempo ein. **Hervorgehobene Stimme** wählt eine andere
    Stimme; **Kleiner** und **Größer** ändern die Größe. Die Leertaste spielt
-   und hält an. **Einzähler** klickt einen oder zwei Takte vor der Musik,
-   **Wiederholen** spielt den Ausschnitt immer wieder. Ein Klick auf eine
-   Note startet dort; mit der Tastatur gehst du in den Noten mit den
-   Pfeiltasten links und rechts zum vorigen oder nächsten Takt.
-3. **Textverweis** und **Beschreibung des Ausschnitts** beschreiben den
-   Ausschnitt in Worten.
-4. Wo Übe-Dateien angeboten werden (**Übe-Dateien: ja**): Wähle die Stimme
+   und hält an. **Einzähler** klickt einen oder zwei Takte vor der Musik. Ein
+   Klick auf eine Note startet dort; mit der Tastatur gehst du in den Noten
+   mit den Pfeiltasten links und rechts zum vorigen oder nächsten Takt.
+3. Um eine Stelle zu üben, gib **Von Takt** und **Bis Takt** an und wähle
+   **Anzeigen**; **Wiederholen** spielt die gezeigten Takte immer wieder.
+   **Alle Takte** zeigt wieder alles.
+4. **Scan (PDF) öffnen** (wo mitgegeben) öffnet den Scan im PDF-Betrachter
+   deines Browsers, in einem neuen Tab.
+5. **Textverweis** und **Beschreibung des Stücks** (oder **des
+   Ausschnitts**) beschreiben es in Worten.
+6. Wo Übe-Dateien angeboten werden (**Übe-Dateien: ja**): Wähle die Stimme
    und „Stimme betont“ oder „Nur diese Stimme“, dann unter **Übe-Datei** das
    Format **WAV (Audio)** oder **MIDI** und **Übe-Datei erstellen**. Die
-   Datei entsteht in deinem Browser; jede Übe-Datei wird im Protokoll des
-   Notenarchivs festgehalten.
+   Datei umfasst die gezeigten Takte; sie entsteht in deinem Browser, und
+   jede Übe-Datei wird im Protokoll des Notenarchivs festgehalten.
 
 ## Für Mitwirkende und Werkzeuge
 
@@ -1593,7 +1620,7 @@ Prüfe die Schreibweise; eine Signatur muss vollständig sein (`2-1`, nicht
 `2-`). Interne Erhaltungskopien sind vor Rollen verborgen, die sie nicht
 ansehen dürfen.
 
-### Meldungen beim Teilen eines Ausschnitts
+### Meldungen beim Teilen
 
 | Meldung oder Problem | Was zu tun ist |
 |---|---|
@@ -1605,9 +1632,12 @@ ansehen dürfen.
 | *Ein öffentlicher Link braucht eine bestätigte Gemeinfreiheit oder eine gültige Lizenz für die Online-Veröffentlichung. …* | Erfasse eine Lizenz mit der Nutzung „Online-Veröffentlichung (öffentliche Links)“ oder bestätige die Gemeinfreiheit. |
 | *Interne Erhaltungskopie: …* | Erhaltungskopien werden nie geteilt; teile eine andere Fassung. |
 | *Dieses Exemplar hat keine MusicXML-Datei. …* | Verknüpfe eine MusicXML-Datei mit dem Exemplar (Reiter **Dateien**). |
-| *Bitte gib den ersten und den letzten Takt an: …* / *In diesen Noten gibt es keinen Takt ….* | Trage beide Takte so ein, wie sie in den Noten gedruckt sind. |
+| *Bitte gib den ersten und den letzten Takt des Ausschnitts an, …* / *In diesen Noten gibt es keinen Takt ….* | Trage beide Takte so ein, wie sie in den Noten gedruckt sind, oder wähle **Ganzes Stück**. |
+| **Scan (PDF) mitgeben** fehlt | Das Exemplar hat keinen PDF-Scan (Reiter **Dateien**), oder der Link ist nicht erlaubt oder intern: Die Archivrollen sehen den Scan neben den Noten. |
+| *Dieser Scan gehört nicht zum Exemplar. …* | Wähle eine der PDF-Dateien des Exemplars; verknüpfe den Scan vorher im Reiter **Dateien**. |
+| *Der Scan dieses Links ist gerade nicht verfügbar.* | Das PDF wurde aus dem Archivordner verschoben oder entfernt, oder das Konto des Archivordners kann es nicht lesen; verknüpfe den Scan neu und erstelle einen neuen Link. |
 | *Ein öffentlicher Link hat keine Notiz, …* | Lass die Notiz leer. |
-| Ein Chormitglied sieht den Ausschnitt nicht | Er ist abgelaufen oder wurde widerrufen, oder die Fassung ist nicht mehr freigegeben; erstelle einen neuen Link. Sieht das Chormitglied gar keine App, siehe das [Administrationshandbuch](administrationshandbuch.md#14-mit-chormitgliedern-und-der-öffentlichkeit-teilen). |
+| Ein Chormitglied sieht das Stück oder den Ausschnitt nicht | Der Link ist abgelaufen oder wurde widerrufen, oder die Fassung ist nicht mehr freigegeben; erstelle einen neuen Link. Sieht das Chormitglied gar keine App, siehe das [Administrationshandbuch](administrationshandbuch.md#14-mit-chormitgliedern-und-der-öffentlichkeit-teilen). |
 | *Auf die öffentliche Repertoireseite kommen nur Werke mit einer Fassung, deren Gemeinfreiheit bestätigt ist. …* | Bestätige zuerst die Rechte einer Fassung des Werks (Reiter **Rechte**). |
 
 ### „Das Jahr des ersten Erscheinens fehlt“

@@ -826,17 +826,18 @@ zu „Vollständig“: Schalte sie einzeln ein, nachdem der Chor entschieden hat
 
 | Modul | Was es öffnet |
 |---|---|
-| **Links für Chormitglieder** | Die Rolle **Chormitglieder** sieht die Seite „Für mich freigegeben“: die Ausschnitte, die die Archivverwaltung oder die Chorleitung mit dem Chor teilt, zum Ansehen und Abspielen mit einer betonten Stimme. Nur für Fassungen, die für das Chorportal freigegeben sind. |
-| **Übe-Audio für Chormitglieder** | Chormitglieder erstellen eine WAV- oder MIDI-Datei einer Stimme eines solchen Ausschnitts, wo die Rechte Übe-Audio-Dateien erlauben. Jede Datei steht im Protokoll. |
-| **Öffentliche Links** | Ein Link, der einen Ausschnitt ohne Anmeldung zeigt und abspielt (`/apps/notenarchiv/p/<token>`). Nur für Fassungen, die zur Veröffentlichung freigegeben sind und bestätigt gemeinfrei sind oder eine Lizenz zur Online-Veröffentlichung haben. |
+| **Links für Chormitglieder** | Die Rolle **Chormitglieder** sieht die Seite „Für mich freigegeben“: die ganzen Stücke oder Ausschnitte, die die Archivverwaltung oder die Chorleitung mit dem Chor teilt, zum Ansehen und Abspielen mit einer betonten Stimme, auf Wunsch mit dem Scan (PDF). Nur für Fassungen, die für das Chorportal freigegeben sind. |
+| **Übe-Audio für Chormitglieder** | Chormitglieder erstellen eine WAV- oder MIDI-Datei einer Stimme eines solchen Stücks oder Ausschnitts, wo die Rechte Übe-Audio-Dateien erlauben. Jede Datei steht im Protokoll. |
+| **Öffentliche Links** | Ein Link, der ein ganzes Stück oder einen Ausschnitt ohne Anmeldung zeigt und abspielt (`/apps/notenarchiv/p/<token>`), auf Wunsch mit dem Scan (PDF). Nur für Fassungen, die zur Veröffentlichung freigegeben sind und bestätigt gemeinfrei sind oder eine Lizenz zur Online-Veröffentlichung haben. |
 | **Öffentliche Repertoireseite** | `/apps/notenarchiv/repertoire`: die Werke, die die Archivverwaltung unter denen mit einer bestätigt gemeinfreien Fassung auswählt, mit Lebensdaten, Besetzung und Links zu CPDL und IMSLP. |
 
 Was die Schalter auch sagen: Chormitglieder und die Öffentlichkeit bekommen
-immer nur die Takte eines Ausschnitts, nie eine Datei des Archivs; interne
-Erhaltungskopien werden nie geteilt; die Rechte werden bei jedem Aufruf neu
-geprüft; Links laufen nach höchstens sechs Monaten ab und lassen sich
-widerrufen. [SECURITY.md](../../SECURITY.md) (englisch) beschreibt das
-Bedrohungsmodell.
+immer nur den Inhalt für die Ansicht (das ganze Stück oder die Takte eines
+Ausschnitts), nie die Notendatei des Archivs, und einen Scan nur, wenn der
+Link ihn mitgibt; interne Erhaltungskopien werden nie geteilt; die Rechte
+werden bei jedem Aufruf neu geprüft; Links laufen nach höchstens sechs
+Monaten ab und lassen sich widerrufen. [SECURITY.md](../../SECURITY.md)
+(englisch) beschreibt das Bedrohungsmodell.
 
 **So richtest du die Chormitglieder ein:**
 
@@ -868,9 +869,11 @@ Bedrohungsmodell.
    und bestätigte Gemeinfreiheit oder eine Lizenz mit der Nutzung
    „Online-Veröffentlichung (öffentliche Links)“.
 
-**Abzuwägende Risiken:** Ein Ausschnitt, der einen Browser erreicht, lässt
-sich speichern; rechtlich zählt er so viel wie das ganze Notenblatt, deshalb
-lassen sich nur freigegebene Fassungen teilen. Links lassen sich
+**Abzuwägende Risiken:** Was einen Browser erreicht, lässt sich speichern,
+die Noten ebenso wie ein Scan, den der Browser in seinem PDF-Betrachter
+zeigt. Rechtlich zählt ein Ausschnitt so viel wie das ganze Notenblatt.
+Deshalb lassen sich nur freigegebene Fassungen teilen, das ganze Stück, ein
+Ausschnitt und der Scan gleichermaßen. Links lassen sich
 weitergeben, bis sie ablaufen oder widerrufen werden. Die Notiz eines Links
 für Chormitglieder lesen alle Chormitglieder. Aufrufe werden gezählt, aber
 ohne Namen.
@@ -883,7 +886,8 @@ ohne Namen.
 | Ein Chormitglied sieht das Archiv statt „Für mich freigegeben“ | Das Konto ist auch in einer Gruppe mit einer Archivrolle; nimm es dort heraus. |
 | Der Dialog sagt, ein Link sei nicht möglich | Er nennt den Grund und den nächsten Schritt: Meist sind die Rechte der Fassung nicht bestätigt, eine Lizenz für das Chorportal oder für die Online-Veröffentlichung fehlt, oder der Veröffentlichungsstatus ist nicht „Zur Veröffentlichung freigegeben“. |
 | Der Dialog sagt „Diese Art von Link ist abgeschaltet“ | Schalte das Modul in den Einstellungen ein (Module). |
-| „Die Noten dieses Ausschnitts sind gerade nicht verfügbar.“ | Das Konto, das den Archivordner gewählt hat (Einstellungen → Archivordner), muss noch vorhanden sein und den Ordner sehen, und die MusicXML-Datei muss noch darin liegen. |
+| „Die Noten dieses Links sind gerade nicht verfügbar.“ oder „Der Scan dieses Links ist gerade nicht verfügbar.“ | Das Konto, das den Archivordner gewählt hat (Einstellungen → Archivordner), muss noch vorhanden sein und den Ordner sehen. Die MusicXML-Datei oder der PDF-Scan muss noch darin liegen und mit dem Exemplar verknüpft sein. |
+| Ein öffentlicher Scan zeigt „nicht gefunden“ | Dieselben Gründe wie bei der Seite, oder die PDF-Datei liegt nicht mehr im Archivordner; verknüpfe den Scan erneut und erstelle einen neuen Link. |
 | Ein öffentlicher Link zeigt „nicht gefunden“ | Er ist abgelaufen, wurde widerrufen, die Fassung ist nicht mehr freigegeben, oder das Modul ist ausgeschaltet; die Seite sagt nicht, was davon. Erstelle bei Bedarf einen neuen Link. |
 
 ## 15. Mappenbuch: Löschfrist
