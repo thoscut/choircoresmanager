@@ -1516,7 +1516,7 @@ onBeforeUnmount(() => {
 								<template #icon>
 									<NcIconSvgWrapper :path="mdiLinkVariantPlus" />
 								</template>
-								{{ canShareOutside ? t('notenarchiv', 'Share excerpt …') : t('notenarchiv', 'Create internal link') }}
+								{{ canShareOutside ? t('notenarchiv', 'Share …') : t('notenarchiv', 'Create internal link') }}
 							</NcButton>
 							<NcButton v-if="canCreateTasks" variant="tertiary" @click="taskDialogOpen = true">
 								<template #icon>

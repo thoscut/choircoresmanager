@@ -329,6 +329,50 @@ final class MusicXmlExcerptTest extends TestCase {
 		self::assertSame(1, self::found($xpath, '//sound[@coda="c1"]'));
 	}
 
+	public function testALinkWithoutMeasuresGetsTheWholePieceUnchanged(): void {
+		$xpath = self::xpath(MusicXmlExcerpt::whole(self::demo(self::MOND)));
+		self::assertSame(['0', '1', '2', '3', '4', '5', '6', '7'], self::numbers($xpath, 'P1'));
+		self::assertSame(['0', '1', '2', '3', '4', '5', '6', '7'], self::numbers($xpath, 'P2'));
+		self::assertSame(2, self::found($xpath, '//repeat[@direction="backward"]'), 'the full playing order');
+		self::assertSame(8, self::found($xpath, '//ending'));
+
+		$xpath = self::xpath(MusicXmlExcerpt::whole(self::demo(self::GROSSER_GOTT)));
+		self::assertSame(range(1, 16), array_map(intval(...), self::numbers($xpath, 'P1')));
+
+		// Jumps stay, also those an excerpt would remove
+		$xml = self::score([
+			self::START . self::NOTE,
+			'<direction><direction-type><segno/></direction-type><sound segno="s1"/></direction>' . self::NOTE,
+			self::NOTE . '<direction><direction-type><words>To Coda</words></direction-type><sound tocoda="c1"/></direction>',
+			self::NOTE . '<direction><direction-type><words>D.S. al Coda</words></direction-type><sound dalsegno="s1"/></direction>',
+			'<direction><direction-type><coda/></direction-type><sound coda="c1"/></direction>' . self::NOTE,
+		]);
+		$xpath = self::xpath(MusicXmlExcerpt::whole($xml));
+		self::assertSame(['1', '2', '3', '4', '5'], self::numbers($xpath, 'P1'));
+		self::assertSame(4, self::found($xpath, '//direction'));
+		self::assertSame(1, self::found($xpath, '//sound[@dalsegno="s1"]'));
+		self::assertSame(1, self::found($xpath, '//sound[@tocoda="c1"]'));
+
+		$withDoctype = '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML 4.0 Partwise//EN" '
+			. '"http://www.musicxml.org/dtds/partwise.dtd">' . substr(self::score([self::NOTE]), strlen('<?xml version="1.0" encoding="UTF-8"?>'));
+		$whole = MusicXmlExcerpt::whole($withDoctype);
+		self::assertStringNotContainsString('DOCTYPE', $whole, 'written like an excerpt');
+		self::assertStringContainsString('encoding="UTF-8"', $whole);
+	}
+
+	public function testTheWholePieceIsCheckedLikeAnExcerpt(): void {
+		$subset = '<?xml version="1.0"?><!DOCTYPE score-partwise [<!ENTITY x "y">]>' . substr(self::score([self::NOTE]), strlen('<?xml version="1.0" encoding="UTF-8"?>'));
+		foreach ([$subset => 'This file is not a MusicXML score.', '<html/>' => 'This file is not a MusicXML score.',
+			'<score-timewise version="4.0"/>' => 'Links for choir members and public links need a score in the partwise MusicXML format.'] as $xml => $message) {
+			try {
+				MusicXmlExcerpt::whole((string)$xml);
+				self::fail('refused: ' . substr((string)$xml, 0, 40));
+			} catch (InvalidInputException $e) {
+				self::assertSame($message, $e->getMessage());
+			}
+		}
+	}
+
 	public function testMissingMeasuresAreRefusedWithTheNumber(): void {
 		$score = self::demo(self::GROSSER_GOTT);
 		foreach ([['99', '100', 'There is no measure %s in this score.', ['99']],

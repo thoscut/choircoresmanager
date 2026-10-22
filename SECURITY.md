@@ -86,27 +86,42 @@ navigation leaves them out.
   account without a role. The navigation entry and the app page appear for
   choir members only while `member_links` is on, and show only "Shared with
   me".
-- A choir member reaches exactly the app page and the two routes of
-  `MemberController` (the measures of a link, permission for a practice
-  file); the unit test keeps that list and checks that no other controller
-  serves choir members. An account with an archive role always gets the
-  archive.
-- They see title and composer of the work, the measures, voice, verse,
-  tempo, note and expiry of each link; no shelf marks, no account names, no
+- A choir member reaches exactly the app page and the three routes of
+  `MemberController` (the score of a link, its scan, permission for a
+  practice file); the unit test keeps that list and checks that no other
+  controller serves choir members. An account with an archive role always
+  gets the archive.
+- They see title and composer of the work, the measures (or "whole
+  piece"), voice, verse, tempo, note and expiry of each link and whether it
+  includes the scan; no shelf marks, no account names, no
   catalog. Every link for choir members is visible to every choir member,
   and so is its note.
 
-**Only the excerpt leaves the server.**
+**Only the content for the view leaves the server.**
 
 - Choir members and the public never get the score file. The server reads
   it through the account that configured the archive folder, only inside
   that folder (as the background jobs do), checks that it is real MusicXML
-  as for the score viewer, unpacks `.mxl`, cuts the measures of the link
-  (`MusicXmlExcerpt`, parsed without entity expansion or network access,
-  document type declaration dropped) and sends only them.
-- For choir members the excerpt is an attachment with `nosniff` and the
+  as for the score viewer, unpacks `.mxl` and sends only the content for the
+  view: the measures of the link (`MusicXmlExcerpt::cut`) or, for a link
+  without measures, the whole piece with all repeats and jumps
+  (`MusicXmlExcerpt::whole`). Both are parsed without entity expansion or
+  network access, and the document type declaration is dropped.
+- For choir members the score is an attachment with `nosniff` and the
   strict policy of data responses; on a public page it is part of the page
-  itself, so that there is no second public route.
+  itself.
+- **The scan (PDF)** leaves the server only where the link includes it
+  (`scan_file_id`, chosen when the link is made from the PDF files of the
+  copy that the creator can open beside the score). It is read the same way
+  through the account of the archive folder, must still be a PDF of the
+  copy (role `score_pdf`, header checked) and is answered with
+  `Content-Type: application/pdf`, `Content-Disposition: inline`, a fixed
+  file name, `nosniff`, no caching and the policy of the scan beside the
+  score (`default-src 'none'`, `object-src 'self'`,
+  `frame-ancestors 'self'`), so that only the browser's own PDF viewer shows
+  it. The page opens it in a tab of its own; that GET route skips the CSRF
+  check like the scan beside the score, and only reads. Internal links never
+  carry a scan.
 
 **Rights on every call.** A link carries no rights of its own. When it is
 made and on every call the server checks:
@@ -118,27 +133,34 @@ made and on every call the server checks:
   set by the catalog librarian) and confirmed public domain or a valid
   license with the use "online publication";
 - never an internal preservation copy;
+- the same for the whole piece, an excerpt and the scan: legally an excerpt
+  counts as much as the whole piece and a scan as much as the notes
+  (guideline 2), so none of them has a release of its own;
 - playback and practice audio as in the archive (public domain or a license
   for practice audio; practice audio files additionally a confirmed status
   or that license). Every practice file of a choir member is recorded in the
-  audit log with account, role `member`, measures, voice, mode and format.
+  audit log with account, role `member`, measures, voice, mode and format;
+  for an excerpt the measures of the link, whatever the request says.
 
 A version that loses its release disappears from "Shared with me" and its
 public links stop working at once.
 
 **The public pages.**
 
-- Exactly two routes are public (`#[PublicPage]`), each the only route of
-  its own controller: `GET /apps/notenarchiv/p/{token}` and
-  `GET /apps/notenarchiv/repertoire`. Both are plain GET pages, limited per
-  address (60 in 10 minutes) and per account, protected by Nextcloud's
-  brute-force protection and need their module; the unit test checks this.
+- Exactly three routes are public (`#[PublicPage]`), the only routes of
+  their controllers: `GET /apps/notenarchiv/p/{token}`, the scan of a public
+  link `GET /apps/notenarchiv/p/{token}/scan` and
+  `GET /apps/notenarchiv/repertoire`. All are plain GET requests, limited
+  per address (60 in 10 minutes, the scan 30) and per account, protected by
+  Nextcloud's brute-force protection and need their module; the unit test
+  checks this.
 - Tokens are 32 alphanumeric characters from Nextcloud's secure random
   generator. An unknown, malformed, expired or revoked token, a version no
   longer released and a switched-off module all get the same 404 page
-  without a reason, and each counts as a failed attempt.
-- A public link shows no account names, no note, no download and no
-  practice audio; the page is marked `noindex` for search engines and has
+  without a reason, and each counts as a failed attempt; the scan route
+  answers the same way, also for a link without a scan.
+- A public link shows no account names, no note, no download of the score
+  file and no practice audio; the page is marked `noindex` for search engines and has
   the policy of the app page (WebAssembly for the bundled notation engine,
   no JavaScript `eval`, no external sources, no frames).
 - The repertoire page has no script of its own and Nextcloud's default
@@ -151,9 +173,12 @@ public links stop working at once.
 
 **What remains.**
 
-- Whatever reaches a browser can be saved: the measures of an excerpt are
-  in the page or the response. Legally an excerpt counts as much as the
-  whole sheet, which is why only released versions are shared.
+- Whatever reaches a browser can be saved: the whole piece or the measures
+  of an excerpt are in the page or the response, and a scan shown inline by
+  the browser's PDF viewer can be downloaded or printed from there; no
+  header can prevent that. The dialog says so before a scan is included
+  ("Whoever sees the scan can also save it."). Legally an excerpt counts as
+  much as the whole sheet, which is why only released versions are shared.
 - Links can be passed on. They expire after at most 183 days and can be
   revoked at any time by their creator or the catalog librarian; calls are
   counted without recording who made them.

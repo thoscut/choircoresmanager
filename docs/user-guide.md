@@ -468,7 +468,7 @@ The sound is synthetic and no substitute for a recording. The files are only
 for practising in the choir, as far as the rights or the license allow.
 Upload them to the practice system yourself. Where the administration has
 switched on practice audio for choir members, they can also make a file of
-their voice of an excerpt shared with them (see
+their voice of a piece or excerpt shared with them (see
 [Sharing with choir members and the public](#sharing-with-choir-members-and-the-public)).
 
 ### Asking a question or giving a task
@@ -505,77 +505,92 @@ Share a place in two ways, both under **This passage** in the score viewer:
   `2-1 · Ännchen von Tharau · m. 5–8 · Tenor II`. It contains no notation and
   can be passed on anywhere.
 - **Create internal link** (music librarians, operations and conductor) makes
-  a link for people with a role in the music archive. It shows the measures
-  with all voices and highlights the chosen voice. A link is valid for at
-  most six months, can be revoked at any time by its creator or a music
-  librarian, and says so when the score has changed since. The server checks
-  the rights on every call; calls are counted without names. **Links** in
-  the navigation lists all active links and says for each who can open it.
-  Where links for choir members or public links are switched on, the button
-  is called **Share excerpt …** and the same dialog asks who can open the
-  link (see
+  a link for people with a role in the music archive. It shows the whole
+  piece or the measures with all voices and highlights the chosen voice. A
+  link is valid for at most six months, can be revoked at any time by its
+  creator or a music librarian, and says so when the score has changed
+  since. The server checks the rights on every call; calls are counted
+  without names. **Links** in the navigation lists all active links and says
+  for each who can open it and what it shares. Where links for choir members
+  or public links are switched on, the button is called **Share …** and the
+  same dialog asks who can open the link (see
   [Sharing with choir members and the public](#sharing-with-choir-members-and-the-public)).
 
 ### Sharing with choir members and the public
 
-Where the administration has switched them on, an excerpt can be shared
-beyond the archive roles: with the **choir members** (they sign in and see
-it under "Shared with me") or with **everyone** through a public link
-without signing in. Both get only the measures of the excerpt, never the
-file; the server cuts the score and checks the rights on every call.
+Where the administration has switched them on, a whole piece or an excerpt
+can be shared beyond the archive roles: with the **choir members** (they
+sign in and see it under "Shared with me") or with **everyone** through a
+public link without signing in. Both get only what you share, the whole
+piece or the chosen measures, never the score file; the server sends only
+that and checks the rights on every call. Optionally the link also offers
+the **scan (PDF)** of the copy.
 
-#### Sharing an excerpt with the choir
+#### How to share a whole piece with the choir
 
-Music librarians, operations and the conductor share an excerpt from the
-score viewer:
+Music librarians, operations and the conductor share from the score viewer
+(or with **New link** on the tab of tasks and links of a copy):
 
-1. Open the score, choose the measures (**From measure**, **To measure**)
-   and the **Focus voice**, and set the tempo if needed.
-2. Choose **Share excerpt …**.
+1. Open the score and choose the **Focus voice**; set the tempo if needed.
+2. Choose **Share …**.
 3. Under **Who can open the link?** choose **Choir members**
    (or **Archive roles (internal)**, **Public (without signing in)**).
-4. Check the measures, voice, verse and tempo, and the **Valid until** date
-   (at most six months). **Note (optional)**: the choir members see this
-   note, for example "Please practise until Thursday".
-5. **What the recipients see** lists the measures, the focus voice, verse,
-   tempo, how long the link is valid, whether they can play the excerpt and
-   whether they can make practice files.
-6. **Create link**, then **Copy link** if you want to send it. Choir members
-   find the excerpt under "Shared with me" anyway, until it expires.
+4. Under **What is shared?** keep **Whole piece**: all pages of the piece,
+   with repeats and jumps as in the score. For a passage choose **Excerpt
+   (measures)** and enter **From measure** and **To measure**; the dialog
+   starts with the excerpt when the score viewer shows a range of measures.
+5. Check voice, verse and tempo, and the **Valid until** date (at most six
+   months). **Note (optional)**: the choir members see this note, for
+   example "Please practise until Thursday".
+6. Where the copy has a scan, **Include the scan (PDF)** offers it too (with
+   several scans, choose one under **Which scan?**). The recipients open it
+   in the PDF viewer of their browser. Whoever sees the scan can also save
+   it; share it only where that is fine.
+7. **What the recipients see** lists what is shared (**Whole piece** or the
+   measures), the focus voice, verse, tempo, whether they can play it,
+   whether they can make practice files, whether the scan is included, and
+   how long the link is valid.
+8. **Create link**, then **Copy link** if you want to send it. Choir members
+   find it under "Shared with me" anyway, until it expires.
 
-A link for choir members needs both measures, and they must exist in the
-score. It is only possible for a version **released for the singers'
-portal**: confirmed public domain, or a valid license with the use
-"Singers' portal"; never for an internal preservation copy. If it is not
-possible, the dialog says why and what to do instead of offering
-**Create link**, for example *Public domain is not confirmed yet. The catalog
-librarian confirms it on the tab "Rights"; then the version can be shared
-with choir members.*
+A link for choir members is only possible for a version **released for the
+singers' portal**: confirmed public domain, or a valid license with the use
+"Singers' portal"; never for an internal preservation copy. The same holds
+for the whole piece, an excerpt and the scan: legally an excerpt counts as
+much as the whole. If it is not possible, the dialog says why and what to
+do instead of offering **Create link**, for example *Public domain is not
+confirmed yet. The catalog librarian confirms it on the tab "Rights"; then
+the version can be shared with choir members.* An excerpt needs both
+measures, and they must exist in the score.
 
 Playback follows the same rules as in the archive (public domain, or a
 license for practice audio). Practice files for choir members additionally
 need the module "Practice audio for choir members" and a confirmed status
-or a license for practice audio.
+or a license for practice audio; they work for the whole piece as for an
+excerpt.
 
 **Links** in the navigation lists every active link with its circle
-(**Internal**, **For choir members**, **Public**), validity and number of
-calls; **Revoke link** stops a link at once for everyone.
+(**Internal**, **For choir members**, **Public**), what it shares
+(**Whole piece** or the measures, and **with scan (PDF)**), validity and
+number of calls; **Revoke link** stops a link at once for everyone.
 
 > [!NOTE]
-> Repeats and jumps that lead out of the excerpt are left out, so that the
-> excerpt plays from its first to its last measure. A repeat back to a
-> measure before the excerpt, its first and second endings, and a D.C. of
-> an excerpt that does not start at the beginning are therefore not played.
-> The score viewer of the archive plays a range as part of the whole piece;
-> for example measures 1 to 7 of "Der Mond ist aufgegangen" (1-1) sound
-> there as 1–6, 1–5, 7, in a shared excerpt as 1–7.
+> The whole piece plays in the full order of the score, with all repeats,
+> endings and jumps. In an excerpt, repeats and jumps that lead out of it
+> are left out, so that it plays from its first to its last measure. A
+> repeat back to a measure before the excerpt, its first and second
+> endings, and a D.C. of an excerpt that does not start at the beginning
+> are therefore not played. The score viewer of the archive, and the view
+> of a shared whole piece, play a range of measures as part of the whole
+> piece: measures 1 to 7 of "Der Mond ist aufgegangen" (1-1) sound there as
+> 1–6, 1–5, 7, in a shared excerpt of these measures as 1–7.
 
 #### Public links
 
-A public link shows and plays an excerpt to anyone who has the link, without
-signing in: only its measures, without download, without names and without
-a note. Choose **Public (without signing in)** in the same dialog. It is
-only possible when
+A public link shows and plays a whole piece or an excerpt to anyone who has
+the link, without signing in: without the score file, without names and
+without a note. Choose **Public (without signing in)** in the same dialog.
+It is only possible when
 
 - the version is **released for publication**: the catalog librarian sets
   the publication status of the version to "Released for publication", and
@@ -584,10 +599,11 @@ only possible when
   not enough),
 - and it is no internal preservation copy.
 
-The page shows title, composer, measures, the focus voice and a text
-description of the excerpt, and plays it with the voice emphasised. When the
-link expires, is revoked or the version is no longer released, the page
-shows "not found" without a reason.
+The scan (PDF) can be included under the same conditions. The page shows
+title, composer, the whole piece or the measures, the focus voice and a text
+description, plays it with the voice emphasised and, if included, links to
+the scan. When the link expires, is revoked or the version is no longer
+released, the page and the scan show "not found" without a reason.
 
 ### Reviewing transcriptions
 
@@ -1229,7 +1245,7 @@ answers and closes the checks addressed to it. Where the folder book is
 switched on, it issues and takes back the choir folders (see
 [Folder book](#folder-book)).
 
-Operations also shares excerpts (see
+Operations also shares pieces and excerpts (see
 [Sharing with choir members and the public](#sharing-with-choir-members-and-the-public))
 and answers checks (see [Answering a question](#answering-a-question)).
 
@@ -1416,33 +1432,40 @@ in large print; **Annual report as CSV** downloads its tables.
 
 Choir members have no role in the music archive. Where the administration
 has switched on links for choir members, they see only the page **Shared
-with me** with the excerpts shared with the choir. If you see no music
-archive at all, see
+with me** with the pieces and excerpts shared with the choir. If you see no
+music archive at all, see
 [No access to the music archive](#no-access-to-the-music-archive).
 
 ### Shared with me
 
 Choir members sign in to Nextcloud and open **Music archive**. They see
-**Shared with me**: the excerpts shared with the choir, with title,
-composer, measures, voice, the note and how long each is valid, and
-whether it can be played (**Playback: yes** or **Playback: no**).
+**Shared with me**: the pieces and excerpts shared with the choir, with
+title, composer, **Whole piece** or the measures, voice, the note and how
+long each is valid, whether it can be played (**Playback: yes** or
+**Playback: no**) and whether the scan is included (**with scan (PDF)**).
 
-1. Choose an excerpt in the list (a link sent to you opens it directly).
-   The notes appear above the list.
+1. Choose a piece in the list (a link sent to you opens it directly). The
+   notes appear above the list, for a whole piece all pages of it.
 2. **Play**, **Pause** and **Stop**; under **Voices during playback**
    choose **All equal**, **Focus voice louder** or **Focus voice only**, and
    set the tempo. **Focus voice** chooses another voice; **Smaller** and
    **Larger** change the size. Space plays and pauses. **Count-in** clicks
-   one or two bars before the music, **Loop** plays the excerpt again and
-   again. A click on a note starts there; with the keyboard, the arrow keys
-   left and right in the score go to the previous or next measure.
-3. **Text reference** and **Description of the excerpt** describe the
-   excerpt in words.
-4. Where practice files are offered (**Practice files: yes**): choose the
+   one or two bars before the music. A click on a note starts there; with
+   the keyboard, the arrow keys left and right in the score go to the
+   previous or next measure.
+3. To practise a passage, enter **From measure** and **To measure** and
+   choose **Show**; **Loop** plays the shown measures again and again.
+   **All measures** shows everything again.
+4. **Open the scan (PDF)** (where included) opens the scan in the PDF viewer
+   of your browser, in a new tab.
+5. **Text reference** and **Description of the piece** (or **of the
+   excerpt**) describe it in words.
+6. Where practice files are offered (**Practice files: yes**): choose the
    voice and "Focus voice louder" or "Focus voice only", then under
    **Practice file** the format **WAV (audio)** or **MIDI** and **Make
-   practice file**. The file is made in your browser; every practice file
-   is recorded in the audit log of the music archive.
+   practice file**. The file covers the shown measures; it is made in your
+   browser, and every practice file is recorded in the audit log of the
+   music archive.
 
 ## As a contributor or tool
 
@@ -1486,7 +1509,7 @@ archive. Ask the administration.
 Check the spelling; a shelf mark must be complete (`2-1`, not `2-`).
 Internal preservation copies are hidden from roles that may not view them.
 
-### Messages when sharing an excerpt
+### Messages when sharing
 
 | Message or problem | What to do |
 |---|---|
@@ -1498,9 +1521,12 @@ Internal preservation copies are hidden from roles that may not view them.
 | *A public link needs confirmed public domain or a valid license for online publication. …* | Record a license with the use "Online publication (public links)", or confirm public domain. |
 | *Internal preservation copy: …* | Preservation copies are never shared; share another version. |
 | *This copy has no MusicXML file. …* | Link a MusicXML file to the copy (tab **Files**). |
-| *Please give the first and the last measure: …* / *There is no measure … in this score.* | Enter both measures as printed in the score. |
+| *Please give both the first and the last measure of the excerpt, …* / *There is no measure … in this score.* | Enter both measures as printed in the score, or choose **Whole piece**. |
+| **Include the scan (PDF)** is missing | The copy has no PDF scan (tab **Files**), or the link is not allowed or internal: the archive roles see the scan beside the score. |
+| *This scan does not belong to the copy. …* | Choose one of the PDF files of the copy; link the scan on the tab **Files** first. |
+| *The scan of this link is not available at the moment.* | The PDF was moved or removed from the archive folder, or the account of the archive folder cannot read it; link the scan again and make a new link. |
 | *A public link has no note, …* | Leave the note empty. |
-| A choir member does not see the excerpt | It has expired or was revoked, or the version is no longer released; make a new link. If they see no app at all, see the [administration guide](admin-guide.md#14-sharing-with-choir-members-and-the-public). |
+| A choir member does not see the piece or excerpt | It has expired or was revoked, or the version is no longer released; make a new link. If they see no app at all, see the [administration guide](admin-guide.md#14-sharing-with-choir-members-and-the-public). |
 | *Only works with a version confirmed as public domain can be shown on the public repertoire page. …* | Confirm the rights of a version of the work first (tab **Rights**). |
 
 ### "The year in which it first appeared is missing"

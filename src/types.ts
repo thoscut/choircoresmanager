@@ -339,6 +339,8 @@ export interface ExcerptLink {
 	expires: string | null
 	revoked: number | null
 	hits: number
+	/** `files[].id` of the PDF scan the link offers (choir members and public only); null for none */
+	scan_file_id?: number | null
 }
 
 /**
@@ -362,6 +364,8 @@ export interface LinkInput {
 	expires?: string | null
 	/** default 'internal' */
 	circle?: LinkCircle
+	/** PDF scan to offer (`files[].id`); only for choir members and public links */
+	scan_file_id?: number | null
 }
 
 /** Whether a link for a circle can be created for a copy (GET /api/copies/{id}/link-options). */
@@ -381,6 +385,8 @@ export interface CircleOption {
 export interface LinkOptions {
 	members: CircleOption
 	public: CircleOption
+	/** PDF scans of the copy that an allowed link may offer */
+	scans: { id: number, name: string }[]
 }
 
 /** A link for choir members, as the page "Shared with me" receives it. */
@@ -388,8 +394,9 @@ export interface MemberLink {
 	token: string
 	title: string
 	composer: string
-	measure_from: string
-	measure_to: string
+	/** null (both): the whole piece */
+	measure_from: string | null
+	measure_to: string | null
 	voice: string | null
 	verse: number | null
 	/** tempo in percent of the score's tempo */
@@ -398,8 +405,10 @@ export interface MemberLink {
 	expires: string | null
 	canPlay: boolean
 	canExportAudio: boolean
-	/** translated reason why the excerpt cannot be played */
+	/** translated reason why the piece cannot be played */
 	reason: string | null
+	/** the link offers the scan (PDF) */
+	scan?: boolean
 }
 
 /** Initial state `member` of the page for choir members. */
@@ -407,17 +416,20 @@ export interface MemberPageState {
 	links: MemberLink[]
 }
 
-/** Initial state `excerpt` of a public link: the excerpt, already cut by the server. */
+/** Initial state `excerpt` of a public link: the excerpt, already cut by the server, or the whole piece. */
 export interface PublicExcerpt {
 	title: string
 	composer: string
-	measureFrom: string
-	measureTo: string
+	/** null (both): the whole piece */
+	measureFrom: string | null
+	measureTo: string | null
 	voice: string | null
 	verse: number | null
 	tempo: number | null
 	canPlay: boolean
-	/** MusicXML with only the measures of the excerpt */
+	/** the link offers the scan (PDF) at `/p/{token}/scan` */
+	scan?: boolean
+	/** MusicXML with only the measures of the excerpt, or the whole piece */
 	xml: string
 }
 
@@ -430,6 +442,9 @@ export interface MemberPracticeAudioInput {
 	/** tempo in percent of the score's tempo */
 	tempo: number
 	repeats: boolean
+	/** printed numbers of the first and last measure of the file; for an excerpt the server takes those of the link */
+	measure_from: string
+	measure_to: string
 }
 
 /** Body of POST /api/versions/{id}/practice-audio (inside `export`). */

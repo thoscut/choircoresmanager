@@ -14,7 +14,8 @@ use OCA\Notenarchiv\Exception\InvalidInputException;
 /**
  * Cuts a MusicXML score (partwise) to a range of printed measures, so that
  * choir members and the public receive only the measures of a link, never
- * the whole file (milestone 0.7).
+ * the file itself (milestone 0.7). A link without measures gets the whole
+ * score through whole(): the same checks, nothing cut.
  *
  * - The range is found in the first part by the printed measure numbers, as
  *   in the score view (src/score/range.ts): "07" equals "7"; the first
@@ -88,13 +89,30 @@ final class MusicXmlExcerpt {
 				}
 			}
 		}
+		return self::save($document);
+	}
+
+	/**
+	 * The whole score, for a link without measures: every measure, repeat,
+	 * ending and jump stays, so the full playing order. Checked and written
+	 * like an excerpt (partwise, no DTD subset, nothing expanded or fetched;
+	 * without the document type declaration, UTF-8).
+	 *
+	 * @return string MusicXML (UTF-8)
+	 * @throws InvalidInputException when the text is no partwise MusicXML score
+	 */
+	public static function whole(string $xml): string {
+		return self::save(self::load($xml)[0]);
+	}
+
+	private static function save(\DOMDocument $document): string {
 		if ($document->doctype !== null) {
 			$document->removeChild($document->doctype);
 		}
 		$document->encoding = 'UTF-8';
 		$result = $document->saveXML();
 		if ($result === false) {
-			throw new \RuntimeException('The excerpt could not be written');
+			throw new \RuntimeException('The score could not be written');
 		}
 		return $result;
 	}

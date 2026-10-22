@@ -36,17 +36,21 @@ use OCP\Security\ISecureRandom;
  *
  * The rights policy is checked when a link is made and again on every call,
  * so a downgraded version or an expired or revoked link shows nothing.
- * Choir members and the public get only the measures of the excerpt (see
- * SharedLinkService); a link for them therefore needs both measures, and
- * they must exist in the score.
+ * Choir members and the public get the measures of the excerpt or, for a
+ * link without measures, the whole piece (see SharedLinkService); given
+ * measures must exist in the score. A link for them may also offer a PDF
+ * scan of the copy (`scan_file_id`): it needs the same release as the notes
+ * (guideline 2: an excerpt counts as much as the whole, a scan as much as
+ * the notes).
  *
  * @psalm-type CircleOption = array{available: bool, allowed: bool, reason: ?string, playback: bool, practiceAudio: bool}
+ * @psalm-type ScanOption = array{id: int, name: string}
  */
 class LinkService {
 	public const MAX_DAYS = 183;
 	private const CREATORS = [Roles::LIBRARIAN, Roles::CONDUCTOR, Roles::OPERATIONS];
 	/** Fields a request may set when creating a link */
-	private const FIELDS = ['measure_from', 'measure_to', 'voice', 'verse', 'tempo', 'note', 'task_id', 'expires', 'circle'];
+	private const FIELDS = ['measure_from', 'measure_to', 'voice', 'verse', 'tempo', 'note', 'task_id', 'expires', 'circle', 'scan_file_id'];
 	/** The module of each circle beyond the archive roles */
 	public const CIRCLE_MODULES = [
 		ExcerptLink::CIRCLE_MEMBERS => Modules::MEMBER_LINKS,
@@ -70,6 +74,7 @@ class LinkService {
 		private ISecureRandom $random,
 		private ITimeFactory $time,
 		private Modules $modules,
+		private ScanService $scans,
 	) {
 	}
 
@@ -104,15 +109,22 @@ class LinkService {
 			if ($score === null) {
 				throw new InvalidInputException(self::NO_SCORE);
 			}
-			foreach (['measure_from', 'measure_to'] as $field) {
-				$measure = $values[$field] ?? null;
-				if ($measure === null || trim((string)$measure) === '') {
-					throw new InvalidInputException('Please give the first and the last measure: choir members and the public only see these measures.');
-				}
+			$given = array_filter(['measure_from', 'measure_to'], fn (string $field): bool => trim((string)($values[$field] ?? '')) !== '');
+			if (count($given) === 1) {
+				throw new InvalidInputException('Please give both the first and the last measure of the excerpt, or leave both empty to share the whole piece.');
 			}
 			if ($circle === ExcerptLink::CIRCLE_PUBLIC && self::text($values['note'] ?? null, 2000) !== null) {
 				throw new InvalidInputException('A public link has no note, because everyone could read it. Please leave the note empty.');
 			}
+		}
+		$scanFileId = $values['scan_file_id'] ?? null;
+		if ($scanFileId !== null && $scanFileId !== '') {
+			if (!$shared) {
+				throw new InvalidInputException('Only links for choir members and public links offer the scan; the archive roles see it beside the score.');
+			}
+			$scanFileId = $this->checkScan($copyId, $scanFileId, $uid);
+		} else {
+			$scanFileId = null;
 		}
 		$latest = (new \DateTimeImmutable($today))->modify('+' . self::MAX_DAYS . ' days')->format('Y-m-d');
 		$expires = $values['expires'] ?? null;
@@ -158,10 +170,16 @@ class LinkService {
 		}
 		$link->setValue('task_id', $taskId === '' || $shared ? null : $taskId);
 		if ($shared && $score !== null) {
-			// The measures must exist: choir members and the public get only them.
-			$content = $this->scores->content($score['fileId'], $uid)['content'];
-			MusicXmlExcerpt::cut($this->scores->scoreText($content)['xml'], (string)$link->getMeasureFrom(), (string)$link->getMeasureTo());
+			// The measures must exist and the score must be one the recipients
+			// can get: the same checks as when the link is opened.
+			$xml = $this->scores->scoreText($this->scores->content($score['fileId'], $uid)['content'])['xml'];
+			if ($link->getMeasureFrom() === null) {
+				MusicXmlExcerpt::whole($xml);
+			} else {
+				MusicXmlExcerpt::cut($xml, (string)$link->getMeasureFrom(), (string)$link->getMeasureTo());
+			}
 		}
+		$link->setScanFileId($scanFileId);
 		$link->setCircle($circle);
 		$link->setCreatedBy($uid);
 		$link->setCreated($this->time->getTime());
@@ -172,7 +190,34 @@ class LinkService {
 		if ($shared) {
 			$this->audit->record($operation, $uid, 'link', $link->getId(), 'created', 'circle', null, $circle);
 		}
+		if ($scanFileId !== null) {
+			$this->audit->record($operation, $uid, 'link', $link->getId(), 'created', 'scan_file_id', null, $scanFileId);
+		}
 		return $link;
+	}
+
+	/**
+	 * The scan a link may offer: a PDF linked to the copy (role `score_pdf`,
+	 * still found) that the account itself can open beside the score.
+	 *
+	 * @throws InvalidInputException|AccessDeniedException
+	 */
+	private function checkScan(int $copyId, string|int|float|bool $value, string $uid): int {
+		$id = filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+		if ($id === false) {
+			throw new InvalidInputException('"%s": value not allowed.', ['Scan']);
+		}
+		try {
+			$file = $this->files->find($id);
+		} catch (DoesNotExistException) {
+			$file = null;
+		}
+		if ($file === null || $file->getCopyId() !== $copyId || $file->getRole() !== 'score_pdf' || $file->getFound() === false) {
+			throw new InvalidInputException('This scan does not belong to the copy. Please choose one of the PDF files of the copy (tab "Files").');
+		}
+		// readable for the account and really a PDF
+		$this->scans->scan($id, $uid);
+		return $id;
 	}
 
 	/**
@@ -183,16 +228,26 @@ class LinkService {
 	 *
 	 * `reason` explains why the link is not possible, or else why it plays
 	 * nothing; English source strings, translated by the controller.
+	 * `scans` are the PDF scans of the copy that such a link may offer; an
+	 * allowed link may offer them, as they need the same release as the
+	 * notes.
 	 *
-	 * @return array{members: CircleOption, public: CircleOption}
+	 * @return array{members: CircleOption, public: CircleOption, scans: list<ScanOption>}
 	 */
 	public function circleOptions(int $copyId, string $uid): array {
 		$this->roles->requireRole($uid, self::CREATORS);
 		[$version, $score] = $this->load($copyId, $uid);
 		$today = $this->rights->today($uid);
+		$scans = [];
+		foreach ($this->files->findByCopy($copyId) as $file) {
+			if ($file->getRole() === 'score_pdf' && $file->getFound() !== false) {
+				$scans[] = ['id' => $file->getId(), 'name' => $file->getName()];
+			}
+		}
 		return [
 			'members' => $this->circleOption(ExcerptLink::CIRCLE_MEMBERS, $version, $score !== null, $today),
 			'public' => $this->circleOption(ExcerptLink::CIRCLE_PUBLIC, $version, $score !== null, $today),
+			'scans' => $scans,
 		];
 	}
 

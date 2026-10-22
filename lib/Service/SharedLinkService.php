@@ -14,6 +14,7 @@ use OCA\Notenarchiv\Db\Copy;
 use OCA\Notenarchiv\Db\CopyMapper;
 use OCA\Notenarchiv\Db\ExcerptLink;
 use OCA\Notenarchiv\Db\ExcerptLinkMapper;
+use OCA\Notenarchiv\Db\Work;
 use OCA\Notenarchiv\Db\WorkMapper;
 use OCA\Notenarchiv\Db\WorkVersion;
 use OCA\Notenarchiv\Db\WorkVersionMapper;
@@ -26,24 +27,30 @@ use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\Files\File;
 
 /**
- * Opens excerpt links for the circles beyond the archive roles (milestone
- * 0.7): the choir members (module member_links) and the public (module
+ * Opens links for the circles beyond the archive roles (milestone 0.7):
+ * the choir members (module member_links) and the public (module
  * public_links). Links are made in LinkService.
  *
  * Choir members and the public never get the score file: the server reads
  * it through the account that configured the archive folder (only inside
- * that folder, like the background jobs), cuts the measures of the excerpt
- * (MusicXmlExcerpt) and sends only them. The rights policy is checked on
- * every call; calls are counted without recording who made them.
+ * that folder, like the background jobs), unpacks `.mxl` and sends only the
+ * content for the view: the measures of the excerpt (MusicXmlExcerpt::cut)
+ * or, for a link without measures, the whole piece with its full playing
+ * order (MusicXmlExcerpt::whole). A link may also offer the PDF scan chosen
+ * when it was made, read the same way; it needs the same release as the
+ * notes. The rights policy is checked on every call; calls of the score are
+ * counted without recording who made them.
  *
- * What they see: title and composer of the work, the measures, voice,
- * verse and tempo of the link, for choir members also its note. Never a
- * shelf mark, an account name or an internal note of the catalog.
+ * What they see: title and composer of the work, the measures (null for the
+ * whole piece), voice, verse and tempo of the link, for choir members also
+ * its note. Never a shelf mark, an account name or an internal note of the
+ * catalog.
  *
- * @psalm-type MemberLink = array{token: string, title: string, composer: string, measure_from: string, measure_to: string,
- *     voice: ?string, verse: ?int, tempo: ?int, note: ?string, expires: ?string, canPlay: bool, canExportAudio: bool, reason: ?string}
- * @psalm-type PublicExcerpt = array{title: string, composer: string, measureFrom: string, measureTo: string, voice: ?string,
- *     verse: ?int, tempo: ?int, canPlay: bool, xml: string}
+ * @psalm-type MemberLink = array{token: string, title: string, composer: string, measure_from: ?string, measure_to: ?string,
+ *     voice: ?string, verse: ?int, tempo: ?int, note: ?string, expires: ?string, canPlay: bool, canExportAudio: bool, reason: ?string,
+ *     scan: bool}
+ * @psalm-type PublicExcerpt = array{title: string, composer: string, measureFrom: ?string, measureTo: ?string, voice: ?string,
+ *     verse: ?int, tempo: ?int, canPlay: bool, scan: bool, xml: string}
  */
 class SharedLinkService {
 	public function __construct(
@@ -64,7 +71,8 @@ class SharedLinkService {
 	/**
 	 * The links for choir members that are active and still allowed, newest
 	 * first: what the page "Shared with me" lists. `reason` (English source
-	 * string) says why the excerpt cannot be played.
+	 * string) says why the piece cannot be played; `scan` whether the link
+	 * offers the scan.
 	 *
 	 * @return list<MemberLink>
 	 * @throws AccessDeniedException when the account is no choir member
@@ -92,8 +100,8 @@ class SharedLinkService {
 				'token' => $link->getToken(),
 				'title' => (string)$work->getTitle(),
 				'composer' => (string)$work->getComposer(),
-				'measure_from' => (string)$link->getMeasureFrom(),
-				'measure_to' => (string)$link->getMeasureTo(),
+				'measure_from' => $link->getMeasureFrom(),
+				'measure_to' => $link->getMeasureTo(),
 				'voice' => $link->getVoice(),
 				'verse' => $link->getVerse(),
 				'tempo' => $link->getTempo(),
@@ -103,27 +111,39 @@ class SharedLinkService {
 				'canExportAudio' => $playDenial === null && $this->modules->isEnabled(Modules::MEMBER_PRACTICE_AUDIO)
 					&& $this->policy->memberPracticeAudioDenial($version, $today) === null,
 				'reason' => $playDenial,
+				'scan' => $link->getScanFileId() !== null,
 			];
 		}
 		return $rows;
 	}
 
 	/**
-	 * The measures of a link for choir members as MusicXML; counts the call.
+	 * The measures of a link for choir members, or the whole piece, as
+	 * MusicXML; counts the call.
 	 *
 	 * @throws UserFacingException
 	 */
 	public function memberScore(string $token, string $uid): string {
 		['link' => $link] = $this->memberLink($token, $uid);
-		$xml = $this->excerpt($link);
+		$xml = $this->score($link);
 		$this->links->countHit($link->getId());
 		return $xml;
 	}
 
 	/**
+	 * The scan a link for choir members offers, after the same checks as
+	 * the score.
+	 *
+	 * @throws UserFacingException
+	 */
+	public function memberScan(string $token, string $uid): File {
+		return $this->scan($this->memberLink($token, $uid)['link']);
+	}
+
+	/**
 	 * An active link for choir members with its copy and version, after
-	 * checking the account and the rights; for the score and for practice
-	 * audio files.
+	 * checking the account and the rights; for the score, the scan and
+	 * practice audio files.
 	 *
 	 * @return array{link: ExcerptLink, copy: Copy, version: WorkVersion}
 	 * @throws UserFacingException
@@ -150,10 +170,10 @@ class SharedLinkService {
 			$copy = $this->copies->find($link->getCopyId());
 			$version = $this->versions->find($copy->getVersionId());
 		} catch (DoesNotExistException) {
-			throw new NotFoundException('This excerpt is no longer shared with choir members.');
+			throw new NotFoundException('This piece is no longer shared with choir members.');
 		}
 		if ($this->policy->memberViewDenial($version, $today) !== null) {
-			throw new AccessDeniedException('This excerpt is no longer shared with choir members.');
+			throw new AccessDeniedException('This piece is no longer shared with choir members.');
 		}
 		return ['link' => $link, 'copy' => $copy, 'version' => $version];
 	}
@@ -167,6 +187,55 @@ class SharedLinkService {
 	 * @return PublicExcerpt|null
 	 */
 	public function publicExcerpt(string $token): ?array {
+		$open = $this->publicLink($token);
+		if ($open === null) {
+			return null;
+		}
+		['link' => $link, 'version' => $version, 'work' => $work, 'today' => $today] = $open;
+		try {
+			$xml = $this->score($link);
+		} catch (UserFacingException) {
+			return null;
+		}
+		$this->links->countHit($link->getId());
+		return [
+			'title' => (string)$work->getTitle(),
+			'composer' => (string)$work->getComposer(),
+			'measureFrom' => $link->getMeasureFrom(),
+			'measureTo' => $link->getMeasureTo(),
+			'voice' => $link->getVoice(),
+			'verse' => $link->getVerse(),
+			'tempo' => $link->getTempo(),
+			'canPlay' => $this->policy->publicPlayDenial($version, $today) === null,
+			'scan' => $link->getScanFileId() !== null,
+			'xml' => $xml,
+		];
+	}
+
+	/**
+	 * The scan a public link offers, or null in every case in which the page
+	 * of the link is refused, and when the link offers no scan or it cannot
+	 * be read: the caller answers all of them with the same 404.
+	 */
+	public function publicScan(string $token): ?File {
+		$open = $this->publicLink($token);
+		if ($open === null) {
+			return null;
+		}
+		try {
+			return $this->scan($open['link']);
+		} catch (UserFacingException) {
+			return null;
+		}
+	}
+
+	/**
+	 * A public link that may be shown today, with its version and work; null
+	 * otherwise.
+	 *
+	 * @return array{link: ExcerptLink, version: WorkVersion, work: Work, today: string}|null
+	 */
+	private function publicLink(string $token): ?array {
 		try {
 			$link = $this->links->findByToken($token);
 			$copy = $this->copies->find($link->getCopyId());
@@ -180,47 +249,74 @@ class SharedLinkService {
 			|| $this->policy->publicViewDenial($version, $today) !== null) {
 			return null;
 		}
-		try {
-			$xml = $this->excerpt($link);
-		} catch (UserFacingException) {
-			return null;
-		}
-		$this->links->countHit($link->getId());
-		return [
-			'title' => (string)$work->getTitle(),
-			'composer' => (string)$work->getComposer(),
-			'measureFrom' => (string)$link->getMeasureFrom(),
-			'measureTo' => (string)$link->getMeasureTo(),
-			'voice' => $link->getVoice(),
-			'verse' => $link->getVerse(),
-			'tempo' => $link->getTempo(),
-			'canPlay' => $this->policy->publicPlayDenial($version, $today) === null,
-			'xml' => $xml,
-		];
+		return ['link' => $link, 'version' => $version, 'work' => $work, 'today' => $today];
 	}
 
 	/**
-	 * The measures of a link, cut from the current score of its copy, read
-	 * through the account of the archive folder and only inside it.
+	 * What a link shows of the current score of its copy: the measures of
+	 * the excerpt, or the whole piece for a link without measures.
 	 *
 	 * @throws UserFacingException
 	 */
-	private function excerpt(ExcerptLink $link): string {
-		$notAvailable = new NotFoundException('The score of this excerpt is not available at the moment.');
+	private function score(ExcerptLink $link): string {
+		$notAvailable = new NotFoundException('The score of this link is not available at the moment.');
 		$file = ScoreService::pick($this->files->findByCopy($link->getCopyId()));
-		$account = $this->settings->archiveInfo()['user'];
-		if ($file === null || $account === '') {
+		if ($file === null) {
 			throw $notAvailable;
 		}
-		$node = $this->settings->archiveFolder($account)->getFirstNodeById($file->getFileId());
-		if (!$node instanceof File) {
-			throw $notAvailable;
-		}
-		$content = UserFiles::content($node, ScoreService::MAX_BYTES, $notAvailable);
+		$content = UserFiles::content($this->archiveNode($file->getFileId(), $notAvailable), ScoreService::MAX_BYTES, $notAvailable);
 		if (!$this->scores->isScore($content)) {
 			throw new InvalidInputException('This file is not a MusicXML score.');
 		}
-		return MusicXmlExcerpt::cut($this->scores->scoreText($content)['xml'], (string)$link->getMeasureFrom(), (string)$link->getMeasureTo());
+		$xml = $this->scores->scoreText($content)['xml'];
+		$from = $link->getMeasureFrom();
+		$to = $link->getMeasureTo();
+		return $from === null || $to === null ? MusicXmlExcerpt::whole($xml) : MusicXmlExcerpt::cut($xml, $from, $to);
+	}
+
+	/**
+	 * The scan of a link: still a PDF of its copy (role `score_pdf`), read
+	 * through the account of the archive folder.
+	 *
+	 * @throws UserFacingException
+	 */
+	private function scan(ExcerptLink $link): File {
+		$notAvailable = new NotFoundException('The scan of this link is not available at the moment.');
+		$id = $link->getScanFileId();
+		if ($id === null) {
+			throw $notAvailable;
+		}
+		try {
+			$file = $this->files->find($id);
+		} catch (DoesNotExistException) {
+			throw $notAvailable;
+		}
+		if ($file->getCopyId() !== $link->getCopyId() || $file->getRole() !== 'score_pdf' || $file->getFound() === false) {
+			throw $notAvailable;
+		}
+		$node = $this->archiveNode($file->getFileId(), $notAvailable);
+		if (!ScanService::isPdf($node)) {
+			throw $notAvailable;
+		}
+		return $node;
+	}
+
+	/**
+	 * A file of the archive folder, read through the account that configured
+	 * it and only inside it.
+	 *
+	 * @throws NotFoundException
+	 */
+	private function archiveNode(int $fileId, NotFoundException $notAvailable): File {
+		$account = $this->settings->archiveInfo()['user'];
+		if ($account === '') {
+			throw $notAvailable;
+		}
+		$node = $this->settings->archiveFolder($account)->getFirstNodeById($fileId);
+		if (!$node instanceof File) {
+			throw $notAvailable;
+		}
+		return $node;
 	}
 
 	/**

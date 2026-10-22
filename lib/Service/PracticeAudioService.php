@@ -36,8 +36,12 @@ class PracticeAudioService {
 	public const TEMPO_MAX = 200;
 	/** Fields a request may contain */
 	private const FIELDS = ['copy_id', 'measure_from', 'measure_to', 'voice', 'mode', 'format', 'all_voices', 'tempo', 'repeats'];
-	/** Fields a request of a choir member may contain: copy and measures come from the link */
-	private const MEMBER_FIELDS = ['voice', 'mode', 'format', 'tempo', 'repeats'];
+	/**
+	 * Fields a request of a choir member may contain: the copy comes from the
+	 * link, and so do the measures of an excerpt; for a whole piece the
+	 * request names the measures of the file
+	 */
+	private const MEMBER_FIELDS = ['voice', 'mode', 'format', 'tempo', 'repeats', 'measure_from', 'measure_to'];
 
 	public function __construct(
 		private WorkVersionMapper $versions,
@@ -84,11 +88,13 @@ class PracticeAudioService {
 	}
 
 	/**
-	 * Allows a choir member one file of one voice of an excerpt shared with
-	 * the choir members, and records it like every export: the copy and the
-	 * measures are those of the link, whatever the request says.
+	 * Allows a choir member one file of one voice of an excerpt or a whole
+	 * piece shared with the choir members, and records it like every export:
+	 * the copy is that of the link, and so are the measures of an excerpt,
+	 * whatever the request says; for a whole piece the request names the
+	 * measures of the file (all of them, or the part chosen in the view).
 	 *
-	 * @param array<array-key, mixed> $data voice, mode, format, tempo, repeats (see docs/api.md)
+	 * @param array<array-key, mixed> $data voice, mode, format, tempo, repeats, measure_from, measure_to (see docs/api.md)
 	 * @return array{ok: true}
 	 * @throws AccessDeniedException when the account is no choir member or the rights refuse the export
 	 * @throws InvalidInputException for an unknown, revoked or expired link or invalid request data
@@ -105,8 +111,13 @@ class PracticeAudioService {
 				throw new InvalidInputException('Unknown field: %s', [$field]);
 			}
 		}
-		$request = self::request(['copy_id' => $copy->getId(), 'measure_from' => (string)$link->getMeasureFrom(),
-			'measure_to' => (string)$link->getMeasureTo(), 'all_voices' => false] + $values);
+		// An excerpt: its measures, whatever was asked. The whole piece: the
+		// measures of the file, as the view sends them.
+		$from = $link->getMeasureFrom();
+		$to = $link->getMeasureTo();
+		$fixed = ['copy_id' => $copy->getId(), 'all_voices' => false]
+			+ ($from === null || $to === null ? [] : ['measure_from' => $from, 'measure_to' => $to]);
+		$request = self::request($fixed + $values);
 		$this->record($version->getId(), $copy->getShelfmark(), $request, $uid);
 		return ['ok' => true];
 	}

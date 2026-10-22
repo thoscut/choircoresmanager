@@ -298,7 +298,8 @@ run_test version_states_test 1-2
 # deletes, and the module switched off (rolled back, switches restored).
 run_test files_integration_test
 # Sharing beyond the archive roles (milestone 0.7): 1-3 is public domain with
-# MusicXML (16 measures) and not confirmed yet, 3-1 the internal
+# MusicXML (16 measures) and a PDF scan and not confirmed yet (excerpt, whole
+# piece and scan for choir members and the public), 3-1 the internal
 # preservation copy. The test creates a group and an account "member" and
 # deletes them; role groups and module switches restored, the rest rolled
 # back.

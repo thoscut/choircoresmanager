@@ -12,16 +12,18 @@ declare(strict_types=1);
  * against a real Nextcloud instance with an imported catalog and a file
  * sync: the role "Choir members" and its routes, links for choir members
  * (allowed, refused without release, preservation copy, only the measures
- * of the excerpt, practice audio), public links (page, unknown, expired,
- * revoked, module off: the same 404) and the public repertoire page.
+ * of the excerpt, the whole piece, the scan, practice audio), public links
+ * (page, whole piece, scan, unknown, expired, revoked, module off: the same
+ * 404) and the public repertoire page.
  *
  * Usage (as the web server user):
  *   php tests/Integration/sharing_test.php <nextcloud-root> <uid> <shelfmark-public-domain> <shelfmark-preservation-copy>
  *
  * <uid> must hold the role "librarian" and be the account of the archive
  * folder (as after tools/ci/integration-demo.sh). The first shelf mark is a
- * public domain copy with a MusicXML file of at least twelve measures whose
- * rights are not confirmed yet (demo: 1-3), the second an internal
+ * public domain copy with a MusicXML file of sixteen measures (1 to 16, with
+ * a repeat) and a PDF scan, whose rights are not confirmed yet (demo: 1-3),
+ * the second an internal
  * preservation copy (demo: 3-1; on a catalog without one it is made one
  * inside the transaction). The test creates a group and an account
  * "member" (random password, never printed) and deletes both at the end;
@@ -34,9 +36,11 @@ require __DIR__ . '/harness.php';
 	['nextcloud-root', 'uid', 'shelfmark-public-domain', 'shelfmark-preservation-copy']);
 
 use OCA\Notenarchiv\AppInfo\Application;
+use OCA\Notenarchiv\Controller\MemberController;
 use OCA\Notenarchiv\Controller\PageController;
 use OCA\Notenarchiv\Controller\PublicLinkController;
 use OCA\Notenarchiv\Controller\PublicRepertoireController;
+use OCA\Notenarchiv\Db\ArchiveFile;
 use OCA\Notenarchiv\Db\ArchiveFileMapper;
 use OCA\Notenarchiv\Db\AuditEntry;
 use OCA\Notenarchiv\Db\AuditEntryMapper;
@@ -158,6 +162,26 @@ $publicPage = function (string $token) use ($middleware, $publicController): Res
 	}
 	return $publicController->show($token);
 };
+/** The answer of the public route of the scan, likewise. */
+$publicScan = function (string $token) use ($middleware, $publicController): Response {
+	try {
+		$middleware->beforeController($publicController, 'scan');
+	} catch (ModuleDisabledException $e) {
+		return $middleware->afterException($publicController, 'scan', $e);
+	}
+	return $publicController->scan($token);
+};
+/** Whether a response is a PDF for the browser's own viewer. */
+$isInlinePdf = function (Response $response): bool {
+	$headers = $response->getHeaders();
+	return $response->getStatus() === Http::STATUS_OK && ($headers['Content-Type'] ?? '') === 'application/pdf'
+		&& ($headers['Content-Disposition'] ?? '') === 'inline; filename="scan.pdf"' && ($headers['X-Content-Type-Options'] ?? '') === 'nosniff'
+		&& str_contains($response->getContentSecurityPolicy()->buildPolicy(), "default-src 'none'");
+};
+/** The PDF scans of a copy. */
+$scansOf = fn (int $copyId): array => array_values(array_filter(Server::get(ArchiveFileMapper::class)->findByCopy($copyId),
+	fn (ArchiveFile $file): bool => $file->getRole() === 'score_pdf' && $file->getFound() !== false));
+$wholePiece = array_map('strval', range(1, 16));
 
 $db->beginTransaction();
 try {
@@ -192,11 +216,43 @@ try {
 	$memberLink = ['circle' => 'members', 'measure_from' => '2', 'measure_to' => '4', 'voice' => 'Alto', 'note' => 'Please practise until Thursday.'];
 	$reason = $throws(fn () => $links->create($public->getId(), $memberLink, $uid));
 	$check('refused without release (public domain not confirmed)', $reason !== null && str_starts_with($reason, 'Public domain is not confirmed yet.'), (string)$reason);
+	$scanId = ($scansOf($public->getId())[0] ?? null)?->getId();
+	$check('the public domain copy has a PDF scan', $scanId !== null);
+	$reason = $throws(fn () => $links->create($public->getId(), ['circle' => 'members', 'scan_file_id' => $scanId], $uid));
+	$check('the whole piece with the scan: refused without release, too', $reason !== null && str_starts_with($reason, 'Public domain is not confirmed yet.'),
+		(string)$reason);
 	$rights->confirm($public->getVersionId(), $uid, 'public_domain', 'All persons involved died more than 70 years ago', 'integration test');
 	$check('a measure that is not in the score is refused', $throws(fn () => $links->create($public->getId(), ['measure_to' => '999'] + $memberLink, $uid))
 		=== 'There is no measure 999 in this score.');
 	$link = $links->create($public->getId(), $memberLink, $uid);
 	$check('a link for choir members is made', $link->getCircle() === ExcerptLink::CIRCLE_MEMBERS);
+
+	// ---- the whole piece and the scan for choir members ----
+	$wholeLink = $links->create($public->getId(), ['circle' => 'members', 'voice' => 'Alto', 'scan_file_id' => $scanId], $uid);
+	$check('a link without measures shares the whole piece, with the scan', $wholeLink->getMeasureFrom() === null
+		&& $wholeLink->getMeasureTo() === null && $wholeLink->getScanFileId() === $scanId);
+	$wholeXml = $shared->memberScore($wholeLink->getToken(), $memberUid);
+	$check('the server sends every measure of the whole piece', $measures($wholeXml) === $wholePiece, implode(',', $measures($wholeXml)));
+	$check('with its repeat (the full playing order)', str_contains($wholeXml, 'direction="backward"'));
+	$wholeEntry = array_values(array_filter($shared->forMember($memberUid), fn (array $row): bool => $row['token'] === $wholeLink->getToken()))[0] ?? [];
+	$check('listed as the whole piece with the scan', array_key_exists('measure_from', $wholeEntry) && $wholeEntry['measure_from'] === null
+		&& ($wholeEntry['scan'] ?? false) === true, json_encode($wholeEntry) ?: '');
+	$memberController = fn (string $account): MemberController => new MemberController(Server::get(IRequest::class), $account, $shared,
+		Server::get(PracticeAudioService::class), $l, Server::get(LoggerInterface::class));
+	$check('the choir member gets the scan inline for the PDF viewer', $isInlinePdf($memberController($memberUid)->scan($wholeLink->getToken())));
+	$check('a link without a scan offers none', $throws(fn () => $shared->memberScan($link->getToken(), $memberUid))
+		=== 'The scan of this link is not available at the moment.');
+	$check('the scan route refuses accounts that are no choir members', $memberController($uid)->scan($wholeLink->getToken())->getStatus()
+		=== Http::STATUS_FORBIDDEN);
+	$check('an internal link takes no scan', $throws(fn () => $links->create($public->getId(), ['scan_file_id' => $scanId], $uid))
+		=== 'Only links for choir members and public links offer the scan; the archive roles see it beside the score.');
+	$otherScan = ($scansOf($preservation->getId())[0] ?? null)?->getId();
+	if ($otherScan !== null) {
+		$check('a scan of another copy is refused', $throws(fn () => $links->create($public->getId(), ['circle' => 'members', 'scan_file_id' => $otherScan], $uid))
+			=== 'This scan does not belong to the copy. Please choose one of the PDF files of the copy (tab "Files").');
+	}
+	$check('one measure alone is refused', $throws(fn () => $links->create($public->getId(), ['circle' => 'members', 'measure_from' => '2'], $uid))
+		=== 'Please give both the first and the last measure of the excerpt, or leave both empty to share the whole piece.');
 
 	Server::get(LicenseService::class)->create($preservation->getVersionId(), ['holder' => 'Publisher', 'uses' => ['portal', 'practice_audio'],
 		'valid_until' => '2099-12-31', 'evidence' => 'integration test'], $uid);
@@ -224,6 +280,12 @@ try {
 	$details = json_decode((string)(($exports[0] ?? null)?->getNewValue() ?? ''), true);
 	$check('practice audio of a choir member is recorded with the measures of the link', is_array($details) && $details['measures'] === '2-4'
 		&& ($exports[0] ?? null)?->getRoles() === Roles::MEMBER && ($exports[0] ?? null)?->getUserId() === $memberUid, (string)(($exports[0] ?? null)?->getNewValue() ?? ''));
+	$practiceAudio->authorizeForMember($wholeLink->getToken(), ['voice' => 'Alto', 'mode' => 'focus', 'format' => 'midi', 'measure_from' => '1',
+		'measure_to' => '16'], $memberUid);
+	$wholeExports = array_filter(Server::get(AuditEntryMapper::class)->findForObjects([['version', $public->getVersionId()]], 50),
+		fn (AuditEntry $e): bool => $e->getAction() === PracticeAudioService::ACTION
+			&& (json_decode((string)$e->getNewValue(), true)['measures'] ?? null) === '1-16');
+	$check('practice audio of the whole piece is recorded with the measures of the file', count($wholeExports) === 1);
 	$modules->change([Modules::MEMBER_PRACTICE_AUDIO => false]);
 	$check('practice audio for choir members switched off: not offered', ($shared->forMember($memberUid)[0]['canExportAudio'] ?? true) === false);
 
@@ -234,6 +296,9 @@ try {
 	$publicLink = ['circle' => 'public', 'measure_from' => '9', 'measure_to' => '12', 'voice' => 'Alto'];
 	$reason = $throws(fn () => $links->create($public->getId(), $publicLink, $uid));
 	$check('refused without the release for publication', $reason !== null && str_starts_with($reason, 'Not released for publication.'), (string)$reason);
+	$reason = $throws(fn () => $links->create($public->getId(), ['circle' => 'public', 'scan_file_id' => $scanId], $uid));
+	$check('the whole piece with the scan: refused without the release for publication, too', $reason !== null
+		&& str_starts_with($reason, 'Not released for publication.'), (string)$reason);
 	$catalog->update('version', $public->getVersionId(), ['publication_status' => 'free'], $uid, 'integration test');
 	$check('a public link has no note', $throws(fn () => $links->create($public->getId(), $publicLink + ['note' => 'internal'], $uid)) !== null);
 	$link = $links->create($public->getId(), $publicLink, $uid);
@@ -242,7 +307,18 @@ try {
 	$excerpt = $shared->publicExcerpt($link->getToken());
 	$check('the public excerpt has only the measures', $excerpt !== null && $measures($excerpt['xml']) === ['9', '10', '11', '12']);
 	$check('and nothing internal', $excerpt !== null && array_keys($excerpt) === ['title', 'composer', 'measureFrom', 'measureTo', 'voice', 'verse',
-		'tempo', 'canPlay', 'xml']);
+		'tempo', 'canPlay', 'scan', 'xml']);
+
+	$publicWhole = $links->create($public->getId(), ['circle' => 'public', 'voice' => 'Alto', 'scan_file_id' => $scanId], $uid);
+	$wholeExcerpt = $shared->publicExcerpt($publicWhole->getToken());
+	$check('a public link without measures shows the whole piece', $wholeExcerpt !== null && $wholeExcerpt['measureFrom'] === null
+		&& $measures($wholeExcerpt['xml']) === $wholePiece);
+	$check('and offers the scan', $wholeExcerpt !== null && $wholeExcerpt['scan'] === true);
+	$check('the public page of the whole piece', $publicPage($publicWhole->getToken()) instanceof PublicTemplateResponse);
+	$check('the public scan is shown inline for the PDF viewer', $isInlinePdf($publicScan($publicWhole->getToken())));
+	$check('a public link without a scan: the 404 page for the scan', $isNotFoundPage($publicScan($link->getToken())));
+	$check('an unknown token: the same 404 page for the scan', $isNotFoundPage($publicScan(str_repeat('x', 32))));
+	$check('a link for choir members: the same 404 page for the scan', $isNotFoundPage($publicScan($wholeLink->getToken())));
 	$page = $publicPage($link->getToken());
 	$check('the public page answers with the public layout', $page instanceof PublicTemplateResponse && $page->getStatus() === Http::STATUS_OK
 		&& !$page->isThrottled());
@@ -261,6 +337,7 @@ try {
 	$check('valid again: the page', $publicPage($link->getToken()) instanceof PublicTemplateResponse);
 	$modules->change([Modules::PUBLIC_LINKS => false]);
 	$check('the module switched off: the same 404 page', $isNotFoundPage($publicPage($link->getToken())));
+	$check('the module switched off: the same 404 page for the scan', $isNotFoundPage($publicScan($publicWhole->getToken())));
 	$modules->change([Modules::PUBLIC_LINKS => true]);
 	$links->revoke($link->getId(), $uid);
 	$check('a revoked link: the same 404 page', $isNotFoundPage($publicPage($link->getToken())));
@@ -285,6 +362,9 @@ try {
 		&& count($response->getParams()['entries'] ?? []) === count($titles));
 	$rights->setOpen($public->getVersionId(), $uid, 'integration test');
 	$check('when the rights change, the work leaves the page at once', count($repertoire->entries()) === count($titles) - 1);
+	$check('and the scan is refused at once: for choir members', $throws(fn () => $shared->memberScan($wholeLink->getToken(), $memberUid))
+		=== 'This piece is no longer shared with choir members.');
+	$check('and for the public: the same 404 page', $isNotFoundPage($publicScan($publicWhole->getToken())));
 	$modules->change([Modules::PUBLIC_REPERTOIRE => false]);
 	try {
 		$middleware->beforeController($repertoirePage, 'index');

@@ -28,6 +28,7 @@ use OCA\Notenarchiv\Db\WorkVersionMapper;
 use OCA\Notenarchiv\Exception\AccessDeniedException;
 use OCA\Notenarchiv\Exception\InvalidInputException;
 use OCA\Notenarchiv\Exception\ModuleDisabledException;
+use OCA\Notenarchiv\Exception\NotFoundException;
 use OCA\Notenarchiv\Exception\UnknownLinkException;
 use OCA\Notenarchiv\Service\AppSettings;
 use OCA\Notenarchiv\Service\AuditLog;
@@ -40,6 +41,7 @@ use OCA\Notenarchiv\Service\PublicRepertoireService;
 use OCA\Notenarchiv\Service\RightsPolicy;
 use OCA\Notenarchiv\Service\RightsService;
 use OCA\Notenarchiv\Service\Roles;
+use OCA\Notenarchiv\Service\ScanService;
 use OCA\Notenarchiv\Service\ScoreService;
 use OCA\Notenarchiv\Service\SharedLinkService;
 use OCA\Notenarchiv\Tests\Unit\Support\ModuleSwitches;
@@ -66,6 +68,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(AuditLog::class)]
 #[UsesClass(MusicXmlExcerpt::class)]
 #[UsesClass(Modules::class)]
+#[UsesClass(ScanService::class)]
 final class SharingTest extends TestCase {
 	use ModuleSwitches;
 
@@ -81,6 +84,9 @@ final class SharingTest extends TestCase {
 		. '<measure number="2"><note><pitch><step>D</step><octave>5</octave></pitch><duration>4</duration><type>whole</type></note></measure>'
 		. '<measure number="3"><note><pitch><step>E</step><octave>5</octave></pitch><duration>4</duration><type>whole</type></note></measure>'
 		. '</part></score-partwise>';
+
+	/** The start of a PDF document, enough for ScanService::isPdf() */
+	private const PDF = "%PDF-1.7\n%\xE2\xE3\xCF\xD3\n";
 
 	/** @var list<array{string, ?string, mixed}> audit entries: action, field, new value */
 	private array $audit = [];
@@ -144,8 +150,14 @@ final class SharingTest extends TestCase {
 		$files = $this->createStub(ArchiveFileMapper::class);
 		$file = new ArchiveFile();
 		$file->setId(4);
+		$file->setCopyId(35);
+		$file->setRole('musicxml');
+		$file->setName('1-03.musicxml');
 		$file->setEtag('e1');
-		$files->method('find')->willReturn($file);
+		$archiveFiles = [4 => $file, 5 => self::archiveFile(5, 35, 'score_pdf', '1-03.pdf'), 6 => self::archiveFile(6, 36, 'score_pdf', '1-04.pdf'),
+			7 => self::archiveFile(7, 35, 'score_pdf', '1-03 old.pdf', false)];
+		$files->method('find')->willReturnCallback(fn (int $id): ArchiveFile => $archiveFiles[$id] ?? throw new DoesNotExistException('none'));
+		$files->method('findByCopy')->willReturn([$file, $archiveFiles[5], $archiveFiles[7]]);
 		$scores = $this->createStub(ScoreService::class);
 		$scores->method('describe')->willReturn($withScore
 			? ['fileId' => 4, 'fileName' => '1-03.musicxml', 'canView' => true, 'canPlay' => true, 'reason' => null, 'canExportAudio' => false, 'exportReason' => null]
@@ -159,9 +171,23 @@ final class SharingTest extends TestCase {
 		});
 		$random = $this->createStub(ISecureRandom::class);
 		$random->method('generate')->willReturn(self::TOKEN);
+		$scans = $this->createStub(ScanService::class);
+		$scans->method('scan')->willReturn($this->createStub(File::class));
 		return new LinkService($mapper, $copies, $versions, $files, $scores, $this->policy($denials), $this->rights(), $this->auditLog(),
 			$this->createStub(Roles::class), $this->createStub(IUserManager::class), $random, $this->createStub(ITimeFactory::class),
-			$this->modulesWithout($off));
+			$this->modulesWithout($off), $scans);
+	}
+
+	private static function archiveFile(int $id, int $copyId, string $role, string $name, bool $found = true): ArchiveFile {
+		$file = new ArchiveFile();
+		$file->setId($id);
+		$file->setFileId(4700 + $id);
+		$file->setCopyId($copyId);
+		$file->setRole($role);
+		$file->setType($role === 'score_pdf' ? 'pdf' : 'musicxml');
+		$file->setName($name);
+		$file->setFound($found);
+		return $file;
 	}
 
 	// ---- making links -------------------------------------------------------------
@@ -197,7 +223,8 @@ final class SharingTest extends TestCase {
 			self::assertSame($reason, $e->getMessage());
 		}
 		$cases = [
-			'no measures' => [['circle' => 'members', 'measure_from' => '1'], 'Please give the first and the last measure: choir members and the public only see these measures.'],
+			'one measure only' => [['circle' => 'members', 'measure_from' => '1'],
+				'Please give both the first and the last measure of the excerpt, or leave both empty to share the whole piece.'],
 			'a note for everyone' => [['circle' => 'public', 'measure_from' => '1', 'measure_to' => '2', 'note' => 'internal remark'],
 				'A public link has no note, because everyone could read it. Please leave the note empty.'],
 			'a measure that is not there' => [['circle' => 'public', 'measure_from' => '2', 'measure_to' => '9'], 'There is no measure %s in this score.'],
@@ -219,9 +246,66 @@ final class SharingTest extends TestCase {
 		}
 	}
 
+	public function testALinkWithoutMeasuresSharesTheWholePiece(): void {
+		foreach (['members', 'public'] as $circle) {
+			$link = $this->links()->create(35, ['circle' => $circle, 'measure_from' => '', 'measure_to' => null, 'voice' => 'Alto'], 'conductor');
+			self::assertSame($circle, $link->getCircle());
+			self::assertNull($link->getMeasureFrom(), $circle . ': the whole piece');
+			self::assertNull($link->getMeasureTo());
+			self::assertNull($link->getScanFileId(), 'no scan unless chosen');
+		}
+		$reason = 'Internal preservation copy: it is never published.';
+		try {
+			$this->links(['publicViewDenial' => $reason])->create(35, ['circle' => 'public'], 'conductor');
+			self::fail('the whole piece needs the same release as an excerpt');
+		} catch (AccessDeniedException $e) {
+			self::assertSame($reason, $e->getMessage());
+		}
+		try {
+			$this->links([], [], false)->create(35, ['circle' => 'members'], 'conductor');
+			self::fail('no MusicXML');
+		} catch (InvalidInputException $e) {
+			self::assertSame(LinkService::NO_SCORE, $e->getMessage());
+		}
+	}
+
+	public function testALinkOffersTheScanOnlyUnderTheSameRelease(): void {
+		$link = $this->links()->create(35, ['circle' => 'members', 'scan_file_id' => '5'], 'conductor');
+		self::assertSame(5, $link->getScanFileId());
+		self::assertContains(['created', 'scan_file_id', 5], $this->audit, 'recorded');
+		self::assertSame(5, $this->links()->create(35, ['circle' => 'public', 'measure_from' => '1', 'measure_to' => '2', 'scan_file_id' => 5],
+			'conductor')->getScanFileId(), 'also with an excerpt');
+
+		foreach (['memberViewDenial' => 'members', 'publicViewDenial' => 'public'] as $method => $circle) {
+			try {
+				$this->links([$method => 'Not released.'])->create(35, ['circle' => $circle, 'scan_file_id' => 5], 'conductor');
+				self::fail($circle . ': not released');
+			} catch (AccessDeniedException $e) {
+				self::assertSame('Not released.', $e->getMessage());
+			}
+		}
+		$refused = [
+			'internal' => [['scan_file_id' => 5], 'Only links for choir members and public links offer the scan; the archive roles see it beside the score.'],
+			'another copy' => [['circle' => 'members', 'scan_file_id' => 6], 'This scan does not belong to the copy. Please choose one of the PDF files of the copy (tab "Files").'],
+			'no PDF' => [['circle' => 'members', 'scan_file_id' => 4], 'This scan does not belong to the copy. Please choose one of the PDF files of the copy (tab "Files").'],
+			'no longer found' => [['circle' => 'members', 'scan_file_id' => 7], 'This scan does not belong to the copy. Please choose one of the PDF files of the copy (tab "Files").'],
+			'unknown' => [['circle' => 'members', 'scan_file_id' => 99], 'This scan does not belong to the copy. Please choose one of the PDF files of the copy (tab "Files").'],
+			'not a number' => [['circle' => 'members', 'scan_file_id' => 'x'], '"%s": value not allowed.'],
+		];
+		foreach ($refused as $case => [$data, $message]) {
+			try {
+				$this->links()->create(35, $data, 'conductor');
+				self::fail($case);
+			} catch (InvalidInputException $e) {
+				self::assertSame($message, $e->getMessage(), $case);
+			}
+		}
+	}
+
 	public function testTheDialogLearnsWhatTheRecipientsGet(): void {
 		$options = $this->links(['publicPlayDenial' => 'Protected version: playback needs a license for practice audio.'], [Modules::MEMBER_PRACTICE_AUDIO])
 			->circleOptions(35, 'conductor');
+		self::assertSame([['id' => 5, 'name' => '1-03.pdf']], $options['scans'], 'the PDF scans of the copy that are still found');
 		self::assertSame(['available' => true, 'allowed' => true, 'reason' => null, 'playback' => true, 'practiceAudio' => false], $options['members'],
 			'practice audio for choir members is switched off');
 		self::assertSame(['available' => true, 'allowed' => true, 'reason' => 'Protected version: playback needs a license for practice audio.',
@@ -250,6 +334,19 @@ final class SharingTest extends TestCase {
 			$link->setValue($column, $value);
 		}
 		return $link;
+	}
+
+	private function node(string $content): File {
+		$node = $this->createStub(File::class);
+		$node->method('getSize')->willReturn(strlen($content));
+		$node->method('fopen')->willReturnCallback(function () use ($content) {
+			$stream = fopen('php://memory', 'r+');
+			self::assertIsResource($stream);
+			fwrite($stream, $content);
+			rewind($stream);
+			return $stream;
+		});
+		return $node;
 	}
 
 	/**
@@ -287,22 +384,21 @@ final class SharingTest extends TestCase {
 		$file->setRole('musicxml');
 		$file->setType('musicxml');
 		$file->setName('1-03.musicxml');
+		$scan = self::archiveFile(5, 35, 'score_pdf', '1-03.pdf');
 		$files = $this->createStub(ArchiveFileMapper::class);
-		$files->method('findByCopy')->willReturn([$file]);
+		$files->method('findByCopy')->willReturn([$file, $scan]);
+		$files->method('find')->willReturnCallback(fn (int $id): ArchiveFile => match ($id) {
+			4 => $file,
+			5 => $scan,
+			6 => self::archiveFile(6, 36, 'score_pdf', '1-04.pdf'),
+			default => throw new DoesNotExistException('none'),
+		});
 		$scores = $this->createStub(ScoreService::class);
 		$scores->method('isScore')->willReturn(true);
 		$scores->method('scoreText')->willReturn(['xml' => self::SCORE, 'entry' => null]);
-		$node = $this->createStub(File::class);
-		$node->method('getSize')->willReturn(strlen(self::SCORE));
-		$node->method('fopen')->willReturnCallback(function () {
-			$stream = fopen('php://memory', 'r+');
-			self::assertIsResource($stream);
-			fwrite($stream, self::SCORE);
-			rewind($stream);
-			return $stream;
-		});
+		$nodes = [4711 => $this->node(self::SCORE), 4705 => $this->node(self::PDF), 4706 => $this->node(self::PDF)];
 		$folder = $this->createStub(Folder::class);
-		$folder->method('getFirstNodeById')->willReturn($node);
+		$folder->method('getFirstNodeById')->willReturnCallback(fn (int $id): ?File => $nodes[$id] ?? null);
 		$settings = $this->createStub(AppSettings::class);
 		$settings->method('archiveInfo')->willReturn(['id' => 1, 'path' => 'Notenarchiv', 'user' => 'archive']);
 		$settings->method('archiveFolder')->willReturn($folder);
@@ -320,7 +416,7 @@ final class SharingTest extends TestCase {
 		self::assertCount(1, $list, 'only active links for choir members');
 		self::assertSame(['token' => self::TOKEN, 'title' => 'Abendlied', 'composer' => 'J. Rheinberger', 'measure_from' => '2', 'measure_to' => '3',
 			'voice' => 'Alto', 'verse' => null, 'tempo' => null, 'note' => 'Please practise until Thursday.', 'expires' => '2026-12-31',
-			'canPlay' => true, 'canExportAudio' => true, 'reason' => null], $list[0]);
+			'canPlay' => true, 'canExportAudio' => true, 'reason' => null, 'scan' => false], $list[0]);
 
 		$xml = $shared->memberScore(self::TOKEN, 'singer');
 		self::assertStringContainsString('<measure number="2"', $xml);
@@ -342,14 +438,75 @@ final class SharingTest extends TestCase {
 		$shared = $this->shared([$this->link('members')], ['memberViewDenial' => 'Public domain is not confirmed yet.']);
 		self::assertSame([], $shared->forMember('singer'), 'no longer released: not listed');
 		$this->expectException(AccessDeniedException::class);
-		$this->expectExceptionMessage('This excerpt is no longer shared with choir members.');
+		$this->expectExceptionMessage('This piece is no longer shared with choir members.');
 		$shared->memberScore(self::TOKEN, 'singer');
+	}
+
+	public function testChoirMembersGetTheWholePieceAndTheScanOfTheLink(): void {
+		$whole = $this->link('members', ['measure_from' => null, 'measure_to' => null, 'scan_file_id' => 5]);
+		$excerpt = $this->link('members', ['token' => str_repeat('x', 32)]);
+		$shared = $this->shared([$whole, $excerpt]);
+		$list = $shared->forMember('singer');
+		self::assertSame([null, null, true], [$list[0]['measure_from'], $list[0]['measure_to'], $list[0]['scan']]);
+		self::assertFalse($list[1]['scan']);
+
+		$xml = $shared->memberScore(self::TOKEN, 'singer');
+		foreach (['1', '2', '3'] as $number) {
+			self::assertStringContainsString('<measure number="' . $number . '"', $xml, 'the whole piece');
+		}
+		self::assertStringContainsString('<work-title>Abendlied</work-title>', $xml);
+
+		self::assertSame(strlen(self::PDF), $shared->memberScan(self::TOKEN, 'singer')->getSize(), 'the scan of the link');
+		try {
+			$shared->memberScan(str_repeat('x', 32), 'singer');
+			self::fail('a link without a scan');
+		} catch (NotFoundException $e) {
+			self::assertSame('The scan of this link is not available at the moment.', $e->getMessage());
+		}
+		$foreign = $this->shared([$this->link('members', ['scan_file_id' => 6])]);
+		try {
+			$foreign->memberScan(self::TOKEN, 'singer');
+			self::fail('a scan of another copy');
+		} catch (NotFoundException) {
+			self::assertTrue(true);
+		}
+		$withdrawn = $this->shared([$whole], ['memberViewDenial' => 'Public domain is not confirmed yet.']);
+		try {
+			$withdrawn->memberScan(self::TOKEN, 'singer');
+			self::fail('no longer released: no scan either');
+		} catch (AccessDeniedException $e) {
+			self::assertSame('This piece is no longer shared with choir members.', $e->getMessage());
+		}
+		$this->expectException(AccessDeniedException::class);
+		$this->shared([$whole], [], false)->memberScan(self::TOKEN, 'reader');
+	}
+
+	public function testAPublicLinkShowsTheWholePieceAndItsScanUnderTheSameRules(): void {
+		$whole = $this->link('public', ['measure_from' => null, 'measure_to' => null, 'scan_file_id' => 5]);
+		$excerpt = $this->shared([$whole])->publicExcerpt(self::TOKEN);
+		self::assertNotNull($excerpt);
+		self::assertSame([null, null, true], [$excerpt['measureFrom'], $excerpt['measureTo'], $excerpt['scan']]);
+		self::assertStringContainsString('<measure number="1"', $excerpt['xml'], 'the whole piece');
+		self::assertInstanceOf(File::class, $this->shared([$whole])->publicScan(self::TOKEN));
+
+		$refused = [
+			'no scan' => [[$this->link('public')], []],
+			'a scan of another copy' => [[$this->link('public', ['scan_file_id' => 6])], []],
+			'for choir members' => [[$this->link('members', ['scan_file_id' => 5])], []],
+			'revoked' => [[$this->link('public', ['scan_file_id' => 5, 'revoked' => 1700000000])], []],
+			'expired' => [[$this->link('public', ['scan_file_id' => 5, 'expires' => '2026-10-21'])], []],
+			'no longer released' => [[$whole], ['publicViewDenial' => 'Not released for publication.']],
+			'unknown' => [[], []],
+		];
+		foreach ($refused as $case => [$links, $denials]) {
+			self::assertNull($this->shared($links, $denials)->publicScan(self::TOKEN), $case);
+		}
 	}
 
 	public function testAPublicLinkShowsOnlyTheExcerptAndNothingInternal(): void {
 		$excerpt = $this->shared([$this->link('public')])->publicExcerpt(self::TOKEN);
 		self::assertNotNull($excerpt);
-		self::assertSame(['title', 'composer', 'measureFrom', 'measureTo', 'voice', 'verse', 'tempo', 'canPlay', 'xml'], array_keys($excerpt),
+		self::assertSame(['title', 'composer', 'measureFrom', 'measureTo', 'voice', 'verse', 'tempo', 'canPlay', 'scan', 'xml'], array_keys($excerpt),
 			'no note, no shelf mark, no account');
 		self::assertStringNotContainsString('<measure number="1"', $excerpt['xml']);
 		self::assertSame([9], $this->hits);
@@ -371,7 +528,8 @@ final class SharingTest extends TestCase {
 	public function testChoirMembersMakePracticeAudioOfTheirExcerptOnly(): void {
 		$service = new PracticeAudioService($this->createStub(WorkVersionMapper::class), $this->createStub(CopyMapper::class), $this->policy(),
 			$this->auditLog(), $this->createStub(Roles::class), $this->shared([$this->link('members')]), $this->rights());
-		$service->authorizeForMember(self::TOKEN, ['voice' => 'Alto', 'mode' => 'solo', 'format' => 'wav', 'tempo' => 80], 'singer');
+		$service->authorizeForMember(self::TOKEN, ['voice' => 'Alto', 'mode' => 'solo', 'format' => 'wav', 'tempo' => 80, 'measure_from' => '1',
+			'measure_to' => '3'], 'singer');
 		$entry = $this->audit[0] ?? null;
 		self::assertSame(PracticeAudioService::ACTION, $entry[0] ?? null);
 		self::assertSame(['copy' => '1-3', 'measures' => '2-3', 'voice' => 'Alto', 'mode' => 'solo', 'format' => 'wav', 'tempo' => 80, 'repeats' => true],
@@ -379,7 +537,28 @@ final class SharingTest extends TestCase {
 
 		$this->expectException(InvalidInputException::class);
 		$this->expectExceptionMessage('Unknown field: %s');
-		$service->authorizeForMember(self::TOKEN, ['format' => 'wav', 'measure_from' => '1'], 'singer');
+		$service->authorizeForMember(self::TOKEN, ['format' => 'wav', 'copy_id' => '36'], 'singer');
+	}
+
+	public function testPracticeAudioOfTheWholePieceIsCheckedAndRecordedTheSame(): void {
+		$whole = $this->link('members', ['measure_from' => null, 'measure_to' => null]);
+		$service = fn (array $denials = []): PracticeAudioService => new PracticeAudioService($this->createStub(WorkVersionMapper::class),
+			$this->createStub(CopyMapper::class), $this->policy($denials), $this->auditLog(), $this->createStub(Roles::class),
+			$this->shared([$whole], $denials), $this->rights());
+		$service()->authorizeForMember(self::TOKEN, ['voice' => 'Alto', 'mode' => 'focus', 'format' => 'midi', 'measure_from' => '1',
+			'measure_to' => '3'], 'singer');
+		self::assertSame(['copy' => '1-3', 'measures' => '1-3', 'voice' => 'Alto', 'mode' => 'focus', 'format' => 'midi', 'tempo' => 100, 'repeats' => true],
+			$this->audit[0][2] ?? null, 'the measures of the file');
+		try {
+			$service()->authorizeForMember(self::TOKEN, ['format' => 'wav'], 'singer');
+			self::fail('the measures of the file are named');
+		} catch (InvalidInputException $e) {
+			self::assertSame('Please give the first and the last measure.', $e->getMessage());
+		}
+		$reason = 'Public domain is not confirmed yet: practice audio files need a confirmed rights status or a license for practice audio.';
+		$this->expectException(AccessDeniedException::class);
+		$this->expectExceptionMessage($reason);
+		$service(['memberPracticeAudioDenial' => $reason])->authorizeForMember(self::TOKEN, ['format' => 'wav', 'measure_from' => '1', 'measure_to' => '3'], 'singer');
 	}
 
 	// ---- the public repertoire page ----------------------------------------------------

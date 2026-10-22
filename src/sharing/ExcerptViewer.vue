@@ -4,22 +4,26 @@
 -->
 <script setup lang="ts">
 /**
- * The slim score view of a shared excerpt (milestone 0.7): for choir
- * members on the page "Shared with me" and for public links. The server
- * has already cut the MusicXML to the measures of the link, so the whole
- * file is shown. The voice of the link is the focus voice; it can be played
- * louder or alone. Choir members may also make a practice file, when the
- * parent passes `exportAudio` (the server checks and records each one).
+ * The slim score view of a shared piece (milestone 0.7): for choir members
+ * on the page "Shared with me" and for public links. The server sends the
+ * measures of the link already cut, or the whole piece with its full
+ * playing order for a link without measures; all pages of it are shown, as
+ * in the score view of the archive. The voice of the link is the focus
+ * voice; it can be played louder or alone. Choir members may also make a
+ * practice file, when the parent passes `exportAudio` (the server checks
+ * and records each one).
  *
  * Built from the same modules as the score view of the archive (src/score);
  * the text reference and the text description are the alternatives to the
- * notation (WCAG 1.1.1). As there: a count-in, a loop (here over the whole
- * excerpt) and starting at a clicked note, or with the arrow keys.
+ * notation (WCAG 1.1.1). As there: a count-in, showing and looping a range
+ * of measures (From measure, To measure) and starting at a clicked note, or
+ * with the arrow keys.
  */
 import type { CountInBars } from '../score/countIn.ts'
 import type { MemberPracticeAudioInput } from '../types.ts'
 import type { PlayMode, ScorePlayer as ScorePlayerType } from '../score/player.ts'
 import type { PracticePart } from '../score/practice.ts'
+import type { MeasureRange } from '../score/range.ts'
 import type { ScoreModel } from '../score/model.ts'
 import type { Timeline } from '../score/timeline.ts'
 import type { VerovioToolkit } from '../score/toolkit.ts'
@@ -37,6 +41,7 @@ import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import NcRadioGroup from '@nextcloud/vue/components/NcRadioGroup'
 import NcRadioGroupButton from '@nextcloud/vue/components/NcRadioGroupButton'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
+import NcTextField from '@nextcloud/vue/components/NcTextField'
 import { countInFor, slotAt, storeCountIn, storedCountIn } from '../score/countIn.ts'
 import { markFocus } from '../score/emphasis.ts'
 import { loadScore, playbackTimeline, renderPages, selectMeasures } from '../score/model.ts'
@@ -48,16 +53,18 @@ import { measureStarts, nextPass, noteStarts } from '../score/timeline.ts'
 import { createToolkit } from '../score/toolkit.ts'
 import { voiceLabel } from '../score/voices.ts'
 import { encodeWav } from '../score/wav.ts'
-import { placeText } from '../references.ts'
+import { resolveRange } from '../score/range.ts'
 import { excerptTempo, TEMPO_MAX, TEMPO_MIN, voiceForServer, voiceOfLink } from './excerpt.ts'
+import { scopeText } from './linkScope.ts'
 
 const props = withDefaults(defineProps<{
-	/** MusicXML of the excerpt, already cut by the server */
+	/** MusicXML of the excerpt, already cut by the server, or of the whole piece */
 	xml: string
 	title: string
 	composer?: string
-	measureFrom: string
-	measureTo: string
+	/** measures of the link; null for the whole piece */
+	measureFrom: string | null
+	measureTo: string | null
 	/** voice of the link: the first focus voice */
 	voice?: string | null
 	verse?: number | null
@@ -120,6 +127,9 @@ async function load(): Promise<void> {
 		await nextFrame()
 		const loaded = loadScore(created, props.xml)
 		model.value = loaded
+		range.value = null
+		rangeFrom.value = numberSpan.value.first
+		rangeTo.value = numberSpan.value.last
 		focusKey.value = voiceOfLink(loaded.voices, props.voice, labelOf)?.key ?? ''
 		mode.value = focusKey.value !== '' ? 'focus' : 'all'
 		status.value = 'ready'
@@ -148,7 +158,7 @@ function layout(): void {
 	const width = Math.max(280, container.clientWidth - 16)
 	lastWidth = container.clientWidth
 	toolkit.setOptions({ scale, pageWidth: Math.min(100000, Math.max(100, Math.round(width * 100 / scale))) })
-	selectMeasures(toolkit, loaded, null)
+	selectMeasures(toolkit, loaded, range.value)
 	// cleaned before it goes into the page with v-html
 	pages.value = renderPages(toolkit).map(sanitizeSvg)
 	nextTick(() => {
@@ -156,6 +166,59 @@ function layout(): void {
 		applyFocus()
 		resetHighlights()
 	})
+}
+
+// ---- measures shown and played ------------------------------------------------
+
+const rangeFrom = ref('')
+const rangeTo = ref('')
+/** The shown measures; null for all measures that were sent */
+const range = shallowRef<MeasureRange | null>(null)
+const rangeError = ref('')
+
+const numberSpan = computed(() => {
+	const measures = model.value?.measures ?? []
+	return { first: measures[0]?.number ?? '', last: measures[measures.length - 1]?.number ?? '' }
+})
+
+/** Printed numbers of the shown measures */
+const shownNumbers = computed(() => {
+	const measures = model.value?.measures ?? []
+	const shown = range.value
+	return shown === null
+		? numberSpan.value
+		: { first: measures[shown.start]?.number ?? '', last: measures[shown.end]?.number ?? '' }
+})
+
+/** Show (and play, and loop) only the measures of the two fields, as in the score view. */
+function applyRange(): void {
+	const loaded = model.value
+	if (!loaded) {
+		return
+	}
+	const from = rangeFrom.value.trim() || numberSpan.value.first
+	const to = rangeTo.value.trim() || numberSpan.value.last
+	const result = resolveRange(loaded.measures, from, to)
+	if ('error' in result) {
+		rangeError.value = result.error === 'order'
+			? t('notenarchiv', 'Measure {to} does not come after measure {from}.', { from, to })
+			: t('notenarchiv', 'There is no measure {number} in this score.', { number: result.error === 'from' ? from : to })
+		return
+	}
+	rangeError.value = ''
+	range.value = result.start === 0 && result.end === loaded.measures.length - 1 ? null : result
+	layout()
+	updateTimeline()
+	announce(t('notenarchiv', 'Measures {from} to {to}', { from: shownNumbers.value.first, to: shownNumbers.value.last }))
+}
+
+function showAllMeasures(): void {
+	rangeFrom.value = numberSpan.value.first
+	rangeTo.value = numberSpan.value.last
+	rangeError.value = ''
+	range.value = null
+	layout()
+	updateTimeline()
 }
 
 /**
@@ -242,7 +305,7 @@ function applyFocus(): void {
 const playing = ref(false)
 const mode = ref<PlayMode>('all')
 const repeats = ref(true)
-/** Play the excerpt again and again */
+/** Play the shown measures again and again */
 const loop = ref(false)
 /** Bars of count-in, remembered in this browser (as in the score view) */
 const countInBars = ref<CountInBars>(storedCountIn())
@@ -264,7 +327,7 @@ function updateTimeline(): void {
 		return
 	}
 	stop()
-	timeline.value = playbackTimeline(loaded, null, repeats.value)
+	timeline.value = playbackTimeline(loaded, range.value, repeats.value)
 	player?.setTimeline(timeline.value)
 }
 
@@ -419,9 +482,14 @@ watch(tempoPercent, (value) => player?.setRate(value / 100))
 watch(repeats, () => updateTimeline())
 watch(countInBars, (bars) => storeCountIn(bars))
 watch(loop, (on) => {
+	// The loop takes the measures of the fields "From measure" and "To measure"
+	const shown = shownNumbers.value
+	if (on && (rangeFrom.value.trim() !== shown.first || rangeTo.value.trim() !== shown.last)) {
+		applyRange()
+	}
 	player?.setLoop(on)
 	announce(on
-		? t('notenarchiv', 'Loop on: measures {from} to {to} play again and again.', { from: props.measureFrom, to: props.measureTo })
+		? t('notenarchiv', 'Loop on: measures {from} to {to} play again and again.', { from: shownNumbers.value.first, to: shownNumbers.value.last })
 		: t('notenarchiv', 'Loop off.'))
 })
 
@@ -557,15 +625,29 @@ const WORDS = {
 	verse: (verse: string) => t('notenarchiv', 'verse {verse}', { verse }),
 }
 
-/** Text reference of the excerpt: title, measures, voice of the link, verse. */
-const reference = computed(() => [props.title, placeText({
+/** A link without measures: the whole piece */
+const whole = computed(() => props.measureFrom === null || props.measureTo === null)
+
+/** Text reference of the link: title, measures or "Whole piece", voice of the link, verse. */
+const reference = computed(() => [props.title, scopeText({
 	measureFrom: props.measureFrom,
 	measureTo: props.measureTo,
 	voice: props.voice,
 	verse: props.verse,
-}, WORDS)].filter((part) => part.trim() !== '').join(' · '))
+}, WORDS, t('notenarchiv', 'Whole piece'))].filter((part) => part.trim() !== '').join(' · '))
 
-const rangeText = computed(() => t('notenarchiv', 'Measures {from} to {to}', { from: props.measureFrom, to: props.measureTo }))
+/** The shown measures as text */
+const rangeText = computed(() => (whole.value && range.value === null
+	? t('notenarchiv', 'Whole piece')
+	: t('notenarchiv', 'Measures {from} to {to}', { from: shownNumbers.value.first, to: shownNumbers.value.last })))
+
+const rangeHint = computed(() => {
+	const parts = [t('notenarchiv', 'Printed measure numbers {first} to {last}.', numberSpan.value)]
+	if (model.value?.pickup) {
+		parts.push(t('notenarchiv', 'The pickup is measure 0.'))
+	}
+	return parts.join(' ')
+})
 
 const keyText = computed(() => {
 	const signatures = model.value?.signatures
@@ -602,7 +684,7 @@ const description = computed(() => {
 		return ''
 	}
 	const sentences = [
-		t('notenarchiv', 'Excerpt of {title}', { title: props.title }),
+		whole.value ? t('notenarchiv', 'Score of {title}', { title: props.title }) : t('notenarchiv', 'Excerpt of {title}', { title: props.title }),
 		rangeText.value,
 		n('notenarchiv', '%n voice: {voices}', '%n voices: {voices}', loaded.voices.length, { voices: loaded.voices.map(labelOf).join(', ') }),
 		focusVoice.value
@@ -693,7 +775,9 @@ async function makePracticeFile(): Promise<void> {
 	const part = exportPart.value
 	const rate = tempoPercent.value / 100
 	const ext = format.value === 'wav' ? 'wav' : 'mid'
-	const name = practiceFileName({ shelfmark: '', title: props.title, label: part.label, from: props.measureFrom, to: props.measureTo, ext })
+	const shown = range.value
+	const { first, last } = shownNumbers.value
+	const name = practiceFileName({ shelfmark: '', title: props.title, label: part.label, from: first, to: last, ext })
 	exporting.value = true
 	exportError.value = ''
 	exportStatus.value = t('notenarchiv', 'Checking the rights …')
@@ -706,10 +790,12 @@ async function makePracticeFile(): Promise<void> {
 			format: format.value,
 			tempo: tempoPercent.value,
 			repeats: repeats.value,
+			measure_from: first,
+			measure_to: last,
 		})
 		exportStatus.value = t('notenarchiv', 'Making the file …')
 		await nextFrame()
-		const events = playbackTimeline(loaded, null, repeats.value)
+		const events = playbackTimeline(loaded, shown, repeats.value)
 		const countIn = countInFor(loaded, events, 0, countInBars.value)
 		let data: Uint8Array
 		if (format.value === 'midi') {
@@ -916,7 +1002,38 @@ onBeforeUnmount(() => {
 						</NcButton>
 					</div>
 				</section>
+
+				<section class="excerpt-viewer__group" :aria-label="t('notenarchiv', 'Measures')">
+					<form class="excerpt-viewer__buttons" @submit.prevent="applyRange">
+						<!-- NcTextField puts a class on its input, not on its box: the width is set here -->
+						<div class="excerpt-viewer__measure-field">
+							<NcTextField v-model="rangeFrom"
+								:label="t('notenarchiv', 'From measure')"
+								:error="rangeError !== ''" />
+						</div>
+						<div class="excerpt-viewer__measure-field">
+							<NcTextField v-model="rangeTo"
+								:label="t('notenarchiv', 'To measure')"
+								:error="rangeError !== ''" />
+						</div>
+						<NcButton type="submit">
+							{{ t('notenarchiv', 'Show') }}
+						</NcButton>
+						<NcButton v-if="range" variant="tertiary" @click="showAllMeasures">
+							{{ t('notenarchiv', 'All measures') }}
+						</NcButton>
+					</form>
+				</section>
 			</div>
+			<p v-if="rangeError" class="excerpt-viewer__error" role="alert">
+				{{ rangeError }}
+			</p>
+			<p class="excerpt-viewer__hint">
+				{{ rangeHint }}
+				<template v-if="canPlay">
+					{{ t('notenarchiv', '"Loop" plays the shown measures again and again.') }}
+				</template>
+			</p>
 
 			<p :id="summaryId" class="excerpt-viewer__summary">
 				{{ summary }}
@@ -953,7 +1070,7 @@ onBeforeUnmount(() => {
 				</div>
 			</div>
 			<details class="excerpt-viewer__description">
-				<summary>{{ t('notenarchiv', 'Description of the excerpt') }}</summary>
+				<summary>{{ whole ? t('notenarchiv', 'Description of the piece') : t('notenarchiv', 'Description of the excerpt') }}</summary>
 				<p>{{ description }}</p>
 			</details>
 
@@ -962,7 +1079,7 @@ onBeforeUnmount(() => {
 					{{ t('notenarchiv', 'Practice file') }}
 				</h3>
 				<p class="excerpt-viewer__hint">
-					{{ t('notenarchiv', 'A practice file of this excerpt for your own practising, made in your browser from the playback above: {choice}. Choose the voice and "Focus voice louder" or "Focus voice only" above. Every practice file is recorded in the audit log of the music archive.', { choice: exportChoice }) }}
+					{{ t('notenarchiv', 'A practice file of the shown measures ({measures}) for your own practising, made in your browser from the playback above: {choice}. Choose the voice and "Focus voice louder" or "Focus voice only" above. Every practice file is recorded in the audit log of the music archive.', { measures: rangeText, choice: exportChoice }) }}
 				</p>
 				<div class="excerpt-viewer__buttons">
 					<NcRadioGroup v-model="format" :label="t('notenarchiv', 'Format')">
@@ -1073,6 +1190,14 @@ onBeforeUnmount(() => {
 .excerpt-viewer__hint,
 .excerpt-viewer__summary {
 	color: var(--color-text-maxcontrast);
+}
+
+.excerpt-viewer__measure-field {
+	width: 8em;
+}
+
+.excerpt-viewer__error {
+	color: var(--color-error-text, var(--color-error));
 }
 
 .excerpt-viewer__zoom-value {

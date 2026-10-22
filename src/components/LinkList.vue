@@ -4,10 +4,10 @@
 -->
 <script setup lang="ts">
 /**
- * Active excerpt links: who can open them (archive roles, choir members or
- * the public), where they point, until when they are valid, how often they
- * were opened (a count only, no names). The creator and the catalog role
- * can revoke a link.
+ * Active links: who can open them (archive roles, choir members or the
+ * public), what they share (the whole piece or measures, with the scan or
+ * not), until when they are valid, how often they were opened (a count
+ * only, no names). The creator and the catalog role can revoke a link.
  */
 import type { ExcerptLink } from '../types.ts'
 
@@ -22,7 +22,7 @@ import { errorMessage, linkUrl, revokeLink } from '../api.ts'
 import { copyText } from '../clipboard.ts'
 import { formatDate, formatDateTime } from '../format.ts'
 import { referenceWords } from '../labels.ts'
-import { placeText } from '../references.ts'
+import { scopeText } from '../sharing/linkScope.ts'
 import { entriesById, isLibrarian, meta, openEntry } from '../store.ts'
 
 withDefaults(defineProps<{
@@ -43,12 +43,12 @@ const emit = defineEmits<{
  * @param link - excerpt link
  */
 function place(link: ExcerptLink): string {
-	return placeText({
+	return scopeText({
 		measureFrom: link.measure_from,
 		measureTo: link.measure_to,
 		voice: link.voice,
 		verse: link.verse,
-	}, referenceWords()) || t('notenarchiv', 'whole score')
+	}, referenceWords(), t('notenarchiv', 'Whole piece'))
 }
 
 /**
@@ -135,6 +135,9 @@ async function revoke(): Promise<void> {
 						· {{ n('notenarchiv', 'opened %n time', 'opened %n times', link.hits) }}
 						<template v-if="link.tempo">
 							· {{ t('notenarchiv', 'tempo {percent} %', { percent: link.tempo }) }}
+						</template>
+						<template v-if="link.scan_file_id">
+							· {{ t('notenarchiv', 'with scan (PDF)') }}
 						</template>
 					</p>
 				</div>

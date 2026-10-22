@@ -29,6 +29,7 @@ use OCA\Notenarchiv\Service\NotificationService;
 use OCA\Notenarchiv\Service\RightsPolicy;
 use OCA\Notenarchiv\Service\RightsService;
 use OCA\Notenarchiv\Service\Roles;
+use OCA\Notenarchiv\Service\ScanService;
 use OCA\Notenarchiv\Service\ScoreService;
 use OCA\Notenarchiv\Service\TaskService;
 use OCP\AppFramework\Db\DoesNotExistException;
@@ -69,7 +70,7 @@ final class RequestBoundaryTest extends TestCase {
 		return new LinkService($mapper, $copies, $versions, $this->createStub(ArchiveFileMapper::class),
 			$this->createStub(ScoreService::class), $this->createStub(RightsPolicy::class), $this->rights(), $this->createStub(AuditLog::class),
 			$this->createStub(Roles::class), $this->createStub(IUserManager::class), $random, $this->createStub(ITimeFactory::class),
-			$this->createStub(Modules::class));
+			$this->createStub(Modules::class), $this->createStub(ScanService::class));
 	}
 
 	public function testLinkRefusesUnknownFields(): void {
@@ -116,7 +117,7 @@ final class RequestBoundaryTest extends TestCase {
 		$service = new LinkService($mapper, $copies, $this->createStub(WorkVersionMapper::class), $this->createStub(ArchiveFileMapper::class),
 			$this->createStub(ScoreService::class), $this->createStub(RightsPolicy::class), $this->rights(), $this->createStub(AuditLog::class),
 			$this->createStub(Roles::class), $this->createStub(IUserManager::class), $this->createStub(ISecureRandom::class),
-			$this->createStub(ITimeFactory::class), $this->createStub(Modules::class));
+			$this->createStub(ITimeFactory::class), $this->createStub(Modules::class), $this->createStub(ScanService::class));
 		try {
 			$service->resolve(str_repeat('b', 32), 'reader');
 			self::fail('no exception');

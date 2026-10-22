@@ -471,8 +471,12 @@ role; `members` for the choir members and `public` for everyone, see
 { "id": 9, "token": "32 alphanumeric characters", "copy_id": 35, "file_id": 78, "file_etag": "…",
   "measure_from": "62", "measure_to": "66", "voice": "Tenor II", "verse": null, "tempo": 80,
   "note": "…", "task_id": 4, "circle": "internal", "created": 1761150000, "expires": "2027-04-23",
-  "revoked": null, "hits": 3 }
+  "revoked": null, "hits": 3, "scan_file_id": null }
 ```
+
+A link without `measure_from` and `measure_to` points to the whole piece.
+`scan_file_id` (`files[].id` of a PDF scan) is only set for links for choir
+members and public links that offer the scan.
 
 Opening a link (`GET /api/links/{token}`) additionally returns `shelfmark`,
 `createdByName` and `changed` (`true` when the MusicXML changed since the link
@@ -493,7 +497,7 @@ Creating a task or a link refuses fields other than the ones listed below
 | `POST /api/copies/{id}/tasks` | `{ task: { kind, addressee, question, page?, measure_from?, measure_to?, voice?, verse?, category?, origin?, due? } }` | librarian, conductor, operations, contributor |
 | `POST /api/tasks/{id}/answer` | `{ answer }` | the addressed role |
 | `POST /api/tasks/{id}/close` | `{ status: "applied"\|"discarded", note? }` | librarian (operations for checks addressed to operations) |
-| `POST /api/copies/{id}/links` | `{ link: { measure_from?, measure_to?, voice?, verse?, tempo?, note?, task_id?, expires?, circle? } }` | librarian, conductor, operations |
+| `POST /api/copies/{id}/links` | `{ link: { measure_from?, measure_to?, voice?, verse?, tempo?, note?, task_id?, expires?, circle?, scan_file_id? } }` | librarian, conductor, operations |
 | `GET /api/copies/{id}/link-options` | – | librarian, conductor, operations: what a link for choir members or the public would allow (milestone 0.7) |
 | `GET /api/links` | – | any role: all active links of every circle (board/auditors can review them) |
 | `GET /api/links/{token}` | – | any role (rights checked on every call) |
@@ -1946,15 +1950,29 @@ is switched off. After opening, the app writes `?copy={copyId}` into the URL.
 Four modules, all off and part of no preset: links for choir members
 (`member_links`), their practice audio (`member_practice_audio`), public
 links (`public_links`) and the public repertoire page (`public_repertoire`).
-Choir members and the public never get a file of the archive: the server
-reads the current score file of the copy (`score` of the entry) through the
-account of the archive folder, only inside that folder, unpacks `.mxl` and
-cuts the measures of the link (`lib/Service/MusicXmlExcerpt.php`). The
-excerpt keeps title, credits, rights notice and part list; its first measure
-gets the attributes (divisions, key, time, clef, transposition, staves) and
-the tempo valid there; repeats, endings and jumps that lead out of the
-excerpt are removed, so that the excerpt plays from its first to its last
-measure.
+A link shares either the **whole piece** (no `measure_from` and
+`measure_to`) or an **excerpt** (both measures). Choir members and the
+public never get a file of the archive: the server reads the current score
+file of the copy (`score` of the entry) through the account of the archive
+folder, only inside that folder, unpacks `.mxl` and sends only the content
+for the view (`lib/Service/MusicXmlExcerpt.php`):
+
+- **Whole piece** (`MusicXmlExcerpt::whole`): every measure of every part,
+  with all repeats, endings and jumps, so the full playing order. Checked
+  like an excerpt (partwise MusicXML, no DTD subset, nothing expanded or
+  fetched); the document type declaration is dropped, the text is UTF-8.
+- **Excerpt** (`MusicXmlExcerpt::cut`): the excerpt keeps title, credits,
+  rights notice and part list; its first measure gets the attributes
+  (divisions, key, time, clef, transposition, staves) and the tempo valid
+  there; repeats, endings and jumps that lead out of the excerpt are
+  removed, so that the excerpt plays from its first to its last measure.
+
+A link may also offer the **scan** (PDF) of the copy (`scan_file_id`). It is
+read the same way and shown by the browser's own PDF viewer
+(`Content-Disposition: inline`). Guideline 2 applies: an excerpt counts as
+much as the whole piece and a scan as much as the notes, so all of them need
+the same release (see below); internal preservation copies are never
+shared. Whoever sees a scan can save it; no header prevents that.
 
 ### Making links for choir members and the public
 
@@ -1963,13 +1981,24 @@ measure.
 
 - The module of the circle must be active, else 404 `This function is
   switched off.`.
-- `measure_from` and `measure_to` are required and must exist in the score
-  (400 `Please give the first and the last measure: choir members and the
-  public only see these measures.`, `There is no measure %s in this score.`,
-  `Measure %s does not come after measure %s.`); the copy needs a MusicXML
-  file (400 `This copy has no MusicXML file. …`); only partwise MusicXML can
-  be cut (400 `Links for choir members and public links need a score in the
-  partwise MusicXML format.`).
+- `measure_from` and `measure_to`: both or none. None shares the whole
+  piece; one alone is refused (400 `Please give both the first and the last
+  measure of the excerpt, or leave both empty to share the whole piece.`).
+  Given measures must exist in the score (400 `There is no measure %s in
+  this score.`, `Measure %s does not come after measure %s.`). The copy
+  needs a MusicXML file (400 `This copy has no MusicXML file. …`); only
+  partwise MusicXML is shared (400 `Links for choir members and public
+  links need a score in the partwise MusicXML format.`), for the whole piece
+  as for an excerpt.
+- `scan_file_id` (optional): `files[].id` of a PDF scan of the copy (role
+  `score_pdf`, still found) that the account itself can open beside the
+  score (`ScanService::scan`). Else 400 `This scan does not belong to the
+  copy. Please choose one of the PDF files of the copy (tab "Files").`, or
+  `"%s": value not allowed.` for a value that is no number. Internal links
+  take no scan (400 `Only links for choir members and public links offer
+  the scan; the archive roles see it beside the score.`). The scan needs no
+  release of its own: the same as the notes (next point); the audit log
+  records it (`field` `scan_file_id`).
 - The rights (403 with the reason and the next step): `members` needs the
   release for the singers' portal (`RightsPolicy::memberViewDenial`:
   confirmed public domain or a license with use `portal`); `public` needs
@@ -1994,7 +2023,8 @@ version) tells the dialog what a link would allow, before it is made:
 { "members": { "available": true, "allowed": true, "reason": null, "playback": true, "practiceAudio": true },
   "public": { "available": true, "allowed": false,
               "reason": "Not released for publication. The catalog librarian sets the publication status of the version to \"Released for publication\".",
-              "playback": false, "practiceAudio": false } }
+              "playback": false, "practiceAudio": false },
+  "scans": [{ "id": 81, "name": "1-03_Grosser-Gott.pdf" }] }
 ```
 
 `available`: the module of the circle is active (else `reason` is `This kind
@@ -2003,7 +2033,9 @@ of the music archive under "Modules".`). `allowed`: the rights allow the
 link. `reason` (translated) says why it is not allowed, or else why the
 recipients cannot play it. `playback`: the recipients can play it;
 `practiceAudio`: choir members can make practice files (always `false` for
-`public`).
+`public`). `scans`: the PDF scans of the copy (role `score_pdf`, still
+found) that an allowed link may offer; the dialog offers "Include the scan
+(PDF)" only when there is one and the circle is allowed.
 
 ### The page of the choir members
 
@@ -2013,68 +2045,98 @@ role (module `member_links`) returns the page "Shared with me" (template
 `member`:
 
 ```json
-{ "links": [{ "token": "…", "title": "Abendlied", "composer": "J. Rheinberger", "measure_from": "2", "measure_to": "3",
+{ "links": [{ "token": "…", "title": "Abendlied", "composer": "J. Rheinberger", "measure_from": null, "measure_to": null,
               "voice": "Alto", "verse": null, "tempo": null, "note": "Please practise until Thursday.",
-              "expires": "2027-04-23", "canPlay": true, "canExportAudio": false, "reason": null }] }
+              "expires": "2027-04-23", "canPlay": true, "canExportAudio": false, "reason": null, "scan": true }] }
 ```
 
 Only active links of the circle `members` whose version is still released,
-newest first; no shelf marks and no account names. `reason` (translated)
-says why an excerpt cannot be played; `canExportAudio` needs the module
-`member_practice_audio` and the rights for practice audio.
+newest first; no shelf marks and no account names. `measure_from` and
+`measure_to` are `null` for the whole piece. `reason` (translated) says why
+the piece cannot be played; `canExportAudio` needs the module
+`member_practice_audio` and the rights for practice audio; `scan` says that
+the link offers the scan.
 
 | Method and path | Body | Who |
 |---|---|---|
 | `GET /api/member/links/{token}/score` | – | choir members; module `member_links` |
-| `POST /api/member/links/{token}/practice-audio` | `{ export: { voice, mode, format, tempo?, repeats? } }` | choir members; modules `member_links` and `member_practice_audio` |
+| `GET /api/member/links/{token}/scan` | – | choir members; module `member_links` |
+| `POST /api/member/links/{token}/practice-audio` | `{ export: { voice, mode, format, tempo?, repeats?, measure_from?, measure_to? } }` | choir members; modules `member_links` and `member_practice_audio` |
 
-`…/score` returns the measures of the link as MusicXML
+`…/score` returns the measures of the link, or the whole piece, as MusicXML
 (`application/vnd.recordare.musicxml+xml`, attachment `excerpt.musicxml`,
 `nosniff`, the strict policy of data responses) and counts the call.
 Errors: 403 `This page is only for choir members. …` (no choir member) or
-`This excerpt is no longer shared with choir members.` (the release is
-gone); 400 `This link has expired.`, `This link has been revoked.`, `This
-link does not exist.` (unknown token or a link of another circle: counts as
-a failed attempt for the brute-force protection); 404 `The score of this
-excerpt is not available at the moment.` (no file, or the account of the
-archive folder cannot read it).
+`This piece is no longer shared with choir members.` (the release is gone);
+400 `This link has expired.`, `This link has been revoked.`, `This link does
+not exist.` (unknown token or a link of another circle: counts as a failed
+attempt for the brute-force protection); 404 `The score of this link is not
+available at the moment.` (no file, or the account of the archive folder
+cannot read it).
+
+`…/scan` returns the scan the link offers, after the same checks as the
+score, for the browser's own PDF viewer: `application/pdf`,
+`Content-Disposition: inline; filename="scan.pdf"`, `nosniff`, not cached,
+and the policy of the scan beside the score (`default-src 'none'`,
+`object-src 'self'`, `frame-ancestors 'self'`). The page opens it in a tab
+of its own, so the route skips the CSRF check (a plain GET that only reads,
+like `GET /api/files/{id}/scan`); it is limited per account and protected by
+the brute-force protection. 404 `The scan of this link is not available at
+the moment.` when the link offers no scan, or the file is no longer a PDF of
+the copy or cannot be read; other errors as for `…/score`. Calls of the scan
+are not counted.
 
 `…/practice-audio` allows one file of one voice and records it like every
 export (`practice_audio`, see "Practice audio files"; the entry has the role
-`member`). Only `voice`, `mode` (`all`, `focus`, `solo`), `format` (`wav`,
-`midi`), `tempo` (25–200) and `repeats` are accepted (400 `Unknown field:
-%s` for others, also for `measure_from` or `copy_id`): copy and measures are
-those of the link. 403 with the reason when the rights refuse it
-(`RightsPolicy::memberPracticeAudioDenial`: the release for the singers'
-portal, playback, and a confirmed status or a license for practice audio).
-Answer `{ "ok": true }`.
+`member`). Accepted: `voice`, `mode` (`all`, `focus`, `solo`), `format`
+(`wav`, `midi`), `tempo` (25–200), `repeats`, `measure_from` and
+`measure_to` (400 `Unknown field: %s` for others, for example `copy_id`).
+The copy is that of the link. For an excerpt the measures are those of the
+link, whatever was sent; for the whole piece the request names the measures
+of the file (all of them or the part shown in the view; 400 `Please give
+the first and the last measure.` without them). 403 with the reason when the
+rights refuse it (`RightsPolicy::memberPracticeAudioDenial`: the release for
+the singers' portal, playback, and a confirmed status or a license for
+practice audio), for the whole piece as for an excerpt. Answer
+`{ "ok": true }`.
 
 ### Public pages
 
-The only routes without login (`#[PublicPage]`), each the only route of its
-controller, plain GET pages in Nextcloud's public layout, limited per
-address and per account and protected by the brute-force protection:
+The only routes without login (`#[PublicPage]`), the only routes of their
+controllers, plain GET requests, limited per address and per account and
+protected by the brute-force protection:
 
 | Path | Module | Shows |
 |---|---|---|
-| `GET /p/{token}` | `public_links` | one excerpt to view and play (template `public`, script `js/notenarchiv-public.mjs`) |
+| `GET /p/{token}` | `public_links` | one piece or excerpt to view and play, in Nextcloud's public layout (template `public`, script `js/notenarchiv-public.mjs`) |
+| `GET /p/{token}/scan` | `public_links` | the scan the link offers, for the browser's own PDF viewer |
 | `GET /repertoire` | `public_repertoire` | the public repertoire page, rendered on the server without script |
 
-`GET /p/{token}` carries everything in the initial state `excerpt`; there
-is no further request, no download and no practice audio:
+`GET /p/{token}` carries everything in the initial state `excerpt`; no
+download of the score file and no practice audio:
 
 ```json
 { "title": "Abendlied", "composer": "J. Rheinberger", "measureFrom": "9", "measureTo": "12",
-  "voice": "Alto", "verse": null, "tempo": null, "canPlay": true, "xml": "<?xml …?><score-partwise …>…</score-partwise>" }
+  "voice": "Alto", "verse": null, "tempo": null, "canPlay": true, "scan": false,
+  "xml": "<?xml …?><score-partwise …>…</score-partwise>" }
 ```
 
-No note, no shelf mark, no account name. Policy: as the app page
-(`'wasm-unsafe-eval'` only), no frames; `X-Robots-Tag: noindex, nofollow`.
-An unknown, malformed, expired or revoked token, a link of another circle, a
-version no longer released (`RightsPolicy::publicViewDenial`) and a
-switched-off module all answer with the same 404 page of Nextcloud, without
-a reason, marked as a failed attempt for the brute-force protection. Each
-shown page counts a call.
+`measureFrom` and `measureTo` are `null` for the whole piece (the header
+then says "Whole piece" instead of the measures). No note, no shelf mark, no
+account name. Policy: as the app page (`'wasm-unsafe-eval'` only), no
+frames; `X-Robots-Tag: noindex, nofollow`. An unknown, malformed, expired
+or revoked token, a link of another circle, a version no longer released
+(`RightsPolicy::publicViewDenial`) and a switched-off module all answer with
+the same 404 page of Nextcloud, without a reason, marked as a failed attempt
+for the brute-force protection. Each shown page counts a call.
+
+`GET /p/{token}/scan` (when `scan` is `true`, the page links to it) answers
+with the scan under the same checks as the page: `application/pdf`,
+`Content-Disposition: inline; filename="scan.pdf"`, `nosniff`, not cached,
+`X-Robots-Tag: noindex, nofollow` and the policy of the scan beside the
+score. Every failure, also a link without a scan or a scan that is no longer
+a readable PDF of the copy, gives the same 404 page. Calls of the scan are
+not counted.
 
 `GET /repertoire` lists the works with `public_repertoire` set that have a
 version confirmed public domain (no preservation copy), checked on every
@@ -2095,7 +2157,9 @@ them while `public_repertoire` is active):
 
 Migration `Version000710Date20261025100000` adds these three columns to
 `notarch_works`; links for choir members and public links use the existing
-column `circle` of `notarch_links`.
+column `circle` of `notarch_links`. Migration
+`Version000830Date20261028100000` adds `notarch_links.scan_file_id`
+(nullable, no default); a whole piece needs no column.
 ## Folder book (module `folder_book`, milestone 0.7)
 
 Which choir folder is out with whom since when. Read by `librarian`,

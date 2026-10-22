@@ -5,9 +5,10 @@
 
 /**
  * The calls of the page for choir members (milestone 0.7, see docs/api.md):
- * the excerpt of a link, already cut to its measures by the server, and the
- * permission for a practice file. Kept apart from api.ts, so that the small
- * bundle of this page does not carry the catalog.
+ * the score of a link (its measures, cut by the server, or the whole
+ * piece), the address of its scan and the permission for a practice file.
+ * Kept apart from api.ts, so that the small bundle of this page does not
+ * carry the catalog.
  */
 import type { MemberPracticeAudioInput } from '../types.ts'
 
@@ -19,10 +20,21 @@ import { errorMessage } from '../api.ts'
  * URL of an API endpoint of a member link.
  *
  * @param token - link token
- * @param action - 'score' or 'practice-audio'
+ * @param action - 'score', 'scan' or 'practice-audio'
  */
 function memberUrl(token: string, action: string): string {
 	return generateUrl('/apps/notenarchiv/api/member/links/{token}/{action}', { token, action })
+}
+
+/**
+ * Address of the scan a member link offers: opened by the browser itself
+ * (its PDF viewer, in a tab of its own); the server checks the role, the
+ * link and the rights.
+ *
+ * @param token - link token
+ */
+export function memberScanUrl(token: string): string {
+	return memberUrl(token, 'scan')
 }
 
 /**
@@ -47,8 +59,8 @@ function textErrorMessage(error: unknown): string {
 }
 
 /**
- * The MusicXML of the excerpt of a link for choir members: only its
- * measures. The server checks the role, the link and the rights.
+ * The MusicXML of a link for choir members: only its measures, or the
+ * whole piece. The server checks the role, the link and the rights.
  *
  * @param token - link token
  */

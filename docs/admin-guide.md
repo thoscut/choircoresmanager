@@ -748,14 +748,15 @@ one by one, after the choir has decided.
 
 | Module | What it opens |
 |---|---|
-| **Links for choir members** | The role **Choir members** sees the page "Shared with me": the excerpts that the music librarians or the conductor share with the choir, to view and play with a voice emphasised. Only for versions released for the singers' portal. |
-| **Practice audio for choir members** | Choir members make a WAV or MIDI file of one voice of such an excerpt, where the rights allow practice audio files. Every file is recorded in the audit log. |
-| **Public links** | A link that shows and plays an excerpt without login (`/apps/notenarchiv/p/<token>`). Only for versions released for publication that are confirmed public domain or have a license for online publication. |
+| **Links for choir members** | The role **Choir members** sees the page "Shared with me": the whole pieces or excerpts that the music librarians or the conductor share with the choir, to view and play with a voice emphasised, optionally with the scan (PDF). Only for versions released for the singers' portal. |
+| **Practice audio for choir members** | Choir members make a WAV or MIDI file of one voice of such a piece or excerpt, where the rights allow practice audio files. Every file is recorded in the audit log. |
+| **Public links** | A link that shows and plays a whole piece or an excerpt without login (`/apps/notenarchiv/p/<token>`), optionally with the scan (PDF). Only for versions released for publication that are confirmed public domain or have a license for online publication. |
 | **Public repertoire page** | `/apps/notenarchiv/repertoire`: the works the catalog librarian chooses among those with a version confirmed as public domain, with life dates, scoring and links to CPDL and IMSLP. |
 
 Whatever the switches say, choir members and the public only ever get the
-measures of an excerpt, never a file of the archive; internal preservation
-copies are never shared; the rights are checked again on every call; links
+content for the view (the whole piece or the measures of an excerpt), never
+the score file of the archive, and a scan only where the link includes it;
+internal preservation copies are never shared; the rights are checked again on every call; links
 expire after at most six months and can be revoked. [SECURITY.md](../SECURITY.md)
 describes the threat model.
 
@@ -787,9 +788,10 @@ describes the threat model.
    publication" on the version and confirmed public domain or a license with
    the use "Online publication (public links)".
 
-**Risks to weigh:** an excerpt that reaches a browser can be saved; legally
-it counts as much as the whole sheet, which is why only released versions
-can be shared. Links can be passed on until they expire or are revoked. The
+**Risks to weigh:** what reaches a browser can be saved, the notes as well
+as a scan, which the browser shows in its PDF viewer; legally an excerpt
+counts as much as the whole sheet, which is why only released versions can
+be shared, the whole piece, an excerpt and the scan alike. Links can be passed on until they expire or are revoked. The
 note of a link for choir members is read by all choir members. Calls are
 counted, but without names.
 
@@ -801,7 +803,8 @@ counted, but without names.
 | A choir member sees the archive instead of "Shared with me" | The account is also in a group with an archive role; remove it there. |
 | The dialog says a link is not possible | It names the reason and the next step: usually the rights of the version are not confirmed, a license for the singers' portal or for online publication is missing, or the publication status is not "Released for publication". |
 | The dialog says "This kind of link is switched off" | Switch on the module in the settings (Modules). |
-| "The score of this excerpt is not available at the moment." | The account that chose the archive folder (Settings → Archive folder) must still exist and see the folder, and the MusicXML file must still be in it. |
+| "The score of this link is not available at the moment." or "The scan of this link is not available at the moment." | The account that chose the archive folder (Settings → Archive folder) must still exist and see the folder, and the MusicXML file or the PDF scan must still be in it and linked to the copy. |
+| A public scan shows "not found" | The same reasons as for the page, or the PDF is no longer in the archive folder; make a new link with the scan linked again. |
 | A public link shows "not found" | It has expired, was revoked, the version is no longer released, or the module is off; the page does not tell which. Make a new link if needed. |
 
 ## 15. Folder book: retention period

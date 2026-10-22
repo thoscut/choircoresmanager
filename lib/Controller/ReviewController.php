@@ -25,8 +25,6 @@ use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\Attribute\UserRateLimit;
-use OCP\AppFramework\Http\EmptyContentSecurityPolicy;
-use OCP\AppFramework\Http\FileDisplayResponse;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\IL10N;
@@ -136,18 +134,8 @@ class ReviewController extends Controller {
 			return new JSONResponse(['error' => $this->translate($e->getMessage(), $e->getParameters())], $status);
 		}
 		// Shown by the browser's own PDF viewer, in a frame of the app page or
-		// a window of its own: inline, never sniffed as something else, and a
-		// policy that allows the PDF viewer only (object-src for the viewer
-		// plugin) and framing by the app itself. The file name is fixed (ASCII).
-		$response = new FileDisplayResponse($scan, Http::STATUS_OK, ['Content-Type' => 'application/pdf']);
-		$response->addHeader('Content-Disposition', 'inline; filename="scan.pdf"');
-		$response->addHeader('X-Content-Type-Options', 'nosniff');
-		$policy = new EmptyContentSecurityPolicy();
-		$policy->addAllowedObjectDomain('\'self\'');
-		$policy->addAllowedFrameAncestorDomain('\'self\'');
-		$response->setContentSecurityPolicy($policy);
-		$response->cacheFor(0, false, false);
-		return $response;
+		// a window of its own.
+		return ScanResponse::inline($scan);
 	}
 
 	/**

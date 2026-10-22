@@ -23,8 +23,13 @@ use OCP\AppFramework\Db\Entity;
  *
  * `circle` says who opens the link: the archive roles (`internal`), the
  * choir members (`members`, module member_links) or everyone (`public`,
- * module public_links). Choir members and the public only ever get the
- * measures of the excerpt, cut on the server.
+ * module public_links). Choir members and the public get the measures of
+ * the excerpt, cut on the server, or the whole piece when the link has no
+ * measures; never the score file.
+ *
+ * `scan_file_id` (circles `members` and `public` only) is the PDF scan
+ * (`notarch_files.id`, role `score_pdf`) offered besides the notes; null
+ * for none.
  *
  * @method string getToken()
  * @method void setToken(string $token)
@@ -60,6 +65,8 @@ use OCP\AppFramework\Db\Entity;
  * @method void setRevoked(?int $revoked)
  * @method int getHits()
  * @method void setHits(int $hits)
+ * @method int|null getScanFileId()
+ * @method void setScanFileId(?int $scanFileId)
  */
 class ExcerptLink extends Entity implements JsonSerializable {
 	use FieldAccess;
@@ -86,9 +93,10 @@ class ExcerptLink extends Entity implements JsonSerializable {
 	protected ?string $expires = null;
 	protected ?int $revoked = null;
 	protected int $hits = 0;
+	protected ?int $scanFileId = null;
 
 	public function __construct() {
-		foreach (['copyId', 'fileId', 'verse', 'tempo', 'taskId', 'created', 'revoked', 'hits'] as $field) {
+		foreach (['copyId', 'fileId', 'verse', 'tempo', 'taskId', 'created', 'revoked', 'hits', 'scanFileId'] as $field) {
 			$this->addType($field, 'integer');
 		}
 		foreach (['token', 'fileEtag', 'measureFrom', 'measureTo', 'voice', 'note', 'circle', 'createdBy', 'expires'] as $field) {

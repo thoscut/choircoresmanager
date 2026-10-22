@@ -12,6 +12,36 @@ All notable changes to this app are documented in this file. The format follows
 
 ### Added
 
+- Whole pieces in links for choir members and public links: the dialog
+  **Share …** asks **What is shared?** with **Whole piece** (the default)
+  or **Excerpt (measures)**; it starts with the excerpt when the score
+  viewer shows a range. A link without measures is the whole piece: the
+  server sends the complete MusicXML of the copy with its full playing
+  order (repeats, endings, jumps), read as before through the account of
+  the archive folder, `.mxl` unpacked, never the file itself
+  (`MusicXmlExcerpt::whole`). The same rights as for an excerpt (guideline
+  2). The page "Shared with me" and the public page show all pages, play
+  with focus voice, count-in and start at a note, and can show and loop a
+  chosen range of measures (**From measure**, **To measure**, **Show**,
+  **Loop**). Practice files of choir members work for the whole piece too,
+  with the same rights checks and audit entry; for a whole piece the
+  request names the measures of the file.
+- Optional scan in links for choir members and public links: **Include the
+  scan (PDF)** when the copy has a PDF scan, with the same release as the
+  notes (singers' portal for choir members; release for publication plus
+  confirmed public domain or a license for online publication for the
+  public), never for preservation copies or internal links. Shown inline by
+  the browser's PDF viewer (`GET /api/member/links/{token}/scan`,
+  `GET /p/{token}/scan`; `nosniff`, the policy of the scan beside the
+  score); unknown, expired and refused public tokens get the same 404. The
+  dialog and SECURITY.md say plainly that whoever sees the scan can save
+  it. Migration `Version000830Date20261028100000` adds
+  `notarch_links.scan_file_id`; `GET /api/copies/{id}/link-options` lists
+  the scans of the copy.
+- The dialog shows under **What the recipients see** whole piece or
+  measures, voice, playback, practice files, scan and expiry; the list of
+  links shows **Whole piece** or the measures and **with scan (PDF)**.
+
 - Settings under **Administration → Music archive** instead of a dialog in
   the app: archive folder, roles and groups, modules, repertoire and (for
   admins) complete backup and restore, on a page with its own small bundle

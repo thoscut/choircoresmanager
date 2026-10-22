@@ -7,9 +7,10 @@
  * The page "Shared with me" for choir members (role "member", module
  * "member_links", milestone 0.7). Choir members see nothing of the catalog:
  * only the links that the conductor or the music librarians made for them,
- * and above the list the score view of the chosen excerpt, which the server
- * cuts to its measures. The server sends the list with the page and checks
- * the role, the link and the rights again on every call.
+ * and above the list the score view of the chosen link: the whole piece or
+ * the measures the server cuts, and the scan (PDF) when the link offers it.
+ * The server sends the list with the page and checks the role, the link and
+ * the rights again on every call.
  */
 import type { MemberLink, MemberPageState, MemberPracticeAudioInput } from '../types.ts'
 
@@ -27,8 +28,8 @@ import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import ExcerptViewer from './ExcerptViewer.vue'
 import { focusAfterUpdate } from '../focus.ts'
 import { formatDate } from '../format.ts'
-import { placeText } from '../references.ts'
-import { authorizeMemberPracticeAudio, fetchMemberScore } from './api.ts'
+import { authorizeMemberPracticeAudio, fetchMemberScore, memberScanUrl } from './api.ts'
+import { scopeText } from './linkScope.ts'
 
 /**
  * The links from the page; an empty list if the state is missing.
@@ -65,12 +66,13 @@ const WORDS = {
 }
 
 /**
- * Measures, voice and verse of a link.
+ * Whole piece or measures, voice and verse of a link.
  *
  * @param link - member link
  */
 function place(link: MemberLink): string {
-	return placeText({ measureFrom: link.measure_from, measureTo: link.measure_to, voice: link.voice, verse: link.verse }, WORDS)
+	return scopeText({ measureFrom: link.measure_from, measureTo: link.measure_to, voice: link.voice, verse: link.verse }, WORDS,
+		t('notenarchiv', 'Whole piece'))
 }
 
 async function loadSelectedScore(): Promise<void> {
@@ -121,7 +123,7 @@ async function select(link: MemberLink, moveFocus = true): Promise<void> {
 function exportAudio(input: MemberPracticeAudioInput): Promise<void> {
 	const link = selected.value
 	if (!link) {
-		return Promise.reject(new Error(t('notenarchiv', 'Please choose an excerpt first.')))
+		return Promise.reject(new Error(t('notenarchiv', 'Please choose a piece from the list first.')))
 	}
 	return authorizeMemberPracticeAudio(link.token, input)
 }
@@ -132,7 +134,7 @@ onMounted(() => {
 	if (linked) {
 		select(linked, false)
 	} else if (token !== null) {
-		notice.value = t('notenarchiv', 'This link is not available to you, or no longer: it may have expired or been revoked. Please ask the conductor or the music librarians for a new link. Your other shared excerpts are listed below.')
+		notice.value = t('notenarchiv', 'This link is not available to you, or no longer: it may have expired or been revoked. Please ask the conductor or the music librarians for a new link. Everything else shared with you is listed below.')
 	} else if (links.length === 1) {
 		select(links[0], false)
 	}
@@ -148,7 +150,7 @@ onMounted(() => {
 					{{ t('notenarchiv', 'Shared with me') }}
 				</h2>
 				<p class="member-app__intro">
-					{{ t('notenarchiv', 'Excerpts of scores that the conductor or the music librarians share with the choir members: view, listen and practise your voice. Each link is valid for a limited time.') }}
+					{{ t('notenarchiv', 'Pieces and excerpts that the conductor or the music librarians share with the choir members: view, listen and practise your voice. Each link is valid for a limited time.') }}
 				</p>
 
 				<NcNoteCard v-if="notice" type="warning" role="status">
@@ -157,7 +159,7 @@ onMounted(() => {
 
 				<NcEmptyContent v-if="links.length === 0"
 					:name="t('notenarchiv', 'Nothing has been shared with you yet')"
-					:description="t('notenarchiv', 'When the conductor or the music librarians share an excerpt with the choir members, it appears here. Each link is valid for at most six months.')">
+					:description="t('notenarchiv', 'When the conductor or the music librarians share a piece or an excerpt with the choir members, it appears here. Each link is valid for at most six months.')">
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiMusicNoteOutline" />
 					</template>
@@ -179,6 +181,13 @@ onMounted(() => {
 						<p v-if="selected.expires" class="member-app__muted">
 							{{ t('notenarchiv', 'Valid until {date}', { date: formatDate(selected.expires) }) }}
 						</p>
+						<p v-if="selected.scan">
+							<!-- The browser's own PDF viewer, in a tab of its own -->
+							<a :href="memberScanUrl(selected.token)"
+								class="member-app__scan"
+								target="_blank"
+								rel="noopener noreferrer">{{ t('notenarchiv', 'Open the scan (PDF)') }}<span class="hidden-visually"> {{ t('notenarchiv', '(opens in a new tab)') }}</span></a>
+						</p>
 
 						<NcEmptyContent v-if="scoreStatus === 'loading'" :name="t('notenarchiv', 'Loading the score …')">
 							<template #icon>
@@ -186,7 +195,7 @@ onMounted(() => {
 							</template>
 						</NcEmptyContent>
 						<NcEmptyContent v-else-if="scoreStatus === 'error'"
-							:name="t('notenarchiv', 'The excerpt cannot be shown')"
+							:name="t('notenarchiv', 'The score cannot be shown')"
 							:description="scoreError">
 							<template #icon>
 								<NcIconSvgWrapper :path="mdiAlertCircleOutline" />
@@ -212,12 +221,12 @@ onMounted(() => {
 							:export-audio="selected.canExportAudio ? exportAudio : null" />
 					</section>
 					<p v-else class="member-app__muted">
-						{{ t('notenarchiv', 'Choose an excerpt from the list to see and hear it.') }}
+						{{ t('notenarchiv', 'Choose a piece from the list to see and hear it.') }}
 					</p>
 
 					<section class="member-app__list" :aria-labelledby="listHeadingId">
 						<h3 :id="listHeadingId" class="member-app__list-title">
-							{{ n('notenarchiv', '%n shared excerpt', '%n shared excerpts', links.length) }}
+							{{ n('notenarchiv', '%n shared link', '%n shared links', links.length) }}
 						</h3>
 						<ul class="member-app__items">
 							<li v-for="link in links"
@@ -244,6 +253,9 @@ onMounted(() => {
 									{{ link.canPlay ? t('notenarchiv', 'Playback: yes') : t('notenarchiv', 'Playback: no') }}
 									<template v-if="link.canExportAudio">
 										· {{ t('notenarchiv', 'Practice files: yes') }}
+									</template>
+									<template v-if="link.scan">
+										· {{ t('notenarchiv', 'with scan (PDF)') }}
 									</template>
 								</p>
 							</li>
@@ -343,6 +355,15 @@ onMounted(() => {
 	overflow-wrap: anywhere;
 }
 
+.member-app__scan {
+	display: inline-block;
+	min-height: var(--default-clickable-area);
+	line-height: var(--default-clickable-area);
+	color: var(--color-main-text);
+	text-decoration: underline;
+}
+
+.member-app__scan:focus-visible,
 .member-app__open:focus-visible {
 	outline: 2px solid var(--color-main-text);
 	outline-offset: 2px;

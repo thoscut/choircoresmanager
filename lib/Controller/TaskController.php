@@ -126,10 +126,10 @@ class TaskController extends Controller {
 	public function linkOptions(int $id): JSONResponse {
 		return $this->run(function (string $uid) use ($id) {
 			$options = $this->links->circleOptions($id, $uid);
-			foreach ($options as &$option) {
-				$option['reason'] = $option['reason'] === null ? null : $this->l->t($option['reason']);
+			foreach (['members', 'public'] as $circle) {
+				$reason = $options[$circle]['reason'];
+				$options[$circle]['reason'] = $reason === null ? null : $this->l->t($reason);
 			}
-			unset($option);
 			return $options;
 		});
 	}

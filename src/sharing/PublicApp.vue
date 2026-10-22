@@ -4,11 +4,12 @@
 -->
 <script setup lang="ts">
 /**
- * The page of a public link (module "public_links", milestone 0.7): one
- * excerpt of a score, viewed and played without signing in, inside
- * Nextcloud's public layout. The server sends the excerpt with the page,
- * already cut to its measures: no further requests, no download, no
- * practice file, no names of accounts, no notes.
+ * The page of a public link (module "public_links", milestone 0.7): a
+ * whole piece or an excerpt of a score, viewed and played without signing
+ * in, inside Nextcloud's public layout. The server sends the score with the
+ * page (the excerpt already cut to its measures): no download of the score
+ * file, no practice file, no names of accounts, no notes. When the link
+ * offers the scan, a link opens it in the browser's own PDF viewer.
  */
 import type { PublicExcerpt } from '../types.ts'
 
@@ -33,6 +34,9 @@ function initialExcerpt(): PublicExcerpt | null {
 }
 
 const excerpt = initialExcerpt()
+
+/** The scan of this link, next to the page's own address (/p/{token}/scan) */
+const scanUrl = window.location.pathname.replace(/\/+$/, '') + '/scan'
 </script>
 
 <template>
@@ -45,8 +49,17 @@ const excerpt = initialExcerpt()
 				{{ excerpt.composer }}
 			</p>
 			<NcNoteCard type="info">
-				{{ t('notenarchiv', 'An excerpt of a score, shared by the choir. Playback comes from a simple synthesizer in your browser; it is no substitute for a recording.') }}
+				{{ excerpt.measureFrom === null
+					? t('notenarchiv', 'A piece shared by the choir. Playback comes from a simple synthesizer in your browser; it is no substitute for a recording.')
+					: t('notenarchiv', 'An excerpt of a score, shared by the choir. Playback comes from a simple synthesizer in your browser; it is no substitute for a recording.') }}
 			</NcNoteCard>
+			<p v-if="excerpt.scan">
+				<!-- The browser's own PDF viewer, in a tab of its own -->
+				<a :href="scanUrl"
+					class="public-excerpt__scan"
+					target="_blank"
+					rel="noopener noreferrer">{{ t('notenarchiv', 'Open the scan (PDF)') }}<span class="hidden-visually"> {{ t('notenarchiv', '(opens in a new tab)') }}</span></a>
+			</p>
 			<ExcerptViewer :xml="excerpt.xml"
 				:title="excerpt.title"
 				:composer="excerpt.composer"
@@ -58,7 +71,7 @@ const excerpt = initialExcerpt()
 				:can-play="excerpt.canPlay" />
 		</template>
 		<NcEmptyContent v-else
-			:name="t('notenarchiv', 'The excerpt cannot be shown')"
+			:name="t('notenarchiv', 'The score cannot be shown')"
 			:description="t('notenarchiv', 'Please reload the page. If it stays empty, the link may no longer be valid.')">
 			<template #icon>
 				<NcIconSvgWrapper :path="mdiAlertCircleOutline" />
@@ -86,6 +99,19 @@ const excerpt = initialExcerpt()
 	font-size: 1.4em;
 	font-weight: bold;
 	overflow-wrap: anywhere;
+}
+
+.public-excerpt__scan {
+	display: inline-block;
+	min-height: var(--default-clickable-area);
+	line-height: var(--default-clickable-area);
+	color: var(--color-main-text);
+	text-decoration: underline;
+}
+
+.public-excerpt__scan:focus-visible {
+	outline: 2px solid var(--color-main-text);
+	outline-offset: 2px;
 }
 
 .public-excerpt__composer {

@@ -23,6 +23,7 @@ use OCA\Notenarchiv\Controller\PrintMirrorController;
 use OCA\Notenarchiv\Controller\PublicLinkController;
 use OCA\Notenarchiv\Controller\PublicRepertoireController;
 use OCA\Notenarchiv\Controller\ReviewController;
+use OCA\Notenarchiv\Controller\ScanResponse;
 use OCA\Notenarchiv\Controller\SettingsController;
 use OCA\Notenarchiv\Controller\StateController;
 use OCA\Notenarchiv\Controller\TaskController;
@@ -135,6 +136,7 @@ use Psr\Log\LoggerInterface;
 #[CoversClass(ReviewController::class)]
 #[CoversClass(MemberController::class)]
 #[CoversClass(PublicLinkController::class)]
+#[CoversClass(ScanResponse::class)]
 #[CoversClass(PublicRepertoireController::class)]
 #[CoversClass(FolderBookController::class)]
 #[CoversClass(PrintMirrorController::class)]
@@ -189,6 +191,8 @@ final class ControllerSecurityTest extends TestCase {
 		'ReviewController::scan',
 		// The public pages (milestone 0.7) are opened by the browser, without login.
 		'PublicLinkController::show', 'PublicRepertoireController::index',
+		// The scan of a link for choir members or of a public link, opened by the browser in a tab of its own.
+		'MemberController::scan', 'PublicLinkController::scan',
 	];
 
 	/** Expensive endpoints: limited per user (the statistics aggregate the whole archive) */
@@ -205,8 +209,8 @@ final class ControllerSecurityTest extends TestCase {
 		// answers only for files the account sees; limited against trying file ids all the same
 		'FilesIntegrationController::copyOfFile',
 		// the routes of the choir members and the public pages (milestone 0.7)
-		'MemberController::score', 'MemberController::practiceAudio',
-		'PublicLinkController::show', 'PublicRepertoireController::index',
+		'MemberController::score', 'MemberController::practiceAudio', 'MemberController::scan',
+		'PublicLinkController::show', 'PublicLinkController::scan', 'PublicRepertoireController::index',
 		// the folder book writes, and the print station reads and writes files
 		'FolderBookController::createFolder', 'FolderBookController::updateFolder', 'FolderBookController::issue',
 		'FolderBookController::takeBack', 'PrintMirrorController::preview', 'PrintMirrorController::sync',
@@ -218,12 +222,13 @@ final class ControllerSecurityTest extends TestCase {
 
 	/**
 	 * The only public routes (#[PublicPage], milestone 0.7) and their module:
-	 * the page of a public link and the public repertoire page. Each is the
-	 * only route of its controller, so that the exception cannot grow by a
-	 * method added later.
+	 * the page of a public link with the scan it offers, and the public
+	 * repertoire page. Their controllers have no other route, so that the
+	 * exception cannot grow by a method added later.
 	 */
 	private const PUBLIC_ROUTES = [
 		'PublicLinkController::show' => 'public_links',
+		'PublicLinkController::scan' => 'public_links',
 		'PublicRepertoireController::index' => 'public_repertoire',
 	];
 
@@ -238,6 +243,7 @@ final class ControllerSecurityTest extends TestCase {
 		'PageController::index' => [],
 		'MemberController::score' => ['member_links'],
 		'MemberController::practiceAudio' => ['member_links', 'member_practice_audio'],
+		'MemberController::scan' => ['member_links'],
 	];
 
 	/**
@@ -420,7 +426,8 @@ final class ControllerSecurityTest extends TestCase {
 			self::assertContains(UserRateLimit::class, $route['attributes'], $name . ' is limited per account');
 			self::assertContains(BruteForceProtection::class, $route['attributes'], $name);
 			self::assertNotContains(CORS::class, $route['attributes'], $name);
-			$others = array_filter(array_keys($routes), fn (string $other): bool => str_starts_with($other, $class . '::') && $other !== $name);
+			$others = array_filter(array_keys($routes), fn (string $other): bool => str_starts_with($other, $class . '::')
+				&& !array_key_exists($other, self::PUBLIC_ROUTES));
 			self::assertSame([], array_values($others), $class . ' has no other route');
 		}
 	}
@@ -468,7 +475,11 @@ final class ControllerSecurityTest extends TestCase {
 			self::assertNotContains(PublicPage::class, $routes[$name]['attributes'], $name);
 			if ($class === 'MemberController') {
 				self::assertContains(UserRateLimit::class, $routes[$name]['attributes'], $name);
-				self::assertNotContains(NoCSRFRequired::class, $routes[$name]['attributes'], $name . ' keeps the CSRF check');
+				self::assertContains(BruteForceProtection::class, $routes[$name]['attributes'], $name);
+				if (!in_array($name, self::WITHOUT_CSRF, true)) {
+					// The scan is opened by the browser itself; it only reads (testCsrfIsOnlySkippedForPlainDownloads)
+					self::assertNotContains(NoCSRFRequired::class, $routes[$name]['attributes'], $name . ' keeps the CSRF check');
+				}
 			}
 		}
 		foreach (glob(__DIR__ . '/../../../lib/Controller/*.php') ?: [] as $file) {
@@ -508,9 +519,10 @@ final class ControllerSecurityTest extends TestCase {
 		self::assertSame('index', $both->getTemplateName(), 'an archive role gets the archive');
 	}
 
-	private function publicLinkController(?array $excerpt): PublicLinkController {
+	private function publicLinkController(?array $excerpt, ?File $scan = null): PublicLinkController {
 		$shared = $this->createStub(SharedLinkService::class);
 		$shared->method('publicExcerpt')->willReturn($excerpt);
+		$shared->method('publicScan')->willReturn($scan);
 		return new PublicLinkController($this->createStub(IRequest::class), $shared, $this->createStub(IInitialState::class), $this->l10n(),
 			$this->createStub(LoggerInterface::class));
 	}
@@ -521,8 +533,8 @@ final class ControllerSecurityTest extends TestCase {
 	 * protection, without a reason.
 	 */
 	public function testPublicLinksAnswerTheSame404ForEveryFailure(): void {
-		$excerpt = ['title' => 'Der Mond ist aufgegangen', 'composer' => 'J. A. P. Schulz', 'measureFrom' => '1', 'measureTo' => '4',
-			'voice' => 'Alto', 'verse' => 1, 'tempo' => null, 'canPlay' => true, 'xml' => '<score-partwise/>'];
+		$excerpt = ['title' => 'Der Mond ist aufgegangen', 'composer' => 'J. A. P. Schulz', 'measureFrom' => null, 'measureTo' => null,
+			'voice' => 'Alto', 'verse' => 1, 'tempo' => null, 'canPlay' => true, 'scan' => true, 'xml' => '<score-partwise/>'];
 		// The page itself needs the running server (PublicTemplateResponse);
 		// the integration test opens it. Its policy: as the app page, without frames.
 		$policy = PublicLinkController::policy()->buildPolicy();
@@ -531,10 +543,24 @@ final class ControllerSecurityTest extends TestCase {
 		self::assertStringNotContainsString('http', $policy, 'no external sources');
 		self::assertStringNotContainsString('frame-src', $policy);
 
+		$scan = $this->createStub(File::class);
 		$failures = [
 			'unknown or refused' => $this->publicLinkController(null)->show(str_repeat('a', 32)),
 			'malformed' => $this->publicLinkController($excerpt)->show('../../etc'),
+			'scan: unknown, refused or none' => $this->publicLinkController($excerpt)->scan(str_repeat('a', 32)),
+			'scan: malformed' => $this->publicLinkController($excerpt, $scan)->scan('../../etc'),
 		];
+		$response = $this->publicLinkController($excerpt, $scan)->scan(str_repeat('a', 32));
+		$headers = self::headers($response);
+		self::assertSame(Http::STATUS_OK, $response->getStatus());
+		self::assertSame('application/pdf', $headers['Content-Type'] ?? null);
+		self::assertSame('inline; filename="scan.pdf"', $headers['Content-Disposition'] ?? null, 'shown by the PDF viewer of the browser');
+		self::assertSame('nosniff', $headers['X-Content-Type-Options'] ?? null);
+		self::assertSame('noindex, nofollow', $headers['X-Robots-Tag'] ?? null);
+		$scanPolicy = $response->getContentSecurityPolicy()->buildPolicy();
+		self::assertStringContainsString("default-src 'none'", $scanPolicy);
+		self::assertStringContainsString("object-src 'self'", $scanPolicy);
+		self::assertStringNotContainsString('http', $scanPolicy, 'no external sources');
 		$controller = $this->publicLinkController($excerpt);
 		$middleware = new ModuleMiddleware($this->modulesWithout([Modules::PUBLIC_LINKS]), $this->l10n());
 		try {
@@ -591,6 +617,39 @@ final class ControllerSecurityTest extends TestCase {
 		self::assertSame(Http::STATUS_BAD_REQUEST, $unknown->getStatus());
 		self::assertTrue($unknown->isThrottled());
 		self::assertSame(Http::STATUS_UNAUTHORIZED, $controller(null)->score(str_repeat('a', 32))->getStatus());
+	}
+
+	public function testTheScanOfAMemberLinkIsShownInlineAfterTheSameChecks(): void {
+		$shared = $this->createStub(SharedLinkService::class);
+		$shared->method('memberScan')->willReturnCallback(function (string $token, string $uid): File {
+			if ($uid !== 'singer') {
+				throw new AccessDeniedException('This page is only for choir members. Roles are linked to groups; please ask an administrator.');
+			}
+			if ($token === str_repeat('u', 32)) {
+				throw new UnknownLinkException('This link does not exist.');
+			}
+			if ($token === str_repeat('n', 32)) {
+				throw new NotFoundException('The scan of this link is not available at the moment.');
+			}
+			return $this->createStub(File::class);
+		});
+		$controller = fn (?string $uid): MemberController => new MemberController($this->createStub(IRequest::class), $uid, $shared,
+			$this->createStub(PracticeAudioService::class), $this->l10n(), $this->createStub(LoggerInterface::class));
+
+		$response = $controller('singer')->scan(str_repeat('a', 32));
+		$headers = self::headers($response);
+		self::assertSame(Http::STATUS_OK, $response->getStatus());
+		self::assertSame('application/pdf', $headers['Content-Type'] ?? null);
+		self::assertSame('inline; filename="scan.pdf"', $headers['Content-Disposition'] ?? null);
+		self::assertSame('nosniff', $headers['X-Content-Type-Options'] ?? null);
+		self::assertStringContainsString("object-src 'self'", $response->getContentSecurityPolicy()->buildPolicy());
+
+		self::assertSame(Http::STATUS_FORBIDDEN, $controller('librarian')->scan(str_repeat('a', 32))->getStatus(), 'no choir member');
+		self::assertSame(Http::STATUS_NOT_FOUND, $controller('singer')->scan(str_repeat('n', 32))->getStatus(), 'no scan');
+		$unknown = $controller('singer')->scan(str_repeat('u', 32));
+		self::assertSame(Http::STATUS_BAD_REQUEST, $unknown->getStatus());
+		self::assertTrue($unknown->isThrottled());
+		self::assertSame(Http::STATUS_UNAUTHORIZED, $controller(null)->scan(str_repeat('a', 32))->getStatus());
 	}
 
 	#[CoversNothing]

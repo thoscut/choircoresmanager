@@ -4,14 +4,16 @@
 -->
 <script setup lang="ts">
 /**
- * Create an excerpt link: measures, voice, verse, tempo and a note, valid
- * for at most six months. By default only logged-in holders of an archive
- * role can open it. With the modules "member_links" and "public_links"
- * (milestone 0.7) the link can be made for the choir members or for anyone
- * without signing in; the dialog then shows beforehand what the recipients
- * will see and why such a link is not possible, if it is not. The server
- * checks the rights on every call. After creating, the link can be copied.
+ * Create a link to the whole piece or an excerpt (measures), with voice,
+ * verse, tempo and a note, valid for at most six months. By default only
+ * logged-in holders of an archive role can open it. With the modules
+ * "member_links" and "public_links" (milestone 0.7) the link can be made
+ * for the choir members or for anyone without signing in, optionally with
+ * the scan (PDF); the dialog then shows beforehand what the recipients will
+ * see and why such a link is not possible, if it is not. The server checks
+ * the rights on every call. After creating, the link can be copied.
  */
+import type { LinkScope } from '../sharing/linkScope.ts'
 import type { CircleOption, ExcerptLink, LinkCircle, LinkInput, LinkOptions } from '../types.ts'
 
 import { mdiContentCopy } from '@mdi/js'
@@ -30,6 +32,7 @@ import DateField from './DateField.vue'
 import { createLink, errorMessage, fetchLinkOptions, linkUrl } from '../api.ts'
 import { copyText } from '../clipboard.ts'
 import { formatDate, toIsoDate } from '../format.ts'
+import { canOfferScan, initialScope, linkMeasures, measureProblem, previewRows } from '../sharing/linkScope.ts'
 import { canShareOutside } from '../store.ts'
 
 export interface LinkPrefill {
@@ -61,6 +64,9 @@ const latest = (() => {
 	date.setDate(date.getDate() + MAX_DAYS)
 	return toIsoDate(date)
 })()
+
+/** Whole piece (the default) or an excerpt; the excerpt when the score view shows a range */
+const scope = ref<LinkScope>(initialScope(props.prefill))
 
 const draft = reactive({
 	measureFrom: props.prefill?.measureFrom ?? '',
@@ -126,19 +132,35 @@ const blockReason = computed(() => {
 const blocked = computed(() => circle.value !== 'internal' && (optionsLoading.value || option.value === null || blockReason.value !== ''))
 
 const dialogName = computed(() => (canShareOutside.value
-	? t('notenarchiv', 'Share excerpt of {shelfmark}', { shelfmark: props.shelfmark })
+	? t('notenarchiv', 'Share {shelfmark}', { shelfmark: props.shelfmark })
 	: t('notenarchiv', 'Internal link to {shelfmark}', { shelfmark: props.shelfmark })))
 
 const circleHint = computed(() => {
 	switch (circle.value) {
 	case 'members':
-		return t('notenarchiv', 'Choir members see the excerpt in the music archive under "Shared with me", without the catalog: only these measures with all voices, the voice highlighted. The server cuts the score to these measures and checks the rights on every call.')
+		return t('notenarchiv', 'Choir members see it in the music archive under "Shared with me", without the catalog: the whole piece or the chosen measures with all voices, the voice highlighted. The server sends only that, never the score file, and checks the rights on every call.')
 	case 'public':
-		return t('notenarchiv', 'Anyone who has the link can view and play the excerpt without signing in, until it expires or is revoked: only these measures, without download, without names and without a note. The server cuts the score to these measures and checks the rights on every call.')
+		return t('notenarchiv', 'Anyone who has the link can view and play it without signing in, until it expires or is revoked: the whole piece or the chosen measures, without the score file, without names and without a note. The server sends only that and checks the rights on every call.')
 	default:
-		return t('notenarchiv', 'Only people with a role in the music archive can open the link. It shows the measures with all voices; the voice is highlighted. The server checks the rights on every call.')
+		return t('notenarchiv', 'Only people with a role in the music archive can open the link. It shows the whole piece or the measures with all voices; the voice is highlighted. The server checks the rights on every call.')
 	}
 })
+
+// ---- the scan (choir members and public links) -------------------------------------
+
+const scans = computed(() => options.value?.scans ?? [])
+const scanOffered = computed(() => canOfferScan(circle.value, option.value, scans.value.length))
+const withScan = ref(false)
+const scanFileId = ref<number | null>(null)
+/** The chosen scan as text, for the radio buttons of several scans */
+const scanChoice = computed<string>({
+	get: () => String(scanFileId.value ?? scans.value[0]?.id ?? ''),
+	set: (value) => {
+		scanFileId.value = Number(value)
+	},
+})
+
+// ---- preview ----------------------------------------------------------------------
 
 const yes = t('notenarchiv', 'Yes')
 const no = t('notenarchiv', 'No')
@@ -149,42 +171,49 @@ const preview = computed(() => {
 	if (circle.value === 'internal' || chosen === null || blockReason.value !== '') {
 		return []
 	}
-	const from = draft.measureFrom.trim()
-	const to = draft.measureTo.trim()
-	const rows = [
-		{ label: t('notenarchiv', 'Measures'), value: from !== '' && to !== '' ? t('notenarchiv', '{from} to {to}', { from, to }) : t('notenarchiv', 'still missing') },
-		{ label: t('notenarchiv', 'Focus voice'), value: draft.voice.trim() || t('notenarchiv', 'none') },
-	]
-	if (draft.verse.trim() !== '') {
-		rows.push({ label: t('notenarchiv', 'Verse'), value: draft.verse.trim() })
-	}
-	rows.push(
-		{ label: t('notenarchiv', 'Tempo'), value: draft.tempo.trim() !== '' ? draft.tempo.trim() + ' %' : t('notenarchiv', 'as in the score') },
-		{ label: t('notenarchiv', 'Valid until'), value: formatDate(draft.expires) },
-		{ label: t('notenarchiv', 'Playback'), value: chosen.playback ? yes : no },
-	)
-	if (circle.value === 'members') {
-		rows.push({ label: t('notenarchiv', 'Practice files'), value: chosen.practiceAudio ? yes : no })
-	}
-	return rows
+	return previewRows({
+		circle: circle.value,
+		scope: scope.value,
+		measureFrom: draft.measureFrom,
+		measureTo: draft.measureTo,
+		voice: draft.voice,
+		verse: draft.verse,
+		tempo: draft.tempo,
+		validUntil: formatDate(draft.expires),
+		option: chosen,
+		scan: scanOffered.value ? withScan.value : null,
+	}, {
+		scope: t('notenarchiv', 'Shared'),
+		whole: t('notenarchiv', 'Whole piece'),
+		measures: (from, to) => t('notenarchiv', 'Measures {from} to {to}', { from, to }),
+		missing: t('notenarchiv', 'measures still missing'),
+		voice: t('notenarchiv', 'Focus voice'),
+		none: t('notenarchiv', 'none'),
+		verse: t('notenarchiv', 'Verse'),
+		tempo: t('notenarchiv', 'Tempo'),
+		asInScore: t('notenarchiv', 'as in the score'),
+		validUntil: t('notenarchiv', 'Valid until'),
+		playback: t('notenarchiv', 'Playback'),
+		practiceFiles: t('notenarchiv', 'Practice files'),
+		scan: t('notenarchiv', 'Scan (PDF)'),
+		yes,
+		no,
+	})
 })
 
 // ---- creating -------------------------------------------------------------------
-
-const MEASURE = /^[0-9A-Za-z.]{1,16}$/
 
 async function save(): Promise<void> {
 	if (blocked.value) {
 		return
 	}
-	for (const measure of [draft.measureFrom, draft.measureTo]) {
-		if (measure.trim() !== '' && !MEASURE.test(measure.trim())) {
-			error.value = t('notenarchiv', 'Measure numbers may only contain digits, letters and dots.')
-			return
-		}
+	const problem = measureProblem(scope.value, circle.value, draft.measureFrom, draft.measureTo)
+	if (problem === 'format') {
+		error.value = t('notenarchiv', 'Measure numbers may only contain digits, letters and dots.')
+		return
 	}
-	if (circle.value !== 'internal' && (draft.measureFrom.trim() === '' || draft.measureTo.trim() === '')) {
-		error.value = t('notenarchiv', 'Please give the first and the last measure: choir members and the public only see these measures.')
+	if (problem === 'missing') {
+		error.value = t('notenarchiv', 'Please give the first and the last measure of the excerpt, or choose "Whole piece".')
 		return
 	}
 	const verse = draft.verse.trim() === '' ? null : Number(draft.verse)
@@ -202,8 +231,7 @@ async function save(): Promise<void> {
 		return
 	}
 	const link: LinkInput = {
-		measure_from: draft.measureFrom.trim() || null,
-		measure_to: draft.measureTo.trim() || null,
+		...linkMeasures(scope.value, draft.measureFrom, draft.measureTo),
 		voice: draft.voice.trim() || null,
 		verse,
 		tempo,
@@ -212,6 +240,7 @@ async function save(): Promise<void> {
 		task_id: circle.value === 'internal' ? (props.prefill?.taskId ?? null) : null,
 		expires: draft.expires,
 		circle: circle.value,
+		scan_file_id: scanOffered.value && withScan.value ? Number(scanChoice.value) : null,
 	}
 	busy.value = true
 	error.value = ''
@@ -233,9 +262,9 @@ const createdText = computed(() => {
 	const date = formatDate(link.expires ?? '')
 	switch (link.circle) {
 	case 'members':
-		return t('notenarchiv', 'Choir members find the excerpt under "Shared with me" until {date}; you can also send them this link. It can be revoked at any time in the list of links.', { date })
+		return t('notenarchiv', 'Choir members find it under "Shared with me" until {date}; you can also send them this link. It can be revoked at any time in the list of links.', { date })
 	case 'public':
-		return t('notenarchiv', 'Anyone with this link can view and play the excerpt until {date}, without signing in. It can be revoked at any time in the list of links.', { date })
+		return t('notenarchiv', 'Anyone with this link can view and play it until {date}, without signing in. It can be revoked at any time in the list of links.', { date })
 	default:
 		return t('notenarchiv', 'The link is valid until {date}. It can be revoked at any time.', { date })
 	}
@@ -260,7 +289,7 @@ async function copyLink(): Promise<void> {
 		size="large"
 		@submit="save"
 		@close="emit('close')">
-		<fieldset v-if="canShareOutside" class="link-dialog__circles">
+		<fieldset v-if="canShareOutside" class="link-dialog__choice">
 			<legend>{{ t('notenarchiv', 'Who can open the link?') }}</legend>
 			<NcCheckboxRadioSwitch v-model="circle"
 				value="internal"
@@ -290,7 +319,22 @@ async function copyLink(): Promise<void> {
 		<NcNoteCard v-else-if="blockReason !== ''" type="warning" role="status">
 			{{ blockReason }}
 		</NcNoteCard>
-		<div class="link-dialog__row">
+		<fieldset class="link-dialog__choice">
+			<legend>{{ t('notenarchiv', 'What is shared?') }}</legend>
+			<NcCheckboxRadioSwitch v-model="scope"
+				value="whole"
+				type="radio"
+				name="link-dialog-scope">
+				{{ t('notenarchiv', 'Whole piece') }}
+			</NcCheckboxRadioSwitch>
+			<NcCheckboxRadioSwitch v-model="scope"
+				value="excerpt"
+				type="radio"
+				name="link-dialog-scope">
+				{{ t('notenarchiv', 'Excerpt (measures)') }}
+			</NcCheckboxRadioSwitch>
+		</fieldset>
+		<div v-if="scope === 'excerpt'" class="link-dialog__row">
 			<NcTextField v-model="draft.measureFrom"
 				:label="t('notenarchiv', 'From measure')"
 				:required="circle !== 'internal'" />
@@ -298,6 +342,9 @@ async function copyLink(): Promise<void> {
 				:label="t('notenarchiv', 'To measure')"
 				:required="circle !== 'internal'" />
 		</div>
+		<p v-else class="action-dialog__hint">
+			{{ t('notenarchiv', 'All pages of the piece, with repeats and jumps as in the score.') }}
+		</p>
 		<div class="link-dialog__row">
 			<NcTextField v-model="draft.voice" :label="t('notenarchiv', 'Voice')" />
 			<NcTextField v-model="draft.verse"
@@ -323,6 +370,25 @@ async function copyLink(): Promise<void> {
 			:max="latest"
 			required
 			:label="t('notenarchiv', 'Valid until (at most six months)')" />
+		<div v-if="scanOffered" class="link-dialog__scan">
+			<NcCheckboxRadioSwitch v-model="withScan" type="checkbox">
+				{{ t('notenarchiv', 'Include the scan (PDF)') }}
+			</NcCheckboxRadioSwitch>
+			<fieldset v-if="withScan && scans.length > 1" class="link-dialog__choice">
+				<legend>{{ t('notenarchiv', 'Which scan?') }}</legend>
+				<NcCheckboxRadioSwitch v-for="scan in scans"
+					:key="scan.id"
+					v-model="scanChoice"
+					:value="String(scan.id)"
+					type="radio"
+					name="link-dialog-scan">
+					{{ scan.name }}
+				</NcCheckboxRadioSwitch>
+			</fieldset>
+			<p class="action-dialog__hint">
+				{{ t('notenarchiv', 'The recipients open the scan in the PDF viewer of their browser. Whoever sees the scan can also save it.') }}
+			</p>
+		</div>
 		<section v-if="preview.length > 0" class="link-dialog__preview" :aria-label="t('notenarchiv', 'What the recipients see')">
 			<h3 class="link-dialog__preview-title">
 				{{ t('notenarchiv', 'What the recipients see') }}
@@ -371,14 +437,20 @@ async function copyLink(): Promise<void> {
 	flex: 1 1 9em;
 }
 
-.link-dialog__circles {
+.link-dialog__choice {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 0 calc(3 * var(--default-grid-baseline));
 }
 
-.link-dialog__circles legend {
+.link-dialog__choice legend {
 	font-weight: bold;
+}
+
+.link-dialog__scan {
+	display: flex;
+	flex-direction: column;
+	gap: var(--default-grid-baseline);
 }
 
 .link-dialog__preview {
