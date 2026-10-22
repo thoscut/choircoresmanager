@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2026-10-21 23:42+0000\n"
+"POT-Creation-Date: 2026-10-22 00:19+0000\n"
 "PO-Revision-Date: 2025-11-28 22:37+0000\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -110,9 +110,6 @@ msgstr "Die hochgeladene Datei ist zu groß (höchstens %d MB)"
 msgid "The uploaded file could not be read"
 msgstr "Die hochgeladene Datei konnte nicht gelesen werden"
 
-msgid "This score is an internal preservation copy"
-msgstr "Diese Partitur ist eine interne Erhaltungskopie"
-
 msgid "No MusicXML file available for this score"
 msgstr "Für diese Partitur gibt es keine MusicXML-Datei"
 
@@ -172,11 +169,21 @@ msgstr "Partitur kann nicht gelöscht werden, da sie Teil einer Ordnersammlung i
 msgid "Score is already part of another score book. Remove it first."
 msgstr "Partitur ist bereits Teil eines anderen Notenbuchs. Entfernen Sie sie zuerst."
 
+msgid "Invalid date. Use the format YYYY-MM-DD."
+msgstr "Ungültiges Datum. Bitte das Format JJJJ-MM-TT verwenden."
+
 msgid "Invalid rights status. Must be \"public_domain\", \"licensed\", \"protected\" or \"open\"."
 msgstr "Ungültiger Rechtestatus. Erlaubt sind \"public_domain\", \"licensed\", \"protected\" und \"open\"."
 
-msgid "Invalid publication status. Must be \"free\", \"to_clarify\", \"blocked\" or \"internal_copy\"."
-msgstr "Ungültiger Veröffentlichungsstatus. Erlaubt sind \"free\", \"to_clarify\", \"blocked\" und \"internal_copy\"."
+msgid "Invalid publication status. Must be \"approved\", \"to_clarify\", \"blocked\" or \"internal_preservation_copy\"."
+msgstr "Ungültiger Veröffentlichungsstatus. Erlaubt sind \"approved\", \"to_clarify\", \"blocked\" oder \"internal_preservation_copy\"."
+
+#, php-format
+msgid "Use at most %d characters for the person who confirmed the rights, e.g. their initials."
+msgstr "Bitte höchstens %d Zeichen für die Person verwenden, die die Rechte bestätigt hat, z. B. ihr Kürzel."
+
+msgid "A \"blocked until\" date can only be set if the publication is blocked."
+msgstr "Ein Datum für \"Gesperrt bis\" kann nur gesetzt werden, wenn die Veröffentlichung gesperrt ist."
 
 msgid "Setlist entry not found"
 msgstr "Setlist-Eintrag nicht gefunden"
@@ -264,8 +271,8 @@ msgstr "Gruppen auswählen …"
 msgid "Public page"
 msgstr "Öffentliche Seite"
 
-msgid "Show all scores that are released for publication and whose rights allow it (public domain or licensed) on a page that can be opened without logging in. Visitors can view and play the MusicXML files of these scores. No other scores or internal details are shown."
-msgstr "Zeigt alle Partituren, die zur Veröffentlichung freigegeben sind und deren Rechte das erlauben (gemeinfrei oder lizenziert), auf einer Seite, die ohne Anmeldung aufgerufen werden kann. Besucher können die MusicXML-Dateien dieser Partituren ansehen und abspielen. Andere Partituren und interne Angaben werden nicht gezeigt."
+msgid "Show all scores that are approved for publication and whose rights status (public domain or licensed) has been confirmed on a page that can be opened without logging in. Visitors can view and play the MusicXML files of these scores. No other scores or internal details are shown."
+msgstr "Alle Partituren, die zur Veröffentlichung freigegeben sind und deren Rechtestatus (gemeinfrei oder lizenziert) bestätigt wurde, auf einer Seite anzeigen, die ohne Anmeldung geöffnet werden kann. Besucher können die MusicXML-Dateien dieser Partituren ansehen und abspielen. Andere Partituren oder interne Angaben werden nicht angezeigt."
 
 msgid "Enable public page"
 msgstr "Öffentliche Seite aktivieren"
@@ -522,17 +529,29 @@ msgstr "Physische Exemplare"
 msgid "Tags"
 msgstr "Tags"
 
-msgid "Rights"
-msgstr "Rechte"
+msgid "Rights Status"
+msgstr "Rechtestatus"
+
+msgid "Rights Reasoning"
+msgstr "Begründung Rechte"
+
+msgid "Rights Confirmed On"
+msgstr "Rechte bestätigt am"
+
+msgid "Rights Confirmed By"
+msgstr "Rechte bestätigt von"
+
+msgid "Who confirmed the rights status, e.g. initials. Changing the rights status removes the confirmation."
+msgstr "Wer den Rechtestatus bestätigt hat, z. B. Kürzel. Eine Änderung des Rechtestatus hebt die Bestätigung auf."
 
 msgid "Publication"
 msgstr "Veröffentlichung"
 
-msgid "Blocked until"
+msgid "Blocked Until"
 msgstr "Gesperrt bis"
 
-msgid "Rights Note"
-msgstr "Rechtevermerk"
+msgid "Publication Reasoning"
+msgstr "Begründung Veröffentlichung"
 
 msgid "MusicXML"
 msgstr "MusicXML"
@@ -840,14 +859,11 @@ msgstr "MusicXML hochladen"
 msgid "Remove file"
 msgstr "Datei entfernen"
 
-msgid "This score is released for publication and its rights allow it, so it is shown on the public page if that page is enabled."
-msgstr "Diese Partitur ist zur Veröffentlichung freigegeben und die Rechte erlauben das. Sie erscheint deshalb auf der öffentlichen Seite, sofern diese aktiviert ist."
+msgid "This score is an internal preservation copy. Its notes are neither displayed nor played back, and only members of the editing groups can download the file."
+msgstr "Diese Partitur ist eine interne Erhaltungskopie. Die Noten werden weder angezeigt noch abgespielt, und nur Mitglieder der Bearbeitergruppen können die Datei herunterladen."
 
-msgid "This score is an internal preservation copy. Only editors can view and play it."
-msgstr "Diese Partitur ist eine interne Erhaltungskopie. Nur Bearbeiter können sie ansehen und abspielen."
-
-msgid "This score is an internal preservation copy. It can only be viewed by the music librarians."
-msgstr "Diese Partitur ist eine interne Erhaltungskopie. Nur die Notenwarte können sie ansehen."
+msgid "This score is approved for publication and its rights are confirmed, so it is shown on the public page if that page is enabled."
+msgstr "Diese Partitur ist zur Veröffentlichung freigegeben und ihre Rechte sind bestätigt. Sie erscheint daher auf der öffentlichen Seite, sofern diese aktiviert ist."
 
 msgid "Scores in this book"
 msgstr "Partituren in diesem Notenbuch"
@@ -1032,14 +1048,20 @@ msgstr "Setliste löschen"
 msgid "Are you sure you want to delete this setlist?"
 msgstr "Sind Sie sicher, dass Sie diese Setliste löschen möchten?"
 
+msgid "Last updated: {date}"
+msgstr "Zuletzt aktualisiert: {date}"
+
 msgid "arr. {arranger}"
 msgstr "bearb. {arranger}"
 
 msgid "Freely available scores"
 msgstr "Frei verfügbare Noten"
 
-msgid "These scores are in the public domain or licensed for publication. Select a score to view the notes and listen to the individual voices."
-msgstr "Diese Stücke sind gemeinfrei oder zur Veröffentlichung lizenziert. Wähle ein Stück, um die Noten zu sehen und die einzelnen Stimmen anzuhören."
+msgid "These scores are in the public domain or may be provided digitally under a licence. Select a score to view the notes and listen to the individual voices."
+msgstr "Diese Partituren sind gemeinfrei oder dürfen mit Lizenz digital bereitgestellt werden. Wählen Sie eine Partitur, um die Noten anzusehen und die einzelnen Stimmen anzuhören."
+
+msgid "All content is provided as is, dated with its last update, without warranty and without any obligation to keep earlier versions available."
+msgstr "Alle Inhalte werden ohne Gewähr im jeweils angegebenen Stand bereitgestellt, ohne Verpflichtung, frühere Fassungen verfügbar zu halten."
 
 msgid "Search by title or composer"
 msgstr "Nach Titel oder Komponist suchen"
@@ -1128,11 +1150,11 @@ msgstr "Lizenziert"
 msgid "Protected"
 msgstr "Geschützt"
 
-msgid "Undetermined"
-msgstr "Offen"
+msgid "Unresolved"
+msgstr "Ungeklärt"
 
-msgid "Free"
-msgstr "Frei"
+msgid "Approved"
+msgstr "Freigegeben"
 
 msgid "To clarify"
 msgstr "Zu klären"
@@ -1145,6 +1167,42 @@ msgstr "Interne Erhaltungskopie"
 
 msgid "Invalid duration format"
 msgstr "Ungültiges Spieldauerformat"
+
+#~ msgid "This score is an internal preservation copy"
+#~ msgstr "Diese Partitur ist eine interne Erhaltungskopie"
+
+#~ msgid "Invalid publication status. Must be \"free\", \"to_clarify\", \"blocked\" or \"internal_copy\"."
+#~ msgstr "Ungültiger Veröffentlichungsstatus. Erlaubt sind \"free\", \"to_clarify\", \"blocked\" und \"internal_copy\"."
+
+#~ msgid "Show all scores that are released for publication and whose rights allow it (public domain or licensed) on a page that can be opened without logging in. Visitors can view and play the MusicXML files of these scores. No other scores or internal details are shown."
+#~ msgstr "Zeigt alle Partituren, die zur Veröffentlichung freigegeben sind und deren Rechte das erlauben (gemeinfrei oder lizenziert), auf einer Seite, die ohne Anmeldung aufgerufen werden kann. Besucher können die MusicXML-Dateien dieser Partituren ansehen und abspielen. Andere Partituren und interne Angaben werden nicht gezeigt."
+
+#~ msgid "Rights"
+#~ msgstr "Rechte"
+
+#~ msgid "Blocked until"
+#~ msgstr "Gesperrt bis"
+
+#~ msgid "Rights Note"
+#~ msgstr "Rechtevermerk"
+
+#~ msgid "This score is released for publication and its rights allow it, so it is shown on the public page if that page is enabled."
+#~ msgstr "Diese Partitur ist zur Veröffentlichung freigegeben und die Rechte erlauben das. Sie erscheint deshalb auf der öffentlichen Seite, sofern diese aktiviert ist."
+
+#~ msgid "This score is an internal preservation copy. Only editors can view and play it."
+#~ msgstr "Diese Partitur ist eine interne Erhaltungskopie. Nur Bearbeiter können sie ansehen und abspielen."
+
+#~ msgid "This score is an internal preservation copy. It can only be viewed by the music librarians."
+#~ msgstr "Diese Partitur ist eine interne Erhaltungskopie. Nur die Notenwarte können sie ansehen."
+
+#~ msgid "These scores are in the public domain or licensed for publication. Select a score to view the notes and listen to the individual voices."
+#~ msgstr "Diese Stücke sind gemeinfrei oder zur Veröffentlichung lizenziert. Wähle ein Stück, um die Noten zu sehen und die einzelnen Stimmen anzuhören."
+
+#~ msgid "Undetermined"
+#~ msgstr "Offen"
+
+#~ msgid "Free"
+#~ msgstr "Frei"
 
 #, php-format
 #~ msgid "Failed to add score to folder collection: %1$s"
