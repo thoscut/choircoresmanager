@@ -56,6 +56,9 @@ class PageController extends Controller {
 		// eval stays forbidden and no other source is allowed.
 		$policy = new ContentSecurityPolicy();
 		$policy->allowEvalWasm(true);
+		// The scan beside the score: a PDF from the app's own route, shown by
+		// the browser's PDF viewer in a frame. Nothing from other origins.
+		$policy->addAllowedFrameDomain('\'self\'');
 		$response->setContentSecurityPolicy($policy);
 		return $response;
 	}

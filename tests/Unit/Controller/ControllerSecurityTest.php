@@ -13,6 +13,7 @@ use OCA\Notenarchiv\Controller\ApiController;
 use OCA\Notenarchiv\Controller\CalendarController;
 use OCA\Notenarchiv\Controller\PageController;
 use OCA\Notenarchiv\Controller\PracticeAudioController;
+use OCA\Notenarchiv\Controller\ReviewController;
 use OCA\Notenarchiv\Controller\TaskController;
 use OCA\Notenarchiv\Db\AuditEntryMapper;
 use OCA\Notenarchiv\Exception\AccessDeniedException;
@@ -23,6 +24,7 @@ use OCA\Notenarchiv\Middleware\ModuleMiddleware;
 use OCA\Notenarchiv\Service\AppSettings;
 use OCA\Notenarchiv\Service\CatalogService;
 use OCA\Notenarchiv\Service\ConcertCalendarService;
+use OCA\Notenarchiv\Service\CorrectionService;
 use OCA\Notenarchiv\Service\DueService;
 use OCA\Notenarchiv\Service\ExportService;
 use OCA\Notenarchiv\Service\FileSyncService;
@@ -31,7 +33,9 @@ use OCA\Notenarchiv\Service\LinkService;
 use OCA\Notenarchiv\Service\MetaService;
 use OCA\Notenarchiv\Service\Modules;
 use OCA\Notenarchiv\Service\PracticeAudioService;
+use OCA\Notenarchiv\Service\ReviewService;
 use OCA\Notenarchiv\Service\Roles;
+use OCA\Notenarchiv\Service\ScanService;
 use OCA\Notenarchiv\Service\ScoreService;
 use OCA\Notenarchiv\Service\TaskService;
 use OCA\Notenarchiv\Service\UserFiles;
@@ -49,6 +53,7 @@ use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Files\File;
 use OCP\IDateTimeZone;
 use OCP\IL10N;
 use OCP\IRequest;
@@ -67,6 +72,7 @@ use Psr\Log\LoggerInterface;
 #[CoversClass(PageController::class)]
 #[CoversClass(TaskController::class)]
 #[CoversClass(ModuleMiddleware::class)]
+#[CoversClass(ReviewController::class)]
 final class ControllerSecurityTest extends TestCase {
 	use ModuleSwitches;
 
@@ -104,6 +110,8 @@ final class ControllerSecurityTest extends TestCase {
 		'PageController::index', 'ApiController::export', 'WorkflowController::fullBackup', 'EventController::songOrder',
 		'StatisticsController::csv', 'StatisticsController::reportCsv',
 		'CalendarController::concertFile', 'CalendarController::upcomingFile',
+		// The scan beside the score is opened by the browser itself (frame or window).
+		'ReviewController::scan',
 	];
 
 	/** Expensive endpoints: limited per user (the statistics aggregate the whole archive) */
@@ -116,6 +124,7 @@ final class ControllerSecurityTest extends TestCase {
 		'StatisticsController::reportCsv',
 		'CalendarController::concertFile', 'CalendarController::upcomingFile', 'CalendarController::addConcert',
 		'CalendarController::addUpcoming',
+		'ReviewController::ingest', 'ReviewController::correct', 'ReviewController::scan',
 	];
 
 	/**
@@ -310,6 +319,35 @@ final class ControllerSecurityTest extends TestCase {
 		self::assertSame('<score-partwise/>', $response->render());
 	}
 
+	private function reviewController(ScanService $scans): ReviewController {
+		return new ReviewController($this->createStub(IRequest::class), 'reader', $this->createStub(ReviewService::class),
+			$this->createStub(CorrectionService::class), $scans, $this->l10n(), $this->createStub(LoggerInterface::class));
+	}
+
+	public function testScansAreOnlyShownByThePdfViewer(): void {
+		$scans = $this->createStub(ScanService::class);
+		$scans->method('scan')->willReturn($this->createStub(File::class));
+		$response = $this->reviewController($scans)->scan(9);
+		$headers = self::headers($response);
+		self::assertSame(Http::STATUS_OK, $response->getStatus());
+		self::assertSame('application/pdf', $headers['Content-Type'] ?? null);
+		self::assertSame('inline; filename="scan.pdf"', $headers['Content-Disposition'] ?? null);
+		self::assertSame('nosniff', $headers['X-Content-Type-Options'] ?? null);
+		$policy = $response->getContentSecurityPolicy()->buildPolicy();
+		self::assertStringContainsString("default-src 'none'", $policy);
+		self::assertStringContainsString("object-src 'self'", $policy, 'the browser\'s own PDF viewer');
+		self::assertStringContainsString("frame-ancestors 'self'", $policy, 'framed by the app only');
+		self::assertStringNotContainsString('http', $policy, 'no external sources');
+	}
+
+	public function testAScanIsRefusedWithoutTheRightToView(): void {
+		$scans = $this->createStub(ScanService::class);
+		$scans->method('scan')->willThrowException(new AccessDeniedException('Internal preservation copy: only the catalog librarian and the conductor may view it.'));
+		$response = $this->reviewController($scans)->scan(9);
+		self::assertSame(Http::STATUS_FORBIDDEN, $response->getStatus());
+		self::assertInstanceOf(JSONResponse::class, $response);
+	}
+
 	public function testCalendarFilesAreRefusedWithoutAccess(): void {
 		$calendar = $this->createStub(ConcertCalendarService::class);
 		$calendar->method('upcomingFile')->willThrowException(new AccessDeniedException('You have no access to the music archive.'));
@@ -339,5 +377,6 @@ final class ControllerSecurityTest extends TestCase {
 		self::assertStringContainsString("'wasm-unsafe-eval'", $policy);
 		self::assertStringNotContainsString("'unsafe-eval'", $policy);
 		self::assertStringNotContainsString('http', $policy, 'no external sources');
+		self::assertStringContainsString("frame-src 'self'", $policy, 'the scan beside the score, from the app itself');
 	}
 }

@@ -106,6 +106,10 @@ export interface Entry {
 	last_performed_on?: string | null
 	/** names of the song lists the work is on (a count from older servers) */
 	song_lists?: string[] | number | null
+	/** review points with status open or question; null while the review of transcriptions is off */
+	review_open?: number | null
+	/** correction orders (review points with status correct); null while the review is off */
+	review_orders?: number | null
 }
 
 export type FieldValue = string | number | boolean | null
@@ -545,6 +549,20 @@ export interface ImportReport {
 	warnings: string[]
 }
 
+/** Transcription reports found and read by the file sync. */
+export interface FileSyncReports {
+	files: number
+	assigned: number
+	/** read into review points with new content */
+	imported: number
+	/** not read again, or read with a known checksum */
+	unchanged: number
+	/** reports that could not be read, with the reason (translated) */
+	failed: { path: string, error: string }[]
+	/** the review of transcriptions is switched off: the reports were not read */
+	switchedOff: boolean
+}
+
 export interface FileSyncReport {
 	files: number
 	assigned: number
@@ -558,6 +576,8 @@ export interface FileSyncReport {
 	byType: Record<string, number>
 	copiesWithoutFile: string[]
 	skippedFolders: string[]
+	/** transcription reports (`…bericht.json`), counted apart from the score files (milestone 0.6) */
+	reports?: FileSyncReports
 }
 
 export interface Settings {
@@ -641,6 +661,8 @@ export interface Filters {
 	unconfirmed: boolean
 	/** only works without a version that is valid for the choir */
 	noValidVersion: boolean
+	/** only copies with open review points of a transcription */
+	reviewOpen: boolean
 }
 
 /** Facts the filters need beyond the entry itself. */
@@ -1086,4 +1108,188 @@ export interface Detail {
 	contributions: Contribution[]
 	protection: Protection | null
 	merges: Merge[]
+}
+
+// ---- milestone 0.6: reviewing transcriptions and corrections -------------------
+
+export type ReviewCategory = 'uncertain' | 'omitted' | 'material' | 'question'
+export type ReviewStatus = 'open' | 'confirmed' | 'correct' | 'corrected' | 'question' | 'dismissed'
+/** Statuses a person can set (corrected is set by the app only). */
+export type ReviewDecision = 'confirmed' | 'correct' | 'question' | 'dismissed' | 'open'
+
+/** A review point of a transcription (GET /api/versions/{id}/review). */
+export interface ReviewPoint {
+	id: number
+	version_id: number
+	copy_id: number
+	report_id: number | null
+	/** `files[].id` of the MusicXML the point refers to */
+	file_id: number | null
+	file_sha256: string | null
+	category: ReviewCategory | string
+	/** measures as given, e.g. "12–14" */
+	measures: string | null
+	measure_from: string | null
+	measure_to: string | null
+	voice: string | null
+	verse: number | null
+	page: number | null
+	text: string | null
+	point_key?: string | null
+	/** responsible role: conductor (musical points) or librarian */
+	role: string
+	status: ReviewStatus | string
+	/** what to change (status correct) */
+	correction: string | null
+	decided_by: string | null
+	decided_by_name: string | null
+	/** Unix timestamp in seconds */
+	decided: number | null
+	decision_reason: string | null
+	task_id: number | null
+	resolved_report_id: number | null
+	created_by: string | null
+	created: number
+}
+
+/** A person named in the rights part of a report (German field names of bericht/1). */
+export interface ReportPerson {
+	rolle?: string | null
+	name?: string | null
+	lebensdaten?: string | null
+	beleg?: string | null
+}
+
+/** Readable parts of a report; any field may be missing. */
+export interface ReportSummary {
+	title?: string | null
+	template?: { typ?: string | null, beschreibung?: string | null, seiten?: number | null, schreiber_oder_verlag?: string | null } | null
+	extent?: { takte?: number | null, auftakt?: boolean | null, stimmen?: number | null, systeme?: number | null, strophen?: number | null } | null
+	persons?: ReportPerson[] | null
+	edition?: string | null
+	rights?: string | null
+	fields?: Record<string, string> | null
+	warnings?: string[] | null
+}
+
+/** A transcription report (bericht/1) as read by the app. */
+export interface TranscriptionReport {
+	id: number
+	version_id: number
+	copy_id: number
+	report_file_id: number | null
+	source: 'file' | 'api' | string
+	sha256: string
+	round: string | null
+	report_date: string | null
+	basename: string | null
+	musicxml_id: number | null
+	musicxml_sha256: string | null
+	method: string | null
+	/** wv.herkunft */
+	origin: string | null
+	/** wv.pruefstand: review state of the transcription */
+	review: string | null
+	/** wv.begruendung */
+	reasoning: string | null
+	rights_class: string | null
+	summary: ReportSummary | null
+	superseded_by: number | null
+	created_by: string | null
+	created: number
+}
+
+export interface ReviewCounts {
+	open: number
+	question: number
+	correct: number
+	confirmed: number
+	corrected: number
+	dismissed: number
+}
+
+/** What the account may do (the server checks again). */
+export interface ReviewPermissions {
+	decideMusical: boolean
+	decideMaterial: boolean
+	ingest: boolean
+	correct: boolean
+}
+
+/** GET /api/versions/{id}/review */
+export interface VersionReview {
+	version_id: number
+	/** newest first */
+	reports: TranscriptionReport[]
+	points: ReviewPoint[]
+	counts: ReviewCounts
+	may: ReviewPermissions
+}
+
+export interface ReviewDecisionInput {
+	status: ReviewDecision
+	correction?: string | null
+	reason?: string | null
+	addressee?: 'conductor' | 'librarian' | null
+}
+
+/** A correction order for the tool chain (GET /api/review/orders). */
+export interface CorrectionOrder {
+	id: number
+	version_id: number
+	copy_id: number
+	shelfmark: string
+	title: string | null
+	basename: string | null
+	file_id: number | null
+	file_name: string | null
+	file_sha256: string | null
+	measures: string | null
+	measure_from: string | null
+	measure_to: string | null
+	voice: string | null
+	verse: number | null
+	category: string
+	text: string | null
+	correction: string | null
+	decided_by_name: string | null
+	decided: number | null
+}
+
+/** Result of reading a report (POST /api/versions/{id}/transcription-reports). */
+export interface ReportIngestResult {
+	report: TranscriptionReport
+	unchanged: boolean
+	points: { created: number, kept: number, closed: number, open: number }
+	proposals: number
+	proposalsSkipped: boolean
+	warnings: string[]
+}
+
+/** One changed note of a correction, as recorded by the server. */
+export interface CorrectionChange {
+	measure: string
+	part: string
+	staff: string
+	voice: string
+	kind: 'pitch' | 'accidental' | 'lyric' | string
+	verse: string | number | null
+	old: string
+	new: string
+}
+
+export interface CorrectionInput {
+	/** `score.fileId` of the score shown */
+	fileId: number
+	/** the whole changed MusicXML */
+	content: string
+	pointIds: number[]
+	reason: string | null
+}
+
+/** POST /api/versions/{id}/corrections */
+export interface CorrectionResult {
+	file: FileRef
+	changes: CorrectionChange[]
+	points: number[]
 }

@@ -10,7 +10,14 @@ const TOKEN = 'abcdefghijklmnopqrstuvwxyz012345'
 
 describe('parseStartParams', () => {
 	it('reads copy and task of a task notification', () => {
-		expect(parseStartParams('?copy=35&task=4')).toEqual({ view: null, copyId: 35, taskId: 4, eventId: null, linkToken: null, dueKey: null })
+		expect(parseStartParams('?copy=35&task=4')).toEqual({ view: null, copyId: 35, taskId: 4, eventId: null, linkToken: null, dueKey: null, review: false })
+	})
+
+	it('reads the review of a transcription of a copy (notification about review points)', () => {
+		expect(parseStartParams('?copy=35&review=1')).toMatchObject({ copyId: 35, review: true })
+		expect(parseStartParams('?review=1').review).toBe(false)
+		expect(parseStartParams('?copy=abc&review=1').review).toBe(false)
+		expect(parseStartParams('?copy=35&review=yes').review).toBe(false)
 	})
 
 	it('reads the proposals view', () => {
@@ -41,7 +48,7 @@ describe('parseStartParams', () => {
 
 	it('ignores invalid numbers and unknown views', () => {
 		expect(parseStartParams('?copy=abc&task=-1&event=0&view=nonsense')).toEqual({
-			view: null, copyId: null, taskId: null, eventId: null, linkToken: null, dueKey: null,
+			view: null, copyId: null, taskId: null, eventId: null, linkToken: null, dueKey: null, review: false,
 		})
 	})
 
@@ -58,7 +65,7 @@ describe('parseStartParams', () => {
 	})
 
 	it('treats an empty query as nothing', () => {
-		expect(parseStartParams('')).toEqual({ view: null, copyId: null, taskId: null, eventId: null, linkToken: null, dueKey: null })
+		expect(parseStartParams('')).toEqual({ view: null, copyId: null, taskId: null, eventId: null, linkToken: null, dueKey: null, review: false })
 	})
 })
 

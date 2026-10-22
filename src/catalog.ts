@@ -64,6 +64,7 @@ export const DEFAULT_FILTERS: Readonly<Filters> = Object.freeze({
 	status: 'active',
 	unconfirmed: false,
 	noValidVersion: false,
+	reviewOpen: false,
 })
 
 /** Repertoire classes in display order. */
@@ -149,6 +150,7 @@ export function hasActiveFilters(filters: Filters): boolean {
 		|| filters.status !== DEFAULT_FILTERS.status
 		|| filters.unconfirmed
 		|| filters.noValidVersion
+		|| filters.reviewOpen
 }
 
 /**
@@ -202,6 +204,9 @@ export function filterEntries(entries: Entry[], filters: Filters, index: Map<num
 			return false
 		}
 		if (filters.noValidVersion && (entry.work_id === null || entry.work_id === undefined || context.worksWithValidVersion.has(entry.work_id))) {
+			return false
+		}
+		if (filters.reviewOpen && !((entry.review_open ?? 0) > 0)) {
 			return false
 		}
 		return true

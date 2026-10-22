@@ -39,6 +39,7 @@ The App Store shows the files marked with a number, in this order
 | `score-excerpt.png` | Focus voice Tenor II, buttons to share and ask, the text reference and the first system of measures 1 to 8. |
 | `practice-audio-dialog.png` | The dialog "Practice files": one file or a ZIP, voice, other voices, WAV or MIDI, mono or stereo, file name and size. |
 | `task-question.png` | Sidebar of copy 2-1, tab "Tasks": an open question to the conductor about measures 5 to 8, Tenor II, and an internal link to the same place. |
+| `review-points.png` | *Planned, not taken yet:* the score viewer of copy 2-1 with the panel "Review of the transcription" of its demo report: the review point at measure 7, Tenor II, chosen (measures shown, voice highlighted), "Play this passage" and the decision buttons. |
 | `concert-warnings.png` | The concert "Adventskonzert 2026" with its pieces, durations and warnings. |
 | `accession-form.png` | The form "Record a new piece" with the next free shelf mark 4-5. |
 | `notifications.png` | The notifications menu with a proposal waiting and two new tasks. |

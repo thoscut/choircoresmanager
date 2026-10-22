@@ -16,6 +16,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import { displayAuditValue, formatDateTime } from '../format.ts'
+import { reviewStatusLabel } from '../review.ts'
 import { fieldInfo, fieldLabel } from '../store.ts'
 import { LEVELS } from '../types.ts'
 
@@ -49,6 +50,10 @@ function objectLabel(type: string): string {
 		return t('notenarchiv', 'Copy')
 	case 'file':
 		return t('notenarchiv', 'File')
+	case 'review_point':
+		return t('notenarchiv', 'Review point')
+	case 'review_report':
+		return t('notenarchiv', 'Transcription report')
 	default:
 		return type
 	}
@@ -75,6 +80,12 @@ function actionLabel(action: string): string {
 		return t('notenarchiv', 'File sync')
 	case 'practice_audio':
 		return t('notenarchiv', 'Practice files made')
+	case 'imported':
+		return t('notenarchiv', 'Report read')
+	case 'decided':
+		return t('notenarchiv', 'Decided')
+	case 'corrected':
+		return t('notenarchiv', 'Corrected')
 	default:
 		return action
 	}
@@ -139,6 +150,9 @@ function subject(entry: AuditEntry): string {
  * @param value - old or new value
  */
 function value(entry: AuditEntry, value: string | null): string {
+	if (entry.object_type === 'review_point' && entry.field === 'status' && value !== null) {
+		return reviewStatusLabel(value)
+	}
 	const info = entry.field && isLevel(entry.object_type) ? fieldInfo(entry.object_type, entry.field) : undefined
 	return displayAuditValue(info, value)
 }

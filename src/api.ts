@@ -17,6 +17,9 @@ import type {
 	EndingLicense,
 	ChoirEvent,
 	Contribution,
+	CorrectionInput,
+	CorrectionOrder,
+	CorrectionResult,
 	CountInput,
 	Detail,
 	DueResult,
@@ -50,14 +53,21 @@ import type {
 	ProtectionReviewRow,
 	ReleaseRow,
 	RepertoireThresholds,
+	ReportIngestResult,
+	ReportPerson,
 	ResolvedLink,
+	ReviewCounts,
+	ReviewDecisionInput,
+	ReviewPoint,
 	Settings,
 	SettingsUpdate,
 	ShelfLabel,
 	Statistics,
 	Task,
 	TaskInput,
+	TranscriptionReport,
 	UserCalendar,
+	VersionReview,
 } from './types.ts'
 
 import axios, { isAxiosError } from '@nextcloud/axios'
@@ -918,4 +928,98 @@ export function fullBackupUrl(): string {
 export async function restoreBackup(fileId: number): Promise<Record<string, number>> {
 	const { data } = await axios.post<{ restored: Record<string, number> }>(apiUrl('/backup/restore'), { fileId })
 	return data.restored ?? {}
+}
+
+// ---- milestone 0.6: reviewing transcriptions and corrections -------------------
+
+const NO_REVIEW_COUNTS: ReviewCounts = { open: 0, question: 0, correct: 0, confirmed: 0, corrected: 0, dismissed: 0 }
+
+/**
+ * A report as delivered by the server: PHP sends an empty summary or field
+ * map as `[]`.
+ *
+ * @param report - report row
+ */
+function normalizeReport(report: TranscriptionReport): TranscriptionReport {
+	const summary = report.summary && typeof report.summary === 'object' && !Array.isArray(report.summary) ? report.summary : null
+	const fields = summary?.fields && typeof summary.fields === 'object' && !Array.isArray(summary.fields) ? summary.fields : null
+	return {
+		...report,
+		summary: summary === null
+			? null
+			: { ...summary, fields, persons: list<ReportPerson>(summary.persons), warnings: list<string>(summary.warnings) },
+	}
+}
+
+/**
+ * Reports, review points and permissions of a version.
+ *
+ * @param versionId - version id
+ */
+export async function fetchReview(versionId: number): Promise<VersionReview> {
+	const { data } = await axios.get<VersionReview>(apiUrl('/versions/{id}/review', { id: versionId }))
+	const counts = data.counts && typeof data.counts === 'object' && !Array.isArray(data.counts) ? data.counts : {}
+	return {
+		version_id: data.version_id ?? versionId,
+		reports: list<TranscriptionReport>(data.reports).map(normalizeReport),
+		points: list(data.points),
+		counts: { ...NO_REVIEW_COUNTS, ...counts },
+		may: {
+			decideMusical: data.may?.decideMusical === true,
+			decideMaterial: data.may?.decideMaterial === true,
+			ingest: data.may?.ingest === true,
+			correct: data.may?.correct === true,
+		},
+	}
+}
+
+/**
+ * Decide a review point.
+ *
+ * @param pointId - review point id
+ * @param decision - new status with correction text, reason and addressee
+ */
+export async function decideReviewPoint(pointId: number, decision: ReviewDecisionInput): Promise<ReviewPoint> {
+	const { data } = await axios.post<ReviewPoint>(apiUrl('/review-points/{id}/decision', { id: pointId }), decision)
+	return data
+}
+
+/**
+ * Read a transcription report (bericht/1) for a version.
+ *
+ * @param versionId - version id
+ * @param content - JSON text of the report
+ */
+export async function ingestReport(versionId: number, content: string): Promise<ReportIngestResult> {
+	const { data } = await axios.post<ReportIngestResult>(apiUrl('/versions/{id}/transcription-reports', { id: versionId }), { content })
+	return { ...data, report: normalizeReport(data.report), warnings: list(data.warnings) }
+}
+
+/** The open correction orders for the tool chain, oldest first. */
+export async function fetchCorrectionOrders(): Promise<CorrectionOrder[]> {
+	const { data } = await axios.get<CorrectionOrder[]>(apiUrl('/review/orders'))
+	return list(data)
+}
+
+/**
+ * Save a small correction of a score as a new file.
+ *
+ * @param versionId - version id
+ * @param correction - score file, changed MusicXML, review points to close, reason
+ */
+export async function saveCorrection(versionId: number, correction: CorrectionInput): Promise<CorrectionResult> {
+	const { data } = await axios.post<CorrectionResult>(apiUrl('/versions/{id}/corrections', { id: versionId }), correction)
+	return { ...data, changes: list(data.changes), points: list(data.points) }
+}
+
+/**
+ * Address of a PDF scan for the browser's own PDF viewer, optionally at a
+ * page (`#page=`).
+ *
+ * @param fileRowId - `files[].id` of the PDF
+ * @param page - page to open, or null
+ */
+export function scanUrl(fileRowId: number, page: number | null = null): string {
+	const url = apiUrl('/files/{id}/scan', { id: fileRowId })
+	return page !== null && Number.isInteger(page) && page > 0 ? `${url}#page=${page}` : url
 }

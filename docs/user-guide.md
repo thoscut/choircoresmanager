@@ -15,6 +15,7 @@ role does not include.
 
 - [Getting around](#getting-around)
 - [Scores, practice files and questions](#scores-practice-files-and-questions)
+- [Reviewing transcriptions](#reviewing-transcriptions)
 - [Concerts and song lists](#concerts-and-song-lists)
 - [Statistics and annual report](#statistics-and-annual-report)
 - [For music librarians](#for-music-librarians)
@@ -261,6 +262,115 @@ Share a place in two ways:
   the rights on every call; calls are counted without names. **Internal
   links** in the navigation lists all active links.
 
+## Reviewing transcriptions
+
+When a scan is transcribed into MusicXML (by a person or with a tool), the
+transcription ends with a **report** (`… - Bericht.json`, format
+`bericht/1`). It says what was uncertain, what was left out and what was
+found on the material, measure by measure. The app turns these findings into
+**review points**, which the conductor and the music librarians decide in the
+score view. The app proposes, people decide: nothing in the catalog changes
+by itself.
+
+### Where review points come from
+
+- **File sync.** Put the report next to the MusicXML in the archive folder,
+  named like the score file with ` - Bericht.json` at the end (for example
+  `5-01_Title - Bericht.json`), and run the file sync. The sync lists the
+  report as a report, not as a score file, and reads it.
+- **Tools.** A tool with the role "Proposals (tools)" sends the report
+  through the app's interface (see the [API](api.md)).
+
+Reading the same report again creates nothing twice. Each report gives:
+
+| In the report | Review point | Decides |
+|---|---|---|
+| uncertain readings, with measure and voice | **Uncertain reading** | conductor |
+| marks left out (for example a breath mark) | **Not transcribed** | conductor |
+| findings on the material (a missing page, notes in pencil) | **Material** | music librarian |
+| questions | **Question** | conductor when a measure is named, otherwise music librarian |
+
+The **catalog librarian may decide every point**; the conductor decides the
+musical ones. The rights assessment and catalog fields of the report (for
+example "Verlag / Bestellnummer") go to the [inbox](#inbox) as proposals,
+while the proposals inbox is switched on; otherwise they are only shown with
+the report. The report's origin and review state of the transcription are
+shown with the version.
+
+When a new report for the same copy arrives (a new round of the
+transcription with a new MusicXML file), the points it no longer names are
+set to **Corrected** ("done in a new version"). If the MusicXML has not
+changed, they stay open.
+
+### Reviewing in the score view
+
+1. Open the copy and its **Score**, then **Review** (the sidebar of the copy
+   also offers a button with the number of open review points, and a
+   notification opens the review directly). The panel **Review of the
+   transcription** lists the review points, the round and the review state;
+   **Show review points** switches between **To do** and **All**.
+2. Choose a point. The score jumps to its measures and highlights its voice
+   as the focus voice. **Play this passage** plays exactly these measures
+   (only where playback is allowed; the rights check is the same as
+   always).
+3. **Scan**: when a PDF scan is linked to the copy, **Show scan beside the
+   score** shows it next to the score, and **Open scan in a new window** opens
+   it in a second window, both at the **Page of the scan** (the page of the
+   point, or the page you last looked at). Both use the browser's own PDF
+   viewer; nothing is sent to another server. The second window helps on
+   small screens and with a magnifier.
+4. Decide:
+   - **Reading is right** – the transcription stays as it is.
+   - **Correct in the app …** – for a wrong pitch, accidental or syllable,
+     see [Small corrections](#small-corrections-in-the-app).
+   - **Correction order** – for anything larger: describe what is to be
+     changed; the tool chain fetches the order and closes it with its next
+     report.
+   - **Ask a question** – becomes a question (task) with the measures and
+     voice of the point, for the conductor or the music librarians.
+   - **Dismiss** – not relevant; a reason is required.
+
+   **Reopen** sets a decided point back to open. Who decided, when and why is
+   stored; nothing is deleted.
+
+Everything works with the keyboard; a change of status is announced to
+screen readers. The catalog shows the number of open review points per copy,
+and the filter **Open review points** lists the copies that still need a
+decision. The responsible roles are notified of new review points (one
+notification per report).
+
+### Small corrections in the app
+
+Small errors are corrected in the app itself (music librarians and
+conductor). Only these can be changed:
+
+- the pitch of a note (step, sharp or flat, octave) and its visible
+  accidental,
+- the syllable of a verse under a note.
+
+Note values, rests, measures and everything else stay as they are; the
+measures keep their length.
+
+1. In the score view show a measure (or up to eight), choose the focus
+   voice and **Correct notes …**; or choose a review point and **Correct in
+   the app …**.
+2. The notes of the voice are listed one by one with their duration; change
+   pitch, accidental or syllable.
+3. The **preview** shows the measures with the changed notes highlighted,
+   and the list of changes in words (for example "measure 12, Bass: C3 →
+   D3").
+4. Save, optionally with a reason, and choose the review points it settles.
+
+The app saves the correction as a **new file next to the old one**, with
+your Nextcloud permissions, for example
+`5-01_Title (korrigiert 2026-10-22).mxl`. The old file is not changed and
+stays linked to the copy; the new one becomes the MusicXML the score view
+shows. The audit log lists every change (measure, voice, old → new), and the
+chosen review points are set to **Corrected**. The music librarians are
+notified of the correction. Without write permission in the folder of the
+score, the app says so and saves nothing. Internal preservation copies are
+not corrected in the app.
+
 ## Concerts and song lists
 
 ### Planning a concert
@@ -440,6 +550,14 @@ Answered questions appear on the start page as **Answered tasks to apply**.
 Correct the catalog or the file if needed, then close the task as **Applied**
 or **Discarded** (see [Questions, tasks and sharing](#questions-tasks-and-sharing)).
 
+### Transcriptions and correction orders
+
+Material findings and questions without a measure of a transcription report
+are yours, and you may decide every other review point, too (see
+[Reviewing transcriptions](#reviewing-transcriptions)). Correction orders wait
+for the tool chain until its next report closes them. You are notified when a
+correction arrives, from the app or with a new round.
+
 ### Imports, file sync and exports
 
 **Archive management** at the bottom of the navigation holds the imports of
@@ -451,7 +569,9 @@ import and the file sync.
 
 A file is linked to a copy by the shelf mark at the start of its name. A file
 whose name does not fit can be linked by hand on the tab **Files** with
-**Link a file …**; such a link stays, whatever the file is called.
+**Link a file …**; such a link stays, whatever the file is called. A file
+whose name ends with `bericht.json` is a transcription report: the sync reads
+it into review points instead of linking it as a score file.
 
 ### New accessions and shelf labels
 
@@ -597,6 +717,16 @@ notification.
 
 The music librarian then applies the answer to the catalog or discards it.
 
+### Reviewing transcriptions
+
+The musical review points of a transcription report are yours: uncertain
+readings, marks that were not transcribed and questions about a measure. You
+are notified when a report brings new ones. In the score view each point
+shows its measures with the voice highlighted and plays them; confirm the
+reading, order a correction, ask a question or dismiss the point, or correct
+a wrong note or syllable in the app yourself (see
+[Reviewing transcriptions](#reviewing-transcriptions)).
+
 ### Concerts, calendar and practice files
 
 - [Planning a concert](#planning-a-concert) and
@@ -622,6 +752,9 @@ The role **Proposals (tools)** is meant for transcription rounds and scripts.
 They send proposals for catalog fields through the app's interface (see the
 [API](api.md)); nothing changes until a music librarian accepts a proposal in
 the inbox. Contributors see the inbox and can ask questions about a copy.
+They also send transcription reports, which become review points, and fetch
+the correction orders; the next report of a round closes them (see
+[Reviewing transcriptions](#reviewing-transcriptions)).
 
 ## Paper
 

@@ -134,6 +134,13 @@ describe('filterEntries', () => {
 		expect(ids({ noValidVersion: true }, context)).toEqual([1, 4])
 	})
 
+	it('filters copies with open review points of a transcription', () => {
+		const withReview = ENTRIES.map((item) => (item.id === 2 ? { ...item, review_open: 3 } : (item.id === 1 ? { ...item, review_open: 0, review_orders: 2 } : item)))
+		expect(filterEntries(withReview, filters({ reviewOpen: true }), INDEX).map((item) => item.id)).toEqual([2])
+		// review switched off: the server sends null
+		expect(filterEntries(ENTRIES.map((item) => ({ ...item, review_open: null })), filters({ reviewOpen: true }), INDEX)).toEqual([])
+	})
+
 	it('combines filters', () => {
 		expect(ids({ repertoire: 'current', musicxml: true })).toEqual([1])
 		expect(ids({ preservationCopy: true, binder: 1 })).toEqual([4])
@@ -149,6 +156,7 @@ describe('hasActiveFilters', () => {
 	it('notices the new filters', () => {
 		expect(hasActiveFilters(filters({ unconfirmed: true }))).toBe(true)
 		expect(hasActiveFilters(filters({ noValidVersion: true }))).toBe(true)
+		expect(hasActiveFilters(filters({ reviewOpen: true }))).toBe(true)
 	})
 })
 

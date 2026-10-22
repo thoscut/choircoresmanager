@@ -312,6 +312,9 @@ function onFooterClick(event: Event, open: 'archive' | 'settings' | 'view'): voi
 				<NcCheckboxRadioSwitch v-if="isModuleActive('valid_version')" v-model="filters.noValidVersion">
 					{{ t('notenarchiv', 'No version valid for the choir') }}
 				</NcCheckboxRadioSwitch>
+				<NcCheckboxRadioSwitch v-if="isModuleActive('transcription_review')" v-model="filters.reviewOpen">
+					{{ t('notenarchiv', 'Open review points') }}
+				</NcCheckboxRadioSwitch>
 
 				<NcButton v-if="filtersActive"
 					variant="tertiary"

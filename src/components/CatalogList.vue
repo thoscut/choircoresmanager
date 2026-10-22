@@ -30,6 +30,7 @@ import {
 	entries,
 	filters,
 	filtersActive,
+	isModuleActive,
 	openEntry,
 	resetFilters,
 	selectedId,
@@ -167,6 +168,17 @@ function repertoireDetail(entry: Entry): string {
 }
 
 /**
+ * Open review points of the transcription, as text ('' when there are none
+ * or the review is switched off).
+ *
+ * @param entry - catalog entry
+ */
+function reviewText(entry: Entry): string {
+	const open = isModuleActive('transcription_review') ? (entry.review_open ?? 0) : 0
+	return open > 0 ? n('notenarchiv', '%n open review point', '%n open review points', open) : ''
+}
+
+/**
  * Status shown next to the shelf mark if the copy is not active.
  *
  * @param entry - catalog entry
@@ -245,6 +257,7 @@ function statusText(entry: Entry): string {
 						<span class="catalog-card__detail">{{ repertoireText(entry) }}</span>
 						<span class="catalog-card__detail">{{ filesTitle(entry) }}</span>
 						<span v-if="entry.has_musicxml" class="musicxml-tag">MusicXML</span>
+						<span v-if="reviewText(entry)" class="review-tag">{{ reviewText(entry) }}</span>
 					</span>
 				</button>
 			</li>
@@ -312,6 +325,7 @@ function statusText(entry: Entry): string {
 					<td class="catalog-table__files" :title="filesTitle(entry)">
 						{{ entry.files }}
 						<span v-if="entry.has_musicxml" class="musicxml-tag">MusicXML</span>
+						<span v-if="reviewText(entry)" class="review-tag">{{ reviewText(entry) }}</span>
 					</td>
 				</tr>
 			</tbody>
@@ -363,7 +377,8 @@ function statusText(entry: Entry): string {
 }
 
 .status-tag,
-.musicxml-tag {
+.musicxml-tag,
+.review-tag {
 	display: inline-block;
 	padding: 0 var(--default-grid-baseline);
 	border: 1px solid var(--color-border-maxcontrast);
@@ -371,6 +386,12 @@ function statusText(entry: Entry): string {
 	color: var(--color-text-maxcontrast);
 	font-size: var(--font-size-small, 13px);
 	white-space: nowrap;
+}
+
+.review-tag {
+	max-width: 12em;
+	color: var(--color-main-text);
+	white-space: normal;
 }
 
 .status-tag {

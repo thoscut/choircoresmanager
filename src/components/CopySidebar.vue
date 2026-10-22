@@ -21,6 +21,7 @@ import {
 	mdiInformationOutline,
 	mdiMusic,
 	mdiScaleBalance,
+	mdiTextBoxCheckOutline,
 } from '@mdi/js'
 import { showError } from '@nextcloud/dialogs'
 import { n, t } from '../l10n.ts'
@@ -88,10 +89,18 @@ watch([scoreRequest, detail], ([request, current]) => {
 	}
 }, { immediate: true })
 
-function openScore(): void {
-	scoreStart.value = null
+/**
+ * Open the score view.
+ *
+ * @param review - with the review of the transcription
+ */
+function openScore(review = false): void {
+	scoreStart.value = review && selectedId.value !== null ? { copyId: selectedId.value, review: true } : null
 	scoreOpen.value = true
 }
+
+/** Review points of the copy that wait for a decision (module "transcription_review"). */
+const openReviewPoints = computed(() => (isModuleActive('transcription_review') ? (listEntry.value?.review_open ?? 0) : 0))
 
 const activeTab = computed({
 	get: () => sidebarTab.value,
@@ -244,11 +253,19 @@ async function onSaved(): Promise<void> {
 				<NcButton v-if="detail.score?.canView && isModuleActive('score_viewer')"
 					variant="secondary"
 					:aria-label="t('notenarchiv', 'Show score of {shelfmark}', { shelfmark })"
-					@click="openScore">
+					@click="openScore()">
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiMusic" />
 					</template>
 					{{ t('notenarchiv', 'Score') }}
+				</NcButton>
+				<NcButton v-if="detail.score?.canView && isModuleActive('score_viewer') && openReviewPoints > 0"
+					variant="tertiary"
+					@click="openScore(true)">
+					<template #icon>
+						<NcIconSvgWrapper :path="mdiTextBoxCheckOutline" />
+					</template>
+					{{ n('notenarchiv', '%n open review point', '%n open review points', openReviewPoints) }}
 				</NcButton>
 				<ScoreViewer v-if="scoreOpen && detail.score"
 					:detail="detail"

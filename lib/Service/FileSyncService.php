@@ -11,12 +11,18 @@ namespace OCA\Notenarchiv\Service;
 
 use OCA\Notenarchiv\Db\ArchiveFile;
 use OCA\Notenarchiv\Db\ArchiveFileMapper;
+use OCA\Notenarchiv\Db\Copy;
 use OCA\Notenarchiv\Db\CopyMapper;
+use OCA\Notenarchiv\Db\TranscriptionReportMapper;
 use OCA\Notenarchiv\Db\WorkVersionMapper;
+use OCA\Notenarchiv\Exception\InvalidInputException;
+use OCA\Notenarchiv\Exception\UserFacingException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\IDBConnection;
+use OCP\IL10N;
+use Psr\Log\LoggerInterface;
 
 /**
  * Matches the files in the archive folder against the catalog.
@@ -32,8 +38,15 @@ use OCP\IDBConnection;
  * copy whatever their name, also outside the scanned folders. When size or
  * modification time of a file changed, its stored checksum is cleared,
  * because it belongs to the old content.
+ *
+ * Reports of transcriptions (`…bericht.json`, milestone 0.6) are registered
+ * with the role `transcription_report` and counted apart from the score
+ * files. While the module "transcription_review" is active, new and changed
+ * reports are read into review points after the sync (ReviewService).
  */
 class FileSyncService {
+	public const ROLE_REPORT = 'transcription_report';
+
 	public const ROLE_BY_TYPE = [
 		'pdf' => 'score_pdf',
 		'mxl' => 'musicxml',
@@ -62,7 +75,30 @@ class FileSyncService {
 		private ArchiveFileMapper $files,
 		private AuditLog $audit,
 		private ITimeFactory $time,
+		private Modules $modules,
+		private ReviewService $review,
+		private TranscriptionReportMapper $reports,
+		private IL10N $l,
+		private LoggerInterface $logger,
 	) {
+	}
+
+	/**
+	 * Whether a file name is that of a transcription report: it ends with
+	 * "bericht.json" (case-insensitive), e.g. "5-01_Titel - Bericht.json".
+	 */
+	public static function isReportName(string $name): bool {
+		return preg_match('/bericht\.json$/i', $name) === 1;
+	}
+
+	/**
+	 * The role of a file by its name.
+	 */
+	public static function roleOf(string $name): string {
+		if (self::isReportName($name)) {
+			return self::ROLE_REPORT;
+		}
+		return self::ROLE_BY_TYPE[strtolower(pathinfo($name, PATHINFO_EXTENSION))] ?? 'other';
 	}
 
 	/**
@@ -89,9 +125,13 @@ class FileSyncService {
 		$skipped = [];
 		$this->collect($archive, $found, $skipped);
 
+		$reviewActive = $this->modules->isEnabled(ReviewService::MODULE);
 		$report = ['files' => 0, 'assigned' => 0, 'new' => 0, 'changed' => 0, 'missing' => 0, 'ignored' => 0, 'linkedManually' => 0,
-			'unassignable' => [], 'byType' => [], 'copiesWithoutFile' => [], 'skippedFolders' => $skipped];
+			'unassignable' => [], 'byType' => [], 'copiesWithoutFile' => [], 'skippedFolders' => $skipped,
+			'reports' => ['files' => 0, 'assigned' => 0, 'imported' => 0, 'unchanged' => 0, 'failed' => [], 'switchedOff' => !$reviewActive]];
 		$copiesWithFile = [];
+		/** @var list<array{file: ArchiveFile, node: File, copy: ?Copy, path: string, changed: bool}> $reportFiles */
+		$reportFiles = [];
 		$operation = $this->audit->newOperation();
 
 		$this->db->beginTransaction();
@@ -116,21 +156,30 @@ class FileSyncService {
 					continue;
 				}
 				$type = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+				$role = self::roleOf($name);
+				$isReport = $role === self::ROLE_REPORT;
 
 				if ($manual) {
 					$report['linkedManually']++;
 					$copy = $copiesById[(int)$known[$node->getId()]->getCopyId()] ?? null;
 				} else {
-					$report['files']++;
-					$report['byType'][$type] = ($report['byType'][$type] ?? 0) + 1;
+					// Reports are counted apart from the score and scan files.
+					if ($isReport) {
+						$report['reports']['files']++;
+					} else {
+						$report['files']++;
+						$report['byType'][$type] = ($report['byType'][$type] ?? 0) + 1;
+					}
 					$copy = $copies[(int)$parts[1] . '-' . (int)$parts[2]] ?? null;
 					if ($copy === null) {
 						$report['unassignable'][] = $path;
+					} elseif ($isReport) {
+						$report['reports']['assigned']++;
 					} else {
 						$report['assigned']++;
 					}
 				}
-				if ($copy !== null) {
+				if ($copy !== null && !$isReport) {
 					$copiesWithFile[$copy->getShelfmark()] = true;
 				}
 
@@ -155,7 +204,7 @@ class FileSyncService {
 				$file->setPath($path);
 				$file->setName($name);
 				$file->setType($type === '' ? null : $type);
-				$file->setRole(self::ROLE_BY_TYPE[$type] ?? 'other');
+				$file->setRole($role);
 				$file->setSize($size);
 				$file->setMtime($node->getMTime());
 				$file->setEtag($node->getEtag());
@@ -164,14 +213,18 @@ class FileSyncService {
 				$file->setFound(true);
 				$file->setSyncedAt($now);
 
+				$contentChanged = $isNew || array_intersect(array_keys($file->getUpdatedFields()), ['size', 'mtime', 'etag', 'fileId']) !== [];
 				if ($isNew) {
-					$this->files->insert($file);
+					$file = $this->files->insert($file);
 					$report['new']++;
 				} else {
 					if (array_diff(array_keys($file->getUpdatedFields()), ['syncedAt']) !== []) {
 						$report['changed']++;
 					}
-					$this->files->update($file);
+					$file = $this->files->update($file);
+				}
+				if ($isReport) {
+					$reportFiles[] = ['file' => $file, 'node' => $node, 'copy' => $copy, 'path' => $path, 'changed' => $contentChanged];
 				}
 				unset($known[$node->getId()]);
 			}
@@ -219,7 +272,52 @@ class FileSyncService {
 			}
 		}
 		arsort($report['byType']);
+		if ($reviewActive) {
+			$report['reports'] = $this->readReports($reportFiles, $report['reports'], $uid);
+		}
 		return $report;
+	}
+
+	/**
+	 * Reads the report files that are new, changed or not read yet into
+	 * review points; one failed report does not stop the others.
+	 *
+	 * @param list<array{file: ArchiveFile, node: File, copy: ?Copy, path: string, changed: bool}> $reportFiles
+	 * @param array{files: int, assigned: int, imported: int, unchanged: int, failed: list<array{path: string, error: string}>, switchedOff: bool} $counts
+	 * @return array{files: int, assigned: int, imported: int, unchanged: int, failed: list<array{path: string, error: string}>, switchedOff: bool}
+	 */
+	private function readReports(array $reportFiles, array $counts, string $uid): array {
+		foreach ($reportFiles as ['file' => $file, 'node' => $node, 'copy' => $copy, 'path' => $path, 'changed' => $changed]) {
+			if ($copy === null) {
+				continue;
+			}
+			if (!$changed && $this->reports->findByReportFile($file->getId()) !== []) {
+				$counts['unchanged']++;
+				continue;
+			}
+			try {
+				$raw = UserFiles::content($node, TranscriptionReportParser::MAX_BYTES,
+					new InvalidInputException('The report file cannot be read.'));
+				$result = $this->review->ingestFile($file, $copy, $raw, $uid);
+				$counts[$result['unchanged'] ? 'unchanged' : 'imported']++;
+			} catch (UserFacingException $e) {
+				$counts['failed'][] = ['path' => $path, 'error' => $this->translate($e->getMessage(), $e->getParameters())];
+			} catch (\Throwable $e) {
+				$this->logger->error('Notenarchiv: reading the report ' . $path . ' failed: ' . $e->getMessage(), ['exception' => $e]);
+				$counts['failed'][] = ['path' => $path, 'error' => $this->l->t('Internal error. Details are in the Nextcloud log.')];
+			}
+		}
+		return $counts;
+	}
+
+	/**
+	 * A message for users with its parameters, translated (as the
+	 * controllers do it).
+	 *
+	 * @param list<string|int> $parameters
+	 */
+	private function translate(string $message, array $parameters): string {
+		return $this->l->t($message, array_map(fn (string|int $p): string => $this->l->t(str_replace('%', '%%', (string)$p)), $parameters));
 	}
 
 	/**

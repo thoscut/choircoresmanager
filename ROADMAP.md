@@ -199,7 +199,15 @@ Beschreibung im Admin-Guide, Abschnitt „Modules and presets“, und in
 
 ### 0.6 Agenten und Prüfung der Übertragungen
 
-- **Schnittstelle für Agenten:**
+*Teilweise umgesetzt* (App-Version folgt): Übertragung prüfen, Prüfen in
+der Notenansicht, Korrigieren und die Benachrichtigungen dazu, als Module
+`transcription_review` und `corrections` (Beschreibung in `docs/api.md`,
+Abschnitt „Reviewing transcriptions and corrections“, und im
+Benutzerhandbuch, Abschnitt „Reviewing transcriptions“). Die Schnittstelle
+für Agenten steht noch aus; sie bindet die Prüfpunkte und Korrekturaufträge
+an.
+
+- **Schnittstelle für Agenten** (offen):
   - eine feste, versionierte API (OCS, `api/v1`) mit OpenAPI-Beschreibung
     für Lesen, Fällig-Liste, Vorschläge, Rückfragen und Prüfpunkte
   - ein MCP-Server, der lokal neben dem Agenten läuft, mit App-Passwort
@@ -207,27 +215,27 @@ Beschreibung im Admin-Guide, Abschnitt „Modules and presets“, und in
   - Schreibende Werkzeuge erzeugen nur Vorschläge, Rückfragen und
     Prüfergebnisse. Der Server begrenzt sie über die Rolle.
   - Ein Agentenlauf gegen den Demo-Bestand läuft in der CI mit.
-- **Übertragung prüfen:**
+- **Übertragung prüfen** (umgesetzt):
   - Der Bericht einer Übertragung (`bericht.json`, Format `bericht/1`) kommt
     über den Dateiabgleich oder die API.
   - Unsicherheiten, Auslassungen und Rückfragen werden zu Prüfpunkten mit
     Takt und Stimme.
   - Rechte und Werkverzeichnis-Felder gehen als Vorschläge in den Eingang.
   - Der Prüfstand steht bei der Fassung und lässt sich filtern.
-- **Prüfen in der Notenansicht:**
+- **Prüfen in der Notenansicht** (umgesetzt):
   - Ein Prüfpunkt springt zu den Takten, hebt die Stimme hervor und spielt
     die Stelle. Die Scan-Seite steht daneben.
   - Entscheidungen: Lesung richtig, korrigieren oder Rückfrage.
   - Musikalische Fragen entscheidet die Chorleitung, Material- und
     Rechtefragen die Archivverwaltung.
-- **Korrigieren:**
+- **Korrigieren** (umgesetzt):
   - Kleine Korrekturen (Tonhöhe, Vorzeichen, Silbe) gehen in der App über
     ein Formular je Takt und Stimme, mit Vorschau. Die App speichert sie als
     neue Datei.
   - Alles Größere geht als Korrekturauftrag an die Werkzeugkette. Deren
     neue Datei und Bericht schließen die Punkte.
-- **Benachrichtigungen:** neue Prüfpunkte an die zuständige Rolle;
-  Korrektur eingetroffen.
+- **Benachrichtigungen** (umgesetzt): neue Prüfpunkte an die zuständige
+  Rolle; Korrektur eingetroffen.
 
 ### 1.0 Stabil
 

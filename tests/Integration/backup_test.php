@@ -18,7 +18,8 @@ declare(strict_types=1);
  * <uid> must hold the role "librarian". Inside one outer transaction the
  * test first adds at least one record to every table through the services
  * (license, proposal, task, link, concert with an item, person with a
- * contribution, merge), so that the round trip covers every table with
+ * contribution, transcription report with a review point, merge; the module
+ * transcription_review must be active), so that the round trip covers every table with
  * content. It then exports the complete backup, empties all app tables,
  * restores the backup and compares every table row by row; then everything
  * is rolled back.
@@ -35,8 +36,10 @@ use OCA\Notenarchiv\Service\FullBackupService;
 use OCA\Notenarchiv\Service\LicenseService;
 use OCA\Notenarchiv\Service\LinkService;
 use OCA\Notenarchiv\Service\MergeService;
+use OCA\Notenarchiv\Service\Modules;
 use OCA\Notenarchiv\Service\PersonService;
 use OCA\Notenarchiv\Service\ProposalService;
+use OCA\Notenarchiv\Service\ReviewService;
 use OCA\Notenarchiv\Service\RightsService;
 use OCA\Notenarchiv\Service\TaskService;
 use OCP\IDBConnection;
@@ -82,6 +85,16 @@ try {
 		$persons = Server::get(PersonService::class);
 		$person = $persons->create(['name' => 'Backup Test Person', 'born' => '1850', 'died' => '1910', 'identification' => 'probable'], $uid);
 		$persons->addContribution($versionId, $person->getId(), 'arranger', true, $uid);
+		// A transcription report with one review point (module transcription_review)
+		$check('the review of transcriptions is active', Server::get(Modules::class)->isEnabled('transcription_review'));
+		Server::get(ReviewService::class)->ingest($versionId, json_encode([
+			'format' => 'bericht/1', 'signatur' => $first->getShelfmark(), 'basisname' => $first->getShelfmark() . '_Backup-test', 'weg' => 'neuaufbau',
+			'vorlage' => ['typ' => 'druck', 'beschreibung' => 'Backup test', 'seiten' => 1], 'umfang' => ['takte' => 1, 'auftakt' => false],
+			'gegenprobe' => ['audiveris' => 'keine', 'ersatz' => []], 'geprueft' => new stdClass(), 'vortragszeichen' => ['ausgelassen' => []],
+			'unsicher' => [['takt' => '1', 'stimme' => 'alle', 'was' => 'Backup test: first measure uncertain']],
+			'rechte' => ['einstufung' => 'offen', 'beteiligte' => []], 'wv' => ['herkunft' => 'Backup test', 'felder' => new stdClass()],
+			'lernen' => [], 'scores' => '| backup test |',
+		], JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR), $uid);
 		Server::get(MergeService::class)->moveCopy($other->getId(), $versionId, $uid, 'backup test');
 	}
 

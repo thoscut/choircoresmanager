@@ -73,10 +73,18 @@ class Notifier implements INotifier {
 			NotificationService::CONCERT_CONFIRM => $l->t('Please confirm what was sung at %1$s on %2$s.', [(string)($p['title'] ?? ''), (string)($p['date'] ?? '')]),
 			NotificationService::PROTECTION_ENDED => $l->t('%1$s %2$s is marked as protected, but by the life dates of the persons involved it is public domain since %3$s. Please check the rights status.', [(string)($p['shelfmark'] ?? ''), (string)($p['title'] ?? ''), (string)($p['date'] ?? '')]),
 			NotificationService::CHECKSUM_MISMATCH => $l->t('A %3$s file of %1$s %2$s has changed although it was not modified: please check it and restore it from a backup if necessary.', [(string)($p['shelfmark'] ?? ''), (string)($p['title'] ?? ''), (string)($p['type'] ?? '')]),
+			NotificationService::REVIEW_POINTS => $l->n('%1$s %2$s: %n new review point of the transcription for your role', '%1$s %2$s: %n new review points of the transcription for your role', (int)($p['count'] ?? 0), [(string)($p['shelfmark'] ?? ''), (string)($p['title'] ?? '')]),
+			NotificationService::CORRECTION_RECEIVED => ($p['kind'] ?? '') === 'report'
+				? $l->t('%1$s %2$s: a new transcription has done review points.', [(string)($p['shelfmark'] ?? ''), (string)($p['title'] ?? '')])
+				: $l->t('%1$s %2$s: a corrected MusicXML file was saved in the app.', [(string)($p['shelfmark'] ?? ''), (string)($p['title'] ?? '')]),
 			default => throw new UnknownNotificationException(),
 		};
 
-		if (isset($p['eventId'])) {
+		if (in_array($notification->getSubject(), [NotificationService::REVIEW_POINTS, NotificationService::CORRECTION_RECEIVED], true)
+			&& isset($p['copyId'])) {
+			// Opens the score view of the copy with the review
+			$link .= '?copy=' . (int)$p['copyId'] . '&review=1';
+		} elseif (isset($p['eventId'])) {
 			$link .= '?event=' . (int)$p['eventId'];
 		} elseif (isset($p['taskId'])) {
 			$link .= '?copy=' . (int)($p['copyId'] ?? 0) . '&task=' . (int)$p['taskId'];

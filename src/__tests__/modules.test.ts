@@ -39,7 +39,8 @@ const TOKEN = 'abcdefghijklmnopqrstuvwxyz012345'
 function without(...off: string[]): Record<string, boolean> {
 	const all = ['rights', 'valid_version', 'persons', 'protection_terms', 'releases', 'portal', 'print_station', 'publication',
 		'score_viewer', 'playback', 'practice_audio', 'excerpt_links', 'tasks', 'proposals', 'concerts', 'performance_import',
-		'repertoire', 'calendar', 'accession', 'merge', 'inventory', 'checksums', 'statistics', 'dashboard_widget', 'notifications']
+		'repertoire', 'calendar', 'accession', 'merge', 'inventory', 'checksums', 'statistics', 'dashboard_widget', 'notifications',
+		'transcription_review', 'corrections']
 	return Object.fromEntries(all.map((key) => [key, !off.includes(key)]))
 }
 
@@ -140,6 +141,15 @@ describe('links from the URL with switched-off modules', () => {
 		expect(result.switchedOff).toBe(true)
 		expect(result.params.view).toBeNull()
 		expect(result.params.eventId).toBeNull()
+	})
+
+	it('opens the copy without the review when the review of transcriptions is off', () => {
+		const on = applyModules(parseStartParams('?copy=3&review=1'), without())
+		expect(on).toEqual({ params: parseStartParams('?copy=3&review=1'), switchedOff: false })
+		const result = applyModules(parseStartParams('?copy=3&review=1'), without('transcription_review'))
+		expect(result.switchedOff).toBe(true)
+		expect(result.params.review).toBe(false)
+		expect(result.params.copyId).toBe(3)
 	})
 
 	it('ignores ?link= without excerpt links', () => {

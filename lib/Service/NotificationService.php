@@ -40,6 +40,10 @@ class NotificationService {
 	public const PROTECTION_ENDED = 'protection_ended';
 	/** Milestone 0.5: the content of an archive file changed without a visible modification (silent corruption) */
 	public const CHECKSUM_MISMATCH = 'checksum_mismatch';
+	/** Milestone 0.6: a transcription report created review points for a role (one per report and role) */
+	public const REVIEW_POINTS = 'review_points';
+	/** Milestone 0.6: a corrected MusicXML arrived (correction in the app, or a new report closed points) */
+	public const CORRECTION_RECEIVED = 'correction_received';
 
 	public function __construct(
 		private IManager $manager,
@@ -64,9 +68,11 @@ class NotificationService {
 
 	/**
 	 * @param array<string, scalar|null> $parameters
+	 * @param string|null $except account not to notify (the person who caused it)
 	 */
-	public function notifyRole(string $role, string $subject, string $objectType, string $objectId, array $parameters = [], bool $includeAdmins = false): void {
-		$this->notifyRoles([$role], $subject, $objectType, $objectId, $parameters, $includeAdmins);
+	public function notifyRole(string $role, string $subject, string $objectType, string $objectId, array $parameters = [], bool $includeAdmins = false,
+		?string $except = null): void {
+		$this->notifyRoles([$role], $subject, $objectType, $objectId, $parameters, $includeAdmins, $except);
 	}
 
 	/**
@@ -75,8 +81,10 @@ class NotificationService {
 	 *
 	 * @param list<string> $roles
 	 * @param array<string, scalar|null> $parameters
+	 * @param string|null $except account not to notify (the person who caused it)
 	 */
-	public function notifyRoles(array $roles, string $subject, string $objectType, string $objectId, array $parameters = [], bool $includeAdmins = false): void {
+	public function notifyRoles(array $roles, string $subject, string $objectType, string $objectId, array $parameters = [], bool $includeAdmins = false,
+		?string $except = null): void {
 		if (!$this->modules->notificationEnabled($subject)) {
 			return;
 		}
@@ -95,6 +103,9 @@ class NotificationService {
 			}
 		}
 		foreach (array_values(array_unique($recipients)) as $uid) {
+			if ($uid === $except) {
+				continue;
+			}
 			try {
 				$notification = $this->base($subject, $objectType, $objectId)
 					->setUser($uid)

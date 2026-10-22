@@ -11,7 +11,9 @@ declare(strict_types=1);
  * Checks the import files of the demo data with the app's own classes,
  * without a Nextcloud server: parsing, columns, values allowed by the field
  * registry, the round trip parse → write (byte for byte) and what the person
- * and performance imports will make of the lists.
+ * and performance imports will make of the lists. The transcription reports
+ * (`… - Bericht.json`) in the archive folder above the import folder are read
+ * as the file sync reads them: format, shelf mark, base name, review points.
  *
  * Usage (PHP 8.2+ with mbstring):
  *   php tools/demo/check-csv.php <app root> <import folder>
@@ -22,12 +24,14 @@ declare(strict_types=1);
  * Exit code 0 when every check passed.
  */
 
+use OCA\Notenarchiv\Exception\InvalidInputException;
 use OCA\Notenarchiv\Service\CatalogCsv;
 use OCA\Notenarchiv\Service\Fields;
 use OCA\Notenarchiv\Service\FieldValue;
 use OCA\Notenarchiv\Service\LifeDates;
 use OCA\Notenarchiv\Service\PerformanceImportService;
 use OCA\Notenarchiv\Service\PersonImportService;
+use OCA\Notenarchiv\Service\TranscriptionReportParser;
 
 if ($argc < 3) {
 	fwrite(STDERR, "usage: php check-csv.php <app root> <import folder>\n");
@@ -268,6 +272,62 @@ if (($content = $read('song-lists.csv')) !== null) {
 	}
 	ksort($kinds);
 	$check('song-lists.csv: lines by assignment', ($kinds['ambiguous'] ?? 0) >= 1, count($lists) . ' lists (' . implode(', ', array_keys($lists)) . '), ' . json_encode($kinds));
+}
+
+// Transcription reports (bericht/1) in the archive folder, the folder above
+// the import folder: read like the file sync reads them.
+$archive = dirname(rtrim($dir, '/\\'));
+$reportFiles = [];
+$collect = function (string $folder) use (&$collect, &$reportFiles): void {
+	foreach (scandir($folder) ?: [] as $name) {
+		if ($name === '.' || $name === '..') {
+			continue;
+		}
+		$path = $folder . '/' . $name;
+		if (is_dir($path)) {
+			// Folders starting with "_" or "." are skipped by the file sync
+			if (!str_starts_with($name, '_') && !str_starts_with($name, '.')) {
+				$collect($path);
+			}
+		} elseif (preg_match('/^\d+-\d+(?!\d)/', $name) === 1 && preg_match('/bericht\.json$/i', $name) === 1) {
+			$reportFiles[] = $path;
+		}
+	}
+};
+$collect($archive);
+sort($reportFiles);
+$check('transcription reports found in the archive folder', $reportFiles !== [], count($reportFiles) . ' in ' . $archive);
+foreach ($reportFiles as $path) {
+	$name = basename($path);
+	try {
+		$parsed = TranscriptionReportParser::parse((string)file_get_contents($path));
+	} catch (InvalidInputException $e) {
+		$check("$name: valid bericht/1", false, vsprintf($e->getMessage(), $e->getParameters()));
+		continue;
+	}
+	$warnings = array_map(fn (array $w): string => vsprintf($w[0], $w[1]), $parsed['warnings']);
+	$check("$name: valid bericht/1 without warnings", $warnings === [], implode('; ', $warnings));
+	$raw = json_decode((string)file_get_contents($path), true);
+	$signatur = is_array($raw) && is_string($raw['signatur'] ?? null) ? $raw['signatur'] : '';
+	$basename = is_array($raw) && is_string($raw['basisname'] ?? null) ? $raw['basisname'] : '';
+	preg_match('/^(\d+)-(\d+)/', $name, $m);
+	$check("$name: shelf mark of the report is the one of the file name",
+		TranscriptionReportParser::canonicalShelfmark($signatur) === (int)$m[1] . '-' . (int)$m[2]
+		&& isset($shelfmarks[TranscriptionReportParser::canonicalShelfmark($signatur) ?? '']), $signatur);
+	$scores = array_filter(['musicxml', 'mxl', 'xml'], fn (string $ext): bool => is_file(dirname($path) . '/' . $basename . '.' . $ext));
+	$check("$name: the score named by the base name lies next to it", $scores !== [], $basename . '.' . implode('|', $scores));
+	$categories = [];
+	$roles = [];
+	$withMeasures = 0;
+	foreach (TranscriptionReportParser::points($parsed['report']) as $point) {
+		$categories[$point['category']] = ($categories[$point['category']] ?? 0) + 1;
+		$roles[$point['role']] = ($roles[$point['role']] ?? 0) + 1;
+		$withMeasures += $point['measure_from'] !== null ? 1 : 0;
+	}
+	ksort($categories);
+	ksort($roles);
+	$check("$name: review points of every kind", count($categories) === 4,
+		json_encode($categories) . ', roles ' . json_encode($roles) . ", $withMeasures with measures");
 }
 
 echo $failures === 0 ? "\nall checks passed\n" : "\n$failures checks failed\n";

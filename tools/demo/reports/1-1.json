@@ -1,0 +1,77 @@
+{
+	"format": "bericht/1",
+	"signatur": "1-1",
+	"basisname": "1-01_Der-Mond-ist-aufgegangen_Schulz",
+	"titel": "Der Mond ist aufgegangen",
+	"runde": 1,
+	"datum": "2026-10-20",
+	"weg": "neuaufbau",
+	"vorlage": {
+		"typ": "druck",
+		"seiten": 1,
+		"schreiber_oder_verlag": "Notenarchiv-Demo (CC0)",
+		"beschreibung": "Platzhalter-Scan des Demo-Bestands, eine Seite; Sopran/Alt und Tenor/Bass je auf einem System, Text unter Sopran und Tenor, zwei Strophen."
+	},
+	"umfang": {
+		"takte": 7,
+		"auftakt": true,
+		"stimmen": 4,
+		"systeme": 2,
+		"strophen": 2,
+		"seiten_rendering": 1,
+		"systemhoehe_mm": 7
+	},
+	"gegenprobe": {
+		"audiveris": "keine",
+		"ersatz": ["Taktlängen und Harmonik je Schlag", "Parallelstellen der beiden Strophen"]
+	},
+	"geprueft": {
+		"taktlaengen": "voll, Auftakt und Klammern ergeben zusammen ganze Takte",
+		"harmonik": "je Schlag schlüssig (F-Dur mit Zwischendominante in T. 3)",
+		"schluessel_oktavlage": "Violin- und Bassschlüssel, klingend; Rendering gegen Scan",
+		"text": "zwei Strophen, Silben je Note gezählt",
+		"balken": "keine Balken"
+	},
+	"vortragszeichen": {
+		"dynamik": 1,
+		"gabeln": 0,
+		"boegen": 5,
+		"haltebogen": 0,
+		"fermaten": 4,
+		"akzente": 0,
+		"staccato": 0,
+		"sonstige": "Tempoangabe „Ruhig“",
+		"ausgelassen": ["T. 6 Atemzeichen im Sopran nach der Halben"]
+	},
+	"unsicher": [
+		{ "takt": "3", "stimme": "T", "was": "Erstes Viertel cis oder c: Kreuz im Scan nur schwach zu sehen, cis gelesen" },
+		{ "takt": "4", "stimme": "Alt", "was": "Bogen über g–e oder Haltebogen? Als Bogen gelesen" },
+		{ "takt": "5", "stimme": "B", "was": "Drittes Viertel b oder a: Notenkopf im Falz, b gelesen" },
+		{ "takt": "6–7", "stimme": "alle", "was": "Ende der ersten Klammer: Wiederholungszeichen kaum lesbar, als Wiederholung gelesen" }
+	],
+	"material": ["Bleistift-Eintrag „leiser“ über dem ersten System (Vereinseintrag, nicht übertragen)"],
+	"rechte": {
+		"einstufung": "gemeinfrei",
+		"beteiligte": [
+			{ "rolle": "Melodie", "name": "Johann Abraham Peter Schulz", "lebensdaten": "1747–1800", "beleg": "Lebensdaten laut Demo-Personenliste" },
+			{ "rolle": "Text", "name": "Matthias Claudius", "lebensdaten": "1740–1815", "beleg": "Lebensdaten laut Demo-Personenliste" },
+			{ "rolle": "Satz", "name": "Demo-Satz (CC0)", "lebensdaten": "–", "beleg": "eigens für den Demo-Bestand gesetzt, CC0" }
+		],
+		"ausgabe": "Notenarchiv-Demo (CC0), ohne Verlagsnummer",
+		"rights": "Melodie und Text gemeinfrei. Satz: CC0 1.0 (Notenarchiv-Demo-Bestand)"
+	},
+	"wv": {
+		"herkunft": "Neuaufbau aus dem Demo-Scan (Spec); keine OMR-Gegenprobe, Ersatzproben Taktlängen, Harmonik und Parallelstellen der Strophen.",
+		"pruefstand": "Platzhalter-Scan, eine Seite, zwei Systeme; Auftakt und 7 Takte, 4 Stimmen, 2 Strophen. Geprüft: Taktlängen, Harmonik, Text. Ausgelassen: Atemzeichen T. 6 (Sopran). Unsicher: T. 3 Tenor cis/c, T. 4 Alt Bogen, T. 5 Bass b/a, T. 6–7 Ende der ersten Klammer.",
+		"begruendung": "Schulz † 1800 und Claudius † 1815 (Demo-Personenliste); der Satz ist ein eigener Demo-Satz unter CC0 – gemeinfrei, Veröffentlichung möglich.",
+		"felder": {
+			"Veröffentlichung": "frei"
+		}
+	},
+	"rueckfragen": ["Strophe 3 steht nur im Programmheft, nicht im Scan: soll sie ergänzt werden?"],
+	"lernen": [],
+	"scores": "| 1-1 | Der Mond ist aufgegangen — Schulz/Claudius, Demo-Satz | F-Dur, 4/4, Auftakt + 7 T., SATB auf zwei Systemen | Demo-Bestand (CC0) | T. 3, 4, 5, 6–7 |",
+	"pruefpunkte": [],
+	"generator": [],
+	"aufwand": { "minuten": 20 }
+}

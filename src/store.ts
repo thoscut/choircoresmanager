@@ -387,6 +387,8 @@ export interface ScoreRequest {
 	/** message to show above the score, e.g. "the score has changed" */
 	notice?: string | null
 	noticeType?: 'info' | 'warning'
+	/** show the review of the transcription (module "transcription_review") */
+	review?: boolean
 }
 
 /** Set to open the score view of a copy; CopySidebar takes it over. */

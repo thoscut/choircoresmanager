@@ -60,7 +60,7 @@ What is covered:
 | `Service/StatisticsServiceTest` | aggregation of the statistics without a database: period, copies per binder, new copies per year (audit log or creation date, time zone of the user), rights states, valid versions, license groups, concerts and pieces per year, most performed works and composers, repertoire classes, works not sung for a long time, tasks by age, protection terms, open rights questions, licenses and accessions of the annual report; 2,000 copies aggregated in well under a second |
 | `Service/StatisticsCsvTest` | CSV of the statistics and the annual report: every table under its heading, translated labels, formula cells neutralized |
 | `Service/InputTest`, `Service/SortTest`, `Db/MergeTest` | request data checks, typed sorting, what a merge recorded |
-| `Controller/ControllerSecurityTest` | route attributes of every controller (no public page, CSRF skipped only for plain downloads, admin-only settings, brute-force and rate limits), headers of the score file response, the app page's content security policy |
+| `Controller/ControllerSecurityTest` | route attributes of every controller (no public page, CSRF skipped only for plain downloads, admin-only settings, brute-force and rate limits), headers of the score file response and of the scan beside the score (PDF viewer only, framed by the app only), the app page's content security policy |
 | `Service/ScoreServiceTest` | only real MusicXML reaches the browser (root element, document type declarations, `.mxl` contents, size limit) |
 | `Service/UserFilesTest`, `Service/RequestBoundaryTest` | reading uploaded files with a size limit, limits of request data (unknown fields, list sizes) |
 | `Notification/NotifierTest` | notification texts, no internal error texts |
@@ -68,6 +68,10 @@ What is covered:
 | `Service/ConcertDeadlinesTest`, `Service/DueServiceTest` | the deadlines 10, 8 and 6 weeks before a concert and the confirmation after it; which roles see them on the start page |
 | `Service/ConcertCalendarServiceTest` | entries in the account's own calendars (test double in `Support/FakeCalendar`): only writable calendars, roles, adding again updates instead of duplicating, cancelled concerts are only updated |
 | `Dashboard/DueWidgetTest` | the dashboard widget: only for accounts with a role, items and deep links of the start page, no personal data |
+| `Service/TranscriptionReportParserTest` | reports of transcriptions (`bericht/1`): fields and review points with their roles, measures ("12–14", "T. 5"), questions as objects, `erledigt`, warnings for unknown and missing fields; refused: invalid JSON, too large, nested too deeply, wrong types, paths and control characters in the base name, a base name of another shelf mark |
+| `Service/MusicXmlCorrectionTest` | small corrections: pitch, alteration, accidental (placed in schema order) and syllable are applied to the stored document, which is kept otherwise; refused: other note values, added or removed notes and measures, renumbered measures, other attributes and elements, invalid values, markup or line breaks in a syllable, no change, a document type with an internal subset |
+| `Service/ReviewServiceTest` | who decides a review point (librarian everything, conductor the musical points), allowed decisions (`corrected` only by the app, text for an order, reason for dismissing), questions need the tasks, catalog fields of a report |
+| `Service/CorrectionServiceTest` | name of the corrected file: dated, in the account's language, numbered when it exists, an earlier suffix replaced, long names shortened without cutting a character |
 
 `Support/MigratedSchema` runs all migrations in `lib/Migration` against an
 in-memory Doctrine schema. `EntitySchemaTest` discovers the mappers in
@@ -100,6 +104,7 @@ sudo -u www-data php tests/Integration/statistics_test.php    /var/www/nextcloud
 sudo -u www-data php tests/Integration/backup_test.php        /var/www/nextcloud <uid>
 sudo -u www-data php tests/Integration/calendar_test.php      /var/www/nextcloud <uid>
 sudo -u www-data php tests/Integration/modules_test.php       /var/www/nextcloud <uid> <shelfmark-protected>
+sudo -u www-data php tests/Integration/review_test.php        /var/www/nextcloud <uid> <shelfmark-with-musicxml>
 ```
 
 `statistics_test.php` fixes no figures of a catalog, so it runs on any
@@ -124,11 +129,24 @@ practice audio of a protected version stay refused. Everything is rolled
 back, and at the end the module switches are exactly as before (also those
 that were not stored).
 
+`review_test.php` writes a transcription report (`bericht/1`) from the
+shelf mark, the name and the measures and parts of the copy's score, reads
+it, decides its review points (confirmed, correction order, question as a
+task, dismissed; the conductor only musical points), saves a small
+correction in the app as a new file next to the old one (the old file stays
+unchanged; changed note values, added notes and a changed number of
+measures are refused), runs the file sync and reads a second round that
+closes the points no longer named. The copy needs a MusicXML file the
+account may read, in a folder it may write to; the new file is deleted at
+the end and everything else rolled back. It runs on any catalog: no fixed
+titles or figures.
+
 `<uid>` must hold the role `librarian`; each script's header lists further
 requirements (CSV paths are relative to the user's files). `backup_test.php`
 first adds a record to every app table (license, proposal, task, link,
-concert with an item, person with a contribution, merge), so that the backup
-round trip covers every table with content.
+concert with an item, person with a contribution, transcription report with a
+review point, merge), so that the backup round trip covers every table
+with content.
 
 All scripts use `harness.php`: it prints one line per check and ends with
 exit code 0 only when every check passed. A failed check, an uncaught
@@ -138,7 +156,7 @@ missing arguments end with exit code 2.
 
 ### Integration tests in CI (demo data)
 
-The CI job `integration` runs all ten scripts against a freshly installed
+The CI job `integration` runs all eleven scripts against a freshly installed
 Nextcloud 33 and 35 (release archives from download.nextcloud.com, checked
 against their SHA-512 checksum) with MariaDB 11.8 and PHP 8.3. The job
 installs the app with its built frontend, builds the public demo data
@@ -157,7 +175,9 @@ real) and runs the file sync. It checks the figures of
 `tools/demo/README.md`: 23 rows, 7 with MusicXML, 1 preservation copy,
 19 × public domain, 2 × protected, 2 × open; 30 files (23 PDF, 4 MXL,
 3 MusicXML), 29 assigned, `Mappe_4/4-04_…pdf` not assignable, `LIESMICH.txt`
-ignored, `_Import` skipped, 4-3 without a file. It switches every module on
+ignored, `_Import` skipped, 4-3 without a file; the two transcription reports
+of the demo (1-1, 2-1) are counted apart (`reports`: 2 files, 2 assigned, 2
+imported; 32 new file rows). It switches every module on
 (`occ notenarchiv:modules preset complete`; a new installation starts with
 the preset "standard"). Then it runs the tests with these shelf marks of the
 demo catalog:
@@ -173,6 +193,7 @@ demo catalog:
 | `practice_audio_test.php` | `2-6 3-1 2-2` | 2-6 is protected without a license for practice audio, 3-1 an internal preservation copy, 2-2 public domain but not confirmed |
 | `statistics_test.php` | `_Import/performances.csv` | the performance list gives the statistics concerts to count; no fixed figures |
 | `modules_test.php` | `2-6` | 2-6 is protected without a license for practice audio |
+| `review_test.php` | `1-2` | MXL with four staves and without a demo report, so the review points of the demo reports do not interfere |
 | `backup_test.php` | – | |
 
 The person and performance lists are imported only inside the tests'

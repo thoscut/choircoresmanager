@@ -185,6 +185,78 @@ class ScoreService {
 		}
 	}
 
+	/**
+	 * The MusicXML text of a score file the way the viewer reads it: the file
+	 * itself, or in a compressed archive (.mxl) the root file named in
+	 * META-INF/container.xml (a MusicXML one first), otherwise the first
+	 * .musicxml or .xml file outside META-INF. Check the content with
+	 * isScore() first.
+	 *
+	 * @return array{xml: string, entry: ?string} `entry`: name of the root file inside an archive
+	 * @throws InvalidInputException
+	 */
+	public function scoreText(string $content): array {
+		if (!str_starts_with($content, "PK\x03\x04")) {
+			return ['xml' => $content, 'entry' => null];
+		}
+		$notScore = new InvalidInputException('This file is not a MusicXML score.');
+		$zip = BoundedZip::open($this->tempManager, $content, self::MAX_ZIP_ENTRIES, self::MAX_BYTES, 2 * self::MAX_BYTES,
+			UserFiles::tooLarge(self::MAX_BYTES), $notScore);
+		if ($zip === null) {
+			throw $notScore;
+		}
+		try {
+			$names = $zip->names();
+			$container = $zip->part('META-INF/container.xml');
+			$entry = $container === null ? null : self::rootFile($container);
+			if ($entry === null || !in_array($entry, $names, true)) {
+				$entry = null;
+				foreach ($names as $name) {
+					if (!str_starts_with($name, 'META-INF/') && preg_match('/\.(musicxml|xml)$/i', $name) === 1) {
+						$entry = $name;
+						break;
+					}
+				}
+			}
+			$xml = $entry === null ? null : $zip->part($entry);
+			if ($entry === null || $xml === null) {
+				throw $notScore;
+			}
+			return ['xml' => $xml, 'entry' => $entry];
+		} finally {
+			$zip->close();
+		}
+	}
+
+	/**
+	 * The root file of an archive as the viewer chooses it: the first one
+	 * whose media type is empty or names MusicXML, otherwise the first one.
+	 */
+	private static function rootFile(string $container): ?string {
+		if (preg_match_all('/<rootfile\b([^>]*)>/i', $container, $tags) < 1) {
+			return null;
+		}
+		$attribute = function (string $attributes, string $name): ?string {
+			if (preg_match('/\b' . $name . '\s*=\s*(["\'])(.*?)\1/s', $attributes, $m) !== 1) {
+				return null;
+			}
+			return html_entity_decode($m[2], ENT_QUOTES | ENT_XML1, 'UTF-8');
+		};
+		$first = null;
+		foreach ($tags[1] as $attributes) {
+			$path = $attribute($attributes, 'full-path');
+			if ($path === null) {
+				continue;
+			}
+			$first ??= $path;
+			$type = $attribute($attributes, 'media-type') ?? '';
+			if ($type === '' || str_contains($type, 'musicxml')) {
+				return $path;
+			}
+		}
+		return $first;
+	}
+
 	private static function looksLikeXml(string $data): bool {
 		if (str_starts_with($data, "\xFF\xFE") || str_starts_with($data, "\xFE\xFF")) {
 			return true;
@@ -221,11 +293,12 @@ class ScoreService {
 	}
 
 	/**
-	 * Prefers the file marked as valid MusicXML, then compressed MusicXML.
+	 * The score file to show among files: prefers the file marked as valid
+	 * MusicXML, then compressed MusicXML.
 	 *
 	 * @param list<ArchiveFile> $files
 	 */
-	private static function pick(array $files): ?ArchiveFile {
+	public static function pick(array $files): ?ArchiveFile {
 		$candidates = array_values(array_filter($files,
 			fn (ArchiveFile $f): bool => $f->getRole() === 'musicxml' && $f->getFound() !== false && isset(self::MIME_TYPES[(string)$f->getType()])));
 		usort($candidates, fn (ArchiveFile $a, ArchiveFile $b): int => [$b->getMusicxmlValid() === true, $b->getType() === 'mxl', $a->getName()]
