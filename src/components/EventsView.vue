@@ -12,7 +12,7 @@
 import type { CalendarMessage } from '../calendar.ts'
 import type { ChoirEvent, EventKind } from '../types.ts'
 
-import { mdiAlertCircleOutline, mdiCalendarBlankOutline, mdiCalendarExportOutline, mdiCalendarPlusOutline, mdiPlus } from '@mdi/js'
+import { mdiAlertCircleOutline, mdiCalendarExportOutline, mdiCalendarPlusOutline, mdiCalendarStarOutline, mdiFormatListNumbered, mdiPlus } from '@mdi/js'
 import { n, t } from '../l10n.ts'
 import { computed, onMounted, ref, watch } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -195,9 +195,12 @@ function onCreated(event: ChoirEvent): void {
 			</NcEmptyContent>
 			<NcEmptyContent v-else-if="shown.length === 0"
 				:name="isConcert ? t('notenarchiv', 'No concerts yet') : t('notenarchiv', 'No song lists yet')"
-				:description="t('notenarchiv', 'Create one or import the history in the archive management.')">
+				:description="isConcert
+					? t('notenarchiv', 'Plan a new concert, or import earlier concerts in the archive management.')
+					: t('notenarchiv', 'Create a new song list, or import earlier song lists in the archive management.')">
 				<template #icon>
-					<NcIconSvgWrapper :path="mdiCalendarBlankOutline" />
+					<!-- the icons of the navigation -->
+					<NcIconSvgWrapper :path="isConcert ? mdiCalendarStarOutline : mdiFormatListNumbered" />
 				</template>
 			</NcEmptyContent>
 			<table v-else class="events-view__table">

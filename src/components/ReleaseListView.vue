@@ -83,6 +83,20 @@ const statusOption = computed({
 	},
 })
 
+/** Empty list: with a status chosen, nothing has it; otherwise nothing is released. */
+const emptyName = computed(() => releaseFilter.value !== '' || all.value
+	? t('notenarchiv', 'Nothing to show')
+	: t('notenarchiv', 'Nothing released yet'))
+
+const emptyDescription = computed(() => {
+	if (releaseFilter.value !== '' || all.value) {
+		return t('notenarchiv', 'No version has this status.')
+	}
+	return props.target === 'portal'
+		? t('notenarchiv', 'No version is released for the singers\' portal, and nothing has to be taken out. Releases are set in the "Rights" tab of a copy.')
+		: t('notenarchiv', 'No version is released for the print station. Releases are set in the "Rights" tab of a copy.')
+})
+
 const groups = computed(() => ORDER
 	.filter((status) => releaseFilter.value === '' || releaseFilter.value === status)
 	.map((status) => ({ status, rows: rows.value.filter((row) => row.status === status) }))
@@ -163,8 +177,8 @@ function rightsText(row: ReleaseRow): string {
 				</template>
 			</NcEmptyContent>
 			<NcEmptyContent v-else-if="groups.length === 0"
-				:name="t('notenarchiv', 'Nothing to show')"
-				:description="t('notenarchiv', 'No version has this status.')">
+				:name="emptyName"
+				:description="emptyDescription">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiCheckCircleOutline" />
 				</template>

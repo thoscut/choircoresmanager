@@ -50,7 +50,11 @@ const display = computed(() => {
 
 <template>
 	<span class="rights-badge" :class="`rights-badge--${display.tone}`">
-		<NcIconSvgWrapper class="rights-badge__icon" :path="display.icon" :size="16" />
+		<!-- inline: without it the icon keeps the size of a clickable area and every badge grows to 34 px -->
+		<NcIconSvgWrapper class="rights-badge__icon"
+			:path="display.icon"
+			:size="16"
+			inline />
 		<span class="rights-badge__text">{{ display.text }}</span>
 	</span>
 </template>
@@ -85,7 +89,9 @@ const display = computed(() => {
 
 .rights-badge__icon {
 	flex-shrink: 0;
+	align-self: center;
 	color: var(--badge-color);
+	vertical-align: middle;
 }
 
 .rights-badge__text {

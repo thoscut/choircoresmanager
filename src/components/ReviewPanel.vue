@@ -445,6 +445,8 @@ defineExpose({ say })
 
 <style scoped>
 .review-panel {
+	/* the facts below stack when the panel is narrow (beside score and scan) */
+	container-type: inline-size;
 	display: flex;
 	flex-direction: column;
 	gap: calc(2 * var(--default-grid-baseline));
@@ -453,6 +455,11 @@ defineExpose({ say })
 	border: 1px solid var(--color-border);
 	border-radius: var(--border-radius-large, 8px);
 	background-color: var(--color-main-background);
+}
+
+/* In a panel of fixed height the panel scrolls as a whole; its parts keep their size */
+.review-panel > * {
+	flex-shrink: 0;
 }
 
 .review-panel__heading {
@@ -518,6 +525,21 @@ defineExpose({ say })
 
 .review-panel__long {
 	white-space: pre-wrap;
+}
+
+@container (max-width: 30em) {
+	.review-panel__facts {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 0;
+	}
+
+	.review-panel__facts dt {
+		font-size: var(--font-size-small, 13px);
+	}
+
+	.review-panel__facts dd + dt {
+		margin-top: var(--default-grid-baseline);
+	}
 }
 
 .review-panel__plain-list {

@@ -513,6 +513,12 @@ onBeforeUnmount(() => {
 	margin: 0;
 }
 
+.practice-dialog__summary > div {
+	/* label above its value (the core styles set dt and dd inline) */
+	display: flex;
+	flex-direction: column;
+}
+
 .practice-dialog__summary dt {
 	color: var(--color-text-maxcontrast);
 	font-size: var(--font-size-small, 13px);

@@ -125,10 +125,14 @@ const endedCount = computed(() => licenses.value.filter((license) => license.end
 				<NcNoteCard v-if="error" type="error" role="alert">
 					{{ error }}
 				</NcNoteCard>
-				<p v-if="licenses.length === 0" class="licenses-view__ok">
-					<NcIconSvgWrapper :path="mdiCheckCircleOutline" inline />
-					{{ t('notenarchiv', 'No license ends in this period, and none has ended.') }}
-				</p>
+				<!-- the same empty state as the other lists -->
+				<NcEmptyContent v-if="licenses.length === 0"
+					:name="t('notenarchiv', 'Nothing to renew')"
+					:description="t('notenarchiv', 'No license ends in this period, and none has ended.')">
+					<template #icon>
+						<NcIconSvgWrapper :path="mdiCheckCircleOutline" />
+					</template>
+				</NcEmptyContent>
 				<template v-else>
 					<p class="licenses-view__summary" aria-live="polite">
 						{{ n('notenarchiv', '%n license', '%n licenses', licenses.length) }}<template v-if="endedCount > 0">
@@ -204,7 +208,6 @@ const endedCount = computed(() => licenses.value.filter((license) => license.end
 	max-width: 20em;
 }
 
-.licenses-view__ok,
 .licenses-view__summary {
 	display: flex;
 	flex-wrap: wrap;

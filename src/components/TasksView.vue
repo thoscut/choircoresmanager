@@ -98,8 +98,8 @@ const shown = computed(() => tasks.value.filter((task) => {
 			</NcRadioGroup>
 			<NcRadioGroup v-model="status" :label="t('notenarchiv', 'Status')">
 				<NcRadioGroupButton value="all" :label="t('notenarchiv', 'Open and answered')" />
-				<NcRadioGroupButton value="open" :label="t('notenarchiv', 'Open')" />
-				<NcRadioGroupButton value="answered" :label="t('notenarchiv', 'Answered')" />
+				<NcRadioGroupButton value="open" :label="t('notenarchiv', 'Only open')" />
+				<NcRadioGroupButton value="answered" :label="t('notenarchiv', 'Only answered')" />
 			</NcRadioGroup>
 			<NcCheckboxRadioSwitch v-model="taskFilters.closed" type="switch">
 				{{ t('notenarchiv', 'Also closed tasks') }}

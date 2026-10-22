@@ -177,7 +177,7 @@ const today = parseIsoDate(toIsoDate(new Date()))
 <template>
 	<div class="inventory-view">
 		<ViewHeader :title="binder !== null ? t('notenarchiv', 'Inventory of binder {binder}', { binder }) : t('notenarchiv', 'Inventory')"
-			:description="t('notenarchiv', 'The copies of one archive binder in shelf order, to tick off on paper. Printed on {date}.', { date: printedOn })"
+			:description="t('notenarchiv', 'The copies of one archive binder in shelf order, to tick off on paper. As of {date}.', { date: printedOn })"
 			printable
 			reloadable
 			:loading="loading"
@@ -306,7 +306,7 @@ const today = parseIsoDate(toIsoDate(new Date()))
 								</td>
 								<td>
 									{{ row.kind ? choiceLabel('copy', 'kind', row.kind) : '' }}
-									<span v-if="row.pages" class="inventory-view__muted">{{ t('notenarchiv', '{pages} p.', { pages: row.pages }) }}</span>
+									<span v-if="row.pages" class="inventory-view__muted inventory-view__pages">{{ t('notenarchiv', '{pages} p.', { pages: row.pages }) }}</span>
 								</td>
 								<td class="inventory-view__number">
 									{{ figure(row.originals_count) }}
@@ -400,8 +400,10 @@ const today = parseIsoDate(toIsoDate(new Date()))
 	gap: calc(2 * var(--default-grid-baseline)) calc(4 * var(--default-grid-baseline));
 }
 
-.inventory-view__binder {
-	min-width: min(100%, 22em);
+/* room for "Binder 12 (40 active, 40 never counted)" without cutting it;
+   .nc-select sets min-width: 260px with three classes, one more wins */
+.inventory-view__controls .inventory-view__binder.nc-select {
+	min-width: min(100%, 27em);
 }
 
 .inventory-view__facts {
@@ -472,6 +474,10 @@ const today = parseIsoDate(toIsoDate(new Date()))
 	margin: 0;
 	color: var(--color-text-maxcontrast);
 	font-size: var(--font-size-small, 13px);
+}
+
+.inventory-view__pages {
+	white-space: nowrap;
 }
 
 .inventory-view__status {

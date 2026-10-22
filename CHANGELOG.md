@@ -284,6 +284,40 @@ Found when checking the prints in Firefox 158 and the icon at small sizes:
 - The label sheet asks to print without the browser's headers and footers,
   which Firefox adds by default.
 
+Found in a design review in Nextcloud 33 (all roles, light and dark theme,
+320 px, tablet, 200 % zoom):
+
+- Score view: the score starts much higher up. Playback, measures and voice,
+  review and scan are three compact bars; tempo and volume and the actions for
+  the passage (text reference, internal link, task) open on request; file and
+  page of the scan only show while the scan is shown. On wide screens score,
+  scan and review fill the window side by side.
+- Score view: the scan beside the score follows the page of a review point;
+  the PDF viewers of Chrome and Edge ignored a change of only `#page=`.
+- Score view: the fields "From measure", "To measure" and "Page of the scan"
+  have their intended width instead of the full width.
+- Score view: without access to the file there is no "Try again" but a link to
+  the explanation of the archive folder in the administration guide.
+- Rights badges are as high as a line of text (the icon kept the size of a
+  button): catalog rows are about half as high.
+- Catalog: a labelled select for the sort order fits every width (the three
+  buttons ran out of the window at 320 px); the tag with open review points
+  no longer runs out of the table; "from the imported catalog" no longer
+  stands in nearly every row.
+- View headers keep their actions beside the heading, also with a long
+  description.
+- Empty states say what to do next (concerts, song lists, singers' portal,
+  print station, ending licenses) and use the icons of the navigation.
+- A "Help" entry in the navigation opens the user guide (in German the quick
+  start).
+- Practice files: labels and values of the summary no longer run together;
+  review panel: its facts stack in a narrow panel and the list of points no
+  longer collapses; person dialog: each date sits beside its precision;
+  inventory: the archive binder is no longer cut off.
+- German texts: correct grammar and consistent terms ("Programmpunkt",
+  "Archivmappe", "Vorschlag" instead of "Empfehlung", "Lesart", "(Pflichtfeld)"),
+  less technical wording for links and checksums.
+
 ### Security
 
 - Every route checks the caller's role on the server; a unit test guards the

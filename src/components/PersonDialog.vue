@@ -134,10 +134,20 @@ async function save(): Promise<void> {
 </template>
 
 <style scoped>
+/* Two columns, so that each date sits beside its precision; dense: the
+   identification fills the gap next to the life dates as found */
 .person-dialog__fields {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(min(100%, 16em), 1fr));
+	grid-auto-flow: row dense;
+	grid-template-columns: repeat(auto-fill, minmax(min(100%, 20em), 1fr));
 	gap: calc(2 * var(--default-grid-baseline)) calc(3 * var(--default-grid-baseline));
+}
+
+/* the selects fill their column like the text fields */
+.person-dialog__fields :deep(.v-select.select) {
+	width: 100%;
+	min-width: 0;
+	max-width: none;
 }
 
 .person-dialog__wide {

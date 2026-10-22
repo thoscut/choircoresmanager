@@ -28,6 +28,9 @@ import type { CorrectionResult, Detail, ReviewPoint, VersionReview } from '../ty
 
 import {
 	mdiAlertCircleOutline,
+	mdiChevronUp,
+	mdiDotsHorizontal,
+	mdiHelpCircleOutline,
 	mdiMagnifyMinusOutline,
 	mdiMagnifyPlusOutline,
 	mdiPause,
@@ -40,6 +43,7 @@ import {
 	mdiOpenInNew,
 	mdiPencilOutline,
 	mdiTextBoxCheckOutline,
+	mdiTuneVariant,
 } from '@mdi/js'
 import { showError, showSuccess } from '@nextcloud/dialogs'
 import { n, t } from '../l10n.ts'
@@ -60,7 +64,7 @@ import LinkDialog from './LinkDialog.vue'
 import ReviewPanel from './ReviewPanel.vue'
 import RightsBadge from './RightsBadge.vue'
 import TaskDialog from './TaskDialog.vue'
-import { adminSettingsUrl, errorMessage, errorReason, fetchFileContent, fetchReview, REASON_NOT_SHARED, scanUrl } from '../api.ts'
+import { adminSettingsUrl, errorMessage, errorReason, fetchFileContent, fetchReview, isPermanentHttpError, REASON_NOT_SHARED, scanUrl } from '../api.ts'
 import { translateLabel } from '../format.ts'
 import { playbackTimeline, renderPages, selectMeasures, loadScore } from '../score/model.ts'
 import { markFocus } from '../score/emphasis.ts'
@@ -77,7 +81,7 @@ import { textReference } from '../references.ts'
 import { canonicalVoice, matchVoice, pointPlace, pointRange } from '../review.ts'
 import { parsePage, scanFiles, storedScanPage, storeScanPage } from '../scan.ts'
 import { SETTINGS_SECTIONS } from '../settings.ts'
-import { USER_GUIDE, userGuideUrl } from '../docs.ts'
+import { ADMIN_GUIDE, adminGuideUrl, USER_GUIDE, userGuideUrl } from '../docs.ts'
 import { canChangeSettings, canCreateLinks, canCreateTasks, fieldInfo, fieldLabel, hasAnyRole, isModuleActive } from '../store.ts'
 
 /** Practice audio files: own chunk, loaded when the dialog is opened */
@@ -110,6 +114,8 @@ const tempoId = useId()
 const tempoHintId = useId()
 const volumeId = useId()
 const scanSelectId = useId()
+const settingsId = useId()
+const placeId = useId()
 
 const score = computed(() => props.detail.score)
 /** Playback (module "playback"); the server also refuses it when switched off. */
@@ -134,6 +140,8 @@ const errorText = ref('')
 const notShared = ref(false)
 /** The access check of the settings, for those who may change them */
 const accessCheckUrl = adminSettingsUrl(SETTINGS_SECTIONS.access)
+/** False when trying again cannot help (no access to the file, file gone). */
+const retryable = ref(true)
 const model = shallowRef<ScoreModel | null>(null)
 /** MusicXML text of the score shown, for the correction form */
 const scoreText = ref('')
@@ -166,6 +174,7 @@ async function load(keep = false): Promise<void> {
 	status.value = 'loading'
 	errorText.value = ''
 	notShared.value = false
+	retryable.value = true
 	loadingText.value = t('notenarchiv', 'Loading the score …')
 	// Fetch the file and load Verovio at the same time. A toolkit created after
 	// the viewer was closed is destroyed right away.
@@ -185,6 +194,7 @@ async function load(keep = false): Promise<void> {
 		status.value = 'error'
 		notShared.value = errorReason(error) === REASON_NOT_SHARED
 		errorText.value = error instanceof Error && error.message !== '' ? error.message : t('notenarchiv', 'The score could not be loaded.')
+		retryable.value = !isPermanentHttpError(error)
 		return
 	}
 	const engraver = toolkit
@@ -702,6 +712,10 @@ function applyFocus(): void {
 // ---- playback ---------------------------------------------------------------
 
 const playing = ref(false)
+/** Tempo, volume and the switches: behind a button, so that the score gets the room */
+const settingsShown = ref(false)
+/** The actions for the shown passage (text reference, link, task) */
+const placeShown = ref(false)
 const mode = ref<PlayMode>('all')
 const repeats = ref(true)
 const follow = ref(true)
@@ -1127,20 +1141,22 @@ onBeforeUnmount(() => {
 					<span v-if="composer">{{ composer }}</span>
 					<span v-if="score" class="score-viewer__file">{{ t('notenarchiv', 'File: {name}', { name: score.fileName }) }}</span>
 				</p>
-				<RightsBadge :rights-status="detail.version.rights_status"
-					:rights-confirmed="detail.version.confirmed_at || detail.version.rights_confirmed"
-					:preservation-copy="detail.version.preservation_copy" />
+				<div class="score-viewer__state">
+					<RightsBadge :rights-status="detail.version.rights_status"
+						:rights-confirmed="detail.version.confirmed_at || detail.version.rights_confirmed"
+						:preservation-copy="detail.version.preservation_copy" />
+					<details v-if="musicxmlReview !== ''" class="score-viewer__review">
+						<summary>{{ reviewLabel }}</summary>
+						<p class="score-viewer__review-text">
+							{{ musicxmlReview }}
+						</p>
+					</details>
+				</div>
 				<NcNoteCard v-if="start?.notice"
 					:type="start.noticeType ?? 'info'"
 					class="score-viewer__notice">
 					{{ start.notice }}
 				</NcNoteCard>
-				<details v-if="musicxmlReview !== ''" class="score-viewer__review">
-					<summary>{{ reviewLabel }}</summary>
-					<p class="score-viewer__review-text">
-						{{ musicxmlReview }}
-					</p>
-				</details>
 			</div>
 
 			<NcEmptyContent v-if="status === 'loading'" :name="loadingText">
@@ -1161,8 +1177,18 @@ onBeforeUnmount(() => {
 						<NcButton v-if="notShared && canChangeSettings" variant="primary" :href="accessCheckUrl">
 							{{ t('notenarchiv', 'Check access to the archive folder') }}
 						</NcButton>
-						<NcButton @click="load()">
+						<NcButton v-if="retryable" @click="load()">
 							{{ t('notenarchiv', 'Try again') }}
+						</NcButton>
+						<!-- Trying again cannot help: say where access to the files is explained -->
+						<NcButton v-else-if="!notShared"
+							variant="secondary"
+							:href="adminGuideUrl(ADMIN_GUIDE.archive)"
+							target="_blank">
+							<template #icon>
+								<NcIconSvgWrapper :path="mdiHelpCircleOutline" />
+							</template>
+							{{ t('notenarchiv', 'Help: access to the archive folder') }}
 						</NcButton>
 					</div>
 					<p v-if="notShared" class="score-viewer__error-help">
@@ -1172,9 +1198,11 @@ onBeforeUnmount(() => {
 			</NcEmptyContent>
 
 			<template v-else>
+				<!-- Three compact bars, so that the score itself starts high up:
+				     playback, then measures and voice, then review and scan -->
 				<div class="score-viewer__controls">
 					<section v-if="canPlay"
-						class="score-viewer__group score-viewer__group--playback"
+						class="score-viewer__bar"
 						:aria-label="t('notenarchiv', 'Playback')">
 						<div class="score-viewer__buttons">
 							<NcButton variant="primary" @click="togglePlay">
@@ -1199,6 +1227,7 @@ onBeforeUnmount(() => {
 								{{ t('notenarchiv', 'Practice files …') }}
 							</NcButton>
 						</div>
+						<!-- How the focus voice (chosen in the bar below) sounds -->
 						<NcRadioGroup v-model="mode" :label="t('notenarchiv', 'Voices during playback')">
 							<NcRadioGroupButton value="all" :label="t('notenarchiv', 'All equal')" />
 							<NcRadioGroupButton value="focus"
@@ -1208,37 +1237,50 @@ onBeforeUnmount(() => {
 								:label="t('notenarchiv', 'Focus voice only')"
 								:disabled="!focusVoice" />
 						</NcRadioGroup>
-						<label class="score-viewer__slider" :for="tempoId">
-							<span>{{ tempoLabel }}</span>
-							<input :id="tempoId"
-								v-model.number="tempoPercent"
-								type="range"
-								min="25"
-								max="200"
-								step="5"
-								:aria-describedby="tempoHintId"
-								:aria-valuetext="t('notenarchiv', '{percent} % of the tempo', { percent: tempoPercent })">
-							<span :id="tempoHintId" class="score-viewer__hint">{{ tempoHint }}</span>
-						</label>
-						<label class="score-viewer__slider" :for="volumeId">
-							<span>{{ t('notenarchiv', 'Volume: {percent} %', { percent: volumePercent }) }}</span>
-							<input :id="volumeId"
-								v-model.number="volumePercent"
-								type="range"
-								min="0"
-								max="100"
-								step="5"
-								:aria-valuetext="t('notenarchiv', '{percent} % volume', { percent: volumePercent })">
-						</label>
-						<div class="score-viewer__switches">
-							<NcCheckboxRadioSwitch v-model="repeats" type="switch">
-								{{ t('notenarchiv', 'Play repeats') }}
-							</NcCheckboxRadioSwitch>
-							<NcCheckboxRadioSwitch v-model="follow" type="switch">
-								{{ t('notenarchiv', 'Scroll along') }}
-							</NcCheckboxRadioSwitch>
+						<div class="score-viewer__buttons">
+							<NcButton variant="tertiary"
+								:aria-expanded="settingsShown ? 'true' : 'false'"
+								:aria-controls="settingsId"
+								@click="settingsShown = !settingsShown">
+								<template #icon>
+									<NcIconSvgWrapper :path="settingsShown ? mdiChevronUp : mdiTuneVariant" />
+								</template>
+								{{ t('notenarchiv', 'Tempo and volume') }}
+							</NcButton>
 						</div>
-						<p v-if="!canExportAudio && exportReason" class="score-viewer__hint">
+						<div v-show="settingsShown" :id="settingsId" class="score-viewer__settings">
+							<label class="score-viewer__slider" :for="tempoId">
+								<span>{{ tempoLabel }}</span>
+								<input :id="tempoId"
+									v-model.number="tempoPercent"
+									type="range"
+									min="25"
+									max="200"
+									step="5"
+									:aria-describedby="tempoHintId"
+									:aria-valuetext="t('notenarchiv', '{percent} % of the tempo', { percent: tempoPercent })">
+								<span :id="tempoHintId" class="score-viewer__hint">{{ tempoHint }}</span>
+							</label>
+							<label class="score-viewer__slider" :for="volumeId">
+								<span>{{ t('notenarchiv', 'Volume: {percent} %', { percent: volumePercent }) }}</span>
+								<input :id="volumeId"
+									v-model.number="volumePercent"
+									type="range"
+									min="0"
+									max="100"
+									step="5"
+									:aria-valuetext="t('notenarchiv', '{percent} % volume', { percent: volumePercent })">
+							</label>
+							<div class="score-viewer__switches">
+								<NcCheckboxRadioSwitch v-model="repeats" type="switch">
+									{{ t('notenarchiv', 'Play repeats') }}
+								</NcCheckboxRadioSwitch>
+								<NcCheckboxRadioSwitch v-model="follow" type="switch">
+									{{ t('notenarchiv', 'Scroll along') }}
+								</NcCheckboxRadioSwitch>
+							</div>
+						</div>
+						<p v-if="!canExportAudio && exportReason" class="score-viewer__hint score-viewer__line">
 							{{ exportReason }}
 						</p>
 					</section>
@@ -1246,16 +1288,19 @@ onBeforeUnmount(() => {
 						{{ playReason }}
 					</NcNoteCard>
 
-					<section class="score-viewer__group" :aria-label="t('notenarchiv', 'Measures and voice')">
+					<section class="score-viewer__bar" :aria-label="t('notenarchiv', 'Measures and voice')">
 						<form class="score-viewer__range" @submit.prevent="applyRange">
-							<NcTextField v-model="rangeFrom"
-								class="score-viewer__measure-field"
-								:label="t('notenarchiv', 'From measure')"
-								:error="rangeError !== ''" />
-							<NcTextField v-model="rangeTo"
-								class="score-viewer__measure-field"
-								:label="t('notenarchiv', 'To measure')"
-								:error="rangeError !== ''" />
+							<!-- NcTextField puts a class on its input, not on its box: the width is set here -->
+							<div class="score-viewer__measure-field">
+								<NcTextField v-model="rangeFrom"
+									:label="t('notenarchiv', 'From measure')"
+									:error="rangeError !== ''" />
+							</div>
+							<div class="score-viewer__measure-field">
+								<NcTextField v-model="rangeTo"
+									:label="t('notenarchiv', 'To measure')"
+									:error="rangeError !== ''" />
+							</div>
 							<NcButton type="submit">
 								{{ t('notenarchiv', 'Show') }}
 							</NcButton>
@@ -1263,12 +1308,6 @@ onBeforeUnmount(() => {
 								{{ t('notenarchiv', 'All measures') }}
 							</NcButton>
 						</form>
-						<p v-if="rangeError" class="score-viewer__error" role="alert">
-							{{ rangeError }}
-						</p>
-						<p class="score-viewer__hint">
-							{{ rangeHint }}
-						</p>
 						<NcSelect v-model="focusOption"
 							class="score-viewer__voice"
 							:input-label="t('notenarchiv', 'Focus voice')"
@@ -1294,88 +1333,108 @@ onBeforeUnmount(() => {
 								</template>
 							</NcButton>
 						</div>
+						<!-- Share and ask: shown on request. Not a menu (NcActions): inside the
+						     modal its Escape would close the whole score view as well -->
+						<NcButton variant="secondary"
+							:aria-expanded="placeShown ? 'true' : 'false'"
+							:aria-controls="placeId"
+							@click="placeShown = !placeShown">
+							<template #icon>
+								<NcIconSvgWrapper :path="placeShown ? mdiChevronUp : mdiDotsHorizontal" />
+							</template>
+							{{ t('notenarchiv', 'This passage') }}
+						</NcButton>
+						<div v-show="placeShown"
+							:id="placeId"
+							class="score-viewer__place score-viewer__line"
+							role="group"
+							:aria-label="t('notenarchiv', 'This passage')">
+							<span class="score-viewer__hint score-viewer__reference">{{ reference }}</span>
+							<NcButton variant="tertiary" @click="copyReference">
+								<template #icon>
+									<NcIconSvgWrapper :path="mdiContentCopy" />
+								</template>
+								{{ t('notenarchiv', 'Copy text reference') }}
+							</NcButton>
+							<NcButton v-if="canCreateLinks" variant="tertiary" @click="linkDialogOpen = true">
+								<template #icon>
+									<NcIconSvgWrapper :path="mdiLinkVariantPlus" />
+								</template>
+								{{ t('notenarchiv', 'Create internal link') }}
+							</NcButton>
+							<NcButton v-if="canCreateTasks" variant="tertiary" @click="taskDialogOpen = true">
+								<template #icon>
+									<NcIconSvgWrapper :path="mdiClipboardTextOutline" />
+								</template>
+								{{ t('notenarchiv', 'New task for this place') }}
+							</NcButton>
+						</div>
+						<p v-if="rangeError" class="score-viewer__error score-viewer__line" role="alert">
+							{{ rangeError }}
+						</p>
+						<p class="score-viewer__hint score-viewer__line">
+							{{ rangeHint }}
+						</p>
+					</section>
+
+					<section v-if="reviewOn || canCorrect || scans.length > 0"
+						class="score-viewer__bar"
+						:aria-label="t('notenarchiv', 'Review and scan')">
+						<NcButton v-if="reviewOn"
+							variant="secondary"
+							:aria-pressed="reviewShown ? 'true' : 'false'"
+							@click="toggleReview">
+							<template #icon>
+								<NcIconSvgWrapper :path="mdiTextBoxCheckOutline" />
+							</template>
+							{{ reviewToggleLabel }}
+						</NcButton>
+						<NcButton v-if="canCorrect"
+							ref="correctButton"
+							variant="secondary"
+							aria-haspopup="dialog"
+							@click="openCorrection()">
+							<template #icon>
+								<NcIconSvgWrapper :path="mdiPencilOutline" />
+							</template>
+							{{ t('notenarchiv', 'Correct notes …') }}
+						</NcButton>
+						<div v-if="scans.length > 0"
+							class="score-viewer__scan-controls"
+							role="group"
+							:aria-label="t('notenarchiv', 'Scan')">
+							<NcCheckboxRadioSwitch v-model="scanShown" type="switch">
+								{{ t('notenarchiv', 'Show scan beside the score') }}
+							</NcCheckboxRadioSwitch>
+							<!-- file and page only while the scan is shown (a review point sets the page, too) -->
+							<label v-if="scanShown && scans.length > 1" class="score-viewer__scan-choice" :for="scanSelectId">
+								<span>{{ t('notenarchiv', 'Scan file') }}</span>
+								<select :id="scanSelectId" v-model.number="scanFileId">
+									<option v-for="file in scans" :key="file.id" :value="file.id">
+										{{ file.name }}
+									</option>
+								</select>
+							</label>
+							<div v-if="scanShown" class="score-viewer__page-field">
+								<NcTextField v-model="scanPageInput"
+									type="number"
+									min="1"
+									:label="t('notenarchiv', 'Page of the scan')" />
+							</div>
+							<NcButton variant="tertiary"
+								:href="scanSrc"
+								target="_blank">
+								<template #icon>
+									<NcIconSvgWrapper :path="mdiOpenInNew" />
+								</template>
+								{{ t('notenarchiv', 'Open scan in a new window') }}
+							</NcButton>
+						</div>
+						<p v-if="correctionHint" class="score-viewer__hint score-viewer__line" role="status">
+							{{ correctionHint }}
+						</p>
 					</section>
 				</div>
-
-				<section class="score-viewer__share" :aria-label="t('notenarchiv', 'Share and ask')">
-					<NcButton variant="secondary" @click="copyReference">
-						<template #icon>
-							<NcIconSvgWrapper :path="mdiContentCopy" />
-						</template>
-						{{ t('notenarchiv', 'Copy text reference') }}
-					</NcButton>
-					<NcButton v-if="canCreateLinks" variant="secondary" @click="linkDialogOpen = true">
-						<template #icon>
-							<NcIconSvgWrapper :path="mdiLinkVariantPlus" />
-						</template>
-						{{ t('notenarchiv', 'Create internal link') }}
-					</NcButton>
-					<NcButton v-if="canCreateTasks" variant="secondary" @click="taskDialogOpen = true">
-						<template #icon>
-							<NcIconSvgWrapper :path="mdiClipboardTextOutline" />
-						</template>
-						{{ t('notenarchiv', 'New task for this place') }}
-					</NcButton>
-					<p class="score-viewer__hint score-viewer__reference">
-						{{ reference }}
-					</p>
-				</section>
-
-				<section v-if="reviewOn || canCorrect || scans.length > 0"
-					class="score-viewer__share"
-					:aria-label="t('notenarchiv', 'Review and scan')">
-					<NcButton v-if="reviewOn"
-						variant="secondary"
-						:aria-pressed="reviewShown ? 'true' : 'false'"
-						@click="toggleReview">
-						<template #icon>
-							<NcIconSvgWrapper :path="mdiTextBoxCheckOutline" />
-						</template>
-						{{ reviewToggleLabel }}
-					</NcButton>
-					<NcButton v-if="canCorrect"
-						ref="correctButton"
-						variant="secondary"
-						aria-haspopup="dialog"
-						@click="openCorrection()">
-						<template #icon>
-							<NcIconSvgWrapper :path="mdiPencilOutline" />
-						</template>
-						{{ t('notenarchiv', 'Correct notes …') }}
-					</NcButton>
-					<div v-if="scans.length > 0"
-						class="score-viewer__scan-controls"
-						role="group"
-						:aria-label="t('notenarchiv', 'Scan')">
-						<label v-if="scans.length > 1" class="score-viewer__scan-choice" :for="scanSelectId">
-							<span>{{ t('notenarchiv', 'Scan file') }}</span>
-							<select :id="scanSelectId" v-model.number="scanFileId">
-								<option v-for="file in scans" :key="file.id" :value="file.id">
-									{{ file.name }}
-								</option>
-							</select>
-						</label>
-						<NcCheckboxRadioSwitch v-model="scanShown" type="switch">
-							{{ t('notenarchiv', 'Show scan beside the score') }}
-						</NcCheckboxRadioSwitch>
-						<NcTextField v-model="scanPageInput"
-							class="score-viewer__measure-field"
-							type="number"
-							min="1"
-							:label="t('notenarchiv', 'Page of the scan')" />
-						<NcButton variant="tertiary"
-							:href="scanSrc"
-							target="_blank">
-							<template #icon>
-								<NcIconSvgWrapper :path="mdiOpenInNew" />
-							</template>
-							{{ t('notenarchiv', 'Open scan in a new window') }}
-						</NcButton>
-					</div>
-					<p v-if="correctionHint" class="score-viewer__hint score-viewer__reference" role="status">
-						{{ correctionHint }}
-					</p>
-				</section>
 
 				<p :id="summaryId" class="score-viewer__summary">
 					{{ summary }}
@@ -1405,7 +1464,10 @@ onBeforeUnmount(() => {
 					</div>
 					<!-- The browser's own PDF viewer; only present while switched on -->
 					<div v-if="scanShown && scanSrc !== ''" class="score-viewer__scan">
-						<iframe :src="scanSrc"
+						<!-- A new frame for every page: the PDF viewers of Chromium (Chrome, Edge)
+						     ignore a change of only "#page=N" in the address of a frame -->
+						<iframe :key="scanSrc"
+							:src="scanSrc"
 							class="score-viewer__scan-frame"
 							:title="t('notenarchiv', 'Scan {name}, page {page}', { name: scanName, page: scanPage })" />
 					</div>
@@ -1512,6 +1574,18 @@ onBeforeUnmount(() => {
 	overflow-wrap: anywhere;
 }
 
+/* rights badge and the MusicXML review in one line */
+.score-viewer__state {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--default-grid-baseline) calc(3 * var(--default-grid-baseline));
+}
+
+.score-viewer__review[open] {
+	flex-basis: 100%;
+}
+
 .score-viewer__review summary {
 	cursor: pointer;
 	font-weight: bold;
@@ -1531,25 +1605,22 @@ onBeforeUnmount(() => {
 
 .score-viewer__controls {
 	display: flex;
-	flex-wrap: wrap;
-	align-items: flex-start;
-	gap: calc(2 * var(--default-grid-baseline)) calc(6 * var(--default-grid-baseline));
+	flex-direction: column;
+	gap: calc(2 * var(--default-grid-baseline));
 }
 
-.score-viewer__group {
+/* one bar of controls: wraps on narrow screens, hints take a line of their own */
+.score-viewer__bar {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: flex-end;
-	gap: calc(2 * var(--default-grid-baseline)) calc(4 * var(--default-grid-baseline));
+	gap: calc(2 * var(--default-grid-baseline)) calc(3 * var(--default-grid-baseline));
 	min-width: 0;
-}
-
-.score-viewer__group--playback {
-	flex: 1 1 30em;
 }
 
 .score-viewer__buttons,
 .score-viewer__range,
+.score-viewer__settings,
 .score-viewer__switches,
 .score-viewer__zoom {
 	display: flex;
@@ -1558,12 +1629,44 @@ onBeforeUnmount(() => {
 	gap: calc(2 * var(--default-grid-baseline));
 }
 
-.score-viewer__measure-field {
-	width: 9em;
+.score-viewer__settings {
+	flex-basis: 100%;
+	align-items: flex-start;
+	gap: calc(2 * var(--default-grid-baseline)) calc(4 * var(--default-grid-baseline));
 }
 
-.score-viewer__voice {
-	min-width: 14em;
+.score-viewer__settings .score-viewer__switches {
+	align-self: center;
+}
+
+.score-viewer__line {
+	flex-basis: 100%;
+	margin: 0;
+}
+
+.score-viewer__place {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--default-grid-baseline) calc(2 * var(--default-grid-baseline));
+}
+
+.score-viewer__reference {
+	overflow-wrap: anywhere;
+}
+
+.score-viewer__measure-field {
+	width: 8em;
+}
+
+.score-viewer__page-field {
+	width: 10em;
+}
+
+/* wide enough for "No focus voice" and "Tenor 1, voice 2"; .nc-select sets
+   min-width: 260px with three classes, one more wins */
+.score-viewer__bar .score-viewer__voice.nc-select {
+	min-width: min(100%, 20em);
 }
 
 .score-viewer__slider {
@@ -1590,12 +1693,6 @@ onBeforeUnmount(() => {
 	font-size: var(--font-size-small, 13px);
 }
 
-.score-viewer__group .score-viewer__hint,
-.score-viewer__error {
-	flex-basis: 100%;
-	margin: 0;
-}
-
 .score-viewer__error {
 	color: var(--color-error-text, var(--color-error));
 }
@@ -1616,19 +1713,6 @@ onBeforeUnmount(() => {
 	min-width: 4em;
 	align-self: center;
 	text-align: center;
-}
-
-.score-viewer__share {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: calc(2 * var(--default-grid-baseline));
-}
-
-.score-viewer__reference {
-	flex-basis: 100%;
-	margin: 0;
-	overflow-wrap: anywhere;
 }
 
 .score-viewer__notice {
@@ -1688,7 +1772,7 @@ onBeforeUnmount(() => {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: flex-end;
-	gap: calc(2 * var(--default-grid-baseline));
+	gap: calc(2 * var(--default-grid-baseline)) calc(3 * var(--default-grid-baseline));
 }
 
 .score-viewer__scan-choice {
@@ -1769,14 +1853,38 @@ onBeforeUnmount(() => {
 	rx: 40px;
 }
 
+/* Wide and tall enough: score, scan and review fill the rest of the window
+   side by side and scroll inside, instead of the whole view scrolling */
+@media (min-width: 1024px) and (min-height: 640px) {
+	.score-viewer__workspace {
+		flex: 1 1 0;
+		flex-wrap: nowrap;
+		align-items: stretch;
+		min-height: 26em;
+	}
+
+	.score-viewer__score,
+	.score-viewer__scan {
+		height: auto;
+	}
+
+	.score-viewer__review-panel {
+		max-height: none;
+	}
+}
+
 @media (max-width: 512px) {
 	.score-viewer {
 		padding: calc(2 * var(--default-grid-baseline));
 	}
 
 	.score-viewer__slider,
-	.score-viewer__voice {
+	.score-viewer__bar .score-viewer__voice.nc-select {
 		min-width: 100%;
+	}
+
+	.score-viewer__measure-field {
+		width: 7em;
 	}
 }
 </style>

@@ -43,7 +43,13 @@ async function score(h, shelfmark, voice = null, mode = null, measures = null) {
 
 /** Focus voice, sharing and the first system of the score. */
 const scoreClip = async (h) => {
-	const clip = await h.rect(['.score-viewer__voice', '.score-viewer__share', '.score-viewer__summary', '.score-viewer__page svg'], { pad: 12, maxHeight: 470 })
+	// The actions for the passage (text reference, link, task) open on request
+	const closed = await h.page.evaluate(() => !!document.querySelector('.score-viewer__place') && getComputedStyle(document.querySelector('.score-viewer__place')).display === 'none')
+	if (closed) {
+		await h.click('.score-viewer button', h.t('This passage'))
+		await h.settle(400)
+	}
+	const clip = await h.rect(['.score-viewer__voice', '.score-viewer__place', '.score-viewer__summary', '.score-viewer__page svg'], { pad: 12, maxHeight: 470 })
 	return { ...clip, width: Math.min(clip.width, 960) }
 }
 

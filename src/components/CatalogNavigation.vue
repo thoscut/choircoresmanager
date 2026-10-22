@@ -28,6 +28,7 @@ import {
 	mdiFileCheckOutline,
 	mdiFilterRemoveOutline,
 	mdiFormatListNumbered,
+	mdiHelpCircleOutline,
 	mdiHelpRhombusOutline,
 	mdiHomeOutline,
 	mdiInboxArrowDownOutline,
@@ -52,6 +53,7 @@ import { adminSettingsUrl } from '../api.ts'
 import { REPERTOIRE_CLASSES } from '../catalog.ts'
 import { translateLabel } from '../format.ts'
 import { repertoireClassLabel } from '../labels.ts'
+import { helpUrl } from '../docs.ts'
 import { currentView, navigate } from '../navigation.ts'
 import { buildQuery } from '../startParams.ts'
 import { viewTitle } from '../viewTitles.ts'
@@ -377,6 +379,13 @@ function onFooterClick(event: Event, open: 'archive' | 'view'): void {
 
 		<template #footer>
 			<NcAppNavigationList class="catalog-footer">
+				<!-- the guide opens in a new tab (external link) -->
+				<NcAppNavigationItem :name="t('notenarchiv', 'Help')"
+					:href="helpUrl()">
+					<template #icon>
+						<NcIconSvgWrapper :path="mdiHelpCircleOutline" />
+					</template>
+				</NcAppNavigationItem>
 				<NcAppNavigationItem :name="t('notenarchiv', 'Customize view')"
 					@click="onFooterClick($event, 'view')">
 					<template #icon>

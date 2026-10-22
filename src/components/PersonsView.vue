@@ -182,10 +182,12 @@ function dateText(value: string | null, precision: string | null): string {
 
 		<div class="persons-view__content">
 			<section class="persons-view__list" :aria-label="t('notenarchiv', 'Register')">
-				<NcTextField v-model="query"
-					class="no-print"
-					type="search"
-					:label="t('notenarchiv', 'Search by name or GND number')" />
+				<!-- NcTextField puts a class on its input, so the wrapper hides it in print -->
+				<div class="no-print">
+					<NcTextField v-model="query"
+						type="search"
+						:label="t('notenarchiv', 'Search by name or GND number')" />
+				</div>
 				<p class="persons-view__muted">
 					{{ n('notenarchiv', '%n person', '%n persons', shown.length) }}
 				</p>

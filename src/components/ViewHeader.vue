@@ -81,7 +81,8 @@ function print(): void {
 	z-index: 2;
 	display: flex;
 	flex-wrap: wrap;
-	align-items: center;
+	/* actions stay beside the heading, also when the description is long */
+	align-items: flex-start;
 	justify-content: space-between;
 	gap: calc(2 * var(--default-grid-baseline));
 	padding: calc(2 * var(--default-grid-baseline));
@@ -89,6 +90,13 @@ function print(): void {
 	padding-inline-start: calc(var(--default-clickable-area) + 3 * var(--default-grid-baseline));
 	border-bottom: 1px solid var(--color-border);
 	background-color: var(--color-main-background);
+}
+
+/* The text takes the room that is left; only below 20em do the actions
+   move under it (narrow windows, large zoom). */
+.view-header__text {
+	flex: 1 1 20em;
+	min-width: 0;
 }
 
 .view-header__title {
@@ -107,6 +115,7 @@ function print(): void {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
+	justify-content: flex-end;
 	gap: var(--default-grid-baseline);
 }
 

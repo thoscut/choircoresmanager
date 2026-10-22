@@ -42,10 +42,11 @@ The navigation on the left lists the views of the app in groups:
 - **Maintaining the catalog:** **New accession** (for the other roles
   **Shelf labels**), **Merge**, **Inventory** and **Checksums**
 
-At the bottom, music librarians find **Archive management** (imports, file
-sync, exports, backups). **Settings** (for administrators and the groups they
-have given the settings) leads to **Administration → Music archive**, the
-settings page of the app in Nextcloud's administration.
+At the bottom, everyone finds **Help** (this guide; in German the quick
+start) and **Customize view**, music librarians **Archive management**
+(imports, file sync, exports, backups). **Settings** (for administrators and
+the groups they have given the settings) leads to **Administration → Music
+archive**, the settings page of the app in Nextcloud's administration.
 
 Every view has its own address, so the browser's back button works and a
 view can be bookmarked.
@@ -229,8 +230,8 @@ sounds are part of the app; nothing is loaded from other servers.
    in colour with bolder note heads and stems, the other voices in a lighter
    grey; the lyrics of its staff stay dark.
 3. Choose **Voices during playback**: **All equal**, **Focus voice louder**
-   or **Focus voice only**, and set tempo and volume. **Play repeats** and
-   **Scroll along** can be switched off.
+   or **Focus voice only**. **Tempo and volume** opens the sliders for tempo
+   and volume and the switches **Play repeats** and **Scroll along**.
 4. **Play**, **Pause** and **Stop** control the playback.
 
 Keyboard: Space plays and pauses unless a control has the focus, `+` and `-`
@@ -287,7 +288,8 @@ members.
 A question or task always belongs to a copy and may name a place in the
 score: page, measures, voice and verse.
 
-1. In the score viewer choose the place and **New task for this place**, or
+1. In the score viewer choose the place, then **This passage** and **New task
+   for this place**, or
    in the tab **Tasks** of the sidebar choose **New task**.
 2. Choose the kind (**Question**, **Check** or **Report**) and the role it is
    **For** (conductor, catalog, operations or read only).
@@ -301,7 +303,7 @@ check can also be closed by the role it is addressed to. **Show in the
 score** opens the place. **Tasks** in the navigation lists the tasks for your
 roles or all tasks, also the closed ones, and can be printed.
 
-Share a place in two ways:
+Share a place in two ways, both under **This passage** in the score viewer:
 
 - **Copy text reference** copies a plain text such as
   `2-1 · Ännchen von Tharau · m. 5–8 · Tenor II`. It contains no notation and

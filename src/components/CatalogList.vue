@@ -17,8 +17,7 @@ import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
-import NcRadioGroup from '@nextcloud/vue/components/NcRadioGroup'
-import NcRadioGroupButton from '@nextcloud/vue/components/NcRadioGroupButton'
+import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
 import RightsBadge from './RightsBadge.vue'
@@ -100,6 +99,27 @@ const sortModel = computed({
 	},
 })
 
+interface SortOption {
+	id: SortOrder
+	label: string
+}
+
+const sortOptions = computed<SortOption[]>(() => [
+	{ id: 'catalog', label: t('notenarchiv', 'Catalog order') },
+	{ id: 'shelfmark', label: t('notenarchiv', 'Shelf mark') },
+	{ id: 'title', label: t('notenarchiv', 'Title') },
+])
+
+/** The sort order as an option of the select (a labelled select fits every width). */
+const sortOption = computed({
+	get: () => sortOptions.value.find((option) => option.id === sortOrder.value) ?? sortOptions.value[0],
+	set: (option: SortOption | null) => {
+		if (option) {
+			sortOrder.value = option.id
+		}
+	},
+})
+
 const countText = computed(() => {
 	const shown = visibleEntries.value.length
 	const total = entries.value.length
@@ -156,10 +176,11 @@ function repertoireText(entry: Entry): string {
  * @param entry - catalog entry
  */
 function repertoireDetail(entry: Entry): string {
-	// Derived from performances: the number says it; otherwise name the source
+	// Derived from performances: the number says it. "From the imported catalog"
+	// would stand in nearly every row; the sidebar names the source.
 	const parts = [entry.repertoire_source === 'performances' && entry.performances
 		? n('notenarchiv', '%n documented performance', '%n documented performances', entry.performances)
-		: repertoireSourceLabel(entry.repertoire_source)]
+		: (entry.repertoire_source === 'import' ? '' : repertoireSourceLabel(entry.repertoire_source))]
 	const songLists = songListCount(entry)
 	if (songLists > 0) {
 		parts.push(n('notenarchiv', 'on %n song list', 'on %n song lists', songLists))
@@ -209,14 +230,12 @@ function statusText(entry: Entry): string {
 				<p class="catalog__count" aria-live="polite">
 					{{ countText }}
 				</p>
-				<NcRadioGroup v-model="sortModel"
+				<NcSelect v-model="sortOption"
 					class="catalog__sort"
-					:label="t('notenarchiv', 'Sort by')"
-					hide-label>
-					<NcRadioGroupButton value="catalog" :label="t('notenarchiv', 'Catalog order')" />
-					<NcRadioGroupButton value="shelfmark" :label="t('notenarchiv', 'Shelf mark')" />
-					<NcRadioGroupButton value="title" :label="t('notenarchiv', 'Title')" />
-				</NcRadioGroup>
+					:input-label="t('notenarchiv', 'Sort by')"
+					:options="sortOptions"
+					:clearable="false"
+					:searchable="false" />
 			</div>
 		</div>
 
@@ -365,9 +384,21 @@ function statusText(entry: Entry): string {
 	color: var(--color-text-maxcontrast);
 }
 
-.catalog__sort {
-	max-width: 420px;
-	flex: 1 1 280px;
+/* .nc-select sets min-width: 260px with three classes; one more wins */
+.catalog__toolbar .catalog__sort.nc-select {
+	flex: 0 1 20em;
+	min-width: min(100%, 12em);
+}
+
+@media (max-width: 512px) {
+	.catalog__toolbar .catalog__sort.nc-select {
+		flex-basis: 100%;
+	}
+}
+
+/* one line per badge: the rows stay low and the column lines up */
+.catalog-table :deep(.rights-badge) {
+	white-space: nowrap;
 }
 
 .shelfmark {
@@ -445,7 +476,17 @@ function statusText(entry: Entry): string {
 }
 
 .catalog-table__files {
-	white-space: nowrap;
+	min-width: 6em;
+}
+
+.catalog-table__files .musicxml-tag,
+.catalog-table__files .review-tag {
+	margin-inline-start: var(--default-grid-baseline);
+}
+
+.catalog-table__files .review-tag {
+	display: table;
+	margin: var(--default-grid-baseline) 0 0;
 }
 
 .catalog-table__sort,

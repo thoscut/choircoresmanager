@@ -126,21 +126,24 @@ export function errorMessage(error: unknown): string {
 export const REASON_NOT_SHARED = 'not_shared'
 
 /**
- * An error of the server with its message and, for some errors, a machine
- * readable `reason` (e.g. `not_shared`).
+ * A failed request: the message for the person, for some errors a machine
+ * readable `reason` (e.g. `not_shared`), and the HTTP status (0: no response).
  */
 export class ApiError extends Error {
 
 	readonly reason: string | null
+	readonly status: number
 
 	/**
 	 * @param message - message for the user
 	 * @param reason - `reason` of the response, if any
+	 * @param status - HTTP status, 0 without a response
 	 */
-	constructor(message: string, reason: string | null = null) {
+	constructor(message: string, reason: string | null = null, status = 0) {
 		super(message)
 		this.name = 'ApiError'
 		this.reason = reason
+		this.status = status
 	}
 
 }
@@ -168,6 +171,19 @@ export function errorReason(error: unknown): string | null {
  */
 export function adminSettingsUrl(section?: string): string {
 	return generateUrl('/settings/admin/{section}', { section: APP }) + (section ? '#' + section : '')
+}
+
+/**
+ * Whether trying the same request again cannot help: no access (403) or
+ * the file is gone (404). Network errors and server errors may pass.
+ *
+ * @param error - whatever was thrown
+ */
+export function isPermanentHttpError(error: unknown): boolean {
+	const status = error instanceof ApiError
+		? error.status
+		: (isAxiosError(error) ? (error.response?.status ?? 0) : 0)
+	return status === 403 || status === 404
 }
 
 /**
@@ -301,12 +317,13 @@ export async function fetchFileContent(id: number): Promise<ArrayBuffer> {
 		return data
 	} catch (error) {
 		// With responseType arraybuffer the `{ error }` body arrives as bytes
+		const status = isAxiosError(error) ? (error.response?.status ?? 0) : 0
 		const body = isAxiosError(error) ? error.response?.data : undefined
 		if (body instanceof ArrayBuffer) {
 			try {
 				const parsed = JSON.parse(new TextDecoder().decode(body)) as { error?: unknown, reason?: unknown }
 				if (typeof parsed.error === 'string' && parsed.error !== '') {
-					throw new ApiError(parsed.error, typeof parsed.reason === 'string' ? parsed.reason : null)
+					throw new ApiError(parsed.error, typeof parsed.reason === 'string' ? parsed.reason : null, status)
 				}
 			} catch (decoded) {
 				if (decoded instanceof Error && !(decoded instanceof SyntaxError)) {
@@ -314,7 +331,7 @@ export async function fetchFileContent(id: number): Promise<ArrayBuffer> {
 				}
 			}
 		}
-		throw new ApiError(errorMessage(error))
+		throw new ApiError(errorMessage(error), null, status)
 	}
 }
 

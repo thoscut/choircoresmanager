@@ -113,6 +113,10 @@ Je Werk gilt höchstens eine Fassung. Die Rechte ändern sich dadurch nicht.
    Notenköpfen, die übrigen Stimmen heller.
 4. Wähle unter **Stimmen beim Abspielen** „Alle gleich“, „Stimme betont“ oder
    „Nur diese Stimme“ und dann **Abspielen**. Die Leertaste spielt und hält an.
+   **Tempo und Lautstärke** öffnet die Regler und die Schalter für
+   Wiederholungen und Mitscrollen.
+5. Unter **Diese Stelle** kopierst du einen Textverweis, erstellst einen
+   internen Link oder legst eine Rückfrage zu den gezeigten Takten an.
 
 Abspielen gibt es für gemeinfreie Fassungen und für Fassungen mit einer
 Lizenz für Übe-Audio, nie für interne Erhaltungskopien.
@@ -121,7 +125,8 @@ Lizenz für Übe-Audio, nie für interne Erhaltungskopien.
 
 ![Der Dialog „Übe-Dateien“: Takte und Tempo aus der Notenansicht, die Wahl zwischen einer Datei und einem ZIP-Archiv mit jeder Stimme und einem Tutti, die Stimme und das Format WAV oder MIDI.](../screenshots/de/practice-audio.png)
 
-1. Stelle in der Notenansicht Takte, Tempo und Wiederholungen ein.
+1. Stelle in der Notenansicht Takte, Tempo und Wiederholungen ein (Tempo und
+   Wiederholungen unter **Tempo und Lautstärke**).
 2. Wähle **Übe-Dateien …**.
 3. Wähle **Eine Datei** oder **Jede Stimme und ein Tutti (ZIP)** und das
    Format **WAV (Audio)** oder **MIDI (eine Spur je Stimme)**.

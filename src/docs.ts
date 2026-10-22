@@ -7,7 +7,10 @@
  * Links into the guides (the same place as `<documentation>` in
  * appinfo/info.xml). Messages that say what to do link the matching
  * section. A unit test checks that every anchor exists in the guide.
+ * Opening a link is the person's own choice; the app itself never requests
+ * anything from outside.
  */
+import { getLanguage } from '@nextcloud/l10n'
 
 const DOCS = 'https://github.com/thoscut/choircoresmanager/blob/main/docs/'
 
@@ -56,4 +59,12 @@ export function userGuideUrl(section: typeof USER_GUIDE[keyof typeof USER_GUIDE]
  */
 export function headingAnchor(heading: string): string {
 	return heading.trim().toLowerCase().replace(/[^\p{L}\p{N}\s_-]/gu, '').replace(/\s/g, '-')
+}
+
+/**
+ * The guide behind "Help": in German the quick start, otherwise the user
+ * guide (the full guides are in English).
+ */
+export function helpUrl(): string {
+	return getLanguage().toLowerCase().startsWith('de') ? DOCS + 'de/schnellstart.md' : DOCS + 'user-guide.md'
 }
