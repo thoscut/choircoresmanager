@@ -16,7 +16,7 @@ use OCP\DB\Exception;
  * Read-only access to scores for anonymous visitors.
  *
  * This service deliberately does not reuse the other services or policies, which
- * allow reading for everyone. It only ever exposes scores that are approved for
+ * require a login. It only ever exposes scores that are approved for
  * publication, in the public domain or licensed, and whose rights status a person
  * has confirmed (filtered in SQL), only while the public page is enabled, and only
  * a whitelisted set of fields.

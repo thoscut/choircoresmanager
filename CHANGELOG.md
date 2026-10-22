@@ -9,9 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Publication rights status (free / unclear / restricted) and note per score
+- Copyright status per score (public domain / licensed / protected / open) and, separately, a publication status (free / to clarify / blocked until a date / internal preservation copy), with a note
+- Internal preservation copies stay with the editors: no player, viewer or download for anyone else
 - Upload of MusicXML files (.musicxml, .xml, .mxl) per score, with notation view and playback (per-voice solo, mute and volume, tempo control)
-- Optional public page listing all scores marked as free, with notation view, playback and MusicXML download (disabled by default, enabled in the admin settings)
+- Optional public page listing all scores released for publication whose rights allow it (public domain or licensed), with notation view, playback and MusicXML download (disabled by default, enabled in the admin settings)
 
 ## [1.2.2] - 2026-08-28
 

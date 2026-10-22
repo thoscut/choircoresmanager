@@ -13,6 +13,7 @@ use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCS\OCSBadRequestException;
 use OCP\AppFramework\OCS\OCSForbiddenException;
+use OCP\AppFramework\OCS\OCSNotFoundException;
 use OCP\AppFramework\OCSController;
 use OCP\IRequest;
 
@@ -42,6 +43,8 @@ class CommentApiController extends OCSController {
 	 * 200: Successful response with the comment
 	 * 400: Bad request
 	 * 403: Forbidden
+	 * 404: Comment not found
+	 * @throws OCSNotFoundException if the comment does not exist
 	 * @throws OCSBadRequestException if the request is invalid
 	 * @throws OCSForbiddenException if the user does not have permission
 	 */
@@ -62,6 +65,8 @@ class CommentApiController extends OCSController {
 	 * 200: Successful deletion of the comment
 	 * 400: Bad request
 	 * 403: Forbidden
+	 * 404: Comment not found
+	 * @throws OCSNotFoundException if the comment does not exist
 	 * @throws OCSBadRequestException if the request is invalid
 	 * @throws OCSForbiddenException if the user does not have permission
 	 */

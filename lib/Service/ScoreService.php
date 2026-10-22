@@ -17,13 +17,18 @@ use OCA\OrchestraScoresManager\Db\ScoreTagLinkMapper;
 use OCA\OrchestraScoresManager\Db\TagMapper;
 use OCA\OrchestraScoresManager\Policy\PolicyInterface;
 use OCA\OrchestraScoresManager\Policy\ScorePolicy;
+use OCA\OrchestraScoresManager\Service\Exceptions\NotFoundException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
+use OCP\AppFramework\Db\TTransactional;
 use OCP\DB\Exception;
+use OCP\IDBConnection;
 use OCP\IL10N;
 use Throwable;
 
 class ScoreService {
+	use TTransactional;
+
 	/** Maximum length of the rights confirmation, which is meant for initials or a short name */
 	public const RIGHTS_CONFIRMED_BY_MAX_LENGTH = 32;
 
@@ -38,6 +43,7 @@ class ScoreService {
 		private readonly AuthorizationService $authorizationService,
 		private readonly ScorePolicy $scorePolicy,
 		private IL10N $l,
+		private readonly IDBConnection $db,
 		private readonly MusicXmlService $musicXmlService,
 	) {
 	}
@@ -47,7 +53,7 @@ class ScoreService {
 	 *
 	 * @param int $id
 	 * @return Score
-	 * @throws \Exception
+	 * @throws NotFoundException
 	 */
 	public function getScoreById(int $id): Score {
 		$this->authorizationService->authorizePolicy($this->scorePolicy, PolicyInterface::ACTION_READ);
@@ -55,7 +61,7 @@ class ScoreService {
 		try {
 			return $this->scoreMapper->find($id);
 		} catch (MultipleObjectsReturnedException|DoesNotExistException|Exception $e) {
-			throw new \Exception($this->l->t('Score not found'));
+			throw new NotFoundException($this->l->t('Score not found'), 0, $e);
 		}
 	}
 
@@ -80,16 +86,18 @@ class ScoreService {
 			throw new \InvalidArgumentException($this->l->t('Cannot delete score because it is part of a folder collection'));
 		}
 
-		//Delete score from score books (cascade should handle this, but let's be sure)
-		$this->scoreBookScoreLinkMapper->removeScoreFromAllBooks($id);
+		$this->atomic(function () use ($id, $score): void {
+			//Delete score from score books (cascade should handle this, but let's be sure)
+			$this->scoreBookScoreLinkMapper->removeScoreFromAllBooks($id);
 
-		// Delete tag links first (cascade should handle this, but let's be sure)
-		$this->scoreTagLinkMapper->deleteAllTagsForScore($id);
+			// Delete tag links first (cascade should handle this, but let's be sure)
+			$this->scoreTagLinkMapper->deleteAllTagsForScore($id);
 
-		// Delete comments first (cascade should handle this, but let's be sure)
-		$this->commentMapper->deleteByScoreId($id);
+			// Delete comments first (cascade should handle this, but let's be sure)
+			$this->commentMapper->deleteByScoreId($id);
 
-		$this->scoreMapper->delete($score);
+			$this->scoreMapper->delete($score);
+		}, $this->db);
 
 		// Remove the attached MusicXML file, if any
 		$this->musicXmlService->removeFile($id);
@@ -132,26 +140,24 @@ class ScoreService {
 		$this->authorizationService->authorizePolicy($this->scorePolicy, PolicyInterface::ACTION_CREATE);
 		$this->normalizeAndValidate($score);
 
-		$created = $this->scoreMapper->insert($score);
-		if ($tagIds !== null) {
-			$validIds = array_map('intval', $tagIds);
-			foreach ($validIds as $tid) {
-				try {
-					$this->tagMapper->find($tid);
-				} catch (DoesNotExistException|MultipleObjectsReturnedException|\RuntimeException $e) {
-					throw new \Exception($this->l->t('Tag not found: %s', [$tid]));
-				}
-			}
-			$this->scoreTagLinkMapper->setTagsForScore($created->getId(), $validIds);
-		}
+		// Validate before writing anything, so a bad tag id doesn't leave a half-created score behind
+		$validIds = $tagIds !== null ? $this->validateTagIds($tagIds) : null;
 
-		// Handle score book info
-		if ($scoreBookInfo !== null && isset($scoreBookInfo['scoreBookId'])) {
-			$this->updateScoreBookInfoInternal($created->getId(), $scoreBookInfo);
-		}
+		$createdId = $this->atomic(function () use ($score, $validIds, $scoreBookInfo): int {
+			$created = $this->scoreMapper->insert($score);
+			if ($validIds !== null) {
+				$this->scoreTagLinkMapper->setTagsForScore($created->getId(), $validIds);
+			}
+
+			// Handle score book info
+			if ($scoreBookInfo !== null && isset($scoreBookInfo['scoreBookId'])) {
+				$this->updateScoreBookInfoInternal($created->getId(), $scoreBookInfo);
+			}
+			return $created->getId();
+		}, $this->db);
 
 		// Reload to get all transient properties
-		return $this->scoreMapper->find($created->getId());
+		return $this->scoreMapper->find($createdId);
 	}
 
 	/**
@@ -169,34 +175,49 @@ class ScoreService {
 		$this->resetDependentFields($score);
 		$this->normalizeAndValidate($score);
 
-		if ($tagIds !== null) {
-			$validIds = array_map('intval', $tagIds);
-			foreach ($validIds as $tid) {
-				try {
-					$this->tagMapper->find($tid);
-				} catch (DoesNotExistException|MultipleObjectsReturnedException|\RuntimeException $e) {
-					throw new Exception($this->l->t('Tag not found: %s', [$tid]));
-				}
+		$validIds = $tagIds !== null ? $this->validateTagIds($tagIds) : null;
+
+		$this->atomic(function () use ($score, $validIds, $scoreBookInfo): void {
+			if ($validIds !== null) {
+				$this->scoreTagLinkMapper->setTagsForScore($score->getId(), $validIds);
 			}
-			$this->scoreTagLinkMapper->setTagsForScore($score->getId(), $validIds);
-		}
 
-		// Handle score book info update
-		if ($scoreBookInfo !== null) {
-			$this->updateScoreBookInfoInternal($score->getId(), $scoreBookInfo);
-		}
+			// Handle score book info update
+			if ($scoreBookInfo !== null) {
+				$this->updateScoreBookInfoInternal($score->getId(), $scoreBookInfo);
+			}
 
-		// This check here is needed in case only transient properties (like tags) were updated
-		// Unfortunately, NC's QBMapper has a bug in handling for this
-		// See also https://github.com/nextcloud/server/pull/56337
-		$updatedProperties = $score->getUpdatedFields();
-		unset($updatedProperties['id']);
-		if (\count($updatedProperties) > 0) {
-			$this->scoreMapper->update($score);
-		}
+			// This check here is needed in case only transient properties (like tags) were updated
+			// Unfortunately, NC's QBMapper has a bug in handling for this
+			// See also https://github.com/nextcloud/server/pull/56337
+			$updatedProperties = $score->getUpdatedFields();
+			unset($updatedProperties['id']);
+			if (\count($updatedProperties) > 0) {
+				$this->scoreMapper->update($score);
+			}
+		}, $this->db);
 
 		// Reload to get all transient properties
 		return $this->scoreMapper->find($score->getId());
+	}
+
+	/**
+	 * Make sure all given tag ids exist.
+	 *
+	 * @param array $tagIds
+	 * @return list<int> The tag ids as integers
+	 * @throws \InvalidArgumentException If a tag does not exist
+	 */
+	private function validateTagIds(array $tagIds): array {
+		$validIds = array_values(array_map('intval', $tagIds));
+		foreach ($validIds as $tid) {
+			try {
+				$this->tagMapper->find($tid);
+			} catch (DoesNotExistException|MultipleObjectsReturnedException|\RuntimeException $e) {
+				throw new \InvalidArgumentException($this->l->t('Tag not found: %s', [$tid]));
+			}
+		}
+		return $validIds;
 	}
 
 	/**

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Nextcloud 3.14159\n"
 "Report-Msgid-Bugs-To: translations\\@example.com\n"
-"POT-Creation-Date: 2026-10-21 20:59+0000\n"
+"POT-Creation-Date: 2026-10-21 23:42+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -62,8 +62,7 @@ msgstr ""
 msgid "Index %d or score %d is already used in this folder collection"
 msgstr ""
 
-#, php-format
-msgid "Failed to add score to folder collection: %1$s"
+msgid "Failed to add score to folder collection"
 msgstr ""
 
 msgid ""
@@ -88,12 +87,10 @@ msgstr ""
 msgid "Index %d or score book %d is already used in this folder collection"
 msgstr ""
 
-#, php-format
-msgid "Failed to add score book to folder collection: %1$s"
+msgid "Failed to add score book to folder collection"
 msgstr ""
 
-#, php-format
-msgid "Failed to remove score book from folder collection: %1$s"
+msgid "Failed to remove score book from folder collection"
 msgstr ""
 
 msgid "Version date range overlaps with an existing version"
@@ -117,6 +114,9 @@ msgid "The uploaded file is too large (maximum %d MB)"
 msgstr ""
 
 msgid "The uploaded file could not be read"
+msgstr ""
+
+msgid "This score is an internal preservation copy"
 msgstr ""
 
 msgid "No MusicXML file available for this score"
@@ -144,8 +144,7 @@ msgstr ""
 msgid "Index %d is already occupied in this score book"
 msgstr ""
 
-#, php-format
-msgid "Failed to add score to score book: %1$s"
+msgid "Failed to add score to score book"
 msgstr ""
 
 #, php-format
@@ -160,12 +159,10 @@ msgstr ""
 msgid "Duplicate index %d in request"
 msgstr ""
 
-#, php-format
-msgid "Failed to add scores to score book: %1$s"
+msgid "Failed to add scores to score book"
 msgstr ""
 
-#, php-format
-msgid "Failed to remove score from score book: %1$s"
+msgid "Failed to remove score from score book"
 msgstr ""
 
 msgid "Index is required when adding score to a score book"
@@ -181,7 +178,14 @@ msgstr ""
 msgid "Score is already part of another score book. Remove it first."
 msgstr ""
 
-msgid "Invalid rights status. Must be \"free\", \"unclear\" or \"restricted\"."
+msgid ""
+"Invalid rights status. Must be \"public_domain\", \"licensed\", "
+"\"protected\" or \"open\"."
+msgstr ""
+
+msgid ""
+"Invalid publication status. Must be \"free\", \"to_clarify\", \"blocked\" or "
+"\"internal_copy\"."
 msgstr ""
 
 msgid "Setlist entry not found"
@@ -263,9 +267,10 @@ msgid "Public page"
 msgstr ""
 
 msgid ""
-"Show all scores marked as free (public domain) on a page that can be opened "
-"without logging in. Visitors can view and play the MusicXML files of these "
-"scores. No other scores or internal details are shown."
+"Show all scores that are released for publication and whose rights allow it "
+"(public domain or licensed) on a page that can be opened without logging in. "
+"Visitors can view and play the MusicXML files of these scores. No other "
+"scores or internal details are shown."
 msgstr ""
 
 msgid "Enable public page"
@@ -526,10 +531,16 @@ msgstr ""
 msgid "Tags"
 msgstr ""
 
+msgid "Rights"
+msgstr ""
+
 msgid "Publication"
 msgstr ""
 
-msgid "Publication Note"
+msgid "Blocked until"
+msgstr ""
+
+msgid "Rights Note"
 msgstr ""
 
 msgid "MusicXML"
@@ -795,9 +806,6 @@ msgstr ""
 msgid "Delete comment"
 msgstr ""
 
-msgid "Unable to determine current user"
-msgstr ""
-
 msgid "Failed to submit comment: "
 msgstr ""
 
@@ -853,8 +861,18 @@ msgid "Remove file"
 msgstr ""
 
 msgid ""
-"This score is marked as free, so it is shown on the public page if that page "
-"is enabled."
+"This score is released for publication and its rights allow it, so it is "
+"shown on the public page if that page is enabled."
+msgstr ""
+
+msgid ""
+"This score is an internal preservation copy. Only editors can view and play "
+"it."
+msgstr ""
+
+msgid ""
+"This score is an internal preservation copy. It can only be viewed by the "
+"music librarians."
 msgstr ""
 
 msgid "Scores in this book"
@@ -1047,8 +1065,8 @@ msgid "Freely available scores"
 msgstr ""
 
 msgid ""
-"These scores are in the public domain. Select a score to view the notes and "
-"listen to the individual voices."
+"These scores are in the public domain or licensed for publication. Select a "
+"score to view the notes and listen to the individual voices."
 msgstr ""
 
 msgid "Search by title or composer"
@@ -1129,13 +1147,28 @@ msgstr ""
 msgid "Overall Duration"
 msgstr ""
 
-msgid "Free (public domain)"
+msgid "Public domain"
 msgstr ""
 
-msgid "Unclear"
+msgid "Licensed"
 msgstr ""
 
-msgid "Restricted"
+msgid "Protected"
+msgstr ""
+
+msgid "Undetermined"
+msgstr ""
+
+msgid "Free"
+msgstr ""
+
+msgid "To clarify"
+msgstr ""
+
+msgid "Blocked"
+msgstr ""
+
+msgid "Internal preservation copy"
 msgstr ""
 
 msgid "Invalid duration format"

@@ -276,6 +276,7 @@ final class MusicXmlServiceTest extends TestCase {
 	 */
 	private function createServiceWithRealPolicy(bool $canEdit): MusicXmlService {
 		$permissionService = $this->createMock(PermissionService::class);
+		$permissionService->method('isCurrentUserLoggedIn')->willReturn(true);
 		$permissionService->method('canCurrentUserEdit')->willReturn($canEdit);
 		$l10n = $this->createMock(IL10N::class);
 		$l10n->method('t')->willReturnArgument(0);

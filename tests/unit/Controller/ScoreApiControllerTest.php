@@ -11,6 +11,7 @@ use OCA\OrchestraScoresManager\Db\ScoreMapper;
 use OCA\OrchestraScoresManager\Db\ScoreTagLinkMapper;
 use OCA\OrchestraScoresManager\Db\TagMapper;
 use OCA\OrchestraScoresManager\Service\CommentService;
+use OCA\OrchestraScoresManager\Service\Exceptions\NotFoundException;
 use OCA\OrchestraScoresManager\Service\Exceptions\PermissionDeniedException;
 use OCA\OrchestraScoresManager\Service\FolderCollectionService;
 use OCA\OrchestraScoresManager\Service\ScoreService;
@@ -18,6 +19,7 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCS\OCSBadRequestException;
 use OCP\AppFramework\OCS\OCSForbiddenException;
+use OCP\AppFramework\OCS\OCSNotFoundException;
 use OCP\IRequest;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
@@ -184,6 +186,46 @@ final class ScoreApiControllerTest extends TestCase {
 		$this->controller->postScore(title: 'Test');
 	}
 
+	public function testPatchScoreIgnoresFieldsOutsideWhitelist(): void {
+		$score = new Score();
+		$score->setId(1);
+		$score->setTitle('Original Title');
+		$score->resetUpdatedFields();
+
+		$this->scoreService->method('getScoreById')->willReturn($score);
+		$this->request->method('getParams')->willReturn([
+			'id' => 1,
+			'composer' => 'Bach',
+			'tags' => [['id' => 5]],
+			'scoreBook' => null,
+			'unknownField' => 'x',
+		]);
+
+		$this->scoreService->expects($this->once())
+			->method('updateScore')
+			->with($this->callback(function (Score $s): bool {
+				return $s->getComposer() === 'Bach'
+					&& $s->getTitle() === 'Original Title'
+					&& array_keys($s->getUpdatedFields()) === ['composer'];
+			}))
+			->willReturn($score);
+
+		$this->controller->patchScore(id: 1, composer: 'Bach', scoreBook: null);
+	}
+
+	public function testPatchScoreRejectsEmptyTitle(): void {
+		$score = new Score();
+		$score->setId(1);
+
+		$this->scoreService->method('getScoreById')->willReturn($score);
+		$this->request->method('getParams')->willReturn(['id' => 1, 'title' => ' ']);
+		$this->scoreService->expects($this->never())->method('updateScore');
+
+		$this->expectException(OCSBadRequestException::class);
+
+		$this->controller->patchScore(id: 1, title: ' ');
+	}
+
 	public function testPatchScoreUpdatesExistingScore(): void {
 		$score = new Score();
 		$score->setId(1);
@@ -220,6 +262,14 @@ final class ScoreApiControllerTest extends TestCase {
 		$this->assertEquals(1791, $response->getData()->getYear());
 	}
 
+	/**
+	 * Let the mocked service parse dates like the real one does for valid input.
+	 */
+	private function mockDateParsing(): void {
+		$this->scoreService->method('parseDate')
+			->willReturnCallback(fn ($value) => $value === null ? null : new \DateTimeImmutable($value . ' 00:00:00', new \DateTimeZone('UTC')));
+	}
+
 	public function testPatchScoreIgnoresUnknownAndManagedFieldsAndSetsRights(): void {
 		$score = new Score();
 		$score->setId(1);
@@ -227,10 +277,13 @@ final class ScoreApiControllerTest extends TestCase {
 		$score->resetUpdatedFields();
 
 		$this->scoreService->method('getScoreById')->willReturn($score);
+		$this->mockDateParsing();
 		$this->request->method('getParams')->willReturn([
 			'id' => 1,
 			'_route' => 'ocs.orchestrascoresmanager.score_api.patch_score',
 			'rightsStatus' => 'public_domain',
+			'publicationStatus' => 'blocked',
+			'publicationBlockedUntil' => '2027-03-31',
 			'rightsNote' => 'Composer died 1791',
 			'musicxmlFile' => '../../evil.xml',
 			'unknownField' => 'x',
@@ -239,69 +292,91 @@ final class ScoreApiControllerTest extends TestCase {
 		$this->scoreService->expects($this->once())
 			->method('updateScore')
 			->with($this->callback(fn (Score $s) => $s->getRightsStatus() === 'public_domain'
+				&& $s->getPublicationStatus() === 'blocked'
+				&& $s->getPublicationBlockedUntil()?->format('Y-m-d') === '2027-03-31'
 				&& $s->getRightsNote() === 'Composer died 1791'
 				&& $s->getMusicxmlFile() === null))
 			->willReturnArgument(0);
 
-		$this->controller->patchScore(id: 1, rightsStatus: 'public_domain', rightsNote: 'Composer died 1791');
+		$this->controller->patchScore(id: 1, rightsStatus: 'public_domain', publicationStatus: 'blocked', publicationBlockedUntil: '2027-03-31', rightsNote: 'Composer died 1791');
 	}
 
-	public function testPatchScoreSetsPublicationFieldsAndParsesDates(): void {
+	public function testPatchScoreSetsConfirmationAndPublicationFields(): void {
 		$score = new Score();
 		$score->setId(1);
 		$score->resetUpdatedFields();
 
 		$this->scoreService->method('getScoreById')->willReturn($score);
-		$this->scoreService->method('parseDate')
-			->willReturnCallback(fn ($value) => $value === null ? null : new \DateTimeImmutable($value . ' 00:00:00', new \DateTimeZone('UTC')));
+		$this->mockDateParsing();
 		$this->request->method('getParams')->willReturn([
 			'id' => 1,
 			'rightsConfirmedAt' => '2026-10-20',
 			'rightsConfirmedBy' => 'TS',
-			'publicationStatus' => 'blocked',
-			'publicationNote' => 'Waiting for the publisher',
-			'publicationBlockedUntil' => '2027-01-31',
+			'publicationStatus' => 'approved',
+			'publicationNote' => 'Approved by the board',
 		]);
 
 		$this->scoreService->expects($this->once())
 			->method('updateScore')
 			->with($this->callback(fn (Score $s) => $s->getRightsConfirmedAt()?->format('Y-m-d') === '2026-10-20'
 				&& $s->getRightsConfirmedBy() === 'TS'
-				&& $s->getPublicationStatus() === 'blocked'
-				&& $s->getPublicationNote() === 'Waiting for the publisher'
-				&& $s->getPublicationBlockedUntil()?->format('Y-m-d') === '2027-01-31'))
+				&& $s->getPublicationStatus() === 'approved'
+				&& $s->getPublicationNote() === 'Approved by the board'))
 			->willReturnArgument(0);
 
-		$this->controller->patchScore(id: 1);
+		$this->controller->patchScore(
+			id: 1,
+			rightsConfirmedAt: '2026-10-20',
+			rightsConfirmedBy: 'TS',
+			publicationStatus: 'approved',
+			publicationNote: 'Approved by the board',
+		);
 	}
 
-	public function testPatchScoreRejectsInvalidDate(): void {
+	#[TestWith(['rightsConfirmedAt'])]
+	#[TestWith(['publicationBlockedUntil'])]
+	public function testPatchScoreRejectsInvalidDate(string $field): void {
 		$score = new Score();
 		$score->setId(1);
 
 		$this->scoreService->method('getScoreById')->willReturn($score);
 		$this->scoreService->method('parseDate')
+			->with('2026-02-30')
 			->willThrowException(new \InvalidArgumentException('Invalid date. Use the format YYYY-MM-DD.'));
-		$this->request->method('getParams')->willReturn(['id' => 1, 'rightsConfirmedAt' => '2026-02-30']);
+		$this->request->method('getParams')->willReturn(['id' => 1, $field => '2026-02-30']);
 		$this->scoreService->expects($this->never())->method('updateScore');
 
 		$this->expectException(OCSBadRequestException::class);
 		$this->expectExceptionMessage('Invalid date');
+		$this->controller->patchScore(...['id' => 1, $field => '2026-02-30']);
+	}
+
+	public function testPatchScoreClearsBlockedUntilDate(): void {
+		$score = new Score();
+		$score->setId(1);
+		$score->setPublicationBlockedUntil(new \DateTimeImmutable('2027-03-31'));
+
+		$this->scoreService->method('getScoreById')->willReturn($score);
+		$this->mockDateParsing();
+		$this->request->method('getParams')->willReturn(['id' => 1, 'publicationBlockedUntil' => null]);
+		$this->scoreService->expects($this->once())
+			->method('updateScore')
+			->with($this->callback(fn (Score $s) => $s->getPublicationBlockedUntil() === null))
+			->willReturnArgument(0);
+
 		$this->controller->patchScore(id: 1);
 	}
 
-	#[TestWith(['rightsStatus'])]
-	#[TestWith(['publicationStatus'])]
-	public function testPatchScoreTurnsNullStatusIntoInvalidValue(string $field): void {
+	public function testPatchScoreTurnsNullStatusIntoInvalidValue(): void {
 		$score = new Score();
 		$score->setId(1);
 
 		$this->scoreService->method('getScoreById')->willReturn($score);
-		$this->request->method('getParams')->willReturn(['id' => 1, $field => null]);
+		$this->request->method('getParams')->willReturn(['id' => 1, 'rightsStatus' => null, 'publicationStatus' => null]);
 
 		$this->scoreService->expects($this->once())
 			->method('updateScore')
-			->with($this->callback(fn (Score $s) => $s->{'get' . ucfirst($field)}() === ''))
+			->with($this->callback(fn (Score $s) => $s->getRightsStatus() === '' && $s->getPublicationStatus() === ''))
 			->willReturnArgument(0);
 
 		$this->controller->patchScore(id: 1);
@@ -309,6 +384,7 @@ final class ScoreApiControllerTest extends TestCase {
 
 	#[TestWith([PermissionDeniedException::class, OCSForbiddenException::class, 'Cannot update score'])]
 	#[TestWith([\InvalidArgumentException::class, OCSBadRequestException::class, 'Score not found'])]
+	#[TestWith([NotFoundException::class, OCSNotFoundException::class, 'Score not found'])]
 	public function testPatchScoreThrowsExceptions(string $serviceException, string $expectedOCSException, string $message): void {
 		$this->scoreService->expects($this->once())
 			->method('getScoreById')
@@ -390,8 +466,6 @@ final class ScoreApiControllerTest extends TestCase {
 		$response = $this->controller->postScoreComment(
 			id: 1,
 			content: 'New comment',
-			userId: 'user1',
-			creationDate: 1234567890
 		);
 
 		$this->assertInstanceOf(DataResponse::class, $response);
@@ -410,8 +484,6 @@ final class ScoreApiControllerTest extends TestCase {
 		$this->controller->postScoreComment(
 			id: 1,
 			content: 'Test',
-			userId: 'user1',
-			creationDate: 1234567890
 		);
 	}
 

@@ -54,8 +54,6 @@
 <script setup lang="ts">
 import type { Comment } from '@/api/generated/openapi/data-contracts'
 
-import { getCurrentUser } from '@nextcloud/auth'
-import { showError } from '@nextcloud/dialogs'
 import { ref, watch } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
@@ -105,12 +103,6 @@ async function submitComment() {
 		return
 	}
 
-	const currentUser = getCurrentUser()
-	if (!currentUser) {
-		showError(t('Unable to determine current user'))
-		return
-	}
-
 	submitting.value = true
 
 	await tryShowError(
@@ -119,8 +111,6 @@ async function submitComment() {
 				String(props.scoreId),
 				{
 					content: newCommentContent.value.trim(),
-					userId: currentUser.uid,
-					creationDate: Date.now(),
 				},
 			)
 
