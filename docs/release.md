@@ -15,10 +15,21 @@ only accepts signed releases from a public repository.
    branch holds this app.
 
    The repository started as a fork of the Orchestra Scores Manager (another
-   app). Before the first push of this app, keep the old state on a branch
-   (e.g. `orchestrascoresmanager`) and close or retarget its open pull
-   requests; the first push then replaces `main`. The fork relation stays
-   visible on GitHub until GitHub support detaches the fork.
+   app) with its own open pull requests. The first push of this app replaces
+   `main`; before that, keep the old line intact:
+
+   1. Create the branch `orchestrascoresmanager` from the current `main`
+      (GitHub: branch selector → "Create branch from main", or
+      `git push origin origin/main:refs/heads/orchestrascoresmanager`).
+   2. Change the base of every open pull request that targets `main` to
+      `orchestrascoresmanager` (pull request → Edit → base). Pull requests
+      based on another feature branch stay as they are.
+   3. Only then push this app: `git push --force-with-lease=main:<old main
+      sha> origin main`, so the push fails if `main` moved in the meantime.
+
+   All other branches keep their history. The fork relation to the
+   Orchestra Scores Manager stays visible on GitHub until GitHub support
+   detaches the fork.
 2. **Key and certificate request.** Create a private key and a certificate
    signing request with the app id as common name, and request the certificate
    with a pull request to
