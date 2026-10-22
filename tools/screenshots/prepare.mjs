@@ -184,21 +184,29 @@ async function extras({ session, librarian, copy, versionOf, check, log, demoFol
 	if (!(await entry('1-1')).releases?.onPortal) {
 		check('portal 1-1', await librarian.api('POST', `/api/versions/${await versionOf('1-1')}/portal`, { since: '2025-09-01' }))
 	}
+	// Both links share the whole piece and offer the scan (PDF) of the copy
+	const scanOf = async (shelfmark) => {
+		const scan = check('link options ' + shelfmark, await librarian.api('GET', `/api/copies/${copy[shelfmark].id}/link-options`)).scans?.[0]
+		if (!scan) {
+			throw new Error(`No scan (PDF) linked to ${shelfmark}: run the file sync first`)
+		}
+		return scan.id
+	}
 	const links = check('links', await librarian.api('GET', '/api/links'))
 	if (!links.some((link) => link.circle === 'members')) {
 		check('member link 1-1', await librarian.api('POST', `/api/copies/${copy['1-1'].id}/links`, {
-			link: { measure_from: '1', measure_to: '4', voice: 'Alt', note: 'Please practise the alto until Thursday.', circle: 'members' },
+			link: { voice: 'Alt', note: 'Please practise the alto until Thursday.', circle: 'members', scan_file_id: await scanOf('1-1') },
 		}))
-		log('link for choir members created (1-1)')
+		log('link for choir members created (1-1, whole piece with scan)')
 	}
 	if (!links.some((link) => link.circle === 'public')) {
 		if ((await entry('1-2')).version.publication_status !== 'free') {
 			check('publication 1-2', await librarian.api('PATCH', `/api/version/${await versionOf('1-2')}`, { fields: { publication_status: 'free' }, reason: 'Public domain, own setting under CC0' }))
 		}
 		check('public link 1-2', await librarian.api('POST', `/api/copies/${copy['1-2'].id}/links`, {
-			link: { measure_from: '1', measure_to: '8', circle: 'public' },
+			link: { circle: 'public', scan_file_id: await scanOf('1-2') },
 		}))
-		log('public link created (1-2)')
+		log('public link created (1-2, whole piece with scan)')
 	}
 
 	// The public repertoire page: works with a version confirmed public domain

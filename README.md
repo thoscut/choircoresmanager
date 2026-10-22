@@ -110,7 +110,7 @@ The screenshots show the invented demo archive from [tools/demo](tools/demo/READ
   </tr>
   <tr>
     <td width="33%" valign="top">
-      <a href="docs/screenshots/shared-with-me.png"><img src="docs/screenshots/shared-with-me.png" width="280" alt="The page Shared with me of a choir member: an excerpt of four measures with the note of the conductor, the playback controls with count-in and loop, and the score with the alto highlighted."></a>
+      <a href="docs/screenshots/shared-with-me.png"><img src="docs/screenshots/shared-with-me.png" width="280" alt="The page Shared with me of a choir member: a whole piece with the note of the conductor, the link to the scan, the playback controls with count-in and loop, and the score with the alto highlighted."></a>
       <h3>Sharing with choir members and the public</h3>
       <p>If the administration switches it on, the conductor or the music librarians share an excerpt from the score viewer: choir members see it under "Shared with me", play it with their voice emphasised and make a practice file; a public link shows it without signing in; a public repertoire page lists the works in the public domain with links to CPDL and IMSLP. The dialog says beforehand what the recipients will see. The server cuts the score to the shared bars and checks the rights on every call; choir members and the public never receive a file of the archive. These modules are off until switched on.</p>
     </td>

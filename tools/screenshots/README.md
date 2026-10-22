@@ -106,14 +106,15 @@ conductors and the administrators, imports persons, performances and song
 lists, confirms rights, adds licenses, chooses valid versions, asks
 questions, makes a proposal and an internal link, and plans the concert
 "Adventskonzert 2026". For the newer pictures it releases 1-1 for the
-singers' portal and 1-2 for publication, makes a link for choir members and
-a public link, puts three works on the public repertoire page, creates three
-folders of the folder book (one out with an invented name), chooses the
-folder "Print station" of the administrator as mirror folder (with a file of
-the same name as a scan, which the sync skips), corrects one note of 2-2 so
-that it has a second revision, marks 1-6 as a scientific edition and writes
-two annual snapshots with a confirmation and a license between them. It
-skips what is done already, so it can run again.
+singers' portal and 1-2 for publication, shares both as a whole piece with
+the scan (PDF), with a link for choir members and a public link, puts three
+works on the public repertoire page, creates three folders of the folder
+book (one out with an invented name), chooses the folder "Print station" of
+the administrator as mirror folder (with a file of the same name as a scan,
+which the sync skips), corrects one note of 2-2 so that it has a second
+revision, marks 1-6 as a scientific edition and writes two annual snapshots
+with a confirmation and a license between them. It skips what is done
+already, so it can run again.
 
 ## Running
 

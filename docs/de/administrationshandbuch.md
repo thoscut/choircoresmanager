@@ -129,7 +129,7 @@ ist ein Wechsel der Gruppenmitgliedschaft.
 4. Prüfe den Zugriff auf den Archivordner: Auch Konten, die neu eine Rolle
    haben, brauchen ihn ([Abschnitt 3](#prüfen-wer-den-archivordner-öffnen-kann)).
 
-![Die Einstellungen der App in den Verwaltungseinstellungen: der Archivordner mit der Schaltfläche, um ihn zu wählen, und die Rollen, jede mit einer kurzen Beschreibung und den ihr zugeordneten Gruppen, zum Beispiel „Archivverwaltung“ für die Rolle „Bestand“.](../screenshots/settings-roles.png)
+![Der Abschnitt „Rollen und Gruppen“ unter Verwaltungseinstellungen → Notenarchiv: jede Rolle mit den ihr zugeordneten Gruppen und einer kurzen Beschreibung, zum Beispiel die Gruppe „Music librarians“ für die Rolle „Bestand (Archivverwaltung)“ und „Choir members“ für die Rolle „Chormitglieder (nur geteilte Ausschnitte)“, und die Schaltfläche „Rollen speichern“.](../screenshots/settings-roles.png)
 
 Die Seite **Verwaltungseinstellungen → Notenarchiv** enthält alle
 Einstellungen der App: Archivordner, Rollen und Gruppen, Zugriff auf den
@@ -944,6 +944,8 @@ Es ist neben den kleinen Korrekturen die einzige Funktion, die Dateien
 schreibt, und sie schreibt nur in diesen Ordner, nie in den Archivordner
 (Leitlinie 4 der [Roadmap](../../ROADMAP.md)). Es gehört zu keiner
 Voreinstellung; schalte es bewusst ein.
+
+![Der Abschnitt „Druckstation: Spiegelordner“ unter Verwaltungseinstellungen → Notenarchiv: was der Spiegelordner tut, die Warnung, dass alle, die ihn öffnen können, die Scans drucken können, der aktuelle Zielordner und, nach der Wahl eines Ordners, die Meldung, dass er passt, mit den Schaltflächen zum Abbrechen und Speichern.](../screenshots/settings-print-mirror.png)
 
 So richtest du es ein:
 

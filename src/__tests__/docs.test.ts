@@ -80,6 +80,28 @@ function headings(text: string): { level: number, anchor: string, repeated: bool
 }
 
 /**
+ * The number of images (`![…](…)`) per section of a Markdown text: the text
+ * before the first heading, then each heading of any level up to the next.
+ * Headings inside code blocks do not start a section.
+ *
+ * @param text - Markdown
+ */
+function imagesPerSection(text: string): number[] {
+	const counts = [0]
+	let code = false
+	for (const line of text.split(/\r?\n/)) {
+		if (/^\s*(```|~~~)/.test(line)) {
+			code = !code
+		} else if (!code && /^#{1,6} /.test(line)) {
+			counts.push(0)
+		} else {
+			counts[counts.length - 1]! += line.match(/!\[[^\]]*\]\([^)]+\)/g)?.length ?? 0
+		}
+	}
+	return counts
+}
+
+/**
  * The anchors of the headings of a guide.
  *
  * @param path - path relative to the repository
@@ -144,6 +166,11 @@ describe('the guides in English and German', () => {
 		// A section added in only one language shows up here: change both.
 		const levels = (path: string) => headings(doc(path)).map((heading) => heading.level)
 		expect(levels(german)).toEqual(levels(english))
+	})
+
+	it.each(PAIRS)('%s and %s show the same number of images in each section', (english, german) => {
+		// A screenshot added in only one language shows up here: add it to both.
+		expect(imagesPerSection(doc(german))).toEqual(imagesPerSection(doc(english)))
 	})
 
 	it.each(PAIRS)('%s and %s link each other at the top', (english, german) => {

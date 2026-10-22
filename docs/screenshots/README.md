@@ -1,8 +1,9 @@
 # Screenshots
 
 Pictures for the README, the guides and the Nextcloud App Store. They were
-taken in Nextcloud 33 with app version 0.7.0-dev.8 and the public demo data
-from [`tools/demo`](../../tools/demo/README.md): the invented choir
+taken in Nextcloud 33 with app version 0.7.0-dev.8 (the three pictures of
+sharing a whole piece, `share-dialog.png`, `shared-with-me.png` and
+`public-link.png`, with 0.7.0-dev.11) and the public demo data from [`tools/demo`](../../tools/demo/README.md): the invented choir
 "Demochor", CC0. The accounts and groups have neutral names ("Demo
 Librarian", "Demo Conductor", "Demo Choir Member", "Music librarians"); the
 folder book names an invented person. The only real persons shown are
@@ -27,14 +28,14 @@ The App Store shows the files marked with a number, in this order
 | `start-page-due.png` | 5 | The start page "Due" of the Demo Librarian: cards with what is to do, the concert deadlines and the tasks for the librarian's roles. |
 | `concert-planning.png` | 6 | The planned concert "Adventskonzert 2026" with time, location, status and the pieces with durations and warnings. |
 | `statistics.png` | 7 | The statistics: period, sections and key figures of the stock. |
-| `shared-with-me.png` | 8 | The page "Shared with me" of a choir member: the excerpt of 1-1, measures 1 to 4, with the note of the conductor, the playback controls with count-in and loop, and the score with the alto highlighted. |
+| `shared-with-me.png` | 8 | The page "Shared with me" of a choir member: the whole piece 1-1 with the note of the conductor, the link "Open the scan (PDF)", the playback controls with count-in and loop, and the score with the alto highlighted. |
 | `score-dark.png` | 9 | The score viewer in the dark theme. |
 | `de/catalog.png` | 10 | The catalog in the German interface. |
 | `dashboard-widget.png` | – | The Nextcloud dashboard with the widget "Music archive – due". |
 | `review-points.png` | – | The score viewer of copy 2-1 with the panel "Review of the transcription" of its demo report: the review point at measure 7, Tenor II, chosen (measure shown, voice highlighted), "Play this passage", "Correct in the app …" and the decisions. |
 | `files-action.png` | – | The Files app in the folder `Mappe_2` of the demo archive with the actions menu of the MusicXML file of copy 2-1 and the action "Open in music archive". |
-| `share-dialog.png` | – | The dialog "Share excerpt of 1-1" over the score viewer: "Who can open the link?" with "Choir members" chosen, measures 1 to 4, the voice Alt, validity, and the box "What the recipients see" (playback yes, practice files yes). |
-| `public-link.png` | – | The page of a public link in Nextcloud's public layout, without signing in: title, composer, the playback controls and measures 1 to 8 of 1-2. |
+| `share-dialog.png` | – | The dialog "Share 1-1" over the score viewer: "Who can open the link?" with "Choir members" chosen, "What is shared?" with "Whole piece", the voice Alt, validity, "Include the scan (PDF)" ticked, and the box "What the recipients see" (playback, practice files and scan yes). |
+| `public-link.png` | – | The page of a public link in Nextcloud's public layout, without signing in: title, composer, the link "Open the scan (PDF)", the playback controls and the whole piece 1-2. |
 | `public-repertoire.png` | – | The public repertoire page with three works confirmed as public domain, composer and lyricist with life dates, scoring and links to CPDL or IMSLP. |
 | `print-mirror-preview.png` | – | The list "Print station" with the section "Mirror folder for the print station" and the dialog "Preview of the sync": five files would be copied, one is skipped with the reason. |
 

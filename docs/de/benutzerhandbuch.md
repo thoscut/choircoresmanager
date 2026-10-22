@@ -144,7 +144,7 @@ Funktion ist abgeschaltet.*
 
 ### Startseite „Fällig“
 
-![Die Startseite „Fällig“ in der deutschen Oberfläche: Karten mit der Zahl der anstehenden Dinge, zum Beispiel offene Aufgaben, Programmpunkte mit unklarer Signatur und ein Vorschlag im Eingang.](../screenshots/de/start-page.png)
+![Die Startseite „Fällig“ in der deutschen Oberfläche: Karten mit der Zahl der anstehenden Dinge, zum Beispiel eine offene Aufgabe, Programmpunkte mit unklarer Signatur und Vorschläge im Eingang, darunter die Konzertfristen mit dem Adventskonzert 2026.](../screenshots/de/start-page.png)
 
 Die App öffnet mit **Fällig**: Das braucht jetzt deine Rollen. Karten zeigen,
 wie viele Dinge warten, zum Beispiel offene Aufgaben für deine Rolle,
@@ -215,9 +215,11 @@ auch Personen aus dem Personenregister. Sie zeigt nur, was deine Rollen sehen
 dürfen: interne Erhaltungskopien nur der Rolle „Bestand“ und der
 Chorleitung, und Konten ohne Rolle im Notenarchiv gar nichts.
 
+![Die Suche von Nextcloud mit dem Begriff „Mond“: unter den Dateien der Bereich „Notenarchiv“ mit den Exemplaren 1-1 und 3-1 „Der Mond ist aufgegangen“, jedes mit Komposition und Bearbeitung.](../screenshots/unified-search.png)
+
 ### Die Angaben zu einem Exemplar
 
-![Die Seitenleiste von Exemplar 1-1 im Reiter „Übersicht“: Titel, Rechtestatus, die Schaltfläche „Noten“, die Reiter und die Felder von Werk und Fassung, jeder Abschnitt mit einer Schaltfläche „Bearbeiten“.](../screenshots/copy-overview.png)
+![Die Seitenleiste von Exemplar 1-1 im Reiter „Details“: Titel, Rechtestatus, die Schaltfläche „Noten“, die Zahl der offenen Prüfpunkte, die Reiter Details, Rechte, Fragen, Dateien und Verlauf und die Felder des Werks mit der Schaltfläche „Bearbeiten“.](../screenshots/copy-overview.png)
 
 Klicke auf eine Zeile, um die Seitenleiste zu öffnen. Ihr Kopf zeigt das
 Rechte-Kennzeichen, den Status, wenn das Exemplar nicht aktiv ist, und
@@ -311,7 +313,7 @@ den Text einer Rückfrage oder den Namen einer Person.
 
 ### Aus der Dateien-App öffnen
 
-<!-- Screenshot planned: screenshots/files-action.png (docs/screenshots/README.md) -->
+![Die App „Dateien“ im Ordner Mappe_2 des Demo-Archivs mit dem geöffneten Aktionsmenü der MusicXML-Datei von Exemplar 2-1; unter den Aktionen „Im Notenarchiv öffnen“.](../screenshots/files-action.png)
 
 Der Archivordner ist ein gewöhnlicher Ordner in Nextcloud. Du findest eine
 Datei also auch in der App **Dateien**. Dateien des Archivordners haben im
@@ -508,7 +510,7 @@ Stimme aus einem mit ihnen geteilten Stück oder Ausschnitt erstellen (siehe
 
 ### Eine Rückfrage stellen oder eine Aufgabe geben
 
-![Der Reiter „Aufgaben“ von Exemplar 2-1 mit einer offenen Rückfrage an die Chorleitung zu den Takten 5 bis 8 im Tenor II und darunter ein interner Link auf dieselbe Stelle.](../screenshots/task-question.png)
+![Der Reiter „Fragen“ von Exemplar 2-1 mit einer offenen Rückfrage an die Chorleitung zu den Takten 5 bis 8 im Tenor II und darunter ein interner Link auf dieselbe Stelle.](../screenshots/task-question.png)
 
 Eine Rückfrage oder Aufgabe gehört immer zu einem Exemplar und kann eine
 Stelle in den Noten nennen: Seite, Takte, Stimme und Strophe.
@@ -630,6 +632,8 @@ sofort für alle.
 > bis 7 von „Der Mond ist aufgegangen“ (1-1) klingen dort als 1–6, 1–5, 7,
 > in einem geteilten Ausschnitt dieser Takte als 1–7.
 
+![Der Dialog „1-1 teilen“ über der Notenansicht: „Wer kann den Link öffnen?“ mit „Chormitglieder“ gewählt, „Was wird geteilt?“ mit „Ganzes Stück“, die Stimme Alt, die Gültigkeit, „Scan (PDF) mitgeben“ angehakt und der Kasten „Das ist beim Öffnen des Links zu sehen“ mit ganzem Stück, hervorgehobener Stimme, Tempo, Gültigkeit, Wiedergabe, Übe-Dateien und Scan (PDF).](../screenshots/share-dialog.png)
+
 #### Öffentliche Links
 
 Ein öffentlicher Link zeigt ein ganzes Stück oder einen Ausschnitt allen, die
@@ -651,6 +655,8 @@ Stimme und eine Textbeschreibung, spielt es mit betonter Stimme ab und
 verlinkt, falls mitgegeben, den Scan. Läuft der Link ab, wird er widerrufen
 oder ist die Fassung nicht mehr freigegeben, zeigen die Seite und der Scan
 „nicht gefunden“ ohne Grund.
+
+![Die Seite eines öffentlichen Links im öffentlichen Layout von Nextcloud, ohne Anmeldung: Titel und Komposition von „Freude, schöner Götterfunken“, der Hinweis, dass die Wiedergabe von einem einfachen Synthesizer kommt, der Link „Scan (PDF) öffnen“, die Wiedergabe mit Einzähler und Wiederholen und die Noten des ganzen Stücks.](../screenshots/public-link.png)
 
 ### Übertragungen prüfen
 
@@ -744,6 +750,8 @@ angesagt. Das Werkverzeichnis zeigt die Zahl der offenen Prüfpunkte je
 Exemplar, und der Filter **Offene Prüfpunkte** zeigt die Exemplare, die noch
 eine Entscheidung brauchen. Die zuständigen Rollen werden über neue
 Prüfpunkte benachrichtigt (eine Benachrichtigung je Bericht).
+
+![Die Notenansicht von Exemplar 2-1 mit dem Bereich „Prüfung der Übertragung“: die Liste der offenen Prüfpunkte und, ausgewählt, der Punkt in Takt 7, Tenor II, mit seiner Notiz, den Schaltflächen „Diese Stelle abspielen“ und „In der App korrigieren …“ und den Entscheidungen; links Takt 7 mit hervorgehobenem Tenor II.](../screenshots/review-points.png)
 
 #### Kleine Korrekturen in der App
 
@@ -849,6 +857,8 @@ Gibt es einen neueren Stand als den geltenden, sagt die Liste das.
    als reiner Text ohne Noten. Wähle **Notiz kopieren** und füge sie in eine
    E-Mail oder eine Nachricht ein.
 
+![Der Reiter „Dateien“ von Exemplar 2-2, Abschnitt „Stände dieser Fassung“: Stand 2, eine Korrektur in der App, geltend seit heute, mit Takten, Stimmen und Begründung; Stand 1, der erste erfasste Stand; darunter der Vergleich beider mit einem Unterschied in Takt 3 und die Notiz für Chormitglieder.](../screenshots/revisions.png)
+
 Verglichen werden Noten, Pausen, Notenwerte, Vorzeichen und Text; Layout,
 Dynamik und Bögen nicht. Die Chorleitung und jede andere Archivrolle können
 vergleichen; die Dateien werden mit deinen eigenen Nextcloud-Rechten
@@ -935,7 +945,7 @@ Programm, die gedruckten Listen und die Liederfolge nennen ihn.
 
 ### Konzerte im eigenen Kalender
 
-![Der Dialog „In meinen Kalender eintragen“ mit dem Kalender „Chor“ des Kontos zur Auswahl und den Hinweisen, dass die Vorbereitungsfristen als ganztägige Einträge dazukommen und ein vorhandener Eintrag aktualisiert und nicht doppelt angelegt wird.](../screenshots/calendar-dialog.png)
+![Der Dialog „In meinen Kalender eintragen“ mit dem Kalender „Persönlich“ des Kontos zur Auswahl und den Hinweisen, dass die Vorbereitungsfristen als ganztägige Einträge dazukommen und ein vorhandener Eintrag aktualisiert und nicht doppelt angelegt wird.](../screenshots/calendar-dialog.png)
 
 In einem Konzert und für alle kommenden Konzerte in der Konzertliste:
 
@@ -1058,6 +1068,8 @@ Interne Erhaltungskopien werden nie kopiert. Die Dateien heißen
 `<shelf mark> <title>.pdf`; eine Datei `LIESMICH.txt` im Ordner sagt, wann
 er zuletzt geändert wurde und dass die Noten nur für den Chor sind.
 
+![Die Liste „Druckstation“ mit dem Abschnitt „Spiegelordner für die Druckstation“ und dem Dialog „Vorschau des Abgleichs“: Fünf Dateien würden kopiert, eine würde übersprungen, weil im Zielordner eine Datei dieses Namens liegt, die nicht die App geschrieben hat.](../screenshots/print-mirror-preview.png)
+
 **So startest du den ersten Abgleich** (Rolle „Bestand“):
 
 1. **Druckstation** → Abschnitt **Spiegelordner für die Druckstation** →
@@ -1097,6 +1109,8 @@ Lebensdaten, Besetzung und Links zu CPDL und IMSLP:
 Die Seite lädt nichts von CPDL oder IMSLP; sie verlinkt nur dorthin. Die
 Lebensdaten kommen aus dem Personenregister. Ein Werk verschwindet von der
 Seite, sobald keine Fassung mehr als gemeinfrei bestätigt ist.
+
+![Die öffentliche Repertoireseite im öffentlichen Layout von Nextcloud: drei gemeinfreie Werke, jedes mit Komposition und Text und deren Lebensdaten, der Besetzung und einem Link zur Notenbibliothek CPDL oder IMSLP.](../screenshots/public-repertoire.png)
 
 ### Vorschläge im Eingang entscheiden
 
@@ -1238,6 +1252,8 @@ Personen zählen weiter wie gewohnt, und das spätere Ende entscheidet. Der
 Vorschlag bleibt ein Vorschlag: Die Archivverwaltung entscheidet, ob ein
 Sonderfall vorliegt, und bestätigt die Rechte.
 
+![Der Reiter „Rechte“ von Exemplar 1-6 mit dem Abschnitt „Beteiligte Personen und Schutzfrist“: nach den Lebensdaten gemeinfrei, weil der Schutz als wissenschaftliche Ausgabe (§ 70 UrhG), die 1991 erschien, mit Ablauf von 2016 endete.](../screenshots/protection-special-case.png)
+
 ### Rechtevermerke in MusicXML-Dateien
 
 Viele MusicXML-Dateien tragen einen Rechtevermerk, z. B. „Public domain“
@@ -1251,6 +1267,8 @@ Vermerk ist eine Angabe aus der Datei, keine Entscheidung:
   **Eingang**: den Rechtestatus „gemeinfrei“ oder den Lizenztext für ein
   leeres Feld **Lizenz**. Nimm ihn erst an, nachdem du die Rechte selbst
   geprüft hast.
+
+![Der Reiter „Dateien“ von Exemplar 1-1: die MusicXML-Datei mit der Markierung „Nicht geprüft“ und dem aus der Datei übernommenen Rechtevermerk „Melodie und Text gemeinfrei. Satz: CC0 1.0“, mit dem Hinweis, dass er keinen Rechtestatus ändert.](../screenshots/rights-notice.png)
 
 
 ### Werke zusammenführen und Exemplare verschieben
@@ -1334,6 +1352,8 @@ festgelegt hat.
    geändert haben.
 3. **Drucken** druckt den Vergleich auf A4.
 
+![Die Ansicht „Jahresstände“: was ein neuer Jahresstand wohin schreibt, der Schalter für den automatischen Jahresstand im Januar, zwei Jahresstände von 2026 und ihr Vergleich: eine Fassung mit hinzugekommener Bestätigung und eine neue Lizenz.](../screenshots/annual-snapshots.png)
+
 ## Für den Betrieb
 
 Die Rolle **Betrieb (Archivverwaltung)** kümmert sich um die Exemplare im
@@ -1376,6 +1396,8 @@ der höchsten vergebenen Nummer, die kein Exemplar hat, z. B.
 Neuzugang, um Exemplare zu finden, die nie erfasst wurden oder verloren
 gegangen sind.
 
+![Die Ansicht „Signaturlücken“ des Demo-Archivs: je Archivmappe die höchste Nummer, die Exemplare und die Nummern ohne Exemplar; in Archivmappe 4 die Signatur 4-4, die nur ein Dateiname verwendet.](../screenshots/shelfmark-gaps.png)
+
 1. Öffne **Signaturlücken** (bei der Inventur unter **Bestandspflege**).
 2. Prüfe jede Lücke am Regal. Ein Hinweis unter den Lücken nennt Nummern,
    die eine Datei im Archivordner verwendet: vermutlich ein Exemplar, das
@@ -1394,6 +1416,8 @@ sie enthält und was fehlt. Die Archivverwaltung (Bestand und Betrieb) führt
 es; Chorleitung und Vorstand lesen es. Chormitglieder und Werkzeuge sehen es
 nie. Die Administration schaltet es ein (Modul „Mappenbuch“); es gehört zur
 Voreinstellung „Vollständig“.
+
+![Das Mappenbuch mit drei Mappen: Mappe 12 seit dem 14.09.2026 bei einer erfundenen Person, die Mappen 14 und 21 verfügbar, Mappe 21 abgenutzt mit einem fehlenden Blatt und dem Hinweis, dass sie ein im Werkverzeichnis ausgemustertes Exemplar enthält.](../screenshots/folder-book.png)
 
 Das Mappenbuch hält nur fest, wer welche Mappe hat. Anwesenheit und die
 Ausgabe am Eingang an Probenabenden gehören nicht zur App.
@@ -1431,6 +1455,8 @@ Zwei Mappen im Dienst können nicht dieselbe Nummer oder Bezeichnung haben.
    füge fehlende Blätter hinzu oder entferne sie.
 3. **Zurücknehmen**. Zustand und fehlende Blätter gelten nun für die Mappe;
    die Mappe ist wieder verfügbar.
+
+![Der Dialog „Mappe 12 zurücknehmen“: seit wann und bei wem sie ausgegeben war, der Tag der Rückgabe, der gewählte Zustand „abgenutzt“, die fehlenden Blätter und eine Notiz.](../screenshots/folder-take-back.png)
 
 #### Eine Mappe außer Dienst stellen
 
@@ -1550,6 +1576,8 @@ Ausschnitte mit Titel, Komposition, **Ganzes Stück** oder den Takten,
 Stimme, der Notiz und wie lange jedes gilt, ob es sich abspielen lässt
 (**Abspielen: ja** oder **Abspielen: nein**) und ob der Scan dabei ist
 (**mit Scan (PDF)**).
+
+![Die Seite „Für mich freigegeben“ eines Chormitglieds: das ganze Stück „Der Mond ist aufgegangen“ mit der Notiz der Chorleitung, der Gültigkeit, dem Link „Scan (PDF) öffnen“, der Wiedergabe mit Einzähler und Wiederholen und den Noten mit hervorgehobenem Alt.](../screenshots/shared-with-me.png)
 
 1. Wähle ein Stück in der Liste (ein Link, den du bekommen hast, öffnet es
    direkt). Die Noten erscheinen über der Liste, bei einem ganzen Stück alle

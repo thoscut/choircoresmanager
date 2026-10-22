@@ -587,7 +587,7 @@ number of calls; **Revoke link** stops a link at once for everyone.
 > piece: measures 1 to 7 of "Der Mond ist aufgegangen" (1-1) sound there as
 > 1–6, 1–5, 7, in a shared excerpt of these measures as 1–7.
 
-![The dialog "Share excerpt of 1-1" over the score viewer: "Who can open the link?" with "Choir members" chosen, measures 1 to 4, the voice Alt, a note and the validity, and the box "What the recipients see" with measures, focus voice, tempo, validity, playback yes and practice files yes.](screenshots/share-dialog.png)
+![The dialog "Share 1-1" over the score viewer: "Who can open the link?" with "Choir members" chosen, "What is shared?" with "Whole piece" chosen, the voice Alt, the validity, "Include the scan (PDF)" ticked, and the box "What the recipients see" with whole piece, focus voice, tempo, validity, playback, practice files and scan (PDF).](screenshots/share-dialog.png)
 
 #### Public links
 
@@ -609,7 +609,7 @@ description, plays it with the voice emphasised and, if included, links to
 the scan. When the link expires, is revoked or the version is no longer
 released, the page and the scan show "not found" without a reason.
 
-![The page of a public link in Nextcloud's public layout, without signing in: title and composer of "Freude, schöner Götterfunken", the note that playback comes from a simple synthesizer, the playback controls with count-in and loop, and measures 1 to 8 of the score.](screenshots/public-link.png)
+![The page of a public link in Nextcloud's public layout, without signing in: title and composer of "Freude, schöner Götterfunken", the note that playback comes from a simple synthesizer, the link "Open the scan (PDF)", the playback controls with count-in and loop, and the whole piece in the score.](screenshots/public-link.png)
 
 ### Reviewing transcriptions
 
@@ -1470,7 +1470,7 @@ title, composer, **Whole piece** or the measures, voice, the note and how
 long each is valid, whether it can be played (**Playback: yes** or
 **Playback: no**) and whether the scan is included (**with scan (PDF)**).
 
-![The page "Shared with me" of a choir member: the excerpt of "Der Mond ist aufgegangen", measures 1 to 4, with the note of the conductor, the validity, the playback controls with count-in and loop, and the score with the alto highlighted.](screenshots/shared-with-me.png)
+![The page "Shared with me" of a choir member: the whole piece "Der Mond ist aufgegangen" with the note of the conductor, the validity, the link "Open the scan (PDF)", the playback controls with count-in and loop, and the score with the alto highlighted.](screenshots/shared-with-me.png)
 
 1. Choose a piece in the list (a link sent to you opens it directly). The
    notes appear above the list, for a whole piece all pages of it.

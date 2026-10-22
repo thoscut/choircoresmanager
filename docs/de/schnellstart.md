@@ -77,7 +77,7 @@ oder exportiert; nur Archivverwaltung und Chorleitung sehen sie.
 
 ### Startseite „Fällig“
 
-![Die Startseite „Fällig“ in der deutschen Oberfläche: Karten mit der Zahl der anstehenden Dinge, zum Beispiel offene Aufgaben, Programmpunkte mit unklarer Signatur und ein Vorschlag im Eingang.](../screenshots/de/start-page.png)
+![Die Startseite „Fällig“ in der deutschen Oberfläche: Karten mit der Zahl der anstehenden Dinge, zum Beispiel eine offene Aufgabe, Programmpunkte mit unklarer Signatur und Vorschläge im Eingang, darunter die Konzertfristen mit dem Adventskonzert 2026.](../screenshots/de/start-page.png)
 
 Das Notenarchiv öffnet mit **Fällig**: Karten zeigen, was für deine Rollen
 ansteht, zum Beispiel offene Aufgaben, Vorschläge im Eingang oder Fassungen,

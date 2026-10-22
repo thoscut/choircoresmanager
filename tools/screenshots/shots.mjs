@@ -342,16 +342,22 @@ export const SHOTS = [
 	{
 		name: 'share-dialog', file: 'share-dialog.png', account: 'librarian', ...en,
 		run: async (h) => {
-			await score(h, '1-1', 'Alt', 'focus', ['1', '4'])
-			if (!(await h.page.evaluate(() => [...document.querySelectorAll('.score-viewer button')].some((b) => b.getClientRects().length > 0 && b.innerText.includes('Share excerpt'))))) {
+			// The whole piece with the scan (PDF), for choir members
+			await score(h, '1-1', 'Alt', 'focus')
+			const label = h.t('Share …')
+			if (!(await h.page.evaluate((label) => [...document.querySelectorAll('.score-viewer button')].some((b) => b.getClientRects().length > 0 && b.innerText.includes(label)), label))) {
 				await h.click('.score-viewer button', h.t('This passage'))
 			}
-			await h.click('.score-viewer button', h.t('Share excerpt …'))
+			await h.click('.score-viewer button', label)
 			await h.page.waitForSelector('.dialog__modal .modal-container', { visible: true })
 			await h.settle(600)
-			await h.page.evaluate((label) => [...document.querySelectorAll('.dialog__modal .checkbox-radio-switch')]
-				.find((choice) => choice.innerText.trim() === label)?.querySelector('input')?.click(), h.t('Choir members'))
+			const choose = (label) => h.page.evaluate((label) => [...document.querySelectorAll('.dialog__modal .checkbox-radio-switch')]
+				.find((choice) => choice.innerText.trim() === label)?.querySelector('input')?.click(), label)
+			await choose(h.t('Choir members'))
 			await h.settle(1500)
+			await choose(h.t('Whole piece'))
+			await choose(h.t('Include the scan (PDF)'))
+			await h.settle(1000)
 		},
 		after: async (h) => {
 			await escape(h)
