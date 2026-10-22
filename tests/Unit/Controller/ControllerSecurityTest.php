@@ -13,15 +13,24 @@ use OCA\Notenarchiv\Controller\ApiController;
 use OCA\Notenarchiv\Controller\ApiV1StatusController;
 use OCA\Notenarchiv\Controller\CalendarController;
 use OCA\Notenarchiv\Controller\FilesIntegrationController;
+use OCA\Notenarchiv\Controller\FolderBookController;
 use OCA\Notenarchiv\Controller\MemberController;
 use OCA\Notenarchiv\Controller\PageController;
 use OCA\Notenarchiv\Controller\PracticeAudioController;
+use OCA\Notenarchiv\Controller\PrintMirrorController;
 use OCA\Notenarchiv\Controller\PublicLinkController;
 use OCA\Notenarchiv\Controller\PublicRepertoireController;
 use OCA\Notenarchiv\Controller\ReviewController;
 use OCA\Notenarchiv\Controller\SettingsController;
 use OCA\Notenarchiv\Controller\TaskController;
+use OCA\Notenarchiv\Db\ArchiveFileMapper;
 use OCA\Notenarchiv\Db\AuditEntryMapper;
+use OCA\Notenarchiv\Db\CopyMapper;
+use OCA\Notenarchiv\Db\FolderLoanMapper;
+use OCA\Notenarchiv\Db\FolderMapper;
+use OCA\Notenarchiv\Db\MirrorFileMapper;
+use OCA\Notenarchiv\Db\WorkMapper;
+use OCA\Notenarchiv\Db\WorkVersionMapper;
 use OCA\Notenarchiv\Exception\AccessDeniedException;
 use OCA\Notenarchiv\Exception\InvalidInputException;
 use OCA\Notenarchiv\Exception\ModuleDisabledException;
@@ -31,6 +40,7 @@ use OCA\Notenarchiv\Exception\UnknownLinkException;
 use OCA\Notenarchiv\Middleware\ModuleMiddleware;
 use OCA\Notenarchiv\Service\AppSettings;
 use OCA\Notenarchiv\Service\ArchiveAccess;
+use OCA\Notenarchiv\Service\AuditLog;
 use OCA\Notenarchiv\Service\CatalogService;
 use OCA\Notenarchiv\Service\ConcertCalendarService;
 use OCA\Notenarchiv\Service\CorrectionService;
@@ -38,16 +48,21 @@ use OCA\Notenarchiv\Service\DueService;
 use OCA\Notenarchiv\Service\ExportService;
 use OCA\Notenarchiv\Service\FilesIntegrationService;
 use OCA\Notenarchiv\Service\FileSyncService;
+use OCA\Notenarchiv\Service\FolderBookService;
 use OCA\Notenarchiv\Service\FullBackupService;
 use OCA\Notenarchiv\Service\ImportService;
 use OCA\Notenarchiv\Service\LinkService;
 use OCA\Notenarchiv\Service\MetaService;
 use OCA\Notenarchiv\Service\Modules;
+use OCA\Notenarchiv\Service\NotificationService;
 use OCA\Notenarchiv\Service\PracticeAudioService;
+use OCA\Notenarchiv\Service\PrintMirrorService;
 use OCA\Notenarchiv\Service\PublicRepertoireService;
+use OCA\Notenarchiv\Service\ReleaseListService;
 use OCA\Notenarchiv\Service\RepertoireService;
 use OCA\Notenarchiv\Service\ReviewService;
 use OCA\Notenarchiv\Service\RightsPolicy;
+use OCA\Notenarchiv\Service\RightsService;
 use OCA\Notenarchiv\Service\Roles;
 use OCA\Notenarchiv\Service\ScanService;
 use OCA\Notenarchiv\Service\ScoreService;
@@ -78,13 +93,17 @@ use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Files\File;
+use OCP\Files\IFilenameValidator;
+use OCP\Files\IRootFolder;
 use OCP\IAppConfig;
 use OCP\IDateTimeZone;
+use OCP\IDBConnection;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUserManager;
+use OCP\L10N\IFactory;
 use OCP\Settings\IManager as ISettingsManager;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\CoversNothing;
@@ -108,6 +127,8 @@ use Psr\Log\LoggerInterface;
 #[CoversClass(MemberController::class)]
 #[CoversClass(PublicLinkController::class)]
 #[CoversClass(PublicRepertoireController::class)]
+#[CoversClass(FolderBookController::class)]
+#[CoversClass(PrintMirrorController::class)]
 final class ControllerSecurityTest extends TestCase {
 	use ModuleSwitches;
 
@@ -120,6 +141,8 @@ final class ControllerSecurityTest extends TestCase {
 	private const SETTINGS = [
 		'SettingsController::index', 'SettingsController::update', 'SettingsController::groups', 'SettingsController::access',
 		'EventController::setThresholds', 'ModuleController::settings', 'ModuleController::update',
+		'FolderBookController::settings', 'FolderBookController::updateSettings',
+		'PrintMirrorController::settings', 'PrintMirrorController::check', 'PrintMirrorController::updateSettings',
 	];
 
 	/**
@@ -173,6 +196,9 @@ final class ControllerSecurityTest extends TestCase {
 		// the routes of the choir members and the public pages (milestone 0.7)
 		'MemberController::score', 'MemberController::practiceAudio',
 		'PublicLinkController::show', 'PublicRepertoireController::index',
+		// the folder book writes, and the print station reads and writes files
+		'FolderBookController::createFolder', 'FolderBookController::updateFolder', 'FolderBookController::issue',
+		'FolderBookController::takeBack', 'PrintMirrorController::preview', 'PrintMirrorController::sync',
 	];
 
 	/**
@@ -905,5 +931,112 @@ final class ControllerSecurityTest extends TestCase {
 		self::assertStringNotContainsString("'unsafe-eval'", $policy);
 		self::assertStringNotContainsString('http', $policy, 'no external sources');
 		self::assertStringContainsString("frame-src 'self'", $policy, 'the scan beside the score, from the app itself');
+	}
+
+	/**
+	 * Real role checks: each test account holds the role it is named after
+	 * ("admin" is an administrator without a role, "member" a role this
+	 * version does not know, e.g. choir members).
+	 */
+	private function rolesByName(): Roles {
+		$config = $this->createStub(IAppConfig::class);
+		$config->method('getValueArray')->willReturnCallback(fn (string $app, string $key): array => [substr($key, strlen('groups_'))]);
+		$groups = $this->createStub(IGroupManager::class);
+		$groups->method('isInGroup')->willReturnCallback(fn (string $uid, string $group): bool => $uid === $group);
+		$groups->method('isAdmin')->willReturnCallback(fn (string $uid): bool => $uid === 'admin');
+		return new Roles($config, $groups, $this->createStub(IUserManager::class), $this->createStub(ISettingsManager::class), $this->createStub(LoggerInterface::class));
+	}
+
+	private function folderBookController(string $uid): FolderBookController {
+		$roles = $this->rolesByName();
+		$service = new FolderBookService($this->createStub(IDBConnection::class), $this->createStub(FolderMapper::class),
+			$this->createStub(FolderLoanMapper::class), $this->createStub(CopyMapper::class), $this->createStub(WorkVersionMapper::class),
+			$this->createStub(WorkMapper::class), $this->createStub(AuditLog::class), $this->createStub(AuditEntryMapper::class), $roles,
+			$this->createStub(RightsService::class), $this->createStub(IUserManager::class), $this->createStub(IAppConfig::class),
+			$this->createStub(ITimeFactory::class));
+		return new FolderBookController($this->createStub(IRequest::class), $uid, $roles, $service, $this->l10n(),
+			$this->createStub(LoggerInterface::class));
+	}
+
+	public function testTheFolderBookIsReadByTheArchiveRolesAndMaintainedByTheLibrarians(): void {
+		foreach (array_keys(self::routes()) as $name) {
+			if (str_starts_with($name, 'FolderBookController::')) {
+				self::assertSame([Modules::FOLDER_BOOK], ModuleMiddleware::required(FolderBookController::class, explode('::', $name)[1]), $name);
+			}
+		}
+		foreach (['librarian', 'operations', 'conductor', 'reader'] as $uid) {
+			self::assertSame(Http::STATUS_OK, $this->folderBookController($uid)->overview()->getStatus(), $uid . ' reads the folder book');
+		}
+		foreach (['contributor', 'member', 'admin'] as $uid) {
+			self::assertSame(Http::STATUS_FORBIDDEN, $this->folderBookController($uid)->overview()->getStatus(), $uid . ' does not see the folder book');
+		}
+		foreach (['conductor', 'reader', 'contributor', 'member', 'admin'] as $uid) {
+			$controller = $this->folderBookController($uid);
+			self::assertSame(Http::STATUS_FORBIDDEN, $controller->createFolder(['label' => '12'])->getStatus(), $uid . ' creates no folder');
+			self::assertSame(Http::STATUS_FORBIDDEN, $controller->issue(1, ['holderName' => 'A person'])->getStatus(), $uid . ' issues no folder');
+			self::assertSame(Http::STATUS_FORBIDDEN, $controller->takeBack(1, ['wear' => 'good'])->getStatus(), $uid . ' takes nothing back');
+			self::assertSame(Http::STATUS_FORBIDDEN, $controller->updateFolder(1, ['note' => 'x'])->getStatus(), $uid . ' changes no folder');
+		}
+		foreach (['librarian', 'operations'] as $uid) {
+			$response = $this->folderBookController($uid)->createFolder([]);
+			self::assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus(), $uid . ' passes the role check');
+			self::assertSame(['error' => 'Please give the folder a number or name.'], $response->getData());
+		}
+		$response = $this->folderBookController('librarian')->createFolder(['label' => '12', 'owner' => 'x']);
+		self::assertSame(['error' => 'Unknown field: owner'], $response->getData(), 'unknown fields are refused');
+	}
+
+	private function printMirrorController(string $uid): PrintMirrorController {
+		$roles = $this->rolesByName();
+		$service = new PrintMirrorService($this->createStub(IAppConfig::class), $this->createStub(IRootFolder::class),
+			$this->createStub(AppSettings::class), $this->createStub(ReleaseListService::class), $this->createStub(ArchiveFileMapper::class),
+			$this->createStub(CopyMapper::class), $this->createStub(MirrorFileMapper::class), $this->createStub(AuditLog::class), $roles,
+			$this->modulesWithout(), $this->createStub(NotificationService::class), $this->createStub(IFilenameValidator::class),
+			$this->createStub(IUserManager::class), $this->createStub(IFactory::class), $this->createStub(ITimeFactory::class),
+			$this->createStub(IDateTimeZone::class), $this->createStub(LoggerInterface::class));
+		return new PrintMirrorController($this->createStub(IRequest::class), $uid, $roles, $service, $this->l10n(),
+			$this->createStub(LoggerInterface::class));
+	}
+
+	public function testThePrintStationIsSyncedByTheCatalogLibrarianAndAdministrators(): void {
+		foreach (array_keys(self::routes()) as $name) {
+			if (str_starts_with($name, 'PrintMirrorController::')) {
+				self::assertSame([Modules::PRINT_MIRROR], ModuleMiddleware::required(PrintMirrorController::class, explode('::', $name)[1]), $name);
+			}
+		}
+		self::assertSame('POST', self::routes()['PrintMirrorController::sync']['verb']);
+		self::assertNotContains(NoCSRFRequired::class, self::routes()['PrintMirrorController::sync']['attributes']);
+		foreach (['operations', 'conductor', 'reader', 'contributor', 'member'] as $uid) {
+			$controller = $this->printMirrorController($uid);
+			self::assertSame(Http::STATUS_FORBIDDEN, $controller->sync()->getStatus(), $uid . ' does not sync');
+			self::assertSame(Http::STATUS_FORBIDDEN, $controller->preview()->getStatus(), $uid . ' sees no preview');
+			self::assertSame(Http::STATUS_FORBIDDEN, $controller->status()->getStatus(), $uid . ' sees no status');
+			self::assertSame(Http::STATUS_FORBIDDEN, $controller->updateSettings(5)->getStatus(), $uid . ' chooses no folder');
+		}
+		foreach (['librarian', 'admin'] as $uid) {
+			$response = $this->printMirrorController($uid)->sync();
+			self::assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus(), $uid . ' passes the role check');
+			self::assertSame(['error' => 'No target folder has been chosen for the print station yet. An administrator chooses it in the settings of the music archive.'],
+				$response->getData());
+		}
+		self::assertSame(Http::STATUS_FORBIDDEN, $this->printMirrorController('librarian')->check(5)->getStatus(), 'only administrators choose the folder');
+	}
+
+	public function testFolderBookEntriesOfTheAuditLogAreHiddenFromOtherRoles(): void {
+		$excluded = [];
+		$entries = $this->createStub(AuditEntryMapper::class);
+		$entries->method('findLatest')->willReturnCallback(function (int $limit, array $exclude) use (&$excluded): array {
+			$excluded[] = $exclude;
+			return [];
+		});
+		foreach (['contributor', 'reader'] as $uid) {
+			$controller = new ApiController($this->createStub(IRequest::class), $uid, $this->rolesByName(), $this->createStub(MetaService::class),
+				$this->createStub(CatalogService::class), $this->createStub(ImportService::class), $this->createStub(ExportService::class),
+				$this->createStub(FileSyncService::class), $entries,
+				$this->createStub(UserFiles::class), $this->createStub(ITimeFactory::class), $this->createStub(IDateTimeZone::class),
+				$this->createStub(ScoreService::class), $this->l10n(), $this->createStub(LoggerInterface::class));
+			self::assertSame(Http::STATUS_OK, $controller->audit()->getStatus());
+		}
+		self::assertSame([FolderBookService::OBJECT_TYPES, []], $excluded, 'contributors do not see the names of the folder book');
 	}
 }

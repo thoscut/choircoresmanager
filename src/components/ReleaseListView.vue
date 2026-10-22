@@ -20,12 +20,13 @@ import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
+import PrintMirrorSync from './PrintMirrorSync.vue'
 import ViewHeader from './ViewHeader.vue'
 import { errorMessage, fetchReleaseList } from '../api.ts'
 import { formatDate, translateLabel } from '../format.ts'
 import { releaseStatusLabel } from '../labels.ts'
 import { releaseFilter } from '../navigation.ts'
-import { choiceLabel, openEntry } from '../store.ts'
+import { canSyncPrintMirror, choiceLabel, openEntry } from '../store.ts'
 
 const props = defineProps<{
 	target: 'portal' | 'print-station'
@@ -159,6 +160,17 @@ function rightsText(row: ReleaseRow): string {
 		</div>
 
 		<div class="release-list__content">
+			<section v-if="target === 'print-station' && canSyncPrintMirror"
+				class="release-list__mirror no-print"
+				aria-labelledby="release-print-mirror">
+				<h3 id="release-print-mirror">
+					{{ t('notenarchiv', 'Mirror folder for the print station') }}
+				</h3>
+				<p class="release-list__hint">
+					{{ t('notenarchiv', 'The PDF scans of the versions this list shows (to add and not decided), copied into a folder of the print station.') }}
+				</p>
+				<PrintMirrorSync />
+			</section>
 			<NcEmptyContent v-if="!loaded && loading" :name="t('notenarchiv', 'Loading …')">
 				<template #icon>
 					<NcLoadingIcon :size="64" />
@@ -270,6 +282,12 @@ function rightsText(row: ReleaseRow): string {
 	padding: calc(3 * var(--default-grid-baseline));
 }
 
+.release-list__mirror {
+	padding-bottom: calc(3 * var(--default-grid-baseline));
+	border-bottom: 1px solid var(--color-border);
+}
+
+.release-list__mirror h3,
 .release-list__group h3 {
 	margin: 0;
 	font-size: 1.2em;

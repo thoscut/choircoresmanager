@@ -293,6 +293,14 @@ run_test files_integration_test
 # deletes them; role groups and module switches restored, the rest rolled
 # back.
 run_test sharing_test 1-3 3-1
+# The folder book with 2-1 in a folder: issuing, taking back, the retention
+# period with a staged day, the roles (rolled back, switches and role groups
+# restored).
+run_test folder_book_test 2-1
+# The mirror folder of the print station with the scan of 2-3 (Am Brunnen
+# vor dem Tore, confirmed as public domain inside the test): the target
+# folder and everything written are deleted, the rest rolled back.
+run_test print_mirror_test 2-3
 run_test backup_test
 # Creates two accounts in two groups of its own (role "reader"), shares the
 # archive folder with the first group and gives the settings page to the

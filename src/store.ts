@@ -128,6 +128,10 @@ export const canShareOutside = computed(() => canCreateLinks.value && (isModuleA
 export const canPlanEvents = computed(() => hasAnyRole(['conductor', 'librarian']))
 /** Roles that see the proposals inbox (module "proposals"). */
 export const canSeeProposals = computed(() => isModuleActive('proposals') && hasAnyRole(['librarian', 'contributor', 'reader']))
+/** Roles that read the folder book (module "folder_book"); never contributors or choir members. */
+export const canSeeFolderBook = computed(() => isModuleActive('folder_book') && hasAnyRole(['librarian', 'operations', 'conductor', 'reader']))
+/** Who syncs the mirror folder of the print station (module "print_mirror"). */
+export const canSyncPrintMirror = computed(() => isModuleActive('print_mirror') && (hasRole('librarian') || isAdmin.value))
 
 export const hasArchiveFolder = computed(() => (meta.value?.archive.id ?? 0) > 0)
 

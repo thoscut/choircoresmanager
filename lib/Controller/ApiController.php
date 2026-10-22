@@ -17,6 +17,7 @@ use OCA\Notenarchiv\Exception\UserFacingException;
 use OCA\Notenarchiv\Service\CatalogService;
 use OCA\Notenarchiv\Service\ExportService;
 use OCA\Notenarchiv\Service\FileSyncService;
+use OCA\Notenarchiv\Service\FolderBookService;
 use OCA\Notenarchiv\Service\ImportService;
 use OCA\Notenarchiv\Service\MetaService;
 use OCA\Notenarchiv\Service\ProtectionText;
@@ -216,7 +217,9 @@ class ApiController extends Controller {
 	public function audit(int $limit = 200): JSONResponse {
 		return $this->run(function (string $uid) use ($limit) {
 			$this->roles->requireAccess($uid);
-			return $this->auditEntries->findLatest(max(1, min($limit, 1000)));
+			// The entries of the folder book name choir members: only for the roles that read it.
+			$hidden = $this->roles->hasAnyRole($uid, FolderBookService::READERS) ? [] : FolderBookService::OBJECT_TYPES;
+			return $this->auditEntries->findLatest(max(1, min($limit, 1000)), $hidden);
 		});
 	}
 }

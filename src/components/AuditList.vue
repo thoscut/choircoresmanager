@@ -54,6 +54,12 @@ function objectLabel(type: string): string {
 		return t('notenarchiv', 'Review point')
 	case 'review_report':
 		return t('notenarchiv', 'Transcription report')
+	case 'folder':
+		return t('notenarchiv', 'Folder')
+	case 'folder_loan':
+		return t('notenarchiv', 'Loan of a folder')
+	case 'print_mirror':
+		return t('notenarchiv', 'Print station')
 	default:
 		return type
 	}
@@ -86,6 +92,18 @@ function actionLabel(action: string): string {
 		return t('notenarchiv', 'Decided')
 	case 'corrected':
 		return t('notenarchiv', 'Corrected')
+	case 'folder_issued':
+		return t('notenarchiv', 'Issue')
+	case 'folder_taken_back':
+		return t('notenarchiv', 'Take back')
+	case 'anonymized':
+		return t('notenarchiv', 'Name removed after the retention period')
+	case 'mirror_copied':
+		return t('notenarchiv', 'Copied')
+	case 'mirror_replaced':
+		return t('notenarchiv', 'Replaced')
+	case 'mirror_removed':
+		return t('notenarchiv', 'Removed')
 	default:
 		return action
 	}

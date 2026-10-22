@@ -36,6 +36,9 @@ Request bodies are checked strictly: unknown fields are refused with 400
 | `GET /api/member/links/{token}/score` | 120 in 10 minutes |
 | `POST /api/member/links/{token}/practice-audio` | 30 in 10 minutes |
 | `GET /p/{token}`, `GET /repertoire` (public pages) | 60 in 10 minutes per address, 120 per account |
+| `POST /api/folder-book/folders`, `PUT /api/folder-book/folders/{id}`, `POST /api/folder-book/folders/{id}/issue`, `POST /api/folder-book/loans/{id}/return` | 300 in 10 minutes |
+| `GET /api/print-mirror/preview` | 30 in 10 minutes |
+| `POST /api/print-mirror/sync` | 10 in 10 minutes |
 
 Files chosen by `fileId` for an import may be at most 20 MB, a backup for a
 restore at most 64 MB; larger files are refused with 400
@@ -66,9 +69,10 @@ and every route of the archive answers a choir member as an account without a
 role (403). Choir members only reach the routes of "Sharing beyond the
 archive roles" below. Admins may read and change settings; they may only write
 catalog data if they also hold a role. Without a role they get 403 for the
-proposals (`GET /api/proposals`) and cannot view preservation copies; the UI
-hides the inbox for them. The administration can give the settings (not a
-role) to further groups, see "Settings" below.
+proposals (`GET /api/proposals`) and the folder book (`GET /api/folder-book`)
+and cannot view preservation copies; the UI hides the inbox and the folder
+book for them. The administration can give the settings (not a role) to
+further groups, see "Settings" below.
 
 ## Page
 
@@ -1119,6 +1123,7 @@ audio and preservation copies applies whatever is switched on.
 | `releases` | `rights` | on |
 | `portal` | `releases` | on |
 | `print_station` | `releases` | off |
+| `print_mirror` | `print_station` | off, and part of no preset (writes files into a target folder) |
 | `publication` | `releases` | on |
 | `score_viewer` | – | on |
 | `playback` | `score_viewer` | on |
@@ -1136,6 +1141,7 @@ audio and preservation copies applies whatever is switched on.
 | `accession` | – | on |
 | `merge` | – | on |
 | `inventory` | – | on |
+| `folder_book` | – | off (on in "complete") |
 | `checksums` | – | off |
 | `statistics` | – | off |
 | `dashboard_widget` | – | on |
@@ -1155,7 +1161,8 @@ audio and preservation copies applies whatever is switched on.
 `notify_concert_confirm` (`concerts`), `notify_protection_ended`
 (`protection_terms`), `notify_checksum_mismatch` (`checksums`),
 `notify_review_points` (`transcription_review`),
-`notify_correction_received` (`score_viewer`).
+`notify_correction_received` (`score_viewer`),
+`notify_print_mirror_failed` (`print_mirror`).
 
 `corrections` needs only `score_viewer`, not `transcription_review`: a
 small correction is useful without transcription reports (e.g. after a
@@ -1164,9 +1171,9 @@ question from a singer). Points are only set to `corrected` while
 
 Presets: `simple` (core, `score_viewer`, `playback`, `notifications` with all
 `notify_*` switches), `standard` (the column above), `complete` (everything
-except `agent_api` and the four modules of the group `sharing`). A preset
-sets every switch except these five (`Modules::OUTSIDE_PRESETS`), which only
-their own switch changes.
+except `agent_api`, the four modules of the group `sharing` and
+`print_mirror`). A preset sets every switch except these six
+(`Modules::OUTSIDE_PRESETS`), which only their own switch changes.
 
 ### Switched-off routes
 
@@ -1202,6 +1209,8 @@ other check of the app. The routes and their modules:
 | `merge` | `/api/merges…` |
 | `inventory` | `GET /api/inventory`, `POST /api/inventory/count` |
 | `checksums` | `GET /api/checksums`, `POST /api/files/{id}/checksum-accept` |
+| `folder_book` | `/api/folder-book…`, `GET`/`PUT /api/settings/folder-book` |
+| `print_mirror` | `/api/print-mirror…`, `/api/settings/print-mirror…` (and `print_station`) |
 | `statistics` | `/api/statistics…` |
 | `agent_api` | every route of the API for agents, `/ocs/v2.php/apps/notenarchiv/api/v1/…` (404 with the message in the OCS meta); each also needs the module of its function |
 
@@ -1239,7 +1248,10 @@ What else follows the modules:
   of `GET /api/due` without the cards the account has hidden (personal view).
 - Background jobs: the checksum job does nothing without `checksums`; the
   daily checks skip the parts whose notification is switched off and
-  withdraw their notifications.
+  withdraw their notifications, and sync the print station only while
+  `print_mirror` is active. The removal of personal data of the folder book
+  after the retention period runs also without `folder_book`: switching off
+  never makes anything less safe.
 - Notifications: a notification whose `notify_{subject}` is not active is
   not sent; one sent before is withdrawn when it is shown (the Nextcloud
   notifications app then deletes it).
@@ -1848,3 +1860,126 @@ them while `public_repertoire` is active):
 Migration `Version000710Date20261025100000` adds these three columns to
 `notarch_works`; links for choir members and public links use the existing
 column `circle` of `notarch_links`.
+## Folder book (module `folder_book`, milestone 0.7)
+
+Which choir folder is out with whom since when. Read by `librarian`,
+`operations`, `conductor` and `reader`; maintained by `librarian` and
+`operations`. `contributor`, admins without a role and any other role (for
+example choir members) get **403**; the audit entries of the folder book
+(object types `folder` and `folder_loan`) are left out of `GET /api/audit`
+for them, and they cannot download the complete backup
+(`GET /api/backup/full`, 403), which contains the folder book. Folders and
+loans are never deleted.
+
+| Method and path | Body | Role |
+|---|---|---|
+| `GET /api/folder-book` | – | librarian, operations, conductor, reader |
+| `POST /api/folder-book/folders` | `{ folder: { label, voice?, contents?, wear?, missing?, note? } }` | librarian, operations |
+| `PUT /api/folder-book/folders/{id}` | `{ folder: { …changed fields, status?, statusReason? } }` | librarian, operations |
+| `POST /api/folder-book/folders/{id}/issue` | `{ loan: { holderUid \| holderName, issuedOn?, note? } }` | librarian, operations |
+| `POST /api/folder-book/loans/{id}/return` | `{ loan: { returnedOn?, wear, missing?, note? } }` | librarian, operations |
+| `GET /api/settings/folder-book` | – | admins and the groups given the settings page |
+| `PUT /api/settings/folder-book` | `{ retentionMonths }` | admins and the groups given the settings page |
+
+`GET /api/folder-book`, folders in service first, in natural order of their
+labels:
+
+```json
+{ "folders": [{ "id": 4, "label": "12", "voice": "Tenor I", "wear": "worn", "missing": "2-35, page 3", "note": null,
+    "status": "active", "statusReason": null, "statusSince": null,
+    "contents": [{ "copyId": 35, "count": 2, "shelfmark": "2-35", "title": "…", "outdated": "retired|other_version_valid|null" }],
+    "outdated": true,
+    "loan": { "id": 9, "holderName": "…", "holderAccount": false, "anonymized": false, "issuedOn": "2026-09-01", "issueNote": null,
+              "returnedOn": null, "returnWear": null, "returnMissing": null, "returnNote": null },
+    "history": [ "…all loans, newest first, same shape as loan…" ] }],
+  "retentionMonths": 12, "canEdit": true }
+```
+
+- `contents` are copies of the catalog with a number (1–999, at most 200
+  different copies); the same copy twice is added up. `outdated` is a hint
+  only: `retired` when the copy was retired in the catalog,
+  `other_version_valid` when another version of its work is valid for the
+  choir. Nothing changes by itself.
+- `wear`: `good`, `worn`, `damaged`. `status`: `active` or `retired`;
+  retiring needs `statusReason` and a folder that is back; `statusSince` is
+  set by the server. A label must be unique among the folders in service
+  (case-insensitive).
+- Issuing: exactly one of `holderUid` (an existing Nextcloud account; its
+  display name is stored with the loan) and `holderName` (at most 255
+  characters). `issuedOn` defaults to today and must not lie in the future.
+  A folder out of service or out already is refused ("This folder is
+  already out with someone. Take it back first."); the database refuses a
+  second open loan as well (unique index on `open_folder_id`).
+- Taking back: `returnedOn` defaults to today, must not lie in the future or
+  before `issuedOn`; `wear` is required. `wear` and `missing` become those of
+  the folder.
+- After the retention period (`retentionMonths`, 1–120, default 12, months
+  after `returnedOn`) the daily checks set `holderName`, `holderUid`,
+  `issueNote` and `returnNote` of the loan to `null` and `anonymized` to the
+  time; the old and new values of these fields in the loan's audit entries
+  become `(anonymised)`, and an entry `anonymized` without user and without
+  the name is added. This runs whatever the module switch says.
+- Errors: 400 with a message that says what to do (e.g. `Please give the
+  folder a number or name.`, `Unknown field: %s`), 403 for other roles, 404
+  for an unknown folder or loan (`… Please reload the folder book.`).
+
+The UI looks up accounts through Nextcloud's own search
+(`/ocs/v2.php/core/autocomplete/get`, share type user), which follows the
+instance's rules on who may find whom.
+
+## Mirror folder for the print station (module `print_mirror`, milestone 0.7)
+
+The PDF scans of the versions on the list of the print station
+(`GET /api/lists/print-station`, rows `add` and `not_decided`: the same rule
+as the list) are copied into a target folder that an administrator chooses.
+Every write and every removal is in the audit log (object type
+`print_mirror`, object id the copy, actions `mirror_copied`,
+`mirror_replaced`, `mirror_removed`, `mirror_readme`, field `file`).
+
+| Method and path | Body | Role |
+|---|---|---|
+| `GET /api/print-mirror` | – | librarian, admins |
+| `GET /api/print-mirror/preview` | – | librarian, admins |
+| `POST /api/print-mirror/sync` | – | librarian, admins |
+| `GET /api/settings/print-mirror` | – | admins and the groups given the settings page |
+| `GET /api/settings/print-mirror/check?folderId=` | – | admins and the groups given the settings page |
+| `PUT /api/settings/print-mirror` | `{ folderId }` (0 removes the target folder) | admins and the groups given the settings page |
+
+Status (`GET /api/print-mirror`, the same as `GET /api/settings/print-mirror`):
+
+```json
+{ "folder": { "id": 812, "path": "/Druckstation", "user": "admin" }, "started": false,
+  "report": { "time": 1761150000, "dryRun": false, "writable": true,
+    "copied": [{ "name": "2-35 Ave verum corpus.pdf", "shelfmark": "2-35", "reason": null }],
+    "replaced": [], "removed": [],
+    "skipped": [{ "name": "5-1 Locus iste.pdf", "shelfmark": "5-1", "reason": "foreign", "reasonText": "A file of this name …" }],
+    "unchanged": 14, "files": 15 } }
+```
+
+The preview and the sync answer with such a report (`dryRun: true` for the
+preview, which writes nothing). `started` turns `true` with the first sync
+by hand; only then does the daily check sync on its own. Reasons of skipped
+files: `foreign` (a file of that name the app did not write), `changed`
+(changed in the target folder after the app wrote it), `not_accessible`,
+`not_pdf`, `invalid_name`, `preservation`, `write_failed`; `reasonText` is
+the translated text with what to do.
+
+- File names: `<shelf mark> <title>.pdf` without `\ / : * ? " < > |` and
+  control characters, at most 120 characters before `.pdf`; further scans of
+  a copy get ` (2)`, ` (3)`. Plus `LIESMICH.txt` with the date and a note,
+  in the language of the account of the target folder.
+- Only files listed in the manifest (table `notarch_mirror_files`: name,
+  file id, SHA-256 of what was written) are replaced or removed, and only
+  while their content still has that checksum. Foreign files stay. The
+  manifest belongs to the instance (file ids) and is not part of the
+  complete backup.
+- Checking and saving the target folder (400 with what to do): a folder of
+  the administrator's files, neither the archive folder nor inside it (also
+  through shares, as seen by the administrator and by the account of the
+  archive folder); the administrator must read the archive folder and may
+  create files in the target folder. Saving another folder forgets the
+  manifest (the files stay in the old folder) and waits for a new first
+  sync. The sync checks the folder again before writing.
+- A failed daily sync notifies the catalog librarians and the
+  administrators (`notify_print_mirror_failed`); the next sync that works
+  withdraws it.

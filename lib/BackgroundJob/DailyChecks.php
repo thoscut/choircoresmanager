@@ -19,9 +19,11 @@ use OCA\Notenarchiv\Db\WorkVersionMapper;
 use OCA\Notenarchiv\Service\AppSettings;
 use OCA\Notenarchiv\Service\ConcertDeadlines;
 use OCA\Notenarchiv\Service\FieldValue;
+use OCA\Notenarchiv\Service\FolderBookService;
 use OCA\Notenarchiv\Service\Modules;
 use OCA\Notenarchiv\Service\NotificationService;
 use OCA\Notenarchiv\Service\PersonService;
+use OCA\Notenarchiv\Service\PrintMirrorService;
 use OCA\Notenarchiv\Service\ProtectionTerm;
 use OCA\Notenarchiv\Service\RightsService;
 use OCA\Notenarchiv\Service\Roles;
@@ -37,6 +39,10 @@ use OCP\IAppConfig;
  * - concert deadlines and concerts to confirm as sung (to the conductor)
  * - protected versions whose protection has ended by the life dates of all
  *   persons involved (resubmission; the rights status is not changed)
+ *
+ * It also removes the personal data of the folder book after the retention
+ * period (FolderBookService) and syncs the mirror folder of the print
+ * station (PrintMirrorService, which notifies its own failures).
  *
  * Each case is notified once (state kept in lazy app config) and withdrawn
  * when it is resolved.
@@ -61,6 +67,8 @@ class DailyChecks extends TimedJob {
 		private EventMapper $events,
 		private PersonService $persons,
 		private Modules $modules,
+		private FolderBookService $folderBook,
+		private PrintMirrorService $printMirror,
 	) {
 		parent::__construct($time);
 		$this->setInterval(24 * 3600);
@@ -138,6 +146,13 @@ class DailyChecks extends TimedJob {
 			$this->transition('notified_protection_' . $version->getId(), $ended ? 'ended' : '', 'version', (string)$version->getId(),
 				['ended' => NotificationService::PROTECTION_ENDED], $describe($version->getId()) + ['date' => $ended ? (string)$proposal['freeSince'] : '']);
 		}
+
+		// Folder book: the personal data of returned folders are removed after
+		// the retention period, also while the module is off (switching off
+		// never makes anything less safe).
+		$this->folderBook->anonymizeExpired($today);
+		// The mirror folder of the print station, while its module is on.
+		$this->printMirror->runDaily();
 	}
 
 	/**

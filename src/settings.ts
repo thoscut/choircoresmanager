@@ -22,6 +22,8 @@ export const SETTINGS_SECTIONS = {
 	access: 'notenarchiv-access',
 	modules: 'notenarchiv-modules',
 	repertoire: 'notenarchiv-repertoire',
+	folderBook: 'notenarchiv-folder-book',
+	printMirror: 'notenarchiv-print-mirror',
 	backup: 'notenarchiv-backup',
 } as const
 
@@ -120,6 +122,8 @@ export function normalizeSettings(data: unknown): Settings {
 			? null
 			: { current: count(thresholds.current), dormant: count(thresholds.dormant) },
 		catalog: { copies: count(catalog.copies), files: count(catalog.files) },
+		folderBook: raw.folderBook === true,
+		printMirror: raw.printMirror === true,
 		admin: raw.admin === true,
 		catalogEmpty: typeof raw.catalogEmpty === 'boolean' ? raw.catalogEmpty : null,
 	}

@@ -21,6 +21,8 @@ Daily work with the app is described in the [user guide](user-guide.md).
 12. [Modules and presets](#12-modules-and-presets)
 13. [Agents and the API](#13-agents-and-the-api)
 14. [Sharing with choir members and the public](#14-sharing-with-choir-members-and-the-public)
+15. [Folder book: retention period](#15-folder-book-retention-period)
+16. [Mirror folder for the print station](#16-mirror-folder-for-the-print-station)
 - [Common problems](#common-problems) – a message, its cause and what to do
 
 ## Setting up in five steps
@@ -194,7 +196,9 @@ The one exception is a small correction of a MusicXML in the score view
 next to the old one, with the Nextcloud permissions of the person who
 corrects (for example `5-01_Title (korrigiert 2026-10-22).mxl`); the old file
 stays unchanged. Without write permission in that folder the app says so and
-saves nothing.
+saves nothing. The mirror folder for the print station (section 16) is the
+other exception: the app writes into a target folder of its own, never into
+the archive folder.
 
 File names start with the shelf mark: `5-01_Title_Composer.pdf` belongs to
 copy 5-1 (leading zeros do not matter). Folders whose name starts with `_` or
@@ -311,7 +315,8 @@ therefore writes, every week, into `_notenarchiv-app/`:
 - `…_backup_weekly.json`: the **complete** backup of all tables (works,
   versions, copies, files, licenses, proposals, tasks, links, concerts and
   song lists with their programme lines, persons, contributions, merges,
-  transcription reports and review points, audit log) for a lossless restore
+  transcription reports and review points, the folder book with its loans,
+  audit log) for a lossless restore
 
 ![The backup sections of the archive management: storing a complete backup now, downloading the complete backup as JSON, and restoring a backup into an empty catalog.](screenshots/backup-restore.png)
 
@@ -321,9 +326,11 @@ complete backup (JSON)** saves the backup on your computer.
 
 > [!WARNING]
 > The backups hold the complete catalog including the audit log (who changed
-> what), tasks and the register of persons. Share the archive folder only with
-> people who may read all of this, the role holders, and not for example with
-> all singers.
+> what), tasks, the register of persons and the folder book (names of choir
+> members until the retention period ends, section 15). Share the archive
+> folder only with people who may read all of this, the role holders, and not
+> for example with all choir members. The role "Proposals (tools)" cannot
+> download the complete backup.
 
 The files in `_notenarchiv-app` are part of the archive folder and are
 covered by your regular file backup of that folder. Keep yearly snapshots
@@ -376,6 +383,7 @@ notifications. A notification is withdrawn when the matter is resolved.
 | Weekly backup failed | catalog role and admins | when the weekly backup fails |
 | New review points | the role responsible: conductor (musical points) and/or catalog role (material, questions without a measure) | a transcription report brings review points; one notification per report and role, withdrawn when none of them is open any more |
 | Correction received | catalog role (not the person who made it) | a correction was saved in the app, or a new round of a transcription closed review points |
+| Print station sync failed | catalog role and admins | the daily sync of the mirror folder for the print station fails; withdrawn after the next sync that works |
 
 Notifications never go to singers and contain no personal data. The deadline
 notifications of a cancelled concert are withdrawn. Every user chooses in
@@ -477,7 +485,10 @@ Transcription reports are kept as received (as evidence, with their
 checksum); their rights section may name the persons involved in a work.
 Review points record who decided them and when.
 
-The app stores no data about singers. Excerpt links count calls without
+Without the folder book the app stores no data about choir members. The
+folder book (section 15) stores the name or the Nextcloud account of the
+person who has a choir folder and notes about the loan; they are removed
+after the retention period. Excerpt links count calls without
 recording who opened them. The statistics contain no personal data of choir
 members and no account names; calendar entries contain no notes and no
 persons; the dashboard widget shows no question texts and no names. Record
@@ -530,8 +541,8 @@ Every change of a switch is recorded in the audit log (object type
 | Preset | Switches on |
 |---|---|
 | **Simple** | the core, the score view with playback and the notifications (of the core only the one about a failed weekly backup is left) |
-| **Standard** | everything except practice audio files, the print station, the proposals inbox, checksums and statistics |
-| **Complete** | everything except the interface for agents and the four sharing modules |
+| **Standard** | everything except practice audio files, the print station, the proposals inbox, checksums, the folder book and statistics |
+| **Complete** | everything except the interface for agents, the four sharing modules and the mirror folder for the print station |
 
 A preset sets every switch at once; the settings ask first and list what
 changes.
@@ -550,6 +561,8 @@ its first year. Left off, and easy to switch on when needed:
   background; that is for large archives that must document their integrity.
   The weekly backup is the safety net of every installation.
 - *Statistics and annual report*: figures for the board of a larger archive.
+- *Folder book*: it stores names of choir members; the club decides first
+  whether to keep it in the app (section 15).
 
 *Reviewing transcriptions* and *small corrections in the app* are on in
 **Standard**: they only show something where a transcription report or a
@@ -569,7 +582,8 @@ administration switches it on on purpose (see section 13), and choosing a
 preset later neither opens nor closes it. The same holds for the four
 modules of the group **Sharing beyond the archive roles**: they open the
 archive to choir members or the public, which the choir decides (see
-section 14).
+section 14), and for the **mirror folder for the print station**: it
+writes files into a folder others can open (see section 16).
 
 ### The modules
 
@@ -582,6 +596,7 @@ section 14).
 | Releases | Rights confirmation and licenses | on | The three releases below are inactive. |
 | Singers' portal | Releases | on | No portal list, no adding to or removing from the portal, no cards and notification; song lists without the portal column. |
 | Print station | Releases | off | No print station list. |
+| Mirror folder for the print station | Print station | off (in no preset) | No sync, no preview, no daily sync, no notification. The files in the target folder stay as they are. |
 | Publication | Releases | on | The publication status is not shown. |
 | Score view | – | on | No score view; the server does not hand out the MusicXML. |
 | Playback | Score view | on | No playback. |
@@ -599,11 +614,12 @@ section 14).
 | New accessions and shelf labels | – | on | No accession assistant and no labels. The import still creates copies. |
 | Merging works | – | on | No merge proposals, no merging and no undo. Merges done stay. |
 | Inventory | – | on | No inventory lists. Recorded counts stay in the catalog. |
+| Folder book | – | off | No folder book. Folders and loans stay; names are still removed after the retention period. |
 | Checksums | – | off | The hourly job does nothing; no checksum list, no notification. |
 | Statistics and annual report | – | off | No statistics, no annual report. |
 | Dashboard widget | – | on | Nextcloud does not offer the widget. |
 | Notifications | – | on | The app sends no notifications; notifications sent before disappear when they are shown. |
-| One switch per occasion | Notifications and the module of the occasion | on | That notification is not sent; the daily checks withdraw it. Occasions: proposals waiting, remove from the singers' portal, license ends soon, license has ended, weekly backup failed, new question or task, question answered, concert deadlines, confirm what was sung, protection term ended, file changed unnoticed, new review points, correction received. |
+| One switch per occasion | Notifications and the module of the occasion | on | That notification is not sent; the daily checks withdraw it. Occasions: proposals waiting, remove from the singers' portal, license ends soon, license has ended, weekly backup failed, new question or task, question answered, concert deadlines, confirm what was sung, protection term ended, file changed unnoticed, new review points, correction received, print station sync failed. |
 | Links for choir members | Excerpt links, Playback, Releases | off (in no preset) | Choir members see neither the app nor "Shared with me"; their routes answer 404; no links for choir members can be made. Existing links are kept and expire as before. |
 | Practice audio for choir members | Links for choir members, Practice audio files | off (in no preset) | Choir members make no practice files; the server refuses every request. |
 | Public links | Excerpt links, Playback, Publication | off (in no preset) | Every public link answers the same 404 page; no new public links. Existing links are kept and expire as before. |
@@ -747,6 +763,95 @@ counted, but without names.
 | The dialog says "This kind of link is switched off" | Switch on the module in the settings (Modules). |
 | "The score of this excerpt is not available at the moment." | The account that chose the archive folder (Settings → Archive folder) must still exist and see the folder, and the MusicXML file must still be in it. |
 | A public link shows "not found" | It has expired, was revoked, the version is no longer released, or the module is off; the page does not tell which. Make a new link if needed. |
+
+## 15. Folder book: retention period
+
+The **folder book** (module "Folder book", in the preset "Complete") records
+which choir folder is out with whom since when (see the
+[user guide](user-guide.md#folder-book)). It is the one part of the app that
+holds personal data of choir members: the name or the Nextcloud account of
+the person who has a folder, and notes about the loan.
+
+**Who sees it.** The catalog and operations roles keep it; the conductor
+and the read-only role read it. Proposals (tools), administrators without a
+role and any other role, for example choir members, do not see it, nor its
+entries in the audit log; they cannot download the complete backup either.
+
+**Retention period.** In **Settings → Folder book: retention period** you
+set after how many months after the return (1 to 120, default 12) the app
+removes the personal data of a loan:
+
+| When | What happens |
+|---|---|
+| The folder is out | Name or account and the note stay; they are needed. |
+| The folder comes back | The loan keeps name, days, condition, missing sheets and notes. |
+| Retention period after the return | The daily check removes name, account and both notes from the loan and from its entries in the audit log (shown as `(anonymised)`). The loan stays as "former loan" with its days, condition and missing sheets; the audit log notes "Name removed after the retention period" without the name and without a user. |
+
+The removal also runs while the folder book is switched off: switching off
+never makes anything less safe. It needs Nextcloud's background jobs (cron).
+
+> [!WARNING]
+> Backups made before the removal still contain the names: the weekly files
+> in `_notenarchiv-app/` (CSV, ODS with the audit log, complete JSON backup),
+> downloaded backups and the regular backups of the server. The app never
+> deletes files. Keep these backups no longer than the retention period, or
+> record in your register of processing activities how long they are kept.
+
+Write the purpose and the period into your register of processing
+activities (GDPR Art. 30) and tell the choir members (GDPR Art. 13), for
+example: "We record who has which choir folder, to get the folders back.
+Names are deleted 12 months after the return."
+
+## 16. Mirror folder for the print station
+
+The module **Mirror folder for the print station** copies the PDF scans of
+the versions on the list **Print station** into a folder of the print
+station and keeps it up to date (see the
+[user guide](user-guide.md#mirror-folder-for-the-print-station)). It is the
+only function besides small corrections that writes files, and it writes
+only into this folder, never into the archive folder (guideline 4 of the
+[roadmap](../ROADMAP.md)). It is part of no preset; switch it on on purpose.
+
+Setting up:
+
+1. Switch on **Print station** and **Mirror folder for the print station**
+   (Settings → Modules, or `occ notenarchiv:modules enable print_mirror`).
+2. Create or choose a folder for the print station **outside the archive
+   folder**, for example a folder shared with the print station's account.
+   Your account must be able to read the archive folder and to create,
+   change and delete files in the target folder.
+3. **Settings → Print station: mirror folder → Choose folder …**. The app
+   checks the folder right away: not the archive folder, not inside it (also
+   through shares), write permission. Then **Save target folder**.
+4. Look at the preview and start the first sync (in the settings or in the
+   list **Print station**). The daily sync starts only after this first sync
+   by hand.
+
+The app reads the scans and writes the files as the account that chose the
+folder. Choosing another folder starts afresh: the files in the old folder
+stay there and are no longer looked after. **Remove target folder** stops the
+sync; the files stay.
+
+What it copies: for every version on the list of the print station (rows
+"add" and "not decided", the same rule as the list) the PDF scans of its
+active copies, never internal preservation copies, named
+`<shelf mark> <title>.pdf`, and a `LIESMICH.txt`. Every write and every
+removal is in the audit log. It replaces or removes only files it wrote
+itself and that nobody changed since (it keeps their checksums); every other
+file in the folder stays. If the daily sync fails (folder gone, no write
+permission), the catalog role and the administrators get a notification
+"Print station sync failed".
+
+Risks:
+
+- **Everyone who can open the target folder can print and copy the scans.**
+  The list of the print station only says what may be printed there; share
+  the folder only with the print station or the people who may print.
+- The files leave the archive: a scan removed from the list is removed from
+  the folder at the next sync, but copies made meanwhile stay where they
+  were made.
+- The app writes as the account that chose the folder; if that account is
+  deleted or loses access, the sync stops and notifies.
 
 ## Common problems
 

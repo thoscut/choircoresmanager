@@ -13,6 +13,7 @@ use OCA\Notenarchiv\AppInfo\Application;
 use OCA\Notenarchiv\Attribute\RequiresModule;
 use OCA\Notenarchiv\Exception\InvalidInputException;
 use OCA\Notenarchiv\Service\ExportService;
+use OCA\Notenarchiv\Service\FolderBookService;
 use OCA\Notenarchiv\Service\FullBackupService;
 use OCA\Notenarchiv\Service\LicenseService;
 use OCA\Notenarchiv\Service\ProposalService;
@@ -236,8 +237,9 @@ class WorkflowController extends Controller {
 	}
 
 	/**
-	 * Complete backup (JSON) as download. Everybody with access may read all
-	 * catalog data anyway.
+	 * Complete backup (JSON) as download, for the roles that read all of
+	 * the catalog including the folder book (which names choir members) and
+	 * for administrators; not for contributors (tools).
 	 */
 	#[NoAdminRequired]
 	#[NoCSRFRequired]
@@ -246,6 +248,10 @@ class WorkflowController extends Controller {
 	public function fullBackup(): Response {
 		if ($this->userId === null || !$this->roles->hasAccess($this->userId)) {
 			return new JSONResponse(['error' => $this->l->t('You have no access to the music archive.')], Http::STATUS_FORBIDDEN);
+		}
+		if (!$this->roles->isAdmin($this->userId) && !$this->roles->hasAnyRole($this->userId, FolderBookService::READERS)) {
+			return new JSONResponse(['error' => $this->l->t('The complete backup contains the names of choir members. It is open to the music librarians, the conductor, readers and administrators.')],
+				Http::STATUS_FORBIDDEN);
 		}
 		$name = 'notenarchiv-backup-' . gmdate('Ymd-His') . '.json';
 		$response = new DataDownloadResponse($this->fullBackupService->export(), $name, 'application/json');

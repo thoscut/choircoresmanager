@@ -30,9 +30,14 @@ und nutzerfreundlich** (Leitlinien 11, 13, 14 und 15).
    - Exemplare bekommen einen Status.
    - Jede Änderung wird protokolliert: wer, wann, alt, neu, Grund.
 4. **Dateien werden nur gelesen.** Die App ändert, verschiebt und benennt
-   keine Datei um. Einzige Ausnahme: Eine kleine Korrektur einer MusicXML
-   (Tonhöhe, Vorzeichen, Silbe) speichert die App als neue Datei neben der
-   alten. Die alte bleibt unverändert, die Änderung steht im Protokoll.
+   keine Datei um. Es gibt zwei Ausnahmen:
+   - Eine kleine Korrektur einer MusicXML (Tonhöhe, Vorzeichen, Silbe)
+     speichert die App als neue Datei neben der alten. Die alte bleibt
+     unverändert, die Änderung steht im Protokoll.
+   - Der Spiegelordner für die Druckstation, nur mit seinem Modul: Die App
+     schreibt nur in den eigenen Zielordner, nie in den Archivordner. Dort
+     ersetzt oder entfernt sie nur Dateien, die sie selbst geschrieben hat.
+     Jede Schreib- und Löschaktion steht im Protokoll.
 5. **Rollen statt Personen.**
    - Rollen werden Nextcloud-Gruppen zugeordnet.
    - Jede Rolle schreibt nur ihre Felder.
@@ -292,8 +297,8 @@ mit dem Schalter.
 in keiner Voreinstellung (Beschreibung in `docs/api.md`, Abschnitt „Sharing
 beyond the archive roles“, im Benutzerhandbuch, Abschnitt „Sharing with choir
 members and the public“, im Admin-Guide, Abschnitt „Sharing with choir members
-and the public“, und in `SECURITY.md`). Offen sind Mappenbuch und
-Spiegelordner.*
+and the public“, und in `SECURITY.md`), dazu Mappenbuch und Spiegelordner
+für die Druckstation (siehe unten).*
 
 - **Links für Chormitglieder** mit Abspielen – *umgesetzt:*
   - eine eigene Rolle „Chormitglieder“ (Gruppen wie bei den anderen Rollen),
@@ -311,10 +316,20 @@ Spiegelordner.*
   und IMSLP (nur Links, nichts wird von dort geladen). – *umgesetzt.*
 - **Übe-Audio je Stimme für Chormitglieder** bei freigegebenen Fassungen.
   – *umgesetzt.*
-- **Mappenbuch:** Ausgabe und Rücknahme von Sängermappen, mit Löschfristen für
-  die Personenangaben.
+- **Mappenbuch:** Ausgabe und Rücknahme von Chormappen, mit Löschfristen für
+  die Personenangaben. – *Umgesetzt als Modul `folder_book` (in
+  „Vollständig“): Mappen mit Inhalt, Zustand und fehlenden Blättern, Ausgabe
+  an ein Nextcloud-Konto oder einen Namen, Rücknahme, Hinweis auf nicht mehr
+  geltende Fassungen, Druckliste; Namen, Konten und Notizen werden nach der
+  Löschfrist (Standard 12 Monate nach der Rücknahme) auch im Protokoll
+  anonymisiert. Beschreibung im Benutzerhandbuch, Abschnitt „Folder book“,
+  und im Admin-Guide, Abschnitt 15.*
 - **Spiegelordner für die Druckstation:** freigegebene PDFs in einem eigenen
   Zielordner, nie im Archivordner (Ausnahme zu Leitlinie 4, nur mit Modul).
+  – *Umgesetzt als Modul `print_mirror` (in keiner Voreinstellung):
+  Zielordner mit Prüfung, Vorschau, täglicher Abgleich nach dem ersten
+  Abgleich von Hand, Manifest mit Prüfsummen, Bericht und Protokoll.
+  Beschreibung im Admin-Guide, Abschnitt 16, und in `docs/api.md`.*
 
 ### 0.8 Archiv und Abspielen
 

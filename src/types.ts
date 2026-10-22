@@ -685,6 +685,10 @@ export interface Settings {
 	archive: ArchiveInfo
 	/** null while the module "repertoire" is not active */
 	repertoire: RepertoireThresholds | null
+	/** the module "folder_book" is active: its retention period */
+	folderBook: boolean
+	/** the module "print_mirror" is active: its target folder */
+	printMirror: boolean
 	/** a real admin: complete backup and restore are only for them on this page */
 	admin: boolean
 	/** whether a restore is possible (every app table empty); null for others than admins */

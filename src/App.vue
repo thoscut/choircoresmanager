@@ -46,6 +46,7 @@ import {
 	archiveDialogOpen,
 	archiveNotShared,
 	canChangeSettings,
+	canSeeFolderBook,
 	canSeeProposals,
 	entries,
 	entriesError,
@@ -83,6 +84,7 @@ const StatisticsView = defineAsyncComponent(() => import('./components/Statistic
 const MergesView = defineAsyncComponent(() => import('./components/MergesView.vue'))
 const InventoryView = defineAsyncComponent(() => import('./components/InventoryView.vue'))
 const ChecksumsView = defineAsyncComponent(() => import('./components/ChecksumsView.vue'))
+const FolderBookView = defineAsyncComponent(() => import('./components/FolderBookView.vue'))
 const PersonalViewDialog = defineAsyncComponent(() => import('./components/PersonalViewDialog.vue'))
 
 /**
@@ -136,7 +138,7 @@ const pageTitle = computed(() => {
  * @param params - parsed query parameters
  */
 function allowedView(params: StartParams): ViewName {
-	if (params.view === 'proposals' && !canSeeProposals.value) {
+	if ((params.view === 'proposals' && !canSeeProposals.value) || (params.view === 'folderBook' && !canSeeFolderBook.value)) {
 		return DEFAULT_VIEW
 	}
 	return params.view ?? DEFAULT_VIEW
@@ -412,6 +414,7 @@ const accessCheckUrl = adminSettingsUrl(SETTINGS_SECTIONS.access)
 					<MergesView v-else-if="currentView === 'merges'" />
 					<InventoryView v-else-if="currentView === 'inventory'" />
 					<ChecksumsView v-else-if="currentView === 'checksums'" />
+					<FolderBookView v-else-if="currentView === 'folderBook' && canSeeFolderBook" />
 					<DueView v-else />
 				</template>
 			</template>

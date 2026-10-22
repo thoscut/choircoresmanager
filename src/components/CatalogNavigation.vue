@@ -27,6 +27,7 @@ import {
 	mdiFileCertificateOutline,
 	mdiFileCheckOutline,
 	mdiFilterRemoveOutline,
+	mdiFolderAccountOutline,
 	mdiFormatListNumbered,
 	mdiHelpCircleOutline,
 	mdiHelpRhombusOutline,
@@ -61,6 +62,7 @@ import {
 	archiveDialogOpen,
 	binderOptions,
 	canChangeSettings,
+	canSeeFolderBook,
 	canSeeProposals,
 	choiceLabel,
 	entries,
@@ -138,6 +140,8 @@ const maintenanceViews = computed<ViewEntry[]>(() => shown([
 	{ view: 'accession', icon: mdiArchivePlusOutline },
 	{ view: 'merges', icon: mdiCallMerge },
 	{ view: 'inventory', icon: mdiClipboardCheckOutline },
+	// The folder book names choir members: only for the roles that read it
+	...(canSeeFolderBook.value ? [{ view: 'folderBook' as ViewName, icon: mdiFolderAccountOutline }] : []),
 	{ view: 'checksums', icon: mdiFileCheckOutline },
 ]))
 

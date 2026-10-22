@@ -25,6 +25,8 @@ export const ADMIN_GUIDE = {
 	import: '4-first-import',
 	backup: '5-backups-and-restore',
 	modules: '12-modules-and-presets',
+	folderBook: '15-folder-book-retention-period',
+	printMirror: '16-mirror-folder-for-the-print-station',
 	problems: 'common-problems',
 } as const
 

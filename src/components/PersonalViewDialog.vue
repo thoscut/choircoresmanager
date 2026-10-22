@@ -21,6 +21,7 @@ import { errorMessage, savePersonalView } from '../api.ts'
 import { dueCardLabel } from '../dueLabels.ts'
 import { cardActive, DUE_CONCERTS, DUE_TASKS, HIDEABLE_CARDS, HIDEABLE_VIEWS, toggleHidden } from '../modules.ts'
 import {
+	canSeeFolderBook,
 	canSeeProposals,
 	hasRole,
 	isLibrarian,
@@ -40,7 +41,8 @@ const error = ref('')
 
 /** Navigation areas the person can see now (start page and catalog always stay). */
 const views = computed(() => HIDEABLE_VIEWS
-	.filter((view) => isViewActive(view) && (view !== 'proposals' || canSeeProposals.value))
+	.filter((view) => isViewActive(view) && (view !== 'proposals' || canSeeProposals.value)
+		&& (view !== 'folderBook' || canSeeFolderBook.value))
 	.map((view: ViewName) => ({ view, label: viewTitle(view, isLibrarian.value) })))
 
 /**

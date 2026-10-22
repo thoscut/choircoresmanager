@@ -48,6 +48,7 @@ export const VIEW_MODULES: Readonly<Record<ViewName, string | null>> = {
 	merges: 'merge',
 	inventory: 'inventory',
 	checksums: 'checksums',
+	folderBook: 'folder_book',
 }
 
 /** The module of each card and list of the start page. */
@@ -82,7 +83,7 @@ const ALWAYS_SHOWN: readonly ViewName[] = ['due', 'catalog']
 /** Views that the personal view can hide, in the order of the navigation. */
 export const HIDEABLE_VIEWS: readonly ViewName[] = [
 	'tasks', 'proposals', 'persons', 'protection', 'statistics', 'portal', 'printStation', 'licenses', 'links',
-	'concerts', 'songLists', 'ambiguous', 'accession', 'merges', 'inventory', 'checksums',
+	'concerts', 'songLists', 'ambiguous', 'accession', 'merges', 'inventory', 'folderBook', 'checksums',
 ]
 
 /**

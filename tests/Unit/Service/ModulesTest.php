@@ -48,7 +48,9 @@ final class ModulesTest extends TestCase {
 	}
 
 	public function testTheInterfaceForAgentsIsSwitchedOnlyByItself(): void {
-		self::assertContains(Modules::AGENT_API, Modules::OUTSIDE_PRESETS);
+		foreach ([Modules::AGENT_API, Modules::PRINT_MIRROR, Modules::MEMBER_LINKS, Modules::PUBLIC_LINKS, Modules::PUBLIC_REPERTOIRE] as $outside) {
+			self::assertContains($outside, Modules::OUTSIDE_PRESETS);
+		}
 		self::assertContains(Modules::AGENT_API, Modules::switchable());
 		self::assertSame('interfaces', Modules::MODULES[Modules::AGENT_API]['group']);
 		self::assertSame([], Modules::requirements(Modules::AGENT_API));
@@ -74,7 +76,7 @@ final class ModulesTest extends TestCase {
 	 */
 	public function testSharingBeyondTheRolesIsSwitchedOnlyByItself(): void {
 		$sharing = [Modules::MEMBER_LINKS, Modules::MEMBER_PRACTICE_AUDIO, Modules::PUBLIC_LINKS, Modules::PUBLIC_REPERTOIRE];
-		self::assertSame([Modules::AGENT_API, ...$sharing], Modules::OUTSIDE_PRESETS);
+		self::assertSame([Modules::AGENT_API, ...$sharing, Modules::PRINT_MIRROR], Modules::OUTSIDE_PRESETS);
 		foreach ($sharing as $key) {
 			self::assertSame('sharing', Modules::MODULES[$key]['group'], $key);
 			self::assertFalse(Modules::MODULES[$key]['simple'], $key);
@@ -121,7 +123,7 @@ final class ModulesTest extends TestCase {
 
 	public function testEveryNotificationHasASwitch(): void {
 		$subjects = array_values((new \ReflectionClass(NotificationService::class))->getConstants());
-		self::assertCount(13, $subjects);
+		self::assertCount(14, $subjects);
 		foreach ($subjects as $subject) {
 			self::assertIsString($subject);
 			$key = Modules::notificationKey($subject);
@@ -236,7 +238,8 @@ final class ModulesTest extends TestCase {
 			array_keys(array_filter($simple)), fn (string $key): bool => !str_starts_with($key, Modules::NOTIFY_PREFIX))));
 		self::assertNotContains(false, Modules::presetValues(Modules::COMPLETE));
 		$standard = Modules::presetValues(Modules::STANDARD);
-		self::assertSame(['print_station', 'practice_audio', 'proposals', 'checksums', 'statistics'], array_keys(array_filter($standard, fn (bool $on): bool => !$on)));
+		self::assertSame(['print_station', 'practice_audio', 'proposals', 'folder_book', 'checksums', 'statistics'],
+			array_keys(array_filter($standard, fn (bool $on): bool => !$on)));
 		foreach (Modules::PRESETS as $preset) {
 			self::assertArrayNotHasKey(Modules::AGENT_API, Modules::presetValues($preset), 'never part of a preset');
 		}
@@ -298,9 +301,38 @@ final class ModulesTest extends TestCase {
 		$modules->writeBaseline(true);
 		foreach (array_keys(Modules::presetValues(Modules::COMPLETE)) as $key) {
 			self::assertTrue($this->moduleConfig['module_' . $key], $key);
-			self::assertTrue($modules->isEnabled($key), $key);
+			// e.g. the notification of the print station waits for its module
+			$waits = array_intersect(Modules::requirements($key), Modules::OUTSIDE_PRESETS) !== [];
+			self::assertSame(!$waits, $modules->isEnabled($key), $key);
 		}
 		self::assertFalse($this->moduleConfig['module_agent_api'], 'the interface for agents starts off');
+		self::assertFalse($this->moduleConfig['module_print_mirror'], 'the mirror folder of the print station starts off');
+	}
+
+	public function testTheFolderBookIsOnlyInCompleteAndTheMirrorFolderInNoPreset(): void {
+		self::assertSame('maintenance', Modules::MODULES[Modules::FOLDER_BOOK]['group']);
+		self::assertSame([], Modules::requirements(Modules::FOLDER_BOOK));
+		self::assertFalse(Modules::presetValues(Modules::SIMPLE)[Modules::FOLDER_BOOK]);
+		self::assertFalse(Modules::presetValues(Modules::STANDARD)[Modules::FOLDER_BOOK]);
+		self::assertTrue(Modules::presetValues(Modules::COMPLETE)[Modules::FOLDER_BOOK]);
+
+		self::assertSame('releases', Modules::MODULES[Modules::PRINT_MIRROR]['group']);
+		self::assertSame(['print_station', 'releases', 'rights'], Modules::requirements(Modules::PRINT_MIRROR));
+		self::assertSame(['notifications', 'print_mirror', 'print_station', 'releases', 'rights'], Modules::requirements('notify_print_mirror_failed'));
+		foreach (Modules::PRESETS as $preset) {
+			self::assertArrayNotHasKey(Modules::PRINT_MIRROR, Modules::presetValues($preset), 'writes files: never part of a preset');
+		}
+
+		$modules = $this->modulesWithout([Modules::PRINT_MIRROR]);
+		$modules->applyPreset(Modules::COMPLETE);
+		self::assertFalse($modules->isEnabled(Modules::PRINT_MIRROR), '"complete" does not switch it on');
+		self::assertFalse($modules->isEnabled('notify_print_mirror_failed'));
+		$changes = $modules->change([Modules::PRINT_MIRROR => true]);
+		self::assertSame([Modules::PRINT_MIRROR], $changes['enabled']);
+		self::assertSame(['notify_print_mirror_failed'], $changes['activated']);
+		$modules->change(['print_station' => false]);
+		self::assertFalse($modules->isEnabled(Modules::PRINT_MIRROR), 'needs the list of the print station');
+		self::assertTrue($modules->isSwitchedOn(Modules::PRINT_MIRROR));
 	}
 
 	public function testStoredSwitchesAreNeverOverwritten(): void {

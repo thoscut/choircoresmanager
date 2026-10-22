@@ -20,6 +20,7 @@ role does not include.
 - [Reviewing transcriptions](#reviewing-transcriptions)
 - [Concerts and song lists](#concerts-and-song-lists)
 - [Statistics and annual report](#statistics-and-annual-report)
+- [Folder book](#folder-book)
 - [For music librarians](#for-music-librarians)
 - [For operations](#for-operations)
 - [For conductors](#for-conductors)
@@ -42,7 +43,8 @@ The navigation on the left lists the views of the app in groups:
 - **Programmes:** **Concerts**, **Song lists** and **Unclear programme
   lines**
 - **Maintaining the catalog:** **New accession** (for the other roles
-  **Shelf labels**), **Merge**, **Inventory** and **Checksums**
+  **Shelf labels**), **Merge**, **Inventory**, **Folder book** (for the
+  roles that read it) and **Checksums**
 
 At the bottom, everyone finds **Help** (this guide; in German the quick
 start) and **Customize view**, music librarians **Archive management**
@@ -672,6 +674,103 @@ in large print; **Annual report as CSV** downloads its tables.
 > Open rights questions and the stock are always those of today, because the
 > archive keeps no earlier states of them.
 
+## Folder book
+
+The **Folder book** records which choir folder is out with whom since
+when, what it holds and what is missing. Music librarians (catalog and
+operations) keep it; the conductor and the board read it. Choir members and
+tools never see it. The administration switches it on (module "Folder
+book"); it is part of the preset "Complete".
+
+The folder book only records who has which folder. Attendance and handing
+out at the door on rehearsal evenings are not part of the app.
+
+### How to create a folder
+
+1. **Folder book** → **New folder**.
+2. Enter the **Number or name** (for example `12` or `Tenor 3`) and the
+   **Voice or section**.
+3. Under **Contents**, **Add a copy** for every piece in the folder: type
+   the shelf mark or the title and choose the copy, then the **Number** of
+   sheets or copies of it.
+4. Choose the **Condition** and enter **Missing sheets at the moment** if
+   something is missing.
+5. **Save**.
+
+Two folders in service cannot have the same number or name.
+
+### How to issue a folder
+
+1. In the row of the folder, choose **Issue**. Only folders that are
+   available offer it: a folder that is out shows **Take back** instead.
+2. **To whom?** Enter the **Name of the person**, or choose **Nextcloud
+   account** and type at least two letters of the name to pick the account.
+3. Check the day (**Handed out on**, today by default) and add a note if
+   needed.
+4. **Issue**.
+
+### How to take a folder back
+
+1. In the row of the folder, choose **Take back**.
+2. The day (today), the condition and the missing sheets known so far are
+   already filled in. Correct what differs: tick the condition, add or
+   remove missing sheets.
+3. **Take back**. The condition and the missing sheets become those of the
+   folder; the folder is available again.
+
+### Taking a folder out of service
+
+Folders are never deleted. **Edit** → **Take this folder out of service**
+with a reason. This is only possible when the folder is back. **Out of
+service** in **Show** lists these folders with their loans; **Edit** → **Put
+this folder back into service** undoes it.
+
+### Overview and paper
+
+The line above the list counts the folders in service, out and available.
+**Show** narrows the list to folders that are out, available, with missing
+sheets or a hint, or out of service; the search finds a number or name, a
+voice or a person. **Print** prints the list as shown on A4 in black and
+white: folder, voice, out with, since, contents, condition and missing
+sheets. The button with the number of loans shows the history of a folder.
+
+### Hint "The folder contains a version that no longer applies"
+
+The folder book shows this hint when a copy in the folder has been retired
+in the catalog, or when the conductor has chosen another version of its work
+as valid for the choir. It is a hint only: the app changes nothing in the
+folder. Exchange the sheets, then **Edit** the contents.
+
+### When names are removed
+
+A loan holds personal data: the name or the Nextcloud account and the
+notes. Some months after the folder came back (the **retention period**, 12
+months unless the administration set another) the app removes them
+automatically:
+
+- The loan stays as **Former loan** with its days, the condition and the
+  missing sheets.
+- The entries of the loan in the audit log lose the name, too; the audit
+  log notes that it was removed, without the name.
+- A folder that is still out keeps the name until it comes back.
+
+The info box above the list says which period applies.
+
+### Common problems
+
+- **There is no Issue button.** The folder is out (take it back first) or
+  out of service (put it back into service), or your role reads only.
+- **"This folder is already out with someone. Take it back first."**
+  Someone else issued it in the meantime. Reload the folder book.
+- **The account is not found.** Type at least two letters. Nextcloud only
+  finds accounts your account may find; enter the name instead.
+- **"The date lies in the future."** A folder can only be issued or taken
+  back up to today.
+- **"A folder in service is already called …"** Choose another number or
+  name, or take the old folder out of service first.
+- **The folder book is missing in the navigation.** It is switched off, or
+  your role does not read it (tools never do).
+
 ## For music librarians
 
 The role **Catalog (music librarian)** keeps the catalog: works, versions and
@@ -724,6 +823,53 @@ that use, and never if it is an internal preservation copy.
 - The lists **Singers' portal** and **Print station** compare the target and
   the actual state: what to remove, what to add (released and valid for the
   choir), and what waits for a valid version.
+
+### Mirror folder for the print station
+
+If the choir runs a print station, the app can keep a folder of it up to
+date with the scans (PDF) of the versions on the list **Print station**
+(module "Mirror folder for the print station"; an administrator chooses the
+folder in the settings). Internal preservation copies are never copied. The
+files are called `<shelf mark> <title>.pdf`; a file `LIESMICH.txt` in the
+folder says when it was last changed and that the scores are only for the
+choir.
+
+**How to start the first sync** (catalog role):
+
+1. **Print station** → section **Mirror folder for the print station** →
+   **Preview and first sync …**.
+2. The preview lists what would be copied, replaced, removed or skipped,
+   with the reason. Nothing has been written yet.
+3. **Sync now**. From now on the app syncs daily in the background.
+
+Later, **Sync now …** syncs at once, again after the preview. The report
+of the last sync stays below the button.
+
+What the sync does:
+
+- A released scan that is missing in the folder is **copied**; a scan that
+  changed in the archive is **replaced**; a scan no longer released is
+  **removed**.
+- The app only replaces or removes files it wrote itself and that nobody
+  changed since. Other files in the folder stay as they are; the report
+  lists them as **skipped** with the reason.
+- Every copy, replacement and removal is in the audit log.
+
+Common problems:
+
+- **Skipped: "A file of this name is in the target folder, but the app did
+  not write it …"** Someone put a file of that name there. Rename or remove
+  it in the folder if the app should copy the scan.
+- **Skipped: "The file was changed in the target folder …"** The app leaves
+  the changed file alone and no longer looks after it. Remove it in the
+  folder, and the next sync copies the scan again.
+- **Skipped: "The account of the target folder cannot read this scan."** The
+  account that chose the folder has no access to that part of the archive
+  folder.
+- **"The target folder of the print station is not accessible …"** The
+  folder was deleted, moved or is no longer shared. An administrator
+  chooses it again. The catalog role and the administrators are also
+  notified when the daily sync fails.
 
 ### Inbox
 
@@ -852,7 +998,9 @@ it into an empty catalog. See the
 
 The role **Operations (music librarian)** looks after the copies on the
 shelf. It changes status, kind and counts of copies, counts the binders, and
-answers and closes the checks addressed to it.
+answers and closes the checks addressed to it. Where the folder book is
+switched on, it issues and takes back the choir folders (see
+[Folder book](#folder-book)).
 
 ### Changing the status of a copy
 
@@ -1078,6 +1226,9 @@ Paper stays the fallback. The views with a **Print** button print on A4 in
 black and white: the start page, tasks, inbox, release lists, ending
 licenses, links, concerts and song lists, unclear programme lines,
 persons, protection terms, the inventory of a binder, and the statistics. A
+licenses, internal links, concerts and song lists, unclear programme lines,
+persons, protection terms, the inventory of a binder, the folder book, and
+the statistics. A
 programme prints as programme, concert binder list with columns to tick or
 song list; programmes, statistics and the annual report also in large print.
 Shelf labels print on label sheets (see

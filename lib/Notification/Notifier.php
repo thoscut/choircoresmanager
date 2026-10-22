@@ -77,6 +77,7 @@ class Notifier implements INotifier {
 			NotificationService::CORRECTION_RECEIVED => ($p['kind'] ?? '') === 'report'
 				? $l->t('%1$s %2$s: a new transcription has done review points.', [(string)($p['shelfmark'] ?? ''), (string)($p['title'] ?? '')])
 				: $l->t('%1$s %2$s: a corrected MusicXML file was saved in the app.', [(string)($p['shelfmark'] ?? ''), (string)($p['title'] ?? '')]),
+			NotificationService::PRINT_MIRROR_FAILED => $l->t('The sync of the mirror folder for the print station failed: %s', [self::exportError($l, $p)]),
 			default => throw new UnknownNotificationException(),
 		};
 
@@ -94,6 +95,8 @@ class Notifier implements INotifier {
 			$link .= '?view=proposals';
 		} elseif ($notification->getSubject() === NotificationService::CHECKSUM_MISMATCH) {
 			$link .= '?view=checksums';
+		} elseif ($notification->getSubject() === NotificationService::PRINT_MIRROR_FAILED) {
+			$link .= '?view=print-station';
 		}
 
 		$notification->setParsedSubject($subject)
@@ -103,8 +106,9 @@ class Notifier implements INotifier {
 	}
 
 	/**
-	 * Why the export failed: a message meant for users (English source string
-	 * with its parameters), translated; otherwise only a pointer to the log.
+	 * Why the export (or the sync of the print station) failed: a message
+	 * meant for users (English source string with its parameters),
+	 * translated; otherwise only a pointer to the log.
 	 * Internal error texts are never shown (older notifications kept them in
 	 * `message`, which is ignored).
 	 *

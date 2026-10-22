@@ -44,6 +44,8 @@ class NotificationService {
 	public const REVIEW_POINTS = 'review_points';
 	/** Milestone 0.6: a corrected MusicXML arrived (correction in the app, or a new report closed points) */
 	public const CORRECTION_RECEIVED = 'correction_received';
+	/** Milestone 0.7: the sync of the mirror folder for the print station failed */
+	public const PRINT_MIRROR_FAILED = 'print_mirror_failed';
 
 	public function __construct(
 		private IManager $manager,

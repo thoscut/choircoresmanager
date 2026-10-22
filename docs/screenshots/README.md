@@ -57,6 +57,10 @@ The App Store shows the files marked with a number, in this order
 | `shared-with-me.png` | Planned: the page "Shared with me" of a choir member: the chosen excerpt of 1-3 with the alto emphasised above, the list of shared excerpts below. |
 | `public-link.png` | Planned: the page of a public link in Nextcloud's public layout: title, measures, the excerpt and the playback controls, without signing in. |
 | `public-repertoire.png` | Planned: the public repertoire page with the demo works confirmed as public domain, their life dates, scoring and links to CPDL and IMSLP. |
+| `folder-book.png` | *Planned, not taken yet:* the folder book with three demo folders (one out with an invented name, one available, one with missing sheets and the hint "contains a version that no longer applies"), the filter and the info about the retention period. |
+| `folder-take-back.png` | *Planned, not taken yet:* the dialog "Take back folder 12" with the day, the condition and the missing sheets filled in. |
+| `print-mirror-preview.png` | *Planned, not taken yet:* the list "Print station" with the section "Mirror folder for the print station" and the preview of the first sync (would be copied, would be skipped with the reason). |
+| `settings-print-mirror.png` | *Planned, not taken yet:* the settings (admins), section "Print station: mirror folder", after choosing a folder that fits. |
 
 ## German interface (informal)
 

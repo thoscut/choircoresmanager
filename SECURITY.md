@@ -44,7 +44,8 @@ possible and mentioned in the changelog.
   sharing modules (a public link and the public repertoire page, see below),
   which are off unless switched on.
 - Only instance settings (role groups, archive folder, modules, repertoire
-  thresholds, the access check of the archive folder) are restricted by
+  thresholds, the access check of the archive folder, the target folder of
+  the print station and the retention period of the folder book) are restricted by
   Nextcloud itself: to admins and to the groups the administration has given
   the page "Administration → Music archive" under Administration privileges
   (`#[AuthorizedAdminSetting]`, checked again by the app). That gives no
@@ -212,6 +213,17 @@ account can do; it offers a stable, documented and limited contract.
   never grants access to files a user could not open otherwise. Background
   jobs read through the account that configured the archive folder and only
   write into `_notenarchiv-app/` inside it.
+- The mirror folder for the print station (module `print_mirror`, part of
+  no preset) is the one place outside the archive folder where the app
+  writes. An administrator chooses the target folder; the server refuses the
+  archive folder and every folder inside it (also reached through shares),
+  checks this again before every sync and writes as the account that chose
+  the folder. It copies only the PDF scans of the versions on the list of
+  the print station (the same rule as the list, never internal preservation
+  copies). It replaces or removes only files listed in its manifest whose
+  SHA-256 is still the one it wrote; every other file in the folder stays.
+  Every write and removal is in the audit log. Whoever can open the target
+  folder can read the scans: it must be shared only with the print station.
 - Score files reach the browser only if they are linked to a copy, pass the
   rights policy (internal preservation copies: never played, viewed only by
   catalog librarian and conductor) and are real MusicXML: plain XML with the
@@ -238,10 +250,29 @@ account can do; it offers a stable, documented and limited contract.
   nullability of its column. It runs in one transaction; the check that the
   catalog is empty is part of that transaction. JSON nesting is limited.
 - The complete backup (download and the weekly file) contains the whole
-  catalog including the audit log, tasks and the register of persons. Every
-  role holder may download it, as they may read all of it in the app anyway.
-  Share the archive folder (which holds the weekly backups in
-  `_notenarchiv-app/`) only with people who may read this.
+  catalog including the audit log, tasks, the register of persons and the
+  folder book. The roles that read all of it in the app (catalog,
+  operations, conductor, read only) and admins may download it; the role
+  "Proposals (tools)" may not, as it does not read the folder book. Share the
+  archive folder (which holds the weekly backups in `_notenarchiv-app/`)
+  only with people who may read this.
+
+### Folder book and personal data
+
+- The folder book (module `folder_book`) is the only part of the app that
+  stores personal data of choir members: the name or the Nextcloud account
+  of the person who has a choir folder, and notes about the loan. Only the
+  catalog and operations roles write it, conductor and read only read it;
+  every route checks the role on the server. Contributors, admins without a
+  role and any other role (for example choir members) get 403 and do not
+  see its entries in the audit log.
+- After a retention period set by the administration (default 12 months
+  after the return) the daily background job removes name, account and
+  notes of the loan, in the loan and in its own entries of the audit log,
+  also while the module is switched off. This is the only change the app
+  ever makes to the audit log; it notes the removal without the name.
+- Backups made before still contain the names; the administration guide
+  asks to keep them no longer than the retention period.
 
 ### Exports and formula injection
 
@@ -265,7 +296,9 @@ account can do; it offers a stable, documented and limited contract.
   generator. Unknown tokens count as failed attempts for Nextcloud's
   brute-force protection.
 - Expensive endpoints (imports, file sync, exports, backups, restore, practice
-  audio, statistics, calendar files and entries) are rate limited per user;
+  audio, statistics, calendar files and entries, the preview and sync of the
+  print station) and the writing routes of the folder book are rate limited
+  per user;
   Nextcloud answers with HTTP 429 when a limit is reached.
 - Clients only see translated messages meant for users; internal errors are
   answered with a generic message and logged by Nextcloud. Notifications
@@ -280,3 +313,5 @@ account can do; it offers a stable, documented and limited contract.
   JavaScript `eval`, no external sources.
 - No external requests: notation, fonts and sounds are bundled.
 - The audit log is append-only; there is no API to change or delete entries.
+  The only change is the removal of personal data of the folder book after
+  its retention period, done by the background job, never through a route.

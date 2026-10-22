@@ -61,6 +61,7 @@ What is covered:
 | `Service/StatisticsCsvTest` | CSV of the statistics and the annual report: every table under its heading, translated labels, formula cells neutralized |
 | `Service/InputTest`, `Service/SortTest`, `Db/MergeTest` | request data checks, typed sorting, what a merge recorded |
 | `Controller/ControllerSecurityTest` | route attributes of every controller (no public page, CSRF skipped only for plain downloads, the settings only for admins and the groups given the settings page, restore not delegable, brute-force and rate limits), headers of the score file response and of the scan beside the score (PDF viewer only, framed by the app only), `reason: not_shared`, the app page's content security policy; every route of the API for agents is an OCS route under `/api/v1/` with `agent_api` plus the module of the same function in the UI, `NoAdminRequired`, a rate limit, no `NoCSRFRequired` and no CORS, and answers 404 with OCS meta when switched off |
+| `Controller/ControllerSecurityTest` | route attributes of every controller (no public page, CSRF skipped only for plain downloads, admin-only settings, brute-force and rate limits), headers of the score file response and of the scan beside the score (PDF viewer only, framed by the app only), the app page's content security policy; every route of the API for agents is an OCS route under `/api/v1/` with `agent_api` plus the module of the same function in the UI, `NoAdminRequired`, a rate limit, no `NoCSRFRequired` and no CORS, and answers 404 with OCS meta when switched off; the folder book (read by librarians, operations, conductor and readers, maintained by librarians and operations, never by contributors or unknown roles such as choir members; its audit entries hidden from contributors) and the print station (sync only by the catalog librarian and administrators, the target folder only by administrators) with real role checks |
 | `Controller/ApiV1ControllerTest` | the API for agents with the services as test doubles: search with filters and cursor pages in shelf order, the fixed fields, preservation copies only for the roles that may view them, no account names, errors as OCS exceptions (400, 403, 404, 500 without internal details), tasks and proposals answer 201, own proposals, concerts by date, module status and permissions |
 | `Service/ApiV1ViewsTest`, `Service/TextReferenceTest` | cursors (opaque, checked, stable when entries are added), snake_case statistics, values without JSON; the server's text reference follows the rules and examples of the UI (`src/__tests__/references.test.ts`) |
 | `Settings/AdminTest`, `Settings/AdminSectionTest` | the page Administration → Music archive: delegable setting without generic app config, its section, template and registration in `appinfo/info.xml` |
@@ -78,6 +79,8 @@ What is covered:
 | `Service/ReviewServiceTest` | who decides a review point (librarian everything, conductor the musical points), allowed decisions (`corrected` only by the app, text for an order, reason for dismissing), questions need the tasks, catalog fields of a report |
 | `Service/CorrectionServiceTest` | name of the corrected file: dated, in the account's language, numbered when it exists, an earlier suffix replaced, long names shortened without cutting a character |
 | `Service/FilesIntegrationServiceTest`, `Listener/FilesScriptListenerTest` | opening from the Files app: the copy of a Nextcloud file only for files the account sees (the same 404 for unlisted and foreign files), the archive folder as the account sees it; the script only for accounts with a role or admins, while the module is on |
+| `Service/FolderBookServiceTest` | the folder book: one loan per folder at a time, account or name, days not in the future and not before the issue, condition and missing sheets taken over on the return, no retiring while out, contents as copies with a number, the hint for a retired copy or another valid version, the retention period in months (end of shorter months) and the anonymisation of the loan and its audit entries |
+| `Service/PrintMirrorServiceTest` | file names in the target folder of the print station: shelf mark and title, without characters Windows or Nextcloud refuse, shortened without cutting a character |
 
 `Support/MigratedSchema` runs all migrations in `lib/Migration` against an
 in-memory Doctrine schema. `EntitySchemaTest` discovers the mappers in
@@ -115,6 +118,8 @@ sudo -u www-data php tests/Integration/api_v1_test.php        /var/www/nextcloud
 sudo -u www-data php tests/Integration/review_test.php        /var/www/nextcloud <uid> <shelfmark-with-musicxml>
 sudo -u www-data php tests/Integration/files_integration_test.php /var/www/nextcloud <uid>
 sudo -u www-data php tests/Integration/settings_access_test.php /var/www/nextcloud <uid>
+sudo -u www-data php tests/Integration/folder_book_test.php   /var/www/nextcloud <uid> <shelfmark>
+sudo -u www-data php tests/Integration/print_mirror_test.php  /var/www/nextcloud <uid> <shelfmark-with-pdf>
 ```
 
 `statistics_test.php` fixes no figures of a catalog, so it runs on any
@@ -188,6 +193,28 @@ the settings routes (403 without the settings page) must agree. The share,
 the delegation, the accounts and the groups are removed and the role groups
 set back afterwards.
 
+`folder_book_test.php` puts the copy into a folder of the folder book,
+issues it to a name and to the account, refuses a second issue (in the
+service and through the unique index of the database), takes it back with
+condition and missing sheets, marks the folder when the copy is retired,
+and runs the retention period with a staged day: a day before it ends
+nothing changes, then name, account and notes disappear from the loans and
+from their entries in the audit log, which notes the anonymisation without
+a name. It also checks the roles (contributors see nothing, conductor and
+reader only read, operations maintains) and the switched-off routes.
+Everything is rolled back; the module switch and the role groups are
+restored exactly.
+`print_mirror_test.php` makes `<uid>` an administrator inside the
+transaction, refuses the archive folder and a folder inside it as target
+folder, creates a target folder in the files of `<uid>` with a foreign file
+in it, and checks the preview (writes nothing), that the daily sync waits
+for the first sync by hand, copying (same content, `LIESMICH.txt`), a
+second sync without changes, replacing a changed scan, removing a scan no
+longer released, and that a file changed by someone and a foreign file
+with the name of a scan stay as they are; every write and removal is in the
+audit log and nothing is written into the archive folder. The target folder
+and everything written are deleted at the end, the rest is rolled back.
+
 `<uid>` must hold the role `librarian`; each script's header lists further
 requirements (CSV paths are relative to the user's files). `backup_test.php`
 first adds a record to every app table (license, proposal, task, link,
@@ -203,7 +230,7 @@ missing arguments end with exit code 2.
 
 ### Integration tests in CI (demo data)
 
-The CI job `integration` runs all eleven scripts against a freshly installed
+The CI job `integration` runs all fifteen scripts against a freshly installed
 Nextcloud 33 and 35 (release archives from download.nextcloud.com, checked
 against their SHA-512 checksum) with MariaDB 11.8 and PHP 8.3. The job
 installs the app with its built frontend, builds the public demo data

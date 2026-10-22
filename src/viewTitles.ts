@@ -59,6 +59,8 @@ export function viewTitle(view: ViewName, librarian: boolean): string {
 		return t('notenarchiv', 'Inventory')
 	case 'checksums':
 		return t('notenarchiv', 'Checksums')
+	case 'folderBook':
+		return t('notenarchiv', 'Folder book')
 	}
 	return t('notenarchiv', 'Music archive')
 }

@@ -51,6 +51,10 @@ class Modules {
 	public const MEMBER_PRACTICE_AUDIO = 'member_practice_audio';
 	public const PUBLIC_LINKS = 'public_links';
 	public const PUBLIC_REPERTOIRE = 'public_repertoire';
+	/** The mirror folder of the print station (milestone 0.7): writes files outside the archive folder */
+	public const PRINT_MIRROR = 'print_mirror';
+	/** The folder book (milestone 0.7): issuing and taking back choir folders */
+	public const FOLDER_BOOK = 'folder_book';
 
 	/**
 	 * Modules that no preset switches on or off; only their own switch
@@ -58,10 +62,12 @@ class Modules {
 	 * not a function for people: the administration switches it on on
 	 * purpose, and a preset chosen later neither opens nor closes it. The
 	 * same holds for every function that opens the archive beyond its roles
-	 * (choir members, the public): the choir decides on it, then the
-	 * administration switches it on.
+	 * (choir members, the public) and for the mirror folder of the print
+	 * station, which writes files (an exception to guideline 4): the choir
+	 * decides on it, then the administration switches it on.
 	 */
-	public const OUTSIDE_PRESETS = [self::AGENT_API, self::MEMBER_LINKS, self::MEMBER_PRACTICE_AUDIO, self::PUBLIC_LINKS, self::PUBLIC_REPERTOIRE];
+	public const OUTSIDE_PRESETS = [self::AGENT_API, self::MEMBER_LINKS, self::MEMBER_PRACTICE_AUDIO, self::PUBLIC_LINKS, self::PUBLIC_REPERTOIRE,
+		self::PRINT_MIRROR];
 	/** The action "Open in music archive" in the Files app */
 	public const FILES_INTEGRATION = 'files_integration';
 
@@ -104,8 +110,8 @@ class Modules {
 	/** English labels and descriptions of the presets */
 	public const PRESET_LABELS = [
 		self::SIMPLE => ['label' => 'Simple', 'description' => 'Catalog, files and the score view with playback.'],
-		self::STANDARD => ['label' => 'Standard', 'description' => 'For most choirs: everything except practice audio files, the print station, the proposals inbox, checksums and statistics.'],
-		self::COMPLETE => ['label' => 'Complete', 'description' => 'All functions. The interface for agents and the sharing with choir members and the public are switched on separately.'],
+		self::STANDARD => ['label' => 'Standard', 'description' => 'For most choirs: everything except practice audio files, the print station, the proposals inbox, checksums, the folder book and statistics.'],
+		self::COMPLETE => ['label' => 'Complete', 'description' => 'All functions. The interface for agents, the sharing with choir members and the public, and the mirror folder of the print station are switched on separately.'],
 	];
 
 	/**
@@ -137,6 +143,9 @@ class Modules {
 		'print_station' => ['group' => 'releases', 'requires' => ['releases'], 'simple' => false, 'standard' => false, 'planned' => false,
 			'label' => 'Print station',
 			'description' => 'Target list of the print station.'],
+		self::PRINT_MIRROR => ['group' => 'releases', 'requires' => ['print_station'], 'simple' => false, 'standard' => false, 'planned' => false,
+			'label' => 'Mirror folder for the print station',
+			'description' => 'Copies the PDF scans of the versions on the list of the print station into a target folder of its own, daily and on request, and removes those no longer released. Writes only into this folder, never into the archive folder, and removes only files it wrote itself. Not part of any preset.'],
 		'publication' => ['group' => 'releases', 'requires' => ['releases'], 'simple' => false, 'standard' => true, 'planned' => false,
 			'label' => 'Publication',
 			'description' => 'Publication status of a version with its reasoning.'],
@@ -188,6 +197,9 @@ class Modules {
 		'inventory' => ['group' => 'maintenance', 'requires' => [], 'simple' => false, 'standard' => true, 'planned' => false,
 			'label' => 'Inventory',
 			'description' => 'Inventory lists per binder to tick on paper, and recording the counts.'],
+		self::FOLDER_BOOK => ['group' => 'maintenance', 'requires' => [], 'simple' => false, 'standard' => false, 'planned' => false,
+			'label' => 'Folder book',
+			'description' => 'Which choir folder is out with whom since when, its contents and what is missing; issuing and taking back. Names are anonymised after a retention period. Choir members do not see it.'],
 		'checksums' => ['group' => 'maintenance', 'requires' => [], 'simple' => false, 'standard' => false, 'planned' => false,
 			'label' => 'Checksums',
 			'description' => 'Reads the archive files hourly in the background and reports files that changed without a visible modification.'],
@@ -251,6 +263,9 @@ class Modules {
 		self::PUBLIC_REPERTOIRE => ['group' => 'sharing', 'requires' => ['rights'], 'simple' => false, 'standard' => false, 'planned' => false,
 			'label' => 'Public repertoire page',
 			'description' => 'A public page with the works the catalog librarian chooses among those with a version confirmed as public domain: title, composer and lyricist, life dates, scoring and links to CPDL and IMSLP. Not part of any preset.'],
+		'notify_print_mirror_failed' => ['group' => 'notifications', 'requires' => ['notifications', 'print_mirror'], 'simple' => true, 'standard' => true, 'planned' => false,
+			'label' => 'Print station sync failed',
+			'description' => 'To the catalog librarian and the administrators: the sync of the mirror folder for the print station failed.'],
 		self::AGENT_API => ['group' => 'interfaces', 'requires' => [], 'simple' => false, 'standard' => false, 'planned' => false,
 			'label' => 'Interface for agents',
 			'description' => 'A fixed, versioned interface (OCS API v1) for agents and tools that sign in with an app password of an account of their own. They can do only what the roles of that account allow and never take decisions: they read, propose changes and ask or answer questions. Not part of any preset.'],

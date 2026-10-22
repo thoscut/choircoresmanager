@@ -33,7 +33,9 @@ import { errorMessage, fetchSettings } from '../../api.ts'
 import { ADMIN_GUIDE, adminGuideUrl } from '../../docs.ts'
 import { SETTINGS_SECTIONS } from '../../settings.ts'
 import BackupRestore from '../BackupRestore.vue'
+import FolderBookSettings from '../FolderBookSettings.vue'
 import ModuleSettings from '../ModuleSettings.vue'
+import PrintMirrorSettings from '../PrintMirrorSettings.vue'
 
 const settings = ref<Settings | null>(null)
 const loading = ref(true)
@@ -162,6 +164,20 @@ onMounted(async () => {
 				:name="t('notenarchiv', 'Repertoire')"
 				:doc-url="adminGuideUrl(ADMIN_GUIDE.roles)">
 				<RepertoireSettings :thresholds="settings.repertoire" @saved="onThresholdsSaved" />
+			</NcSettingsSection>
+
+			<NcSettingsSection v-if="settings.printMirror"
+				:id="sections.printMirror"
+				:name="t('notenarchiv', 'Print station: mirror folder')"
+				:doc-url="adminGuideUrl(ADMIN_GUIDE.printMirror)">
+				<PrintMirrorSettings />
+			</NcSettingsSection>
+
+			<NcSettingsSection v-if="settings.folderBook"
+				:id="sections.folderBook"
+				:name="t('notenarchiv', 'Folder book: retention period')"
+				:doc-url="adminGuideUrl(ADMIN_GUIDE.folderBook)">
+				<FolderBookSettings />
 			</NcSettingsSection>
 
 			<!-- Restoring stays with admins; giving the page to a group does not include it -->

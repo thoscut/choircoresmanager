@@ -73,6 +73,37 @@ All notable changes to this app are documented in this file. The format follows
     start; repeats and jumps that lead out of it are left out.
   - Integration test `sharing_test.php`; migration
     `Version000710Date20261025100000` (three work columns).
+- Folder book (milestone 0.7, module `folder_book`, off in Standard, on in
+  Complete): choir folders with number or name, voice, contents (copies of
+  the catalog with a number), condition and missing sheets; issuing to a
+  Nextcloud account or a name and taking back with the condition and the
+  missing sheets filled in. A folder is out at most once at a time (also a
+  unique index in the database); folders are never deleted, only taken out
+  of service. A hint marks folders holding a copy that was retired or a
+  version that is no longer the valid one. The list filters, searches and
+  prints on A4. Catalog and operations roles maintain it, conductor and
+  readers read it; contributors and choir members never see it, nor its
+  audit entries. After a retention period set by the administration (default
+  12 months after the return) the daily checks remove names, accounts and
+  notes of the loan, also from its audit entries, and note the removal
+  without the name; this runs also while the module is off. New routes
+  `/api/folder-book…`, `/api/settings/folder-book`; tables
+  `notarch_folders`, `notarch_folder_loans` (part of the complete backup).
+- Mirror folder for the print station (milestone 0.7, module
+  `print_mirror`, part of no preset): the PDF scans of the versions on the
+  list of the print station (never preservation copies) are copied into a
+  target folder chosen by an administrator, as `<shelf mark> <title>.pdf`
+  with a `LIESMICH.txt`, daily and on request. The target folder is checked
+  when it is chosen and before every sync (not the archive folder, not
+  inside it, write permission). Every sync can be previewed; the daily sync
+  starts after the first sync by hand. Changed scans are replaced and scans
+  no longer released removed, but only files the app wrote itself and
+  nobody changed since (manifest with SHA-256 in `notarch_mirror_files`);
+  other files stay. Every write and removal is in the audit log; the report
+  lists what was copied, replaced, removed or skipped and why. Notification
+  "Print station sync failed" to the catalog role and the administrators.
+  New routes `/api/print-mirror…`, `/api/settings/print-mirror…`. Guideline
+  4 of the roadmap names this exception.
 
 ### Security
 
@@ -82,6 +113,8 @@ All notable changes to this app are documented in this file. The format follows
   protected against guessing tokens and answer every failure with the same
   404 page; choir members and the public never receive a file of the archive
   (see `SECURITY.md`).
+- The complete backup can no longer be downloaded by the role "Proposals
+  (tools)": it contains the folder book with names of choir members.
 
 ## [0.6.0] - 2026-10-22
 

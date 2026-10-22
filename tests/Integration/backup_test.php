@@ -18,8 +18,9 @@ declare(strict_types=1);
  * <uid> must hold the role "librarian". Inside one outer transaction the
  * test first adds at least one record to every table through the services
  * (license, proposal, task, link, concert with an item, person with a
- * contribution, transcription report with a review point, merge; the module
- * transcription_review must be active), so that the round trip covers every table with
+ * contribution, transcription report with a review point, merge, a folder
+ * of the folder book issued to a name; the modules transcription_review and
+ * folder_book must be active), so that the round trip covers every table with
  * content. It then exports the complete backup, empties all app tables,
  * restores the backup and compares every table row by row; then everything
  * is rolled back.
@@ -32,6 +33,7 @@ use OCA\Notenarchiv\Db\CopyMapper;
 use OCA\Notenarchiv\Db\Event;
 use OCA\Notenarchiv\Exception\UserFacingException;
 use OCA\Notenarchiv\Service\EventService;
+use OCA\Notenarchiv\Service\FolderBookService;
 use OCA\Notenarchiv\Service\FullBackupService;
 use OCA\Notenarchiv\Service\LicenseService;
 use OCA\Notenarchiv\Service\LinkService;
@@ -95,6 +97,12 @@ try {
 			'rechte' => ['einstufung' => 'offen', 'beteiligte' => []], 'wv' => ['herkunft' => 'Backup test', 'felder' => new stdClass()],
 			'lernen' => [], 'scores' => '| backup test |',
 		], JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR), $uid);
+		// A folder of the folder book, issued to a name (module folder_book)
+		$check('the folder book is active', Server::get(Modules::class)->isEnabled(Modules::FOLDER_BOOK));
+		$folderBook = Server::get(FolderBookService::class);
+		$folder = $folderBook->createFolder(['label' => 'Backup test folder', 'voice' => 'Tenor 1',
+			'contents' => [['copyId' => $first->getId(), 'count' => 2]]], $uid);
+		$folderBook->issue($folder['id'], ['holderName' => 'Backup Test Person', 'note' => 'backup test'], $uid);
 		Server::get(MergeService::class)->moveCopy($other->getId(), $versionId, $uid, 'backup test');
 	}
 

@@ -21,8 +21,10 @@ use OCA\Notenarchiv\Db\WorkVersion;
 use OCA\Notenarchiv\Db\WorkVersionMapper;
 use OCA\Notenarchiv\Service\AppSettings;
 use OCA\Notenarchiv\Service\ChecksumService;
+use OCA\Notenarchiv\Service\FolderBookService;
 use OCA\Notenarchiv\Service\NotificationService;
 use OCA\Notenarchiv\Service\PersonService;
+use OCA\Notenarchiv\Service\PrintMirrorService;
 use OCA\Notenarchiv\Service\RightsService;
 use OCA\Notenarchiv\Tests\Unit\Support\ModuleSwitches;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -52,7 +54,8 @@ final class JobsTest extends TestCase {
 	/**
 	 * @param list<string> $off modules switched off
 	 */
-	private function daily(array $off, NotificationService $notifications, ?PersonService $persons = null): DailyChecks {
+	private function daily(array $off, NotificationService $notifications, ?PersonService $persons = null,
+		?FolderBookService $folderBook = null, ?PrintMirrorService $printMirror = null): DailyChecks {
 		$settings = $this->createStub(AppSettings::class);
 		$settings->method('archiveInfo')->willReturn(['id' => 1, 'path' => '/Notenarchiv', 'user' => 'lena']);
 		$rights = $this->createStub(RightsService::class);
@@ -94,7 +97,16 @@ final class JobsTest extends TestCase {
 		}
 		return new DailyChecks($this->createStub(ITimeFactory::class), $settings, $this->createStub(LicenseMapper::class), $versions,
 			$works, $this->createStub(CopyMapper::class), $rights, $notifications, $config, $events,
-			$persons, $this->modulesWithout($off));
+			$persons, $this->modulesWithout($off), $folderBook ?? $this->createStub(FolderBookService::class),
+			$printMirror ?? $this->createStub(PrintMirrorService::class));
+	}
+
+	public function testTheFolderBookIsAnonymisedEvenWithItsModuleOff(): void {
+		$folderBook = $this->createMock(FolderBookService::class);
+		$folderBook->expects(self::once())->method('anonymizeExpired')->with('2026-10-22');
+		$printMirror = $this->createMock(PrintMirrorService::class);
+		$printMirror->expects(self::once())->method('runDaily');
+		self::runJob($this->daily(['folder_book', 'print_mirror'], $this->createStub(NotificationService::class), null, $folderBook, $printMirror));
 	}
 
 	/**

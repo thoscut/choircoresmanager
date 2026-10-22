@@ -79,6 +79,8 @@ describe('settings of the app', () => {
 			archive: { id: 4711, path: '/Demo archive', user: 'demo-librarian' },
 			repertoire: { current: 3, dormant: 10 },
 			catalog: { copies: 23, files: 30 },
+			folderBook: true,
+			printMirror: 'yes',
 			admin: true,
 			catalogEmpty: false,
 		})).toEqual({
@@ -89,6 +91,8 @@ describe('settings of the app', () => {
 			archive: { id: 4711, path: '/Demo archive', user: 'demo-librarian' },
 			repertoire: { current: 3, dormant: 10 },
 			catalog: { copies: 23, files: 30 },
+			folderBook: true,
+			printMirror: false,
 			admin: true,
 			catalogEmpty: false,
 		})
@@ -104,6 +108,8 @@ describe('settings of the app', () => {
 			archive: { id: 0, path: '', user: '' },
 			repertoire: null,
 			catalog: { copies: 0, files: 0 },
+			folderBook: false,
+			printMirror: false,
 			admin: false,
 			catalogEmpty: null,
 		})

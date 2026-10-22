@@ -30,11 +30,11 @@ use OCP\IDBConnection;
  *
  * The CSV and ODS exports are for people (readable without the app); this
  * backup is for machines: it keeps the ids and therefore shared works and
- * versions, licenses, proposals, tasks, links, events, persons, merges and the
- * audit log.
+ * versions, licenses, proposals, tasks, links, events, persons, merges, the
+ * folder book and the audit log.
  *
- * Instance-specific settings (role groups, archive folder) are not part of
- * the backup. Nextcloud file ids are only valid within one instance: after a
+ * Instance-specific settings (role groups, archive folder, the target folder
+ * of the print station and its manifest) are not part of the backup. Nextcloud file ids are only valid within one instance: after a
  * restore on another instance, the file sync matches the files again by
  * their path.
  *
@@ -58,7 +58,8 @@ class FullBackupService {
 	public const TABLES = [
 		'notarch_works', 'notarch_versions', 'notarch_copies', 'notarch_files', 'notarch_licenses',
 		'notarch_proposals', 'notarch_tasks', 'notarch_links', 'notarch_events', 'notarch_event_items',
-		'notarch_persons', 'notarch_contributions', 'notarch_merges', 'notarch_review_reports', 'notarch_review_points', 'notarch_audit',
+		'notarch_persons', 'notarch_contributions', 'notarch_merges', 'notarch_review_reports', 'notarch_review_points',
+		'notarch_folders', 'notarch_folder_loans', 'notarch_audit',
 	];
 
 	public function __construct(
