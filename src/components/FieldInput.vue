@@ -1,3 +1,7 @@
+<!--
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
 <script setup lang="ts">
 /**
  * Input for one field, chosen by the field type from the field directory.

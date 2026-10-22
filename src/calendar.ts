@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Concerts in the calendar: which concerts count as upcoming, how a concert's
  * time is shown, where an entry lives (CalDAV) and what the user is told
  * after adding entries. Pure functions, tested in

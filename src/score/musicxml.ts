@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * The parts of a MusicXML file that Verovio's MEI does not keep or keeps
  * incompletely: part names and staff counts, printed measure numbers, and
  * the playback structure (repeats with `times`, endings, D.C./D.S./Fine/Coda

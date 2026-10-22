@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # Runs the integration tests in tests/Integration against a freshly
 # installed Nextcloud with the app and the public demo data (tools/demo):
 #   bash tools/ci/integration-demo.sh <nextcloud-root>

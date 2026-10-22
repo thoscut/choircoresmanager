@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Plays a timeline with the synthesizer: look-ahead scheduling on the
  * AudioContext clock, pause/resume, tempo and voice balance changes while
  * playing. Browser only (Web Audio).

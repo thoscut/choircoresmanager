@@ -1,3 +1,7 @@
+<!--
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
 <script setup lang="ts">
 /**
  * Score view: renders the MusicXML of a copy with Verovio, shows a range of

@@ -1,3 +1,8 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 // Minimal ZIP writer for compressed MusicXML (.mxl): deflated entries, a
 // fixed timestamp so that repeated builds give identical files.
 import { deflateRawSync } from 'node:zlib'

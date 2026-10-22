@@ -1,3 +1,8 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 // Checks the score logic of the app against MusicXML files, without a
 // browser. It imports the same modules as the score view (src/score/*.ts;
 // Node strips the types) and Verovio from node_modules.

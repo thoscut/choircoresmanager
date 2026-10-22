@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * The views of the app and their representation in the URL. Notifications,
  * the dashboard widget and shared links open the app with query parameters
  * (`?copy=`, `?task=`, `?view=proposals`, `?event=`, `?due=`, `?link=`); the

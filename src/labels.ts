@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Translated labels of keys used across the views: roles, task kinds and
  * states, event states, release states, repertoire classes, license uses,
  * and the words of text references.

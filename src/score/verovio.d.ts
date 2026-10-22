@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Minimal type declarations for the parts of the verovio npm package
  * (LGPL-3.0-or-later) that the app uses. The package ships no types.
  */

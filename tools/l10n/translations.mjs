@@ -1,3 +1,8 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 // German translations. A string value is used for both "de" (du) and
 // "de_DE" (Sie); an array is [du, Sie]. Plurals: key "singular|plural",
 // value [singular, plural] or { du: [..], sie: [..] }.

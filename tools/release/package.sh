@@ -1,12 +1,18 @@
 #!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # Builds the release archive for the Nextcloud app store:
 #   tools/release/package.sh [--sign KEY CERT OCC]
 #
 # The archive contains only what the app needs at runtime (appinfo, lib,
-# templates, img, js, css, l10n, LICENSE, README, CHANGELOG). Tests, sources,
-# tooling (including tools/screenshots), the documentation with its
-# screenshots (docs/), the GitHub templates (.github/), internal documents
-# and dependencies for development stay out.
+# templates, img, js, css, l10n, LICENSE, README, CHANGELOG) and, as in
+# Nextcloud's own app archives, the license texts (LICENSES/) and REUSE.toml,
+# which names the license of the files without a header (icons,
+# translations, info.xml). Tests, sources, tooling (including
+# tools/screenshots), the documentation with its screenshots (docs/), the
+# GitHub templates (.github/), internal documents and dependencies for
+# development stay out.
 #
 # With --sign (KEY = private key of the app store certificate request, CERT =
 # the certificate issued by Nextcloud, OCC = path to `occ` of any Nextcloud
@@ -62,7 +68,7 @@ npm run build >/dev/null
 npm run l10n >/dev/null
 
 mkdir -p "$STAGE/$APP_ID" "$OUT"
-cp -r appinfo lib templates img js css l10n LICENSE README.md CHANGELOG.md "$STAGE/$APP_ID/"
+cp -r appinfo lib templates img js css l10n LICENSE LICENSES REUSE.toml README.md CHANGELOG.md "$STAGE/$APP_ID/"
 # Source maps are not needed at runtime; the license files of bundled
 # third-party code (*.license) stay.
 find "$STAGE/$APP_ID/js" -name '*.map' -delete

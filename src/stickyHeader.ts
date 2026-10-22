@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Keeps the focus visible below a sticky header (WCAG 2.4.11 focus not
  * obscured): the scrolling content area gets a scroll padding as high as
  * the header, so that the browser scrolls a focused element below the

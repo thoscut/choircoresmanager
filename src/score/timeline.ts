@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * The events the synthesizer plays, in seconds at 100 % tempo. Note times
  * come from Verovio's linear timemap (no repeats, tempo changes included);
  * the measures are then laid out in playing order, so repeats and ranges

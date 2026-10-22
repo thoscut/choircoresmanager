@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Writing WAV files: PCM, 16 bit, little endian, mono or stereo, with the
  * canonical 44-byte header (RIFF, "fmt " and "data" chunks).
  */

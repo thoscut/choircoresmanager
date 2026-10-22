@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Emphasis of the focus voice in the rendered score. The focus voice is
  * marked with FOCUS_CLASS (the view draws it in color with bolder note
  * heads and stems), everything that belongs to the other voices with

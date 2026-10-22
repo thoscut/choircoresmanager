@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Loading Verovio (music engraving, LGPL-3.0-or-later). The package embeds
  * its WebAssembly binary and the music fonts in its JavaScript module, so
  * everything comes from the app's own bundle – no CDN, no other server. The

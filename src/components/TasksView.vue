@@ -1,3 +1,7 @@
+<!--
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
 <script setup lang="ts">
 /**
  * All questions and tasks: for my roles or all, optionally with the closed

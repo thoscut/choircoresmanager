@@ -3,6 +3,11 @@
 declare(strict_types=1);
 
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Shared runner of the integration tests: loads Nextcloud, counts the checks
  * and makes sure that the exit code tells the truth.
  *

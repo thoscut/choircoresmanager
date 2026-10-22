@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Measure ranges in printed numbering: the `number` attribute of the
  * MusicXML measure. A pickup is measure 0 (or the first, implicit measure);
  * measures without a printed number (e.g. "X1" after a repeat inside a

@@ -78,10 +78,12 @@ only accepts signed releases from a public repository.
    tools/release/package.sh --sign /path/notenarchiv.key /path/notenarchiv.crt /path/to/nextcloud/occ
    ```
 
-   The script builds the frontend and the translations, copies only the
-   runtime files, refuses to package internal or development files, writes
-   the code signature (`appinfo/signature.json`) into the archive and prints
-   the archive signature.
+   The script checks `appinfo/info.xml` against the app store schema (with
+   `xmllint`), builds the frontend and the translations, copies only the
+   runtime files together with the license texts (`LICENSES/`, `REUSE.toml`),
+   refuses to package internal or development files, writes the code
+   signature (`appinfo/signature.json`) into the archive and prints the
+   archive signature.
 6. Attach `build/release/notenarchiv-<version>.tar.gz` to the release in the
    repository (the app store downloads it from a public HTTPS URL) and upload
    that URL with the printed signature on apps.nextcloud.com (account → upload

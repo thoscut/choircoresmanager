@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * A small Web Audio synthesizer for playing scores in the browser: a soft,
  * organ-like tone (a few harmonics, gentle vibrato, low-pass filter) with an
  * envelope. No sound fonts, nothing is loaded from a server.

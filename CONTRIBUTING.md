@@ -121,3 +121,21 @@ use.
 By contributing you agree that your contribution is licensed under the
 [GNU Affero General Public License v3.0 or later](LICENSE), the license of
 this project.
+
+### Licensing information in every file (REUSE)
+
+The repository follows the [REUSE specification](https://reuse.software) 3.3,
+like Nextcloud's own apps. Every new file needs an SPDX header in the form of
+its neighbours, for example in PHP after `declare(strict_types=1);`:
+
+    /**
+     * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+     * SPDX-License-Identifier: AGPL-3.0-or-later
+     */
+
+Vue and Markdown files use `<!--` with `  - SPDX-…` lines, TypeScript and
+JavaScript a `/** … */` block, shell scripts `#` lines after the shebang.
+Code, templates, tests, icons, translations, documentation and screenshots are
+`AGPL-3.0-or-later`; the demo data and trivial configuration are `CC0-1.0`.
+Files without room for a comment (JSON, images) are listed in `REUSE.toml`.
+Check with `pipx run reuse lint`; CI runs the same check.

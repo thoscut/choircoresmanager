@@ -1,3 +1,8 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 // Collects all translatable source strings of the app (UI + server).
 // Usage: node extract.mjs <projectRoot>  -> prints JSON { singular: [...], plural: [[s,p],...] }
 import { readFileSync, readdirSync, statSync } from 'node:fs'

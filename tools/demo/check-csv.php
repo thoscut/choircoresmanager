@@ -3,6 +3,11 @@
 declare(strict_types=1);
 
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Checks the import files of the demo data with the app's own classes,
  * without a Nextcloud server: parsing, columns, values allowed by the field
  * registry, the round trip parse → write (byte for byte) and what the person

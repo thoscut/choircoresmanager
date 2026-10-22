@@ -2,6 +2,11 @@
 
 declare(strict_types=1);
 
+/**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: CC0-1.0
+ */
+
 use Rector\Config\RectorConfig;
 
 return RectorConfig::configure()

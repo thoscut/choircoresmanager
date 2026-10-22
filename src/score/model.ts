@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Everything the score view knows about one file, computed once after
  * loading: measures with printed numbers, voices, note timings and the
  * playing order. Used by the UI and by tools/score-check alike.

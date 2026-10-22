@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Text references to a place in a score, e.g.
  * "5-1 · Freude, schöner Götterfunken · p. 2 · m. 17–24 · Tenor II · note".
  * They contain no notation and may always be copied and passed on. The

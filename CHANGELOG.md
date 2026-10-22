@@ -1,3 +1,7 @@
+<!--
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
 # Changelog
 
 All notable changes to this app are documented in this file. The format follows
@@ -98,6 +102,10 @@ and 35.0.2 with MariaDB; the app requires MySQL or MariaDB.
   administration guides, German quick start, contributing guide, issue and
   pull request templates; a script recreates the screenshots
   (`tools/screenshots`).
+- Licensing after the REUSE specification 3.3, as in Nextcloud's own apps:
+  every file names its copyright and license in an SPDX header or in
+  `REUSE.toml`, the license texts are in `LICENSES/` (also in the release
+  archive), and CI checks it with `reuse lint`.
 
 ### Fixed
 
@@ -141,6 +149,9 @@ Found in the end-to-end acceptance test of 0.1.20:
 - `npm run stylelint` works (Nextcloud's shared configuration) and runs in CI;
   `package.json` has the app version again and the release script stops when
   it differs from `appinfo/info.xml`.
+- `appinfo/info.xml` is valid against the app store schema again: the repair
+  step after migrations (`post-migration`) comes before the one at
+  installation (`install`), in the order the schema requires.
 
 Found when checking the prints in Firefox 158 and the icon at small sizes:
 

@@ -1,3 +1,7 @@
+<!--
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
 # Tests
 
 There are two kinds of tests. They are kept apart on purpose:
@@ -194,5 +198,35 @@ composer lint       # php -l on all PHP files
 ```
 
 The CI workflow (`.github/workflows/ci.yml`) runs all of these, the unit
-tests on PHP 8.2, 8.3 and 8.4, the frontend checks and the integration tests
-with the demo data on Nextcloud 33 and 35.
+tests on PHP 8.2, 8.3 and 8.4, the frontend checks, the REUSE check and the
+integration tests with the demo data on Nextcloud 33 and 35.
+
+## Licensing (REUSE)
+
+The repository follows the [REUSE specification](https://reuse.software) 3.3,
+like Nextcloud's own apps: every file states its copyright and license, the
+license texts are in `LICENSES/`. A new file gets an SPDX header in the form
+of its neighbours, for example in PHP after `declare(strict_types=1);`:
+
+```php
+/**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+```
+
+Vue files and Markdown start with `<!--` and `  - SPDX-…` lines, TypeScript
+and JavaScript with a `/** … */` block, shell scripts with `#` lines after
+the shebang. Code, templates, tests, icons, translations and screenshots are
+`AGPL-3.0-or-later`; the demo data (`tools/demo/catalog.json`,
+`tools/demo/scores/`) and trivial configuration (lock files, package
+manifests, linter and tool configuration) are `CC0-1.0`. Files that cannot
+hold a comment (JSON, images) or must stay unchanged (`appinfo/info.xml`,
+generated `l10n/`) are listed in `REUSE.toml` instead; a new file in a folder
+listed there needs nothing. Check with
+
+```sh
+pipx run reuse lint   # or: pip install reuse && reuse lint
+```
+
+The CI job `reuse` runs the same check.

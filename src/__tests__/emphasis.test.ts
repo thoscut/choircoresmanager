@@ -1,3 +1,8 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
 // @vitest-environment jsdom
 import { describe, expect, it } from 'vitest'
 import { FOCUS_CLASS, markFocus, MUTED_CLASS, SHARED_CLASS } from '../score/emphasis.ts'

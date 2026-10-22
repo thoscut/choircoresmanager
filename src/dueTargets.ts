@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Where a card of the start page leads: a view and the filters to set
  * there. Pure function, tested in tests/dueTargets.test.ts.
  */

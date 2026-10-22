@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * What the score view needs from the MEI that Verovio produces when it
  * imports MusicXML: measure ids, and every note with staff, layer (= MusicXML
  * voice), MIDI pitch and measure. The ids are the ones used in Verovio's SVG

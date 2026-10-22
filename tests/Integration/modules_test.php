@@ -3,6 +3,11 @@
 declare(strict_types=1);
 
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Integration test of the modules against a real Nextcloud instance with an
  * imported catalog and the notifications app: a switched-off module is off
  * on the server (routes, daily checks, notifications, start page, dashboard

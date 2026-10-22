@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Which view the app shows, kept in sync with the URL so that the browser's
  * back button works and a view can be bookmarked. Also the presets the start
  * page uses to open a filtered view.

@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Which fields of `meta.fields` appear in which section of the sidebar.
  *
  * The forms are generated from the field directory; this file only sorts

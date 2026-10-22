@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Rendering practice audio in the browser: the playback events go through
  * the same synthesizer and the same scheduling as the playback, but into an
  * OfflineAudioContext, which computes the sound faster than real time.

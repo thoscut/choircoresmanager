@@ -1,0 +1,51 @@
+# SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+# SPDX-License-Identifier: CC0-1.0
+#
+# Licensing of the files that carry no header of their own (REUSE 3.3,
+# https://reuse.software). Every other file names its copyright and license in
+# an SPDX comment at the top; see "Licensing (REUSE)" in tests/README.md.
+version = 1
+SPDX-PackageName = "notenarchiv"
+SPDX-PackageSupplier = "Thomas Scheel"
+SPDX-PackageDownloadLocation = "https://github.com/thoscut/choircoresmanager"
+
+# The app: metadata (kept free of comments for the app store schema), icons,
+# generated translations, documentation and screenshots of the user interface
+[[annotations]]
+path = [
+	"appinfo/info.xml",
+	"img/**",
+	"l10n/**",
+	"README.md",
+	"CONTRIBUTING.md",
+	"docs/**",
+	"tools/screenshots/**",
+	".github/ISSUE_TEMPLATE/**",
+	".github/pull_request_template.md",
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Thomas Scheel and Notenarchiv contributors"
+SPDX-License-Identifier = "AGPL-3.0-or-later"
+
+# Package manifests, lock files and trivial configuration (as in nextcloud/deck)
+[[annotations]]
+path = [
+	".nvmrc",
+	"package.json",
+	"package-lock.json",
+	"composer.json",
+	"composer.lock",
+	"vendor-bin/**/composer.json",
+	"vendor-bin/**/composer.lock",
+	"tsconfig.json",
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Thomas Scheel and Notenarchiv contributors"
+SPDX-License-Identifier = "CC0-1.0"
+
+# Demo data, dedicated to the public domain (see tools/demo/README.md)
+[[annotations]]
+path = ["tools/demo/catalog.json", "tools/demo/scores/**"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Thomas Scheel and Notenarchiv contributors"
+SPDX-License-Identifier = "CC0-1.0"

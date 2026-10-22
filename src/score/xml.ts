@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * A small, non-validating XML parser for well-formed documents: MusicXML
  * files and the MEI that Verovio writes. It has no browser dependencies, so
  * the check script in tools/score-check runs exactly the same code as the UI.

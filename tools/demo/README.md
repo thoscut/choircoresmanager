@@ -1,3 +1,7 @@
+<!--
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
 # Demo data
 
 A small, invented music archive of a fictitious choir, the "Demochor", for
@@ -21,7 +25,11 @@ composers, lyricists and arrangers of the works, all of whom died more than
   for this demo; they are not copies of historical or published settings.
 - Two versions are marked "geschützt" (protected) in the catalog. That is a
   label for the demo only: their "arranger" A. Example is a fictitious living
-  person. The files themselves are CC0 like everything else here.
+  person. The files themselves are CC0 like all other demo data.
+- The build and check scripts (`build.mjs`, `lib/`, `check-csv.php`) and this
+  README belong to the app's code and documentation and are licensed under
+  AGPL-3.0-or-later. Each file names its license in an SPDX header or in
+  `REUSE.toml` in the repository root.
 
 ## Contents
 

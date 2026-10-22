@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Durations of programme items: stored in seconds, shown and entered as
  * "m:ss" (or "h:mm:ss" for long works). Pure functions.
  */

@@ -3,6 +3,11 @@
 declare(strict_types=1);
 
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Integration test of concerts in the calendar and of the dashboard widget
  * against a real Nextcloud instance with the dav app (calendars).
  *

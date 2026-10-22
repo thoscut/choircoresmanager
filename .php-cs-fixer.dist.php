@@ -2,6 +2,11 @@
 
 declare(strict_types=1);
 
+/**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: CC0-1.0
+ */
+
 require_once __DIR__ . '/vendor-bin/cs-fixer/vendor/autoload.php';
 
 use Nextcloud\CodingStandard\Config;

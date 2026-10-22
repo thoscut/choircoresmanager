@@ -1,4 +1,9 @@
 /**
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
  * Writing ZIP archives with stored (uncompressed) entries, e.g. the practice
  * audio files of all voices in one download. WAV and MIDI files hardly
  * shrink when compressed, so storing them is enough. Reading archives is in
