@@ -16,6 +16,7 @@ use OCA\Notenarchiv\Db\WorkMapper;
 use OCA\Notenarchiv\Db\WorkVersionMapper;
 use OCA\Notenarchiv\Exception\AccessDeniedException;
 use OCA\Notenarchiv\Exception\InvalidInputException;
+use OCA\Notenarchiv\Exception\NotFoundException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IUserManager;
@@ -34,7 +35,8 @@ use OCP\IUserManager;
 class TaskService {
 	public const ADDRESSEES = [Roles::CONDUCTOR, Roles::LIBRARIAN, Roles::OPERATIONS, Roles::READER];
 	public const CATEGORIES = ['reading', 'structure', 'origin', 'shelf', 'rights', 'other'];
-	private const CREATORS = [Roles::LIBRARIAN, Roles::CONDUCTOR, Roles::OPERATIONS, Roles::CONTRIBUTOR];
+	/** Roles that may create tasks */
+	public const CREATORS = [Roles::LIBRARIAN, Roles::CONDUCTOR, Roles::OPERATIONS, Roles::CONTRIBUTOR];
 	/** Fields a request may set when creating a task */
 	private const FIELDS = ['kind', 'addressee', 'category', 'page', 'verse', 'measure_from', 'measure_to', 'voice', 'origin', 'question', 'due'];
 
@@ -177,13 +179,22 @@ class TaskService {
 	}
 
 	/**
+	 * One task (no role check: every archive role reads the tasks).
+	 *
+	 * @throws NotFoundException
+	 */
+	public function find(int $taskId): Task {
+		return $this->load($taskId);
+	}
+
+	/**
 	 * Adds shelf mark, binder and title to tasks, sorted by binder and number
 	 * so that a printed list follows the shelf.
 	 *
 	 * @param list<Task> $tasks
 	 * @return list<array<string, mixed>>
 	 */
-	private function withContext(array $tasks): array {
+	public function withContext(array $tasks): array {
 		$copies = [];
 		foreach ($this->copies->findAll() as $copy) {
 			$copies[$copy->getId()] = $copy;
@@ -225,7 +236,7 @@ class TaskService {
 		try {
 			return $this->tasks->find($taskId);
 		} catch (DoesNotExistException) {
-			throw new InvalidInputException('Not found.');
+			throw new NotFoundException('Not found.');
 		}
 	}
 
@@ -233,7 +244,7 @@ class TaskService {
 		try {
 			return $this->copies->find($copyId);
 		} catch (DoesNotExistException) {
-			throw new InvalidInputException('Not found.');
+			throw new NotFoundException('Not found.');
 		}
 	}
 

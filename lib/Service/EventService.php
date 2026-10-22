@@ -21,6 +21,7 @@ use OCA\Notenarchiv\Db\WorkMapper;
 use OCA\Notenarchiv\Db\WorkVersion;
 use OCA\Notenarchiv\Db\WorkVersionMapper;
 use OCA\Notenarchiv\Exception\InvalidInputException;
+use OCA\Notenarchiv\Exception\NotFoundException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IDateTimeZone;
@@ -117,7 +118,7 @@ class EventService {
 			$copy = $this->copies->find($copyId);
 			$version = $this->versions->find($copy->getVersionId());
 		} catch (DoesNotExistException) {
-			throw new InvalidInputException('Not found.');
+			throw new NotFoundException('Not found.');
 		}
 		$position = count($this->items->findByEvent($eventId)) + 1;
 		$item = new EventItem();
@@ -213,7 +214,7 @@ class EventService {
 		try {
 			$event = $this->events->find($eventId);
 		} catch (DoesNotExistException) {
-			throw new InvalidInputException('Not found.');
+			throw new NotFoundException('Not found.');
 		}
 		if ($event->getStatus() !== Event::CANCELLED) {
 			throw new InvalidInputException('Only a cancelled concert can be reopened.');
@@ -278,7 +279,7 @@ class EventService {
 				$copy = $this->copies->find($copyId);
 				$version = $this->versions->find($copy->getVersionId());
 			} catch (DoesNotExistException) {
-				throw new InvalidInputException('Not found.');
+				throw new NotFoundException('Not found.');
 			}
 			$item->setAssignment(EventItem::CERTAIN);
 			$item->setValue('copy_id', $copy->getId());
@@ -333,7 +334,7 @@ class EventService {
 		try {
 			$event = $this->events->find($eventId);
 		} catch (DoesNotExistException) {
-			throw new InvalidInputException('Not found.');
+			throw new NotFoundException('Not found.');
 		}
 		$day = $this->rights->today($uid);
 		$versions = $this->versions->findAllById();
@@ -418,7 +419,7 @@ class EventService {
 		try {
 			$event = $this->events->find($eventId);
 		} catch (DoesNotExistException) {
-			throw new InvalidInputException('Not found.');
+			throw new NotFoundException('Not found.');
 		}
 		if ($event->getImported() === true || $event->getStatus() === 'sung') {
 			throw new InvalidInputException('Performed or imported programmes are history and cannot be changed.');
@@ -507,7 +508,7 @@ class EventService {
 		try {
 			return $this->items->find($itemId);
 		} catch (DoesNotExistException) {
-			throw new InvalidInputException('Not found.');
+			throw new NotFoundException('Not found.');
 		}
 	}
 

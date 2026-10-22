@@ -1,5 +1,9 @@
 # Internal API (version 0.1)
 
+This is the API of the app's own user interface; it changes with the app.
+Tools and agents use the stable **API for agents** instead
+([api-v1.md](api-v1.md), OCS, `/ocs/v2.php/apps/notenarchiv/api/v1/…`).
+
 All paths are relative to `/apps/notenarchiv`. Responses are JSON. Errors are
 returned as `{ "error": "message for the user" }` with status 400 (invalid),
 403 (not permitted) or 404 (not found). Write requests need the Nextcloud CSRF
@@ -260,7 +264,9 @@ Rules the UI should reflect (the server enforces them):
   preservation copies.
 - Only `conductor` sets or clears the valid version; one per work.
 - Proposals (role `contributor` or `librarian`) never change data until a
-  `librarian` accepts them.
+  `librarian` accepts them. Only fields the `librarian` may write can be
+  proposed; all fields of a request are checked first and stored together
+  (one proposal each) or not at all.
 
 Endpoints (all JSON, errors as `{ "error" }`):
 
@@ -403,7 +409,9 @@ and `task_answered` (to the librarian).
 
 **Text reference** (no server call): the UI builds a plain text such as
 `5-1 · Freude, schöner Götterfunken · p. 2 · m. 17–24 · Tenor II · note` that can
-be copied anywhere; it contains no notation and is always allowed.
+be copied anywhere; it contains no notation and is always allowed. The API
+for agents builds the same text on the server
+(`GET /api/v1/copies/{id}/reference`, `lib/Service/TextReference.php`).
 
 ## Practice audio files
 
@@ -1016,7 +1024,7 @@ audio and preservation copies applies whatever is switched on.
 | `dashboard_widget` | – | on |
 | `notifications` | – | on |
 | `notify_{subject}` | `notifications` and the module of the subject | on |
-| `agent_api` | – | off (planned, cannot be switched yet) |
+| `agent_api` | – | off, and part of no preset (the API for agents, [api-v1.md](api-v1.md)) |
 
 `notify_{subject}` exists for every notification subject:
 `notify_proposals_waiting` (needs `proposals`), `notify_portal_remove`
@@ -1027,8 +1035,9 @@ audio and preservation copies applies whatever is switched on.
 (`protection_terms`), `notify_checksum_mismatch` (`checksums`).
 
 Presets: `simple` (core, `score_viewer`, `playback`, `notifications` with all
-`notify_*` switches), `standard` (the column above), `complete` (everything).
-A preset sets every switch; `agent_api` is never part of a preset.
+`notify_*` switches), `standard` (the column above), `complete` (everything
+except `agent_api`). A preset sets every switch except `agent_api`
+(`Modules::OUTSIDE_PRESETS`), which only its own switch changes.
 
 ### Switched-off routes
 
@@ -1058,6 +1067,7 @@ other check of the app. The routes and their modules:
 | `inventory` | `GET /api/inventory`, `POST /api/inventory/count` |
 | `checksums` | `GET /api/checksums`, `POST /api/files/{id}/checksum-accept` |
 | `statistics` | `/api/statistics…` |
+| `agent_api` | every route of the API for agents, `/ocs/v2.php/apps/notenarchiv/api/v1/…` (404 with the message in the OCS meta); each also needs the module of its function |
 
 `releases` and `publication` have no routes of their own: `releases` is the
 switch of the three releases (it gates `portal`, `print_station` and
@@ -1109,7 +1119,9 @@ What else follows the modules:
 
 `enabled` is the module's own switch, `active` whether it works (its switch
 and everything it requires is on). `requires` lists the direct
-requirements. Planned modules (`agent_api`) are not listed.
+requirements. Planned modules (none at the moment) are not listed.
+`agent_api` is in the group `interfaces` and missing from the `modules` of
+every preset (no preset changes it).
 
 `PUT /api/settings/modules` with either `{ "modules": { "concerts": false } }`
 (one or more switches) or `{ "preset": "standard" }` returns the same plus

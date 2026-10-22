@@ -56,6 +56,8 @@ composer lint         # PHP syntax
 composer cs:check     # Nextcloud coding standard (composer cs:fix fixes it)
 composer psalm        # static analysis
 composer test:unit    # PHP unit tests, no Nextcloud server needed
+composer run openapi  # openapi.json of the API for agents; commit it when it changes
+(cd tools/mcp && npm ci && npm test)   # MCP server for agents
 ```
 
 The integration tests run against a real Nextcloud with the app installed;

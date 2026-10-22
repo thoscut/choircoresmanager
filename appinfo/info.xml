@@ -18,6 +18,7 @@
 - **Care of the archive:** accession with the next free shelf mark and label printing, register of persons with a protection-term suggestion, merging with undo, inventory, checksums.
 - **Safety:** weekly backups (CSV, ODS and a complete JSON backup) into the archive folder, restore into an empty catalog, notifications to the people responsible (never to singers).
 - **Only what you need:** every function outside the catalog is a module the administration can switch off, with the presets Simple, Standard and Complete; everyone can hide areas they do not use.
+- **Agents and tools (optional):** a versioned API (OCS) with an OpenAPI description and an MCP server. With an account of their own, agents read, ask and propose; they never decide, and the server checks every request against their role.
 - **Access by groups:** roles are given to Nextcloud groups, e.g. the music librarians write, the board reads. Other accounts do not see the app; admins without a role may read it and change the settings.
 
 No external requests and no telemetry: notation, fonts and sounds are part of the app. Accessible (target WCAG 2.2 AA) with inclusive wording, in English and German. Works on managed hosting without shell access; an existing catalog can be imported from CSV. Requires MySQL or MariaDB. The rights helpers follow German copyright law; they support a decision and are no legal advice.]]></description>
@@ -34,6 +35,7 @@ No external requests and no telemetry: notation, fonts and sounds are part of th
 - **Pflege des Archivs:** Neuzugang mit der nächsten freien Signatur und Etikettendruck, Personenregister mit Vorschlag zum Schutzfristende, Zusammenführen mit Rücknahme, Inventur, Prüfsummen.
 - **Sicherheit:** wöchentliche Sicherungen (CSV, ODS und vollständige JSON-Sicherung) in den Archivordner, Wiederherstellung in ein leeres Werkverzeichnis, Benachrichtigungen an die Zuständigen (nie an Chormitglieder).
 - **Nur, was gebraucht wird:** Jede Funktion außerhalb des Werkverzeichnisses ist ein Modul, das die Administration abschalten kann, mit den Voreinstellungen Einfach, Standard und Vollständig; jede Person kann Bereiche ausblenden, die sie nicht nutzt.
+- **Agenten und Werkzeuge (optional):** eine versionierte Schnittstelle (OCS) mit OpenAPI-Beschreibung und ein MCP-Server. Mit einem eigenen Konto lesen, fragen und schlagen Agenten vor; sie entscheiden nie, und der Server prüft jede Anfrage gegen ihre Rolle.
 - **Zugriff über Gruppen:** Rollen werden Nextcloud-Gruppen zugeordnet, z. B. schreibt die Archivverwaltung und der Vorstand liest. Andere Konten sehen die App nicht; die Administration ohne Rolle darf lesen und die Einstellungen ändern.
 
 Keine fremden Server und keine Telemetrie: Notensatz, Schriften und Klänge sind in der App enthalten. Barrierefrei (Ziel WCAG 2.2 AA) mit inklusiver Sprache, auf Deutsch und Englisch. Läuft auch bei gehosteten Nextclouds ohne Shell-Zugang; ein vorhandenes Verzeichnis lässt sich aus CSV übernehmen. Benötigt MySQL oder MariaDB. Die Rechte-Hilfen bilden deutsches Urheberrecht ab; sie unterstützen eine Entscheidung und sind keine Rechtsberatung.]]></description>

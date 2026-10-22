@@ -56,7 +56,53 @@ possible and mentioned in the changelog.
   not change state. Adding concerts to a calendar keeps the check.
 - A unit test (`tests/Unit/Controller/ControllerSecurityTest`) checks these
   route attributes, so that a new route cannot silently become public, skip
-  the CSRF check or lose its admin restriction.
+  the CSRF check or lose its admin restriction; for the API for agents also
+  its modules and rate limit.
+
+### Interface for agents
+
+The API for agents (OCS, `/ocs/v2.php/apps/notenarchiv/api/v1/…`,
+[docs/api-v1.md](docs/api-v1.md)) and the MCP server in `tools/mcp` follow
+these rules:
+
+- **Off unless switched on.** The module "Interface for agents"
+  (`agent_api`) is off on new and updated installations and part of no
+  preset; only an administrator switches it on. Switched off, every route
+  answers 404 before the controller runs.
+- **No right beyond the roles.** The routes call the same services as the
+  user interface, with the same role checks; each route also needs the
+  module of its function. An agent signs in with an app password of an
+  account of its own; the documentation asks for the roles "contributor" or
+  "reader" only.
+- **Nothing decides.** There are no routes to confirm rights, change
+  licenses, set the valid version, accept or reject proposals, close tasks,
+  delete, restore, back up or change settings. Writing creates proposals
+  (taken as a whole or not at all) and tasks, or answers a task addressed
+  to an own role. A unit test lists every route of the API and checks its
+  modules, role requirement, rate limit and CSRF handling.
+- **CSRF.** The routes keep Nextcloud's CSRF check; an OCS request passes it
+  only with the header `OCS-APIRequest: true` (or a Bearer token), which a
+  foreign web page cannot send with the cookies of a logged-in browser. No
+  route allows CORS.
+- **Data minimisation.** Answers contain no account names (who confirmed or
+  chose something) and no file contents. Internal preservation copies are
+  left out of the search for roles that may not view them and refused
+  (403) as a copy, text reference or target of a task.
+- **Limits.** Every route is rate limited per account (30 to 300 requests
+  in 10 minutes); internal errors are logged and answered with a generic
+  message.
+- **MCP server.** It runs locally over stdio (no listening port), needs
+  https (plain http only for localhost), does not follow redirects, never
+  logs the app password and replaces it in every output; a read-only mode
+  offers no writing tools and refuses writing requests before they are
+  sent. Catalog texts may contain instructions written to mislead an agent
+  (prompt injection); what such an agent can do is limited by its role, and
+  people decide on every proposal.
+
+Note that Nextcloud lets any client with an app password and the header
+`OCS-APIRequest: true` call the internal API of the user interface as well
+(with the same role checks). The module therefore does not widen what an
+account can do; it offers a stable, documented and limited contract.
 
 ### Files
 

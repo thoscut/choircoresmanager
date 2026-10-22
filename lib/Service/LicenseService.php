@@ -13,6 +13,7 @@ use OCA\Notenarchiv\Db\License;
 use OCA\Notenarchiv\Db\LicenseMapper;
 use OCA\Notenarchiv\Db\WorkVersionMapper;
 use OCA\Notenarchiv\Exception\InvalidInputException;
+use OCA\Notenarchiv\Exception\NotFoundException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 
@@ -41,7 +42,7 @@ class LicenseService {
 		try {
 			$this->versions->find($versionId);
 		} catch (DoesNotExistException) {
-			throw new InvalidInputException('Not found.');
+			throw new NotFoundException('Not found.');
 		}
 		$license = new License();
 		$license->setVersionId($versionId);
@@ -61,7 +62,7 @@ class LicenseService {
 		try {
 			$license = $this->licenses->find($licenseId);
 		} catch (DoesNotExistException) {
-			throw new InvalidInputException('Not found.');
+			throw new NotFoundException('Not found.');
 		}
 		$before = $license->jsonSerialize();
 		$this->assign($license, $data, false);

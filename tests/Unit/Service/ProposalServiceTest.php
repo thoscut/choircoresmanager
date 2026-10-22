@@ -70,6 +70,34 @@ final class ProposalServiceTest extends TestCase {
 		self::assertSame($value, $this->inserted[0]->value());
 	}
 
+	public function testAProposalIsTakenAsAWholeOrNotAtAll(): void {
+		try {
+			$this->service->propose('version', 10, ['scoring' => 'TTBB', 'confirmed_at' => '2026-01-01'], 'anna', null, 'tool');
+			self::fail('a decision was proposed');
+		} catch (InvalidInputException $e) {
+			self::assertSame('"%s" cannot be proposed.', $e->getMessage());
+		}
+		self::assertSame([], $this->inserted, 'nothing stored');
+	}
+
+	public function testOnlyFieldsOfTheCatalogLibrarianCanBeProposed(): void {
+		$fields = ProposalService::proposableFields();
+		self::assertSame(['work', 'version', 'copy'], array_keys($fields));
+		self::assertContains('key_signature', $fields['version']);
+		self::assertContains('rights_status', $fields['version'], 'a proposal, which only the catalog librarian can accept');
+		foreach (['confirmed_at', 'confirmed_by', 'valid_since', 'portal_since', 'rights_confirmed'] as $decision) {
+			self::assertNotContains($decision, $fields['version'], $decision);
+		}
+		self::assertNotContains('shelfmark', $fields['copy']);
+	}
+
+	public function testOwnProposalsAndTheirStatus(): void {
+		$this->service->own('anna', null);
+		$this->service->own('anna', '');
+		$this->expectException(InvalidInputException::class);
+		$this->service->own('anna', 'maybe');
+	}
+
 	public function testAcceptingAppliesTheExactValue(): void {
 		$this->service->propose('version', 10, ['rule1_count' => 0], 'anna', 'counted twice', null);
 		$this->catalog->expects(self::once())->method('update')

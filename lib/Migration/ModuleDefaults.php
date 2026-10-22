@@ -20,8 +20,8 @@ use OCP\Migration\IRepairStep;
  * on installation and after every update).
  *
  * An installation from before the modules (installed version below 0.1.27)
- * keeps every function it had: all switches on, the planned interface for
- * agents off. A new installation gets the preset "standard". Switches that
+ * keeps every function it had: all switches on, the interface for agents
+ * off. A new installation gets the preset "standard". Switches that
  * exist already are never changed, and a module added by a later version
  * gets its default, so that a later change of the defaults switches nothing
  * at an existing installation.

@@ -16,6 +16,7 @@ use OCA\Notenarchiv\Db\CopyMapper;
 use OCA\Notenarchiv\Db\WorkMapper;
 use OCA\Notenarchiv\Db\WorkVersionMapper;
 use OCA\Notenarchiv\Exception\InvalidInputException;
+use OCA\Notenarchiv\Exception\NotFoundException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Files\File;
@@ -157,7 +158,7 @@ class ChecksumService {
 		try {
 			$file = $this->files->find($archiveFileId);
 		} catch (DoesNotExistException) {
-			throw new InvalidInputException('Not found.');
+			throw new NotFoundException('Not found.');
 		}
 		if ($file->getSha256Mismatch() !== true) {
 			throw new InvalidInputException('There is no checksum difference to accept for this file.');

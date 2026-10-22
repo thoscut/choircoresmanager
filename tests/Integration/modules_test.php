@@ -126,7 +126,8 @@ $route = function (string $method) use ($middleware, $eventController): ?JSONRes
 $db->beginTransaction();
 try {
 	$modules->applyPreset(Modules::COMPLETE);
-	$check('all modules on', !in_array(false, array_intersect_key($modules->states(), array_flip(Modules::switchable())), true));
+	// "complete" leaves the interface for agents as it is (Modules::OUTSIDE_PRESETS).
+	$check('all modules on', !in_array(false, array_intersect_key($modules->states(), Modules::presetValues(Modules::COMPLETE)), true));
 
 	// ---- concerts ----
 	$today = Server::get(RightsService::class)->today($uid);

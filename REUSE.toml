@@ -38,10 +38,21 @@ path = [
 	"vendor-bin/**/composer.json",
 	"vendor-bin/**/composer.lock",
 	"tsconfig.json",
+	"tools/mcp/package.json",
+	"tools/mcp/package-lock.json",
+	"tools/mcp/tsconfig.json",
 ]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2026 Thomas Scheel and Notenarchiv contributors"
 SPDX-License-Identifier = "CC0-1.0"
+
+# The OpenAPI description of the API for agents, generated from the code
+# (composer run openapi), as in Nextcloud's own apps
+[[annotations]]
+path = ["openapi*.json"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Thomas Scheel and Notenarchiv contributors"
+SPDX-License-Identifier = "AGPL-3.0-or-later"
 
 # Demo data, dedicated to the public domain (see tools/demo/README.md)
 [[annotations]]

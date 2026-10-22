@@ -18,6 +18,7 @@ Daily work with the app is described in the [user guide](user-guide.md).
 10. [Data protection](#10-data-protection)
 11. [Accessibility](#11-accessibility)
 12. [Modules and presets](#12-modules-and-presets)
+13. [Agents and the API](#13-agents-and-the-api)
 
 ## 1. Installation
 
@@ -382,7 +383,7 @@ Every change of a switch is recorded in the audit log (object type
 |---|---|
 | **Simple** | the core, the score view with playback and the notifications (of the core only the one about a failed weekly backup is left) |
 | **Standard** | everything except practice audio files, the print station, the proposals inbox, checksums and statistics |
-| **Complete** | everything |
+| **Complete** | everything except the interface for agents |
 
 A preset sets every switch at once; the settings ask first and list what
 changes.
@@ -406,8 +407,11 @@ its first year. Left off, and easy to switch on when needed:
 before 0.1.27 stores all switches as on. The switches are stored on every
 installation and update, so a later change of the defaults never switches
 anything at an existing installation; a module added by a later version gets
-its default. The **interface for agents** (planned for milestone 0.6) starts
-off everywhere and is not part of any preset.
+its default. The **interface for agents** starts off everywhere and is
+part of no preset: no preset switches it on or off, not even "Complete". It
+is an access path for tools rather than a function for people, so the
+administration switches it on on purpose (see section 13), and choosing a
+preset later neither opens nor closes it.
 
 ### The modules
 
@@ -439,6 +443,7 @@ off everywhere and is not part of any preset.
 | Dashboard widget | – | on | Nextcloud does not offer the widget. |
 | Notifications | – | on | The app sends no notifications; notifications sent before disappear when they are shown. |
 | One switch per occasion | Notifications and the module of the occasion | on | That notification is not sent; the daily checks withdraw it. Occasions: proposals waiting, remove from the singers' portal, license ends soon, license has ended, weekly backup failed, new question or task, question answered, concert deadlines, confirm what was sung, protection term ended, file changed unnoticed. |
+| Interface for agents | – | off (in no preset) | The API for agents (`/ocs/v2.php/apps/notenarchiv/api/v1/…`) answers 404; the MCP server reports the interface as switched off. Nothing else changes. |
 
 ### Command line
 
@@ -460,3 +465,48 @@ Independently of the modules, every person can hide navigation areas and
 start page cards they do not need (**Customize view** in the navigation). It
 is stored on the server for the account and changes no permission; hidden
 areas still open through links and notifications.
+
+## 13. Agents and the API
+
+Tools and assistants ("agents") can work with the archive through a fixed,
+versioned interface: the **API for agents** (OCS, version 1, described in
+[api-v1.md](api-v1.md) and in `openapi.json`) and an **MCP server** for
+clients such as Claude Desktop or Claude Code ([tools/mcp](../tools/mcp/README.md)).
+An agent can read the catalog, a copy with its rights, the due list,
+concerts and statistics, build text references, ask questions, answer
+questions addressed to its role and propose changes.
+
+**Agents never decide.** The interface has no way to confirm a rights status,
+to add or change licenses, to choose the valid version, to accept proposals,
+to close tasks, to delete or restore anything, to make backups or to change
+settings. People do that in the app, as before. A proposal of an agent lands
+in the proposals inbox; a question goes to the role it is addressed to.
+
+Setting up:
+
+1. Switch on the module **Interface for agents** (Settings → Modules, or
+   `occ notenarchiv:modules enable agent_api`). For proposals, the
+   **Proposals inbox** must be on as well; for questions, **Questions and
+   tasks**.
+2. Create an account that only the agent uses and a group for it, and give
+   the group the role **Proposals (tools)** (reads, proposes, asks) or
+   **Read only**. Do not give agents the roles of the catalog or operations
+   librarian or the conductor.
+3. Create an app password for that account (Personal settings → Security,
+   logged in as the agent's account) and give it to the agent's MCP
+   configuration only. Revoke it when the agent is no longer used.
+
+What the server enforces: every request is checked against the roles of
+the agent's account and the modules, as in the app; every route is limited
+per account; internal preservation copies stay hidden from roles that may
+not view them; answers contain no account names. Proposals and questions
+of the agent appear in the audit log under its account.
+
+To stop all agents at once, switch the module off: the interface answers
+404 immediately. Deleting an app password or the account ends the access of
+one agent.
+
+Note: Nextcloud lets every client with an app password also call the
+internal interface of the app's user interface (with the same role checks).
+The module does not open more than the roles allow; it offers a stable,
+documented contract that stays the same across updates of the app.

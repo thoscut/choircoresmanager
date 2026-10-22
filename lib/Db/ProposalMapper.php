@@ -41,6 +41,23 @@ class ProposalMapper extends QBMapper {
 	}
 
 	/**
+	 * Proposals made by one account, oldest first.
+	 *
+	 * @param string|null $status null = every status
+	 * @return list<Proposal>
+	 */
+	public function findByCreator(string $uid, ?string $status): array {
+		$qb = $this->db->getQueryBuilder();
+		$qb->select('*')->from($this->getTableName())
+			->where($qb->expr()->eq('created_by', $qb->createNamedParameter($uid)))
+			->orderBy('id');
+		if ($status !== null) {
+			$qb->andWhere($qb->expr()->eq('status', $qb->createNamedParameter($status)));
+		}
+		return $this->findEntities($qb);
+	}
+
+	/**
 	 * @return list<Proposal>
 	 */
 	public function findOpenForObject(string $objectType, int $objectId): array {

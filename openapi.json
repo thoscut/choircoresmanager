@@ -1,0 +1,4260 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "notenarchiv",
+        "version": "0.0.1",
+        "description": "Sheet music archive for choirs: catalog, rights, scores, concerts",
+        "license": {
+            "name": "AGPL-3.0-or-later"
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "basic_auth": {
+                "type": "http",
+                "scheme": "basic"
+            },
+            "bearer_auth": {
+                "type": "http",
+                "scheme": "bearer"
+            }
+        },
+        "schemas": {
+            "ApiStatus": {
+                "type": "object",
+                "required": [
+                    "api_version",
+                    "roles",
+                    "modules",
+                    "permissions",
+                    "proposable_fields",
+                    "task_options"
+                ],
+                "properties": {
+                    "api_version": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "roles": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "modules": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "boolean"
+                        }
+                    },
+                    "permissions": {
+                        "type": "object",
+                        "required": [
+                            "create_tasks",
+                            "answer_tasks_for",
+                            "propose",
+                            "view_preservation_copies"
+                        ],
+                        "properties": {
+                            "create_tasks": {
+                                "type": "boolean"
+                            },
+                            "answer_tasks_for": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "propose": {
+                                "type": "boolean"
+                            },
+                            "view_preservation_copies": {
+                                "type": "boolean"
+                            }
+                        }
+                    },
+                    "proposable_fields": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "task_options": {
+                        "type": "object",
+                        "required": [
+                            "kinds",
+                            "addressees",
+                            "categories"
+                        ],
+                        "properties": {
+                            "kinds": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "addressees": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "categories": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "CatalogPage": {
+                "type": "object",
+                "required": [
+                    "items",
+                    "total",
+                    "next_cursor"
+                ],
+                "properties": {
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CatalogRow"
+                        }
+                    },
+                    "total": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "next_cursor": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                }
+            },
+            "CatalogRow": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "shelfmark",
+                    "binder",
+                    "number",
+                    "status",
+                    "work_id",
+                    "version_id",
+                    "title",
+                    "composer",
+                    "work_no",
+                    "arranger_text",
+                    "rights_status",
+                    "rights_confirmed",
+                    "preservation_copy",
+                    "valid_for_choir",
+                    "repertoire_class",
+                    "performances",
+                    "last_performed_on",
+                    "has_musicxml",
+                    "files"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "shelfmark": {
+                        "type": "string"
+                    },
+                    "binder": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "number": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "work_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "nullable": true
+                    },
+                    "version_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "nullable": true
+                    },
+                    "title": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "composer": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "work_no": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "arranger_text": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "rights_status": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "rights_confirmed": {
+                        "type": "boolean"
+                    },
+                    "preservation_copy": {
+                        "type": "boolean"
+                    },
+                    "valid_for_choir": {
+                        "type": "boolean"
+                    },
+                    "repertoire_class": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "performances": {
+                        "type": "integer",
+                        "format": "int64",
+                        "nullable": true
+                    },
+                    "last_performed_on": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "has_musicxml": {
+                        "type": "boolean"
+                    },
+                    "files": {
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                }
+            },
+            "Concert": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "kind",
+                    "title",
+                    "date",
+                    "start_time",
+                    "end_time",
+                    "time_zone",
+                    "location",
+                    "status",
+                    "imported",
+                    "is_public",
+                    "notes",
+                    "items",
+                    "total_duration",
+                    "missing_durations"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "kind": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "date": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "start_time": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "end_time": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "time_zone": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "location": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "imported": {
+                        "type": "boolean"
+                    },
+                    "is_public": {
+                        "type": "boolean"
+                    },
+                    "notes": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ProgrammeItem"
+                        }
+                    },
+                    "total_duration": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "missing_durations": {
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                }
+            },
+            "ConcertPage": {
+                "type": "object",
+                "required": [
+                    "items",
+                    "total",
+                    "next_cursor"
+                ],
+                "properties": {
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ConcertRow"
+                        }
+                    },
+                    "total": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "next_cursor": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                }
+            },
+            "ConcertRow": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "kind",
+                    "title",
+                    "date",
+                    "start_time",
+                    "end_time",
+                    "time_zone",
+                    "location",
+                    "status",
+                    "imported",
+                    "pieces"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "kind": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "date": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "start_time": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "end_time": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "time_zone": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "location": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "imported": {
+                        "type": "boolean"
+                    },
+                    "pieces": {
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                }
+            },
+            "Copy": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "shelfmark",
+                    "binder",
+                    "number",
+                    "status",
+                    "work_id",
+                    "version_id",
+                    "title",
+                    "composer",
+                    "fields",
+                    "rights",
+                    "score",
+                    "files",
+                    "other_copies",
+                    "tasks",
+                    "open_proposals"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "shelfmark": {
+                        "type": "string"
+                    },
+                    "binder": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "number": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "work_id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "version_id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "title": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "composer": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "fields": {
+                        "type": "object",
+                        "required": [
+                            "work",
+                            "version",
+                            "copy"
+                        ],
+                        "properties": {
+                            "work": {
+                                "$ref": "#/components/schemas/FieldValues"
+                            },
+                            "version": {
+                                "$ref": "#/components/schemas/FieldValues"
+                            },
+                            "copy": {
+                                "$ref": "#/components/schemas/FieldValues"
+                            }
+                        }
+                    },
+                    "rights": {
+                        "$ref": "#/components/schemas/Rights"
+                    },
+                    "score": {
+                        "nullable": true,
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/Score"
+                            }
+                        ]
+                    },
+                    "files": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/File"
+                        }
+                    },
+                    "other_copies": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CopyRef"
+                        }
+                    },
+                    "tasks": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Task"
+                        }
+                    },
+                    "open_proposals": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Proposal"
+                        }
+                    }
+                }
+            },
+            "CopyRef": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "shelfmark",
+                    "version_id",
+                    "status"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "shelfmark": {
+                        "type": "string"
+                    },
+                    "version_id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "status": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Due": {
+                "type": "object",
+                "required": [
+                    "cards",
+                    "concerts"
+                ],
+                "properties": {
+                    "cards": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "key",
+                                "count",
+                                "label"
+                            ],
+                            "properties": {
+                                "key": {
+                                    "type": "string"
+                                },
+                                "count": {
+                                    "type": "integer",
+                                    "format": "int64"
+                                },
+                                "label": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "concerts": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "id",
+                                "title",
+                                "date",
+                                "stage",
+                                "label"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "format": "int64"
+                                },
+                                "title": {
+                                    "type": "string"
+                                },
+                                "date": {
+                                    "type": "string"
+                                },
+                                "stage": {
+                                    "type": "string"
+                                },
+                                "label": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "FieldValues": {
+                "type": "object",
+                "additionalProperties": {
+                    "nullable": true,
+                    "oneOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "integer",
+                            "format": "int64"
+                        },
+                        {
+                            "type": "boolean"
+                        }
+                    ]
+                }
+            },
+            "File": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "name",
+                    "path",
+                    "type",
+                    "role",
+                    "found"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "role": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "found": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "OCSMeta": {
+                "type": "object",
+                "required": [
+                    "status",
+                    "statuscode"
+                ],
+                "properties": {
+                    "status": {
+                        "type": "string"
+                    },
+                    "statuscode": {
+                        "type": "integer"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "totalitems": {
+                        "type": "string"
+                    },
+                    "itemsperpage": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ProgrammeItem": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "position",
+                    "copy_id",
+                    "version_id",
+                    "work_id",
+                    "shelfmark",
+                    "title",
+                    "composer",
+                    "arranger_text",
+                    "duration",
+                    "encore",
+                    "struck",
+                    "assignment",
+                    "note",
+                    "warnings"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "position": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "copy_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "nullable": true
+                    },
+                    "version_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "nullable": true
+                    },
+                    "work_id": {
+                        "type": "integer",
+                        "format": "int64",
+                        "nullable": true
+                    },
+                    "shelfmark": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "title": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "composer": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "arranger_text": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "duration": {
+                        "type": "integer",
+                        "format": "int64",
+                        "nullable": true
+                    },
+                    "encore": {
+                        "type": "boolean"
+                    },
+                    "struck": {
+                        "type": "boolean"
+                    },
+                    "assignment": {
+                        "type": "string"
+                    },
+                    "note": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "warnings": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "Proposal": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "level",
+                    "object_id",
+                    "field",
+                    "value",
+                    "reason",
+                    "source",
+                    "status",
+                    "decision_reason",
+                    "created_at",
+                    "decided_at",
+                    "own"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "level": {
+                        "type": "string"
+                    },
+                    "object_id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "field": {
+                        "type": "string"
+                    },
+                    "value": {
+                        "nullable": true,
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "integer",
+                                "format": "int64"
+                            },
+                            {
+                                "type": "number",
+                                "format": "double"
+                            },
+                            {
+                                "type": "boolean"
+                            }
+                        ]
+                    },
+                    "reason": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "source": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "decision_reason": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "decided_at": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "own": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "ProposalPage": {
+                "type": "object",
+                "required": [
+                    "items",
+                    "total",
+                    "next_cursor"
+                ],
+                "properties": {
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Proposal"
+                        }
+                    },
+                    "total": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "next_cursor": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                }
+            },
+            "Rights": {
+                "type": "object",
+                "required": [
+                    "status",
+                    "confirmed",
+                    "confirmed_on",
+                    "preservation_copy",
+                    "valid_for_choir",
+                    "valid_since",
+                    "publication_status",
+                    "portal",
+                    "print_station"
+                ],
+                "properties": {
+                    "status": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "confirmed": {
+                        "type": "boolean"
+                    },
+                    "confirmed_on": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "preservation_copy": {
+                        "type": "boolean"
+                    },
+                    "valid_for_choir": {
+                        "type": "boolean"
+                    },
+                    "valid_since": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "publication_status": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "portal": {
+                        "type": "object",
+                        "required": [
+                            "allowed",
+                            "reason",
+                            "on_portal"
+                        ],
+                        "properties": {
+                            "allowed": {
+                                "type": "boolean"
+                            },
+                            "reason": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "on_portal": {
+                                "type": "boolean"
+                            }
+                        }
+                    },
+                    "print_station": {
+                        "type": "object",
+                        "required": [
+                            "allowed",
+                            "reason"
+                        ],
+                        "properties": {
+                            "allowed": {
+                                "type": "boolean"
+                            },
+                            "reason": {
+                                "type": "string",
+                                "nullable": true
+                            }
+                        }
+                    }
+                }
+            },
+            "Score": {
+                "type": "object",
+                "required": [
+                    "file_id",
+                    "file_name",
+                    "can_view",
+                    "can_play",
+                    "reason"
+                ],
+                "properties": {
+                    "file_id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "file_name": {
+                        "type": "string"
+                    },
+                    "can_view": {
+                        "type": "boolean"
+                    },
+                    "can_play": {
+                        "type": "boolean"
+                    },
+                    "reason": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                }
+            },
+            "Statistics": {
+                "type": "object",
+                "required": [
+                    "period",
+                    "today",
+                    "stock",
+                    "rights",
+                    "repertoire",
+                    "maintenance"
+                ],
+                "properties": {
+                    "period": {
+                        "type": "object",
+                        "required": [
+                            "from",
+                            "to"
+                        ],
+                        "properties": {
+                            "from": {
+                                "type": "integer",
+                                "format": "int64"
+                            },
+                            "to": {
+                                "type": "integer",
+                                "format": "int64"
+                            }
+                        }
+                    },
+                    "today": {
+                        "type": "string"
+                    },
+                    "stock": {
+                        "type": "object",
+                        "required": [
+                            "works",
+                            "versions",
+                            "copies",
+                            "active",
+                            "active_with_file",
+                            "active_with_musicxml",
+                            "preservation_versions",
+                            "preservation_copies",
+                            "status"
+                        ],
+                        "properties": {
+                            "works": {
+                                "type": "integer",
+                                "format": "int64"
+                            },
+                            "versions": {
+                                "type": "integer",
+                                "format": "int64"
+                            },
+                            "copies": {
+                                "type": "integer",
+                                "format": "int64"
+                            },
+                            "active": {
+                                "type": "integer",
+                                "format": "int64"
+                            },
+                            "active_with_file": {
+                                "type": "integer",
+                                "format": "int64"
+                            },
+                            "active_with_musicxml": {
+                                "type": "integer",
+                                "format": "int64"
+                            },
+                            "preservation_versions": {
+                                "type": "integer",
+                                "format": "int64"
+                            },
+                            "preservation_copies": {
+                                "type": "integer",
+                                "format": "int64"
+                            },
+                            "status": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "integer",
+                                    "format": "int64"
+                                }
+                            }
+                        }
+                    },
+                    "rights": {
+                        "type": "object",
+                        "required": [
+                            "status",
+                            "valid_versions",
+                            "licenses",
+                            "portal",
+                            "print_station",
+                            "publication"
+                        ],
+                        "properties": {
+                            "status": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "required": [
+                                        "status",
+                                        "confirmed",
+                                        "unconfirmed",
+                                        "total"
+                                    ],
+                                    "properties": {
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "confirmed": {
+                                            "type": "integer",
+                                            "format": "int64"
+                                        },
+                                        "unconfirmed": {
+                                            "type": "integer",
+                                            "format": "int64"
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "format": "int64"
+                                        }
+                                    }
+                                }
+                            },
+                            "valid_versions": {
+                                "type": "object",
+                                "required": [
+                                    "works",
+                                    "with_valid",
+                                    "without_valid",
+                                    "current_without_valid"
+                                ],
+                                "properties": {
+                                    "works": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    },
+                                    "with_valid": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    },
+                                    "without_valid": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    },
+                                    "current_without_valid": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    }
+                                }
+                            },
+                            "licenses": {
+                                "type": "object",
+                                "required": [
+                                    "total",
+                                    "active",
+                                    "ending",
+                                    "ended",
+                                    "future"
+                                ],
+                                "properties": {
+                                    "total": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    },
+                                    "active": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    },
+                                    "ending": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    },
+                                    "ended": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    },
+                                    "future": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    }
+                                }
+                            },
+                            "portal": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "integer",
+                                    "format": "int64"
+                                }
+                            },
+                            "print_station": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "integer",
+                                    "format": "int64"
+                                }
+                            },
+                            "publication": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "integer",
+                                    "format": "int64"
+                                }
+                            }
+                        }
+                    },
+                    "repertoire": {
+                        "type": "object",
+                        "required": [
+                            "classes",
+                            "years",
+                            "top_works",
+                            "top_composers"
+                        ],
+                        "properties": {
+                            "classes": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "integer",
+                                    "format": "int64"
+                                }
+                            },
+                            "years": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "required": [
+                                        "year",
+                                        "concerts",
+                                        "planned",
+                                        "pieces",
+                                        "works"
+                                    ],
+                                    "properties": {
+                                        "year": {
+                                            "type": "integer",
+                                            "format": "int64"
+                                        },
+                                        "concerts": {
+                                            "type": "integer",
+                                            "format": "int64"
+                                        },
+                                        "planned": {
+                                            "type": "integer",
+                                            "format": "int64"
+                                        },
+                                        "pieces": {
+                                            "type": "integer",
+                                            "format": "int64"
+                                        },
+                                        "works": {
+                                            "type": "integer",
+                                            "format": "int64"
+                                        }
+                                    }
+                                }
+                            },
+                            "top_works": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "required": [
+                                        "work_id",
+                                        "title",
+                                        "composer",
+                                        "performances",
+                                        "last"
+                                    ],
+                                    "properties": {
+                                        "work_id": {
+                                            "type": "integer",
+                                            "format": "int64"
+                                        },
+                                        "title": {
+                                            "type": "string",
+                                            "nullable": true
+                                        },
+                                        "composer": {
+                                            "type": "string",
+                                            "nullable": true
+                                        },
+                                        "performances": {
+                                            "type": "integer",
+                                            "format": "int64"
+                                        },
+                                        "last": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            },
+                            "top_composers": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "required": [
+                                        "composer",
+                                        "performances",
+                                        "works"
+                                    ],
+                                    "properties": {
+                                        "composer": {
+                                            "type": "string"
+                                        },
+                                        "performances": {
+                                            "type": "integer",
+                                            "format": "int64"
+                                        },
+                                        "works": {
+                                            "type": "integer",
+                                            "format": "int64"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "maintenance": {
+                        "type": "object",
+                        "required": [
+                            "tasks",
+                            "proposals"
+                        ],
+                        "properties": {
+                            "tasks": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "required": [
+                                        "addressee",
+                                        "open",
+                                        "answered"
+                                    ],
+                                    "properties": {
+                                        "addressee": {
+                                            "type": "string"
+                                        },
+                                        "open": {
+                                            "type": "integer",
+                                            "format": "int64"
+                                        },
+                                        "answered": {
+                                            "type": "integer",
+                                            "format": "int64"
+                                        }
+                                    }
+                                }
+                            },
+                            "proposals": {
+                                "type": "object",
+                                "required": [
+                                    "open",
+                                    "older_than_30_days"
+                                ],
+                                "properties": {
+                                    "open": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    },
+                                    "older_than_30_days": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "Task": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "kind",
+                    "status",
+                    "copy_id",
+                    "shelfmark",
+                    "title",
+                    "addressee",
+                    "category",
+                    "page",
+                    "measure_from",
+                    "measure_to",
+                    "voice",
+                    "verse",
+                    "origin",
+                    "question",
+                    "answer",
+                    "due",
+                    "closing_note",
+                    "created_at",
+                    "answered_at",
+                    "closed_at",
+                    "own"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "kind": {
+                        "type": "string"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "copy_id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "shelfmark": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "title": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "addressee": {
+                        "type": "string"
+                    },
+                    "category": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "page": {
+                        "type": "integer",
+                        "format": "int64",
+                        "nullable": true
+                    },
+                    "measure_from": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "measure_to": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "voice": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "verse": {
+                        "type": "integer",
+                        "format": "int64",
+                        "nullable": true
+                    },
+                    "origin": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "question": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "answer": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "due": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "closing_note": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string"
+                    },
+                    "answered_at": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "closed_at": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "own": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "TaskPage": {
+                "type": "object",
+                "required": [
+                    "items",
+                    "total",
+                    "next_cursor"
+                ],
+                "properties": {
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Task"
+                        }
+                    },
+                    "total": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "next_cursor": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                }
+            },
+            "TextReference": {
+                "type": "object",
+                "required": [
+                    "text",
+                    "shelfmark",
+                    "title"
+                ],
+                "properties": {
+                    "text": {
+                        "type": "string"
+                    },
+                    "shelfmark": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                }
+            }
+        }
+    },
+    "paths": {
+        "/ocs/v2.php/apps/notenarchiv/api/v1/catalog": {
+            "get": {
+                "operationId": "api_v1_catalog-search",
+                "summary": "Search the catalog",
+                "description": "One row per copy (shelf mark), in the order of the shelf. All filters are optional and combine. Internal preservation copies are left out for roles that may not view them.",
+                "tags": [
+                    "api_v1_catalog"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Text in shelf mark, title, composer, arranger or work number (case-insensitive, also parts of words)",
+                        "schema": {
+                            "type": "string",
+                            "nullable": true,
+                            "default": null
+                        }
+                    },
+                    {
+                        "name": "shelfmark",
+                        "in": "query",
+                        "description": "Exact shelf mark, e.g. \"5-1\" (also finds \"5-01\")",
+                        "schema": {
+                            "type": "string",
+                            "nullable": true,
+                            "default": null
+                        }
+                    },
+                    {
+                        "name": "binder",
+                        "in": "query",
+                        "description": "Number of the binder",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "nullable": true,
+                            "default": null
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Status of the copy",
+                        "schema": {
+                            "type": "string",
+                            "nullable": true,
+                            "default": null,
+                            "enum": [
+                                "active",
+                                "retired",
+                                "missing",
+                                "lent"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "rights_status",
+                        "in": "query",
+                        "description": "Rights status of the version; \"none\" for versions without one",
+                        "schema": {
+                            "type": "string",
+                            "nullable": true,
+                            "default": null,
+                            "enum": [
+                                "public_domain",
+                                "protected",
+                                "open",
+                                "none"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "confirmed",
+                        "in": "query",
+                        "description": "Whether the archive management has confirmed the rights status",
+                        "schema": {
+                            "type": "boolean",
+                            "nullable": true,
+                            "default": null
+                        }
+                    },
+                    {
+                        "name": "repertoire_class",
+                        "in": "query",
+                        "description": "Repertoire class of the work",
+                        "schema": {
+                            "type": "string",
+                            "nullable": true,
+                            "default": null,
+                            "enum": [
+                                "current",
+                                "dormant",
+                                "earlier",
+                                "none"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "has_musicxml",
+                        "in": "query",
+                        "description": "Whether the copy has a MusicXML file",
+                        "schema": {
+                            "type": "boolean",
+                            "nullable": true,
+                            "default": null
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Rows per page",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "default": 25,
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "name": "cursor",
+                        "in": "query",
+                        "description": "The \"next_cursor\" of the page before; omit it for the first page",
+                        "schema": {
+                            "type": "string",
+                            "nullable": true,
+                            "default": null
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Page of the catalog returned",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/CatalogPage"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "A filter value, the limit or the cursor is not valid",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The account has no role in the music archive",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The interface for agents is switched off",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Current user is not logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/notenarchiv/api/v1/copies/{id}": {
+            "get": {
+                "operationId": "api_v1_catalog-copy",
+                "summary": "Read one copy",
+                "description": "The copy with its version and work: every catalog field (without account names), the rights status with confirmation, releases and the valid version, the score and the files, the other copies of the work, its tasks and open proposals. Parts of switched-off modules are empty.",
+                "tags": [
+                    "api_v1_catalog"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the copy (the \"id\" of a search row, not the shelf mark)",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Copy returned",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Copy"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The account has no role, or the copy is an internal preservation copy it may not view",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The copy does not exist, or the interface for agents is switched off",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Current user is not logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/notenarchiv/api/v1/copies/{id}/reference": {
+            "get": {
+                "operationId": "api_v1_catalog-reference",
+                "summary": "Text reference to a place in a copy",
+                "description": "A plain text such as \"5-1 · Title · p. 2 · m. 17–24 · Tenor II\" in the language of the account. It contains no notation and may be passed on freely. Every part of the place is optional.",
+                "tags": [
+                    "api_v1_catalog"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the copy",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page of the score",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "nullable": true,
+                            "default": null
+                        }
+                    },
+                    {
+                        "name": "measure_from",
+                        "in": "query",
+                        "description": "First measure as printed, e.g. \"17\", \"0\" (upbeat) or \"34X\"",
+                        "schema": {
+                            "type": "string",
+                            "nullable": true,
+                            "default": null
+                        }
+                    },
+                    {
+                        "name": "measure_to",
+                        "in": "query",
+                        "description": "Last measure as printed",
+                        "schema": {
+                            "type": "string",
+                            "nullable": true,
+                            "default": null
+                        }
+                    },
+                    {
+                        "name": "voice",
+                        "in": "query",
+                        "description": "Voice, e.g. \"Tenor II\"",
+                        "schema": {
+                            "type": "string",
+                            "nullable": true,
+                            "default": null
+                        }
+                    },
+                    {
+                        "name": "verse",
+                        "in": "query",
+                        "description": "Verse",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "nullable": true,
+                            "default": null
+                        }
+                    },
+                    {
+                        "name": "note",
+                        "in": "query",
+                        "description": "Short note at the end (at most 500 characters)",
+                        "schema": {
+                            "type": "string",
+                            "nullable": true,
+                            "default": null
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Text reference returned",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/TextReference"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "A part of the place is not valid",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The account has no role, or the copy is an internal preservation copy it may not view",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The copy does not exist, or the interface for agents is switched off",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Current user is not logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/notenarchiv/api/v1/concerts": {
+            "get": {
+                "operationId": "api_v1_concert-concerts",
+                "summary": "List concerts and song lists",
+                "description": "By date, events without a date last. \"pieces\" counts the lines of the programme.",
+                "tags": [
+                    "api_v1_concert"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "kind",
+                        "in": "query",
+                        "description": "Only concerts or only song lists",
+                        "schema": {
+                            "type": "string",
+                            "nullable": true,
+                            "default": null,
+                            "enum": [
+                                "concert",
+                                "song_list"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Only events in this state",
+                        "schema": {
+                            "type": "string",
+                            "nullable": true,
+                            "default": null,
+                            "enum": [
+                                "draft",
+                                "fixed",
+                                "sung",
+                                "cancelled"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "from",
+                        "in": "query",
+                        "description": "Only events on or after this day (YYYY-MM-DD)",
+                        "schema": {
+                            "type": "string",
+                            "nullable": true,
+                            "default": null
+                        }
+                    },
+                    {
+                        "name": "to",
+                        "in": "query",
+                        "description": "Only events on or before this day (YYYY-MM-DD)",
+                        "schema": {
+                            "type": "string",
+                            "nullable": true,
+                            "default": null
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Events per page",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "default": 25,
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "name": "cursor",
+                        "in": "query",
+                        "description": "The \"next_cursor\" of the page before; omit it for the first page",
+                        "schema": {
+                            "type": "string",
+                            "nullable": true,
+                            "default": null
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Page of events returned",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/ConcertPage"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "A filter value, the limit or the cursor is not valid",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The account has no role in the music archive",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Concerts or the interface for agents are switched off",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Current user is not logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/notenarchiv/api/v1/concerts/{id}": {
+            "get": {
+                "operationId": "api_v1_concert-concert",
+                "summary": "Read a concert or song list with its programme",
+                "description": "The programme lines in their order with copy, work, duration and the rights warnings (translated), and the total duration of the lines that are not struck.",
+                "tags": [
+                    "api_v1_concert"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the concert or song list",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Event returned",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Concert"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The account has no role in the music archive",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The event does not exist, or concerts or the interface for agents are switched off",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Current user is not logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/notenarchiv/api/v1/proposals": {
+            "get": {
+                "operationId": "api_v1_proposal-proposals",
+                "summary": "List the own proposals",
+                "description": "The proposals this account made, oldest first, with their state: open, accepted or rejected (with the reason of the decision).",
+                "tags": [
+                    "api_v1_proposal"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Only proposals in this state",
+                        "schema": {
+                            "type": "string",
+                            "nullable": true,
+                            "default": null,
+                            "enum": [
+                                "open",
+                                "accepted",
+                                "rejected"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Proposals per page",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "default": 25,
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "name": "cursor",
+                        "in": "query",
+                        "description": "The \"next_cursor\" of the page before; omit it for the first page",
+                        "schema": {
+                            "type": "string",
+                            "nullable": true,
+                            "default": null
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Page of proposals returned",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/ProposalPage"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "The state, the limit or the cursor is not valid",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The account has no role in the music archive",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The proposals inbox or the interface for agents is switched off",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Current user is not logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "operationId": "api_v1_proposal-propose",
+                "summary": "Propose changes of catalog fields",
+                "description": "One proposal per field, all or none. Only fields the catalog librarian may write can be proposed (GET /api/v1/modules lists them); rights confirmations, licenses and the valid version never. Nothing changes until the catalog librarian accepts a proposal in the app. Allowed for the roles contributor and librarian.",
+                "tags": [
+                    "api_v1_proposal"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "level": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "Level of the catalog the fields belong to: \"work\", \"version\" or \"copy\""
+                                    },
+                                    "object_id": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "default": 0,
+                                        "description": "ID of the work, version or copy (see \"work_id\" and \"version_id\" of a copy)"
+                                    },
+                                    "fields": {
+                                        "type": "object",
+                                        "default": {},
+                                        "description": "Field => proposed value; null proposes to empty the field",
+                                        "additionalProperties": {
+                                            "nullable": true,
+                                            "anyOf": [
+                                                {
+                                                    "type": "string"
+                                                },
+                                                {
+                                                    "type": "integer",
+                                                    "format": "int64"
+                                                },
+                                                {
+                                                    "type": "number",
+                                                    "format": "double"
+                                                },
+                                                {
+                                                    "type": "boolean"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "reason": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "Why the change is proposed"
+                                    },
+                                    "source": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "Where it comes from, e.g. the name of a tool or a transcription round (at most 255 characters)"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Proposals created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Proposal"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "The level is unknown, there are no fields, or a field cannot be proposed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The roles of the account may not propose changes",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The work, version or copy does not exist, or the proposals inbox or the interface for agents is switched off",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Current user is not logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/notenarchiv/api/v1/statistics": {
+            "get": {
+                "operationId": "api_v1_statistics-statistics",
+                "summary": "Statistics of the archive",
+                "description": "Stock, rights and releases, licenses, repertoire classes, concerts and pieces per year, the most performed works and composers, open tasks and proposals. Rights, stock and open work are those of today; concerts follow the period (default: the ten years up to now).",
+                "tags": [
+                    "api_v1_statistics"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "from",
+                        "in": "query",
+                        "description": "First year of the period",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "nullable": true,
+                            "default": null
+                        }
+                    },
+                    {
+                        "name": "to",
+                        "in": "query",
+                        "description": "Last year of the period",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "nullable": true,
+                            "default": null
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Statistics returned",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Statistics"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "The period is not valid",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The account has no role in the music archive",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Statistics or the interface for agents are switched off",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Current user is not logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/notenarchiv/api/v1/modules": {
+            "get": {
+                "operationId": "api_v1_status-modules",
+                "summary": "Status of the interface and the modules for this account",
+                "description": "The version of the API, the roles of the account, which modules are active, what the account may write, the fields that can be proposed and the choices of a new task. Call it first: a route of a switched-off module answers 404.",
+                "tags": [
+                    "api_v1_status"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Status returned",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/ApiStatus"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The account has no role in the music archive",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The interface for agents is switched off",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Current user is not logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/notenarchiv/api/v1/due": {
+            "get": {
+                "operationId": "api_v1_task-due",
+                "summary": "What is due for the roles of the account",
+                "description": "The cards of the start page (key, number, translated label) and the concerts with a deadline now, only of active modules. The tasks behind the card \"tasks_open\" are listed by GET /api/v1/tasks?scope=mine.",
+                "tags": [
+                    "api_v1_task"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Due list returned",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Due"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The account has no role in the music archive",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The interface for agents is switched off",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Current user is not logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/notenarchiv/api/v1/tasks": {
+            "get": {
+                "operationId": "api_v1_task-tasks",
+                "summary": "List questions and tasks",
+                "description": "\"mine\": open tasks addressed to a role of the account and, for the catalog librarian, answered tasks to apply; \"open\": all open and answered tasks; \"all\": also the closed ones. In the order of the shelf.",
+                "tags": [
+                    "api_v1_task"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "scope",
+                        "in": "query",
+                        "description": "Which tasks",
+                        "schema": {
+                            "type": "string",
+                            "default": "mine",
+                            "enum": [
+                                "mine",
+                                "open",
+                                "all"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "copy_id",
+                        "in": "query",
+                        "description": "Only the tasks of this copy",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "nullable": true,
+                            "default": null
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Tasks per page",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64",
+                            "default": 25,
+                            "minimum": 1,
+                            "maximum": 100
+                        }
+                    },
+                    {
+                        "name": "cursor",
+                        "in": "query",
+                        "description": "The \"next_cursor\" of the page before; omit it for the first page",
+                        "schema": {
+                            "type": "string",
+                            "nullable": true,
+                            "default": null
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Page of tasks returned",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/TaskPage"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "The scope, the limit or the cursor is not valid",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The account has no role in the music archive",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Questions and tasks or the interface for agents are switched off",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Current user is not logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/notenarchiv/api/v1/copies/{id}/tasks": {
+            "post": {
+                "operationId": "api_v1_task-create-task",
+                "summary": "Ask a question or create a task about a copy",
+                "description": "Addressed to a role (conductor, librarian, operations, reader), with an optional place in the score. Allowed for the roles librarian, conductor, operations and contributor; the addressed role is notified.",
+                "tags": [
+                    "api_v1_task"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "kind": {
+                                        "type": "string",
+                                        "default": "question",
+                                        "enum": [
+                                            "question",
+                                            "check",
+                                            "report"
+                                        ],
+                                        "description": "Question, check or error report"
+                                    },
+                                    "addressee": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "Role that should answer: \"conductor\", \"librarian\", \"operations\" or \"reader\""
+                                    },
+                                    "question": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "The question or task (at most 10,000 characters)"
+                                    },
+                                    "category": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "enum": [
+                                            "reading",
+                                            "structure",
+                                            "origin",
+                                            "shelf",
+                                            "rights",
+                                            "other"
+                                        ],
+                                        "description": "Topic"
+                                    },
+                                    "page": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "Page of the score"
+                                    },
+                                    "measure_from": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "First measure as printed, e.g. \"17\""
+                                    },
+                                    "measure_to": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "Last measure as printed"
+                                    },
+                                    "voice": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "Voice, e.g. \"Tenor II\""
+                                    },
+                                    "verse": {
+                                        "type": "integer",
+                                        "format": "int64",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "Verse"
+                                    },
+                                    "origin": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "Where the question comes from, e.g. the name of a transcription round"
+                                    },
+                                    "due": {
+                                        "type": "string",
+                                        "nullable": true,
+                                        "default": null,
+                                        "description": "Date by which an answer is needed (YYYY-MM-DD)"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the copy",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Task created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Task"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "A value is missing or not valid",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The roles of the account may not create tasks, or the copy is an internal preservation copy it may not view",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The copy does not exist, or questions and tasks or the interface for agents are switched off",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Current user is not logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/ocs/v2.php/apps/notenarchiv/api/v1/tasks/{id}/answer": {
+            "post": {
+                "operationId": "api_v1_task-answer",
+                "summary": "Answer a question or task",
+                "description": "Only a role the task is addressed to answers, and only while the task is open. The catalog librarian then applies or discards the answer in the app.",
+                "tags": [
+                    "api_v1_task"
+                ],
+                "security": [
+                    {
+                        "bearer_auth": []
+                    },
+                    {
+                        "basic_auth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "answer": {
+                                        "type": "string",
+                                        "default": "",
+                                        "description": "The answer"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the task",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    },
+                    {
+                        "name": "OCS-APIRequest",
+                        "in": "header",
+                        "description": "Required to be true for the API request to pass",
+                        "required": true,
+                        "schema": {
+                            "type": "boolean",
+                            "default": true
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Task answered",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {
+                                                    "$ref": "#/components/schemas/Task"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "The answer is empty, or the task is not open any more",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The task is addressed to a role the account does not hold",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The task does not exist, or questions and tasks or the interface for agents are switched off",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Current user is not logged in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "required": [
+                                        "ocs"
+                                    ],
+                                    "properties": {
+                                        "ocs": {
+                                            "type": "object",
+                                            "required": [
+                                                "meta",
+                                                "data"
+                                            ],
+                                            "properties": {
+                                                "meta": {
+                                                    "$ref": "#/components/schemas/OCSMeta"
+                                                },
+                                                "data": {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "api_v1_catalog",
+            "description": "Reading the catalog: search, one copy with its version and work, text references (API v1, see docs/api-v1.md). The catalog belongs to the core; these routes only need the interface for agents. Internal preservation copies are left out for roles that may not view them."
+        },
+        {
+            "name": "api_v1_concert",
+            "description": "Concerts and song lists with their programmes, read only (API v1, see docs/api-v1.md). Planning stays with the conductor and the catalog librarian in the app."
+        },
+        {
+            "name": "api_v1_proposal",
+            "description": "Proposals: create them and read the own ones (API v1, see docs/api-v1.md). A proposal changes nothing; the catalog librarian accepts or rejects it in the app (guideline 6)."
+        },
+        {
+            "name": "api_v1_statistics",
+            "description": "Statistics, read only (API v1, see docs/api-v1.md): figures without personal data of choir members and without account names."
+        },
+        {
+            "name": "api_v1_status",
+            "description": "What the interface for agents offers the calling account: version, roles, active modules and permissions (API v1, see docs/api-v1.md)."
+        },
+        {
+            "name": "api_v1_task",
+            "description": "The due list of the own roles, questions and tasks: read, ask, answer (API v1, see docs/api-v1.md). Who may ask and answer is decided by TaskService, as in the app; closing a task stays with people in the app."
+        }
+    ]
+}

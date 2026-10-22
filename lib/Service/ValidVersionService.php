@@ -11,7 +11,7 @@ namespace OCA\Notenarchiv\Service;
 
 use OCA\Notenarchiv\Db\WorkVersion;
 use OCA\Notenarchiv\Db\WorkVersionMapper;
-use OCA\Notenarchiv\Exception\InvalidInputException;
+use OCA\Notenarchiv\Exception\NotFoundException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IDBConnection;
@@ -98,7 +98,7 @@ class ValidVersionService {
 		try {
 			return $this->versions->find($versionId);
 		} catch (DoesNotExistException) {
-			throw new InvalidInputException('Not found.');
+			throw new NotFoundException('Not found.');
 		}
 	}
 }

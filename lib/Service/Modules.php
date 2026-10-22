@@ -43,8 +43,16 @@ class Modules {
 	public const COMPLETE = 'complete';
 	public const PRESETS = [self::SIMPLE, self::STANDARD, self::COMPLETE];
 
-	/** Planned interface for agents (milestone 0.6): not built yet, always off */
+	/** The interface for agents (OCS API v1, milestone 0.6; see docs/api-v1.md) */
 	public const AGENT_API = 'agent_api';
+
+	/**
+	 * Modules that no preset switches on or off; only their own switch
+	 * changes them. The interface for agents is an access path for tools,
+	 * not a function for people: the administration switches it on on
+	 * purpose, and a preset chosen later neither opens nor closes it.
+	 */
+	public const OUTSIDE_PRESETS = [self::AGENT_API];
 
 	/** Switches of the notifications: this prefix plus the subject (NotificationService) */
 	public const NOTIFY_PREFIX = 'notify_';
@@ -65,6 +73,7 @@ class Modules {
 		'maintenance' => 'Maintaining the catalog',
 		'overview' => 'Overview',
 		'notifications' => 'Notifications',
+		'interfaces' => 'Interfaces',
 		'planned' => 'Planned',
 	];
 
@@ -84,14 +93,15 @@ class Modules {
 	public const PRESET_LABELS = [
 		self::SIMPLE => ['label' => 'Simple', 'description' => 'Catalog, files and the score view with playback.'],
 		self::STANDARD => ['label' => 'Standard', 'description' => 'For most choirs: everything except practice audio files, the print station, the proposals inbox, checksums and statistics.'],
-		self::COMPLETE => ['label' => 'Complete', 'description' => 'All functions.'],
+		self::COMPLETE => ['label' => 'Complete', 'description' => 'All functions. The interface for agents is switched on separately.'],
 	];
 
 	/**
 	 * The register, in the order of the settings. `requires`: modules that
 	 * must be active; `simple` and `standard`: switched on by these presets
-	 * ("complete" switches on everything); `planned`: not built yet.
-	 * Labels and descriptions are English source strings.
+	 * ("complete" switches on everything except OUTSIDE_PRESETS); `planned`:
+	 * not built yet (none at the moment). Labels and descriptions are English
+	 * source strings.
 	 */
 	public const MODULES = [
 		'rights' => ['group' => 'rights', 'requires' => [], 'simple' => false, 'standard' => true, 'planned' => false,
@@ -202,9 +212,9 @@ class Modules {
 		'notify_checksum_mismatch' => ['group' => 'notifications', 'requires' => ['notifications', 'checksums'], 'simple' => true, 'standard' => true, 'planned' => false,
 			'label' => 'File changed unnoticed',
 			'description' => 'To the catalog librarian: an archive file changed without a visible modification.'],
-		self::AGENT_API => ['group' => 'planned', 'requires' => [], 'simple' => false, 'standard' => false, 'planned' => true,
+		self::AGENT_API => ['group' => 'interfaces', 'requires' => [], 'simple' => false, 'standard' => false, 'planned' => false,
 			'label' => 'Interface for agents',
-			'description' => 'A fixed interface for agents and tools (planned).'],
+			'description' => 'A fixed, versioned interface (OCS API v1) for agents and tools that sign in with an app password of an account of their own. They can do only what the roles of that account allow and never take decisions: they read, propose changes and ask or answer questions. Not part of any preset.'],
 	];
 
 	/** @var array<string, bool>|null active modules, computed once per request */
@@ -221,7 +231,10 @@ class Modules {
 
 	/**
 	 * Whether a module is planned but not built yet: always off, cannot be
-	 * switched and is not shown in the settings.
+	 * switched and is not shown in the settings. No module is planned at the
+	 * moment; the mechanism stays for the next one.
+	 *
+	 * @psalm-suppress TypeDoesNotContainType
 	 */
 	public static function isPlanned(string $key): bool {
 		return (self::MODULES[$key]['planned'] ?? false) === true;
@@ -271,8 +284,16 @@ class Modules {
 	}
 
 	/**
-	 * What a preset switches on and off (planned modules are not part of a
-	 * preset).
+	 * Whether the presets set the switch of a module: every switchable module
+	 * except OUTSIDE_PRESETS.
+	 */
+	public static function inPresets(string $key): bool {
+		return self::exists($key) && !self::isPlanned($key) && !in_array($key, self::OUTSIDE_PRESETS, true);
+	}
+
+	/**
+	 * What a preset switches on and off (planned modules and OUTSIDE_PRESETS
+	 * are not part of a preset).
 	 *
 	 * @return array<string, bool>
 	 * @throws InvalidInputException for an unknown preset
@@ -282,7 +303,7 @@ class Modules {
 			throw new InvalidInputException('Unknown preset: %s', [$preset]);
 		}
 		$values = [];
-		foreach (self::switchable() as $key) {
+		foreach (array_filter(self::switchable(), self::inPresets(...)) as $key) {
 			$values[$key] = match ($preset) {
 				self::SIMPLE => self::MODULES[$key]['simple'],
 				self::STANDARD => self::MODULES[$key]['standard'],
@@ -383,9 +404,10 @@ class Modules {
 	}
 
 	/**
-	 * Sets every switchable module as the preset says. A preset may leave a
-	 * switch on whose module it switches off (e.g. the notifications of
-	 * tasks in "simple"): it stays inactive until that module is on.
+	 * Sets every module of the presets as the preset says; OUTSIDE_PRESETS
+	 * keep their switch. A preset may leave a switch on whose module it
+	 * switches off (e.g. the notifications of tasks in "simple"): it stays
+	 * inactive until that module is on.
 	 *
 	 * @return array{enabled: list<string>, alsoEnabled: list<string>, disabled: list<string>, inactive: list<string>, activated: list<string>}
 	 * @throws InvalidInputException for an unknown preset
@@ -398,8 +420,9 @@ class Modules {
 	 * Writes every switch that has no stored value yet, so that a later
 	 * change of the defaults switches nothing (repair step on installation
 	 * and update). An installation from before the modules (< 0.1.27) keeps
-	 * every function it had: all switches on, except planned modules. A new
-	 * installation gets the preset "standard".
+	 * every function it had: all switches on, except planned modules and
+	 * OUTSIDE_PRESETS (the interface for agents starts off everywhere). A
+	 * new installation gets the preset "standard".
 	 *
 	 * @return list<string> the keys written
 	 */
@@ -410,7 +433,7 @@ class Modules {
 			if ($this->appConfig->hasKey(Application::APP_ID, self::CONFIG_PREFIX . $key, null)) {
 				continue;
 			}
-			$value = !self::isPlanned($key) && ($existingInstallation || $standard[$key]);
+			$value = self::inPresets($key) && ($existingInstallation || $standard[$key]);
 			$this->appConfig->setValueBool(Application::APP_ID, self::CONFIG_PREFIX . $key, $value);
 			$written[] = $key;
 		}

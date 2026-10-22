@@ -81,14 +81,18 @@ final class ModuleSettingsTest extends TestCase {
 	public function testDescribesTheModulesForTheSettings(): void {
 		$described = $this->settings($this->modulesWithout(['score_viewer']))->describe($this->l10n());
 		$byKey = array_column($described['modules'], null, 'key');
-		self::assertArrayNotHasKey(Modules::AGENT_API, $byKey, 'planned modules are not listed');
+		self::assertArrayHasKey(Modules::AGENT_API, $byKey, 'the interface for agents can be switched');
+		self::assertSame('interfaces', $byKey[Modules::AGENT_API]['group']);
 		self::assertSame(Modules::switchable(), array_keys($byKey));
 		self::assertSame(['key' => 'playback', 'group' => 'scores', 'label' => '[Playback]',
 			'description' => '[' . Modules::MODULES['playback']['description'] . ']', 'requires' => ['score_viewer'],
 			'enabled' => true, 'active' => false], $byKey['playback']);
-		self::assertSame(['rights', 'releases', 'scores', 'collaboration', 'concerts', 'maintenance', 'overview', 'notifications'],
+		self::assertSame(['rights', 'releases', 'scores', 'collaboration', 'concerts', 'maintenance', 'overview', 'notifications', 'interfaces'],
 			array_column($described['groups'], 'key'));
 		self::assertSame(Modules::PRESETS, array_column($described['presets'], 'key'));
+		foreach ($described['presets'] as $preset) {
+			self::assertArrayNotHasKey(Modules::AGENT_API, $preset['modules'], 'no preset switches the interface for agents');
+		}
 		self::assertSame('[Simple]', $described['presets'][0]['label']);
 		self::assertCount(count(Modules::CORE), $described['core']);
 	}
