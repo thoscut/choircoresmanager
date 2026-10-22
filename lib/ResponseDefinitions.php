@@ -157,6 +157,41 @@ namespace OCA\OrchestraScoresManager;
  *     defaultModerationTime: int|null,
  *     defaultFolderCollectionId: int|null
  * }
+ * @psalm-type OrchestraScoresManagerCatalogueChange = array{
+ *     column: string,
+ *     old: string,
+ *     new: string
+ * }
+ * @psalm-type OrchestraScoresManagerCatalogueImportRow = array{
+ *     line: int,
+ *     signature: string,
+ *     title: string,
+ *     status: 'new'|'changed'|'error',
+ *     scoreId: int|null,
+ *     changes: list<OrchestraScoresManagerCatalogueChange>,
+ *     errors: list<string>
+ * }
+ * @psalm-type OrchestraScoresManagerCatalogueImportCounts = array{
+ *     new: int,
+ *     changed: int,
+ *     unchanged: int,
+ *     errors: int
+ * }
+ * @psalm-type OrchestraScoresManagerCatalogueImportResult = array{
+ *     dryRun: bool,
+ *     counts: OrchestraScoresManagerCatalogueImportCounts,
+ *     mappedColumns: list<string>,
+ *     extraColumns: list<string>,
+ *     rows: list<OrchestraScoresManagerCatalogueImportRow>
+ * }
+ * @psalm-type OrchestraScoresManagerCatalogueExport = array{
+ *     fileName: string,
+ *     content: string
+ * }
+ * @psalm-type OrchestraScoresManagerCatalogueValue = array{
+ *     column: string,
+ *     value: string
+ * }
  * @psalm-suppress UnusedClass - Used for OpenAPI response type definitions
  */
 class ResponseDefinitions {

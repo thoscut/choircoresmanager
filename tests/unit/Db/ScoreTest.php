@@ -328,4 +328,37 @@ final class ScoreTest extends TestCase {
 		$this->assertSame('not_documented', $score->getRepertoireClass());
 		$this->assertSame('not_documented', $score->jsonSerialize()['repertoireClass']);
 	}
+
+	public function testCatalogueExtraValuesKeepOrderAndDropEmptyValues(): void {
+		$score = new Score();
+		$score->setCatalogueExtraValues(['Notenliste' => 'Advent, Frühjahr', 'Mappe' => '5', 'Lizenz' => '', '2024' => 'Zahl als Spaltenname']);
+
+		$this->assertSame(['Notenliste' => 'Advent, Frühjahr', 'Mappe' => '5', '2024' => 'Zahl als Spaltenname'], $score->getCatalogueExtraValues());
+		$this->assertSame('{"Notenliste":"Advent, Frühjahr","Mappe":"5","2024":"Zahl als Spaltenname"}', $score->getCatalogueExtra());
+		$this->assertArrayNotHasKey('catalogueExtra', $score->jsonSerialize());
+	}
+
+	public function testCatalogueExtraValuesWithOnlyNumericColumnNamesStayAnObject(): void {
+		$score = new Score();
+		$score->setCatalogueExtraValues(['0' => 'a', '1' => 'b']);
+
+		$this->assertSame('{"0":"a","1":"b"}', $score->getCatalogueExtra());
+		$this->assertSame(['0' => 'a', '1' => 'b'], $score->getCatalogueExtraValues());
+	}
+
+	public function testEmptyCatalogueExtraValuesAreStoredAsNull(): void {
+		$score = new Score();
+		$score->setCatalogueExtraValues(['Mappe' => '5']);
+		$score->setCatalogueExtraValues(['Mappe' => '']);
+
+		$this->assertNull($score->getCatalogueExtra());
+		$this->assertSame([], $score->getCatalogueExtraValues());
+	}
+
+	public function testSetCatalogueExtraRejectsNonObjectJson(): void {
+		$this->expectException(\InvalidArgumentException::class);
+
+		$score = new Score();
+		$score->setCatalogueExtra('"just a string"');
+	}
 }

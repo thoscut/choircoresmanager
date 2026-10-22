@@ -11,6 +11,10 @@
  */
 
 import {
+  CatalogueApiExportCatalogueData,
+  CatalogueApiGetScoreCatalogueValuesData,
+  CatalogueApiImportCatalogueData,
+  CatalogueApiImportCataloguePayload,
   CommentApiDeleteCommentData,
   CommentApiGetCommentData,
   FolderCollectionApiDeleteFolderCollectionData,
@@ -91,6 +95,90 @@ import { HttpClient, RequestParams } from "./http-client";
 export class Ocs<
   SecurityDataType = unknown,
 > extends HttpClient<SecurityDataType> {
+  /**
+   * @description The file is semicolon-separated UTF-8 with the catalogue header. Rows are matched to scores by the column "Signatur"; rows with a missing or duplicate signature or invalid values are reported as errors and not applied. Scores that are not in the file stay untouched. With dryRun (the default) nothing is saved and the result shows what would change. Counts and changes per row
+   *
+   * @tags catalogue_api
+   * @name CatalogueApiImportCatalogue
+   * @summary Import the work catalogue from a CSV file
+   * @request POST:/ocs/v2.php/apps/orchestrascoresmanager/catalogue/import
+   * @secure
+   */
+  catalogueApiImportCatalogue = (
+    data: CatalogueApiImportCataloguePayload,
+    params: RequestParams = {},
+  ) =>
+    this.request<
+      CatalogueApiImportCatalogueData,
+      | {
+          ocs: {
+            meta: OCSMeta;
+            data: any;
+          };
+        }
+      | string
+    >({
+      path: `/ocs/v2.php/apps/orchestrascoresmanager/catalogue/import`,
+      method: "POST",
+      body: data,
+      secure: true,
+      type: "application/json",
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description File name and content (UTF-8 with BOM)
+   *
+   * @tags catalogue_api
+   * @name CatalogueApiExportCatalogue
+   * @summary Export all scores as a work catalogue CSV file
+   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/catalogue/export
+   * @secure
+   */
+  catalogueApiExportCatalogue = (params: RequestParams = {}) =>
+    this.request<
+      CatalogueApiExportCatalogueData,
+      {
+        ocs: {
+          meta: OCSMeta;
+          data: any;
+        };
+      }
+    >({
+      path: `/ocs/v2.php/apps/orchestrascoresmanager/catalogue/export`,
+      method: "GET",
+      secure: true,
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description Column names and values
+   *
+   * @tags catalogue_api
+   * @name CatalogueApiGetScoreCatalogueValues
+   * @summary Get the catalogue values of a score that are not stored in a field
+   * @request GET:/ocs/v2.php/apps/orchestrascoresmanager/scores/{id}/catalogue
+   * @secure
+   */
+  catalogueApiGetScoreCatalogueValues = (
+    id: number,
+    params: RequestParams = {},
+  ) =>
+    this.request<
+      CatalogueApiGetScoreCatalogueValuesData,
+      {
+        ocs: {
+          meta: OCSMeta;
+          data: any;
+        };
+      }
+    >({
+      path: `/ocs/v2.php/apps/orchestrascoresmanager/scores/${id}/catalogue`,
+      method: "GET",
+      secure: true,
+      format: "json",
+      ...params,
+    });
   /**
    * @description the comment
    *

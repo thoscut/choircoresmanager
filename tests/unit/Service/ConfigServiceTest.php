@@ -162,4 +162,21 @@ final class ConfigServiceTest extends TestCase {
 
 		$this->service->setRepertoireThresholds($currentYears, $dormantYears);
 	}
+
+	public function testGetCatalogueColumnsReturnsOnlyStrings(): void {
+		$this->appConfig->expects($this->once())
+			->method('getAppValueArray')
+			->with('catalogue_columns', [], true)
+			->willReturn(['Signatur', 42, 'Titel', null]);
+
+		$this->assertSame(['Signatur', 'Titel'], $this->service->getCatalogueColumns());
+	}
+
+	public function testSetCatalogueColumnsStoresLazily(): void {
+		$this->appConfig->expects($this->once())
+			->method('setAppValueArray')
+			->with('catalogue_columns', ['Signatur', 'Neue Spalte'], true);
+
+		$this->service->setCatalogueColumns(['Signatur', 'Neue Spalte']);
+	}
 }

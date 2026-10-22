@@ -83,6 +83,11 @@ class Score extends Entity implements JsonSerializable {
 	protected string $inventoryStatus = self::INVENTORY_STATUS_ACTIVE;
 	/** Date of the last performance as documented in an imported catalogue (DATE field) */
 	protected ?\DateTimeImmutable $lastPerformedImported = null;
+	/**
+	 * JSON object with the catalogue columns that are not mapped to a field, keyed by column name.
+	 * Not part of jsonSerialize(); served separately to keep score lists small.
+	 */
+	protected ?string $catalogueExtra = null;
 
 	// transient properties, not stored in DB
 	// ensure to add setters & getters for these
@@ -117,6 +122,7 @@ class Score extends Entity implements JsonSerializable {
 		$this->addType('language', Types::STRING);
 		$this->addType('inventoryStatus', Types::STRING);
 		$this->addType('lastPerformedImported', Types::DATE_IMMUTABLE);
+		$this->addType('catalogueExtra', Types::TEXT);
 	}
 
 	public function jsonSerialize(): array {
@@ -203,6 +209,61 @@ class Score extends Entity implements JsonSerializable {
 			return;
 		}
 		$this->setter('lastPerformedImported', [$lastPerformedImported]);
+	}
+
+	/**
+	 * Get the catalogue columns that are not mapped to a field.
+	 *
+	 * @return array<array-key, string> Column name => value, in stored order (numeric names become integer keys)
+	 */
+	public function getCatalogueExtraValues(): array {
+		if ($this->catalogueExtra === null || $this->catalogueExtra === '') {
+			return [];
+		}
+		/** @var mixed $decoded */
+		$decoded = json_decode($this->catalogueExtra, true);
+		if (!is_array($decoded)) {
+			throw new \RuntimeException('Failed to decode catalogueExtra JSON: ' . json_last_error_msg());
+		}
+		$values = [];
+		/** @var mixed $value */
+		foreach ($decoded as $column => $value) {
+			if (is_scalar($value)) {
+				$values[(string)$column] = (string)$value;
+			}
+		}
+		return $values;
+	}
+
+	/**
+	 * Set the catalogue columns that are not mapped to a field.
+	 *
+	 * Empty values are dropped; an empty list is stored as null.
+	 *
+	 * @param array<array-key, string> $values Column name => value
+	 */
+	public function setCatalogueExtraValues(array $values): void {
+		$values = array_filter($values, fn (string $value): bool => $value !== '');
+		$this->setCatalogueExtra($values === [] ? null : $values);
+	}
+
+	/**
+	 * Set the catalogue columns that are not mapped to a field.
+	 *
+	 * @param array<array-key, string>|string|null $catalogueExtra Values or their JSON object
+	 * @throws \InvalidArgumentException if a string is not a JSON object
+	 * @psalm-suppress PossiblyUnusedMethod - Called by Entity framework
+	 */
+	public function setCatalogueExtra(array|string|null $catalogueExtra): void {
+		if (is_string($catalogueExtra) && $catalogueExtra !== '') {
+			if (!is_array(json_decode($catalogueExtra, true))) {
+				throw new \InvalidArgumentException('catalogueExtra must be a JSON object');
+			}
+		} elseif (is_array($catalogueExtra)) {
+			// JSON_FORCE_OBJECT keeps an object even for numeric column names
+			$catalogueExtra = json_encode($catalogueExtra, JSON_FORCE_OBJECT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
+		}
+		$this->setter('catalogueExtra', [$catalogueExtra === '' ? null : $catalogueExtra]);
 	}
 
 	/**

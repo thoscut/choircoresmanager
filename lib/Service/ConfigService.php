@@ -106,4 +106,25 @@ class ConfigService {
 	private static function areValidRepertoireThresholds(int $currentYears, int $dormantYears): bool {
 		return $currentYears >= 0 && $currentYears < $dormantYears && $dormantYears <= self::MAX_REPERTOIRE_YEARS;
 	}
+
+	/**
+	 * Get the column names of the last applied catalogue import, in file order.
+	 *
+	 * The export includes these columns even if no score has a value in them.
+	 *
+	 * @return list<string>
+	 */
+	public function getCatalogueColumns(): array {
+		$columns = $this->appConfig->getAppValueArray('catalogue_columns', [], true);
+		return array_values(array_filter($columns, 'is_string'));
+	}
+
+	/**
+	 * Remember the column names of an applied catalogue import.
+	 *
+	 * @param list<string> $columns
+	 */
+	public function setCatalogueColumns(array $columns): void {
+		$this->appConfig->setAppValueArray('catalogue_columns', $columns, true);
+	}
 }

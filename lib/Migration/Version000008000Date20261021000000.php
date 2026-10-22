@@ -20,6 +20,7 @@ use OCP\Migration\SimpleMigrationStep;
  * - language: language of the lyrics
  * - inventory_status: one of active, retired, missing, lent (default active)
  * - last_performed_imported: date of the last performance as documented in an imported catalogue
+ * - catalogue_extra: JSON object with the catalogue columns that are not mapped to a field
  *
  * @psalm-suppress UnusedClass - Migration class discovered by Nextcloud framework
  */
@@ -78,6 +79,14 @@ class Version000008000Date20261021000000 extends SimpleMigrationStep {
 		}
 		if (!$table->hasColumn('last_performed_imported')) {
 			$table->addColumn('last_performed_imported', Types::DATE_IMMUTABLE, [
+				'notnull' => false,
+			]);
+			$changed = true;
+		}
+		if (!$table->hasColumn('catalogue_extra')) {
+			// TEXT rather than JSON: some backends reorder the keys of JSON columns,
+			// but the column order of the catalogue has to survive an export
+			$table->addColumn('catalogue_extra', Types::TEXT, [
 				'notnull' => false,
 			]);
 			$changed = true;

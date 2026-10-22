@@ -10,6 +10,53 @@
  * ---------------------------------------------------------------
  */
 
+export interface CatalogueChange {
+  column: string;
+  old: string;
+  new: string;
+}
+
+export interface CatalogueExport {
+  fileName: string;
+  content: string;
+}
+
+export interface CatalogueImportCounts {
+  /** @format int64 */
+  new: number;
+  /** @format int64 */
+  changed: number;
+  /** @format int64 */
+  unchanged: number;
+  /** @format int64 */
+  errors: number;
+}
+
+export interface CatalogueImportResult {
+  dryRun: boolean;
+  counts: CatalogueImportCounts;
+  mappedColumns: string[];
+  extraColumns: string[];
+  rows: CatalogueImportRow[];
+}
+
+export interface CatalogueImportRow {
+  /** @format int64 */
+  line: number;
+  signature: string;
+  title: string;
+  status: "new" | "changed" | "error";
+  /** @format int64 */
+  scoreId: number | null;
+  changes: CatalogueChange[];
+  errors: string[];
+}
+
+export interface CatalogueValue {
+  column: string;
+  value: string;
+}
+
 export interface Comment {
   /** @format int64 */
   id: number;
@@ -229,6 +276,37 @@ export interface UserSetlistSettings {
   defaultModerationTime: number | null;
   /** @format int64 */
   defaultFolderCollectionId: number | null;
+}
+
+export interface CatalogueApiImportCataloguePayload {
+  /** The content of the CSV file */
+  csv: string;
+  /**
+   * Only report the changes without saving them
+   * @default true
+   */
+  dryRun?: boolean;
+}
+
+export interface CatalogueApiImportCatalogueData {
+  ocs: {
+    meta: OCSMeta;
+    data: CatalogueImportResult;
+  };
+}
+
+export interface CatalogueApiExportCatalogueData {
+  ocs: {
+    meta: OCSMeta;
+    data: CatalogueExport;
+  };
+}
+
+export interface CatalogueApiGetScoreCatalogueValuesData {
+  ocs: {
+    meta: OCSMeta;
+    data: CatalogueValue[];
+  };
 }
 
 export interface CommentApiGetCommentData {
