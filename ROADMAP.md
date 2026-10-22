@@ -23,7 +23,9 @@ Unterstützt werden Nextcloud 33 bis 35.
    - Exemplare bekommen einen Status.
    - Jede Änderung wird protokolliert: wer, wann, alt, neu, Grund.
 4. **Dateien werden nur gelesen.** Die App ändert, verschiebt und benennt
-   keine Datei um.
+   keine Datei um. Einzige Ausnahme: Eine kleine Korrektur einer MusicXML
+   (Tonhöhe, Vorzeichen, Silbe) speichert die App als neue Datei neben der
+   alten. Die alte bleibt unverändert, die Änderung steht im Protokoll.
 5. **Rollen statt Personen.**
    - Rollen werden Nextcloud-Gruppen zugeordnet.
    - Jede Rolle schreibt nur ihre Felder.
@@ -161,6 +163,38 @@ Meilensteinen.
 - **Benachrichtigung:** Wiedervorlage zum Schutzfristende
 - **Inventurliste und Prüfsummenvergleich**
 
+### 0.6 Agenten und Prüfung der Übertragungen
+
+- **Schnittstelle für Agenten:**
+  - eine feste, versionierte API (OCS, `api/v1`) mit OpenAPI-Beschreibung
+    für Lesen, Fällig-Liste, Vorschläge, Rückfragen und Prüfpunkte
+  - ein MCP-Server, der lokal neben dem Agenten läuft, mit App-Passwort
+    eines eigenen Kontos
+  - Schreibende Werkzeuge erzeugen nur Vorschläge, Rückfragen und
+    Prüfergebnisse. Der Server begrenzt sie über die Rolle.
+  - Ein Agentenlauf gegen den Demo-Bestand läuft in der CI mit.
+- **Übertragung prüfen:**
+  - Der Bericht einer Übertragung (`bericht.json`, Format `bericht/1`) kommt
+    über den Dateiabgleich oder die API.
+  - Unsicherheiten, Auslassungen und Rückfragen werden zu Prüfpunkten mit
+    Takt und Stimme.
+  - Rechte und Werkverzeichnis-Felder gehen als Vorschläge in den Eingang.
+  - Der Prüfstand steht bei der Fassung und lässt sich filtern.
+- **Prüfen in der Notenansicht:**
+  - Ein Prüfpunkt springt zu den Takten, hebt die Stimme hervor und spielt
+    die Stelle. Die Scan-Seite steht daneben.
+  - Entscheidungen: Lesung richtig, korrigieren oder Rückfrage.
+  - Musikalische Fragen entscheidet die Chorleitung, Material- und
+    Rechtefragen die Archivverwaltung.
+- **Korrigieren:**
+  - Kleine Korrekturen (Tonhöhe, Vorzeichen, Silbe) gehen in der App über
+    ein Formular je Takt und Stimme, mit Vorschau. Die App speichert sie als
+    neue Datei.
+  - Alles Größere geht als Korrekturauftrag an die Werkzeugkette. Deren
+    neue Datei und Bericht schließen die Punkte.
+- **Benachrichtigungen:** neue Prüfpunkte an die zuständige Rolle;
+  Korrektur eingetroffen.
+
 ### 1.0 Stabil
 
 - Abnahme auf der niedrigsten unterstützten Nextcloud-Version
@@ -220,6 +254,6 @@ Druckstation, eine öffentliche Seite mit Links zu CPDL und IMSLP.
 - **Funktionen eines Chorsystems:** Üben, Termine, Anwesenheit, Nachrichten an
   Sänger
 - **Ausgabe und Rücknahme am Probenabend**
-- **Notensatz**
+- **Notensatz** über kleine Korrekturen hinaus
 - **Hochladen zu externen Notenbibliotheken**
 - **Automatische Urheberrechts- oder Lizenzvermerke**
