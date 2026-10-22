@@ -31,23 +31,35 @@ final class PublicScoreServiceTest extends TestCase {
 		$this->service = new PublicScoreService($this->scoreMapper, $this->configService, $this->musicXmlService);
 	}
 
-	public function testGetPublicScoresOnlyQueriesFreeScoresAndWhitelistsFields(): void {
+	private function createPublishableScore(int $id, string $title): Score {
+		$score = new Score();
+		$score->setId($id);
+		$score->setTitle($title);
+		$score->setRightsStatus('public_domain');
+		$score->setRightsConfirmedAt(new \DateTimeImmutable('2026-10-01'));
+		$score->setPublicationStatus('approved');
+		return $score;
+	}
+
+	public function testGetPublicScoresUsesPublishableQueryAndWhitelistsFields(): void {
 		$this->configService->method('isPublicPageEnabled')->willReturn(true);
 
-		$score = new Score();
-		$score->setId(1);
-		$score->setTitle('Ave verum');
+		$score = $this->createPublishableScore(1, 'Ave verum');
 		$score->setComposer('Mozart');
 		$score->setDefects('torn page');
 		$score->setGemaIds(['123']);
-		$score->setRightsStatus('public_domain');
-		$score->setPublicationStatus('free');
 		$score->setRightsNote('internal note');
+		$score->setRightsConfirmedBy('TS');
+		$score->setPublicationNote('internal publication note');
 		$score->setMusicxmlFile('ave.musicxml');
+		$score->setUpdatedAt(new \DateTimeImmutable('2026-10-15 23:30:00', new \DateTimeZone('UTC')));
 
 		$this->scoreMapper->expects($this->once())
-			->method('findPublic')
+			->method('findPublishable')
 			->willReturn([$score]);
+		$this->musicXmlService->method('getFileMTime')
+			->with($score)
+			->willReturn((new \DateTimeImmutable('2026-10-20 08:00:00', new \DateTimeZone('UTC')))->getTimestamp());
 
 		$result = $this->service->getPublicScores();
 
@@ -59,24 +71,49 @@ final class PublicScoreServiceTest extends TestCase {
 			'year' => null,
 			'duration' => null,
 			'hasMusicXml' => true,
+			'lastUpdated' => '2026-10-20',
 		]], $result);
+	}
+
+	public function testLastUpdatedUsesScoreChangeIfLaterThanFile(): void {
+		$this->configService->method('isPublicPageEnabled')->willReturn(true);
+
+		$score = $this->createPublishableScore(1, 'Ave verum');
+		$score->setUpdatedAt(new \DateTimeImmutable('2026-10-21 12:00:00', new \DateTimeZone('UTC')));
+		$this->scoreMapper->method('findPublishable')->willReturn([$score]);
+		$this->musicXmlService->method('getFileMTime')
+			->willReturn((new \DateTimeImmutable('2025-01-01 08:00:00', new \DateTimeZone('UTC')))->getTimestamp());
+
+		$this->assertSame('2026-10-21', $this->service->getPublicScores()[0]['lastUpdated']);
+	}
+
+	public function testScoreWithoutFileAndChangeDateHasNoMusicXmlAndNoDate(): void {
+		$this->configService->method('isPublicPageEnabled')->willReturn(true);
+
+		$score = $this->createPublishableScore(2, 'Locus iste');
+		$this->scoreMapper->method('findPublishable')->willReturn([$score]);
+		$this->musicXmlService->method('getFileMTime')->willReturn(null);
+
+		$result = $this->service->getPublicScores()[0];
+
+		$this->assertFalse($result['hasMusicXml']);
+		$this->assertNull($result['lastUpdated']);
 	}
 
 	public function testGetPublicScoresFailsWhenDisabled(): void {
 		$this->configService->method('isPublicPageEnabled')->willReturn(false);
-		$this->scoreMapper->expects($this->never())->method('findPublic');
+		$this->scoreMapper->expects($this->never())->method('findPublishable');
 
 		$this->expectException(\InvalidArgumentException::class);
 		$this->service->getPublicScores();
 	}
 
-	public function testGetPublicMusicXmlChecksPublicationInQuery(): void {
+	public function testGetPublicMusicXmlUsesPublishableQuery(): void {
 		$this->configService->method('isPublicPageEnabled')->willReturn(true);
 
-		$score = new Score();
-		$score->setId(3);
+		$score = $this->createPublishableScore(3, 'Ave verum');
 		$this->scoreMapper->expects($this->once())
-			->method('findPublicById')
+			->method('findPublishableById')
 			->with(3)
 			->willReturn($score);
 
@@ -86,9 +123,9 @@ final class PublicScoreServiceTest extends TestCase {
 		$this->assertSame($file, $this->service->getPublicMusicXml(3));
 	}
 
-	public function testGetPublicMusicXmlFailsForNonFreeScore(): void {
+	public function testGetPublicMusicXmlFailsForScoreThatMayNotBeShown(): void {
 		$this->configService->method('isPublicPageEnabled')->willReturn(true);
-		$this->scoreMapper->method('findPublicById')
+		$this->scoreMapper->method('findPublishableById')
 			->willThrowException(new DoesNotExistException('not found'));
 		$this->musicXmlService->expects($this->never())->method('readFile');
 
@@ -98,7 +135,7 @@ final class PublicScoreServiceTest extends TestCase {
 
 	public function testGetPublicMusicXmlFailsWhenDisabled(): void {
 		$this->configService->method('isPublicPageEnabled')->willReturn(false);
-		$this->scoreMapper->expects($this->never())->method('findPublicById');
+		$this->scoreMapper->expects($this->never())->method('findPublishableById');
 
 		$this->expectException(\InvalidArgumentException::class);
 		$this->service->getPublicMusicXml(3);

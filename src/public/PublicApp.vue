@@ -3,7 +3,10 @@
 		<header class="public-scores__header">
 			<h2>{{ t('Freely available scores') }}</h2>
 			<p class="public-scores__intro">
-				{{ t('These scores are in the public domain or licensed for publication. Select a score to view the notes and listen to the individual voices.') }}
+				{{ t('These scores are in the public domain or may be provided digitally under a licence. Select a score to view the notes and listen to the individual voices.') }}
+			</p>
+			<p class="public-scores__disclaimer">
+				{{ t('All content is provided as is, dated with its last update, without warranty and without any obligation to keep earlier versions available.') }}
 			</p>
 			<NcTextField
 				v-model="search"
@@ -20,6 +23,9 @@
 					<h3>{{ selectedScore.title }}</h3>
 					<p class="public-scores__meta">
 						{{ describe(selectedScore) }}
+					</p>
+					<p v-if="selectedScore.lastUpdated" class="public-scores__meta">
+						{{ lastUpdatedText(selectedScore.lastUpdated) }}
 					</p>
 				</div>
 				<div class="public-scores__player-actions">
@@ -56,6 +62,7 @@
 				<div class="public-scores__item-text">
 					<span class="public-scores__item-title">{{ score.title }}</span>
 					<span class="public-scores__meta">{{ describe(score) }}</span>
+					<span v-if="score.lastUpdated" class="public-scores__meta">{{ lastUpdatedText(score.lastUpdated) }}</span>
 				</div>
 				<NcButton
 					v-if="score.hasMusicXml"
@@ -80,6 +87,7 @@ import NcButton from '@nextcloud/vue/components/NcButton'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import MusicXmlPlayer from '@/components/MusicXmlPlayer.vue'
+import { formatDateStr } from '@/composables/useDateFormatting'
 import { CloseIcon, DownloadIcon, PlayIcon, ScoreIcon } from '@/icons/vue-material'
 import { t } from '@/utils/l10n'
 import { formatDurationHHMMSS } from '@/utils/timeFormatUtils'
@@ -92,6 +100,8 @@ interface PublicScore {
 	year: number | null
 	duration: number | null
 	hasMusicXml: boolean
+	/** Date (Y-m-d) of the last change of the score or its MusicXML file */
+	lastUpdated: string | null
 }
 
 const scores = loadState<PublicScore[]>('orchestrascoresmanager', 'publicScores', [])
@@ -124,6 +134,15 @@ async function loadSelectedFile(): Promise<ArrayBuffer> {
 		throw new Error(`HTTP ${response.status}`)
 	}
 	return response.arrayBuffer()
+}
+
+/**
+ * Text stating when a score was last updated
+ *
+ * @param date - The date in Y-m-d format
+ */
+function lastUpdatedText(date: string): string {
+	return t('Last updated: {date}', { date: formatDateStr(date) })
 }
 
 /**
@@ -203,6 +222,11 @@ onMounted(() => {
 	&__intro,
 	&__meta {
 		color: var(--color-text-maxcontrast);
+	}
+
+	&__disclaimer {
+		color: var(--color-text-maxcontrast);
+		font-size: var(--font-size-small, 13px);
 	}
 
 	&__search {

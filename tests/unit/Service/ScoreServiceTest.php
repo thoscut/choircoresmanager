@@ -23,6 +23,7 @@ use OCA\OrchestraScoresManager\Service\ScoreService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\IDBConnection;
 use OCP\IL10N;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -286,51 +287,188 @@ final class ScoreServiceTest extends TestCase {
 		$this->assertSame($createdScore, $result);
 	}
 
-	public function testCreateScoreRejectsInvalidRightsStatus(): void {
+	#[TestWith(['rightsStatus', 'free'])]
+	#[TestWith(['rightsStatus', ''])]
+	#[TestWith(['publicationStatus', 'published'])]
+	#[TestWith(['publicationStatus', ''])]
+	public function testCreateScoreRejectsInvalidStatus(string $field, string $value): void {
 		$score = new Score();
 		$score->setTitle('Test Score');
-		$score->setRightsStatus('public');
+		$score->{'set' . ucfirst($field)}($value);
 
 		$this->scoreMapper->expects($this->never())->method('insert');
 
 		$this->expectException(\InvalidArgumentException::class);
+		$this->expectExceptionMessage('Invalid');
 		$this->service->createScore($score);
 	}
 
-	public function testCreateScoreRejectsOldRightsStatus(): void {
-		$score = new Score();
-		$score->setTitle('Test Score');
-		$score->setRightsStatus('free');
-
-		$this->scoreMapper->expects($this->never())->method('insert');
-
-		$this->expectException(\InvalidArgumentException::class);
-		$this->service->createScore($score);
-	}
-
-	public function testCreateScoreRejectsInvalidPublicationStatus(): void {
-		$score = new Score();
-		$score->setTitle('Test Score');
-		$score->setPublicationStatus('public');
-
-		$this->scoreMapper->expects($this->never())->method('insert');
-
-		$this->expectException(\InvalidArgumentException::class);
-		$this->service->createScore($score);
-	}
-
-	public function testUpdateScoreAcceptsRightsAndPublicationStatus(): void {
+	public function testUpdateScoreAcceptsRightsAndPublicationFields(): void {
 		$score = new Score();
 		$score->setId(1);
-		$score->setRightsStatus('public_domain');
-		$score->setPublicationStatus('internal_copy');
+		$score->setRightsStatus('licensed');
+		$score->setRightsConfirmedAt(new \DateTimeImmutable('2026-10-20'));
+		$score->setRightsConfirmedBy(' TS ');
+		$score->setPublicationStatus('blocked');
+		$score->setPublicationBlockedUntil(new \DateTimeImmutable('2027-01-31'));
 
 		$this->scoreMapper->expects($this->once())->method('update')->with($score);
 		$this->scoreMapper->method('find')->willReturn($score);
 
-		$updated = $this->service->updateScore($score);
-		$this->assertSame('public_domain', $updated->getRightsStatus());
-		$this->assertSame('internal_copy', $updated->getPublicationStatus());
+		$result = $this->service->updateScore($score);
+
+		$this->assertSame('licensed', $result->getRightsStatus());
+		$this->assertSame('2026-10-20', $result->getRightsConfirmedAt()?->format('Y-m-d'));
+		$this->assertSame('TS', $result->getRightsConfirmedBy());
+		$this->assertSame('2027-01-31', $result->getPublicationBlockedUntil()?->format('Y-m-d'));
+	}
+
+	public function testUpdateScoreRejectsTooLongRightsConfirmation(): void {
+		$score = new Score();
+		$score->setId(1);
+		$score->setRightsConfirmedBy(str_repeat('ä', ScoreService::RIGHTS_CONFIRMED_BY_MAX_LENGTH + 1));
+
+		$this->scoreMapper->expects($this->never())->method('update');
+
+		$this->expectException(\InvalidArgumentException::class);
+		$this->service->updateScore($score);
+	}
+
+	public function testUpdateScoreAcceptsRightsConfirmationOfMaximumLength(): void {
+		$score = new Score();
+		$score->setId(1);
+		$score->setRightsConfirmedBy(str_repeat('ä', ScoreService::RIGHTS_CONFIRMED_BY_MAX_LENGTH));
+		$this->scoreMapper->method('find')->willReturn($score);
+
+		$this->assertSame(
+			str_repeat('ä', ScoreService::RIGHTS_CONFIRMED_BY_MAX_LENGTH),
+			$this->service->updateScore($score)->getRightsConfirmedBy(),
+		);
+	}
+
+	public function testUpdateScoreTurnsBlankRightsConfirmationIntoNull(): void {
+		$score = new Score();
+		$score->setId(1);
+		$score->setRightsConfirmedBy('   ');
+		$this->scoreMapper->method('find')->willReturn($score);
+
+		$this->assertNull($this->service->updateScore($score)->getRightsConfirmedBy());
+	}
+
+	public function testUpdateScoreClearsRightsConfirmationWhenRightsStatusChanges(): void {
+		$score = $this->createLoadedScore();
+		$score->setRightsStatus('protected');
+		$this->scoreMapper->method('find')->willReturn($score);
+
+		$result = $this->service->updateScore($score);
+
+		$this->assertSame('protected', $result->getRightsStatus());
+		$this->assertNull($result->getRightsConfirmedAt());
+		$this->assertNull($result->getRightsConfirmedBy());
+	}
+
+	public function testUpdateScoreKeepsRightsConfirmationSetTogetherWithStatus(): void {
+		$score = $this->createLoadedScore();
+		$score->setRightsStatus('licensed');
+		$score->setRightsConfirmedAt(new \DateTimeImmutable('2026-10-21'));
+		$this->scoreMapper->method('find')->willReturn($score);
+
+		$result = $this->service->updateScore($score);
+
+		$this->assertSame('2026-10-21', $result->getRightsConfirmedAt()?->format('Y-m-d'));
+		$this->assertSame('TS', $result->getRightsConfirmedBy());
+	}
+
+	public function testUpdateScoreKeepsRightsConfirmationWhenOtherFieldsChange(): void {
+		$score = $this->createLoadedScore();
+		$score->setRightsNote('Composer died 1791');
+		$score->setPublicationStatus('blocked');
+		$score->setPublicationNote('Waiting for the publisher');
+		$this->scoreMapper->method('find')->willReturn($score);
+
+		$result = $this->service->updateScore($score);
+
+		$this->assertSame('2026-10-01', $result->getRightsConfirmedAt()?->format('Y-m-d'));
+		$this->assertSame('TS', $result->getRightsConfirmedBy());
+		$this->assertSame('2027-01-31', $result->getPublicationBlockedUntil()?->format('Y-m-d'));
+	}
+
+	public function testUpdateScoreClearsBlockedUntilWhenNoLongerBlocked(): void {
+		$score = $this->createLoadedScore();
+		$score->setPublicationStatus('approved');
+		$this->scoreMapper->method('find')->willReturn($score);
+
+		$result = $this->service->updateScore($score);
+
+		$this->assertSame('approved', $result->getPublicationStatus());
+		$this->assertNull($result->getPublicationBlockedUntil());
+	}
+
+	public function testUpdateScoreRejectsBlockedUntilForScoreThatIsNotBlocked(): void {
+		$score = $this->createLoadedScore();
+		$score->setPublicationStatus('approved');
+		$score->setPublicationBlockedUntil(new \DateTimeImmutable('2027-01-31'));
+
+		$this->scoreMapper->expects($this->never())->method('update');
+
+		$this->expectException(\InvalidArgumentException::class);
+		$this->expectExceptionMessage('blocked until');
+		$this->service->updateScore($score);
+	}
+
+	public function testCreateScoreRejectsBlockedUntilForScoreThatIsNotBlocked(): void {
+		$score = new Score();
+		$score->setTitle('Test Score');
+		$score->setPublicationBlockedUntil(new \DateTimeImmutable('2027-01-31'));
+
+		$this->scoreMapper->expects($this->never())->method('insert');
+
+		$this->expectException(\InvalidArgumentException::class);
+		$this->service->createScore($score);
+	}
+
+	#[TestWith([null, null])]
+	#[TestWith(['', null])]
+	#[TestWith(['2026-10-21', '2026-10-21'])]
+	#[TestWith(['2028-02-29', '2028-02-29'])]
+	public function testParseDateAcceptsValidDates(?string $value, ?string $expected): void {
+		$date = $this->service->parseDate($value);
+
+		$this->assertSame($expected, $date?->format('Y-m-d'));
+		if ($date !== null) {
+			$this->assertSame('00:00:00 UTC', $date->format('H:i:s T'));
+		}
+	}
+
+	#[TestWith(['2026-02-30'])]
+	#[TestWith(['2027-02-29'])]
+	#[TestWith(['2026-13-01'])]
+	#[TestWith(['2026-1-5'])]
+	#[TestWith(['21.10.2026'])]
+	#[TestWith(['2026-10-21T10:00:00'])]
+	#[TestWith(['yesterday'])]
+	#[TestWith([20261021])]
+	#[TestWith([['2026-10-21']])]
+	public function testParseDateRejectsInvalidDates(mixed $value): void {
+		$this->expectException(\InvalidArgumentException::class);
+		$this->expectExceptionMessage('Invalid date');
+		$this->service->parseDate($value);
+	}
+
+	/**
+	 * A blocked score with a confirmed rights status, as loaded from the database.
+	 */
+	private function createLoadedScore(): Score {
+		$score = new Score();
+		$score->setId(1);
+		$score->setTitle('Test Score');
+		$score->setRightsStatus('public_domain');
+		$score->setRightsConfirmedAt(new \DateTimeImmutable('2026-10-01'));
+		$score->setRightsConfirmedBy('TS');
+		$score->setPublicationStatus('blocked');
+		$score->setPublicationBlockedUntil(new \DateTimeImmutable('2027-01-31'));
+		$score->resetUpdatedFields();
+		return $score;
 	}
 
 	public function testCreateScoreWithTags(): void {

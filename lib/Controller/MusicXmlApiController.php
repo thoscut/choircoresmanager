@@ -39,12 +39,14 @@ class MusicXmlApiController extends OCSController {
 	/**
 	 * Download the MusicXML file of a score
 	 *
+	 * The file of an internal preservation copy is only available to editors.
+	 *
 	 * @param int $id The ID of the score
 	 * @return DataDownloadResponse<Http::STATUS_OK, 'application/vnd.recordare.musicxml+xml'|'application/vnd.recordare.musicxml', array{}> the MusicXML file
 	 *
 	 * 200: The MusicXML file
 	 * @throws OCSBadRequestException if the score or file does not exist
-	 * @throws OCSForbiddenException if the user does not have permission
+	 * @throws OCSForbiddenException if the user does not have permission, e.g. for an internal preservation copy
 	 */
 	#[NoAdminRequired]
 	#[ApiRoute(verb: 'GET', url: '/scores/{id}/musicxml')]

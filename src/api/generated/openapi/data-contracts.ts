@@ -91,11 +91,19 @@ export interface Score {
   /** @format int64 */
   duration: number | null;
   rightsStatus: "public_domain" | "licensed" | "protected" | "open";
-  publicationStatus: "free" | "to_clarify" | "blocked" | "internal_copy";
-  publicationBlockedUntil: string | null;
   rightsNote: string | null;
+  rightsConfirmedAt: string | null;
+  rightsConfirmedBy: string | null;
+  publicationStatus:
+    | "approved"
+    | "to_clarify"
+    | "blocked"
+    | "internal_preservation_copy";
+  publicationNote: string | null;
+  publicationBlockedUntil: string | null;
   musicxmlFile: string | null;
   pdfFile: string | null;
+  updatedAt: string | null;
   tags: string[] | null;
   scoreBook: ScoreBookInfo | null;
   viaScoreBook?: true;
@@ -170,11 +178,19 @@ export interface ScoreIndexed {
   /** @format int64 */
   duration: number | null;
   rightsStatus: "public_domain" | "licensed" | "protected" | "open";
-  publicationStatus: "free" | "to_clarify" | "blocked" | "internal_copy";
-  publicationBlockedUntil: string | null;
   rightsNote: string | null;
+  rightsConfirmedAt: string | null;
+  rightsConfirmedBy: string | null;
+  publicationStatus:
+    | "approved"
+    | "to_clarify"
+    | "blocked"
+    | "internal_preservation_copy";
+  publicationNote: string | null;
+  publicationBlockedUntil: string | null;
   musicxmlFile: string | null;
   pdfFile: string | null;
+  updatedAt: string | null;
   tags: string[] | null;
   scoreBook: ScoreBookInfo | null;
   viaScoreBook?: true;
@@ -599,30 +615,45 @@ export interface ScoreApiPostScorePayload {
    */
   duration?: number | null;
   /**
-   * The copyright status of the score
+   * The rights status of the score
    * @default null
    */
   rightsStatus?: "public_domain" | "licensed" | "protected" | "open" | null;
   /**
-   * Whether the score may be published
-   * @default null
-   */
-  publicationStatus?:
-    | "free"
-    | "to_clarify"
-    | "blocked"
-    | "internal_copy"
-    | null;
-  /**
-   * Date until which publication is blocked (Y-m-d format)
-   * @default null
-   */
-  publicationBlockedUntil?: string | null;
-  /**
-   * A note explaining the rights status
+   * The reasoning for the rights status
    * @default null
    */
   rightsNote?: string | null;
+  /**
+   * The date (Y-m-d) on which a person confirmed the rights status
+   * @default null
+   */
+  rightsConfirmedAt?: string | null;
+  /**
+   * Who confirmed the rights status, e.g. initials (at most 32 characters)
+   * @default null
+   */
+  rightsConfirmedBy?: string | null;
+  /**
+   * The publication status of the score
+   * @default null
+   */
+  publicationStatus?:
+    | "approved"
+    | "to_clarify"
+    | "blocked"
+    | "internal_preservation_copy"
+    | null;
+  /**
+   * The reasoning for the publication status
+   * @default null
+   */
+  publicationNote?: string | null;
+  /**
+   * The date (Y-m-d) until which a blocked score stays blocked; only allowed for blocked scores
+   * @default null
+   */
+  publicationBlockedUntil?: string | null;
   /**
    * optional list of tag ids to link
    * @default null
@@ -717,30 +748,45 @@ export interface ScoreApiPatchScorePayload {
    */
   duration?: number | null;
   /**
-   * The copyright status of the score
+   * The rights status of the score
    * @default null
    */
   rightsStatus?: "public_domain" | "licensed" | "protected" | "open" | null;
   /**
-   * Whether the score may be published
-   * @default null
-   */
-  publicationStatus?:
-    | "free"
-    | "to_clarify"
-    | "blocked"
-    | "internal_copy"
-    | null;
-  /**
-   * Date until which publication is blocked (Y-m-d format)
-   * @default null
-   */
-  publicationBlockedUntil?: string | null;
-  /**
-   * A note explaining the rights status
+   * The reasoning for the rights status
    * @default null
    */
   rightsNote?: string | null;
+  /**
+   * The date (Y-m-d) on which a person confirmed the rights status
+   * @default null
+   */
+  rightsConfirmedAt?: string | null;
+  /**
+   * Who confirmed the rights status, e.g. initials (at most 32 characters)
+   * @default null
+   */
+  rightsConfirmedBy?: string | null;
+  /**
+   * The publication status of the score
+   * @default null
+   */
+  publicationStatus?:
+    | "approved"
+    | "to_clarify"
+    | "blocked"
+    | "internal_preservation_copy"
+    | null;
+  /**
+   * The reasoning for the publication status
+   * @default null
+   */
+  publicationNote?: string | null;
+  /**
+   * The date (Y-m-d) until which a blocked score stays blocked; only allowed for blocked scores
+   * @default null
+   */
+  publicationBlockedUntil?: string | null;
   /**
    * optional list of tag ids to link
    * @default null

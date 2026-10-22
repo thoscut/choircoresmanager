@@ -19,6 +19,7 @@ use OCP\Files\SimpleFS\ISimpleFolder;
 use OCP\IL10N;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 /**
  * Unit tests for MusicXmlService.
@@ -33,7 +34,6 @@ final class MusicXmlServiceTest extends TestCase {
 	private ScoreMapper $scoreMapper;
 	private AuthorizationService $authorizationService;
 	private ScorePolicy $scorePolicy;
-	private PermissionService $permissionService;
 	private MusicXmlService $service;
 	/** @var list<string> */
 	private array $tmpFiles = [];
@@ -47,7 +47,6 @@ final class MusicXmlServiceTest extends TestCase {
 		$this->scoreMapper = $this->createMock(ScoreMapper::class);
 		$this->authorizationService = $this->createMock(AuthorizationService::class);
 		$this->scorePolicy = $this->createMock(ScorePolicy::class);
-		$this->permissionService = $this->createMock(PermissionService::class);
 		$l10n = $this->createMock(IL10N::class);
 		$l10n->method('t')->willReturnCallback(fn ($text, $params = []) => vsprintf($text, $params));
 
@@ -56,7 +55,6 @@ final class MusicXmlServiceTest extends TestCase {
 			$this->scoreMapper,
 			$this->authorizationService,
 			$this->scorePolicy,
-			$this->permissionService,
 			$l10n,
 		);
 	}
@@ -273,17 +271,65 @@ final class MusicXmlServiceTest extends TestCase {
 		$this->service->getForScore(1);
 	}
 
-	public function testGetForScoreRefusesFilesWithoutFileAccess(): void {
-		$score = $this->createScore(6, 'copy.musicxml');
-		$score->setPublicationStatus('internal_copy');
-		$this->scoreMapper->method('find')->willReturn($score);
-		$this->permissionService->expects($this->once())
-			->method('canAccessFiles')
-			->with($score)
-			->willReturn(false);
+	/**
+	 * A service using the real policy, so that the preservation copy rule itself is tested.
+	 */
+	private function createServiceWithRealPolicy(bool $canEdit): MusicXmlService {
+		$permissionService = $this->createMock(PermissionService::class);
+		$permissionService->method('isCurrentUserLoggedIn')->willReturn(true);
+		$permissionService->method('canCurrentUserEdit')->willReturn($canEdit);
+		$l10n = $this->createMock(IL10N::class);
+		$l10n->method('t')->willReturnArgument(0);
+
+		return new MusicXmlService(
+			$this->appData,
+			$this->scoreMapper,
+			new AuthorizationService($this->createMock(LoggerInterface::class), 'orchestrascoresmanager', $l10n),
+			new ScorePolicy($permissionService),
+			$l10n,
+		);
+	}
+
+	private function createPreservationCopy(): Score {
+		$score = $this->createScore(6, 'protected.mxl');
+		$score->setPublicationStatus('internal_preservation_copy');
+		return $score;
+	}
+
+	public function testGetForScoreDeniesPreservationCopyToNonEditors(): void {
+		$this->scoreMapper->method('find')->with(6)->willReturn($this->createPreservationCopy());
 		$this->folder->expects($this->never())->method('getFile');
 
 		$this->expectException(PermissionDeniedException::class);
-		$this->service->getForScore(6);
+		$this->createServiceWithRealPolicy(false)->getForScore(6);
+	}
+
+	public function testGetForScoreServesPreservationCopyToEditors(): void {
+		$this->scoreMapper->method('find')->with(6)->willReturn($this->createPreservationCopy());
+		$file = $this->createMock(ISimpleFile::class);
+		$file->method('getContent')->willReturn(self::VALID_XML);
+		$this->folder->method('getFile')->with('score-6')->willReturn($file);
+
+		$this->assertSame(self::VALID_XML, $this->createServiceWithRealPolicy(true)->getForScore(6)['content']);
+	}
+
+	#[DataProvider('servedToEveryoneProvider')]
+	public function testGetForScoreServesOtherScoresToNonEditors(string $publicationStatus): void {
+		$score = $this->createScore(7, 'score.musicxml');
+		$score->setPublicationStatus($publicationStatus);
+		$this->scoreMapper->method('find')->with(7)->willReturn($score);
+		$file = $this->createMock(ISimpleFile::class);
+		$file->method('getContent')->willReturn(self::VALID_XML);
+		$this->folder->method('getFile')->with('score-7')->willReturn($file);
+
+		$this->assertSame(self::VALID_XML, $this->createServiceWithRealPolicy(false)->getForScore(7)['content']);
+	}
+
+	public static function servedToEveryoneProvider(): array {
+		return [
+			'approved' => ['approved'],
+			'to clarify' => ['to_clarify'],
+			'blocked' => ['blocked'],
+		];
 	}
 }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace OCA\OrchestraScoresManager\Tests\unit\Service;
 
-use OCA\OrchestraScoresManager\Db\Score;
 use OCA\OrchestraScoresManager\Service\ConfigService;
 use OCA\OrchestraScoresManager\Service\PermissionService;
 use OCP\IGroup;
@@ -166,42 +165,4 @@ final class PermissionServiceTest extends TestCase {
 		$this->assertTrue($result);
 	}
 
-	private function loginAs(string $groupId): void {
-		$user = $this->createMock(IUser::class);
-		$group = $this->createMock(IGroup::class);
-		$group->method('getGID')->willReturn($groupId);
-		$this->userSession->method('getUser')->willReturn($user);
-		$this->groupManager->method('getUserGroups')->willReturn([$group]);
-		$this->configService->method('getAllowedEditGroups')->willReturn(['notenwarte']);
-	}
-
-	public function testCanAccessFilesOfInternalCopyOnlyForEditors(): void {
-		$score = new Score();
-		$score->setPublicationStatus('internal_copy');
-
-		$this->loginAs('singers');
-		$this->assertFalse($this->service->canAccessFiles($score));
-	}
-
-	public function testEditorsCanAccessFilesOfInternalCopy(): void {
-		$score = new Score();
-		$score->setPublicationStatus('internal_copy');
-
-		$this->loginAs('notenwarte');
-		$this->assertTrue($this->service->canAccessFiles($score));
-	}
-
-	public function testLoggedInUsersCanAccessFilesOfOtherScores(): void {
-		$score = new Score();
-		$score->setRightsStatus('protected');
-		$score->setPublicationStatus('blocked');
-
-		$this->loginAs('singers');
-		$this->assertTrue($this->service->canAccessFiles($score));
-	}
-
-	public function testAnonymousUsersCannotAccessFiles(): void {
-		$this->userSession->method('getUser')->willReturn(null);
-		$this->assertFalse($this->service->canAccessFiles(new Score()));
-	}
 }

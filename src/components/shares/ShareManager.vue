@@ -1,7 +1,7 @@
 <template>
 	<div class="share-manager">
 		<NcNoteCard type="info">
-			{{ t('Public links work without login and only show scores that are released for publication and whose rights allow it. Group shares show all scores, including PDFs, to the members of the group, except the files of internal preservation copies. Files cannot be downloaded from shares.') }}
+			{{ t('Public links work without login and only show scores that are approved for publication and whose rights are confirmed. Group shares show all scores, including PDFs, to the members of the group, but never the notes of internal preservation copies. Files cannot be downloaded from shares.') }}
 		</NcNoteCard>
 
 		<div v-if="loading" class="share-manager__state">

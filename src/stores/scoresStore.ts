@@ -7,6 +7,7 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { apiClients } from '@/api/client'
 import { useScoreBooksStore } from '@/stores/scoreBooksStore'
+import { useScoreSidebarStore } from '@/stores/scoreSidebarStore'
 
 /**
  * Files that can be attached to a score
@@ -25,6 +26,7 @@ export const useScoresStore = defineStore('scores', () => {
 	const isLoaded = ref(false)
 	const isLoading = ref(false)
 	const scoreBooksStore = useScoreBooksStore()
+	const scoreSidebarStore = useScoreSidebarStore()
 
 	/**
 	 * Get scores sorted by title
@@ -107,7 +109,9 @@ export const useScoresStore = defineStore('scores', () => {
 		scores.value[index] = { ...scores.value[index], [field]: value }
 
 		try {
-			await apiClients.default.scoreApiPatchScore(id, { [field]: value })
+			const response = await apiClients.default.scoreApiPatchScore(id, { [field]: value })
+			// The server may change dependent fields, e.g. clear the rights confirmation when the rights status changes
+			replaceScore(response.data.ocs.data as Score)
 		} catch (error) {
 			// Revert on error
 			scores.value[index] = { ...scores.value[index], [field]: oldValue }
@@ -156,7 +160,7 @@ export const useScoresStore = defineStore('scores', () => {
 	}
 
 	/**
-	 * Replace a score in the store with an updated version from the API
+	 * Replace a score in the store (and in the sidebar, if shown there) with an updated version from the API
 	 *
 	 * @param updated - The updated score
 	 */
@@ -165,6 +169,7 @@ export const useScoresStore = defineStore('scores', () => {
 		if (index !== -1) {
 			scores.value[index] = updated
 		}
+		scoreSidebarStore.updateSelectedScore(updated)
 	}
 
 	/**

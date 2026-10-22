@@ -81,12 +81,13 @@ final class ShareServiceTest extends TestCase {
 		);
 	}
 
-	private function makeScore(int $id, string $title, string $rightsStatus = 'public_domain', string $publicationStatus = 'free'): Score {
+	private function makeScore(int $id, string $title, string $rightsStatus = 'public_domain', string $publicationStatus = 'approved'): Score {
 		$score = new Score();
 		$score->setId($id);
 		$score->setTitle($title);
 		$score->setRightsStatus($rightsStatus);
 		$score->setPublicationStatus($publicationStatus);
+		$score->setRightsConfirmedAt(new \DateTimeImmutable('2026-10-01'));
 		$score->setDefects('internal');
 		return $score;
 	}
@@ -290,16 +291,15 @@ final class ShareServiceTest extends TestCase {
 		$this->assertSame('Geschützt', $result[0]['scores'][0]['title']);
 	}
 
-	public function testGetSharedWithCurrentUserHidesFilesOfInternalCopiesWithoutAccess(): void {
+	public function testGetSharedWithCurrentUserHidesFilesOfPreservationCopies(): void {
 		$user = $this->createMock(IUser::class);
 		$this->userSession->method('getUser')->willReturn($user);
 		$this->groupManager->method('getUserGroupIds')->willReturn(['tenors']);
 		$this->shareMapper->method('findGroupSharesForGroups')->willReturn([$this->makeShare('group', 'score', 1, 'tenors')]);
-		$copy = $this->makeScore(1, 'Erhaltungskopie', 'protected', 'internal_copy');
+		$copy = $this->makeScore(1, 'Erhaltungskopie', 'protected', 'internal_preservation_copy');
 		$copy->setMusicxmlFile('copy.musicxml');
 		$copy->setPdfFile('copy.pdf');
 		$this->scoreMapper->method('findMultipleWithoutTransients')->willReturn([$copy]);
-		$this->permissionService->method('canAccessFiles')->with($copy)->willReturn(false);
 
 		$score = $this->service->getSharedWithCurrentUser()[0]['scores'][0];
 

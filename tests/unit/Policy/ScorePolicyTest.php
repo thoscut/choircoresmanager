@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace OCA\OrchestraScoresManager\Tests\unit\Policy;
 
+use OCA\OrchestraScoresManager\Db\Score;
 use OCA\OrchestraScoresManager\Policy\PolicyInterface;
 use OCA\OrchestraScoresManager\Policy\ScorePolicy;
 use OCA\OrchestraScoresManager\Service\PermissionService;
@@ -69,5 +70,58 @@ final class ScorePolicyTest extends TestCase {
 		$policy = new ScorePolicy($permissionService);
 
 		$this->assertFalse($policy->allows(PolicyInterface::ACTION_READ));
+	}
+
+	/**
+	 * @param string $publicationStatus Publication status of the score
+	 * @param bool|null $canUserEdit Whether the user can edit (null means permission service should not be called)
+	 * @param bool $expectedResult The expected result of the allows() call
+	 */
+	#[DataProvider('readMusicXmlProvider')]
+	public function testReadMusicXml(string $publicationStatus, ?bool $canUserEdit, bool $expectedResult): void {
+		$this->assertReadFile(ScorePolicy::ACTION_READ_MUSICXML, $publicationStatus, $canUserEdit, $expectedResult);
+	}
+
+	#[DataProvider('readMusicXmlProvider')]
+	public function testReadPdf(string $publicationStatus, ?bool $canUserEdit, bool $expectedResult): void {
+		$this->assertReadFile(ScorePolicy::ACTION_READ_PDF, $publicationStatus, $canUserEdit, $expectedResult);
+	}
+
+	private function assertReadFile(string $action, string $publicationStatus, ?bool $canUserEdit, bool $expectedResult): void {
+		if ($canUserEdit === null) {
+			$this->permissionService->expects($this->never())->method('canCurrentUserEdit');
+		} else {
+			$this->permissionService->method('canCurrentUserEdit')->willReturn($canUserEdit);
+		}
+		$score = new Score();
+		$score->setPublicationStatus($publicationStatus);
+
+		$this->assertSame($expectedResult, $this->policy->allows($action, $score));
+	}
+
+	public static function readMusicXmlProvider(): array {
+		return [
+			'approved score for everyone' => ['approved', null, true],
+			'score to clarify for everyone' => ['to_clarify', null, true],
+			'blocked score for everyone' => ['blocked', null, true],
+			'preservation copy for editors' => ['internal_preservation_copy', true, true],
+			'preservation copy denied for others' => ['internal_preservation_copy', false, false],
+		];
+	}
+
+	public function testReadMusicXmlRequiresScoreSubject(): void {
+		$this->assertFalse($this->policy->allows(ScorePolicy::ACTION_READ_MUSICXML));
+		$this->assertFalse($this->policy->allows(ScorePolicy::ACTION_READ_MUSICXML, new \stdClass()));
+	}
+
+	public function testReadMusicXmlDeniedForAnonymousUser(): void {
+		$permissionService = $this->createMock(PermissionService::class);
+		$permissionService->method('isCurrentUserLoggedIn')->willReturn(false);
+		$permissionService->method('canCurrentUserEdit')->willReturn(false);
+		$policy = new ScorePolicy($permissionService);
+		$score = new Score();
+		$score->setPublicationStatus('approved');
+
+		$this->assertFalse($policy->allows(ScorePolicy::ACTION_READ_MUSICXML, $score));
 	}
 }

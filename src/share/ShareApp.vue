@@ -6,7 +6,7 @@
 				{{ target.description }}
 			</p>
 			<p class="shared-page__meta">
-				{{ t('Only scores released for publication are shown. Select a score to view the notes and listen to the individual voices.') }}
+				{{ t('Only scores approved for publication are shown. Select a score to view the notes and listen to the individual voices.') }}
 			</p>
 		</header>
 		<SharedTargetView

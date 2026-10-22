@@ -200,72 +200,158 @@ final class ScoreMapperTest extends MapperTestCase {
 		$this->assertCount(2, $found);
 	}
 
-	public function testRightsAndPublicationStatusDefaults(): void {
+	public function testRightsAndPublicationFieldsHaveDefaults(): void {
 		$score = new Score();
-		$score->setTitle('Defaults');
+		$score->setTitle('Test Score');
 		$inserted = $this->mapper->insert($score);
 
 		$found = $this->mapper->find($inserted->getId());
+
 		$this->assertSame('open', $found->getRightsStatus());
-		$this->assertSame('to_clarify', $found->getPublicationStatus());
-		$this->assertNull($found->getPublicationBlockedUntil());
 		$this->assertNull($found->getRightsNote());
+		$this->assertNull($found->getRightsConfirmedAt());
+		$this->assertNull($found->getRightsConfirmedBy());
+		$this->assertSame('to_clarify', $found->getPublicationStatus());
+		$this->assertNull($found->getPublicationNote());
+		$this->assertNull($found->getPublicationBlockedUntil());
+		$this->assertNull($found->getMusicxmlFile());
 	}
 
-	public function testBlockedUntilDateRoundTrips(): void {
+	public function testRightsAndPublicationFieldsAreStored(): void {
 		$score = new Score();
-		$score->setTitle('Blocked');
+		$score->setTitle('Test Score');
+		$score->setRightsStatus('licensed');
+		$score->setRightsNote('Licence of 2026-10-01');
+		$score->setRightsConfirmedAt(new \DateTimeImmutable('2026-10-20 00:00:00', new \DateTimeZone('UTC')));
+		$score->setRightsConfirmedBy('TS');
 		$score->setPublicationStatus('blocked');
-		$score->setPublicationBlockedUntil('2027-03-31');
+		$score->setPublicationNote('Waiting for the publisher');
+		$score->setPublicationBlockedUntil(new \DateTimeImmutable('2027-01-31 00:00:00', new \DateTimeZone('UTC')));
 		$inserted = $this->mapper->insert($score);
 
-		$this->assertSame('2027-03-31', $this->mapper->find($inserted->getId())->jsonSerialize()['publicationBlockedUntil']);
+		$serialized = $this->mapper->find($inserted->getId())->jsonSerialize();
+
+		$this->assertSame('licensed', $serialized['rightsStatus']);
+		$this->assertSame('Licence of 2026-10-01', $serialized['rightsNote']);
+		$this->assertSame('2026-10-20', $serialized['rightsConfirmedAt']);
+		$this->assertSame('TS', $serialized['rightsConfirmedBy']);
+		$this->assertSame('blocked', $serialized['publicationStatus']);
+		$this->assertSame('Waiting for the publisher', $serialized['publicationNote']);
+		$this->assertSame('2027-01-31', $serialized['publicationBlockedUntil']);
 	}
 
-	public function testFindPublicRequiresReleaseAndPublishableRights(): void {
-		$cases = [
-			'B public domain' => ['public_domain', 'free'],
-			'A licensed' => ['licensed', 'free'],
-			'Protected but free' => ['protected', 'free'],
-			'Open but free' => ['open', 'free'],
-			'Public domain to clarify' => ['public_domain', 'to_clarify'],
-			'Public domain blocked' => ['public_domain', 'blocked'],
-			'Internal copy' => ['public_domain', 'internal_copy'],
-		];
-		$ids = [];
-		foreach ($cases as $title => [$rights, $publication]) {
-			$score = new Score();
-			$score->setTitle($title);
-			$score->setRightsStatus($rights);
-			$score->setPublicationStatus($publication);
-			$ids[$title] = $this->mapper->insert($score)->getId();
+	public function testInsertAndUpdateSetUpdatedAt(): void {
+		$score = new Score();
+		$score->setTitle('Test Score');
+		$inserted = $this->mapper->insert($score);
+
+		$created = $this->mapper->find($inserted->getId())->getUpdatedAt();
+		$this->assertNotNull($created);
+		$this->assertEqualsWithDelta(time(), $created->getTimestamp(), 60);
+
+		$found = $this->mapper->find($inserted->getId());
+		$found->setTitle('Changed');
+		$found->setUpdatedAt(new \DateTimeImmutable('2020-01-01 00:00:00', new \DateTimeZone('UTC')));
+		$this->mapper->update($found);
+
+		$updated = $this->mapper->find($inserted->getId())->getUpdatedAt();
+		$this->assertNotNull($updated);
+		$this->assertEqualsWithDelta(time(), $updated->getTimestamp(), 60);
+	}
+
+	/**
+	 * @param array<string, mixed> $fields
+	 */
+	private function insertScoreWith(string $title, array $fields): Score {
+		$score = new Score();
+		$score->setTitle($title);
+		foreach ($fields as $field => $value) {
+			$score->{'set' . ucfirst($field)}($value);
 		}
+		return $this->mapper->insert($score);
+	}
 
-		$public = array_values(array_filter(
-			$this->mapper->findPublic(),
-			fn (Score $s) => in_array($s->getId(), $ids, true),
-		));
-		$this->assertSame(['A licensed', 'B public domain'], array_map(fn (Score $s) => $s->getTitle(), $public));
+	/**
+	 * Scores covering each condition of the public page, keyed by title.
+	 *
+	 * @return array<string, Score>
+	 */
+	private function insertScoresForPublicPage(): array {
+		$confirmed = new \DateTimeImmutable('2026-10-01 00:00:00', new \DateTimeZone('UTC'));
+		$cases = [
+			'B public domain' => ['rightsStatus' => 'public_domain', 'rightsConfirmedAt' => $confirmed, 'publicationStatus' => 'approved'],
+			'A licensed' => ['rightsStatus' => 'licensed', 'rightsConfirmedAt' => $confirmed, 'publicationStatus' => 'approved'],
+			'Unconfirmed' => ['rightsStatus' => 'public_domain', 'publicationStatus' => 'approved'],
+			'Protected' => ['rightsStatus' => 'protected', 'rightsConfirmedAt' => $confirmed, 'publicationStatus' => 'approved'],
+			'Open' => ['rightsStatus' => 'open', 'rightsConfirmedAt' => $confirmed, 'publicationStatus' => 'approved'],
+			'To clarify' => ['rightsStatus' => 'public_domain', 'rightsConfirmedAt' => $confirmed, 'publicationStatus' => 'to_clarify'],
+			'Blocked' => [
+				'rightsStatus' => 'public_domain',
+				'rightsConfirmedAt' => $confirmed,
+				'publicationStatus' => 'blocked',
+				'publicationBlockedUntil' => new \DateTimeImmutable('2020-01-01 00:00:00', new \DateTimeZone('UTC')),
+			],
+			'Preservation copy' => ['rightsStatus' => 'public_domain', 'rightsConfirmedAt' => $confirmed, 'publicationStatus' => 'internal_preservation_copy'],
+			'Defaults' => [],
+		];
+		$scores = [];
+		foreach ($cases as $title => $fields) {
+			$scores[$title] = $this->insertScoreWith($title, $fields);
+		}
+		return $scores;
+	}
 
-		$this->assertSame($ids['A licensed'], $this->mapper->findPublicById($ids['A licensed'])->getId());
-		$this->expectException(DoesNotExistException::class);
-		$this->mapper->findPublicById($ids['Internal copy']);
+	public function testFindPublishableOnlyReturnsApprovedAndConfirmedFreeOrLicensedScores(): void {
+		$scores = $this->insertScoresForPublicPage();
+		$insertedIds = array_map(fn (Score $s) => $s->getId(), $scores);
+
+		$publishable = array_filter(
+			$this->mapper->findPublishable(),
+			fn (Score $s) => in_array($s->getId(), $insertedIds, true),
+		);
+
+		$this->assertSame(['A licensed', 'B public domain'], array_values(array_map(fn (Score $s) => $s->getTitle(), $publishable)));
+	}
+
+	public function testFindPublishableById(): void {
+		$scores = $this->insertScoresForPublicPage();
+
+		$this->assertSame('A licensed', $this->mapper->findPublishableById($scores['A licensed']->getId())->getTitle());
+		$this->assertSame('B public domain', $this->mapper->findPublishableById($scores['B public domain']->getId())->getTitle());
+
+		foreach (['Unconfirmed', 'Protected', 'Open', 'To clarify', 'Blocked', 'Preservation copy', 'Defaults'] as $title) {
+			try {
+				$this->mapper->findPublishableById($scores[$title]->getId());
+				$this->fail("Score '$title' must not be publishable");
+			} catch (DoesNotExistException) {
+				$this->addToAssertionCount(1);
+			}
+		}
 	}
 
 	public function testFindMultipleWithoutTransientsCanFilterToPublicScores(): void {
 		$ids = [];
-		foreach ([['public_domain', 'free'], ['protected', 'free'], ['public_domain', 'internal_copy']] as [$rights, $publication]) {
+		$cases = [
+			['public_domain', 'approved', true],
+			['public_domain', 'approved', false],
+			['protected', 'approved', true],
+			['public_domain', 'internal_preservation_copy', true],
+		];
+		foreach ($cases as [$rights, $publication, $confirmed]) {
 			$score = new Score();
 			$score->setTitle("Score $rights $publication");
 			$score->setRightsStatus($rights);
 			$score->setPublicationStatus($publication);
+			if ($confirmed) {
+				$score->setRightsConfirmedAt(new \DateTimeImmutable('2026-10-01'));
+			}
 			$ids[] = $this->mapper->insert($score)->getId();
 		}
 
 		$public = $this->mapper->findMultipleWithoutTransients($ids, true);
 		$this->assertSame([$ids[0]], array_map(fn (Score $s) => $s->getId(), $public));
 
-		$this->assertCount(3, $this->mapper->findMultipleWithoutTransients($ids, false));
+		$this->assertCount(4, $this->mapper->findMultipleWithoutTransients($ids, false));
 		$this->assertSame([], $this->mapper->findMultipleWithoutTransients([], false));
 	}
 }

@@ -5,23 +5,24 @@ declare(strict_types=1);
 namespace OCA\OrchestraScoresManager\Db\Enum;
 
 /**
- * Copyright status of a score.
+ * Rights status of a score: may the club provide the work digitally?
  *
- * This records what is known about the rights. Whether a score is published
- * is decided separately, see PublicationStatus.
+ * The status is an assessment; whether a human has confirmed it is stored
+ * separately (rights confirmation date and initials). Whether a score is
+ * actually published is decided by its PublicationStatus.
  */
 enum RightsStatus: string {
 	/** The work is in the public domain */
 	case PUBLIC_DOMAIN = 'public_domain';
-	/** The rights holder has granted a license */
+	/** A licence explicitly allows the digital provision */
 	case LICENSED = 'licensed';
-	/** The work is protected by copyright */
+	/** The work is protected and no licence allows the digital provision */
 	case PROTECTED = 'protected';
-	/** The rights have not been determined yet */
+	/** Not yet assessed or unresolved; treated like a protected work */
 	case OPEN = 'open';
 
 	/**
-	 * Rights statuses that allow publishing a score.
+	 * Values of the rights statuses that allow a publication.
 	 *
 	 * @return list<string>
 	 */

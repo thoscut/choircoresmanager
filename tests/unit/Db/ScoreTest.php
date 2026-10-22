@@ -234,15 +234,24 @@ final class ScoreTest extends TestCase {
 		$this->assertSame('to_clarify', $score->getPublicationStatus());
 	}
 
-	public function testPublicationBlockedUntilAcceptsDateStrings(): void {
+	public function testDateFieldsAreSerializedAsDates(): void {
 		$score = new Score();
-		$score->setPublicationBlockedUntil('2027-03-31');
-		$this->assertSame('2027-03-31', $score->jsonSerialize()['publicationBlockedUntil']);
+		$score->setRightsConfirmedAt(new \DateTimeImmutable('2026-10-20 00:00:00', new \DateTimeZone('UTC')));
+		$score->setPublicationBlockedUntil(new \DateTimeImmutable('2027-03-31 00:00:00', new \DateTimeZone('UTC')));
+		$score->setUpdatedAt(new \DateTimeImmutable('2026-10-21 12:34:56', new \DateTimeZone('UTC')));
 
-		$score->setPublicationBlockedUntil('');
-		$this->assertNull($score->getPublicationBlockedUntil());
+		$serialized = $score->jsonSerialize();
 
-		$this->expectException(\InvalidArgumentException::class);
-		$score->setPublicationBlockedUntil('31.03.2027');
+		$this->assertSame('2026-10-20', $serialized['rightsConfirmedAt']);
+		$this->assertSame('2027-03-31', $serialized['publicationBlockedUntil']);
+		$this->assertSame('2026-10-21T12:34:56+00:00', $serialized['updatedAt']);
+	}
+
+	public function testDateFieldsAreNullByDefault(): void {
+		$serialized = (new Score())->jsonSerialize();
+
+		$this->assertNull($serialized['rightsConfirmedAt']);
+		$this->assertNull($serialized['publicationBlockedUntil']);
+		$this->assertNull($serialized['updatedAt']);
 	}
 }

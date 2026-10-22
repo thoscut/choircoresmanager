@@ -36,7 +36,6 @@ class PdfService {
 		private readonly ScoreMapper $scoreMapper,
 		private readonly AuthorizationService $authorizationService,
 		private readonly ScorePolicy $scorePolicy,
-		private readonly PermissionService $permissionService,
 		private IL10N $l,
 	) {
 	}
@@ -123,9 +122,7 @@ class PdfService {
 	public function getForScore(int $scoreId): array {
 		$this->authorizationService->authorizePolicy($this->scorePolicy, PolicyInterface::ACTION_READ);
 		$score = $this->findScore($scoreId);
-		if (!$this->permissionService->canAccessFiles($score)) {
-			throw new Exceptions\PermissionDeniedException($this->l->t('This score is an internal preservation copy'));
-		}
+		$this->authorizationService->authorizePolicy($this->scorePolicy, ScorePolicy::ACTION_READ_PDF, $score);
 		return $this->readFile($score);
 	}
 

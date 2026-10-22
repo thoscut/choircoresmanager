@@ -4,7 +4,7 @@
 			<template v-if="fileName">
 				<span class="score-file-tab__file-name" :title="fileName">{{ fileName }}</span>
 				<NcButton
-					v-if="config.downloadable && canAccessFile"
+					v-if="config.downloadable && canDownload"
 					variant="tertiary"
 					:aria-label="config.downloadLabel"
 					:title="config.downloadLabel"
@@ -43,17 +43,14 @@
 			</NcButton>
 		</div>
 
-		<NcNoteCard v-if="kind === 'musicxml' && fileName && isPublic(score)" type="info">
-			{{ t('This score is released for publication and its rights allow it, so it is shown on the public page if that page is enabled.') }}
+		<NcNoteCard v-if="fileName && isPreservationCopy" type="warning">
+			{{ t('This score is an internal preservation copy. Its notes are neither displayed nor played back, and only members of the editing groups can download the file.') }}
+		</NcNoteCard>
+		<NcNoteCard v-else-if="kind === 'musicxml' && fileName && isPublishable(score)" type="info">
+			{{ t('This score is approved for publication and its rights are confirmed, so it is shown on the public page if that page is enabled.') }}
 		</NcNoteCard>
 
-		<NcNoteCard v-if="fileName && score.publicationStatus === 'internal_copy'" type="warning">
-			{{ editable
-				? t('This score is an internal preservation copy. Only editors can view and play it.')
-				: t('This score is an internal preservation copy. It can only be viewed by the music librarians.') }}
-		</NcNoteCard>
-
-		<template v-if="fileName && canAccessFile">
+		<template v-if="fileName && !isPreservationCopy">
 			<MusicXmlPlayer
 				v-if="kind === 'musicxml'"
 				:key="`${score.id}-${fileName}-${uploadCount}`"
@@ -82,7 +79,7 @@ import { useScoreSidebarStore } from '@/stores/scoreSidebarStore'
 import { useScoresStore } from '@/stores/scoresStore'
 import { tryShowError } from '@/utils/errorHandling'
 import { t } from '@/utils/l10n'
-import { isPublic } from '@/utils/rightsStatus'
+import { isInternalPreservationCopy, isPublishable } from '@/utils/scoreStatus'
 
 interface Props {
 	score: Score
@@ -91,6 +88,12 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+
+/**
+ * Internal preservation copies are never rendered or played back, and only editors may download them
+ */
+const isPreservationCopy = computed(() => isInternalPreservationCopy(props.score))
+const canDownload = computed(() => props.editable || !isPreservationCopy.value)
 
 const scoresStore = useScoresStore()
 const scoreSidebarStore = useScoreSidebarStore()
@@ -119,11 +122,6 @@ const config = computed(() => props.kind === 'musicxml'
 		})
 
 const fileName = computed(() => (props.kind === 'musicxml' ? props.score.musicxmlFile : props.score.pdfFile) ?? null)
-
-/**
- * Internal preservation copies are only shown to editors, the server enforces the same rule
- */
-const canAccessFile = computed(() => props.editable || props.score.publicationStatus !== 'internal_copy')
 
 /**
  * Load the file for the player or viewer

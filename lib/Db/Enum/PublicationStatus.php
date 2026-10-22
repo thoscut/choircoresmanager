@@ -5,18 +5,18 @@ declare(strict_types=1);
 namespace OCA\OrchestraScoresManager\Db\Enum;
 
 /**
- * Whether a score may be published.
- *
- * A score is shown publicly only if it is released for publication (FREE)
- * and its rights status allows it, see RightsStatus::publishableValues().
+ * Publication status of a score, decided independently of its rights status.
  */
 enum PublicationStatus: string {
-	/** Released for publication */
-	case FREE = 'free';
+	/** Approved for publication on the public page */
+	case APPROVED = 'approved';
 	/** Not decided yet */
 	case TO_CLARIFY = 'to_clarify';
 	/** Must not be published, optionally until a given date */
 	case BLOCKED = 'blocked';
-	/** Internal preservation copy of a protected work: no player, files only for editors */
-	case INTERNAL_COPY = 'internal_copy';
+	/**
+	 * Copy kept only to preserve the work, e.g. of a protected work.
+	 * Its notes are neither rendered nor played back, and only editors may download the file.
+	 */
+	case INTERNAL_PRESERVATION_COPY = 'internal_preservation_copy';
 }

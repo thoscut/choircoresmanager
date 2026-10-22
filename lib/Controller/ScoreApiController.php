@@ -38,6 +38,9 @@ use OCP\IRequest;
 class ScoreApiController extends OCSController {
 	use ServiceExceptionBridgeTrait;
 
+	/** Fields given as Y-m-d strings in the API */
+	private const DATE_FIELDS = ['rightsConfirmedAt', 'publicationBlockedUntil'];
+
 	public function __construct(
 		string $appName,
 		IRequest $request,
@@ -88,10 +91,13 @@ class ScoreApiController extends OCSController {
 	 * @param string|null $digitalStatus The digital status of the score
 	 * @param list<string>|null $gemaIds The GEMA IDs of the score
 	 * @param int|null $duration The duration of the score in seconds
-	 * @param 'public_domain'|'licensed'|'protected'|'open'|null $rightsStatus The copyright status of the score
-	 * @param 'free'|'to_clarify'|'blocked'|'internal_copy'|null $publicationStatus Whether the score may be published
-	 * @param string|null $publicationBlockedUntil Date until which publication is blocked (Y-m-d format)
-	 * @param string|null $rightsNote A note explaining the rights status
+	 * @param 'public_domain'|'licensed'|'protected'|'open'|null $rightsStatus The rights status of the score
+	 * @param string|null $rightsNote The reasoning for the rights status
+	 * @param string|null $rightsConfirmedAt The date (Y-m-d) on which a person confirmed the rights status
+	 * @param string|null $rightsConfirmedBy Who confirmed the rights status, e.g. initials (at most 32 characters)
+	 * @param 'approved'|'to_clarify'|'blocked'|'internal_preservation_copy'|null $publicationStatus The publication status of the score
+	 * @param string|null $publicationNote The reasoning for the publication status
+	 * @param string|null $publicationBlockedUntil The date (Y-m-d) until which a blocked score stays blocked; only allowed for blocked scores
 	 * @param list<int>|null $tagIds optional list of tag ids to link
 	 * @param array{id: int, index: int}|null $scoreBook Score book info with id and index (both required)
 	 *
@@ -119,12 +125,18 @@ class ScoreApiController extends OCSController {
 		?array $gemaIds = null,
 		?int $duration = null,
 		?string $rightsStatus = null,
-		?string $publicationStatus = null,
-		?string $publicationBlockedUntil = null,
 		?string $rightsNote = null,
+		?string $rightsConfirmedAt = null,
+		?string $rightsConfirmedBy = null,
+		?string $publicationStatus = null,
+		?string $publicationNote = null,
+		?string $publicationBlockedUntil = null,
 		?array $tagIds = null,
 		?array $scoreBook = null,
 	): DataResponse {
+		$confirmedAt = $this->callService(fn () => $this->scoreService->parseDate($rightsConfirmedAt));
+		$blockedUntil = $this->callService(fn () => $this->scoreService->parseDate($publicationBlockedUntil));
+
 		$score = $this->callService(fn () => Score::fromParams([
 			'title' => $title,
 			'titleShort' => $titleShort,
@@ -140,9 +152,12 @@ class ScoreApiController extends OCSController {
 			'gemaIds' => $gemaIds,
 			'duration' => $duration,
 			'rightsStatus' => $rightsStatus ?? RightsStatus::OPEN->value,
-			'publicationStatus' => $publicationStatus ?? PublicationStatus::TO_CLARIFY->value,
-			'publicationBlockedUntil' => $publicationBlockedUntil,
 			'rightsNote' => $rightsNote,
+			'rightsConfirmedAt' => $confirmedAt,
+			'rightsConfirmedBy' => $rightsConfirmedBy,
+			'publicationStatus' => $publicationStatus ?? PublicationStatus::TO_CLARIFY->value,
+			'publicationNote' => $publicationNote,
+			'publicationBlockedUntil' => $blockedUntil,
 		]));
 
 		// Build score book info if provided
@@ -176,10 +191,13 @@ class ScoreApiController extends OCSController {
 	 * @param string|null $digitalStatus The digital status of the score
 	 * @param list<string>|null $gemaIds The GEMA IDs of the score
 	 * @param int|null $duration The duration of the score in seconds
-	 * @param 'public_domain'|'licensed'|'protected'|'open'|null $rightsStatus The copyright status of the score
-	 * @param 'free'|'to_clarify'|'blocked'|'internal_copy'|null $publicationStatus Whether the score may be published
-	 * @param string|null $publicationBlockedUntil Date until which publication is blocked (Y-m-d format)
-	 * @param string|null $rightsNote A note explaining the rights status
+	 * @param 'public_domain'|'licensed'|'protected'|'open'|null $rightsStatus The rights status of the score
+	 * @param string|null $rightsNote The reasoning for the rights status
+	 * @param string|null $rightsConfirmedAt The date (Y-m-d) on which a person confirmed the rights status
+	 * @param string|null $rightsConfirmedBy Who confirmed the rights status, e.g. initials (at most 32 characters)
+	 * @param 'approved'|'to_clarify'|'blocked'|'internal_preservation_copy'|null $publicationStatus The publication status of the score
+	 * @param string|null $publicationNote The reasoning for the publication status
+	 * @param string|null $publicationBlockedUntil The date (Y-m-d) until which a blocked score stays blocked; only allowed for blocked scores
 	 * @param list<int>|null $tagIds optional list of tag ids to link
 	 * @param array{id?: int, index?: int}|null $scoreBook Score book info (id and/or index). Set id to null to remove from book.
 	 *
@@ -212,9 +230,12 @@ class ScoreApiController extends OCSController {
 		?array $gemaIds = null,
 		?int $duration = null,
 		?string $rightsStatus = null,
-		?string $publicationStatus = null,
-		?string $publicationBlockedUntil = null,
 		?string $rightsNote = null,
+		?string $rightsConfirmedAt = null,
+		?string $rightsConfirmedBy = null,
+		?string $publicationStatus = null,
+		?string $publicationNote = null,
+		?string $publicationBlockedUntil = null,
 		?array $tagIds = null,
 		?array $scoreBook = null,
 	): DataResponse {
@@ -265,15 +286,21 @@ class ScoreApiController extends OCSController {
 			'duration' => $duration,
 			// the rights and publication status are not nullable, let the service reject a null value
 			'rightsStatus' => $rightsStatus ?? '',
-			'publicationStatus' => $publicationStatus ?? '',
-			'publicationBlockedUntil' => $publicationBlockedUntil,
 			'rightsNote' => $rightsNote,
+			'rightsConfirmedAt' => $rightsConfirmedAt,
+			'rightsConfirmedBy' => $rightsConfirmedBy,
+			'publicationStatus' => $publicationStatus ?? '',
+			'publicationNote' => $publicationNote,
+			'publicationBlockedUntil' => $publicationBlockedUntil,
 		];
 		$this->callService(function () use ($updatableFields, $params, $score): void {
 			/** @psalm-suppress MixedAssignment */
 			foreach ($updatableFields as $field => $value) {
 				if (!array_key_exists($field, $params)) {
 					continue;
+				}
+				if (in_array($field, self::DATE_FIELDS, true)) {
+					$value = $this->scoreService->parseDate($value);
 				}
 				$score->{'set' . ucfirst($field)}($value);
 			}

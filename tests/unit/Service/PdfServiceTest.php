@@ -19,6 +19,7 @@ use OCP\Files\SimpleFS\ISimpleFolder;
 use OCP\IL10N;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 /**
  * Unit tests for PdfService.
@@ -30,7 +31,6 @@ final class PdfServiceTest extends TestCase {
 	private ScoreMapper $scoreMapper;
 	private AuthorizationService $authorizationService;
 	private ScorePolicy $scorePolicy;
-	private PermissionService $permissionService;
 	private PdfService $service;
 	/** @var list<string> */
 	private array $tmpFiles = [];
@@ -44,11 +44,10 @@ final class PdfServiceTest extends TestCase {
 		$this->scoreMapper = $this->createMock(ScoreMapper::class);
 		$this->authorizationService = $this->createMock(AuthorizationService::class);
 		$this->scorePolicy = $this->createMock(ScorePolicy::class);
-		$this->permissionService = $this->createMock(PermissionService::class);
 		$l10n = $this->createMock(IL10N::class);
 		$l10n->method('t')->willReturnCallback(fn ($text, $params = []) => vsprintf($text, $params));
 
-		$this->service = new PdfService($appData, $this->scoreMapper, $this->authorizationService, $this->scorePolicy, $this->permissionService, $l10n);
+		$this->service = new PdfService($appData, $this->scoreMapper, $this->authorizationService, $this->scorePolicy, $l10n);
 	}
 
 	protected function tearDown(): void {
@@ -147,25 +146,54 @@ final class PdfServiceTest extends TestCase {
 		$this->service->deleteForScore(4);
 	}
 
-	public function testGetForScoreRefusesFilesWithoutFileAccess(): void {
+	/**
+	 * A service using the real policy, so that the preservation copy rule itself is tested.
+	 */
+	private function createServiceWithRealPolicy(bool $canEdit): PdfService {
+		$permissionService = $this->createMock(PermissionService::class);
+		$permissionService->method('isCurrentUserLoggedIn')->willReturn(true);
+		$permissionService->method('canCurrentUserEdit')->willReturn($canEdit);
+		$appData = $this->createMock(IAppData::class);
+		$appData->method('getFolder')->with('pdf')->willReturn($this->folder);
+		$l10n = $this->createMock(IL10N::class);
+		$l10n->method('t')->willReturnArgument(0);
+
+		return new PdfService(
+			$appData,
+			$this->scoreMapper,
+			new AuthorizationService($this->createMock(LoggerInterface::class), 'orchestrascoresmanager', $l10n),
+			new ScorePolicy($permissionService),
+			$l10n,
+		);
+	}
+
+	public function testGetForScoreDeniesPreservationCopyToNonEditors(): void {
 		$score = $this->createScore(6, 'copy.pdf');
-		$score->setPublicationStatus('internal_copy');
+		$score->setPublicationStatus('internal_preservation_copy');
 		$this->scoreMapper->method('find')->willReturn($score);
-		$this->permissionService->method('canAccessFiles')->with($score)->willReturn(false);
 		$this->folder->expects($this->never())->method('getFile');
 
 		$this->expectException(PermissionDeniedException::class);
-		$this->service->getForScore(6);
+		$this->createServiceWithRealPolicy(false)->getForScore(6);
 	}
 
-	public function testGetForScoreReadsFileWithFileAccess(): void {
+	public function testGetForScoreServesPreservationCopyToEditors(): void {
 		$score = $this->createScore(6, 'copy.pdf');
+		$score->setPublicationStatus('internal_preservation_copy');
 		$this->scoreMapper->method('find')->willReturn($score);
-		$this->permissionService->method('canAccessFiles')->willReturn(true);
 		$file = $this->createMock(ISimpleFile::class);
 		$file->method('getContent')->willReturn(self::VALID_PDF);
 		$this->folder->method('getFile')->with('score-6')->willReturn($file);
 
-		$this->assertSame(self::VALID_PDF, $this->service->getForScore(6)['content']);
+		$this->assertSame(self::VALID_PDF, $this->createServiceWithRealPolicy(true)->getForScore(6)['content']);
+	}
+
+	public function testGetForScoreServesRegularScoresToSingers(): void {
+		$this->scoreMapper->method('find')->willReturn($this->createScore(6, 'score.pdf'));
+		$file = $this->createMock(ISimpleFile::class);
+		$file->method('getContent')->willReturn(self::VALID_PDF);
+		$this->folder->method('getFile')->with('score-6')->willReturn($file);
+
+		$this->assertSame(self::VALID_PDF, $this->createServiceWithRealPolicy(false)->getForScore(6)['content']);
 	}
 }

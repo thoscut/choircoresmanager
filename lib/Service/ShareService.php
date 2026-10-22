@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace OCA\OrchestraScoresManager\Service;
 
+use OCA\OrchestraScoresManager\Db\Enum\PublicationStatus;
 use OCA\OrchestraScoresManager\Db\Enum\ShareTargetType;
 use OCA\OrchestraScoresManager\Db\Enum\ShareType;
 use OCA\OrchestraScoresManager\Db\FolderCollectionMapper;
@@ -264,7 +265,7 @@ class ShareService {
 			$scores = [];
 		}
 
-		// Public scores are never internal copies; for group shares the viewer's permissions decide
+		// The notes of internal preservation copies are never displayed or played back, not even to editors
 		$items = array_map(fn (Score $score) => [
 			'id' => $score->getId(),
 			'title' => $score->getTitle(),
@@ -273,8 +274,8 @@ class ShareService {
 			'year' => $score->getYear(),
 			'duration' => $score->getDuration(),
 			'index' => $indexes[$score->getId()] ?? null,
-			'hasMusicXml' => $score->getMusicxmlFile() !== null && ($publicOnly || $this->permissionService->canAccessFiles($score)),
-			'hasPdf' => $score->getPdfFile() !== null && ($publicOnly || $this->permissionService->canAccessFiles($score)),
+			'hasMusicXml' => $score->getMusicxmlFile() !== null && self::isViewable($score),
+			'hasPdf' => $score->getPdfFile() !== null && self::isViewable($score),
 		], $scores);
 
 		usort($items, function (array $a, array $b): int {
@@ -292,6 +293,13 @@ class ShareService {
 			'description' => $description,
 			'scores' => $items,
 		];
+	}
+
+	/**
+	 * Whether the notes of a score may be displayed or played back
+	 */
+	private static function isViewable(Score $score): bool {
+		return $score->getPublicationStatus() !== PublicationStatus::INTERNAL_PRESERVATION_COPY->value;
 	}
 
 	/**
