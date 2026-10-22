@@ -61,6 +61,15 @@ Unterstützt werden Nextcloud 33 bis 35.
     - Ein abgeschaltetes Modul ist auch auf dem Server aus: keine Routen,
       keine Hintergrundjobs, keine Meldungen. Seine Daten bleiben erhalten.
     - Jede Person kann Bereiche ausblenden, die sie nicht braucht.
+13. **Einfach und fehlerfrei.** Die App wird von Ehrenamtlichen ohne
+    IT-Hintergrund bedient.
+    - Fehler vermeiden statt melden: Die Einrichtung ist geführt, Eingaben
+      werden vorab geprüft, Folgen stehen vor dem Speichern da, und es gibt
+      einen Rückweg.
+    - Jede Meldung sagt, was los ist und was zu tun ist, mit Verweis auf die
+      passende Stelle der Doku. Leere Ansichten nennen den nächsten Schritt.
+    - Die Doku ist nach Aufgaben je Rolle gegliedert und hat einen Abschnitt
+      „Häufige Probleme“.
 
 ## Benachrichtigungen (Querschnitt)
 
@@ -304,6 +313,18 @@ dieselben Anforderungen auf einem anderen Weg umgesetzt hat):
 - **Vorlagen für Infomaterial** (Flyer, Banner) mit eigenem Absender je Chor.
 - **Weitere Sprachen** (z. B. Französisch, Spanisch, Italienisch,
   Niederländisch, Polnisch), zuletzt, wenn die Texte stehen.
+
+### 0.9 Benutzerführung
+
+- **Geführte Einrichtung** unter Administration → Notenarchiv: Archivordner,
+  Rollen und Gruppen, Zugriffsprüfung, Import, Dateiabgleich, mit Status je
+  Schritt.
+- **Hilfe am Ort:** kurze Erklärungen an Feldern und Ansichten, Verweise auf
+  die Doku aus Meldungen und leeren Ansichten.
+- **Durchgang ohne Vorwissen:** die wichtigsten Aufgaben je Rolle, nur mit
+  Oberfläche und Doku gelöst; was dabei stolpert, wird behoben.
+- **Doku nach Aufgaben** („Wie mache ich …“) je Rolle, Schnellstart, häufige
+  Probleme.
 
 ### 1.0 Stabil
 
