@@ -245,28 +245,35 @@ anzubinden.*
 - **Benachrichtigungen** (umgesetzt): neue Prüfpunkte an die zuständige
   Rolle; Korrektur eingetroffen.
 
-### 1.0 Stabil
+### 0.7 Teilen, Mappen und Druckstation
 
-- Abnahme auf der niedrigsten unterstützten Nextcloud-Version
-- Übersetzungen
-- Dokumentation für Archivverwaltung und Admins
-- Mindestens zwei Maintainer
+Auch Funktionen, über deren Nutzung der Verein noch entscheiden muss, werden
+gebaut: als Module, die anfangs aus sind. Was etwas nach außen öffnet, steht in
+keiner Voreinstellung. Ob eine Funktion genutzt wird, entscheidet der Verein
+mit dem Schalter.
 
-### Später
+- **Links für Chormitglieder** mit Abspielen:
+  - eine eigene Rolle „Chormitglieder“ (Gruppen wie bei den anderen Rollen),
+    die nur die für sie freigegebenen Ausschnitte sieht, nicht das
+    Werkverzeichnis
+  - die gewählte Stimme wird betont (solo oder lauter, die übrigen leiser)
+  - nur für Fassungen, die für die digitale Bereitstellung freigegeben sind;
+    der Server schneidet den Taktbereich zu
+- **Öffentliche Links** für Fassungen mit Veröffentlichungsfreigabe: Ausschnitt
+  ansehen und abspielen ohne Anmeldung, mit Ablaufdatum, Abrufzähler und
+  Begrenzung der Aufrufe; keine Downloads, keine Kontonamen.
+- **Öffentliche Repertoireseite** mit gemeinfreien Werken und Links zu CPDL
+  und IMSLP (nur Links, nichts wird von dort geladen).
+- **Übe-Audio je Stimme für Chormitglieder** bei freigegebenen Fassungen.
+- **Mappenbuch:** Ausgabe und Rücknahme von Sängermappen, mit Löschfristen für
+  die Personenangaben.
+- **Spiegelordner für die Druckstation:** freigegebene PDFs in einem eigenen
+  Zielordner, nie im Archivordner (Ausnahme zu Leitlinie 4, nur mit Modul).
 
-- **Ausschnitt-Links für Sänger mit Abspielen.** Die gewählte Stimme wird
-  betont (solo oder lauter, die übrigen leiser). Nur für Fassungen, die für
-  die digitale Bereitstellung freigegeben sind; der Server schneidet den
-  Taktbereich zu.
-- **Öffentliche Links** für Fassungen mit Veröffentlichungsfreigabe
-- **Ausgabe von Sängermappen** (Mappenbuch). Nur mit Löschfristen.
-- **Übe-Audio je Stimme** für freigegebene Fassungen
-- **Kalender und Auswertungen**
+### 0.8 Archiv und Abspielen
 
-### Aus der Parallelentwicklung übernommen
-
-Ein Fork des Orchestra Scores Manager hat dieselben Anforderungen auf einem
-anderen Weg umgesetzt. Was dort entstanden ist und hier noch fehlt:
+Aus der Parallelentwicklung (ein Fork des Orchestra Scores Manager, der
+dieselben Anforderungen auf einem anderen Weg umgesetzt hat):
 
 - **Stände einer Fassung:**
   - Jede Korrektur ergibt einen neuen, unveränderlichen Stand, mit
@@ -291,19 +298,23 @@ anderen Weg umgesetzt. Was dort entstanden ist und hier noch fehlt:
 - **Jahresstand einfrieren** (CSV, JSON, Prüfsummen-Manifest) und mit dem
   Vorjahr vergleichen.
 - **Lizenzvermerk aus der MusicXML** anzeigen (`<identification><rights>`).
-- **Weitere Sprachen** (z. B. Französisch, Spanisch, Italienisch,
-  Niederländisch, Polnisch).
 - **Vorlagen für Infomaterial** (Flyer, Banner) mit eigenem Absender je Chor.
+- **Weitere Sprachen** (z. B. Französisch, Spanisch, Italienisch,
+  Niederländisch, Polnisch), zuletzt, wenn die Texte stehen.
 
-Nur nach Vereinsentscheidung: Gruppenfreigaben und öffentliche Links für
-Chormitglieder, Mappenbuch (Ausgabe und Rücknahme), ein Spiegelordner für die
-Druckstation, eine öffentliche Seite mit Links zu CPDL und IMSLP.
+### 1.0 Stabil
+
+- Abnahme auf der niedrigsten unterstützten Nextcloud-Version
+- Übersetzungen
+- Dokumentation für Archivverwaltung und Admins
+- Mindestens zwei Maintainer
 
 ## Bewusst nicht vorgesehen
 
 - **Funktionen eines Chorsystems:** Üben, Termine, Anwesenheit, Nachrichten an
   Sänger
-- **Ausgabe und Rücknahme am Probenabend**
+- **Ausgabe und Rücknahme am Probenabend** als eigener Ablauf (Anwesenheit,
+  Erfassen an der Tür). Das Mappenbuch hält nur fest, wer welche Mappe hat.
 - **Notensatz** über kleine Korrekturen hinaus
 - **Hochladen zu externen Notenbibliotheken**
 - **Automatische Urheberrechts- oder Lizenzvermerke**
