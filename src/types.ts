@@ -734,6 +734,190 @@ export interface ChecksumStatus {
 	mismatches: ChecksumMismatch[]
 }
 
+// ---- statistics (GET /api/statistics, /api/statistics/report) ----
+
+/** Copies of one archive binder by state. */
+export interface StatisticsBinderRow {
+	binder: number
+	active: number
+	retired: number
+	missing: number
+	lent: number
+	other: number
+	total: number
+}
+
+/** New copies of one year by where they came from. */
+export interface StatisticsAdditionRow {
+	year: number
+	/** accession assistant */
+	accession: number
+	/** catalog import */
+	import: number
+	/** other (e.g. creation date without audit entry) */
+	other: number
+	total: number
+}
+
+/** Concerts and documented performances of one year. */
+export interface StatisticsYearRow {
+	year: number
+	/** concerts confirmed as sung */
+	concerts: number
+	/** concerts not confirmed yet */
+	planned: number
+	/** programme lines that count as documented performances */
+	pieces: number
+	/** different works among them */
+	works: number
+}
+
+export interface StatisticsRightsRow {
+	/** public_domain, protected, open or none */
+	status: string
+	confirmed: number
+	unconfirmed: number
+	total: number
+}
+
+export interface StatisticsTopWork {
+	workId: number
+	title: string | null
+	composer: string | null
+	/** performance days in the period */
+	performances: number
+	last: string
+}
+
+export interface StatisticsTopComposer {
+	composer: string
+	performances: number
+	works: number
+}
+
+/** A work sung before, but not within the current repertoire. */
+export interface StatisticsLongRow {
+	workId: number
+	title: string | null
+	composer: string | null
+	/** dormant or earlier */
+	class: string
+	performances: number | null
+	last: string | null
+	copyId: number
+	shelfmark: string
+}
+
+/** Open and answered tasks of one addressed role, by age. */
+export interface StatisticsTaskRow {
+	addressee: string
+	open: number
+	answered: number
+	days30: number
+	days90: number
+	days365: number
+	older: number
+}
+
+export interface StatisticsProtectionRow {
+	versionId: number
+	title: string | null
+	composer: string | null
+	until: string
+	rightsStatus: string | null
+	confirmed: boolean
+	copies: { id: number, shelfmark: string, status: string }[]
+}
+
+export interface Statistics {
+	period: { from: number, to: number }
+	today: string
+	/** years with data, for the choice of the period */
+	range: { first: number, last: number }
+	stock: {
+		works: number
+		versions: number
+		copies: number
+		/** active, retired, missing, lent, other */
+		status: Record<string, number>
+		binders: StatisticsBinderRow[]
+		active: number
+		activeWithFile: number
+		activeWithMusicxml: number
+		preservationVersions: number
+		preservationCopies: number
+		additions: StatisticsAdditionRow[]
+	}
+	rights: {
+		status: StatisticsRightsRow[]
+		validVersions: { works: number, withValid: number, withoutValid: number, withoutValidSeveral: number, currentWithoutValid: number }
+		licenses: { total: number, active: number, ending: number, ended: number, future: number, endingDays: number }
+		/** release list state => versions */
+		portal: Record<string, number>
+		printStation: Record<string, number>
+		/** publication status (or none) => versions */
+		publication: Record<string, number>
+	}
+	repertoire: {
+		years: StatisticsYearRow[]
+		undated: number
+		topWorks: StatisticsTopWork[]
+		topComposers: StatisticsTopComposer[]
+		/** current, dormant, earlier, none => works */
+		classes: Record<string, number>
+		sources: { performances: number, import: number }
+		thresholds: { current: number, dormant: number }
+		longNotSung: StatisticsLongRow[]
+		longNotSungTotal: number
+	}
+	maintenance: {
+		tasks: StatisticsTaskRow[]
+		proposals: { open: number, olderThan30Days: number }
+		checksums: { files: number, hashed: number, pending: number, mismatches: number }
+		protection: {
+			years: { year: number, versions: number }[]
+			total: number
+			rows: StatisticsProtectionRow[]
+			/** internal preservation copies: counted, not listed */
+			omitted: number
+		}
+	}
+}
+
+export interface ReportLicense {
+	licenseId: number
+	title: string | null
+	composer: string | null
+	holder: string | null
+	uses: string[]
+	validFrom: string | null
+	validUntil: string | null
+	shelfmarks: string[]
+}
+
+/** The annual report of one year. */
+export interface AnnualReport {
+	year: number
+	today: string
+	concerts: { id: number, date: string | null, title: string | null, location: string | null, status: string, imported: boolean, pieces: number }[]
+	totals: StatisticsYearRow
+	additions: StatisticsAdditionRow
+	accessions: { copyId: number, shelfmark: string, title: string | null, composer: string | null, date: string }[]
+	accessionsOmitted: number
+	licenses: { validOn: string, valid: number, started: ReportLicense[], ended: ReportLicense[], omitted: number }
+	/** as of today */
+	openRights: {
+		open: number
+		none: number
+		publicDomainUnconfirmed: number
+		protectedUnconfirmed: number
+		protectionEnded: number
+		conflicts: number
+		rightsTasks: number
+	}
+	stock: { works: number, versions: number, copies: number, active: number }
+}
+
 /** Everything about one copy (GET /api/entries/{id}). */
 export interface Detail {
 	work: DataRecord

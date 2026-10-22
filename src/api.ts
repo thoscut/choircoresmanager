@@ -5,6 +5,7 @@ import type {
 	AccessionInput,
 	AccessionProposal,
 	AccessionResult,
+	AnnualReport,
 	ChecksumStatus,
 	EndingLicense,
 	ChoirEvent,
@@ -42,6 +43,7 @@ import type {
 	Settings,
 	SettingsUpdate,
 	ShelfLabel,
+	Statistics,
 	Task,
 	TaskInput,
 } from './types.ts'
@@ -661,6 +663,64 @@ export async function acceptChecksum(fileRowId: number, reason: string | null): 
 export async function fetchEndingLicenses(days: number): Promise<EndingLicense[]> {
 	const { data } = await axios.get<EndingLicense[]>(apiUrl('/licenses/ending') + '?days=' + days)
 	return list<EndingLicense>(data).map((license) => ({ ...license, copies: list(license.copies), uses: list(license.uses) }))
+}
+
+/**
+ * Statistics for a period of years (default on the server: the last ten).
+ *
+ * @param from - first year
+ * @param to - last year
+ */
+export async function fetchStatistics(from: number | null, to: number | null): Promise<Statistics> {
+	const { data } = await axios.get<Statistics>(apiUrl('/statistics') + periodQuery(from, to))
+	return data
+}
+
+/**
+ * The annual report of a year.
+ *
+ * @param year - the year
+ */
+export async function fetchAnnualReport(year: number): Promise<AnnualReport> {
+	const { data } = await axios.get<AnnualReport>(apiUrl('/statistics/report') + '?year=' + year)
+	return data
+}
+
+/**
+ * Download URL of the statistics as CSV.
+ *
+ * @param from - first year
+ * @param to - last year
+ */
+export function statisticsCsvUrl(from: number | null, to: number | null): string {
+	return apiUrl('/statistics/csv') + periodQuery(from, to)
+}
+
+/**
+ * Download URL of the annual report as CSV.
+ *
+ * @param year - the year
+ */
+export function annualReportCsvUrl(year: number): string {
+	return apiUrl('/statistics/report/csv') + '?year=' + year
+}
+
+/**
+ * Query string of a period ("" when both years are open).
+ *
+ * @param from - first year
+ * @param to - last year
+ */
+function periodQuery(from: number | null, to: number | null): string {
+	const params = new URLSearchParams()
+	if (from !== null) {
+		params.set('from', String(from))
+	}
+	if (to !== null) {
+		params.set('to', String(to))
+	}
+	const query = params.toString()
+	return query === '' ? '' : '?' + query
 }
 
 /** Download URL of the complete backup (JSON). */

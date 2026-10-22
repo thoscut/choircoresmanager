@@ -38,6 +38,12 @@ and 35.0.2 with MariaDB; the app requires MySQL or MariaDB.
   protection-term suggestion with its reasoning, merging works and copies with
   undo, inventory lists per binder with counts, background checksums of the
   archive files with mismatch warnings.
+- Statistics for board, archive management and conductor (`?view=statistics`):
+  stock per binder, new copies per year, rights and releases, licenses,
+  concerts and pieces per year, most performed works and composers,
+  repertoire classes, works not sung for a long time, open tasks by age,
+  checksums, protection terms ending; a printable annual report (A4, also in
+  large print) and CSV downloads of both. No personal data of choir members.
 - Licenses ending within 30 days or already ended, with the copies concerned;
   merges show who merged or undid them and what was moved.
 - Notifications to role holders (never to singers).

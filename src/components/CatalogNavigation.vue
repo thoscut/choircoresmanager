@@ -15,6 +15,7 @@ import {
 	mdiCalendarClockOutline,
 	mdiCalendarStarOutline,
 	mdiCallMerge,
+	mdiChartBar,
 	mdiClipboardCheckOutline,
 	mdiClipboardTextOutline,
 	mdiCogOutline,
@@ -105,6 +106,7 @@ const releaseViews = computed<ViewEntry[]>(() => [
 const archiveViews = computed<ViewEntry[]>(() => [
 	{ view: 'persons', name: viewTitle('persons', isLibrarian.value), icon: mdiAccountMultipleOutline },
 	{ view: 'protection', name: viewTitle('protection', isLibrarian.value), icon: mdiCalendarClockOutline },
+	{ view: 'statistics', name: viewTitle('statistics', isLibrarian.value), icon: mdiChartBar },
 ])
 
 const maintenanceViews = computed<ViewEntry[]>(() => [

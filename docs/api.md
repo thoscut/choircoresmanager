@@ -20,6 +20,8 @@ Request bodies are checked strictly: unknown fields are refused with 400
 | `GET /api/backup/full` | 10 in 10 minutes |
 | `POST /api/backup/restore` | 5 in 10 minutes |
 | `GET /api/events/{id}/song-order` | 60 in 10 minutes |
+| `GET /api/statistics`, `GET /api/statistics/report` | 120 in 10 minutes |
+| `GET /api/statistics/csv`, `GET /api/statistics/report/csv` | 30 in 10 minutes |
 
 Files chosen by `fileId` for an import may be at most 20 MB, a backup for a
 restore at most 64 MB; larger files are refused with 400
@@ -697,3 +699,117 @@ accepts the current content; the next run stores the new checksum.
 |---|---|---|
 | `protection_ended` | librarian | daily: a version is marked protected, but by the life dates of all persons involved it is public domain since `date` (task: check; nothing changes automatically). Link `?copy={id}`. Withdrawn when the status changes. |
 | `checksum_mismatch` | librarian | a file changed without a visible modification. Parameters: shelf mark, title, file type (no file name). Link `?copy={id}` or `?view=checksums`. Withdrawn when the file is restored or the change is accepted. |
+
+## Statistics and annual report
+
+Read only, for every archive role (and admins); 403 without access. The
+figures contain no personal data of choir members and no account names
+(composers and other persons of the register are fine); internal
+preservation copies are counted but never listed by title or shelf mark
+(`omitted` counts them where a list would name them). Rights, stock and
+maintenance figures are those of today; concerts, new copies and protection
+terms follow the period. Years of timestamps (audit log) follow the time zone
+of the user. The UI opens the view with `?view=statistics`.
+
+`GET /api/statistics?from=YYYY&to=YYYY` — both optional: `to` defaults to the
+current year, `from` to the ten years up to `to`. A period must lie between
+1800 and 50 years after the current one, be at most 100 years long and not
+end before it starts; otherwise 400
+`Please choose a period between %1$s and %2$s of at most %3$s years, the first year not after the last.`
+
+```json
+{ "period": { "from": 2017, "to": 2026 }, "today": "2026-10-22", "range": { "first": 1987, "last": 2026 },
+  "stock": { "works": 120, "versions": 130, "copies": 150,
+    "status": { "active": 140, "retired": 5, "missing": 3, "lent": 2, "other": 0 },
+    "binders": [{ "binder": 1, "active": 30, "retired": 1, "missing": 0, "lent": 0, "other": 0, "total": 31 }],
+    "active": 140, "activeWithFile": 120, "activeWithMusicxml": 40, "preservationVersions": 2, "preservationCopies": 3,
+    "additions": [{ "year": 2025, "accession": 4, "import": 0, "other": 0, "total": 4 }] },
+  "rights": {
+    "status": [{ "status": "public_domain|protected|open|none", "confirmed": 50, "unconfirmed": 60, "total": 110 }],
+    "validVersions": { "works": 120, "withValid": 30, "withoutValid": 90, "withoutValidSeveral": 5, "currentWithoutValid": 3 },
+    "licenses": { "total": 10, "active": 6, "ending": 1, "ended": 2, "future": 1, "endingDays": 30 },
+    "portal": { "ok": 30, "remove": 1, "add": 4, "not_decided": 6, "other_version_valid": 2, "blocked": 87 },
+    "printStation": { "ok": 0, "remove": 0, "add": 5, "not_decided": 6, "other_version_valid": 2, "blocked": 117 },
+    "publication": { "free": 10, "blocked": 2, "internal": 3, "to_clarify": 20, "none": 95 } },
+  "repertoire": {
+    "years": [{ "year": 2025, "concerts": 3, "planned": 0, "pieces": 41, "works": 35 }], "undated": 0,
+    "topWorks": [{ "workId": 1, "title": "…", "composer": "…", "performances": 5, "last": "2025-12-06" }],
+    "topComposers": [{ "composer": "…", "performances": 12, "works": 4 }],
+    "classes": { "current": 20, "dormant": 30, "earlier": 10, "none": 60 }, "sources": { "performances": 40, "import": 25 },
+    "thresholds": { "current": 3, "dormant": 10 },
+    "longNotSung": [{ "workId": 7, "title": "…", "composer": "…", "class": "dormant|earlier", "performances": 9,
+                      "last": "2014-05-01", "copyId": 12, "shelfmark": "2-4" }], "longNotSungTotal": 31 },
+  "maintenance": {
+    "tasks": [{ "addressee": "conductor", "open": 3, "answered": 1, "days30": 2, "days90": 1, "days365": 0, "older": 1 }],
+    "proposals": { "open": 4, "olderThan30Days": 1 },
+    "checksums": { "files": 128, "hashed": 100, "pending": 28, "mismatches": 0 },
+    "protection": { "years": [{ "year": 2026, "versions": 1 }], "total": 3, "omitted": 0,
+      "rows": [{ "versionId": 35, "title": "…", "composer": "…", "until": "2026-12-31", "rightsStatus": "protected",
+                 "confirmed": false, "copies": [{ "id": 35, "shelfmark": "10-46", "status": "active" }] }] } } }
+```
+
+- `stock.status`, the binder rows and `additions` add up to `copies`
+  (`additions` over all years with data). `activeWithMusicxml` follows the
+  rule of the catalog list (`has_musicxml`). `additions`: the year the audit
+  log records the creation of a copy, by the accession assistant
+  (`accession`) or the catalog import (`import`); copies without such an
+  entry count with their creation date (`other`). One row per year of the
+  period.
+- `rights.status` (always the four keys in this order), `portal`,
+  `printStation` and `publication` each add up to `versions`. `portal` and
+  `printStation` are the states of the release lists (`GET /api/lists/…`
+  with `all=1`); the print station knows no `ok` and `remove`. License groups
+  do not overlap: `ended` (before today), `future` (not valid yet), `ending`
+  (within `endingDays` days), `active` (the rest).
+- `validVersions`: listed works (not merged) with and without a version
+  chosen as valid; `withoutValidSeveral` of those have more than one
+  version, `currentWithoutValid` belong to the current repertoire.
+- `repertoire.years`: one row per year of the period. `concerts` are
+  concerts confirmed as sung (also imported ones), `planned` the others,
+  `pieces` the documented performances (programme lines that count),
+  `works` the different works among them; `undated` counts sung concerts
+  without a date. `topWorks` and `topComposers` (at most 10) count
+  performance days in the period, the composer as recorded for the work.
+  `classes` (adding up to `works`) as in the catalog list: from documented
+  performances, otherwise from the imported catalog, otherwise `none`.
+  `longNotSung` (at most 20 of `longNotSungTotal`): works of class
+  `dormant` or `earlier` with an active copy that is no preservation copy,
+  the most often sung first; `copyId` opens the copy.
+- `maintenance.tasks`: one row per role a task can be addressed to; open
+  and answered tasks by age in days since they were created. `protection`:
+  versions with copies whose proposed protection (by the life dates, see
+  milestone 0.5) ends in the period; `rows` at most 50, the soonest first.
+
+`GET /api/statistics/report?year=YYYY` (default: the current year) returns
+the annual report:
+
+```json
+{ "year": 2025, "today": "2026-10-22",
+  "concerts": [{ "id": 3, "date": "2025-12-06", "title": "Advent concert", "location": "…", "status": "sung", "imported": false, "pieces": 12 }],
+  "totals": { "year": 2025, "concerts": 3, "planned": 0, "pieces": 41, "works": 35 },
+  "additions": { "year": 2025, "accession": 4, "import": 0, "other": 0, "total": 4 },
+  "accessions": [{ "copyId": 81, "shelfmark": "10-75", "title": "…", "composer": "…", "date": "2025-03-01" }], "accessionsOmitted": 0,
+  "licenses": { "validOn": "2025-12-31", "valid": 6, "omitted": 0,
+    "started": [{ "licenseId": 4, "title": "…", "composer": "…", "holder": "…", "uses": ["binder"], "validFrom": "2025-02-01",
+                  "validUntil": "2026-01-31", "shelfmarks": ["5-1"] }], "ended": [] },
+  "openRights": { "open": 10, "none": 0, "publicDomainUnconfirmed": 60, "protectedUnconfirmed": 2, "protectionEnded": 1,
+                  "conflicts": 0, "rightsTasks": 2 },
+  "stock": { "works": 120, "versions": 130, "copies": 150, "active": 140 } }
+```
+
+`totals` equals the row of the year in `repertoire.years` of the statistics;
+`pieces` of a sung concert are its documented performances, of a planned one
+the lines not struck. `accessions` lists the copies of the accession
+assistant recorded in the year. `licenses.valid` counts the licenses valid
+on `validOn` (the last day of the year, today for the current year);
+`started` (by `valid_from`, without it by the day it was recorded) and
+`ended` (by `valid_until`) list those of the year. `openRights` and `stock`
+are those of today; `protectionEnded` and `conflicts` match the kinds
+`ended` and `conflict` of `GET /api/protection/review`.
+
+`GET /api/statistics/csv?from=YYYY&to=YYYY` and
+`GET /api/statistics/report/csv?year=YYYY` download the same tables as one
+CSV file for people (UTF-8 with BOM, `;`, each table under its heading,
+texts in the user's language, cells that start like a formula get a leading
+`'`). Plain download links without CSRF token; errors as JSON
+(`{ "error" }`, 400/403).

@@ -22,6 +22,7 @@ export type ViewName =
 	| 'accession'
 	| 'persons'
 	| 'protection'
+	| 'statistics'
 	| 'merges'
 	| 'inventory'
 	| 'checksums'
@@ -42,6 +43,7 @@ const VIEW_PARAMS: Record<Exclude<ViewName, 'event'>, string> = {
 	accession: 'accession',
 	persons: 'persons',
 	protection: 'protection-review',
+	statistics: 'statistics',
 	merges: 'merges',
 	inventory: 'inventory',
 	checksums: 'checksums',

@@ -102,6 +102,17 @@ class CatalogService {
 	}
 
 	/**
+	 * Whether a copy has MusicXML: a linked .mxl or .musicxml file, or a
+	 * valid MusicXML noted in the catalog. Same rule in the list and in the
+	 * statistics.
+	 *
+	 * @param array<string, int> $fileCounts file type => number of found files of the copy
+	 */
+	public static function hasMusicxml(array $fileCounts, ?WorkVersion $version): bool {
+		return ($fileCounts['mxl'] ?? 0) + ($fileCounts['musicxml'] ?? 0) > 0 || $version?->getMusicxmlValid() !== null;
+	}
+
+	/**
 	 * Throws when the entity does not exist.
 	 */
 	public function entityExists(string $level, int $id): void {
@@ -145,7 +156,7 @@ class CatalogService {
 				'repertoire' => $work?->getValue('repertoire_import'),
 				'last_performed' => $work?->getValue('last_performed_import'),
 				...self::repertoireFigures($work, $derived),
-				'has_musicxml' => ($counts['mxl'] ?? 0) + ($counts['musicxml'] ?? 0) > 0 || $version?->getMusicxmlValid() !== null,
+				'has_musicxml' => self::hasMusicxml($counts, $version),
 				'files' => array_sum($counts),
 				'pdfs' => $counts['pdf'] ?? 0,
 			];

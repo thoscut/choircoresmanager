@@ -6,6 +6,7 @@ namespace OCA\Notenarchiv\Service;
 
 use OCA\Notenarchiv\AppInfo\Application;
 use OCA\Notenarchiv\Db\Event;
+use OCA\Notenarchiv\Db\EventItem;
 use OCA\Notenarchiv\Db\EventItemMapper;
 use OCA\Notenarchiv\Db\EventMapper;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -55,10 +56,21 @@ class RepertoireService {
 	 * @return array<int, array{performances: int, first: ?string, last: ?string, class: string, songLists: list<string>}> keyed by work id
 	 */
 	public function perWork(): array {
-		$events = $this->events->findAllById();
+		return $this->perWorkFrom($this->events->findAllById(), $this->items->findAll());
+	}
+
+	/**
+	 * The figures of perWork() from events and items that are loaded already
+	 * (the statistics use them for further figures).
+	 *
+	 * @param array<int, Event> $events keyed by id
+	 * @param iterable<EventItem> $items
+	 * @return array<int, array{performances: int, first: ?string, last: ?string, class: string, songLists: list<string>}> keyed by work id
+	 */
+	public function perWorkFrom(array $events, iterable $items): array {
 		$dates = [];
 		$songLists = [];
-		foreach ($this->items->findAll() as $item) {
+		foreach ($items as $item) {
 			$workId = $item->getWorkId();
 			$event = $events[$item->getEventId()] ?? null;
 			if ($workId === null || $event === null || $item->getAssignment() !== 'certain') {

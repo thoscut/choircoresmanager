@@ -18,7 +18,8 @@
 # The person and performance lists are imported only by the tests, inside
 # transactions that are rolled back. events_test expects no concert at all
 # ("dry run leaves no events") and maintenance_test expects its dry run to
-# create persons, so both must run before any real import of these lists.
+# create persons, so both must run before any real import of these lists;
+# statistics_test imports the performance list itself, also rolled back.
 #
 # Environment (all optional):
 #   CI_USER   test account, created by the script (default: demo-librarian)
@@ -199,6 +200,9 @@ run_test events_test "$IMPORT/performances.csv" "$IMPORT/song-lists.csv" 2-1 3-1
 # uncertainly identified B. Beispiel, so no "free" proposal); all persons of
 # 2-1 (Silcher, Dach, Herder) died more than 70 years ago.
 run_test maintenance_test "$IMPORT/persons.csv" 2-4 3-2 2-1
+# Consistency of the statistics and the annual report with the performance
+# records imported inside the test (rolled back); no fixed figures.
+run_test statistics_test "$IMPORT/performances.csv"
 run_test backup_test
 
 echo
