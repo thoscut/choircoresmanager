@@ -24,6 +24,10 @@ export { default as PDFIcon } from 'vue-material-design-icons/FilePdfBox.vue'
 export { default as SettingsIcon } from 'vue-material-design-icons/CogOutline.vue'
 export { default as TableViewIcon } from 'vue-material-design-icons/TableHeadersEye.vue'
 export { default as EditIcon } from 'vue-material-design-icons/Pencil.vue'
+export { default as ImportIcon } from 'vue-material-design-icons/FileImport.vue'
+export { default as ExportIcon } from 'vue-material-design-icons/FileExport.vue'
+export { default as UploadIcon } from 'vue-material-design-icons/FileUpload.vue'
+export { default as CatalogueIcon } from 'vue-material-design-icons/FileTableOutline.vue'
 
 // State icons
 export { default as ErrorIcon } from 'vue-material-design-icons/AlertCircle.vue'

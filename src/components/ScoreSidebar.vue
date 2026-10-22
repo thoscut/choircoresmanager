@@ -23,6 +23,16 @@
 			<EntityFolderCollectionsList type="score" :entityId="scoreSidebarStore.selectedScore.id" />
 		</NcAppSidebarTab>
 		<NcAppSidebarTab
+			id="catalogue"
+			:name="t('Catalogue')">
+			<template #icon>
+				<CatalogueIcon :size="20" />
+			</template>
+			<CatalogueDataTab
+				:scoreId="scoreSidebarStore.selectedScore.id"
+				:lastPerformedImported="scoreSidebarStore.selectedScore.lastPerformedImported" />
+		</NcAppSidebarTab>
+		<NcAppSidebarTab
 			v-if="scoreSidebarStore.selectedScore.scoreBook !== null"
 			id="scorebook"
 			:name="t('Score Book')">
@@ -40,9 +50,10 @@
 import NcAppSidebar from '@nextcloud/vue/components/NcAppSidebar'
 import NcAppSidebarTab from '@nextcloud/vue/components/NcAppSidebarTab'
 import EntityFolderCollectionsList from '@/components/EntityFolderCollectionsList.vue'
+import CatalogueDataTab from '@/pages/scores/components/CatalogueDataTab.vue'
 import CommentsList from '@/pages/scores/components/CommentsList.vue'
 import ScoreBookInfo from '@/pages/scores/components/ScoreBookInfo.vue'
-import { CommentIcon, FolderCollectionIcon, ScoreBookIcon } from '@/icons/vue-material'
+import { CatalogueIcon, CommentIcon, FolderCollectionIcon, ScoreBookIcon } from '@/icons/vue-material'
 import { useScoreSidebarStore } from '@/stores/scoreSidebarStore'
 import { t } from '@/utils/l10n.ts'
 

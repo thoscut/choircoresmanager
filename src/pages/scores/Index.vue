@@ -17,6 +17,7 @@
 
 		<template #headerActions>
 			<AddScoreButton :editable="editable" />
+			<CatalogueMenu :editable="editable" />
 			<ExportCsvButton :tableRef="scoresTableRef?.tableRef ?? null" />
 		</template>
 
@@ -30,6 +31,7 @@
 import { loadState } from '@nextcloud/initial-state'
 import { onMounted, ref } from 'vue'
 import AddScoreButton from './components/AddScoreButton.vue'
+import CatalogueMenu from './components/CatalogueMenu.vue'
 import ContentStateWrapper from '@/components/ContentStateWrapper.vue'
 import ExportCsvButton from '@/components/ExportCsvButton.vue'
 import Layout from '@/components/Layout.vue'
