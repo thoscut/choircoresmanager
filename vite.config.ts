@@ -19,6 +19,8 @@ export default process.env.VITEST
 	: createAppConfig(
 		{
 			main: resolve(join('src', 'main.ts')),
+			// Action "Open in music archive" in the Files app (small: no score viewer, no Vue)
+			files: resolve(join('src', 'files.ts')),
 		},
 		{
 			createEmptyCSSEntryPoints: true,

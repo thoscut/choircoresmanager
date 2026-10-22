@@ -10,7 +10,7 @@ const TOKEN = 'abcdefghijklmnopqrstuvwxyz012345'
 
 describe('parseStartParams', () => {
 	it('reads copy and task of a task notification', () => {
-		expect(parseStartParams('?copy=35&task=4')).toEqual({ view: null, copyId: 35, taskId: 4, eventId: null, linkToken: null, dueKey: null })
+		expect(parseStartParams('?copy=35&task=4')).toEqual({ view: null, copyId: 35, score: false, taskId: 4, eventId: null, linkToken: null, dueKey: null })
 	})
 
 	it('reads the proposals view', () => {
@@ -41,7 +41,7 @@ describe('parseStartParams', () => {
 
 	it('ignores invalid numbers and unknown views', () => {
 		expect(parseStartParams('?copy=abc&task=-1&event=0&view=nonsense')).toEqual({
-			view: null, copyId: null, taskId: null, eventId: null, linkToken: null, dueKey: null,
+			view: null, copyId: null, score: false, taskId: null, eventId: null, linkToken: null, dueKey: null,
 		})
 	})
 
@@ -57,8 +57,20 @@ describe('parseStartParams', () => {
 		expect(parseStartParams('?due=tasks_open&event=4')).toMatchObject({ view: 'event', eventId: 4, dueKey: null })
 	})
 
+	it('opens the score view of a copy for ?score=1 (Files app)', () => {
+		expect(parseStartParams('?copy=35&score=1')).toMatchObject({ view: null, copyId: 35, score: true })
+		expect(parseStartParams('?copy=35')).toMatchObject({ copyId: 35, score: false })
+	})
+
+	it('ignores ?score= without a copy or with another value', () => {
+		expect(parseStartParams('?score=1').score).toBe(false)
+		expect(parseStartParams('?copy=abc&score=1').score).toBe(false)
+		expect(parseStartParams('?copy=35&score=true').score).toBe(false)
+		expect(parseStartParams('?copy=35&score=0').score).toBe(false)
+	})
+
 	it('treats an empty query as nothing', () => {
-		expect(parseStartParams('')).toEqual({ view: null, copyId: null, taskId: null, eventId: null, linkToken: null, dueKey: null })
+		expect(parseStartParams('')).toEqual({ view: null, copyId: null, score: false, taskId: null, eventId: null, linkToken: null, dueKey: null })
 	})
 })
 
@@ -76,6 +88,12 @@ describe('buildQuery', () => {
 
 	it('writes view and copy', () => {
 		expect(buildQuery({ view: 'printStation', copyId: 7 })).toBe('?view=print-station&copy=7')
+	})
+
+	it('writes score=1 only with a copy', () => {
+		expect(buildQuery({ view: DEFAULT_VIEW, copyId: 35, score: true })).toBe('?copy=35&score=1')
+		expect(buildQuery({ view: DEFAULT_VIEW, score: true })).toBe('')
+		expect(parseStartParams(buildQuery({ view: 'catalog', copyId: 35, score: true }))).toMatchObject({ view: 'catalog', copyId: 35, score: true })
 	})
 
 	it('writes the event view as ?event=', () => {

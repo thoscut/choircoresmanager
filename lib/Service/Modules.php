@@ -46,6 +46,9 @@ class Modules {
 	/** Planned interface for agents (milestone 0.6): not built yet, always off */
 	public const AGENT_API = 'agent_api';
 
+	/** The action "Open in music archive" in the Files app */
+	public const FILES_INTEGRATION = 'files_integration';
+
 	/** Switches of the notifications: this prefix plus the subject (NotificationService) */
 	public const NOTIFY_PREFIX = 'notify_';
 
@@ -130,6 +133,9 @@ class Modules {
 		'excerpt_links' => ['group' => 'scores', 'requires' => ['score_viewer'], 'simple' => false, 'standard' => true, 'planned' => false,
 			'label' => 'Excerpt links',
 			'description' => 'Internal links to a range of measures and a voice for logged-in archive roles; they expire and can be revoked.'],
+		'files_integration' => ['group' => 'scores', 'requires' => [], 'simple' => false, 'standard' => true, 'planned' => false,
+			'label' => 'Opening from the Files app',
+			'description' => 'The action "Open in music archive" for files of the archive folder in the Files app: a click on MusicXML opens the score view, other files of a copy open the copy. Rights are checked as in the app.'],
 		'tasks' => ['group' => 'collaboration', 'requires' => [], 'simple' => false, 'standard' => true, 'planned' => false,
 			'label' => 'Questions and tasks',
 			'description' => 'Questions and checks with a location in the score (page, measures, voice), addressed to a role.'],

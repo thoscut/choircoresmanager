@@ -68,6 +68,7 @@ What is covered:
 | `Service/ConcertDeadlinesTest`, `Service/DueServiceTest` | the deadlines 10, 8 and 6 weeks before a concert and the confirmation after it; which roles see them on the start page |
 | `Service/ConcertCalendarServiceTest` | entries in the account's own calendars (test double in `Support/FakeCalendar`): only writable calendars, roles, adding again updates instead of duplicating, cancelled concerts are only updated |
 | `Dashboard/DueWidgetTest` | the dashboard widget: only for accounts with a role, items and deep links of the start page, no personal data |
+| `Service/FilesIntegrationServiceTest`, `Listener/FilesScriptListenerTest` | opening from the Files app: the copy of a Nextcloud file only for files the account sees (the same 404 for unlisted and foreign files), the archive folder as the account sees it; the script only for accounts with a role or admins, while the module is on |
 
 `Support/MigratedSchema` runs all migrations in `lib/Migration` against an
 in-memory Doctrine schema. `EntitySchemaTest` discovers the mappers in
@@ -76,7 +77,8 @@ changing the tests; a new column of a work, version or copy needs a field in
 `Service/Fields` or an entry in `FieldsTest::INTERNAL_COLUMNS`.
 
 `tests/stubs/` holds stubs of private server classes that the public API refers
-to (used by the unit tests and by Psalm).
+to, and of the Files app event the app listens to (used by the unit tests and
+by Psalm).
 
 ## Integration tests
 
@@ -100,6 +102,7 @@ sudo -u www-data php tests/Integration/statistics_test.php    /var/www/nextcloud
 sudo -u www-data php tests/Integration/backup_test.php        /var/www/nextcloud <uid>
 sudo -u www-data php tests/Integration/calendar_test.php      /var/www/nextcloud <uid>
 sudo -u www-data php tests/Integration/modules_test.php       /var/www/nextcloud <uid> <shelfmark-protected>
+sudo -u www-data php tests/Integration/files_integration_test.php /var/www/nextcloud <uid>
 ```
 
 `statistics_test.php` fixes no figures of a catalog, so it runs on any
@@ -124,6 +127,16 @@ practice audio of a protected version stay refused. Everything is rolled
 back, and at the end the module switches are exactly as before (also those
 that were not stored).
 
+`files_integration_test.php` checks the action "Open in music archive" of
+the Files app: a listed MusicXML file names its copy and opens the score
+view, a PDF opens its copy, an unlisted file of the archive folder, an
+unknown file id and a file of another account all get the same 404 (the
+latter also when it is entered in the archive), the route answers 404 while
+the module is off, and only an account with a role gets the script. It
+creates a second account without a role (random password, never printed)
+with one file and deletes it at the end; everything else is rolled back and
+the module switches are restored exactly.
+
 `<uid>` must hold the role `librarian`; each script's header lists further
 requirements (CSV paths are relative to the user's files). `backup_test.php`
 first adds a record to every app table (license, proposal, task, link,
@@ -138,7 +151,7 @@ missing arguments end with exit code 2.
 
 ### Integration tests in CI (demo data)
 
-The CI job `integration` runs all ten scripts against a freshly installed
+The CI job `integration` runs all eleven scripts against a freshly installed
 Nextcloud 33 and 35 (release archives from download.nextcloud.com, checked
 against their SHA-512 checksum) with MariaDB 11.8 and PHP 8.3. The job
 installs the app with its built frontend, builds the public demo data
@@ -173,6 +186,7 @@ demo catalog:
 | `practice_audio_test.php` | `2-6 3-1 2-2` | 2-6 is protected without a license for practice audio, 3-1 an internal preservation copy, 2-2 public domain but not confirmed |
 | `statistics_test.php` | `_Import/performances.csv` | the performance list gives the statistics concerts to count; no fixed figures |
 | `modules_test.php` | `2-6` | 2-6 is protected without a license for practice audio |
+| `files_integration_test.php` | – | finds a MusicXML file and a PDF of copies itself; `LIESMICH.txt` is the unlisted file; creates and deletes a second account |
 | `backup_test.php` | – | |
 
 The person and performance lists are imported only inside the tests'

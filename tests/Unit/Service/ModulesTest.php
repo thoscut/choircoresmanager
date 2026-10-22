@@ -182,6 +182,22 @@ final class ModulesTest extends TestCase {
 		}
 	}
 
+	public function testOpeningFromTheFilesAppIsPartOfStandardAndComplete(): void {
+		$module = Modules::MODULES[Modules::FILES_INTEGRATION];
+		self::assertSame('scores', $module['group']);
+		self::assertSame('Opening from the Files app', $module['label']);
+		self::assertSame([], $module['requires'], 'without the score view it opens the copy');
+		self::assertFalse(Modules::presetValues(Modules::SIMPLE)[Modules::FILES_INTEGRATION]);
+		self::assertTrue(Modules::presetValues(Modules::STANDARD)[Modules::FILES_INTEGRATION]);
+		self::assertTrue(Modules::presetValues(Modules::COMPLETE)[Modules::FILES_INTEGRATION]);
+		self::assertContains(Modules::FILES_INTEGRATION, Modules::switchable());
+
+		$modules = $this->modulesWithout(['score_viewer']);
+		self::assertTrue($modules->isEnabled(Modules::FILES_INTEGRATION), 'independent of the score view');
+		$modules->change([Modules::FILES_INTEGRATION => false]);
+		self::assertFalse($modules->isEnabled(Modules::FILES_INTEGRATION));
+	}
+
 	public function testUnknownPreset(): void {
 		$this->expectException(InvalidInputException::class);
 		Modules::presetValues('everything');

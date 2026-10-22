@@ -50,6 +50,7 @@ The App Store shows the files marked with a number, in this order
 | `merge-proposals.png` | The proposals to merge the three works listed twice. |
 | `annual-report.png` | The annual report 2026: the year in figures, concerts and new accessions. |
 | `calendar-dialog.png` | The dialog "Add to my calendar" of a concert. |
+| `files-action.png` | Planned: the Files app in the demo archive folder with the actions menu of a MusicXML file of copy 2-1 and the action "Open in music archive". |
 
 ## German interface (informal)
 

@@ -157,7 +157,7 @@ Die Archivverwaltung übernimmt die Antwort danach ins Werkverzeichnis.
 
 Die App erinnert dich 10, 8 und 6 Wochen vor dem Konzert an die Fristen.
 
-### Kalender und Dashboard
+### Kalender, Dashboard und Dateien
 
 - **In meinen Kalender eintragen** trägt ein Konzert in einen deiner
   Nextcloud-Kalender ein, **Kalenderdatei (.ics)** lädt es für jedes
@@ -165,6 +165,9 @@ Die App erinnert dich 10, 8 und 6 Wochen vor dem Konzert an die Fristen.
   Wochen vorher)** kommen die Fristen als ganztägige Einträge dazu.
 - Das Widget **Notenarchiv – fällig** zeigt im Nextcloud-Dashboard dasselbe
   wie die Startseite „Fällig“, mit Links ins Notenarchiv.
+- In der **Dateien**-App öffnet ein Klick auf eine MusicXML-Datei im
+  Archivordner die Notenansicht ihres Exemplars. Bei Scans und anderen
+  Dateien steht **Im Notenarchiv öffnen** im Aktionsmenü.
 
 ## Mehr
 

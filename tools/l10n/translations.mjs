@@ -1143,6 +1143,8 @@ export const singular = {
 	'Makes WAV or MIDI files per voice in the browser. The server checks and records every export; the files leave the app.': 'Erstellt WAV- oder MIDI-Dateien je Stimme im Browser. Der Server prüft und protokolliert jeden Export; die Dateien verlassen die App.',
 	'Excerpt links': 'Ausschnitt-Links',
 	'Internal links to a range of measures and a voice for logged-in archive roles; they expire and can be revoked.': 'Interne Links auf einen Taktbereich und eine Stimme für angemeldete Archivrollen; sie laufen ab und lassen sich widerrufen.',
+	'Opening from the Files app': 'Öffnen aus der Dateien-App',
+	'The action "Open in music archive" for files of the archive folder in the Files app: a click on MusicXML opens the score view, other files of a copy open the copy. Rights are checked as in the app.': 'Die Aktion „Im Notenarchiv öffnen“ für Dateien des Archivordners in der Dateien-App: Ein Klick auf MusicXML öffnet die Notenansicht, andere Dateien eines Exemplars öffnen das Exemplar. Die Rechte werden wie in der App geprüft.',
 	'Questions and checks with a location in the score (page, measures, voice), addressed to a role.': 'Rückfragen und Prüfaufgaben mit Stelle in den Noten (Seite, Takte, Stimme), gerichtet an eine Rolle.',
 	'Proposals inbox': 'Vorschlagseingang',
 	'Changes proposed by tools and transcription rounds wait in an inbox until the catalog librarian accepts them.': 'Änderungsvorschläge von Werkzeugen und Übertragungsrunden warten im Eingang, bis die Rolle „Bestand“ sie übernimmt.',
@@ -1744,6 +1746,9 @@ export const singular = {
 	'No license ends in this period, and none has ended.': 'In diesem Zeitraum endet keine Lizenz, und keine ist abgelaufen.',
 	'License holder': 'Lizenz erteilt von',
 	'Open the rights of {shelfmark}': 'Rechte von {shelfmark} öffnen',
+	// ---- opening from the Files app ----
+	'Open in music archive': 'Im Notenarchiv öffnen',
+	'This file is not listed in the music archive.': 'Diese Datei ist im Notenarchiv nicht verzeichnet.',
 }
 
 export const plural = {

@@ -163,6 +163,10 @@ async function followStartParams(params: StartParams): Promise<void> {
 		return
 	}
 	if (copyId !== null) {
+		if (params.score && params.copyId === copyId) {
+			// From the Files app: the score view, which checks the rights itself
+			scoreRequest.value = { copyId }
+		}
 		await openEntry(copyId, params.taskId !== null ? 'tasks' : undefined)
 		// after opening: opening another copy resets the highlight
 		highlightedTaskId.value = params.taskId

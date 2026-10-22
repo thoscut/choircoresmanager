@@ -227,6 +227,10 @@ run_test statistics_test "$IMPORT/performances.csv"
 # (rolled back, module switches restored); 2-6 is protected without a
 # license for practice audio.
 run_test modules_test 2-6
+# Opening from the Files app: a listed MusicXML file and PDF, an unlisted
+# file (LIESMICH.txt), a file of a second account that the test creates and
+# deletes, and the module switched off (rolled back, switches restored).
+run_test files_integration_test
 run_test backup_test
 
 echo
