@@ -324,6 +324,28 @@ class ScoreMapper extends QBMapper {
 	}
 
 	/**
+	 * Find scores by IDs without transient properties, optionally only those that may be shown publicly.
+	 *
+	 * @param list<int> $ids
+	 * @param bool $publicOnly Only return public scores, filtered in SQL (see findPublic())
+	 * @return array<Score>
+	 * @throws Exception
+	 */
+	public function findMultipleWithoutTransients(array $ids, bool $publicOnly): array {
+		if ($ids === []) {
+			return [];
+		}
+		$qb = $this->db->getQueryBuilder();
+		$qb->select('*')
+			->from($this->getTableName())
+			->where($qb->expr()->in('id', $qb->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)));
+		if ($publicOnly) {
+			$this->wherePublishable($qb);
+		}
+		return $this->findEntities($qb);
+	}
+
+	/**
 	 * Restrict a query to scores that may be shown publicly: approved for publication,
 	 * in the public domain or licensed, and with a rights status confirmed by a person.
 	 *

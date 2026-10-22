@@ -2,7 +2,7 @@ import type { NavigationItem, NavigationRoute } from './types/navigation.ts'
 
 import { markRaw } from 'vue'
 import { t } from './utils/l10n.ts'
-import { FolderCollectionIcon, ScoreBookIcon, ScoreIcon, SetlistIcon } from '@/icons/vue-material'
+import { FolderCollectionIcon, ManageSharesIcon, ScoreBookIcon, ScoreIcon, SetlistIcon, ShareIcon } from '@/icons/vue-material'
 
 const APP_NAME = t('Orchestra Scores Manager')
 
@@ -38,6 +38,21 @@ const navigation: NavigationItem[] = [
 		displayName: t('Setlists'),
 		component: () => import('./pages/setlists/Index.vue'),
 		icon: markRaw(SetlistIcon),
+	},
+	{
+		path: '/shared',
+		name: 'shared',
+		displayName: t('Shared with me'),
+		component: () => import('./pages/shared/Index.vue'),
+		icon: markRaw(ShareIcon),
+	},
+	{
+		path: '/shares',
+		name: 'shares',
+		displayName: t('Manage shares'),
+		component: () => import('./pages/shares/Index.vue'),
+		icon: markRaw(ManageSharesIcon),
+		editorOnly: true,
 	},
 ]
 

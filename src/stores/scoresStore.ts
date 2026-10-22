@@ -10,6 +10,11 @@ import { useScoreBooksStore } from '@/stores/scoreBooksStore'
 import { useScoreSidebarStore } from '@/stores/scoreSidebarStore'
 
 /**
+ * Files that can be linked to a score
+ */
+export type ScoreFileKind = 'musicxml' | 'pdf'
+
+/**
  * Pinia store for managing scores state.
  *
  * All CRUD operations are centralized here. Components should use store
@@ -208,6 +213,35 @@ export const useScoresStore = defineStore('scores', () => {
 	}
 
 	/**
+	 * Link a PDF file from Nextcloud Files to a score and update local state
+	 *
+	 * @param id - The score ID
+	 * @param fileId - The Nextcloud file id of the PDF file
+	 * @return The updated score
+	 * @throws { Error } if API call fails
+	 */
+	async function linkPdf(id: number, fileId: number): Promise<Score> {
+		const response = await apiClients.default.pdfApiPostPdf(id, { fileId })
+		const updated = response.data.ocs.data as Score
+		replaceScore(updated)
+		return updated
+	}
+
+	/**
+	 * Remove the link to the PDF file of a score and update local state. The file stays in Files.
+	 *
+	 * @param id - The score ID
+	 * @return The updated score
+	 * @throws { Error } if API call fails
+	 */
+	async function unlinkPdf(id: number): Promise<Score> {
+		const response = await apiClients.default.pdfApiDeletePdf(id)
+		const updated = response.data.ocs.data as Score
+		replaceScore(updated)
+		return updated
+	}
+
+	/**
 	 * Download the content of the MusicXML file of a score
 	 *
 	 * @param id - The score ID
@@ -215,9 +249,32 @@ export const useScoresStore = defineStore('scores', () => {
 	 * @throws { Error } if API call fails; an OCS error body is decoded so that its message can be shown
 	 */
 	async function fetchMusicXml(id: number): Promise<ArrayBuffer> {
+		return fetchScoreFile(id, 'musicxml')
+	}
+
+	/**
+	 * Download the content of the PDF file of a score
+	 *
+	 * @param id - The score ID
+	 * @return The file content
+	 * @throws { Error } if API call fails; an OCS error body is decoded so that its message can be shown
+	 */
+	async function fetchPdf(id: number): Promise<ArrayBuffer> {
+		return fetchScoreFile(id, 'pdf')
+	}
+
+	/**
+	 * Download the content of a file linked to a score
+	 *
+	 * @param id - The score ID
+	 * @param kind - Which file to fetch
+	 * @return The file content
+	 * @throws { Error } if API call fails; an OCS error body is decoded so that its message can be shown
+	 */
+	async function fetchScoreFile(id: number, kind: ScoreFileKind): Promise<ArrayBuffer> {
 		try {
 			const response = await ncAxios.get(
-				generateOcsUrl('/apps/orchestrascoresmanager/scores/{id}/musicxml', { id }),
+				generateOcsUrl('/apps/orchestrascoresmanager/scores/{id}/{kind}', { id, kind }),
 				{ headers: { 'OCS-APIRequest': 'true', Accept: 'application/json' }, responseType: 'arraybuffer' },
 			)
 			return response.data as ArrayBuffer
@@ -272,6 +329,10 @@ export const useScoresStore = defineStore('scores', () => {
 		linkMusicXml,
 		unlinkMusicXml,
 		fetchMusicXml,
+		linkPdf,
+		unlinkPdf,
+		fetchPdf,
+		fetchScoreFile,
 		deleteScore,
 	}
 })

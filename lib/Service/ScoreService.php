@@ -9,11 +9,13 @@ use DateTimeZone;
 use OCA\OrchestraScoresManager\Db\CommentMapper;
 use OCA\OrchestraScoresManager\Db\Enum\PublicationStatus;
 use OCA\OrchestraScoresManager\Db\Enum\RightsStatus;
+use OCA\OrchestraScoresManager\Db\Enum\ShareTargetType;
 use OCA\OrchestraScoresManager\Db\Score;
 use OCA\OrchestraScoresManager\Db\ScoreBookScoreLinkMapper;
 use OCA\OrchestraScoresManager\Db\ScoreFolderCollectionLinkMapper;
 use OCA\OrchestraScoresManager\Db\ScoreMapper;
 use OCA\OrchestraScoresManager\Db\ScoreTagLinkMapper;
+use OCA\OrchestraScoresManager\Db\ShareMapper;
 use OCA\OrchestraScoresManager\Db\TagMapper;
 use OCA\OrchestraScoresManager\Policy\PolicyInterface;
 use OCA\OrchestraScoresManager\Policy\ScorePolicy;
@@ -44,6 +46,7 @@ class ScoreService {
 		private readonly ScorePolicy $scorePolicy,
 		private IL10N $l,
 		private readonly IDBConnection $db,
+		private readonly ShareMapper $shareMapper,
 	) {
 	}
 
@@ -94,6 +97,8 @@ class ScoreService {
 
 			// Delete comments first (cascade should handle this, but let's be sure)
 			$this->commentMapper->deleteByScoreId($id);
+
+			$this->shareMapper->deleteForTarget(ShareTargetType::SCORE->value, $id);
 
 			$this->scoreMapper->delete($score);
 		}, $this->db);

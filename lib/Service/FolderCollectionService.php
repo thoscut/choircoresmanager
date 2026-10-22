@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OCA\OrchestraScoresManager\Service;
 
 use OCA\OrchestraScoresManager\Db\Enum\FolderCollectionType;
+use OCA\OrchestraScoresManager\Db\Enum\ShareTargetType;
 use OCA\OrchestraScoresManager\Db\FolderCollection;
 use OCA\OrchestraScoresManager\Db\FolderCollectionMapper;
 use OCA\OrchestraScoresManager\Db\FolderCollectionVersion;
@@ -13,6 +14,7 @@ use OCA\OrchestraScoresManager\Db\ScoreBookMapper;
 use OCA\OrchestraScoresManager\Db\ScoreBookScoreLinkMapper;
 use OCA\OrchestraScoresManager\Db\ScoreFolderCollectionLinkMapper;
 use OCA\OrchestraScoresManager\Db\ScoreMapper;
+use OCA\OrchestraScoresManager\Db\ShareMapper;
 use OCA\OrchestraScoresManager\Policy\FolderCollectionPolicy;
 use OCA\OrchestraScoresManager\Policy\FolderCollectionVersionPolicy;
 use OCA\OrchestraScoresManager\Policy\PolicyInterface;
@@ -41,6 +43,7 @@ class FolderCollectionService {
 		private readonly FolderCollectionVersionPolicy $versionPolicy,
 		private IL10N $l,
 		private readonly IDBConnection $db,
+		private readonly ShareMapper $shareMapper,
 	) {
 	}
 
@@ -264,6 +267,7 @@ class FolderCollectionService {
 
 		try {
 			$folderCollection = $this->folderCollectionMapper->find($id);
+			$this->shareMapper->deleteForTarget(ShareTargetType::FOLDER_COLLECTION->value, $id);
 			$this->folderCollectionMapper->delete($folderCollection);
 		} catch (DoesNotExistException|MultipleObjectsReturnedException|Exception $e) {
 			throw new \InvalidArgumentException($this->l->t('Folder collection not found'));

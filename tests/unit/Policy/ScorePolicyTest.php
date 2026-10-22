@@ -79,6 +79,15 @@ final class ScorePolicyTest extends TestCase {
 	 */
 	#[DataProvider('readMusicXmlProvider')]
 	public function testReadMusicXml(string $publicationStatus, ?bool $canUserEdit, bool $expectedResult): void {
+		$this->assertReadFile(ScorePolicy::ACTION_READ_MUSICXML, $publicationStatus, $canUserEdit, $expectedResult);
+	}
+
+	#[DataProvider('readMusicXmlProvider')]
+	public function testReadPdf(string $publicationStatus, ?bool $canUserEdit, bool $expectedResult): void {
+		$this->assertReadFile(ScorePolicy::ACTION_READ_PDF, $publicationStatus, $canUserEdit, $expectedResult);
+	}
+
+	private function assertReadFile(string $action, string $publicationStatus, ?bool $canUserEdit, bool $expectedResult): void {
 		if ($canUserEdit === null) {
 			$this->permissionService->expects($this->never())->method('canCurrentUserEdit');
 		} else {
@@ -87,7 +96,7 @@ final class ScorePolicyTest extends TestCase {
 		$score = new Score();
 		$score->setPublicationStatus($publicationStatus);
 
-		$this->assertSame($expectedResult, $this->policy->allows(ScorePolicy::ACTION_READ_MUSICXML, $score));
+		$this->assertSame($expectedResult, $this->policy->allows($action, $score));
 	}
 
 	public static function readMusicXmlProvider(): array {

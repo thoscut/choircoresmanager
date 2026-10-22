@@ -71,6 +71,12 @@ use OCP\DB\Types;
  * @method void setMusicxmlFileId(?int $value)
  * @method string|null getMusicxmlLinkedBy()
  * @method void setMusicxmlLinkedBy(?string $value)
+ * @method string|null getPdfFile()
+ * @method void setPdfFile(?string $value)
+ * @method int|null getPdfFileId()
+ * @method void setPdfFileId(?int $value)
+ * @method string|null getPdfLinkedBy()
+ * @method void setPdfLinkedBy(?string $value)
  * @method DateTimeImmutable|null getUpdatedAt()
  * @method void setUpdatedAt(?DateTimeImmutable $value)
  */
@@ -130,6 +136,16 @@ class Score extends Entity implements JsonSerializable {
 	 * @psalm-suppress PossiblyUnusedProperty - Only accessed through the magic getter and setter
 	 */
 	protected ?string $musicxmlLinkedBy = null;
+	/** Name of the linked PDF file at the time it was linked, only for display */
+	protected ?string $pdfFile = null;
+	/** Nextcloud file id of the linked PDF file */
+	protected ?int $pdfFileId = null;
+	/**
+	 * User id of the person who linked the PDF file; the file is read with this user's access. Not exposed in the API.
+	 *
+	 * @psalm-suppress PossiblyUnusedProperty - Only accessed through the magic getter and setter
+	 */
+	protected ?string $pdfLinkedBy = null;
 	/** Set by the mapper on every insert and update */
 	protected ?DateTimeImmutable $updatedAt = null;
 
@@ -177,6 +193,9 @@ class Score extends Entity implements JsonSerializable {
 		$this->addType('musicxmlFile', Types::STRING);
 		$this->addType('musicxmlFileId', Types::BIGINT);
 		$this->addType('musicxmlLinkedBy', Types::STRING);
+		$this->addType('pdfFile', Types::STRING);
+		$this->addType('pdfFileId', Types::BIGINT);
+		$this->addType('pdfLinkedBy', Types::STRING);
 		$this->addType('updatedAt', Types::DATETIME_IMMUTABLE);
 
 		// Always write both status columns on insert instead of relying on the database default
@@ -219,6 +238,8 @@ class Score extends Entity implements JsonSerializable {
 			'publicationBlockedUntil' => $this->publicationBlockedUntil?->format('Y-m-d'),
 			'musicxmlFile' => $this->musicxmlFile,
 			'musicxmlFileId' => $this->musicxmlFileId,
+			'pdfFile' => $this->pdfFile,
+			'pdfFileId' => $this->pdfFileId,
 			'updatedAt' => $this->updatedAt?->format(DATE_ATOM),
 		];
 	}

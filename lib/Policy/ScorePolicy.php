@@ -16,6 +16,13 @@ class ScorePolicy implements PolicyInterface {
 	 */
 	public const ACTION_READ_MUSICXML = 'READ_MUSICXML';
 
+	/**
+	 * Read the content of the PDF file of a score (subject: the Score).
+	 *
+	 * Same rule as ACTION_READ_MUSICXML.
+	 */
+	public const ACTION_READ_PDF = 'READ_PDF';
+
 	/** @psalm-suppress PossiblyUnusedMethod - Constructor used by DI container */
 	public function __construct(
 		private readonly PermissionService $permissionService,
@@ -28,7 +35,7 @@ class ScorePolicy implements PolicyInterface {
 			self::ACTION_CREATE, self::ACTION_UPDATE, self::ACTION_DELETE, self::ACTION_SHARE => $this->permissionService->canCurrentUserEdit(),
 			// read is allowed for every logged-in user
 			self::ACTION_READ => $this->permissionService->isCurrentUserLoggedIn(),
-			self::ACTION_READ_MUSICXML => $subject instanceof Score
+			self::ACTION_READ_MUSICXML, self::ACTION_READ_PDF => $subject instanceof Score
 				&& $this->permissionService->isCurrentUserLoggedIn()
 				&& ($subject->getPublicationStatus() !== PublicationStatus::INTERNAL_PRESERVATION_COPY->value
 					|| $this->permissionService->canCurrentUserEdit()),

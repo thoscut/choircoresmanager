@@ -10,6 +10,7 @@ use OCA\OrchestraScoresManager\Db\ScoreBookScoreLinkMapper;
 use OCA\OrchestraScoresManager\Db\ScoreFolderCollectionLinkMapper;
 use OCA\OrchestraScoresManager\Db\ScoreMapper;
 use OCA\OrchestraScoresManager\Db\ScoreTagLinkMapper;
+use OCA\OrchestraScoresManager\Db\ShareMapper;
 use OCA\OrchestraScoresManager\Db\Tag;
 use OCA\OrchestraScoresManager\Db\TagMapper;
 use OCA\OrchestraScoresManager\Policy\PolicyInterface;
@@ -36,6 +37,7 @@ final class ScoreServiceTest extends TestCase {
 	private AuthorizationService $authorizationService;
 	private ScorePolicy $scorePolicy;
 	private IL10N $l10n;
+	private ShareMapper $shareMapper;
 	private ScoreService $service;
 
 	protected function setUp(): void {
@@ -50,6 +52,7 @@ final class ScoreServiceTest extends TestCase {
 		$this->authorizationService = $this->createMock(AuthorizationService::class);
 		$this->scorePolicy = $this->createMock(ScorePolicy::class);
 		$this->l10n = $this->createMock(IL10N::class);
+		$this->shareMapper = $this->createMock(ShareMapper::class);
 
 		$this->l10n->method('t')->willReturnCallback(fn ($text, $params = []) => vsprintf($text, $params));
 
@@ -64,6 +67,7 @@ final class ScoreServiceTest extends TestCase {
 			$this->scorePolicy,
 			$this->l10n,
 			$this->createMock(IDBConnection::class),
+			$this->shareMapper,
 		);
 	}
 
@@ -210,6 +214,10 @@ final class ScoreServiceTest extends TestCase {
 		$this->scoreMapper->expects($this->once())
 			->method('delete')
 			->with($score);
+
+		$this->shareMapper->expects($this->once())
+			->method('deleteForTarget')
+			->with('score', 1);
 
 		$this->service->deleteScoreById(1);
 	}
@@ -500,6 +508,7 @@ final class ScoreServiceTest extends TestCase {
 			$this->scorePolicy,
 			$this->l10n,
 			$db,
+			$this->shareMapper,
 		);
 
 		$created = new Score();

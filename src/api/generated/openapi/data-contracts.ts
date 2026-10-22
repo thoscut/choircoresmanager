@@ -159,6 +159,9 @@ export interface Score {
   musicxmlFile: string | null;
   /** @format int64 */
   musicxmlFileId: number | null;
+  pdfFile: string | null;
+  /** @format int64 */
+  pdfFileId: number | null;
   updatedAt: string | null;
   tags: string[] | null;
   scoreBook: ScoreBookInfo | null;
@@ -255,6 +258,9 @@ export interface ScoreIndexed {
   musicxmlFile: string | null;
   /** @format int64 */
   musicxmlFileId: number | null;
+  pdfFile: string | null;
+  /** @format int64 */
+  pdfFileId: number | null;
   updatedAt: string | null;
   tags: string[] | null;
   scoreBook: ScoreBookInfo | null;
@@ -293,6 +299,54 @@ export interface SetlistEntry {
   breakDuration: number | null;
   /** @format int64 */
   scoreId: number | null;
+}
+
+export interface Share {
+  /** @format int64 */
+  id: number;
+  shareType: "link" | "group";
+  targetType: "score" | "folder_collection";
+  /** @format int64 */
+  targetId: number;
+  targetTitle: string | null;
+  token: string | null;
+  groupId: string | null;
+  groupName: string | null;
+  label: string | null;
+  createdBy: string;
+  /** @format int64 */
+  createdAt: number;
+}
+
+export interface ShareGroup {
+  id: string;
+  displayName: string;
+}
+
+export interface SharedScore {
+  /** @format int64 */
+  id: number;
+  title: string;
+  composer: string | null;
+  arranger: string | null;
+  /** @format int64 */
+  year: number | null;
+  /** @format int64 */
+  duration: number | null;
+  index: string | null;
+  hasMusicXml: boolean;
+  hasPdf: boolean;
+}
+
+export interface SharedTarget {
+  /** @format int64 */
+  shareId: number;
+  targetType: "score" | "folder_collection";
+  /** @format int64 */
+  targetId: number;
+  title: string;
+  description: string | null;
+  scores: SharedScore[];
 }
 
 export interface Tag {
@@ -574,6 +628,31 @@ export interface MusicXmlApiPostMusicXmlData {
 }
 
 export interface MusicXmlApiDeleteMusicXmlData {
+  ocs: {
+    meta: OCSMeta;
+    data: Score;
+  };
+}
+
+/** @format binary */
+export type PdfApiGetPdfData = File;
+
+export interface PdfApiPostPdfPayload {
+  /**
+   * The Nextcloud file id of the PDF file
+   * @format int64
+   */
+  fileId: number;
+}
+
+export interface PdfApiPostPdfData {
+  ocs: {
+    meta: OCSMeta;
+    data: Score;
+  };
+}
+
+export interface PdfApiDeletePdfData {
   ocs: {
     meta: OCSMeta;
     data: Score;
@@ -1393,6 +1472,70 @@ export interface SetlistEntryApiPostSetlistEntriesBatchData {
   ocs: {
     meta: OCSMeta;
     data: SetlistEntry[];
+  };
+}
+
+export interface ShareApiGetSharesData {
+  ocs: {
+    meta: OCSMeta;
+    data: Share[];
+  };
+}
+
+export interface ShareApiPostSharePayload {
+  /** The type of share */
+  shareType: "link" | "group";
+  /** The type of the shared item */
+  targetType: "score" | "folder_collection";
+  /**
+   * The ID of the shared item
+   * @format int64
+   */
+  targetId: number;
+  /**
+   * The group to share with, required for group shares
+   * @default null
+   */
+  groupId?: string | null;
+  /**
+   * Optional title shown instead of the item's title
+   * @default null
+   */
+  label?: string | null;
+}
+
+export interface ShareApiPostShareData {
+  ocs: {
+    meta: OCSMeta;
+    data: Share;
+  };
+}
+
+export interface ShareApiGetAllSharesData {
+  ocs: {
+    meta: OCSMeta;
+    data: Share[];
+  };
+}
+
+export interface ShareApiDeleteShareData {
+  ocs: {
+    meta: OCSMeta;
+    data: object;
+  };
+}
+
+export interface ShareApiGetShareGroupsData {
+  ocs: {
+    meta: OCSMeta;
+    data: ShareGroup[];
+  };
+}
+
+export interface ShareApiGetSharedWithMeData {
+  ocs: {
+    meta: OCSMeta;
+    data: SharedTarget[];
   };
 }
 

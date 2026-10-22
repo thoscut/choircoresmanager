@@ -15,6 +15,7 @@ use OCA\OrchestraScoresManager\Db\ScoreBookMapper;
 use OCA\OrchestraScoresManager\Db\ScoreBookScoreLinkMapper;
 use OCA\OrchestraScoresManager\Db\ScoreFolderCollectionLinkMapper;
 use OCA\OrchestraScoresManager\Db\ScoreMapper;
+use OCA\OrchestraScoresManager\Db\ShareMapper;
 use OCA\OrchestraScoresManager\Policy\FolderCollectionPolicy;
 use OCA\OrchestraScoresManager\Policy\FolderCollectionVersionPolicy;
 use OCA\OrchestraScoresManager\Policy\PolicyInterface;
@@ -41,6 +42,7 @@ final class FolderCollectionServiceTest extends TestCase {
 	private FolderCollectionPolicy $folderCollectionPolicy;
 	private FolderCollectionVersionPolicy $versionPolicy;
 	private IL10N $l10n;
+	private ShareMapper $shareMapper;
 	private FolderCollectionService $service;
 
 	protected function setUp(): void {
@@ -56,6 +58,7 @@ final class FolderCollectionServiceTest extends TestCase {
 		$this->folderCollectionPolicy = $this->createMock(FolderCollectionPolicy::class);
 		$this->versionPolicy = $this->createMock(FolderCollectionVersionPolicy::class);
 		$this->l10n = $this->createMock(IL10N::class);
+		$this->shareMapper = $this->createMock(ShareMapper::class);
 
 		$this->l10n->method('t')->willReturnCallback(fn ($text, $params = []) => vsprintf($text, $params));
 
@@ -70,7 +73,8 @@ final class FolderCollectionServiceTest extends TestCase {
 			$this->folderCollectionPolicy,
 			$this->versionPolicy,
 			$this->l10n,
-			$this->createMock(IDBConnection::class)
+			$this->createMock(IDBConnection::class),
+			$this->shareMapper,
 		);
 	}
 
@@ -285,6 +289,10 @@ final class FolderCollectionServiceTest extends TestCase {
 		$this->folderCollectionMapper->expects($this->once())
 			->method('delete')
 			->with($fc);
+
+		$this->shareMapper->expects($this->once())
+			->method('deleteForTarget')
+			->with('folder_collection', 1);
 
 		$this->service->deleteFolderCollection(1);
 	}

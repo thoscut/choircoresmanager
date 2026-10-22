@@ -482,4 +482,30 @@ final class ScoreMapperTest extends MapperTestCase {
 			}
 		}
 	}
+
+	public function testFindMultipleWithoutTransientsCanFilterToPublicScores(): void {
+		$ids = [];
+		$cases = [
+			['public_domain', 'approved', true],
+			['public_domain', 'approved', false],
+			['protected', 'approved', true],
+			['public_domain', 'internal_preservation_copy', true],
+		];
+		foreach ($cases as [$rights, $publication, $confirmed]) {
+			$score = new Score();
+			$score->setTitle("Score $rights $publication");
+			$score->setRightsStatus($rights);
+			$score->setPublicationStatus($publication);
+			if ($confirmed) {
+				$score->setRightsConfirmedAt(new \DateTimeImmutable('2026-10-01'));
+			}
+			$ids[] = $this->mapper->insert($score)->getId();
+		}
+
+		$public = $this->mapper->findMultipleWithoutTransients($ids, true);
+		$this->assertSame([$ids[0]], array_map(fn (Score $s) => $s->getId(), $public));
+
+		$this->assertCount(4, $this->mapper->findMultipleWithoutTransients($ids, false));
+		$this->assertSame([], $this->mapper->findMultipleWithoutTransients([], false));
+	}
 }

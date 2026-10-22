@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - Unreleased
+
+### Added
+
+- PDF file per score, linked from Nextcloud Files like the MusicXML file, with an in-browser viewer (no download or print button)
+- Sharing of scores and folder collections: group shares appear in "Shared with me" for the group's members, public links work without login and only show scores that may be published; editors manage shares on "Manage shares", in the folder collection header and in the score sidebar
+
 ## [1.3.0] - Unreleased
 
 ### Added

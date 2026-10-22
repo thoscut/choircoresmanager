@@ -40,6 +40,8 @@ export { default as PreviousIcon } from 'vue-material-design-icons/ChevronLeft.v
 export { default as NextIcon } from 'vue-material-design-icons/ChevronRight.vue'
 export { default as MusicXmlIcon } from 'vue-material-design-icons/MusicNote.vue'
 export { default as PublicIcon } from 'vue-material-design-icons/Earth.vue'
+export { default as ZoomInIcon } from 'vue-material-design-icons/MagnifyPlusOutline.vue'
+export { default as ZoomOutIcon } from 'vue-material-design-icons/MagnifyMinusOutline.vue'
 
 // State icons
 export { default as ErrorIcon } from 'vue-material-design-icons/AlertCircle.vue'
@@ -54,3 +56,8 @@ export { default as CommentIcon } from 'vue-material-design-icons/CommentTextOut
 export { default as ExpandedIcon } from 'vue-material-design-icons/ChevronDown.vue'
 export { default as CollapsedIcon } from 'vue-material-design-icons/ChevronRight.vue'
 export { default as DragVerticalIcon } from 'vue-material-design-icons/DragHorizontal.vue'
+
+// Sharing icons
+export { default as ShareIcon } from 'vue-material-design-icons/ShareVariant.vue'
+export { default as GroupIcon } from 'vue-material-design-icons/AccountGroup.vue'
+export { default as ManageSharesIcon } from 'vue-material-design-icons/AccountMultipleCheck.vue'

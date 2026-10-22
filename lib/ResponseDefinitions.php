@@ -39,6 +39,8 @@ namespace OCA\OrchestraScoresManager;
  *     publicationBlockedUntil: string|null,
  *     musicxmlFile: string|null,
  *     musicxmlFileId: int|null,
+ *     pdfFile: string|null,
+ *     pdfFileId: int|null,
  *     updatedAt: string|null,
  *     tags: list<string>|null,
  *     scoreBook: OrchestraScoresManagerScoreBookInfo|null,
@@ -76,6 +78,8 @@ namespace OCA\OrchestraScoresManager;
  *     publicationBlockedUntil: string|null,
  *     musicxmlFile: string|null,
  *     musicxmlFileId: int|null,
+ *     pdfFile: string|null,
+ *     pdfFileId: int|null,
  *     updatedAt: string|null,
  *     tags: list<string>|null,
  *     scoreBook: OrchestraScoresManagerScoreBookInfo|null,
@@ -211,6 +215,42 @@ namespace OCA\OrchestraScoresManager;
  * @psalm-type OrchestraScoresManagerCatalogueValue = array{
  *     column: string,
  *     value: string
+ * }
+ * @psalm-type OrchestraScoresManagerShare = array{
+ *     id: int,
+ *     shareType: 'link'|'group',
+ *     targetType: 'score'|'folder_collection',
+ *     targetId: int,
+ *     targetTitle: string|null,
+ *     token: string|null,
+ *     groupId: string|null,
+ *     groupName: string|null,
+ *     label: string|null,
+ *     createdBy: string,
+ *     createdAt: int
+ * }
+ * @psalm-type OrchestraScoresManagerShareGroup = array{
+ *     id: string,
+ *     displayName: string
+ * }
+ * @psalm-type OrchestraScoresManagerSharedScore = array{
+ *     id: int,
+ *     title: string,
+ *     composer: string|null,
+ *     arranger: string|null,
+ *     year: int|null,
+ *     duration: int|null,
+ *     index: string|null,
+ *     hasMusicXml: bool,
+ *     hasPdf: bool
+ * }
+ * @psalm-type OrchestraScoresManagerSharedTarget = array{
+ *     shareId: int,
+ *     targetType: 'score'|'folder_collection',
+ *     targetId: int,
+ *     title: string,
+ *     description: string|null,
+ *     scores: list<OrchestraScoresManagerSharedScore>
  * }
  * @psalm-suppress UnusedClass - Used for OpenAPI response type definitions
  */
