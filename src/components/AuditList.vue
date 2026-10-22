@@ -69,9 +69,47 @@ function actionLabel(action: string): string {
 		return t('notenarchiv', 'File not found')
 	case 'file_sync':
 		return t('notenarchiv', 'File sync')
+	case 'practice_audio':
+		return t('notenarchiv', 'Practice files made')
 	default:
 		return action
 	}
+}
+
+/**
+ * What a practice audio export contained, from its JSON record:
+ * "2-2 · Measures 1 to 4 · Tenor 1 · Focus voice louder · WAV · 90 % · with repeats".
+ *
+ * @param value - new_value of the log entry
+ */
+function practiceAudioText(value: string): string {
+	let details: Record<string, unknown>
+	try {
+		details = JSON.parse(value)
+	} catch {
+		return value
+	}
+	if (details === null || typeof details !== 'object') {
+		return value
+	}
+	const modes: Record<string, string> = {
+		all: t('notenarchiv', 'All equal'),
+		focus: t('notenarchiv', 'Focus voice louder'),
+		solo: t('notenarchiv', 'Focus voice only'),
+	}
+	const [from, to] = String(details.measures ?? '').split('-')
+	const voice = details.voice === '*'
+		? t('notenarchiv', 'Every voice and a tutti (ZIP)')
+		: (typeof details.voice === 'string' && details.voice !== '' ? details.voice : t('notenarchiv', 'Tutti'))
+	return [
+		String(details.copy ?? ''),
+		t('notenarchiv', 'Measures {from} to {to}', { from: from ?? '', to: to ?? '' }),
+		voice,
+		modes[String(details.mode)] ?? String(details.mode ?? ''),
+		String(details.format ?? '').toUpperCase(),
+		typeof details.tempo === 'number' ? `${details.tempo} %` : '',
+		details.repeats === false ? t('notenarchiv', 'without repeats') : t('notenarchiv', 'with repeats'),
+	].filter((part) => part !== '').join(' · ')
 }
 
 /**
@@ -132,7 +170,7 @@ function who(entry: AuditEntry): string {
 					<span class="audit-list__new">{{ value(entry, entry.new_value) || t('notenarchiv', '(empty)') }}</span>
 				</div>
 				<div v-else-if="entry.new_value" class="audit-list__change">
-					{{ entry.new_value }}
+					{{ entry.action === 'practice_audio' ? practiceAudioText(entry.new_value) : entry.new_value }}
 				</div>
 				<div v-if="entry.reason" class="audit-list__reason">
 					{{ t('notenarchiv', 'Reason: {reason}', { reason: entry.reason }) }}

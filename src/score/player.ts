@@ -4,8 +4,10 @@
  * playing. Browser only (Web Audio).
  */
 import type { PlayEvent, Timeline } from './timeline.ts'
+import type { VoiceMember } from './voices.ts'
 
 import { Synth } from './synth.ts'
+import { memberKey } from './voices.ts'
 
 export type PlayMode = 'all' | 'focus' | 'solo'
 
@@ -34,6 +36,70 @@ export function voiceGain(mode: PlayMode, inFocus: boolean, hasFocus: boolean): 
 		return inFocus ? 0.8 : 0
 	}
 	return inFocus ? 0.9 : 0.16
+}
+
+/**
+ * Loudness of every voice member key (staff.layer) for a focus voice and a
+ * playback mode, as in the score view.
+ *
+ * @param members - staff/layer pairs of the focus voice; empty for none
+ * @param mode - playback mode
+ */
+export function voiceGains(members: VoiceMember[], mode: PlayMode): (voice: string) => number {
+	const keys = new Set(members.map((member) => memberKey(member.staff, member.layer)))
+	const hasFocus = keys.size > 0
+	return (voice: string) => voiceGain(mode, keys.has(voice), hasFocus)
+}
+
+/** Whatever plays notes: the synthesizer, or a recorder in tests. */
+export interface NoteTarget {
+	note(pitch: number, start: number, end: number, gain: number): void
+}
+
+/** Where the timeline lies on the clock of an audio context. */
+export interface Clock {
+	/** context time at which `startScore` sounds */
+	startAudio: number
+	/** position in the timeline (seconds at 100 % tempo) */
+	startScore: number
+	/** tempo factor */
+	rate: number
+}
+
+/**
+ * Hand the events that start up to a horizon to the synthesizer, as the
+ * playback and the practice audio files both do: tied continuations are
+ * not struck again, voices with gain 0 stay silent.
+ *
+ * @param target - synthesizer
+ * @param events - events sorted by start
+ * @param next - index of the first event not yet scheduled
+ * @param clock - where the timeline lies on the context's clock
+ * @param horizon - schedule events that start up to this context time
+ * @param now - current context time; nothing starts earlier
+ * @param gainOf - gain 0 … 1 per voice member key
+ * @return the index of the first event not yet scheduled
+ */
+export function scheduleEvents(target: NoteTarget, events: PlayEvent[], next: number, clock: Clock, horizon: number, now: number, gainOf: (voice: string) => number): number {
+	let index = next
+	while (index < events.length) {
+		const event = events[index]
+		const at = clock.startAudio + (event.start - clock.startScore) / clock.rate
+		if (at > horizon) {
+			break
+		}
+		index++
+		if (!event.sound) {
+			continue
+		}
+		const gain = gainOf(event.voice)
+		if (gain <= 0) {
+			continue
+		}
+		const end = clock.startAudio + (event.soundEnd - clock.startScore) / clock.rate
+		target.note(event.pitch, Math.max(at, now), end, gain)
+	}
+	return index
 }
 
 /**
@@ -223,25 +289,9 @@ export class ScorePlayer {
 			return
 		}
 		const now = synth.context.currentTime
-		const horizon = now + LOOK_AHEAD
 		const events = this.timeline.events
-		while (this.next < events.length) {
-			const event = events[this.next]
-			const at = this.startAudio + (event.start - this.startScore) / this.rate
-			if (at > horizon) {
-				break
-			}
-			this.next++
-			if (!event.sound) {
-				continue
-			}
-			const gain = this.gainOf(event.voice)
-			if (gain <= 0) {
-				continue
-			}
-			const end = this.startAudio + (event.soundEnd - this.startScore) / this.rate
-			synth.note(event.pitch, Math.max(at, now), end, gain)
-		}
+		const clock = { startAudio: this.startAudio, startScore: this.startScore, rate: this.rate }
+		this.next = scheduleEvents(synth, events, this.next, clock, now + LOOK_AHEAD, now, this.gainOf)
 		if (this.next >= events.length && this.currentTime() >= this.timeline.duration) {
 			this.halt()
 			this.position = 0

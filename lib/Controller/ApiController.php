@@ -95,8 +95,13 @@ class ApiController extends Controller {
 			$this->roles->requireAccess($uid);
 			$entry = $this->catalog->entry($id, $uid);
 			$score = $entry['score'];
-			if ($score !== null && $score['reason'] !== null) {
-				$score['reason'] = $this->l->t($score['reason']);
+			if ($score !== null) {
+				if ($score['reason'] !== null) {
+					$score['reason'] = $this->l->t($score['reason']);
+				}
+				if ($score['exportReason'] !== null) {
+					$score['exportReason'] = $this->l->t($score['exportReason']);
+				}
 				$entry['score'] = $score;
 			}
 			$releases = $entry['releases'];

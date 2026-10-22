@@ -55,6 +55,12 @@ and 35.0.2 with MariaDB; the app requires MySQL or MariaDB.
   static analysis (Psalm), coding standard, CI workflow.
 - CI on GitHub Actions also runs the integration tests with the demo data
   against fresh Nextcloud 33 and 35 instances with MariaDB.
+- Practice files per voice from the score view (librarian and conductor): WAV
+  rendered in the browser with the playback's synthesizer and playing order,
+  or MIDI with one track per voice; one file or a ZIP with every voice plus a
+  tutti. The server allows each export only for confirmed public domain or
+  versions licensed for practice audio, never for preservation copies, and
+  records it in the audit log (`POST /api/versions/{id}/practice-audio`).
 
 ### Fixed
 

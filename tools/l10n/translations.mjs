@@ -418,12 +418,79 @@ export const singular = {
 	major: 'Dur',
 	minor: 'Moll',
 	'Time signature: {time}': 'Taktart: {time}',
+	'{percent} % ({mark})': '{percent} % ({mark})',
+
+	// ---- score view: practice files ----
+	'Practice files …': 'Übe-Dateien …',
+	'Practice files': 'Übe-Dateien',
+	'Practice files made': 'Übe-Dateien erstellt',
+	'Playback and practice files come from a simple built-in synthesizer; they are no substitute for a recording. The files are only for practising in the choir, as far as the rights or the license allow. Upload them to the practice system of the choir yourself: the music archive gives nothing to choir members. Every export is recorded in the audit log.': [
+		'Wiedergabe und Übe-Dateien kommen aus einem einfachen eingebauten Synthesizer; sie ersetzen keine Einspielung. Die Dateien sind nur zum Üben im Chor bestimmt, soweit die Rechte oder die Lizenz es erlauben. Lade sie selbst in das Übesystem des Chors hoch: Das Notenarchiv gibt nichts an Chormitglieder weiter. Jeder Export wird im Protokoll vermerkt.',
+		'Wiedergabe und Übe-Dateien kommen aus einem einfachen eingebauten Synthesizer; sie ersetzen keine Einspielung. Die Dateien sind nur zum Üben im Chor bestimmt, soweit die Rechte oder die Lizenz es erlauben. Laden Sie sie selbst in das Übesystem des Chors hoch: Das Notenarchiv gibt nichts an Chormitglieder weiter. Jeder Export wird im Protokoll vermerkt.',
+	],
+	Measures: 'Takte',
+	'{from} to {to}': '{from} bis {to}',
+	Repeats: 'Wiederholungen',
+	Length: 'Dauer',
+	'Measures, tempo and repeats are taken from the score view; change them there.': [
+		'Takte, Tempo und Wiederholungen kommen aus der Notenansicht; ändere sie dort.',
+		'Takte, Tempo und Wiederholungen kommen aus der Notenansicht; ändern Sie sie dort.',
+	],
+	'One file': 'Eine Datei',
+	'Every voice and a tutti (ZIP)': 'Jede Stimme und ein Tutti (ZIP)',
+	'All voices equal (tutti)': 'Alle Stimmen gleich (Tutti)',
+	Tutti: 'Tutti',
+	'All voices': 'Alle Stimmen',
+	'Other voices': 'Übrige Stimmen',
+	'In the file of each voice': 'In der Datei jeder Stimme',
+	Format: 'Format',
+	'WAV (audio)': 'WAV (Audio)',
+	'MIDI (one track per voice)': 'MIDI (eine Spur je Stimme)',
+	Channels: 'Kanäle',
+	Mono: 'Mono',
+	Stereo: 'Stereo',
+	'About {size}; making it needs about {memory} of memory in the browser.': 'Etwa {size}; zum Erstellen braucht der Browser etwa {memory} Arbeitsspeicher.',
+	'About {size}.': 'Etwa {size}.',
+	'At this tempo the excerpt lasts {length}, more than 10 minutes. Making the files takes a while and needs about {memory} of memory; a shorter range may be easier to practise anyway.': 'In diesem Tempo dauert der Ausschnitt {length}, also mehr als 10 Minuten. Das Erstellen dauert eine Weile und braucht etwa {memory} Arbeitsspeicher; ein kürzerer Bereich lässt sich ohnehin oft besser üben.',
+	'Checking the rights …': 'Rechte werden geprüft …',
+	'Making file {number} of {count} … {percent} %': 'Datei {number} von {count} wird erstellt … {percent} %',
+	'Making the file … {percent} %': 'Die Datei wird erstellt … {percent} %',
+	'Cancelled. No file was made.': 'Abgebrochen. Es wurde keine Datei erstellt.',
+	'The files are too large. Please choose fewer measures.': [
+		'Die Dateien sind zu groß. Bitte wähle weniger Takte.',
+		'Die Dateien sind zu groß. Bitte wählen Sie weniger Takte.',
+	],
+	'The file could not be made in this browser.': 'Die Datei konnte in diesem Browser nicht erstellt werden.',
+	'Made: {name} ({size}). The browser saves the file in your downloads.': [
+		'Erstellt: {name} ({size}). Der Browser speichert die Datei bei deinen Downloads.',
+		'Erstellt: {name} ({size}). Der Browser speichert die Datei bei Ihren Downloads.',
+	],
+	'Save again': 'Noch einmal speichern',
+	'Make file': 'Datei erstellen',
+	'Make ZIP archive': 'ZIP-Archiv erstellen',
+	'with repeats': 'mit Wiederholungen',
+	'without repeats': 'ohne Wiederholungen',
 
 	// ---- server: rights policy (reasons shown with the score) ----
 	'Internal preservation copy: only the catalog librarian and the conductor may view it.': 'Interne Erhaltungskopie: Nur die Rollen „Bestand“ und „Chorleitung“ dürfen sie ansehen.',
 	'Internal preservation copy: no playback.': 'Interne Erhaltungskopie: kein Abspielen.',
 	'Protected version: playback needs a license for practice audio.': 'Geschützte Fassung: Zum Abspielen ist eine Lizenz für Übe-Audio nötig.',
 	'Rights not clarified: no playback until the rights status is known.': 'Rechte nicht geklärt: kein Abspielen, bis der Rechtestatus feststeht.',
+	'Practice audio files are made by the catalog librarian or the conductor.': 'Übe-Dateien erstellen nur die Rollen „Bestand“ und „Chorleitung“.',
+	'Public domain is not confirmed yet: practice audio files need a confirmed rights status or a license for practice audio.': 'Die Gemeinfreiheit ist noch nicht bestätigt: Übe-Dateien brauchen einen bestätigten Rechtestatus oder eine Lizenz für Übe-Audio.',
+
+	// ---- server: practice audio requests ----
+	'The copy does not belong to this version.': 'Das Exemplar gehört nicht zu dieser Fassung.',
+	'Please give the first and the last measure.': [
+		'Bitte gib den ersten und den letzten Takt an.',
+		'Bitte geben Sie den ersten und den letzten Takt an.',
+	],
+	Mode: 'Modus',
+	'A file for every voice needs the mode "focus voice louder" or "focus voice only".': 'Eine Datei je Stimme braucht den Modus „Stimme betont“ oder „Nur diese Stimme“.',
+	'Please choose the voice to emphasise.': [
+		'Bitte wähle die Stimme, die betont werden soll.',
+		'Bitte wählen Sie die Stimme, die betont werden soll.',
+	],
 
 	// ---- server: options ----
 	'Released for publication': 'Zur Veröffentlichung freigegeben',
@@ -1356,6 +1423,7 @@ export const singular = {
 
 export const plural = {
 	'%n copy|%n copies': ['%n Exemplar', '%n Exemplare'],
+	'ZIP archive with %n file: {name}|ZIP archive with %n files: {name}': ['ZIP-Archiv mit %n Datei: {name}', 'ZIP-Archiv mit %n Dateien: {name}'],
 	'%n file|%n files': ['%n Datei', '%n Dateien'],
 	'%n PDF|%n PDFs': ['%n PDF', '%n PDFs'],
 	'%n change saved|%n changes saved': ['%n Änderung gespeichert', '%n Änderungen gespeichert'],

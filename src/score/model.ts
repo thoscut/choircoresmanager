@@ -217,6 +217,19 @@ export function timelineFor(model: ScoreModel, order: number[]): Timeline {
 }
 
 /**
+ * What sounds for a range with or without repeats: the events of the
+ * playback in the score view and of the practice audio files alike, so that
+ * an exported file sounds exactly like playing the same choice.
+ *
+ * @param model - the score
+ * @param range - measure range or null for the whole piece
+ * @param repeats - whether to take repeats
+ */
+export function playbackTimeline(model: ScoreModel, range: MeasureRange | null, repeats: boolean): Timeline {
+	return timelineFor(model, playingOrder(model, range, repeats))
+}
+
+/**
  * Show only a range of measures (or all) in the rendered pages.
  *
  * @param toolkit - toolkit with the score loaded

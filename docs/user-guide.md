@@ -55,6 +55,27 @@ stems, the other voices in a lighter gray; the lyrics of its staff stay dark. Pl
 Keyboard: Space plays and pauses, Esc closes. The current bar is announced to
 screen readers.
 
+**Practice files** (music librarian and conductor): **Practice files …** makes
+files for the choir's practice system from the bars, tempo and repeats chosen
+in the score view. Choose one file (a voice louder, only this voice, or all
+voices equal) or a ZIP archive with a file per voice plus a tutti, as WAV
+(16 bit, mono or stereo; sounds exactly like the playback) or MIDI (one track
+per voice with its name; the balance is in the volume of each track, so it can
+be changed in a MIDI player). File names follow
+`<shelf mark>_<title>_<voice>_T<from>-<to>`, e.g.
+`2-2_Kein-schoener-Land_Tenor-1_T0-10.wav`. The dialog shows the length and
+roughly how large the files are; excerpts longer than 10 minutes get a warning.
+A progress bar shows how far the files are, and **Cancel** stops.
+
+The server checks the rights before every export: practice files are only
+made for confirmed public domain versions and for versions with a valid
+license for practice audio, never for internal preservation copies. Without
+the right, the reason is shown instead of the button. Every export is recorded
+in the history of the version (bars, voice, mode, format). The sound is
+synthetic and no substitute for a recording; the files are only for practising
+in the choir, as far as the rights or the license allow. Upload them to the
+practice system yourself: the app gives nothing to choir members.
+
 ## Questions and tasks
 
 Ask a question about a place in the score — page, bars, voice, verse — and

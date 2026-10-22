@@ -21,10 +21,41 @@ export interface TimemapEntry {
 export interface LinearTiming {
 	/** start and end of every measure in ms, linear (index = measure index) */
 	measures: { start: number, end: number }[]
+	/**
+	 * start and end of every measure in quarter notes, linear; used for the
+	 * beats and bars of a MIDI file. Missing when the timemap has no qstamp.
+	 */
+	quarters?: { start: number, end: number }[]
 	/** on and off time of every note in ms */
 	notes: Map<string, { on: number, off: number }>
 	/** first tempo in quarter notes per minute */
 	tempo: number | null
+}
+
+/**
+ * Start and end of every measure from the first timemap entry of each, in a
+ * linear time axis; measures without an entry start where the next known
+ * one starts.
+ *
+ * @param starts - start of every measure, undefined when unknown
+ * @param last - end of the last measure
+ */
+function spans(starts: (number | undefined)[], last: number): { start: number, end: number }[] {
+	const filled = [...starts]
+	let next = last
+	for (let i = filled.length - 1; i >= 0; i--) {
+		const start = filled[i]
+		if (start === undefined) {
+			filled[i] = next
+		} else {
+			next = start
+		}
+	}
+	return filled.map((start, i) => {
+		const begin = start ?? 0
+		const end = i + 1 < filled.length ? (filled[i + 1] ?? begin) : last
+		return { start: begin, end: Math.max(begin, end) }
+	})
 }
 
 export interface PlayEvent {
@@ -64,13 +95,24 @@ export interface Timeline {
  */
 export function linearTiming(timemap: TimemapEntry[], measureIds: string[]): LinearTiming {
 	const measureStart = new Map<string, number>()
+	const measureQuarter = new Map<string, number>()
 	const notes = new Map<string, { on: number, off: number }>()
 	let tempo: number | null = null
 	let last = 0
+	let lastQuarter = 0
+	let withQuarters = timemap.length > 0
 	for (const entry of timemap) {
 		last = Math.max(last, entry.tstamp)
+		if (typeof entry.qstamp === 'number') {
+			lastQuarter = Math.max(lastQuarter, entry.qstamp)
+		} else {
+			withQuarters = false
+		}
 		if (entry.measureOn && !measureStart.has(entry.measureOn)) {
 			measureStart.set(entry.measureOn, entry.tstamp)
+			if (typeof entry.qstamp === 'number') {
+				measureQuarter.set(entry.measureOn, entry.qstamp)
+			}
 		}
 		if (tempo === null && typeof entry.tempo === 'number' && entry.tempo > 0) {
 			tempo = entry.tempo
@@ -87,23 +129,12 @@ export function linearTiming(timemap: TimemapEntry[], measureIds: string[]): Lin
 			}
 		}
 	}
-	const starts = measureIds.map((id) => measureStart.get(id))
-	// Measures without an entry start where the next known one starts
-	let next = last
-	for (let i = starts.length - 1; i >= 0; i--) {
-		const start = starts[i]
-		if (start === undefined) {
-			starts[i] = next
-		} else {
-			next = start
-		}
+	const measures = spans(measureIds.map((id) => measureStart.get(id)), last)
+	const timing: LinearTiming = { measures, notes, tempo }
+	if (withQuarters) {
+		timing.quarters = spans(measureIds.map((id) => measureQuarter.get(id)), lastQuarter)
 	}
-	const measures = starts.map((start, i) => {
-		const begin = start ?? 0
-		const end = i + 1 < starts.length ? (starts[i + 1] ?? begin) : last
-		return { start: begin, end: Math.max(begin, end) }
-	})
-	return { measures, notes, tempo }
+	return timing
 }
 
 /**

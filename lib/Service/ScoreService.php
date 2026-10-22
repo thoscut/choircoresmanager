@@ -47,8 +47,11 @@ class ScoreService {
 	/**
 	 * The score to show for a copy, with the permissions of the user.
 	 *
+	 * `exportReason` explains why practice audio files cannot be made while
+	 * playback is allowed (null otherwise; `reason` covers the rest).
+	 *
 	 * @param list<ArchiveFile> $files files of the copy
-	 * @return array{fileId: int, fileName: string, canView: bool, canPlay: bool, reason: ?string}|null
+	 * @return array{fileId: int, fileName: string, canView: bool, canPlay: bool, reason: ?string, canExportAudio: bool, exportReason: ?string}|null
 	 */
 	public function describe(WorkVersion $version, array $files, string $uid): ?array {
 		$file = self::pick($files);
@@ -57,12 +60,15 @@ class ScoreService {
 		}
 		$viewDenial = $this->policy->viewDenial($version, $uid);
 		$playDenial = $this->policy->playDenial($version, $uid);
+		$exportDenial = $playDenial === null ? $this->policy->practiceAudioDenial($version, $uid) : $playDenial;
 		return [
 			'fileId' => $file->getId(),
 			'fileName' => $file->getName(),
 			'canView' => $viewDenial === null,
 			'canPlay' => $playDenial === null,
 			'reason' => $viewDenial ?? $playDenial,
+			'canExportAudio' => $exportDenial === null,
+			'exportReason' => $playDenial === null ? $exportDenial : null,
 		];
 	}
 

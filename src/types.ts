@@ -144,6 +144,10 @@ export interface ScoreInfo {
 	canPlay: boolean
 	/** translated explanation why viewing or playback is not allowed */
 	reason: string | null
+	/** practice audio files may be made (the server checks again before each export) */
+	canExportAudio?: boolean
+	/** translated explanation why no practice audio files can be made although playback is allowed */
+	exportReason?: string | null
 }
 
 // ---- milestone 0.2: rights, releases, proposals ---------------------------
@@ -306,6 +310,23 @@ export interface LinkInput {
 	note?: string | null
 	task_id?: number | null
 	expires?: string | null
+}
+
+/** Body of POST /api/versions/{id}/practice-audio (inside `export`). */
+export interface PracticeAudioInput {
+	copy_id: number
+	/** printed numbers of the first and the last measure */
+	measure_from: string
+	measure_to: string
+	/** name of the focus voice; null for all voices equal or every voice */
+	voice: string | null
+	mode: 'all' | 'focus' | 'solo'
+	format: 'wav' | 'midi'
+	/** one file per voice plus a tutti (ZIP) */
+	all_voices: boolean
+	/** tempo in percent of the score's tempo */
+	tempo: number
+	repeats: boolean
 }
 
 /** A link as returned by GET /api/links/{token}. */

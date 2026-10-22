@@ -23,7 +23,9 @@ choir's own practice system; the archive itself is not shown to them.
 - **Score viewer:** MusicXML rendered in the browser, cut to a range of printed
   bar numbers, a chosen voice highlighted and emphasised in playback — for
   public domain or licensed versions only. Notation, fonts and sounds are
-  bundled; nothing is loaded from other servers.
+  bundled; nothing is loaded from other servers. Librarians and the conductor
+  can make practice files per voice (WAV or MIDI) for the choir's practice
+  system; the server allows and records each export.
 - **Questions and tasks** with a location in the score (page, bars, voice,
   verse), internal excerpt links that expire and are checked on every call, and
   a start page showing what each role has to do.
