@@ -10,7 +10,6 @@
 
 export const singular = {
 	"Too many requests. Please wait a moment and try again.": "Troppe richieste. Attendi un momento e riprova.",
-	"The server reported an error (HTTP {status}).": "Il server ha segnalato un errore (HTTP {status}).",
 	"The server cannot be reached. Please check your connection.": "Il server non è raggiungibile. Controlla la connessione.",
 	"An unexpected error occurred.": "Si è verificato un errore imprevisto.",
 	"This function is switched off.": "Questa funzione è disattivata.",
@@ -2253,6 +2252,15 @@ export const singular = {
 	"The number of the work at the collecting society, e.g. from the GEMA repertoire search. It goes into the song order of a concert.": "Il numero dell'opera presso la società di gestione collettiva, ad es. dalla ricerca del repertorio GEMA. Compare nell'ordine dei brani di un concerto.",
 	"Revision": "Revisione",
 	"A revision is one state of the MusicXML of a version, numbered 1, 2, 3 …: after a correction or a better transcription. The current revision is the one exports and printouts name.": "Una revisione è uno stato del MusicXML di una versione, numerato 1, 2, 3 …: dopo una correzione o una trascrizione migliore. La revisione valida è quella indicata da esportazioni e stampe.",
+	"You are no longer logged in. Please reload the page and log in again.": "Non sei più connesso. Ricarica la pagina e accedi di nuovo.",
+	"Your account may not do this. Please ask the music librarians for the role you need.": "Il tuo account non può farlo. Chiedi alla gestione dell'archivio il ruolo che ti serve.",
+	"This no longer exists or is switched off. Please reload the page.": "Questo non esiste più o è disattivato. Ricarica la pagina.",
+	"The file is too large for the server. Please choose a smaller file or ask the administration to allow larger uploads.": "Il file è troppo grande per il server. Scegli un file più piccolo o chiedi all'amministrazione di consentire caricamenti più grandi.",
+	"The server could not finish this. Please try again in a moment. If it happens again, tell the administration this request ID for the Nextcloud log: {id}": "Il server non è riuscito a completare. Riprova tra un momento. Se succede di nuovo, comunica all'amministrazione questo ID della richiesta per il registro di Nextcloud: {id}",
+	"The server could not finish this. Please try again in a moment. If it happens again, tell the administration the time, so that it finds the error in the Nextcloud log.": "Il server non è riuscito a completare. Riprova tra un momento. Se succede di nuovo, comunica l'ora all'amministrazione, così trova l'errore nel registro di Nextcloud.",
+	"The server refused the request (HTTP {status}). Please reload the page and try again.": "Il server ha rifiutato la richiesta (HTTP {status}). Ricarica la pagina e riprova.",
+	"The server could not finish this. Please try again in a moment. If it happens again, tell the administration this request ID for the Nextcloud log: %s": "Il server non è riuscito a completare. Riprova tra un momento. Se succede di nuovo, comunica all'amministrazione questo ID della richiesta per il registro di Nextcloud: %s",
+	"Nothing was recorded. Please correct these rows and record again:": "Non è stato registrato nulla. Correggi queste righe e registra di nuovo:",
 }
 
 export const plural = {
@@ -2362,4 +2370,5 @@ export const plural = {
 	"%n shared link|%n shared links": ["%n link condiviso", "%n link condivisi"],
 	"Current repertoire: version with photocopies without a license|Current repertoire: versions with photocopies without a license": ["Repertorio attuale: versione con fotocopie senza licenza", "Repertorio attuale: versioni con fotocopie senza licenza"],
 	"A folder that does not come back loses its holder %n month after it was issued; it stays recorded as out.|A folder that does not come back loses its holder %n months after it was issued; it stays recorded as out.": ["Una cartellina che non torna perde il detentore %n mese dopo la consegna; resta registrata come in prestito.", "Una cartellina che non torna perde il detentore %n mesi dopo la consegna; resta registrata come in prestito."],
+	"and %n more row|and %n more rows": ["e %n altra riga", "e altre %n righe"],
 }

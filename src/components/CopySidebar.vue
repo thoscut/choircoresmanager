@@ -23,7 +23,6 @@ import {
 	mdiScaleBalance,
 	mdiTextBoxCheckOutline,
 } from '@mdi/js'
-import { showError } from '@nextcloud/dialogs'
 import { n, t } from '../l10n.ts'
 import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue'
 import NcAppSidebar from '@nextcloud/vue/components/NcAppSidebar'
@@ -44,6 +43,7 @@ import { songListCount, songListNames } from '../catalog.ts'
 import { OVERVIEW_SECTIONS, RIGHTS_SECTIONS, sectionFields } from '../fieldGroups.ts'
 import { formatDate } from '../format.ts'
 import { repertoireClassLabel, repertoireSourceLabel } from '../labels.ts'
+import { showError } from '../toasts.ts'
 import {
 	choiceLabel,
 	closeEntry,

@@ -452,7 +452,6 @@ export const singular = {
 	// ---- general (UI) ----
 	Yes: 'Ja',
 	No: 'Nein',
-	'The server reported an error (HTTP {status}).': 'Der Server meldet einen Fehler (HTTP {status}).',
 	'The server cannot be reached. Please check your connection.': [
 		'Der Server ist nicht erreichbar. Bitte prüfe deine Verbindung.',
 		'Der Server ist nicht erreichbar. Bitte prüfen Sie Ihre Verbindung.',
@@ -2937,9 +2936,47 @@ export const singular = {
 	// ---- 0.12: help for revision ----
 	'A revision is one state of the MusicXML of a version, numbered 1, 2, 3 …: after a correction or a better transcription. The current revision is the one exports and printouts name.': 'Ein Stand ist die MusicXML einer Fassung zu einem Zeitpunkt, nummeriert 1, 2, 3 …: nach einer Korrektur oder einer besseren Übertragung. Der geltende Stand ist der, den Exporte und Ausdrucke nennen.',
 	'Revision': 'Stand',
+	// ---- 0.12: error messages that say what to do ----
+	'You are no longer logged in. Please reload the page and log in again.': [
+		'Du bist nicht mehr angemeldet. Bitte lade die Seite neu und melde dich wieder an.',
+		'Sie sind nicht mehr angemeldet. Bitte laden Sie die Seite neu und melden Sie sich wieder an.',
+	],
+	'Your account may not do this. Please ask the music librarians for the role you need.': [
+		'Dein Konto darf das nicht. Bitte frag die Archivverwaltung nach der Rolle, die du brauchst.',
+		'Ihr Konto darf das nicht. Bitte fragen Sie die Archivverwaltung nach der Rolle, die Sie brauchen.',
+	],
+	'This no longer exists or is switched off. Please reload the page.': [
+		'Das gibt es nicht mehr oder es ist ausgeschaltet. Bitte lade die Seite neu.',
+		'Das gibt es nicht mehr oder es ist ausgeschaltet. Bitte laden Sie die Seite neu.',
+	],
+	'The file is too large for the server. Please choose a smaller file or ask the administration to allow larger uploads.': [
+		'Die Datei ist für den Server zu groß. Bitte wähle eine kleinere Datei oder bitte die Administration, größere Uploads zu erlauben.',
+		'Die Datei ist für den Server zu groß. Bitte wählen Sie eine kleinere Datei oder bitten Sie die Administration, größere Uploads zu erlauben.',
+	],
+	'The server could not finish this. Please try again in a moment. If it happens again, tell the administration this request ID for the Nextcloud log: {id}': [
+		'Der Server konnte das nicht abschließen. Bitte versuche es gleich noch einmal. Passiert es wieder, nenne der Administration diese Anfrage-ID für das Nextcloud-Protokoll: {id}',
+		'Der Server konnte das nicht abschließen. Bitte versuchen Sie es gleich noch einmal. Passiert es wieder, nennen Sie der Administration diese Anfrage-ID für das Nextcloud-Protokoll: {id}',
+	],
+	'The server could not finish this. Please try again in a moment. If it happens again, tell the administration the time, so that it finds the error in the Nextcloud log.': [
+		'Der Server konnte das nicht abschließen. Bitte versuche es gleich noch einmal. Passiert es wieder, nenne der Administration die Uhrzeit, damit sie den Fehler im Nextcloud-Protokoll findet.',
+		'Der Server konnte das nicht abschließen. Bitte versuchen Sie es gleich noch einmal. Passiert es wieder, nennen Sie der Administration die Uhrzeit, damit sie den Fehler im Nextcloud-Protokoll findet.',
+	],
+	'The server refused the request (HTTP {status}). Please reload the page and try again.': [
+		'Der Server hat die Anfrage abgelehnt (HTTP {status}). Bitte lade die Seite neu und versuche es noch einmal.',
+		'Der Server hat die Anfrage abgelehnt (HTTP {status}). Bitte laden Sie die Seite neu und versuchen Sie es noch einmal.',
+	],
+	'The server could not finish this. Please try again in a moment. If it happens again, tell the administration this request ID for the Nextcloud log: %s': [
+		'Der Server konnte das nicht abschließen. Bitte versuche es gleich noch einmal. Passiert es wieder, nenne der Administration diese Anfrage-ID für das Nextcloud-Protokoll: %s',
+		'Der Server konnte das nicht abschließen. Bitte versuchen Sie es gleich noch einmal. Passiert es wieder, nennen Sie der Administration diese Anfrage-ID für das Nextcloud-Protokoll: %s',
+	],
+	'Nothing was recorded. Please correct these rows and record again:': [
+		'Nichts wurde erfasst. Bitte korrigiere diese Zeilen und erfasse erneut:',
+		'Nichts wurde erfasst. Bitte korrigieren Sie diese Zeilen und erfassen Sie erneut:',
+	],
 }
 
 export const plural = {
+	'and %n more row|and %n more rows': ['und %n weitere Zeile', 'und %n weitere Zeilen'],
 	'A folder that does not come back loses its holder %n month after it was issued; it stays recorded as out.|A folder that does not come back loses its holder %n months after it was issued; it stays recorded as out.': [
 		'Eine Mappe, die nicht zurückkommt, verliert %n Monat nach der Ausgabe die Person; sie bleibt als ausgegeben vermerkt.',
 		'Eine Mappe, die nicht zurückkommt, verliert %n Monate nach der Ausgabe die Person; sie bleibt als ausgegeben vermerkt.',

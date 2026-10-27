@@ -11,7 +11,7 @@
  */
 import type { Settings } from '../../types.ts'
 
-import { showError, showSuccess } from '@nextcloud/dialogs'
+import { showSuccess } from '@nextcloud/dialogs'
 import { t } from '../../l10n.ts'
 import { computed, reactive, ref, watch } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -23,6 +23,7 @@ import { errorMessage, saveSettings } from '../../api.ts'
 import { ADMIN_GUIDE, adminGuideUrl } from '../../docs.ts'
 import { translateLabel } from '../../format.ts'
 import { catalogRoleEmpty, roleChanges } from '../../settings.ts'
+import { showError } from '../../toasts.ts'
 
 const props = defineProps<{
 	settings: Settings

@@ -48,15 +48,16 @@ function viewerMimes(): readonly string[] {
 }
 
 /**
- * Shows an error as a toast of Nextcloud. @nextcloud/dialogs is loaded
- * only now, so that the script stays small.
+ * Shows an error as a toast of Nextcloud that stays until it is closed
+ * (toasts.ts). @nextcloud/dialogs is loaded only now, so that the script
+ * stays small.
  *
  * @param message - translated text
  * @return null when the toast was shown, false when not (the Files app then reports the failure itself)
  */
 async function report(message: string): Promise<null | false> {
 	try {
-		const { showError } = await import('@nextcloud/dialogs')
+		const { showError } = await import('./toasts.ts')
 		showError(message)
 		return null
 	} catch {

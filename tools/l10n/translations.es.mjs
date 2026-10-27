@@ -10,7 +10,6 @@
 
 export const singular = {
 	"Too many requests. Please wait a moment and try again.": "Demasiadas solicitudes. Espera un momento y vuelve a intentarlo.",
-	"The server reported an error (HTTP {status}).": "El servidor ha informado de un error (HTTP {status}).",
 	"The server cannot be reached. Please check your connection.": "No se puede conectar con el servidor. Comprueba tu conexión.",
 	"An unexpected error occurred.": "Se ha producido un error inesperado.",
 	"This function is switched off.": "Esta función está desactivada.",
@@ -2253,6 +2252,15 @@ export const singular = {
 	"The number of the work at the collecting society, e.g. from the GEMA repertoire search. It goes into the song order of a concert.": "El número de la obra en la entidad de gestión, p. ej. de la búsqueda de repertorio de la GEMA. Figura en el orden de las canciones de un concierto.",
 	"Revision": "Revisión",
 	"A revision is one state of the MusicXML of a version, numbered 1, 2, 3 …: after a correction or a better transcription. The current revision is the one exports and printouts name.": "Una revisión es un estado del MusicXML de una versión, numerado 1, 2, 3 …: tras una corrección o una transcripción mejor. La revisión vigente es la que nombran las exportaciones y las impresiones.",
+	"You are no longer logged in. Please reload the page and log in again.": "Ya no tienes la sesión iniciada. Recarga la página y vuelve a iniciar sesión.",
+	"Your account may not do this. Please ask the music librarians for the role you need.": "Tu cuenta no puede hacer esto. Pide a la gestión del archivo el rol que necesitas.",
+	"This no longer exists or is switched off. Please reload the page.": "Esto ya no existe o está desactivado. Recarga la página.",
+	"The file is too large for the server. Please choose a smaller file or ask the administration to allow larger uploads.": "El archivo es demasiado grande para el servidor. Elige un archivo más pequeño o pide a la administración que permita subidas más grandes.",
+	"The server could not finish this. Please try again in a moment. If it happens again, tell the administration this request ID for the Nextcloud log: {id}": "El servidor no pudo terminar. Inténtalo de nuevo en un momento. Si vuelve a ocurrir, da a la administración este ID de solicitud para el registro de Nextcloud: {id}",
+	"The server could not finish this. Please try again in a moment. If it happens again, tell the administration the time, so that it finds the error in the Nextcloud log.": "El servidor no pudo terminar. Inténtalo de nuevo en un momento. Si vuelve a ocurrir, indica la hora a la administración para que encuentre el error en el registro de Nextcloud.",
+	"The server refused the request (HTTP {status}). Please reload the page and try again.": "El servidor rechazó la solicitud (HTTP {status}). Recarga la página e inténtalo de nuevo.",
+	"The server could not finish this. Please try again in a moment. If it happens again, tell the administration this request ID for the Nextcloud log: %s": "El servidor no pudo terminar. Inténtalo de nuevo en un momento. Si vuelve a ocurrir, da a la administración este ID de solicitud para el registro de Nextcloud: %s",
+	"Nothing was recorded. Please correct these rows and record again:": "No se registró nada. Corrige estas filas y vuelve a registrar:",
 }
 
 export const plural = {
@@ -2362,4 +2370,5 @@ export const plural = {
 	"%n shared link|%n shared links": ["%n enlace compartido", "%n enlaces compartidos"],
 	"Current repertoire: version with photocopies without a license|Current repertoire: versions with photocopies without a license": ["Repertorio actual: versión con fotocopias sin licencia", "Repertorio actual: versiones con fotocopias sin licencia"],
 	"A folder that does not come back loses its holder %n month after it was issued; it stays recorded as out.|A folder that does not come back loses its holder %n months after it was issued; it stays recorded as out.": ["Una carpeta que no se devuelve pierde su titular %n mes después de entregarse; sigue registrada como prestada.", "Una carpeta que no se devuelve pierde su titular %n meses después de entregarse; sigue registrada como prestada."],
+	"and %n more row|and %n more rows": ["y %n fila más", "y %n filas más"],
 }

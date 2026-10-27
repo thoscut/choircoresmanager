@@ -14,7 +14,7 @@ import type { Comparison } from '../score/compare.ts'
 import type { Detail, StateList, VersionState } from '../types.ts'
 
 import { mdiCheckDecagramOutline, mdiContentCopy, mdiFileCompare } from '@mdi/js'
-import { showError, showSuccess } from '@nextcloud/dialogs'
+import { showSuccess } from '@nextcloud/dialogs'
 import { n, t } from '../l10n.ts'
 import { computed, onMounted, ref, watch } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -34,6 +34,7 @@ import { changeWords, compareWords, revisionLine, revisionSourceLabel } from '..
 import { compareScores } from '../score/compare.ts'
 import { ArchiveLimitError, readScoreText } from '../score/mxl.ts'
 import { changeText, memberNote, sha256Hex } from '../states.ts'
+import { showError } from '../toasts.ts'
 
 const props = defineProps<{
 	detail: Detail

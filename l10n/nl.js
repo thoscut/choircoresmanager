@@ -23,7 +23,6 @@ OC.L10N.register(
         "Open archive management": "Archiefbeheer openen",
         "Open settings": "Instellingen openen",
         "Too many requests. Please wait a moment and try again.": "Te veel verzoeken. Wacht even en probeer het opnieuw.",
-        "The server reported an error (HTTP {status}).": "De server meldt een fout (HTTP {status}).",
         "The server cannot be reached. Please check your connection.": "De server is niet bereikbaar. Controleer je verbinding.",
         "An unexpected error occurred.": "Er is een onverwachte fout opgetreden.",
         "There are no upcoming concerts.": "Er zijn geen komende concerten.",
@@ -1597,6 +1596,13 @@ OC.L10N.register(
         "public links (after the release for publication)": "openbare links (na vrijgave voor publicatie)",
         "After the confirmation this becomes possible: {uses}.": "Na de bevestiging wordt dit mogelijk: {uses}.",
         "A protected version needs a valid license for each of these uses: {uses}.": "Een beschermde versie heeft voor elk van deze gebruiksvormen een geldige licentie nodig: {uses}.",
+        "You are no longer logged in. Please reload the page and log in again.": "Je bent niet meer aangemeld. Laad de pagina opnieuw en meld je opnieuw aan.",
+        "Your account may not do this. Please ask the music librarians for the role you need.": "Je account mag dit niet. Vraag het archiefbeheer om de rol die je nodig hebt.",
+        "This no longer exists or is switched off. Please reload the page.": "Dit bestaat niet meer of is uitgeschakeld. Laad de pagina opnieuw.",
+        "The file is too large for the server. Please choose a smaller file or ask the administration to allow larger uploads.": "Het bestand is te groot voor de server. Kies een kleiner bestand of vraag de beheerder grotere uploads toe te staan.",
+        "The server could not finish this. Please try again in a moment. If it happens again, tell the administration this request ID for the Nextcloud log: {id}": "De server kon dit niet afronden. Probeer het zo opnieuw. Gebeurt het weer, geef de beheerder dan deze aanvraag-ID voor het Nextcloud-logboek: {id}",
+        "The server could not finish this. Please try again in a moment. If it happens again, tell the administration the time, so that it finds the error in the Nextcloud log.": "De server kon dit niet afronden. Probeer het zo opnieuw. Gebeurt het weer, geef de beheerder dan de tijd, zodat die de fout in het Nextcloud-logboek vindt.",
+        "The server refused the request (HTTP {status}). Please reload the page and try again.": "De server heeft het verzoek geweigerd (HTTP {status}). Laad de pagina opnieuw en probeer het nog eens.",
         "Text: {name}": "Tekst: {name}",
         "Translation: {name}": "Vertaling: {name}",
         "Arrangement: {name}": "Bewerking: {name}",
@@ -1665,6 +1671,7 @@ OC.L10N.register(
         "Scores on CPDL (external site)": "Bladmuziek op CPDL (externe site)",
         "Scores on IMSLP (external site)": "Bladmuziek op IMSLP (externe site)",
         "Works in the public domain": "Werken in het publiek domein",
+        "The server could not finish this. Please try again in a moment. If it happens again, tell the administration this request ID for the Nextcloud log: %s": "De server kon dit niet afronden. Probeer het zo opnieuw. Gebeurt het weer, geef de beheerder dan deze aanvraag-ID voor het Nextcloud-logboek: %s",
         "Internal error. Details are in the Nextcloud log.": "Interne fout. Details staan in het Nextcloud-logboek.",
         "Unknown role: %s": "Onbekende rol: %s",
         "Only an administrator can give a role to a group you belong to.": "Alleen een beheerder kan een rol geven aan een groep waartoe je behoort.",
@@ -1940,6 +1947,7 @@ OC.L10N.register(
         "Shelf mark %s: version or work missing in the database, skipped.": "Signatuur %s: versie of werk ontbreekt in de database, overgeslagen.",
         "Shelf mark %s: \"%s\" is already set and is not overwritten by the import.": "Signatuur %s: “%s” is al ingevuld en wordt door de import niet overschreven.",
         "Nothing to record.": "Er is niets om vast te leggen.",
+        "Nothing was recorded. Please correct these rows and record again:": "Er is niets vastgelegd. Corrigeer deze regels en leg opnieuw vast:",
         "Photocopies of a version that is not confirmed public domain, without a license for copies for the binders.": "Fotokopieën van een versie zonder bevestigd publiek domein en zonder licentie voor kopieën voor de koormappen.",
         "More copies than the licenses for the binders allow.": "Meer kopieën dan de licenties voor de koormappen toestaan.",
         "Scans or transcriptions of a version that is not confirmed public domain, without a license for digitisation.": "Scans of transcripties van een versie zonder bevestigd publiek domein en zonder licentie voor digitalisering.",
@@ -2651,6 +2659,10 @@ OC.L10N.register(
         "_%n shared link_::_%n shared links_": [
             "%n gedeelde link",
             "%n gedeelde links"
+        ],
+        "_and %n more row_::_and %n more rows_": [
+            "en nog %n regel",
+            "en nog %n regels"
         ],
         "_%n proposal is waiting in the inbox_::_%n proposals are waiting in the inbox_": [
             "%n voorstel wacht in de inbox",

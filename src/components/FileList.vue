@@ -26,7 +26,7 @@ import {
 	mdiLinkOff,
 	mdiOpenInNew,
 } from '@mdi/js'
-import { FilePickerClosed, FilePickerType, getFilePickerBuilder, showError, showSuccess } from '@nextcloud/dialogs'
+import { FilePickerClosed, FilePickerType, getFilePickerBuilder, showSuccess } from '@nextcloud/dialogs'
 import { t } from '../l10n.ts'
 import { generateUrl } from '@nextcloud/router'
 import { computed, ref, useTemplateRef } from 'vue'
@@ -43,6 +43,7 @@ import { formatSize } from '../format.ts'
 import { navigate } from '../navigation.ts'
 import { SETTINGS_SECTIONS } from '../settings.ts'
 import { archiveNotShared, canChangeSettings, hasArchiveFolder, isLibrarian, isModuleActive } from '../store.ts'
+import { showError } from '../toasts.ts'
 
 const props = defineProps<{
 	files: FileRef[]

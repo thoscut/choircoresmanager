@@ -49,7 +49,7 @@ import {
 	mdiTextBoxCheckOutline,
 	mdiTuneVariant,
 } from '@mdi/js'
-import { showError, showSuccess } from '@nextcloud/dialogs'
+import { showSuccess } from '@nextcloud/dialogs'
 import { n, t } from '../l10n.ts'
 import { computed, defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, useId, watch } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -92,6 +92,7 @@ import { parsePage, scanFiles, storedScanPage, storeScanPage } from '../scan.ts'
 import { SETTINGS_SECTIONS } from '../settings.ts'
 import { ADMIN_GUIDE, adminGuideUrl, USER_GUIDE, userGuideUrl } from '../docs.ts'
 import { canChangeSettings, canCreateLinks, canCreateTasks, canShareOutside, fieldInfo, fieldLabel, hasAnyRole, isModuleActive } from '../store.ts'
+import { showError } from '../toasts.ts'
 
 /** Practice audio files: own chunk, loaded when the dialog is opened */
 const PracticeAudioDialog = defineAsyncComponent(() => import('./PracticeAudioDialog.vue'))

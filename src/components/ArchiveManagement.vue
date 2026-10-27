@@ -19,7 +19,7 @@ import {
 	mdiImport,
 	mdiShieldCheckOutline,
 } from '@mdi/js'
-import { FilePickerClosed, FilePickerType, getFilePickerBuilder, showError, showSuccess } from '@nextcloud/dialogs'
+import { FilePickerClosed, FilePickerType, getFilePickerBuilder, showSuccess } from '@nextcloud/dialogs'
 import { t } from '../l10n.ts'
 import { computed, onMounted, ref, useTemplateRef } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -35,6 +35,7 @@ import PersonImport from './PersonImport.vue'
 import { adminSettingsUrl, errorMessage, exportUrl, fetchFileSyncStatus, runFileSync, runImport, storeBackup, storeExport } from '../api.ts'
 import { formatDateTime } from '../format.ts'
 import { focusAfterDialog, focusAfterUpdate } from '../focus.ts'
+import { showError } from '../toasts.ts'
 import {
 	archiveDialogOpen,
 	canChangeSettings,

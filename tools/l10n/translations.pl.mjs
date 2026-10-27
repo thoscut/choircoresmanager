@@ -10,7 +10,6 @@
 
 export const singular = {
 	"Too many requests. Please wait a moment and try again.": "Zbyt wiele żądań. Odczekaj chwilę i spróbuj ponownie.",
-	"The server reported an error (HTTP {status}).": "Serwer zgłosił błąd (HTTP {status}).",
 	"The server cannot be reached. Please check your connection.": "Nie można połączyć się z serwerem. Sprawdź połączenie.",
 	"An unexpected error occurred.": "Wystąpił nieoczekiwany błąd.",
 	"This function is switched off.": "Ta funkcja jest wyłączona.",
@@ -2253,6 +2252,15 @@ export const singular = {
 	"The number of the work at the collecting society, e.g. from the GEMA repertoire search. It goes into the song order of a concert.": "Numer utworu w organizacji zbiorowego zarządzania, np. z wyszukiwarki repertuaru GEMA. Trafia do kolejności utworów koncertu.",
 	"Revision": "Rewizja",
 	"A revision is one state of the MusicXML of a version, numbered 1, 2, 3 …: after a correction or a better transcription. The current revision is the one exports and printouts name.": "Rewizja to stan pliku MusicXML wersji, numerowany 1, 2, 3 …: po poprawce lub lepszej transkrypcji. Obowiązująca rewizja to ta, którą podają eksporty i wydruki.",
+	"You are no longer logged in. Please reload the page and log in again.": "Sesja wygasła. Przeładuj stronę i zaloguj się ponownie.",
+	"Your account may not do this. Please ask the music librarians for the role you need.": "To konto nie może tego zrobić. Poproś administrację archiwum o potrzebną rolę.",
+	"This no longer exists or is switched off. Please reload the page.": "To już nie istnieje albo jest wyłączone. Przeładuj stronę.",
+	"The file is too large for the server. Please choose a smaller file or ask the administration to allow larger uploads.": "Plik jest za duży dla serwera. Wybierz mniejszy plik albo poproś administrację o zezwolenie na większe pliki.",
+	"The server could not finish this. Please try again in a moment. If it happens again, tell the administration this request ID for the Nextcloud log: {id}": "Serwer nie mógł tego dokończyć. Spróbuj ponownie za chwilę. Jeśli to się powtórzy, przekaż administracji ten identyfikator żądania do dziennika Nextcloud: {id}",
+	"The server could not finish this. Please try again in a moment. If it happens again, tell the administration the time, so that it finds the error in the Nextcloud log.": "Serwer nie mógł tego dokończyć. Spróbuj ponownie za chwilę. Jeśli to się powtórzy, przekaż administracji godzinę, aby znalazła błąd w dzienniku Nextcloud.",
+	"The server refused the request (HTTP {status}). Please reload the page and try again.": "Serwer odrzucił żądanie (HTTP {status}). Przeładuj stronę i spróbuj ponownie.",
+	"The server could not finish this. Please try again in a moment. If it happens again, tell the administration this request ID for the Nextcloud log: %s": "Serwer nie mógł tego dokończyć. Spróbuj ponownie za chwilę. Jeśli to się powtórzy, przekaż administracji ten identyfikator żądania do dziennika Nextcloud: %s",
+	"Nothing was recorded. Please correct these rows and record again:": "Nic nie zostało zapisane. Popraw te wiersze i zapisz ponownie:",
 }
 
 export const plural = {
@@ -2362,4 +2370,5 @@ export const plural = {
 	"%n shared link|%n shared links": ["%n udostępniony link", "%n udostępnione linki", "%n udostępnionych linków"],
 	"Current repertoire: version with photocopies without a license|Current repertoire: versions with photocopies without a license": ["Bieżący repertuar: wersja z fotokopiami bez licencji", "Bieżący repertuar: wersje z fotokopiami bez licencji", "Bieżący repertuar: wersji z fotokopiami bez licencji"],
 	"A folder that does not come back loses its holder %n month after it was issued; it stays recorded as out.|A folder that does not come back loses its holder %n months after it was issued; it stays recorded as out.": ["Teczka, która nie wraca, traci osobę %n miesiąc po wydaniu; pozostaje zapisana jako wydana.", "Teczka, która nie wraca, traci osobę %n miesiące po wydaniu; pozostaje zapisana jako wydana.", "Teczka, która nie wraca, traci osobę %n miesięcy po wydaniu; pozostaje zapisana jako wydana."],
+	"and %n more row|and %n more rows": ["i jeszcze %n wiersz", "i jeszcze %n wiersze", "i jeszcze %n wierszy"],
 }

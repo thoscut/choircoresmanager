@@ -112,6 +112,11 @@ All notable changes to this app are documented in this file. The format follows
   geteilt"), the loop of the playback is "Schleife", no longer
   "Wiederholen". A check in `tools/l10n` keeps it so. The correction form
   names the note B "H" in German and Polish.
+- **Error messages stay** until they are closed and say what to do, also
+  for errors of the server: log in again, ask for the role, reload, try
+  again with the request ID for the Nextcloud log, instead of "HTTP 500".
+  The inventory names the rows it could not record (shelf mark and reason)
+  and records nothing until they are corrected.
 - Excerpts and whole pieces for choir members and the public no longer
   carry the encoder, the miscellaneous fields, XML comments or processing
   instructions of the MusicXML file.

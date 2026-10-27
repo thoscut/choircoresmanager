@@ -17,7 +17,7 @@ import type { LinkScope } from '../sharing/linkScope.ts'
 import type { CircleOption, ExcerptLink, LinkCircle, LinkInput, LinkOptions } from '../types.ts'
 
 import { mdiContentCopy } from '@mdi/js'
-import { showError, showSuccess } from '@nextcloud/dialogs'
+import { showSuccess } from '@nextcloud/dialogs'
 import { t } from '../l10n.ts'
 import { computed, onMounted, reactive, ref, shallowRef } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -34,6 +34,7 @@ import { copyText } from '../clipboard.ts'
 import { formatDate, toIsoDate } from '../format.ts'
 import { canOfferScan, initialScope, linkMeasures, measureProblem, previewRows } from '../sharing/linkScope.ts'
 import { canShareOutside } from '../store.ts'
+import { showError } from '../toasts.ts'
 
 export interface LinkPrefill {
 	measureFrom?: string | null

@@ -22,7 +22,6 @@
         "Open archive management": "Archivverwaltung öffnen",
         "Open settings": "Einstellungen öffnen",
         "Too many requests. Please wait a moment and try again.": "Zu viele Anfragen. Bitte warten Sie einen Moment und versuchen Sie es dann erneut.",
-        "The server reported an error (HTTP {status}).": "Der Server meldet einen Fehler (HTTP {status}).",
         "The server cannot be reached. Please check your connection.": "Der Server ist nicht erreichbar. Bitte prüfen Sie Ihre Verbindung.",
         "An unexpected error occurred.": "Ein unerwarteter Fehler ist aufgetreten.",
         "There are no upcoming concerts.": "Es gibt keine kommenden Konzerte.",
@@ -1596,6 +1595,13 @@
         "public links (after the release for publication)": "öffentliche Links (nach der Freigabe zur Veröffentlichung)",
         "After the confirmation this becomes possible: {uses}.": "Nach der Bestätigung wird möglich: {uses}.",
         "A protected version needs a valid license for each of these uses: {uses}.": "Eine geschützte Fassung braucht für jede dieser Nutzungen eine gültige Lizenz: {uses}.",
+        "You are no longer logged in. Please reload the page and log in again.": "Sie sind nicht mehr angemeldet. Bitte laden Sie die Seite neu und melden Sie sich wieder an.",
+        "Your account may not do this. Please ask the music librarians for the role you need.": "Ihr Konto darf das nicht. Bitte fragen Sie die Archivverwaltung nach der Rolle, die Sie brauchen.",
+        "This no longer exists or is switched off. Please reload the page.": "Das gibt es nicht mehr oder es ist ausgeschaltet. Bitte laden Sie die Seite neu.",
+        "The file is too large for the server. Please choose a smaller file or ask the administration to allow larger uploads.": "Die Datei ist für den Server zu groß. Bitte wählen Sie eine kleinere Datei oder bitten Sie die Administration, größere Uploads zu erlauben.",
+        "The server could not finish this. Please try again in a moment. If it happens again, tell the administration this request ID for the Nextcloud log: {id}": "Der Server konnte das nicht abschließen. Bitte versuchen Sie es gleich noch einmal. Passiert es wieder, nennen Sie der Administration diese Anfrage-ID für das Nextcloud-Protokoll: {id}",
+        "The server could not finish this. Please try again in a moment. If it happens again, tell the administration the time, so that it finds the error in the Nextcloud log.": "Der Server konnte das nicht abschließen. Bitte versuchen Sie es gleich noch einmal. Passiert es wieder, nennen Sie der Administration die Uhrzeit, damit sie den Fehler im Nextcloud-Protokoll findet.",
+        "The server refused the request (HTTP {status}). Please reload the page and try again.": "Der Server hat die Anfrage abgelehnt (HTTP {status}). Bitte laden Sie die Seite neu und versuchen Sie es noch einmal.",
         "Text: {name}": "Text: {name}",
         "Translation: {name}": "Übersetzung: {name}",
         "Arrangement: {name}": "Bearbeitung: {name}",
@@ -1664,6 +1670,7 @@
         "Scores on CPDL (external site)": "Noten bei CPDL (externe Seite)",
         "Scores on IMSLP (external site)": "Noten bei IMSLP (externe Seite)",
         "Works in the public domain": "Gemeinfreie Werke",
+        "The server could not finish this. Please try again in a moment. If it happens again, tell the administration this request ID for the Nextcloud log: %s": "Der Server konnte das nicht abschließen. Bitte versuchen Sie es gleich noch einmal. Passiert es wieder, nennen Sie der Administration diese Anfrage-ID für das Nextcloud-Protokoll: %s",
         "Internal error. Details are in the Nextcloud log.": "Interner Fehler. Details stehen im Nextcloud-Protokoll.",
         "Unknown role: %s": "Unbekannte Rolle: %s",
         "Only an administrator can give a role to a group you belong to.": "Nur die Administration kann einer Gruppe, zu der Sie gehören, eine Rolle geben.",
@@ -1939,6 +1946,7 @@
         "Shelf mark %s: version or work missing in the database, skipped.": "Signatur %s: Fassung oder Werk fehlt in der Datenbank, übersprungen.",
         "Shelf mark %s: \"%s\" is already set and is not overwritten by the import.": "Signatur %s: „%s“ ist bereits gesetzt und wird vom Import nicht überschrieben.",
         "Nothing to record.": "Es gibt nichts einzutragen.",
+        "Nothing was recorded. Please correct these rows and record again:": "Nichts wurde erfasst. Bitte korrigieren Sie diese Zeilen und erfassen Sie erneut:",
         "Photocopies of a version that is not confirmed public domain, without a license for copies for the binders.": "Fotokopien einer Fassung ohne bestätigte Gemeinfreiheit und ohne Lizenz für Kopien für die Chormappen.",
         "More copies than the licenses for the binders allow.": "Mehr Kopien, als die Lizenzen für die Chormappen erlauben.",
         "Scans or transcriptions of a version that is not confirmed public domain, without a license for digitisation.": "Scans oder Übertragungen einer Fassung ohne bestätigte Gemeinfreiheit und ohne Lizenz für die Digitalisierung.",
@@ -2650,6 +2658,10 @@
         "_%n shared link_::_%n shared links_": [
             "%n geteilter Link",
             "%n geteilte Links"
+        ],
+        "_and %n more row_::_and %n more rows_": [
+            "und %n weitere Zeile",
+            "und %n weitere Zeilen"
         ],
         "_%n proposal is waiting in the inbox_::_%n proposals are waiting in the inbox_": [
             "%n Vorschlag wartet im Eingang",

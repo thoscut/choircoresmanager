@@ -12,7 +12,7 @@ import type { DataRecord, FieldInfo, FieldValue, Level } from '../types.ts'
 import type { DraftValue } from './FieldInput.vue'
 
 import { mdiPencilOutline } from '@mdi/js'
-import { showError, showInfo, showSuccess } from '@nextcloud/dialogs'
+import { showInfo, showSuccess } from '@nextcloud/dialogs'
 import { n, t } from '../l10n.ts'
 import { computed, reactive, ref, useTemplateRef } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -26,6 +26,7 @@ import { displayValue, isEmpty, translateLabel } from '../format.ts'
 import { focusAfterUpdate } from '../focus.ts'
 import { FIELD_HELP, SECTION_HELP } from '../helpTerms.ts'
 import { canWrite, fieldInfo } from '../store.ts'
+import { showError } from '../toasts.ts'
 
 const props = defineProps<{
 	/** Unique id of the section, used for the heading id */

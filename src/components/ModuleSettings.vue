@@ -14,7 +14,6 @@
  */
 import type { ModuleChanges, ModuleInfo, ModulePreset, ModuleSettings } from '../types.ts'
 
-import { showError } from '@nextcloud/dialogs'
 import { t } from '../l10n.ts'
 import { computed, onMounted, ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -25,6 +24,7 @@ import ActionDialog from './ActionDialog.vue'
 import { errorMessage, fetchModuleSettings, saveModules } from '../api.ts'
 import { focusAfterDialog } from '../focus.ts'
 import { inactiveBecause, moduleLabels, presetChanges, stopsWorking, switchedOnWith } from '../modules.ts'
+import { showError } from '../toasts.ts'
 
 const emit = defineEmits<{
 	/** modules were switched: what depends on them may have changed */

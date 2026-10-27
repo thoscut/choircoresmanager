@@ -19,6 +19,7 @@ use OCA\Notenarchiv\Db\WorkMapper;
 use OCA\Notenarchiv\Db\WorkVersion;
 use OCA\Notenarchiv\Db\WorkVersionMapper;
 use OCA\Notenarchiv\Exception\InvalidInputException;
+use OCA\Notenarchiv\Exception\InvalidRowsException;
 use OCA\Notenarchiv\Exception\UnknownLinkException;
 use OCA\Notenarchiv\Service\AuditLog;
 use OCA\Notenarchiv\Service\CatalogService;
@@ -148,5 +149,30 @@ final class RequestBoundaryTest extends TestCase {
 		$this->expectException(InvalidInputException::class);
 		$this->expectExceptionMessage('Too many entries at once (at most %s).');
 		$service->recordCounts($counts, null, 'operations');
+	}
+	public function testInventoryNamesTheFaultyRowsAndRecordsNothing(): void {
+		$catalog = $this->createStub(CatalogService::class);
+		$catalog->method('update')->willReturnCallback(function (string $type, int $id, array $values): array {
+			if ($id === 2) {
+				throw new InvalidInputException('"%s" must be a whole number of at least 0.', ['Number of copies']);
+			}
+			return [];
+		});
+		$copy = new Copy();
+		$copy->setShelfmark('2-7');
+		$copies = $this->createStub(CopyMapper::class);
+		$copies->method('find')->willReturn($copy);
+		$db = $this->createMock(IDBConnection::class);
+		$db->expects(self::never())->method('commit');
+		$db->expects(self::once())->method('rollBack');
+		$service = new InventoryService($db, $copies, $this->createStub(WorkVersionMapper::class), $this->createStub(WorkMapper::class), $catalog,
+			$this->rights(), $this->createStub(Roles::class), $this->createStub(ArchiveFileMapper::class));
+		try {
+			$service->recordCounts([['copyId' => 1, 'copies' => 3], ['copyId' => 2, 'copies' => -1], ['copyId' => 'x']], null, 'operations');
+			self::fail('no exception');
+		} catch (InvalidRowsException $e) {
+			self::assertSame(['2-7', '#3'], array_column($e->getRows(), 'row'));
+			self::assertSame(['Number of copies'], $e->getRows()[0]['parameters']);
+		}
 	}
 }

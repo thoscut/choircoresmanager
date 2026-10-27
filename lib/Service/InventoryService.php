@@ -15,6 +15,8 @@ use OCA\Notenarchiv\Db\CopyMapper;
 use OCA\Notenarchiv\Db\WorkMapper;
 use OCA\Notenarchiv\Db\WorkVersionMapper;
 use OCA\Notenarchiv\Exception\InvalidInputException;
+use OCA\Notenarchiv\Exception\InvalidRowsException;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\IDBConnection;
 
 /**
@@ -192,9 +194,17 @@ class InventoryService {
 		}
 		$this->db->beginTransaction();
 		try {
+			$faulty = [];
 			foreach (array_keys($counts) as $index) {
-				[$copyId, $fields] = self::countEntry($counts[$index]);
-				$this->catalog->update(Fields::COPY, $copyId, ['last_counted' => $date] + $fields, $uid, 'inventory');
+				try {
+					[$copyId, $fields] = self::countEntry($counts[$index]);
+					$this->catalog->update(Fields::COPY, $copyId, ['last_counted' => $date] + $fields, $uid, 'inventory');
+				} catch (InvalidInputException $e) {
+					$faulty[] = ['row' => $this->rowLabel($counts[$index], $index), 'message' => $e->getMessage(), 'parameters' => $e->getParameters()];
+				}
+			}
+			if ($faulty !== []) {
+				throw new InvalidRowsException('Nothing was recorded. Please correct these rows and record again:', $faulty);
 			}
 			$this->db->commit();
 		} catch (\Throwable $e) {
@@ -202,6 +212,21 @@ class InventoryService {
 			throw $e;
 		}
 		return count($counts);
+	}
+
+	/**
+	 * The shelf mark of a counted copy for an error message, or its position
+	 * in the request when the copy is unknown.
+	 */
+	private function rowLabel(mixed $entry, int|string $index): string {
+		$copyId = is_array($entry) ? filter_var($entry['copyId'] ?? null, FILTER_VALIDATE_INT) : false;
+		if ($copyId !== false) {
+			try {
+				return $this->copies->find($copyId)->getShelfmark();
+			} catch (DoesNotExistException) {
+			}
+		}
+		return '#' . ((int)$index + 1);
 	}
 
 	/**

@@ -23,7 +23,6 @@ OC.L10N.register(
         "Open archive management": "Ouvrir la gestion des archives",
         "Open settings": "Ouvrir les paramètres",
         "Too many requests. Please wait a moment and try again.": "Trop de requêtes. Veuillez patienter un instant, puis réessayer.",
-        "The server reported an error (HTTP {status}).": "Le serveur a signalé une erreur (HTTP {status}).",
         "The server cannot be reached. Please check your connection.": "Le serveur est injoignable. Veuillez vérifier votre connexion.",
         "An unexpected error occurred.": "Une erreur inattendue s'est produite.",
         "There are no upcoming concerts.": "Aucun concert à venir.",
@@ -1597,6 +1596,13 @@ OC.L10N.register(
         "public links (after the release for publication)": "liens publics (après l'autorisation de publication)",
         "After the confirmation this becomes possible: {uses}.": "Après la confirmation, ceci devient possible : {uses}.",
         "A protected version needs a valid license for each of these uses: {uses}.": "Une version protégée nécessite une licence valide pour chacune de ces utilisations : {uses}.",
+        "You are no longer logged in. Please reload the page and log in again.": "Vous n’êtes plus connecté. Veuillez recharger la page et vous reconnecter.",
+        "Your account may not do this. Please ask the music librarians for the role you need.": "Votre compte ne peut pas faire cela. Demandez à la gestion des archives le rôle nécessaire.",
+        "This no longer exists or is switched off. Please reload the page.": "Cet élément n’existe plus ou est désactivé. Veuillez recharger la page.",
+        "The file is too large for the server. Please choose a smaller file or ask the administration to allow larger uploads.": "Le fichier est trop volumineux pour le serveur. Choisissez un fichier plus petit ou demandez à l’administration d’autoriser des envois plus grands.",
+        "The server could not finish this. Please try again in a moment. If it happens again, tell the administration this request ID for the Nextcloud log: {id}": "Le serveur n’a pas pu terminer. Veuillez réessayer dans un instant. Si cela se reproduit, donnez à l’administration cet identifiant de requête pour le journal de Nextcloud : {id}",
+        "The server could not finish this. Please try again in a moment. If it happens again, tell the administration the time, so that it finds the error in the Nextcloud log.": "Le serveur n’a pas pu terminer. Veuillez réessayer dans un instant. Si cela se reproduit, indiquez l’heure à l’administration pour qu’elle trouve l’erreur dans le journal de Nextcloud.",
+        "The server refused the request (HTTP {status}). Please reload the page and try again.": "Le serveur a refusé la requête (HTTP {status}). Veuillez recharger la page et réessayer.",
         "Text: {name}": "Texte : {name}",
         "Translation: {name}": "Traduction : {name}",
         "Arrangement: {name}": "Arrangement : {name}",
@@ -1665,6 +1671,7 @@ OC.L10N.register(
         "Scores on CPDL (external site)": "Partitions sur CPDL (site externe)",
         "Scores on IMSLP (external site)": "Partitions sur IMSLP (site externe)",
         "Works in the public domain": "Œuvres dans le domaine public",
+        "The server could not finish this. Please try again in a moment. If it happens again, tell the administration this request ID for the Nextcloud log: %s": "Le serveur n’a pas pu terminer. Veuillez réessayer dans un instant. Si cela se reproduit, donnez à l’administration cet identifiant de requête pour le journal de Nextcloud : %s",
         "Internal error. Details are in the Nextcloud log.": "Erreur interne. Les détails figurent dans le journal de Nextcloud.",
         "Unknown role: %s": "Rôle inconnu : %s",
         "Only an administrator can give a role to a group you belong to.": "Seul un administrateur peut attribuer un rôle à un groupe dont vous êtes membre.",
@@ -1940,6 +1947,7 @@ OC.L10N.register(
         "Shelf mark %s: version or work missing in the database, skipped.": "Cote %s : version ou œuvre absente de la base de données, ignorée.",
         "Shelf mark %s: \"%s\" is already set and is not overwritten by the import.": "Cote %s : « %s » est déjà renseigné et n'est pas écrasé par l'import.",
         "Nothing to record.": "Rien à enregistrer.",
+        "Nothing was recorded. Please correct these rows and record again:": "Rien n’a été enregistré. Corrigez ces lignes et enregistrez à nouveau :",
         "Photocopies of a version that is not confirmed public domain, without a license for copies for the binders.": "Photocopies d'une version dont l'appartenance au domaine public n'est pas confirmée, sans licence pour les copies destinées aux classeurs.",
         "More copies than the licenses for the binders allow.": "Plus de copies que ne le permettent les licences pour les classeurs.",
         "Scans or transcriptions of a version that is not confirmed public domain, without a license for digitisation.": "Scans ou transcriptions d'une version dont l'appartenance au domaine public n'est pas confirmée, sans licence de numérisation.",
@@ -2651,6 +2659,10 @@ OC.L10N.register(
         "_%n shared link_::_%n shared links_": [
             "%n lien partagé",
             "%n liens partagés"
+        ],
+        "_and %n more row_::_and %n more rows_": [
+            "et %n autre ligne",
+            "et %n autres lignes"
         ],
         "_%n proposal is waiting in the inbox_::_%n proposals are waiting in the inbox_": [
             "%n proposition attend dans la boîte de réception",

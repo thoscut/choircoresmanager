@@ -13,7 +13,7 @@
 import type { AccessReport, ArchiveInfo, Settings } from '../../types.ts'
 
 import { mdiFolderOutline } from '@mdi/js'
-import { FilePickerClosed, FilePickerType, getFilePickerBuilder, showError, showSuccess } from '@nextcloud/dialogs'
+import { FilePickerClosed, FilePickerType, getFilePickerBuilder, showSuccess } from '@nextcloud/dialogs'
 import { t } from '../../l10n.ts'
 import { computed, ref, useTemplateRef } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -26,6 +26,7 @@ import { ADMIN_GUIDE, adminGuideUrl } from '../../docs.ts'
 import { focusAfterDialog, focusAfterUpdate } from '../../focus.ts'
 import { translateLabel } from '../../format.ts'
 import { accessRows } from '../../settings.ts'
+import { showError } from '../../toasts.ts'
 
 const props = defineProps<{
 	archive: ArchiveInfo

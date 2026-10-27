@@ -10,7 +10,6 @@
 
 export const singular = {
 	"Too many requests. Please wait a moment and try again.": "Te veel verzoeken. Wacht even en probeer het opnieuw.",
-	"The server reported an error (HTTP {status}).": "De server meldt een fout (HTTP {status}).",
 	"The server cannot be reached. Please check your connection.": "De server is niet bereikbaar. Controleer je verbinding.",
 	"An unexpected error occurred.": "Er is een onverwachte fout opgetreden.",
 	"This function is switched off.": "Deze functie is uitgeschakeld.",
@@ -2253,6 +2252,15 @@ export const singular = {
 	"The number of the work at the collecting society, e.g. from the GEMA repertoire search. It goes into the song order of a concert.": "Het nummer van het werk bij de collectieve beheersorganisatie, bijv. uit het repertoire-zoeken van de GEMA. Het komt in de liedvolgorde van een concert.",
 	"Revision": "Revisie",
 	"A revision is one state of the MusicXML of a version, numbered 1, 2, 3 …: after a correction or a better transcription. The current revision is the one exports and printouts name.": "Een revisie is een stand van de MusicXML van een versie, genummerd 1, 2, 3 …: na een correctie of een betere transcriptie. De geldende revisie is die welke exports en afdrukken noemen.",
+	"You are no longer logged in. Please reload the page and log in again.": "Je bent niet meer aangemeld. Laad de pagina opnieuw en meld je opnieuw aan.",
+	"Your account may not do this. Please ask the music librarians for the role you need.": "Je account mag dit niet. Vraag het archiefbeheer om de rol die je nodig hebt.",
+	"This no longer exists or is switched off. Please reload the page.": "Dit bestaat niet meer of is uitgeschakeld. Laad de pagina opnieuw.",
+	"The file is too large for the server. Please choose a smaller file or ask the administration to allow larger uploads.": "Het bestand is te groot voor de server. Kies een kleiner bestand of vraag de beheerder grotere uploads toe te staan.",
+	"The server could not finish this. Please try again in a moment. If it happens again, tell the administration this request ID for the Nextcloud log: {id}": "De server kon dit niet afronden. Probeer het zo opnieuw. Gebeurt het weer, geef de beheerder dan deze aanvraag-ID voor het Nextcloud-logboek: {id}",
+	"The server could not finish this. Please try again in a moment. If it happens again, tell the administration the time, so that it finds the error in the Nextcloud log.": "De server kon dit niet afronden. Probeer het zo opnieuw. Gebeurt het weer, geef de beheerder dan de tijd, zodat die de fout in het Nextcloud-logboek vindt.",
+	"The server refused the request (HTTP {status}). Please reload the page and try again.": "De server heeft het verzoek geweigerd (HTTP {status}). Laad de pagina opnieuw en probeer het nog eens.",
+	"The server could not finish this. Please try again in a moment. If it happens again, tell the administration this request ID for the Nextcloud log: %s": "De server kon dit niet afronden. Probeer het zo opnieuw. Gebeurt het weer, geef de beheerder dan deze aanvraag-ID voor het Nextcloud-logboek: %s",
+	"Nothing was recorded. Please correct these rows and record again:": "Er is niets vastgelegd. Corrigeer deze regels en leg opnieuw vast:",
 }
 
 export const plural = {
@@ -2362,4 +2370,5 @@ export const plural = {
 	"%n shared link|%n shared links": ["%n gedeelde link", "%n gedeelde links"],
 	"Current repertoire: version with photocopies without a license|Current repertoire: versions with photocopies without a license": ["Actueel repertoire: versie met fotokopieën zonder licentie", "Actueel repertoire: versies met fotokopieën zonder licentie"],
 	"A folder that does not come back loses its holder %n month after it was issued; it stays recorded as out.|A folder that does not come back loses its holder %n months after it was issued; it stays recorded as out.": ["Een koormap die niet terugkomt, verliest haar houder %n maand na de uitgifte; ze blijft geregistreerd als uitgegeven.", "Een koormap die niet terugkomt, verliest haar houder %n maanden na de uitgifte; ze blijft geregistreerd als uitgegeven."],
+	"and %n more row|and %n more rows": ["en nog %n regel", "en nog %n regels"],
 }

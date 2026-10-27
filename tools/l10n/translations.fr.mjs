@@ -10,7 +10,6 @@
 
 export const singular = {
 	"Too many requests. Please wait a moment and try again.": "Trop de requêtes. Veuillez patienter un instant, puis réessayer.",
-	"The server reported an error (HTTP {status}).": "Le serveur a signalé une erreur (HTTP {status}).",
 	"The server cannot be reached. Please check your connection.": "Le serveur est injoignable. Veuillez vérifier votre connexion.",
 	"An unexpected error occurred.": "Une erreur inattendue s'est produite.",
 	"This function is switched off.": "Cette fonction est désactivée.",
@@ -2253,6 +2252,15 @@ export const singular = {
 	"The number of the work at the collecting society, e.g. from the GEMA repertoire search. It goes into the song order of a concert.": "Le numéro de l'œuvre auprès de la société de gestion collective, p. ex. issu de la recherche de répertoire de la GEMA. Il figure dans l'ordre des chants d'un concert.",
 	"Revision": "Révision",
 	"A revision is one state of the MusicXML of a version, numbered 1, 2, 3 …: after a correction or a better transcription. The current revision is the one exports and printouts name.": "Une révision est un état du MusicXML d'une version, numéroté 1, 2, 3 … : après une correction ou une meilleure transcription. La révision en vigueur est celle que nomment les exports et les impressions.",
+	"You are no longer logged in. Please reload the page and log in again.": "Vous n’êtes plus connecté. Veuillez recharger la page et vous reconnecter.",
+	"Your account may not do this. Please ask the music librarians for the role you need.": "Votre compte ne peut pas faire cela. Demandez à la gestion des archives le rôle nécessaire.",
+	"This no longer exists or is switched off. Please reload the page.": "Cet élément n’existe plus ou est désactivé. Veuillez recharger la page.",
+	"The file is too large for the server. Please choose a smaller file or ask the administration to allow larger uploads.": "Le fichier est trop volumineux pour le serveur. Choisissez un fichier plus petit ou demandez à l’administration d’autoriser des envois plus grands.",
+	"The server could not finish this. Please try again in a moment. If it happens again, tell the administration this request ID for the Nextcloud log: {id}": "Le serveur n’a pas pu terminer. Veuillez réessayer dans un instant. Si cela se reproduit, donnez à l’administration cet identifiant de requête pour le journal de Nextcloud : {id}",
+	"The server could not finish this. Please try again in a moment. If it happens again, tell the administration the time, so that it finds the error in the Nextcloud log.": "Le serveur n’a pas pu terminer. Veuillez réessayer dans un instant. Si cela se reproduit, indiquez l’heure à l’administration pour qu’elle trouve l’erreur dans le journal de Nextcloud.",
+	"The server refused the request (HTTP {status}). Please reload the page and try again.": "Le serveur a refusé la requête (HTTP {status}). Veuillez recharger la page et réessayer.",
+	"The server could not finish this. Please try again in a moment. If it happens again, tell the administration this request ID for the Nextcloud log: %s": "Le serveur n’a pas pu terminer. Veuillez réessayer dans un instant. Si cela se reproduit, donnez à l’administration cet identifiant de requête pour le journal de Nextcloud : %s",
+	"Nothing was recorded. Please correct these rows and record again:": "Rien n’a été enregistré. Corrigez ces lignes et enregistrez à nouveau :",
 }
 
 export const plural = {
@@ -2362,4 +2370,5 @@ export const plural = {
 	"%n shared link|%n shared links": ["%n lien partagé", "%n liens partagés"],
 	"Current repertoire: version with photocopies without a license|Current repertoire: versions with photocopies without a license": ["Répertoire actuel : version avec des photocopies sans licence", "Répertoire actuel : versions avec des photocopies sans licence"],
 	"A folder that does not come back loses its holder %n month after it was issued; it stays recorded as out.|A folder that does not come back loses its holder %n months after it was issued; it stays recorded as out.": ["Un classeur qui ne revient pas perd son détenteur %n mois après sa remise ; il reste enregistré comme sorti.", "Un classeur qui ne revient pas perd son détenteur %n mois après sa remise ; il reste enregistré comme sorti."],
+	"and %n more row|and %n more rows": ["et %n autre ligne", "et %n autres lignes"],
 }

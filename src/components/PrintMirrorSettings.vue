@@ -12,7 +12,7 @@
 import type { MirrorFolder } from '../printMirror.ts'
 
 import { mdiFolderOutline } from '@mdi/js'
-import { FilePickerClosed, FilePickerType, getFilePickerBuilder, showError, showSuccess } from '@nextcloud/dialogs'
+import { FilePickerClosed, FilePickerType, getFilePickerBuilder, showSuccess } from '@nextcloud/dialogs'
 import { t } from '../l10n.ts'
 import { onMounted, ref, useTemplateRef } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -23,6 +23,7 @@ import PrintMirrorSync from './PrintMirrorSync.vue'
 import { errorMessage } from '../api.ts'
 import { focusAfterDialog, focusAfterUpdate } from '../focus.ts'
 import { checkMirrorFolder, fetchMirrorStatus, saveMirrorFolder } from '../printMirror.ts'
+import { showError } from '../toasts.ts'
 
 const current = ref<MirrorFolder | null>(null)
 /** A chosen folder that passed the check, not saved yet */

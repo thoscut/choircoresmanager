@@ -13,7 +13,7 @@ import type { DraftValue } from './FieldInput.vue'
 import type { AccessionInput, AccessionProposal, AccessionResult, FieldInfo, Level, ShelfLabel } from '../types.ts'
 
 import { mdiCheckCircleOutline, mdiClose, mdiFileLinkOutline, mdiLabelOutline, mdiPlus } from '@mdi/js'
-import { FilePickerClosed, FilePickerType, getFilePickerBuilder, showError, showSuccess } from '@nextcloud/dialogs'
+import { FilePickerClosed, FilePickerType, getFilePickerBuilder, showSuccess } from '@nextcloud/dialogs'
 import { n, t } from '../l10n.ts'
 import { computed, onMounted, reactive, ref, useTemplateRef, watch } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -33,6 +33,7 @@ import { focusAfterDialog, focusAfterUpdate } from '../focus.ts'
 import { toIsoDate, translateLabel } from '../format.ts'
 import { parseShelfmarkList } from '../maintenance.ts'
 import { entries, fieldInfo, isLibrarian, loadEntries, openEntry } from '../store.ts'
+import { showError } from '../toasts.ts'
 
 // ---- shelf mark proposal and open binders ----
 

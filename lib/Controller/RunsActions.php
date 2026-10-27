@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\Notenarchiv\Controller;
 
 use OCA\Notenarchiv\Exception\AccessDeniedException;
+use OCA\Notenarchiv\Exception\InvalidRowsException;
 use OCA\Notenarchiv\Exception\ModuleDisabledException;
 use OCA\Notenarchiv\Exception\NotFoundException;
 use OCA\Notenarchiv\Exception\NotSharedException;
@@ -28,6 +29,9 @@ use OCP\AppFramework\Http\JSONResponse;
  */
 trait RunsActions {
 	use TranslatesMessages;
+
+	/** Faulty rows named in the message itself; all of them are in `rows` */
+	private const ROWS_IN_MESSAGE = 10;
 
 	/**
 	 * @param callable(string): (array|\JsonSerializable) $action
@@ -51,7 +55,9 @@ trait RunsActions {
 			return new JSONResponse(['error' => $this->l->t('This function is switched off.')], Http::STATUS_NOT_FOUND);
 		} catch (\Throwable $e) {
 			$this->logger->error('Notenarchiv: ' . $e->getMessage(), ['exception' => $e]);
-			return new JSONResponse(['error' => $this->l->t('Internal error. Details are in the Nextcloud log.')], Http::STATUS_INTERNAL_SERVER_ERROR);
+			// Says what to do; the request ID finds the entry in the log.
+			return new JSONResponse(['error' => $this->l->t('The server could not finish this. Please try again in a moment. If it happens again, tell the administration this request ID for the Nextcloud log: %s',
+				[$this->request->getId()])], Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -71,6 +77,15 @@ trait RunsActions {
 		$data = ['error' => $this->translate($e->getMessage(), $e->getParameters())];
 		if ($e instanceof NotSharedException) {
 			$data['reason'] = NotSharedException::REASON;
+		}
+		if ($e instanceof InvalidRowsException) {
+			$data['rows'] = array_map(fn (array $row): array => ['row' => $row['row'], 'error' => $this->translate($row['message'], $row['parameters'])],
+				$e->getRows());
+			$data['error'] .= ' ' . implode(' ', array_map(fn (array $row): string => $row['row'] . ': ' . $row['error'],
+				array_slice($data['rows'], 0, self::ROWS_IN_MESSAGE)));
+			if (count($data['rows']) > self::ROWS_IN_MESSAGE) {
+				$data['error'] .= ' ' . $this->l->n('and %n more row', 'and %n more rows', count($data['rows']) - self::ROWS_IN_MESSAGE);
+			}
 		}
 		return new JSONResponse($data, $status);
 	}

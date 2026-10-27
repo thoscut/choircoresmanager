@@ -15,6 +15,7 @@
  * as always.
  */
 import { t } from './l10n.ts'
+import { statusMessage } from './serverErrors.ts'
 import { buildQuery, DEFAULT_VIEW } from './startParams.ts'
 
 /** Initial state `files` from Listener\FilesScriptListener. */
@@ -149,7 +150,8 @@ export function appLink(appUrl: string, copy: CopyOfFile): string {
 
 /**
  * Message for a failed request: the server's own (translated) error, or a
- * general text for the rate limit, other HTTP errors and a lost connection.
+ * general text for the rate limit, other HTTP errors (what to do,
+ * serverErrors.ts) and a lost connection.
  *
  * @param status - HTTP status, null when the server was not reached
  * @param body - parsed JSON body, if any
@@ -163,7 +165,7 @@ export function errorText(status: number | null, body: unknown): string {
 		return t('notenarchiv', 'Too many requests. Please wait a moment and try again.')
 	}
 	if (status !== null) {
-		return t('notenarchiv', 'The server reported an error (HTTP {status}).', { status })
+		return statusMessage(status)
 	}
 	return t('notenarchiv', 'The server cannot be reached. Please check your connection.')
 }

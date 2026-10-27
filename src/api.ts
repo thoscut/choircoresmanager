@@ -81,6 +81,7 @@ import { t } from './l10n.ts'
 import { generateRemoteUrl, generateUrl } from '@nextcloud/router'
 import { davUrl } from './calendar.ts'
 import { normalizeAccessReport, normalizeGroups, normalizeSettings } from './settings.ts'
+import { statusMessage } from './serverErrors.ts'
 import { LEVELS } from './types.ts'
 
 const APP = 'notenarchiv'
@@ -116,7 +117,7 @@ export function errorMessage(error: unknown): string {
 			return t('notenarchiv', 'Too many requests. Please wait a moment and try again.')
 		}
 		if (error.response) {
-			return t('notenarchiv', 'The server reported an error (HTTP {status}).', { status: error.response.status })
+			return statusMessage(error.response.status, String(error.response.headers?.['x-request-id'] ?? ''))
 		}
 		return t('notenarchiv', 'The server cannot be reached. Please check your connection.')
 	}

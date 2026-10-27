@@ -22,7 +22,6 @@
         "Open archive management": "Abrir la gestión del archivo",
         "Open settings": "Abrir la configuración",
         "Too many requests. Please wait a moment and try again.": "Demasiadas solicitudes. Espera un momento y vuelve a intentarlo.",
-        "The server reported an error (HTTP {status}).": "El servidor ha informado de un error (HTTP {status}).",
         "The server cannot be reached. Please check your connection.": "No se puede conectar con el servidor. Comprueba tu conexión.",
         "An unexpected error occurred.": "Se ha producido un error inesperado.",
         "There are no upcoming concerts.": "No hay conciertos próximos.",
@@ -1596,6 +1595,13 @@
         "public links (after the release for publication)": "enlaces públicos (tras la autorización para publicación)",
         "After the confirmation this becomes possible: {uses}.": "Tras la confirmación será posible: {uses}.",
         "A protected version needs a valid license for each of these uses: {uses}.": "Una versión protegida necesita una licencia válida para cada uno de estos usos: {uses}.",
+        "You are no longer logged in. Please reload the page and log in again.": "Ya no tienes la sesión iniciada. Recarga la página y vuelve a iniciar sesión.",
+        "Your account may not do this. Please ask the music librarians for the role you need.": "Tu cuenta no puede hacer esto. Pide a la gestión del archivo el rol que necesitas.",
+        "This no longer exists or is switched off. Please reload the page.": "Esto ya no existe o está desactivado. Recarga la página.",
+        "The file is too large for the server. Please choose a smaller file or ask the administration to allow larger uploads.": "El archivo es demasiado grande para el servidor. Elige un archivo más pequeño o pide a la administración que permita subidas más grandes.",
+        "The server could not finish this. Please try again in a moment. If it happens again, tell the administration this request ID for the Nextcloud log: {id}": "El servidor no pudo terminar. Inténtalo de nuevo en un momento. Si vuelve a ocurrir, da a la administración este ID de solicitud para el registro de Nextcloud: {id}",
+        "The server could not finish this. Please try again in a moment. If it happens again, tell the administration the time, so that it finds the error in the Nextcloud log.": "El servidor no pudo terminar. Inténtalo de nuevo en un momento. Si vuelve a ocurrir, indica la hora a la administración para que encuentre el error en el registro de Nextcloud.",
+        "The server refused the request (HTTP {status}). Please reload the page and try again.": "El servidor rechazó la solicitud (HTTP {status}). Recarga la página e inténtalo de nuevo.",
         "Text: {name}": "Letra: {name}",
         "Translation: {name}": "Traducción: {name}",
         "Arrangement: {name}": "Arreglo: {name}",
@@ -1664,6 +1670,7 @@
         "Scores on CPDL (external site)": "Partituras en CPDL (sitio externo)",
         "Scores on IMSLP (external site)": "Partituras en IMSLP (sitio externo)",
         "Works in the public domain": "Obras de dominio público",
+        "The server could not finish this. Please try again in a moment. If it happens again, tell the administration this request ID for the Nextcloud log: %s": "El servidor no pudo terminar. Inténtalo de nuevo en un momento. Si vuelve a ocurrir, da a la administración este ID de solicitud para el registro de Nextcloud: %s",
         "Internal error. Details are in the Nextcloud log.": "Error interno. Los detalles están en el registro de Nextcloud.",
         "Unknown role: %s": "Rol desconocido: %s",
         "Only an administrator can give a role to a group you belong to.": "Solo un administrador puede asignar un rol a un grupo al que perteneces.",
@@ -1939,6 +1946,7 @@
         "Shelf mark %s: version or work missing in the database, skipped.": "Signatura %s: falta la versión o la obra en la base de datos; se ha omitido.",
         "Shelf mark %s: \"%s\" is already set and is not overwritten by the import.": "Signatura %s: “%s” ya tiene un valor y la importación no lo sobrescribe.",
         "Nothing to record.": "No hay nada que registrar.",
+        "Nothing was recorded. Please correct these rows and record again:": "No se registró nada. Corrige estas filas y vuelve a registrar:",
         "Photocopies of a version that is not confirmed public domain, without a license for copies for the binders.": "Fotocopias de una versión sin dominio público confirmado y sin licencia para copias para las carpetas de coro.",
         "More copies than the licenses for the binders allow.": "Más copias de las que permiten las licencias para las carpetas de coro.",
         "Scans or transcriptions of a version that is not confirmed public domain, without a license for digitisation.": "Escaneos o transcripciones de una versión sin dominio público confirmado y sin licencia de digitalización.",
@@ -2650,6 +2658,10 @@
         "_%n shared link_::_%n shared links_": [
             "%n enlace compartido",
             "%n enlaces compartidos"
+        ],
+        "_and %n more row_::_and %n more rows_": [
+            "y %n fila más",
+            "y %n filas más"
         ],
         "_%n proposal is waiting in the inbox_::_%n proposals are waiting in the inbox_": [
             "%n propuesta espera en la bandeja de entrada",

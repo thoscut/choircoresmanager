@@ -12,7 +12,7 @@
 import type { PerformanceImportReport } from '../types.ts'
 
 import { mdiFileTableOutline, mdiImport, mdiRefresh } from '@mdi/js'
-import { FilePickerClosed, FilePickerType, getFilePickerBuilder, showError, showSuccess } from '@nextcloud/dialogs'
+import { FilePickerClosed, FilePickerType, getFilePickerBuilder, showSuccess } from '@nextcloud/dialogs'
 import { n, t } from '../l10n.ts'
 import { ref, useTemplateRef } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -23,6 +23,7 @@ import NcTextField from '@nextcloud/vue/components/NcTextField'
 import { errorMessage, importPerformances } from '../api.ts'
 import { focusAfterDialog, focusAfterUpdate } from '../focus.ts'
 import { loadEntries } from '../store.ts'
+import { showError } from '../toasts.ts'
 
 const emit = defineEmits<{
 	busy: [busy: boolean]

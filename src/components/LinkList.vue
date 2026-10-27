@@ -14,7 +14,7 @@
 import type { ExcerptLink } from '../types.ts'
 
 import { mdiContentCopy, mdiLinkOff } from '@mdi/js'
-import { showError, showSuccess } from '@nextcloud/dialogs'
+import { showSuccess } from '@nextcloud/dialogs'
 import { n, t } from '../l10n.ts'
 import { ref } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -26,6 +26,7 @@ import { formatDate, formatDateTime } from '../format.ts'
 import { referenceWords } from '../labels.ts'
 import { scopeText } from '../sharing/linkScope.ts'
 import { entriesById, isLibrarian, openEntry } from '../store.ts'
+import { showError } from '../toasts.ts'
 
 withDefaults(defineProps<{
 	links: ExcerptLink[]

@@ -12,7 +12,7 @@
  * restore (`restored`).
  */
 import { mdiAlertOutline, mdiBackupRestore, mdiDownload } from '@mdi/js'
-import { FilePickerClosed, FilePickerType, getFilePickerBuilder, showError, showSuccess } from '@nextcloud/dialogs'
+import { FilePickerClosed, FilePickerType, getFilePickerBuilder, showSuccess } from '@nextcloud/dialogs'
 import { t } from '../l10n.ts'
 import { ref, useTemplateRef } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
@@ -22,6 +22,7 @@ import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import ActionDialog from './ActionDialog.vue'
 import { errorMessage, fullBackupUrl, restoreBackup } from '../api.ts'
 import { focusAfterDialog } from '../focus.ts'
+import { showError } from '../toasts.ts'
 
 defineProps<{
 	/** The catalog holds data: a restore would be refused. */
