@@ -686,7 +686,9 @@ dunklen Design, Informationen nie nur über Farbe, Zoom auf 200 %, reduzierte
 Bewegung wird beachtet. Die Notenansicht bietet eine Textbeschreibung des
 Ausschnitts, sagt beim Abspielen den aktuellen Takt an und bietet Abspielen
 und Textverweise als Alternative zum Notenbild. Die Auswertungen zeigen jede
-Zahl als Zahl in einer Tabelle; die Balken sind nur eine Ergänzung.
+Zahl als Zahl in einer Tabelle; die Balken sind nur eine Ergänzung. Was noch
+nicht barrierefrei ist und wie man ein Problem meldet, steht in der
+[Erklärung zur Barrierefreiheit](barrierefreiheit.md).
 
 ## 12. Module und Voreinstellungen
 
@@ -1178,6 +1180,9 @@ Risiken:
 - Die App schreibt als das Konto, das den Ordner gewählt hat; wird dieses
   Konto gelöscht oder verliert es den Zugriff, hält der Abgleich an und
   benachrichtigt.
+
+Wie sich Archiv und Chorsystem die Arbeit teilen und was das Archiv nie
+verlässt, steht in [Notenarchiv neben einem Chorsystem](neben-einem-chorsystem.md).
 
 ## Häufige Probleme
 

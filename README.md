@@ -274,8 +274,9 @@ zoom, increased text spacing and a catalog of 2,000 copies; the
 [changelog](CHANGELOG.md) lists what was found and fixed. The views added
 since then (settings page, sharing, public pages, folder book, revisions,
 annual snapshots) were checked again in Nextcloud 33 with axe-core in the
-light and the dark theme. This is a self-check, not a formal audit. Please
-report barriers as issues.
+light and the dark theme. This is a self-check, not a formal audit; the
+known limitations are in the [accessibility statement](docs/accessibility.md).
+Please report barriers as issues.
 
 ## Translations
 

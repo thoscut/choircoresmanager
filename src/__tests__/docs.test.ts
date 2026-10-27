@@ -37,6 +37,8 @@ const PAIRS = [
 	['docs/admin-guide.md', 'docs/de/administrationshandbuch.md'],
 	['docs/legal-background.md', 'docs/de/rechtlicher-hintergrund.md'],
 	['docs/privacy-templates.md', 'docs/de/datenschutz-vorlagen.md'],
+	['docs/alongside-a-choir-system.md', 'docs/de/neben-einem-chorsystem.md'],
+	['docs/accessibility.md', 'docs/de/barrierefreiheit.md'],
 ] as const
 
 /** The pages whose links are checked. */

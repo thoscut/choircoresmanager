@@ -1,0 +1,77 @@
+<!--
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+# Erklärung zur Barrierefreiheit
+
+Diese Erklärung gilt für die App Notenarchiv für Nextcloud: ihre Seiten in
+Nextcloud, die Seiten „Mit mir geteilt“ für Chormitglieder und die
+öffentlichen Seiten (öffentliche Links und die Repertoireseite).
+[English](../accessibility.md)
+
+## Ziel und Stand
+
+Die App zielt auf **WCAG 2.2, Stufe AA**. Sie ist **teilweise konform**: Die
+unten genannten Teile erfüllen das Ziel noch nicht. Die Erklärung ist eine
+Selbsteinschätzung der Entwickler, keine förmliche Prüfung. Vor der ersten
+Veröffentlichung wurden alle Rollen in Nextcloud 33 mit axe-core, reiner
+Tastaturbedienung, 320 px Breite, 200 % Zoom und vergrößerten Textabständen
+geprüft; die seitdem hinzugekommenen Ansichten wurden erneut mit axe-core im
+hellen und im dunklen Design geprüft. Diese Prüfungen geschehen von Hand; die
+automatische Prüfung (CI) führt sie nicht aus.
+
+Was die App tut:
+
+- Jede Funktion lässt sich mit der Tastatur bedienen; der Fokus springt in
+  einen Dialog oder die Seitenleiste und zurück dorthin, wo er herkam.
+- Schaltflächen, Felder und Symbole sind für Screenreader beschriftet;
+  Listen und Ergebnisse, die sich ändern, werden angesagt.
+- Der Kontrast reicht im hellen und im dunklen Design; Informationen stehen
+  nie nur in der Farbe.
+- Die Seiten funktionieren mit Zoom bis 200 % und auf schmalen Bildschirmen;
+  Animationen beachten „Bewegung reduzieren“.
+- Fehlermeldungen bleiben stehen, bis man sie schließt, und sagen, was zu
+  tun ist.
+- Die Notenansicht beschreibt den Ausschnitt in Text, sagt beim Abspielen den
+  aktuellen Takt an und bietet Abspielen und Textverweise als Alternative zum
+  Notenbild.
+- Auswertungen zeigen jede Zahl als Zahl in einer Tabelle; Diagramme sind nur
+  eine Ergänzung.
+- Ausdrucke tragen eine Kopfzeile mit Ansicht, Filtern und Datum.
+
+## Bekannte Einschränkungen
+
+- **Scans** gedruckter Noten sind Bilder (PDF). Sie haben keine Textebene,
+  und Notenschrift kann kein Screenreader vorlesen. Wo es eine
+  MusicXML-Datei gibt, sind die Notenansicht und das Abspielen die
+  barrierefreie Alternative.
+- Das **Notenbild** in der Notenansicht ist eine Zeichnung. Sein Inhalt steht
+  als Textbeschreibung und über das Abspielen zur Verfügung, nicht als
+  Notenschrift selbst.
+- **Seitenzahlen** in Ausdrucken hängen vom Browser ab (zum Beispiel Chrome
+  und Edge; Firefox druckt ohne).
+- **Teile von Nextcloud** (Navigation, Dateiauswahl, Dialoge, der Kalender
+  und die Dateien-App) liegen außerhalb der App. Ihre Barrierefreiheit ist
+  die der genutzten Nextcloud-Version.
+- **Übersetzungen** außer Deutsch und Englisch sind noch nicht von
+  Muttersprachlern geprüft; die Formulierungen dort können weniger klar sein.
+
+## Öffentliche Seiten eines Chors
+
+Ein Chor, der öffentliche Links oder die Repertoireseite auf seiner Website
+zeigt, ist für seine Website selbst verantwortlich und kann gesetzlich
+verpflichtet sein, dafür eine Erklärung zur Barrierefreiheit zu
+veröffentlichen. Die öffentlichen Seiten der App folgen dem Ziel oben; diese
+Erklärung kann als Grundlage für den Teil dienen, den sie abdecken.
+
+## Rückmeldung
+
+Wenn dir etwas in der App schwer fällt oder nicht gelingt, sag es uns bitte
+in einem Issue des Repositorys
+([github.com/thoscut/choircoresmanager/issues](https://github.com/thoscut/choircoresmanager/issues))
+oder bitte die Administration deiner Nextcloud, es weiterzugeben. Beschreibe
+die Seite, was du tun wolltest, und welche Hilfstechnik du nutzt. Nenne
+keine personenbezogenen Daten anderer.
+
+Diese Erklärung entstand im Oktober 2026 und wird mit jeder Version
+aktualisiert, die die Oberfläche ändert.

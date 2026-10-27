@@ -626,7 +626,8 @@ colour alone, zoom to 200 %, reduced motion respected. The score viewer offers
 a text description of the excerpt, announces the current measure during
 playback and offers playback and text references as alternatives to the
 notation. The statistics show every figure as a number in a table; the bars
-are only an addition.
+are only an addition. What is not accessible yet, and how to report a
+problem, is in the [accessibility statement](accessibility.md).
 
 ## 12. Modules and presets
 
@@ -1075,6 +1076,9 @@ Risks:
   removed from the folder must also be removed there. The read-me says so.
 - The app writes as the account that chose the folder; if that account is
   deleted or loses access, the sync stops and notifies.
+
+How the archive and a choir system share the work, and what never leaves
+the archive, is in [Notenarchiv alongside a choir system](alongside-a-choir-system.md).
 
 ## Common problems
 

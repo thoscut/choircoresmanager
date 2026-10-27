@@ -142,6 +142,9 @@ All notable changes to this app are documented in this file. The format follows
   not recorded, and pieces recorded but missing there, become proposals in
   the inbox for "In singers' portal since", pieces there but not released
   are listed to be removed there. New route `POST /api/lists/portal/compare`.
+- New guides **Notenarchiv alongside a choir system** (who keeps what, what
+  never goes there, concerts as calendar files) and an **accessibility
+  statement** with the known limitations, in English and German.
 - Excerpts and whole pieces for choir members and the public no longer
   carry the encoder, the miscellaneous fields, XML comments or processing
   instructions of the MusicXML file.

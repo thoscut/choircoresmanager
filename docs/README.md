@@ -14,6 +14,8 @@ documentation for developers is in English.
 | The essentials in a few minutes | – | [Schnellstart](de/schnellstart.md) |
 | The law behind the rights checks | [Legal background](legal-background.md) | [Rechtlicher Hintergrund](de/rechtlicher-hintergrund.md) |
 | Data protection templates for the choir | [Privacy templates](privacy-templates.md) | [Datenschutz-Vorlagen](de/datenschutz-vorlagen.md) |
+| Running it next to a member app or choir website | [Alongside a choir system](alongside-a-choir-system.md) | [Neben einem Chorsystem](de/neben-einem-chorsystem.md) |
+| What the app does for accessibility, and its limits | [Accessibility statement](accessibility.md) | [Erklärung zur Barrierefreiheit](de/barrierefreiheit.md) |
 
 ## Using the app
 
