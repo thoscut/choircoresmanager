@@ -105,8 +105,10 @@ jobs:
       image: php:8.2-cli
     steps:
       - name: Install job tools
-        run: apt-get update -qq && apt-get install -y -qq --no-install-recommends git unzip curl nodejs ca-certificates
+        run: apt-get update -qq && apt-get install -y -qq --no-install-recommends git unzip curl nodejs ca-certificates libzip-dev libicu-dev
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install the PHP extensions the app requires (composer.json)
+        run: sh .github/scripts/install-php-extensions.sh
       - name: Install Composer
         run: sh .github/scripts/install-composer.sh
       - name: Validate composer.json and lock file
@@ -126,8 +128,10 @@ jobs:
       image: php:8.2-cli
     steps:
       - name: Install job tools
-        run: apt-get update -qq && apt-get install -y -qq --no-install-recommends git unzip curl nodejs ca-certificates
+        run: apt-get update -qq && apt-get install -y -qq --no-install-recommends git unzip curl nodejs ca-certificates libzip-dev libicu-dev
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install the PHP extensions the app requires (composer.json)
+        run: sh .github/scripts/install-php-extensions.sh
       - name: Install Composer
         run: sh .github/scripts/install-composer.sh
       - name: Install dependencies
@@ -144,8 +148,10 @@ jobs:
       image: php:8.2-cli
     steps:
       - name: Install job tools
-        run: apt-get update -qq && apt-get install -y -qq --no-install-recommends git unzip curl nodejs ca-certificates
+        run: apt-get update -qq && apt-get install -y -qq --no-install-recommends git unzip curl nodejs ca-certificates libzip-dev libicu-dev
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install the PHP extensions the app requires (composer.json)
+        run: sh .github/scripts/install-php-extensions.sh
       - name: Install Composer
         run: sh .github/scripts/install-composer.sh
       - name: Install dependencies
@@ -164,8 +170,10 @@ jobs:
       image: php:8.2-cli
     steps:
       - name: Install job tools
-        run: apt-get update -qq && apt-get install -y -qq --no-install-recommends git unzip curl nodejs ca-certificates
+        run: apt-get update -qq && apt-get install -y -qq --no-install-recommends git unzip curl nodejs ca-certificates libzip-dev libicu-dev
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install the PHP extensions the app requires (composer.json)
+        run: sh .github/scripts/install-php-extensions.sh
       - name: Trust the workspace for git
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - name: Install Composer
@@ -196,10 +204,10 @@ jobs:
       image: php:${{ matrix.php }}-cli
     steps:
       - name: Install job tools
-        run: apt-get update -qq && apt-get install -y -qq --no-install-recommends git unzip curl nodejs ca-certificates libzip-dev
-      - name: Install the zip extension (spreadsheet reader and writer tests)
-        run: docker-php-ext-install zip >/dev/null && php -m | grep -qx zip
+        run: apt-get update -qq && apt-get install -y -qq --no-install-recommends git unzip curl nodejs ca-certificates libzip-dev libicu-dev
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install the PHP extensions the app requires (composer.json)
+        run: sh .github/scripts/install-php-extensions.sh
       - name: Install Composer
         run: sh .github/scripts/install-composer.sh
       - name: Install dependencies
