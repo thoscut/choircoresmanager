@@ -34,6 +34,54 @@ Please include:
 You will receive an answer within a week. Fixes are released as soon as
 possible and mentioned in the changelog.
 
+## Promises and their tests
+
+What the app promises and where that is tested. `CS` is
+`tests/Unit/Controller/ControllerSecurityTest`; integration tests
+(`tests/Integration/…_test.php`) run against a real Nextcloud in CI
+(`tools/ci/integration-demo.sh`). A change that breaks a promise must fail
+one of these tests; a new promise gets a row and a test. The design notes
+below explain the reasons.
+
+| Promise | Tested by |
+|---|---|
+| Every route needs a logged-in account, except the public pages of the sharing modules | CS `testOnlyTheSharingPagesArePublic` |
+| Every route belongs to the core or names its module; a switched-off module answers 404 | CS `testEveryRouteIsCoreOrBelongsToAModule`, `testRoutesOfASwitchedOffModuleAnswer404`, `testASwitchedOffPartOfAnActionAnswers404` |
+| Only the settings are restricted to administrators, and only they can be delegated | CS `testOnlyTheSettingsLackNoAdminRequired`, `testTheSettingsCanBeDelegatedAndNothingElse`, `testTheSettingsRefuseWhomTheyWereNotGiven`; `settings_access_test` |
+| Delegated settings give no role to an own group, do not move the archive folder and switch on no module that opens the archive; such changes are logged | CS `testDelegatedSettingsCannotGrantRolesOrMoveTheArchiveFolder`; `ModuleSettingsTest::testOnlyAdministratorsSwitchOnWhatOpensTheArchive`, `testEveryChangedSwitchIsRecorded` |
+| Only administrators learn whether a restore is possible; the restore cannot be delegated | CS `testTheSettingsTellWhetherARestoreIsPossibleOnlyToAdmins` |
+| Writing requests keep the CSRF check; only plain downloads skip it | CS `testCsrfIsOnlySkippedForPlainDownloads` |
+| Expensive endpoints are rate limited | CS `testExpensiveEndpointsAreRateLimited` |
+| Decisions (rights confirmation, valid version, portal release) are no generic fields; unknown fields are refused | `FieldsTest::testDecisionFieldsAreMarked`; `RequestBoundaryTest::testLinkRefusesUnknownFields`, `testTaskRefusesUnknownFields`; `workflow_test` |
+| Choir members hold no archive role and reach only their page and the routes of their links | CS `testChoirMembersHoldNoArchiveRole`, `testOnlyTheMemberRoutesLetChoirMembersIn`, `testChoirMembersGetOnlyTheirPage`, `testMemberRoutesRefuseOthersAndThrottleUnknownTokens` |
+| A link carries no rights of its own: release and rights are checked on every call, preservation copies never | `RightsPolicyTest::testLinksForChoirMembers`, `testPublicLinks`, `testPreservationCopiesAreNeverPlayed`; `SharingTest::testOthersAndWithdrawnLinksGetNothing`, `testALinkOffersTheScanOnlyUnderTheSameRelease` |
+| Every failure of a public link gets the same 404 and counts for the brute-force protection | CS `testPublicLinksAnswerTheSame404ForEveryFailure`, `testResolvingALinkHasBruteForceProtection`, `testAnUnknownTokenIsThrottled` |
+| A public link shows title, composer and the measures of the link, no account names and no note | `SharingTest::testAPublicLinkShowsOnlyTheExcerptAndNothingInternal`, `testChoirMembersSeeTheirLinksAndOnlyTheMeasures`; `sharing_test` |
+| A scan is shown only by the browser's PDF viewer, after the same checks as the link | CS `testScansAreOnlyShownByThePdfViewer`, `testTheScanOfAMemberLinkIsShownInlineAfterTheSameChecks`, `testAScanIsRefusedWithoutTheRightToView` |
+| Practice audio of choir members stays within the link and is recorded with the role | `SharingTest::testChoirMembersMakePracticeAudioOfTheirExcerptOnly`, `testTheAuditLogNamesTheRoleOfAChoirMember` |
+| The repertoire page lists only public-domain works and links only to `cpdl.org` and `imslp.org` over https | `SharingTest::testTheRepertoirePageShowsChosenPublicDomainWorksOnly`, `testLinksToCpdlAndImslpMustBeHttpsToTheirSite` |
+| The API for agents needs its module, a role and a limit on every route, and decides nothing | CS `testEveryApiV1RouteNeedsTheInterfaceItsModuleARoleAndALimit`, `testNoApiV1RouteDecidesOrCorrects`, `testASwitchedOffApiV1RouteAnswers404WithOcsMeta`; agent run in `tools/ci/integration-demo.sh` |
+| Answers of the API for agents name no accounts; preservation copies only for the roles that may view them | `ApiV1ControllerTest::testACopyWithoutAccountNamesAndAPreservationCopyOnlyForItsRoles`, `testTheReviewOfACopyHasNoAccountNamesAndComesInPages`, `testPreservationCopiesOnlyForRolesThatMayViewThem` |
+| The MCP server never shows the app password and sends nothing in read-only mode | `tools/mcp/test`: "never appear in tool results" (secrets), "send nothing in read-only mode", "leaves out the writing tools in read-only mode" |
+| Files are read through the user's own view; nobody gets a file they could not open | `UserFilesTest::testRefusesAFileTheUserCannotSee`; `ScoreServiceTest::testAScoreInAnArchiveFolderThatIsNotSharedSaysWhatToDo`; `files_integration_test` |
+| Size limits are enforced while reading, not only by the size in the file cache | `UserFilesTest::testRefusesContentAboveTheLimitWhenTheRecordedSizeIsWrong`; `ScoreServiceTest::testReadsNoMoreThanTheLimitWhenTheRecordedSizeIsWrong`, `testRefusesACompressedScoreThatUnpacksTooLarge` |
+| Score files reach the browser only as real MusicXML, as an attachment with `nosniff` | CS `testScoreFilesAreNeverShownInline`; `ScoreServiceTest::testRefusesAFileThatOnlyPretendsToBeMusicXml`, `testRightsPolicyComesFirst` |
+| Spreadsheets are read without document type declarations and with limits against ZIP bombs | `XlsxReaderTest::testRefusesDocumentTypeDeclarations`, `testRefusesAPartThatUnpacksTooLarge`, `testAFarCellCannotInflateTheWorkbook` |
+| A rights notice in a MusicXML file never sets a rights status | `RightsNoticeServiceTest::testANoticeBecomesAtMostAProposal`, `testTheDoctypeOfMusicXmlIsAcceptedButNoInternalSubset`; `archive_extras_test` |
+| The print station never writes into the archive folder and replaces only files it wrote itself | `print_mirror_test`; CS `testThePrintStationIsSyncedByTheCatalogLibrarianAndAdministrators` |
+| Backups and annual snapshots lie outside the archive folder | `workflow_test` ("the backup lies in the backup folder"), `archive_extras_test` ("the snapshot lies outside the archive folder"), `notifications_test` |
+| Backups hold no link tokens; a restore brings links back revoked | `ExportServiceTest::testABackupHoldsNoLinkTokensAndASnapshotNoAccounts`; `backup_test` |
+| Of the weekly backups the newest eight are kept | `ExportServiceTest::testOnlyTheNewestWeeklyBackupsAreKept` |
+| Annual snapshots name nobody: no accounts, folder book, audit log or links | `ExportServiceTest::testABackupHoldsNoLinkTokensAndASnapshotNoAccounts`; `backup_test`, `archive_extras_test`; CS `testAnnualSnapshotsCheckTheRolesOnTheServer` |
+| A restore writes only into an empty catalog, checks every value against its column and writes nothing when it fails | `backup_test`; `FullBackupServiceTest::testColumnValue`, `testRefusesDeeplyNestedJson`, `testRefusesWhatIsNoBackup` |
+| The folder book is read and written only by its roles; its entries of the audit log are hidden from others | CS `testTheFolderBookIsReadByTheArchiveRolesAndMaintainedByTheLibrarians`, `testFolderBookEntriesOfTheAuditLogAreHiddenFromOtherRoles`; `folder_book_test` |
+| After the retention period names and notes of a loan are removed, also from the audit log | `FolderBookServiceTest::testExpiredLoansLoseTheirPersonalDataAlsoInTheAuditLog`; `folder_book_test` |
+| The search of Nextcloud answers only catalog roles, in pages, without preservation copies for others | `CatalogSearchProviderTest::testAccountsWithoutACatalogRoleFindNothing`, `testPreservationCopiesOnlyForTheRolesThatMayViewThem`, `testResultsComeInPages` |
+| CSV files for people neutralise formulas; the catalog CSV keeps its cells for the round trip | `CatalogCsvTest::testWriteForPeopleNeutralizesHeaderAndCells`, `testCatalogCsvKeepsFormulaLikeCellsForTheRoundTrip`; `StatisticsCsvTest::testCellsThatLookLikeFormulasAreNeutralized` |
+| Clients and notifications get no internal error texts | `NotifierTest::testExportFailureShowsNoInternalDetails`, `testLinksStayInsideTheApp`; `ApiV1ControllerTest::testErrorsBecomeOcsExceptions` |
+| The app page allows WebAssembly and nothing else beyond Nextcloud's policy | CS `testTheAppPageAllowsWebAssemblyButNoScriptEval` |
+| The audit log has no route to change or delete entries | review: the route list of CS `testEveryRouteIsCoreOrBelongsToAModule` names every route |
+
 ## Design notes
 
 ### Access
@@ -253,9 +301,9 @@ account can do; it offers a stable, documented and limited contract.
   only as that account and never uses a folder inside the archive folder for
   it. Only an administrator sets the archive folder, and with it that
   account.
-- The mirror folder for the print station (module `print_mirror`, part of
-  no preset) is the one place outside the archive folder where the app
-  writes. An administrator chooses the target folder; the server refuses the
+- Besides the backup folder, the mirror folder for the print station
+  (module `print_mirror`, part of no preset) is the only place outside the
+  archive folder where the app writes. An administrator chooses the target folder; the server refuses the
   archive folder and every folder inside it (also reached through shares),
   checks this again before every sync and writes as the account that chose
   the folder. It copies only the PDF scans of the versions on the list of

@@ -42,6 +42,8 @@ All notable changes to this app are documented in this file. The format follows
   going when the page is closed. Archive management shows a running file
   sync and the counts of the last one.
 - The file sync only writes the rows of files that changed.
+- `SECURITY.md` starts with a table of what the app promises and which test
+  checks it; a test makes sure every named test exists.
 
 ### Fixed
 

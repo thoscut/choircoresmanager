@@ -4,7 +4,8 @@
 # Checks of the documentation on every push and pull request, also when only
 # documentation changed (the CI workflow skips those): equal headings in the
 # German and English guides, links and anchors, screenshots that exist
-# (src/__tests__/docs.test.ts).
+# (src/__tests__/docs.test.ts), and that the table of promises in SECURITY.md
+# names only tests that exist (src/__tests__/security.test.ts).
 
 name: Docs
 
@@ -37,4 +38,4 @@ jobs:
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
       - name: Check the documentation
-        run: npx vitest run src/__tests__/docs.test.ts
+        run: npx vitest run src/__tests__/docs.test.ts src/__tests__/security.test.ts
