@@ -26,7 +26,7 @@ import { errorMessage, fetchReleaseList } from '../api.ts'
 import { formatDate, translateLabel } from '../format.ts'
 import { releaseStatusLabel } from '../labels.ts'
 import { navigate, releaseFilter } from '../navigation.ts'
-import { canSyncPrintMirror, choiceLabel, openEntry } from '../store.ts'
+import { canSyncHandover, canSyncPrintMirror, choiceLabel, openEntry } from '../store.ts'
 
 const props = defineProps<{
 	target: 'portal' | 'print-station'
@@ -175,6 +175,17 @@ function rightsText(row: ReleaseRow): string {
 					{{ t('notenarchiv', 'The PDF scans of the versions this list shows (to add and not decided), copied into a folder of the print station.') }}
 				</p>
 				<PrintMirrorSync />
+			</section>
+			<section v-if="target === 'portal' && canSyncHandover"
+				class="release-list__mirror no-print"
+				aria-labelledby="release-choir-handover">
+				<h3 id="release-choir-handover">
+					{{ t('notenarchiv', 'Hand-over to the choir system') }}
+				</h3>
+				<p class="release-list__hint">
+					{{ t('notenarchiv', 'The files of the versions this list shows (to add and not decided), with a list of the pieces and the conductor\'s notes, copied into a folder that the choir system reads.') }}
+				</p>
+				<PrintMirrorSync kind="handover" />
 			</section>
 			<NcEmptyContent v-if="!loaded && loading" :name="t('notenarchiv', 'Loading …')">
 				<template #icon>

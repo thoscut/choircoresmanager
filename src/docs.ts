@@ -42,6 +42,7 @@ export const ADMIN_GUIDE = {
 	modules: { en: '12-modules-and-presets', de: '12-module-und-voreinstellungen' },
 	folderBook: { en: '15-folder-book-retention-period', de: '15-mappenbuch-löschfrist' },
 	printMirror: { en: '16-mirror-folder-for-the-print-station', de: '16-spiegelordner-für-die-druckstation' },
+	choirHandover: { en: '17-hand-over-to-a-choir-system', de: '17-übergabe-an-ein-chorsystem' },
 	problems: { en: 'common-problems', de: 'häufige-probleme' },
 } as const satisfies Record<string, GuideSection>
 

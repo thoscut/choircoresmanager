@@ -177,6 +177,13 @@ onMounted(async () => {
 				<PrintMirrorSettings />
 			</NcSettingsSection>
 
+			<NcSettingsSection v-if="settings.choirHandover"
+				:id="sections.choirHandover"
+				:name="t('notenarchiv', 'Hand-over to the choir system')"
+				:doc-url="adminGuideUrl(ADMIN_GUIDE.choirHandover)">
+				<PrintMirrorSettings kind="handover" />
+			</NcSettingsSection>
+
 			<NcSettingsSection v-if="settings.folderBook"
 				:id="sections.folderBook"
 				:name="t('notenarchiv', 'Folder book: retention period')"

@@ -127,6 +127,16 @@ All notable changes to this app are documented in this file. The format follows
 - **Printouts** carry a header with the name of the Nextcloud (usually the
   choir), the view, the filters that are on and the day, and page numbers
   where the browser supports them.
+- **Hand-over to a choir system** (module `choir_handover`, part of no
+  preset): like the mirror folder of the print station, a folder of its
+  own gets what the singers' portal releases, the scans and MusicXML files
+  choir members may save and the practice recordings the rights allow,
+  with `Liste.csv` (version, revision and license notice per file) and the
+  notes of the conductor per passage from the links for choir members as
+  `… Hinweise.txt`. Preview, first sync by hand, then daily; the app
+  uploads nothing to the choir system. New routes `/api/choir-handover…`,
+  `/api/settings/choir-handover…`; the table `notarch_mirror_files` gets
+  the column `mirror`.
 - Excerpts and whole pieces for choir members and the public no longer
   carry the encoder, the miscellaneous fields, XML comments or processing
   instructions of the MusicXML file.

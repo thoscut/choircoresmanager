@@ -133,6 +133,8 @@ export const canSeeProposals = computed(() => isModuleActive('proposals') && has
 export const canSeeFolderBook = computed(() => isModuleActive('folder_book') && hasAnyRole(['librarian', 'operations', 'conductor', 'reader']))
 /** Who syncs the mirror folder of the print station (module "print_mirror"). */
 export const canSyncPrintMirror = computed(() => isModuleActive('print_mirror') && (hasRole('librarian') || isAdmin.value))
+/** Who syncs the hand-over folder for a choir system (module "choir_handover"). */
+export const canSyncHandover = computed(() => isModuleActive('choir_handover') && (hasRole('librarian') || isAdmin.value))
 
 export const hasArchiveFolder = computed(() => (meta.value?.archive.id ?? 0) > 0)
 

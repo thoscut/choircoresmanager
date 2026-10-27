@@ -4,13 +4,22 @@
  */
 
 /**
- * The mirror folder of the print station (module "print_mirror", see
- * docs/api.md): types, calls to the server and pure helpers. The server
- * checks everything again.
+ * The mirror folder of the print station (module "print_mirror") and the
+ * hand-over folder for a choir system (module "choir_handover"), see
+ * docs/api.md: types, calls to the server and pure helpers. Both work the
+ * same way; `kind` chooses the routes. The server checks everything again.
  */
 import axios from '@nextcloud/axios'
 import { t } from './l10n.ts'
 import { apiUrl } from './api.ts'
+
+/** Which folder: the print station or the hand-over to a choir system */
+export type MirrorKind = 'print' | 'handover'
+
+const ROUTES: Record<MirrorKind, string> = {
+	print: 'print-mirror',
+	handover: 'choir-handover',
+}
 
 /** The target folder as the account that chose it sees it. */
 export interface MirrorFolder {
@@ -40,7 +49,7 @@ export interface MirrorReport {
 	files: number
 }
 
-/** GET /api/print-mirror and /api/settings/print-mirror */
+/** GET /api/print-mirror, /api/choir-handover and their settings routes */
 export interface MirrorStatus {
 	folder: MirrorFolder | null
 	/** whether the daily sync runs (after the first sync by hand) */
@@ -81,20 +90,28 @@ export function normalizeReport(report: Partial<MirrorReport> | null | undefined
 
 /**
  * @param admin - read through the settings route (administrators)
+ * @param kind - which folder
  */
-export async function fetchMirrorStatus(admin = false): Promise<MirrorStatus> {
-	const { data } = await axios.get<MirrorStatus>(apiUrl(admin ? '/settings/print-mirror' : '/print-mirror'))
+export async function fetchMirrorStatus(admin = false, kind: MirrorKind = 'print'): Promise<MirrorStatus> {
+	const { data } = await axios.get<MirrorStatus>(apiUrl(admin ? `/settings/${ROUTES[kind]}` : `/${ROUTES[kind]}`))
 	return { folder: data.folder ?? null, started: data.started === true, report: normalizeReport(data.report) }
 }
 
-/** What a sync would do now, without writing anything. */
-export async function previewMirror(): Promise<MirrorReport> {
-	const { data } = await axios.get<MirrorReport>(apiUrl('/print-mirror/preview'))
+/**
+ * What a sync would do now, without writing anything.
+ *
+ * @param kind - which folder
+ */
+export async function previewMirror(kind: MirrorKind = 'print'): Promise<MirrorReport> {
+	const { data } = await axios.get<MirrorReport>(apiUrl(`/${ROUTES[kind]}/preview`))
 	return normalizeReport(data) as MirrorReport
 }
 
-export async function syncMirror(): Promise<MirrorReport> {
-	const { data } = await axios.post<MirrorReport>(apiUrl('/print-mirror/sync'))
+/**
+ * @param kind - which folder
+ */
+export async function syncMirror(kind: MirrorKind = 'print'): Promise<MirrorReport> {
+	const { data } = await axios.post<MirrorReport>(apiUrl(`/${ROUTES[kind]}/sync`))
 	return normalizeReport(data) as MirrorReport
 }
 
@@ -102,9 +119,10 @@ export async function syncMirror(): Promise<MirrorReport> {
  * Checks a folder as target folder without saving it (administrators).
  *
  * @param folderId - Nextcloud file id of the folder
+ * @param kind - which folder
  */
-export async function checkMirrorFolder(folderId: number): Promise<MirrorFolder> {
-	const { data } = await axios.get<{ folder: MirrorFolder }>(apiUrl('/settings/print-mirror/check'), { params: { folderId } })
+export async function checkMirrorFolder(folderId: number, kind: MirrorKind = 'print'): Promise<MirrorFolder> {
+	const { data } = await axios.get<{ folder: MirrorFolder }>(apiUrl(`/settings/${ROUTES[kind]}/check`), { params: { folderId } })
 	return data.folder
 }
 
@@ -112,9 +130,10 @@ export async function checkMirrorFolder(folderId: number): Promise<MirrorFolder>
  * Saves the target folder; 0 removes it (administrators).
  *
  * @param folderId - Nextcloud file id of the folder, or 0
+ * @param kind - which folder
  */
-export async function saveMirrorFolder(folderId: number): Promise<MirrorFolder | null> {
-	const { data } = await axios.put<{ folder: MirrorFolder | null }>(apiUrl('/settings/print-mirror'), { folderId })
+export async function saveMirrorFolder(folderId: number, kind: MirrorKind = 'print'): Promise<MirrorFolder | null> {
+	const { data } = await axios.put<{ folder: MirrorFolder | null }>(apiUrl(`/settings/${ROUTES[kind]}`), { folderId })
 	return data.folder ?? null
 }
 

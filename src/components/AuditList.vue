@@ -60,6 +60,8 @@ function objectLabel(type: string): string {
 		return t('notenarchiv', 'Loan of a folder')
 	case 'print_mirror':
 		return t('notenarchiv', 'Print station')
+	case 'choir_handover':
+		return t('notenarchiv', 'Hand-over to the choir system')
 	default:
 		return type
 	}

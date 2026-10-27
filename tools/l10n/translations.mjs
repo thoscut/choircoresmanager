@@ -1129,7 +1129,6 @@ export const singular = {
 		'Der Zielordner wurde gespeichert. Sehen Sie sich vor dem ersten Abgleich die Vorschau an.',
 	],
 	'The print station has no target folder any more. The files in the old folder stay there.': 'Die Druckstation hat keinen Zielordner mehr. Die Dateien im alten Ordner bleiben dort.',
-	'The app copies the PDF scans of the versions released for the print station into this folder and keeps it up to date. It is the only folder besides the archive where the app writes; it must not be the archive folder or lie inside it.': 'Die App kopiert die PDF-Scans der für die Druckstation freigegebenen Fassungen in diesen Ordner und hält ihn aktuell. Außer dem Archiv ist er der einzige Ordner, in den die App schreibt; er darf weder der Archivordner sein noch darin liegen.',
 	'Everyone who can open the target folder can print the scans in it. Share it only with the print station or the people who may print.': 'Wer den Zielordner öffnen kann, kann die Scans darin drucken. Teile ihn nur mit der Druckstation oder den Personen, die drucken dürfen.',
 	'Current target folder:': 'Aktueller Zielordner:',
 	'Remove target folder': 'Zielordner entfernen',
@@ -2979,9 +2978,80 @@ export const singular = {
 	'Filter: {filter}': 'Filter: {filter}',
 	'Printed on {date}': 'Gedruckt am {date}',
 	'Page {page} of {pages}': 'Seite {page} von {pages}',
+	// ---- 0.12: hand-over to a choir system ----
+	'Hand-over to the choir system': 'Übergabe an das Chorsystem',
+	'Choose the hand-over folder for the choir system': 'Übergabeordner für das Chorsystem wählen',
+	'The hand-over has no target folder any more. The files in the old folder stay there.': 'Die Übergabe hat keinen Zielordner mehr. Die Dateien im alten Ordner bleiben dort.',
+	'The app copies what the singers\' portal releases into this folder and keeps it up to date: the PDF scans, the MusicXML files and the practice recordings the rights allow, with a list of the pieces (Liste.csv) and the conductor\'s notes per piece. A choir system such as a member app can read the folder; the app never writes into the choir system itself. The folder must not be the archive folder, lie inside it or be the folder of the print station.': 'Die App kopiert, was das Chorportal freigibt, in diesen Ordner und hält ihn aktuell: die PDF-Scans, die MusicXML-Dateien und die Übe-Aufnahmen, die die Rechte erlauben, mit einer Liste der Stücke (Liste.csv) und den Hinweisen der Chorleitung je Stück. Ein Chorsystem wie eine Mitglieder-App kann den Ordner lesen; die App schreibt nie selbst in das Chorsystem. Der Ordner darf weder der Archivordner sein noch darin liegen noch der Ordner der Druckstation sein.',
+	'Everyone who can open the hand-over folder can download the files in it. Share it only with the account of the choir system.': [
+		'Wer den Übergabeordner öffnen kann, kann die Dateien darin herunterladen. Teile ihn nur mit dem Konto des Chorsystems.',
+		'Wer den Übergabeordner öffnen kann, kann die Dateien darin herunterladen. Teilen Sie ihn nur mit dem Konto des Chorsystems.',
+	],
+	'The app copies the PDF scans of the versions released for the print station into this folder and keeps it up to date. The folder must not be the archive folder or lie inside it.': 'Die App kopiert die PDF-Scans der für die Druckstation freigegebenen Fassungen in diesen Ordner und hält ihn aktuell. Der Ordner darf weder der Archivordner sein noch darin liegen.',
+	'The hand-over folder for the choir system has been synced.': 'Der Übergabeordner für das Chorsystem wurde abgeglichen.',
+	'The files of the versions this list shows (to add and not decided), with a list of the pieces and the conductor\'s notes, copied into a folder that the choir system reads.': 'Die Dateien der Fassungen, die diese Liste zeigt (hinzuzufügen und nicht entschieden), mit einer Liste der Stücke und den Hinweisen der Chorleitung, kopiert in einen Ordner, den das Chorsystem liest.',
+	'A file of this name is in the hand-over folder, but the app did not write it (or it was replaced). It stays as it is; rename or remove it there if the app should write it.': [
+		'Eine Datei dieses Namens liegt im Übergabeordner, aber die App hat sie nicht geschrieben (oder sie wurde ersetzt). Sie bleibt, wie sie ist; benenne sie dort um oder entferne sie, wenn die App sie schreiben soll.',
+		'Eine Datei dieses Namens liegt im Übergabeordner, aber die App hat sie nicht geschrieben (oder sie wurde ersetzt). Sie bleibt, wie sie ist; benennen Sie sie dort um oder entfernen Sie sie, wenn die App sie schreiben soll.',
+	],
+	'The file was changed in the hand-over folder after the app wrote it. It stays as it is; remove it there if the app should look after it again.': [
+		'Die Datei wurde im Übergabeordner geändert, nachdem die App sie geschrieben hat. Sie bleibt, wie sie ist; entferne sie dort, wenn die App sie wieder pflegen soll.',
+		'Die Datei wurde im Übergabeordner geändert, nachdem die App sie geschrieben hat. Sie bleibt, wie sie ist; entfernen Sie sie dort, wenn die App sie wieder pflegen soll.',
+	],
+	'The account of the hand-over folder cannot read this file. Give it access to the archive folder.': [
+		'Das Konto des Übergabeordners kann diese Datei nicht lesen. Gib ihm Zugriff auf den Archivordner.',
+		'Das Konto des Übergabeordners kann diese Datei nicht lesen. Geben Sie ihm Zugriff auf den Archivordner.',
+	],
+	'Internal preservation copy: never handed over.': 'Interne Erhaltungskopie: wird nie übergeben.',
+	'Choir members could save and print this file in the choir system: it needs confirmed public domain or a license for download and printing by choir members.': 'Chormitglieder könnten diese Datei im Chorsystem speichern und drucken: Dafür braucht es bestätigte Gemeinfreiheit oder eine Lizenz zum Herunterladen und Drucken durch Chormitglieder.',
+	'Practice recording: it needs confirmed public domain or a license for practice audio.': 'Übe-Aufnahme: Dafür braucht es bestätigte Gemeinfreiheit oder eine Lizenz für Übe-Audio.',
+	'The sync of the hand-over folder for the choir system failed: %s': 'Der Abgleich des Übergabeordners für das Chorsystem ist fehlgeschlagen: %s',
+	'Hand-over to the choir system: folder of the music archive': 'Übergabe an das Chorsystem: Ordner des Notenarchivs',
+	'Liste.csv names the version, the revision and the license notice of every file; show the notice with the file in the choir system.': [
+		'Liste.csv nennt Fassung, Stand und Lizenzhinweis jeder Datei; zeige den Hinweis im Chorsystem bei der Datei.',
+		'Liste.csv nennt Fassung, Stand und Lizenzhinweis jeder Datei; zeigen Sie den Hinweis im Chorsystem bei der Datei.',
+	],
+	'Upload the files to the choir system yourself and remove there what is no longer in this folder. The music archive uploads nothing.': [
+		'Lade die Dateien selbst in das Chorsystem hoch und entferne dort, was nicht mehr in diesem Ordner ist. Das Notenarchiv lädt nichts hoch.',
+		'Laden Sie die Dateien selbst in das Chorsystem hoch und entfernen Sie dort, was nicht mehr in diesem Ordner ist. Das Notenarchiv lädt nichts hoch.',
+	],
+	'License notice': 'Lizenzhinweis',
+	'License: %s': 'Lizenz: %s',
+	'Public domain (confirmed)': 'Gemeinfrei (bestätigt)',
+	'Please choose the archive folder first: the hand-over copies the files from it.': [
+		'Bitte wähle zuerst den Archivordner: Die Übergabe kopiert die Dateien daraus.',
+		'Bitte wählen Sie zuerst den Archivordner: Die Übergabe kopiert die Dateien daraus.',
+	],
+	'The hand-over folder must be neither the archive folder nor inside it. Please choose a folder outside the archive folder.': [
+		'Der Übergabeordner darf weder der Archivordner sein noch darin liegen. Bitte wähle einen Ordner außerhalb des Archivordners.',
+		'Der Übergabeordner darf weder der Archivordner sein noch darin liegen. Bitte wählen Sie einen Ordner außerhalb des Archivordners.',
+	],
+	'No hand-over folder has been chosen yet. An administrator chooses it in the settings of the music archive.': 'Es wurde noch kein Übergabeordner gewählt. Die Administration wählt ihn in den Einstellungen des Notenarchivs.',
+	'The hand-over folder is not accessible (deleted, moved or no longer shared). An administrator chooses it again in the settings.': 'Der Übergabeordner ist nicht erreichbar (gelöscht, verschoben oder nicht mehr geteilt). Die Administration wählt ihn in den Einstellungen neu.',
+	'The hand-over folder lies inside the archive folder, where the app never writes. An administrator chooses another folder in the settings.': 'Der Übergabeordner liegt im Archivordner, in den die App nie schreibt. Die Administration wählt in den Einstellungen einen anderen Ordner.',
+	'The account %s may not write into the hand-over folder. Give it write permission, or let an administrator choose another folder in the settings.': [
+		'Das Konto %s darf nicht in den Übergabeordner schreiben. Gib ihm Schreibrecht, oder lass die Administration in den Einstellungen einen anderen Ordner wählen.',
+		'Das Konto %s darf nicht in den Übergabeordner schreiben. Geben Sie ihm Schreibrecht, oder lassen Sie die Administration in den Einstellungen einen anderen Ordner wählen.',
+	],
+	'The account that chose the hand-over folder no longer exists. An administrator chooses the folder again in the settings.': 'Das Konto, das den Übergabeordner gewählt hat, gibt es nicht mehr. Die Administration wählt den Ordner in den Einstellungen neu.',
+	'Puts the scans (PDF), MusicXML and practice audio files of the versions released for the singers\' portal into a hand-over folder of its own, with a list (version line and license notice per file) and the notes of the conductor per passage as text, daily and on request. Someone of the choir uploads them to the choir system; the app uploads nothing to a provider. Writes only into this folder and removes only files it wrote itself. Not part of any preset.': 'Legt die Scans (PDF), MusicXML- und Übe-Audio-Dateien der für das Chorportal freigegebenen Fassungen in einen eigenen Übergabeordner, mit einer Liste (Fassungszeile und Lizenzhinweis je Datei) und den Hinweisen der Chorleitung je Stelle als Text, täglich und auf Anfrage. Jemand aus dem Chor lädt sie in das Chorsystem hoch; die App lädt nichts zu einem Anbieter hoch. Schreibt nur in diesen Ordner und entfernt nur Dateien, die sie selbst geschrieben hat. Gehört zu keiner Voreinstellung.',
+	'Hand-over to the choir system failed': 'Übergabe an das Chorsystem fehlgeschlagen',
+	'To the catalog librarian and the administrators: the sync of the hand-over folder for the choir system failed.': 'An die Rolle „Bestand“ und die Administration: Der Abgleich des Übergabeordners für das Chorsystem ist fehlgeschlagen.',
+	'This folder is already the target folder of the print station or of the hand-over to the choir system. Please choose a folder of its own.': [
+		'Dieser Ordner ist schon der Zielordner der Druckstation oder der Übergabe an das Chorsystem. Bitte wähle einen eigenen Ordner.',
+		'Dieser Ordner ist schon der Zielordner der Druckstation oder der Übergabe an das Chorsystem. Bitte wählen Sie einen eigenen Ordner.',
+	],
+	'The hand-over folder is already being synced. Wait until that run has finished.': [
+		'Der Übergabeordner wird gerade abgeglichen. Warte, bis dieser Lauf fertig ist.',
+		'Der Übergabeordner wird gerade abgeglichen. Warten Sie, bis dieser Lauf fertig ist.',
+	],
 }
 
 export const plural = {
+	'The music archive keeps this folder up to date. It holds %n file released for choir members: scans (PDF), MusicXML and practice recordings.|The music archive keeps this folder up to date. It holds %n files released for choir members: scans (PDF), MusicXML and practice recordings.': [
+		'Das Notenarchiv hält diesen Ordner aktuell. Er enthält %n für Chormitglieder freigegebene Datei: Scans (PDF), MusicXML und Übe-Aufnahmen.',
+		'Das Notenarchiv hält diesen Ordner aktuell. Er enthält %n für Chormitglieder freigegebene Dateien: Scans (PDF), MusicXML und Übe-Aufnahmen.',
+	],
 	'and %n more row|and %n more rows': ['und %n weitere Zeile', 'und %n weitere Zeilen'],
 	'A folder that does not come back loses its holder %n month after it was issued; it stays recorded as out.|A folder that does not come back loses its holder %n months after it was issued; it stays recorded as out.': [
 		'Eine Mappe, die nicht zurückkommt, verliert %n Monat nach der Ausgabe die Person; sie bleibt als ausgegeben vermerkt.',

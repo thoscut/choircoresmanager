@@ -158,8 +158,8 @@ aims at WCAG 2.2 AA and uses plain, inclusive language.
 
 Every function outside the core is a module that admins can switch off,
 with the presets Simple, Standard and Complete. Sharing with choir members
-and the public, the public pages, the mirror folder of the print station and
-the interface for agents belong to no preset: they stay off until an admin
+and the public, the public pages, the mirror folder of the print station, the
+hand-over to a choir system and the interface for agents belong to no preset: they stay off until an admin
 switches them on. All principles and milestones are in
 [ROADMAP.md](ROADMAP.md) (German).
 

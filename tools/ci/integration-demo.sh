@@ -312,6 +312,11 @@ run_test folder_book_test 2-1
 # vor dem Tore, confirmed as public domain inside the test): the target
 # folder and everything written are deleted, the rest rolled back.
 run_test print_mirror_test 2-3
+# The hand-over folder for a choir system (milestone 0.12) with 1-3 (public
+# domain with MusicXML and a PDF scan, confirmed inside the test) and a note
+# on a link for choir members: both target folders and everything written
+# are deleted, the rest rolled back.
+run_test handover_test 1-3
 # Milestone 0.8, archive: special cases of the protection term, the search
 # of Nextcloud, gaps in the shelf marks, the rights notice of a MusicXML
 # file and two annual snapshots with their comparison. Finds its copies

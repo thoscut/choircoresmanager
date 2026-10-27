@@ -39,6 +39,8 @@ Request bodies are checked strictly: unknown fields are refused with 400
 | `POST /api/folder-book/folders`, `PUT /api/folder-book/folders/{id}`, `POST /api/folder-book/folders/{id}/issue`, `POST /api/folder-book/loans/{id}/return` | 300 in 10 minutes |
 | `GET /api/print-mirror/preview` | 30 in 10 minutes |
 | `POST /api/print-mirror/sync` | 10 in 10 minutes |
+| `GET /api/choir-handover/preview` | 30 in 10 minutes |
+| `POST /api/choir-handover/sync` | 10 in 10 minutes |
 | `POST /api/annual-snapshots` | 5 in 60 minutes |
 | `GET /api/annual-snapshots/compare` | 30 in 10 minutes |
 | `PUT /api/states/{id}/current` | 60 in 10 minutes |
@@ -236,7 +238,8 @@ than `active` requires `status_reason` in the same request.
 `changed` counts the rows that were written because a file changed; a sync
 without changes writes no row. While a file sync runs (also one started by
 `occ`), another one is refused with **409** and `{ error }`; the same holds
-for `POST /api/print-mirror/sync` and `POST /api/annual-snapshots`.
+for `POST /api/print-mirror/sync`, `POST /api/choir-handover/sync` and
+`POST /api/annual-snapshots`.
 `GET /api/file-sync` (catalog role) tells whether one is running and gives
 the counts of the last one:
 
@@ -1309,6 +1312,7 @@ audio and preservation copies applies whatever is switched on.
 | `portal` | `releases` | on |
 | `print_station` | `releases` | off |
 | `print_mirror` | `print_station` | off, and part of no preset (writes files into a target folder) |
+| `choir_handover` | `portal` | off, and part of no preset (writes files into a target folder) |
 | `publication` | `releases` | on |
 | `score_viewer` | – | on |
 | `playback` | `score_viewer` | on |
@@ -1349,7 +1353,8 @@ audio and preservation copies applies whatever is switched on.
 `notify_protection_conflict` (`protection_terms`), `notify_checksum_mismatch` (`checksums`),
 `notify_review_points` (`transcription_review`),
 `notify_correction_received` (`score_viewer`),
-`notify_print_mirror_failed` (`print_mirror`).
+`notify_print_mirror_failed` (`print_mirror`),
+`notify_choir_handover_failed` (`choir_handover`).
 
 `corrections` needs only `score_viewer`, not `transcription_review`: a
 small correction is useful without transcription reports (e.g. after a
@@ -1359,7 +1364,7 @@ question from a singer). Points are only set to `corrected` while
 Presets: `simple` (core, `score_viewer`, `playback`, `notifications` with all
 `notify_*` switches), `standard` (the column above), `complete` (everything
 except `agent_api`, the four modules of the group `sharing` and
-`print_mirror`). A preset sets every switch except these six
+`print_mirror` and `choir_handover`). A preset sets every switch except these seven
 (`Modules::OUTSIDE_PRESETS`), which only their own switch changes.
 
 ### Switched-off routes
@@ -1399,6 +1404,7 @@ other check of the app. The routes and their modules:
 | `checksums` | `GET /api/checksums`, `POST /api/files/{id}/checksum-accept` |
 | `folder_book` | `/api/folder-book…`, `GET`/`PUT /api/settings/folder-book` |
 | `print_mirror` | `/api/print-mirror…`, `/api/settings/print-mirror…` (and `print_station`) |
+| `choir_handover` | `/api/choir-handover…`, `/api/settings/choir-handover…` (and `portal`) |
 | `annual_snapshot` | `/api/annual-snapshots…` |
 | `statistics` | `/api/statistics…` |
 | `agent_api` | every route of the API for agents, `/ocs/v2.php/apps/notenarchiv/api/v1/…` (404 with the message in the OCS meta); each also needs the module of its function |
@@ -1445,7 +1451,7 @@ What else follows the modules:
   annual snapshot job nothing without `annual_snapshot`; the daily checks
   skip the parts whose notification is switched off and withdraw their
   notifications, and sync the print station only while `print_mirror` is
-  active. The removal of personal data of the folder book after the
+  active, the hand-over folder only while `choir_handover` is active. The removal of personal data of the folder book after the
   retention period runs also without `folder_book`: switching off never
   makes anything less safe. The file sync reads no rights notices without
   `rights`.
@@ -2355,6 +2361,45 @@ the translated text with what to do.
 - A failed daily sync notifies the catalog librarians and the
   administrators (`notify_print_mirror_failed`); the next sync that works
   withdraws it.
+
+## Hand-over to a choir system (module `choir_handover`, milestone 0.12)
+
+Works like the mirror folder of the print station, with a target folder,
+manifest (column `mirror` = `handover`) and state of its own; the two
+target folders must differ (400). It hands over the versions on the list of
+the singers' portal (`GET /api/lists/portal`, rows `add` and `not_decided`).
+Audit log: object type `choir_handover`, the same actions.
+
+| Method and path | Body | Role |
+|---|---|---|
+| `GET /api/choir-handover` | – | librarian, admins |
+| `GET /api/choir-handover/preview` | – | librarian, admins |
+| `POST /api/choir-handover/sync` | – | librarian, admins |
+| `GET /api/settings/choir-handover` | – | admins and the groups given the settings page |
+| `GET /api/settings/choir-handover/check?folderId=` | – | admins and the groups given the settings page |
+| `PUT /api/settings/choir-handover` | `{ folderId }` (0 removes the target folder) | admins and the groups given the settings page |
+
+Status, preview and sync answer as for the print station. What is written:
+
+- For every active copy of a version on the list (never internal
+  preservation copies): the PDF scans and MusicXML files if choir members
+  may save and print them (`RightsPolicy::memberScanDenial`, otherwise
+  reason `no_download`), and the audio files of the archive folder if
+  practice audio is allowed (`RightsPolicy::handoverAudioDenial`, otherwise
+  `no_practice_audio`). Names `<shelf mark> <title>.pdf`, `….musicxml` or
+  `.mxl`, recordings `<shelf mark> <title> - <file name>.<ext>`.
+- `Liste.csv` (semicolon, UTF-8 with BOM, cells that start like a formula
+  get a leading apostrophe): file, shelf mark, title, composer, version (kind and
+  arranger), revision, revision valid since, rights status, license notice
+  (`Public domain (confirmed)`, the share notices of the licenses valid
+  today, or `License: <holder>`), in the language of the account of the
+  target folder.
+- `<shelf mark> <title> Hinweise.txt` per copy with notes: one line per
+  unrevoked, unexpired link for choir members with a note
+  (`m. 3–8, Alto: …`, `Whole piece: …`).
+- `LIESMICH.txt`. List, notes and read-me are rewritten when their content
+  changes.
+- A failed daily sync notifies (`notify_choir_handover_failed`).
 ## Search of Nextcloud (module `unified_search`)
 
 `Search\CatalogSearchProvider` (`OCP\Search\IProvider`, id `notenarchiv`,

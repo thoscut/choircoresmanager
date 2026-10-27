@@ -71,6 +71,7 @@ below explain the reasons.
 | Spreadsheets are read without document type declarations and with limits against ZIP bombs | `XlsxReaderTest::testRefusesDocumentTypeDeclarations`, `testRefusesAPartThatUnpacksTooLarge`, `testAFarCellCannotInflateTheWorkbook` |
 | A rights notice in a MusicXML file never sets a rights status | `RightsNoticeServiceTest::testANoticeBecomesAtMostAProposal`, `testTheDoctypeOfMusicXmlIsAcceptedButNoInternalSubset`; `archive_extras_test` |
 | The print station never writes into the archive folder and replaces only files it wrote itself | `print_mirror_test`; CS `testThePrintStationIsSyncedByTheCatalogLibrarianAndAdministrators` |
+| The hand-over to a choir system never writes into the archive folder or the folder of the print station and hands over only what choir members may have | `handover_test`; CS `testTheHandOverIsSyncedByTheCatalogLibrarianAndAdministrators` |
 | Backups and annual snapshots lie outside the archive folder | `workflow_test` ("the backup lies in the backup folder"), `archive_extras_test` ("the snapshot lies outside the archive folder"), `notifications_test` |
 | The database holds link tokens only as hash and encrypted; tokens of links for choir members and public links only for their creator and the catalog librarian, no account names in link lists | `LinkTokensTest::testTheTableHoldsTheHashAndTheEncryptedTokenOnly`, `testTheTokenIsReadBackOnlyWithTheSecretOfTheInstance`, `testOnlyTheCreatorAndTheLibrarianSeeTokensThatOpenALinkToOthers` |
 | Excerpts and whole pieces for choir members and the public carry no encoder, miscellaneous fields, comments or processing instructions | `MusicXmlExcerptTest::testNamesAndNotesOutsideTheMusicDoNotLeaveTheServer` |
@@ -336,16 +337,22 @@ account can do; it offers a stable, documented and limited contract.
   it. Only an administrator sets the archive folder, and with it that
   account.
 - Besides the backup folder, the mirror folder for the print station
-  (module `print_mirror`, part of no preset) is the only place outside the
-  archive folder where the app writes. An administrator chooses the target folder; the server refuses the
-  archive folder and every folder inside it (also reached through shares),
-  checks this again before every sync and writes as the account that chose
-  the folder. It copies only the PDF scans of the versions on the list of
-  the print station (the same rule as the list, never internal preservation
-  copies). It replaces or removes only files listed in its manifest whose
-  SHA-256 is still the one it wrote; every other file in the folder stays.
-  Every write and removal is in the audit log. Whoever can open the target
-  folder can read the scans: it must be shared only with the print station.
+  (module `print_mirror`) and the hand-over folder for a choir system
+  (module `choir_handover`), both part of no preset, are the only places
+  outside the archive folder where the app writes. An administrator chooses
+  each target folder; the server refuses the archive folder and every
+  folder inside it (also reached through shares) and the target folder of
+  the other module, checks this again before every sync and writes as the
+  account that chose the folder. The print station gets only the PDF scans
+  of the versions on its list; the hand-over only the files of the versions
+  on the list of the singers' portal that choir members may save and print,
+  and recordings only where practice audio is allowed (the same rules as
+  the lists, never internal preservation copies). Each replaces or removes
+  only files listed in its own manifest whose SHA-256 is still the one it
+  wrote; every other file in the folder stays. Every write and removal is
+  in the audit log. Whoever can open a target folder can read the files in
+  it: it must be shared only with the print station or the account of the
+  choir system.
 - Score files reach the browser only if they are linked to a copy, pass the
   rights policy (internal preservation copies: never played, viewed only by
   catalog librarian and conductor) and are real MusicXML: plain XML with the

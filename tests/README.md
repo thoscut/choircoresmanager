@@ -121,6 +121,7 @@ sudo -u www-data php tests/Integration/files_integration_test.php /var/www/nextc
 sudo -u www-data php tests/Integration/settings_access_test.php /var/www/nextcloud <uid>
 sudo -u www-data php tests/Integration/folder_book_test.php   /var/www/nextcloud <uid> <shelfmark>
 sudo -u www-data php tests/Integration/print_mirror_test.php  /var/www/nextcloud <uid> <shelfmark-with-pdf>
+sudo -u www-data php tests/Integration/handover_test.php      /var/www/nextcloud <uid> <shelfmark-with-pdf-and-musicxml>
 sudo -u www-data php tests/Integration/archive_extras_test.php /var/www/nextcloud <uid>
 sudo -u www-data php tests/Integration/version_states_test.php /var/www/nextcloud <uid> <shelfmark-with-musicxml>
 ```
@@ -242,6 +243,14 @@ longer released, and that a file changed by someone and a foreign file
 with the name of a scan stay as they are; every write and removal is in the
 audit log and nothing is written into the archive folder. The target folder
 and everything written are deleted at the end, the rest is rolled back.
+
+`handover_test.php` does the same for the hand-over folder for a choir
+system (milestone 0.12): it refuses the archive folder and the folder of the
+print station, writes a note on a link for choir members, and checks the
+preview, that scan, MusicXML file, `Liste.csv` (shelf mark and license
+notice), the notes file and `LIESMICH.txt` are written, that its manifest is
+apart from the one of the print station, a second sync without changes and
+that the files leave the folder when the version is no longer released.
 
 `<uid>` must hold the role `librarian`; each script's header lists further
 requirements (CSV paths are relative to the user's files). `backup_test.php`

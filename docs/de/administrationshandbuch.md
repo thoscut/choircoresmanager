@@ -1060,8 +1060,10 @@ Das Modul **Spiegelordner für die Druckstation** kopiert die PDF-Scans der
 Fassungen auf der Liste **Druckstation** in einen Ordner der Druckstation
 und hält ihn aktuell (siehe das
 [Benutzerhandbuch](benutzerhandbuch.md#spiegelordner-für-die-druckstation)).
-Es ist neben den kleinen Korrekturen die einzige Funktion, die Dateien
-schreibt, und sie schreibt nur in diesen Ordner, nie in den Archivordner
+Neben den kleinen Korrekturen sind es und die
+[Übergabe an ein Chorsystem](#17-übergabe-an-ein-chorsystem) die einzigen
+Funktionen, die Dateien schreiben, jede nur in ihren eigenen Ordner, nie in
+den Archivordner
 (Leitlinie 4 der [Roadmap](../../ROADMAP.md)). Es gehört zu keiner
 Voreinstellung; schalte es bewusst ein.
 
@@ -1108,6 +1110,70 @@ Risiken:
 - Die Dateien verlassen das Archiv: Ein Scan, der von der Liste genommen
   wird, wird beim nächsten Abgleich aus dem Ordner entfernt, aber Kopien,
   die zwischendurch entstanden sind, bleiben, wo sie gemacht wurden.
+- Die App schreibt als das Konto, das den Ordner gewählt hat; wird dieses
+  Konto gelöscht oder verliert es den Zugriff, hält der Abgleich an und
+  benachrichtigt.
+
+## 17. Übergabe an ein Chorsystem
+
+Das Modul **Übergabe an das Chorsystem** füllt einen Ordner für ein
+Chorsystem (zum Beispiel eine Mitglieder-App oder eine Chor-Website mit
+Download-Bereich) mit dem, was das Chorportal freigibt, und hält ihn
+aktuell (siehe das
+[Benutzerhandbuch](benutzerhandbuch.md#übergabe-an-das-chorsystem)). Es
+arbeitet wie der
+[Spiegelordner für die Druckstation](#16-spiegelordner-für-die-druckstation):
+ein eigener Zielordner außerhalb des Archivordners, eine Vorschau, ein erster
+Abgleich von Hand, danach ein täglicher Abgleich. Die App lädt nichts in das
+Chorsystem hoch; jemand aus dem Chor holt die Dateien aus dem Ordner, oder
+das Chorsystem liest den Ordner selbst. Es gehört zu keiner Voreinstellung;
+schalte es bewusst ein.
+
+So richtest du es ein:
+
+1. Schalte **Chorportal** und **Übergabe an das Chorsystem** ein
+   (Einstellungen → Module, oder
+   `occ notenarchiv:modules enable choir_handover`).
+2. Lege einen Ordner **außerhalb des Archivordners** an oder wähle einen,
+   nicht den Ordner der Druckstation, zum Beispiel einen Ordner, der mit dem
+   Konto des Chorsystems geteilt ist. Dein Konto muss den Archivordner lesen
+   und im Zielordner Dateien anlegen, ändern und löschen können.
+3. **Einstellungen → Übergabe an das Chorsystem → Ordner wählen …**. Die App
+   prüft den Ordner sofort. Dann **Zielordner speichern**.
+4. Sieh dir die Vorschau an und starte den ersten Abgleich (in den
+   Einstellungen oder in der Liste **Chorportal**).
+
+Was kopiert wird, für jede Fassung auf der Liste des Chorportals (Zeilen
+„hinzufügen“ und „nicht entschieden“), aus ihren aktiven Exemplaren, nie aus
+internen Erhaltungskopien:
+
+- die Scans (PDF) und MusicXML-Dateien, wenn Chormitglieder sie speichern
+  und drucken dürfen (dieselbe Regel wie beim Herunterladen im Portal);
+- die Übe-Aufnahmen (Audiodateien im Archivordner), wenn die Rechte Übe-Audio
+  erlauben. Für die Übergabe erzeugt die App keine neuen Aufnahmen;
+- `Liste.csv`: eine Zeile je Datei mit Signatur, Titel, Komposition,
+  Fassung, aktuellem Stand und seit wann er gilt, Rechtestatus und
+  Lizenzhinweis (bestätigt gemeinfrei, oder die Hinweise der gültigen
+  Lizenzen). Zeige den Hinweis im Chorsystem bei der Datei;
+- `<Signatur> <Titel> Hinweise.txt`: die Hinweise der Chorleitung je Stelle,
+  aus den Notizen der nicht abgelaufenen Links für Chormitglieder;
+- `LIESMICH.txt`, die sagt, wofür der Ordner da ist.
+
+Die Dateien heißen `<Signatur> <Titel>.pdf` oder `.musicxml`, Aufnahmen
+`<Signatur> <Titel> - <Dateiname>`. Wie bei der Druckstation ersetzt oder
+entfernt die App nur Dateien, die sie selbst geschrieben hat und die seitdem
+niemand geändert hat; jedes Schreiben und Entfernen steht im Protokoll;
+schlägt der tägliche Abgleich fehl, bekommen die Rolle „Bestand“ und die
+Administration die Benachrichtigung „Übergabe an das Chorsystem
+fehlgeschlagen“.
+
+Risiken:
+
+- **Alle, die den Ordner öffnen können, können die Dateien darin
+  herunterladen.** Teile ihn nur mit dem Konto des Chorsystems.
+- Was das Chorsystem mit den Dateien macht, liegt außerhalb der App: Eine
+  Datei, die aus dem Ordner entfernt wird, muss auch dort entfernt werden.
+  Das sagt auch die `LIESMICH.txt`.
 - Die App schreibt als das Konto, das den Ordner gewählt hat; wird dieses
   Konto gelöscht oder verliert es den Zugriff, hält der Abgleich an und
   benachrichtigt.

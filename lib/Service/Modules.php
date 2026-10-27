@@ -156,7 +156,7 @@ class Modules {
 			'label' => 'Mirror folder for the print station',
 			'description' => 'Copies the PDF scans of the versions on the list of the print station into a target folder of its own, daily and on request, and removes those no longer released. Writes only into this folder, never into the archive folder, and removes only files it wrote itself. Not part of any preset.'],
 		self::CHOIR_HANDOVER => ['group' => 'releases', 'requires' => ['portal'], 'simple' => false, 'standard' => false, 'planned' => false,
-			'label' => 'Hand-over to a choir system',
+			'label' => 'Hand-over to the choir system',
 			'description' => 'Puts the scans (PDF), MusicXML and practice audio files of the versions released for the singers\' portal into a hand-over folder of its own, with a list (version line and license notice per file) and the notes of the conductor per passage as text, daily and on request. Someone of the choir uploads them to the choir system; the app uploads nothing to a provider. Writes only into this folder and removes only files it wrote itself. Not part of any preset.'],
 		'publication' => ['group' => 'releases', 'requires' => ['releases'], 'simple' => false, 'standard' => true, 'planned' => false,
 			'label' => 'Publication',

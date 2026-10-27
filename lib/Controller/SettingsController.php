@@ -212,6 +212,7 @@ class SettingsController extends Controller {
 			// Sections of modules that start off (milestone 0.7)
 			'folderBook' => $this->modules->isEnabled('folder_book'),
 			'printMirror' => $this->modules->isEnabled('print_mirror'),
+			'choirHandover' => $this->modules->isEnabled('choir_handover'),
 			// For the setup steps: imported copies and files found by the file sync
 			'catalog' => ['copies' => $counts['notarch_copies'] ?? 0, 'files' => $counts['notarch_files'] ?? 0],
 			// Restoring a backup stays with admins (and the catalog role in the app).

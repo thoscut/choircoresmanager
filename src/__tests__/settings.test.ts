@@ -95,6 +95,7 @@ describe('settings of the app', () => {
 			catalog: { copies: 23, files: 30 },
 			folderBook: true,
 			printMirror: false,
+			choirHandover: false,
 			admin: true,
 			catalogEmpty: false,
 		})
@@ -113,6 +114,7 @@ describe('settings of the app', () => {
 			catalog: { copies: 0, files: 0 },
 			folderBook: false,
 			printMirror: false,
+			choirHandover: false,
 			admin: false,
 			catalogEmpty: null,
 		})

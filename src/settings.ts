@@ -24,6 +24,7 @@ export const SETTINGS_SECTIONS = {
 	repertoire: 'notenarchiv-repertoire',
 	folderBook: 'notenarchiv-folder-book',
 	printMirror: 'notenarchiv-print-mirror',
+	choirHandover: 'notenarchiv-choir-handover',
 	backup: 'notenarchiv-backup',
 } as const
 
@@ -126,6 +127,7 @@ export function normalizeSettings(data: unknown): Settings {
 		catalog: { copies: count(catalog.copies), files: count(catalog.files) },
 		folderBook: raw.folderBook === true,
 		printMirror: raw.printMirror === true,
+		choirHandover: raw.choirHandover === true,
 		admin: raw.admin === true,
 		catalogEmpty: typeof raw.catalogEmpty === 'boolean' ? raw.catalogEmpty : null,
 	}

@@ -965,9 +965,11 @@ Names are deleted 12 months after the return."
 The module **Mirror folder for the print station** copies the PDF scans of
 the versions on the list **Print station** into a folder of the print
 station and keeps it up to date (see the
-[user guide](user-guide.md#mirror-folder-for-the-print-station)). It is the
-only function besides small corrections that writes files, and it writes
-only into this folder, never into the archive folder (guideline 4 of the
+[user guide](user-guide.md#mirror-folder-for-the-print-station)). Besides
+small corrections, it and the
+[hand-over to a choir system](#17-hand-over-to-a-choir-system) are the only
+functions that write files, each only into its own folder, never into the
+archive folder (guideline 4 of the
 [roadmap](../ROADMAP.md)). It is part of no preset; switch it on on purpose.
 
 ![The section "Print station: mirror folder" under Administration → Music archive: what the mirror folder does, the warning that everyone who can open it can print the scans, the current target folder and, after choosing a folder, the message that it fits, with the buttons to cancel or save.](screenshots/settings-print-mirror.png)
@@ -1010,6 +1012,67 @@ Risks:
 - The files leave the archive: a scan removed from the list is removed from
   the folder at the next sync, but copies made meanwhile stay where they
   were made.
+- The app writes as the account that chose the folder; if that account is
+  deleted or loses access, the sync stops and notifies.
+
+## 17. Hand-over to a choir system
+
+The module **Hand-over to the choir system** fills a folder for a choir
+system (for example a member app or a choir website with a download area)
+with what the singers' portal releases, and keeps it up to date (see the
+[user guide](user-guide.md#hand-over-to-the-choir-system)). It works like
+the [mirror folder for the print station](#16-mirror-folder-for-the-print-station):
+a target folder of its own outside the archive folder, a preview, a first
+sync by hand, then a daily sync. The app uploads nothing to the choir
+system; someone of the choir takes the files from the folder, or the choir
+system reads the folder itself. It is part of no preset; switch it on on
+purpose.
+
+Setting up:
+
+1. Switch on **Singers' portal** and **Hand-over to the choir system**
+   (Settings → Modules, or `occ notenarchiv:modules enable choir_handover`).
+2. Create or choose a folder **outside the archive folder**, and not the
+   folder of the print station, for example a folder shared with the
+   account of the choir system. Your account must be able to read the
+   archive folder and to create, change and delete files in the target
+   folder.
+3. **Settings → Hand-over to the choir system → Choose folder …**. The app
+   checks the folder right away. Then **Save target folder**.
+4. Look at the preview and start the first sync (in the settings or in the
+   list **Singers' portal**).
+
+What it copies, for every version on the list of the singers' portal (rows
+"add" and "not decided"), from its active copies, never from internal
+preservation copies:
+
+- the scans (PDF) and MusicXML files, if choir members may save and print
+  them (the same rule as the download button of the portal);
+- the practice recordings (audio files in the archive folder), if the
+  rights allow practice audio. The app does not render new recordings for
+  the hand-over;
+- `Liste.csv`: one row per file with shelf mark, title, composer, version,
+  current revision and since when it is valid, rights status and the
+  license notice (confirmed public domain, or the notices of the valid
+  licenses). Show the notice with the file in the choir system;
+- `<shelf mark> <title> Hinweise.txt`: the notes of the conductor per
+  passage, taken from the notes of the links for choir members that have
+  not expired;
+- `LIESMICH.txt`, which says what the folder is for.
+
+Files are named `<shelf mark> <title>.pdf` or `.musicxml`, recordings
+`<shelf mark> <title> - <file name>`. As with the print station, the app
+replaces or removes only files it wrote itself and that nobody changed
+since; every write and removal is in the audit log; if the daily sync
+fails, the catalog role and the administrators get the notification
+"Hand-over to the choir system failed".
+
+Risks:
+
+- **Everyone who can open the folder can download the files in it.** Share
+  it only with the account of the choir system.
+- What the choir system does with the files is outside the app: a file
+  removed from the folder must also be removed there. The read-me says so.
 - The app writes as the account that chose the folder; if that account is
   deleted or loses access, the sync stops and notifies.
 

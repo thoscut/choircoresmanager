@@ -4,17 +4,18 @@
 -->
 <script setup lang="ts">
 /**
- * Settings of the mirror folder for the print station (administrators,
- * module "print_mirror"): choose the target folder, which the server checks
+ * Settings of the mirror folder for the print station (module
+ * "print_mirror") or of the hand-over folder for a choir system (module
+ * "choir_handover"), for administrators: choose the target folder, which the server checks
  * right away (not the archive folder, not inside it, write permission), save
  * it, then look at the preview and start the first sync.
  */
-import type { MirrorFolder } from '../printMirror.ts'
+import type { MirrorFolder, MirrorKind } from '../printMirror.ts'
 
 import { mdiFolderOutline } from '@mdi/js'
 import { FilePickerClosed, FilePickerType, getFilePickerBuilder, showSuccess } from '@nextcloud/dialogs'
 import { t } from '../l10n.ts'
-import { onMounted, ref, useTemplateRef } from 'vue'
+import { computed, onMounted, ref, useTemplateRef } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
@@ -24,6 +25,15 @@ import { errorMessage } from '../api.ts'
 import { focusAfterDialog, focusAfterUpdate } from '../focus.ts'
 import { checkMirrorFolder, fetchMirrorStatus, saveMirrorFolder } from '../printMirror.ts'
 import { showError } from '../toasts.ts'
+
+const props = withDefaults(defineProps<{
+	/** which folder */
+	kind?: MirrorKind
+}>(), {
+	kind: 'print',
+})
+
+const handover = computed(() => props.kind === 'handover')
 
 const current = ref<MirrorFolder | null>(null)
 /** A chosen folder that passed the check, not saved yet */
@@ -38,7 +48,7 @@ const saveButton = useTemplateRef('saveButton')
 
 onMounted(async () => {
 	try {
-		current.value = (await fetchMirrorStatus(true)).folder
+		current.value = (await fetchMirrorStatus(true, props.kind)).folder
 	} catch (caught) {
 		loadError.value = errorMessage(caught)
 	}
@@ -47,7 +57,9 @@ onMounted(async () => {
 async function choose(): Promise<void> {
 	let nodes
 	try {
-		nodes = await getFilePickerBuilder(t('notenarchiv', 'Choose the target folder of the print station'))
+		nodes = await getFilePickerBuilder(handover.value
+			? t('notenarchiv', 'Choose the hand-over folder for the choir system')
+			: t('notenarchiv', 'Choose the target folder of the print station'))
 			.setMultiSelect(false)
 			.allowDirectories(true)
 			.setMimeTypeFilter(['httpd/unix-directory'])
@@ -72,7 +84,7 @@ async function choose(): Promise<void> {
 	busy.value = true
 	try {
 		// Checked right away: not the archive folder, not inside it, write permission
-		pending.value = await checkMirrorFolder(node.fileid)
+		pending.value = await checkMirrorFolder(node.fileid, props.kind)
 	} catch (caught) {
 		problem.value = errorMessage(caught)
 	} finally {
@@ -87,7 +99,7 @@ async function save(): Promise<void> {
 	}
 	busy.value = true
 	try {
-		current.value = await saveMirrorFolder(pending.value.id)
+		current.value = await saveMirrorFolder(pending.value.id, props.kind)
 		pending.value = null
 		showSuccess(t('notenarchiv', 'The target folder has been saved. Look at the preview before the first sync.'))
 	} catch (caught) {
@@ -101,8 +113,10 @@ async function save(): Promise<void> {
 async function remove(): Promise<void> {
 	busy.value = true
 	try {
-		current.value = await saveMirrorFolder(0)
-		showSuccess(t('notenarchiv', 'The print station has no target folder any more. The files in the old folder stay there.'))
+		current.value = await saveMirrorFolder(0, props.kind)
+		showSuccess(handover.value
+			? t('notenarchiv', 'The hand-over has no target folder any more. The files in the old folder stay there.')
+			: t('notenarchiv', 'The print station has no target folder any more. The files in the old folder stay there.'))
 	} catch (caught) {
 		problem.value = errorMessage(caught)
 	} finally {
@@ -113,12 +127,22 @@ async function remove(): Promise<void> {
 
 <template>
 	<div class="mirror-settings">
-		<p>
-			{{ t('notenarchiv', 'The app copies the PDF scans of the versions released for the print station into this folder and keeps it up to date. It is the only folder besides the archive where the app writes; it must not be the archive folder or lie inside it.') }}
-		</p>
-		<NcNoteCard type="warning">
-			{{ t('notenarchiv', 'Everyone who can open the target folder can print the scans in it. Share it only with the print station or the people who may print.') }}
-		</NcNoteCard>
+		<template v-if="handover">
+			<p>
+				{{ t('notenarchiv', 'The app copies what the singers\' portal releases into this folder and keeps it up to date: the PDF scans, the MusicXML files and the practice recordings the rights allow, with a list of the pieces (Liste.csv) and the conductor\'s notes per piece. A choir system such as a member app can read the folder; the app never writes into the choir system itself. The folder must not be the archive folder, lie inside it or be the folder of the print station.') }}
+			</p>
+			<NcNoteCard type="warning">
+				{{ t('notenarchiv', 'Everyone who can open the hand-over folder can download the files in it. Share it only with the account of the choir system.') }}
+			</NcNoteCard>
+		</template>
+		<template v-else>
+			<p>
+				{{ t('notenarchiv', 'The app copies the PDF scans of the versions released for the print station into this folder and keeps it up to date. The folder must not be the archive folder or lie inside it.') }}
+			</p>
+			<NcNoteCard type="warning">
+				{{ t('notenarchiv', 'Everyone who can open the target folder can print the scans in it. Share it only with the print station or the people who may print.') }}
+			</NcNoteCard>
+		</template>
 		<NcNoteCard v-if="loadError" type="error">
 			{{ loadError }}
 		</NcNoteCard>
@@ -161,7 +185,10 @@ async function remove(): Promise<void> {
 				</NcButton>
 			</div>
 		</template>
-		<PrintMirrorSync v-if="current" admin :folder-id="current.id" />
+		<PrintMirrorSync v-if="current"
+			admin
+			:folder-id="current.id"
+			:kind="kind" />
 	</div>
 </template>
 

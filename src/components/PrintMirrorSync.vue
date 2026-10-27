@@ -4,13 +4,14 @@
 -->
 <script setup lang="ts">
 /**
- * The mirror folder of the print station (module "print_mirror"): where it
+ * The mirror folder of the print station (module "print_mirror") or the
+ * hand-over folder for a choir system (module "choir_handover"): where it
  * is, whether the daily sync runs, and the report of the last sync. "Sync
  * now" always shows the preview first (what would be copied, replaced,
  * removed or skipped) and syncs only when it is confirmed. Used in the list
- * of the print station and in the settings.
+ * of the print station or of the portal and in the settings.
  */
-import type { MirrorReport, MirrorStatus } from '../printMirror.ts'
+import type { MirrorKind, MirrorReport, MirrorStatus } from '../printMirror.ts'
 
 import { mdiFolderSyncOutline } from '@mdi/js'
 import { showSuccess } from '@nextcloud/dialogs'
@@ -30,9 +31,12 @@ const props = withDefaults(defineProps<{
 	admin?: boolean
 	/** changes when the target folder was saved: load again */
 	folderId?: number
+	/** which folder */
+	kind?: MirrorKind
 }>(), {
 	admin: false,
 	folderId: 0,
+	kind: 'print',
 })
 
 const status = ref<MirrorStatus | null>(null)
@@ -44,7 +48,7 @@ const preview = ref<MirrorReport | null>(null)
 async function load(): Promise<void> {
 	error.value = ''
 	try {
-		status.value = await fetchMirrorStatus(props.admin)
+		status.value = await fetchMirrorStatus(props.admin, props.kind)
 	} catch (caught) {
 		error.value = errorMessage(caught)
 	}
@@ -57,7 +61,7 @@ async function showPreview(): Promise<void> {
 	busy.value = true
 	error.value = ''
 	try {
-		preview.value = await previewMirror()
+		preview.value = await previewMirror(props.kind)
 	} catch (caught) {
 		error.value = errorMessage(caught)
 	} finally {
@@ -69,9 +73,11 @@ async function runSync(): Promise<void> {
 	busy.value = true
 	error.value = ''
 	try {
-		const report = await syncMirror()
+		const report = await syncMirror(props.kind)
 		preview.value = null
-		showSuccess(t('notenarchiv', 'The mirror folder of the print station has been synced.'))
+		showSuccess(props.kind === 'handover'
+			? t('notenarchiv', 'The hand-over folder for the choir system has been synced.')
+			: t('notenarchiv', 'The mirror folder of the print station has been synced.'))
 		status.value = { folder: status.value?.folder ?? null, started: true, report }
 	} catch (caught) {
 		error.value = errorMessage(caught)
@@ -83,7 +89,7 @@ async function runSync(): Promise<void> {
 </script>
 
 <template>
-	<section class="mirror-sync" :aria-label="t('notenarchiv', 'Mirror folder for the print station')">
+	<section class="mirror-sync" :aria-label="kind === 'handover' ? t('notenarchiv', 'Hand-over to the choir system') : t('notenarchiv', 'Mirror folder for the print station')">
 		<template v-if="status">
 			<p v-if="status.folder">
 				{{ t('notenarchiv', 'Target folder: {path} (account {user})', { path: status.folder.path, user: status.folder.user }) }}

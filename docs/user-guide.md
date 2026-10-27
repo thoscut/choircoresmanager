@@ -1084,6 +1084,23 @@ What the sync does:
 If the report lists skipped files or the sync fails, see
 [Common problems](#common-problems).
 
+### Hand-over to the choir system
+
+If the choir uses a choir system (a member app or a website with a download
+area), the app can keep a folder for it up to date with what the singers'
+portal releases (module "Hand-over to the choir system"; an administrator
+chooses the folder in the settings). The section sits in the list
+**Singers' portal** and works like the mirror folder of the print station:
+**Preview and first sync …**, then **Sync now**, then daily.
+
+The folder holds the scans and MusicXML files the members may save, the
+practice recordings the rights allow, a list `Liste.csv` with the version,
+the revision and the license notice of every file, and per piece a file
+`… Hinweise.txt` with the notes of the conductor: the notes you wrote on
+links for choir members (see [Sharing with choir members and the public](#sharing-with-choir-members-and-the-public)).
+Upload the files to the choir system, and remove there what has left the
+folder.
+
 ### The public repertoire page
 
 The catalog librarian can list works on a public page of the choir

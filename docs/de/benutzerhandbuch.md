@@ -1159,6 +1159,25 @@ Was der Abgleich tut:
 Führt der Bericht übersprungene Dateien auf oder schlägt der Abgleich fehl,
 sieh unter [Häufige Probleme](#häufige-probleme) nach.
 
+### Übergabe an das Chorsystem
+
+Nutzt der Chor ein Chorsystem (eine Mitglieder-App oder eine Website mit
+Download-Bereich), kann die App einen Ordner dafür mit dem aktuell halten,
+was das Chorportal freigibt (Modul „Übergabe an das Chorsystem“; die
+Administration wählt den Ordner in den Einstellungen). Der Abschnitt steht in
+der Liste **Chorportal** und arbeitet wie der Spiegelordner der
+Druckstation: **Vorschau und erster Abgleich …**, dann **Jetzt abgleichen**,
+danach täglich.
+
+Der Ordner enthält die Scans und MusicXML-Dateien, die die Mitglieder
+speichern dürfen, die Übe-Aufnahmen, die die Rechte erlauben, eine Liste
+`Liste.csv` mit Fassung, Stand und Lizenzhinweis jeder Datei und je Stück
+eine Datei `… Hinweise.txt` mit den Hinweisen der Chorleitung: den Notizen,
+die du an Links für Chormitglieder geschrieben hast (siehe
+[Mit Chormitgliedern und der Öffentlichkeit teilen](#mit-chormitgliedern-und-der-öffentlichkeit-teilen)). Lade die Dateien
+in das Chorsystem hoch und entferne dort, was aus dem Ordner verschwunden
+ist.
+
 ### Die öffentliche Repertoireseite
 
 Die Archivverwaltung kann Werke auf einer öffentlichen Seite des Chors
