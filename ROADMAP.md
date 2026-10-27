@@ -109,6 +109,57 @@ auch als E-Mail-Zusammenfassung kommen. Dafür gilt:
 Ab welchem Meilenstein welcher Anlass gemeldet wird, steht bei den
 Meilensteinen.
 
+## Review Oktober 2026
+
+Nach Version 0.9.1 wurde die App aus sechs Blickwinkeln geprüft: Sicherheit,
+Nextcloud-Architektur, Benutzerführung und Barrierefreiheit, Urheberrecht und
+Datenschutz, Tests und CI sowie ein Vergleich mit anderen Chor-Apps. Die
+Ergebnisse stehen in den Meilensteinen 0.10 bis 1.0 und unter „Bewusst nicht
+vorgesehen“.
+
+- **Gesamtbild:** Für eine App von Ehrenamtlichen sorgfältig gebaut. Die
+  öffentlichen Routen sind schmal und gut geschützt, die App nutzt nur
+  öffentliche Nextcloud-Schnittstellen, die Schutzfristberechnung ist richtig
+  und stützt sich auf keine Schranke, die es für Vereine nicht gibt. Die
+  Barrierefreiheit liegt über dem Durchschnitt.
+- **Dringend:** Die CI auf `main` ist seit dem ersten Push rot, die
+  Integrationstests sind dort nie gelaufen. 0.9.0 und 0.9.1 sind trotzdem
+  entstanden, obwohl `docs/release.md` ein grünes CI verlangt (Meilenstein
+  0.10).
+- **Lücken zwischen Zusage und Code:** Sicherungen und Jahresstände halten
+  Personenangaben über die Löschfrist hinaus, die Doku sagt an einer Stelle,
+  ohne Mappenbuch speichere die App keine Mitgliederdaten, und einige Aussagen
+  in `SECURITY.md` decken sich nicht ganz mit dem Code. Einzelheiten zu
+  Sicherheitsbefunden werden nach `SECURITY.md` nicht öffentlich geführt.
+- **Wartbarkeit:** Eine Person hält Code, Signierschlüssel und Release. Für
+  1.0 („mindestens zwei Maintainer“) fehlen Entwickler-Doku, ein Release-Ablauf
+  in der CI und eine Regel für den Schlüssel.
+
+### Marktumfeld
+
+Verglichen wurden das **Chorsystem Singste** (dawesys GmbH) und **cori**
+(cori Tech GmbH), Stand 27.10.2026, nach den öffentlichen Webseiten der
+Anbieter.
+
+- **Singste** ist das Chorsystem, in dem die Sänger üben, und schon jetzt
+  das Gegenstück des Notenarchivs (Spalte „Auf Singste seit“ im Import, Soll/
+  Ist-Abgleich). Stark bei Terminen, Zu- und Absagen, Nachrichten, Umfragen
+  und GEMA-Listen; Noten nur als Repertoire, MP3-Player und Dateiablage.
+- **cori** ist stark beim Üben: Stimmen-Mixer, Stimmen aus MusicXML und
+  MuseScore, Stimmtraining, Zeichnen im Notenbild, Offline-App, Chat und
+  Anwesenheit. Bezahlt je Mitglied und Monat, Cloud-Dienst.
+- **Was nur das Notenarchiv hat:** Rechte je Fassung mit Bestätigung,
+  Lizenzen je Nutzungsart, echte Bestandsführung (Signaturen, Inventur,
+  Prüfsummen, Protokoll), selbst gehostet ohne fremde Server, offene
+  Schnittstelle und Lizenz (AGPL), Barrierefreiheit als Ziel. Zu
+  Rechteverwaltung, offener Schnittstelle und Barrierefreiheit fanden sich bei
+  beiden Anbietern keine Angaben.
+- **Folgerung:** Kein Nachbau von Chorsystem-Funktionen (Leitlinie 12 und
+  „Bewusst nicht vorgesehen“), dafür eine gute Übergabe an das Chorsystem
+  (Meilenstein 0.12). Die größte Lücke ist heute die Handarbeit dazwischen:
+  Übe-Dateien werden von Hand hochgeladen, „Auf Singste seit“ wird von Hand
+  gepflegt.
+
 ## Meilensteine
 
 Jeder Meilenstein ergibt eine Minor-Version (0.6 → 0.6.0, 0.7 → 0.7.0);
@@ -419,12 +470,146 @@ und Englisch. Die geführte Einrichtung kam schon mit den Einstellungen.*
 - **Doku nach Aufgaben** („Wie mache ich …“) je Rolle, Schnellstart, häufige
   Probleme.
 
+### 0.10 Verlässlich bauen und sichern
+
+*Aus dem Review Oktober 2026. Vor jeder neuen Funktion.*
+
+- **CI grün und verbindlich:**
+  - Die bekannten Ausfälle beheben: Speichergrenze der Unit-Tests, fehlende
+    PHP-Erweiterungen im Psalm-Job (und `ext-zip`/`ext-intl` in
+    `composer.json`), die mehrzeilige Ausgabe des Prüfsummen-Schritts, das
+    Testmuster des MCP-Servers, die feste Reihenfolge in `tools/l10n/extract.mjs`.
+  - Pflicht-Checks für `main` (Branch-Schutz); ein Release entsteht nur aus
+    einem Tag mit grünem CI, wie `docs/release.md` es verlangt.
+  - Die Prüfungen von `docs.test.ts` laufen auch bei reinen Doku-Änderungen.
+- **Sicherungen außerhalb des Archivordners:** Wochensicherung, ODS mit
+  Protokoll und Jahresstände liegen in einem eigenen Ordner, den nur die
+  Archivverwaltung sieht. Sie enthalten keine Link-Token im Klartext.
+- **Löschfristen gelten überall:**
+  - Alte Wochensicherungen werden rotiert.
+  - Jahresstände enthalten keine Namen aus dem Mappenbuch und keine Konten.
+  - Die Admin-Doku nennt Dateiversionen und Papierkorb der Nextcloud.
+- **Sicherung als Datenstrom:** Die Sicherung entsteht nicht mehr ganz im
+  Speicher. Die App merkt sich die letzte gelungene Sicherung und meldet,
+  wenn sie älter als acht Tage ist.
+- **Läufe gegeneinander sperren:** Dateiabgleich, Spiegelordner und Jahresstand
+  laufen nie doppelt (Web, `occ` und Hintergrundjob). Lange Läufe gehen als
+  Hintergrundjob mit Statusanzeige; der Jahresstand nutzt die gespeicherten
+  Prüfsummen. Der Dateiabgleich schreibt nur geänderte Zeilen.
+- **Einstellungen und Rollen:** Wer die Einstellungsseite delegiert bekommt,
+  kann sich keine Rolle geben und keine Module einschalten, die nach außen
+  öffnen. Wechsel von Rollen, Gruppen und Archivordner stehen im Protokoll.
+- **`SECURITY.md` als Tabelle „Zusage → Test“**, laufend gepflegt; veraltete
+  und widersprüchliche Stellen werden bereinigt.
+
+### 0.11 Rechte und Datenschutz schärfen
+
+*Aus dem Review Oktober 2026.*
+
+- **Erhaltungskopien an einer Stelle prüfen:** Ein Dienst entscheidet für alle
+  Wege (interne API, API v1, Links, Scans, Druckstation), ob eine Datei eine
+  Erhaltungskopie ist. Ein Test vergleicht die interne API mit v1.
+- **Link-Token** werden gehasht gespeichert und nur dem Ersteller und der
+  Archivverwaltung gezeigt, ohne Konto-ID. Die Druckstation liest nur aus dem
+  Archivordner. Öffentliche Ausschnitte enthalten nur, was zum Anzeigen und
+  Abspielen nötig ist (keine Kommentare, Encoder- oder Zusatzfelder).
+- **Neue Nutzungsarten** für Lizenzen: Digitalisierung, Herunterladen und
+  Ausdrucken durch Mitglieder, Audio online. Der ganze Scan in Mitglieder-Links
+  braucht die passende Nutzungsart.
+- **Notenkopien prüfen:** Fotokopierte Exemplare und Mappenanzahl werden mit
+  der Lizenz verglichen (Notenkopierverbot, § 53 Abs. 4 a UrhG); ohne Lizenz
+  gibt es eine Warnung.
+- **Rechtekonflikte melden:** Kommt zu einer als gemeinfrei bestätigten
+  Fassung ein Beteiligter hinzu, der noch geschützt sein kann, gibt es eine
+  Meldung an die Archivverwaltung. Ein Gemeinfrei-Vorschlag braucht Komponist
+  oder Textdichter oder den Vermerk „traditionell“.
+- **Urhebernennung auf geteilten Seiten:** Komponist, Text, Bearbeitung und
+  Übersetzung sowie ein bestätigter Lizenzvermerk stehen dabei (§ 13 UrhG).
+- **Datenschutz-Paket:**
+  - Auskunft und Löschung je Person per `occ`.
+  - Wird ein Nextcloud-Konto gelöscht, werden seine Angaben anonymisiert;
+    Mappen, die nie zurückkommen, haben eine eigene Frist.
+  - Übe-Dateien von Mitgliedern werden ohne Konto oder nur befristet
+    protokolliert; die Doku sagt, was gespeichert wird.
+  - Lebende Personen nur mit Geburtsjahr.
+  - Muster für das Verzeichnis der Verarbeitungstätigkeiten und die
+    Information nach Art. 13 DSGVO.
+- **Doku „Rechtlicher Hintergrund“:** Schutzfristen, Erhaltungskopien
+  (§ 53 Abs. 2 UrhG passt für ein Vereinsarchiv selten), Notenerkennung,
+  öffentliches Abspielen (§ 19a UrhG), Impressum und Datenschutzerklärung vor
+  dem Einschalten öffentlicher Seiten, IP-Adressen in Server-Logs, Agenten und
+  KI-Anbieter (Rolle, Auftragsverarbeitung, Drittland). Keine Rechtsberatung
+  (Leitlinie 10).
+- **Liederfolge nach dem GEMA-Musikfolgebogen.**
+
+### 0.12 Klar bedienen und an das Chorsystem übergeben
+
+*Aus dem Review Oktober 2026 und dem Vergleich mit Singste und cori.*
+
+- **Begriffe bereinigen:** ein Wort, eine Bedeutung („Freigabe“, „Stand“,
+  „Ausgabe“, „geltende Fassung“), Hilfe am Ort auch für „Stand“, eine Prüfung
+  in `tools/l10n`.
+  - Im Korrekturformular heißt der Ton **H**, nicht B (deutsche Notennamen).
+  - „Wiederholen“ (Schleife) und „Wiederholungen spielen“ bekommen Namen, die
+    sich nicht verwechseln lassen.
+- **Fehlermeldungen bleiben stehen**, bis man sie schließt, und sagen, was zu
+  tun ist, auch bei Fehlern des Servers (statt „HTTP 500“). Die Inventur nennt
+  die fehlerhaften Zeilen.
+- **Fokus:** Beim Öffnen der Seitenleiste springt der Fokus hinein, beim
+  Schließen zurück zur Zeile.
+- **Am Handy:** Die Sängerseite zeigt die Liste vor den Noten und merkt sich
+  die Notengröße; die Notenansicht der Archivrollen zeigt weniger vor den
+  Noten.
+- **Ausdrucke** mit Kopfzeile: Chor, Ansicht, Filter, Datum, Seitenzahl.
+- **Übergabe an das Chorsystem** (Modul, anfangs aus, nach dem Muster des
+  Spiegelordners): ein Übergabeordner mit Übe-Dateien je Stimme, freigegebenen
+  PDFs und MusicXML, jede Datei mit Fassungszeile und bestätigtem
+  Lizenzvermerk, dazu eine Liste. Die App lädt nichts zu einem Anbieter hoch.
+- **Ist-Stand aus dem Chorsystem einlesen:** Ein Export des Chorsystems
+  (CSV) wird mit dem Soll verglichen; Abweichungen landen als Vorschläge im
+  Eingang (Leitlinie 6), statt „Auf Singste seit“ von Hand zu pflegen.
+- **Hinweise der Chorleitung je Stelle** (Takt, Stimme) als Text für das
+  Chorsystem ausgeben, statt im Notenbild zu zeichnen.
+- **Admin-Guide „Notenarchiv neben einem Chorsystem“:** welche Daten wo
+  liegen, was nie ins Chorsystem geht, Konzerte als ICS-Datei. Bei dawesys
+  klären, ob sich die Ablage von Singste als Nextcloud-Freigabe einbinden
+  lässt.
+- **Erklärung zur Barrierefreiheit** in `docs/`.
+
 ### 1.0 Stabil
 
 - Abnahme auf der niedrigsten unterstützten Nextcloud-Version
-- Übersetzungen
+- Übersetzungen außer Deutsch und Englisch von Muttersprachlern
+  geprüft
 - Dokumentation für Archivverwaltung und Admins
-- Mindestens zwei Maintainer
+- Mindestens zwei Maintainer:
+  - `docs/architecture.md` für Entwickler, CODEOWNERS, Maintainer-Handbuch
+  - Release-Workflow in der CI mit geschützter Umgebung für Signierung und
+    App-Store-Upload; ein Notfallplan für Signierschlüssel und App-Store-Konto
+  - Renovate oder Dependabot für Lockfiles, Actions und Images
+- **Testtiefe:**
+  - Upgrade-Test von der letzten veröffentlichten Version auf den aktuellen
+    Stand, mit Altdaten
+  - Nächtliche Matrix: Nextcloud 33, 34 und 35, PHP 8.2 bis 8.5, MySQL und
+    MariaDB; Psalm auch gegen das OCP der neuesten Version
+  - Test der Rolle je Route (Route × Rolle) und ein HTTP-Test durch die
+    Middleware
+  - Browser-Tests mit axe, Tastatur und Handybreite auf dem vorhandenen
+    Screenshot-Aufbau; Durchgang mit NVDA, VoiceOver und TalkBack und mit
+    älteren Sängern und Notenwarten
+  - Lasttest mit einem großen erfundenen Bestand; die getestete Größe steht
+    im Admin-Guide
+- **Wartbarkeit:** Ein gemeinsamer Abspielteil für Notenansicht und geteilte
+  Ausschnitte statt zweier Kopien; Modulregister ohne den Vorrat `planned`;
+  ESLint 9.
+- **Entscheidung zu PostgreSQL:** unterstützen und testen oder den toten Code
+  entfernen.
+
+### Später (nach 1.0)
+
+- Notenansicht für PDF-Scans mit Seiten statt Takten, wenn sie ohne viel
+  Komplexität geht (Leitlinien 2 und 14).
+- Vorbereitung auf Nextcloud 36.
 
 ## Bewusst nicht vorgesehen
 
@@ -435,3 +620,6 @@ und Englisch. Die geführte Einrichtung kam schon mit den Einstellungen.*
 - **Notensatz** über kleine Korrekturen hinaus
 - **Hochladen zu externen Notenbibliotheken**
 - **Automatische Urheberrechts- oder Lizenzvermerke**
+- **Eine eigene App, Offline-Modus, Chat, Stimmtraining und
+  Zeichnen im Notenbild.** Das leisten Chorsysteme wie Singste oder cori; das
+  Notenarchiv übergibt ihnen, was freigegeben ist (Meilenstein 0.12).
