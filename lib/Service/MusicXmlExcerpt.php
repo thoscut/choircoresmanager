@@ -115,7 +115,9 @@ final class MusicXmlExcerpt {
 		$dropped = $xpath->query('//comment() | //processing-instruction() | /*/identification/encoding/encoder | /*/identification/miscellaneous');
 		if ($dropped !== false) {
 			foreach (iterator_to_array($dropped) as $node) {
-				$node->parentNode?->removeChild($node);
+				if ($node instanceof \DOMNode) {
+					$node->parentNode?->removeChild($node);
+				}
 			}
 		}
 		$document->encoding = 'UTF-8';
