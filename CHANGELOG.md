@@ -49,6 +49,14 @@ All notable changes to this app are documented in this file. The format follows
   API for agents. The app's own pages leave preservation copies out of the
   list for roles that may not view them and refuse to open them or to file
   a task on them (403), as the API for agents already did.
+- **Link tokens stored as hashes.** The database holds the hash of each
+  link token and the token encrypted with the secret of the instance;
+  existing links keep working. Only the creator and the catalog librarian
+  see and copy the address of a link for choir members or a public link;
+  link lists name creators by display name, not by account, and leave out
+  links to preservation copies for roles that may not view them.
+  `SECURITY.md` names the web server logs, which record the addresses of
+  public links.
 - `SECURITY.md` starts with a table of what the app promises and which test
   checks it; a test makes sure every named test exists.
 

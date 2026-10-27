@@ -81,7 +81,7 @@ const draft = reactive({
 const busy = ref(false)
 const error = ref('')
 const created = ref<ExcerptLink | null>(null)
-const url = computed(() => (created.value ? linkUrl(created.value.token, created.value.circle) : ''))
+const url = computed(() => (created.value?.token ? linkUrl(created.value.token, created.value.circle) : ''))
 
 // ---- who can open the link (milestone 0.7) --------------------------------------
 

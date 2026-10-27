@@ -65,6 +65,7 @@ class SharedLinkService {
 		private Roles $roles,
 		private Modules $modules,
 		private AppSettings $settings,
+		private LinkTokens $tokens,
 	) {
 	}
 
@@ -82,7 +83,8 @@ class SharedLinkService {
 		$today = $this->rights->today($uid);
 		$rows = [];
 		foreach ($this->links->findUnrevokedByCircle(ExcerptLink::CIRCLE_MEMBERS) as $link) {
-			if (self::expired($link, $today)) {
+			$token = $this->tokens->reveal($link);
+			if ($token === null || self::expired($link, $today)) {
 				continue;
 			}
 			try {
@@ -97,7 +99,7 @@ class SharedLinkService {
 			}
 			$playDenial = $this->policy->memberPlayDenial($version, $today, $copy);
 			$rows[] = [
-				'token' => $link->getToken(),
+				'token' => $token,
 				'title' => (string)$work->getTitle(),
 				'composer' => (string)$work->getComposer(),
 				'measure_from' => $link->getMeasureFrom(),

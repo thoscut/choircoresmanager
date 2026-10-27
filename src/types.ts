@@ -323,7 +323,12 @@ export interface TaskInput {
 
 export interface ExcerptLink {
 	id: number
-	token: string
+	/**
+	 * Token of the address (milestone 0.11): for links for choir members and
+	 * public links only for the creator and the catalog librarian; null for
+	 * the others and for links whose token is gone
+	 */
+	token: string | null
 	copy_id: number
 	file_id: number | null
 	measure_from: string | null
@@ -334,7 +339,10 @@ export interface ExcerptLink {
 	note: string | null
 	task_id: number | null
 	circle: string
-	created_by?: string | null
+	/** whether the account made the link */
+	own: boolean
+	/** display name of the creator (no account name) */
+	created_by_name: string | null
 	created: number
 	expires: string | null
 	revoked: number | null

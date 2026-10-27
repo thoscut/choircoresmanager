@@ -71,6 +71,7 @@ below explain the reasons.
 | A rights notice in a MusicXML file never sets a rights status | `RightsNoticeServiceTest::testANoticeBecomesAtMostAProposal`, `testTheDoctypeOfMusicXmlIsAcceptedButNoInternalSubset`; `archive_extras_test` |
 | The print station never writes into the archive folder and replaces only files it wrote itself | `print_mirror_test`; CS `testThePrintStationIsSyncedByTheCatalogLibrarianAndAdministrators` |
 | Backups and annual snapshots lie outside the archive folder | `workflow_test` ("the backup lies in the backup folder"), `archive_extras_test` ("the snapshot lies outside the archive folder"), `notifications_test` |
+| The database holds link tokens only as hash and encrypted; tokens of links for choir members and public links only for their creator and the catalog librarian, no account names in link lists | `LinkTokensTest::testTheTableHoldsTheHashAndTheEncryptedTokenOnly`, `testTheTokenIsReadBackOnlyWithTheSecretOfTheInstance`, `testOnlyTheCreatorAndTheLibrarianSeeTokensThatOpenALinkToOthers` |
 | Backups hold no link tokens; a restore brings links back revoked | `ExportServiceTest::testABackupHoldsNoLinkTokensAndASnapshotNoAccounts`; `backup_test` |
 | Of the weekly backups the newest eight are kept | `ExportServiceTest::testOnlyTheNewestWeeklyBackupsAreKept` |
 | Annual snapshots name nobody: no accounts, folder book, audit log or links | `ExportServiceTest::testABackupHoldsNoLinkTokensAndASnapshotNoAccounts`; `backup_test`, `archive_extras_test`; CS `testAnnualSnapshotsCheckTheRolesOnTheServer` |
@@ -210,7 +211,12 @@ public links stop working at once.
   Nextcloud's brute-force protection and need their module; the unit test
   checks this.
 - Tokens are 32 alphanumeric characters from Nextcloud's secure random
-  generator. An unknown, malformed, expired or revoked token, a version no
+  generator. The database holds only their SHA-256 hash, by which a link is
+  found, and the token encrypted with the secret of the instance, so that
+  the creator and the catalog librarian can copy the link again; a copy of
+  the table alone opens no link. Other archive roles see links for choir
+  members and public links without their token, and lists name creators by
+  display name only. An unknown, malformed, expired or revoked token, a version no
   longer released and a switched-off module all get the same 404 page
   without a reason, and each counts as a failed attempt; the scan route
   answers the same way, also for a link without a scan.
@@ -237,6 +243,11 @@ public links stop working at once.
 - Links can be passed on. They expire after at most 183 days and can be
   revoked at any time by their creator or the catalog librarian; calls are
   counted without recording who made them.
+- The token is part of the address (`/p/{token}`). The access log of the
+  web server records addresses, and so does Nextcloud's log when a request
+  fails with an internal error. Whoever reads these logs can open the
+  links found there until they expire or are revoked; the app's own log
+  and audit log hold no tokens.
 - The time a 404 takes may tell whether the module is on; which works are
   public is no secret.
 - A note on a link for choir members is read by all choir members: it is

@@ -488,9 +488,18 @@ role; `members` for the choir members and `public` for everyone, see
 ```json
 { "id": 9, "token": "32 alphanumeric characters", "copy_id": 35, "file_id": 78, "file_etag": "…",
   "measure_from": "62", "measure_to": "66", "voice": "Tenor II", "verse": null, "tempo": 80,
-  "note": "…", "task_id": 4, "circle": "internal", "created": 1761150000, "expires": "2027-04-23",
-  "revoked": null, "hits": 3, "scan_file_id": null }
+  "note": "…", "task_id": 4, "circle": "internal", "own": true, "created_by_name": "Anna Beispiel",
+  "created": 1761150000, "expires": "2027-04-23", "revoked": null, "hits": 3, "scan_file_id": null }
 ```
+
+`token` of a link for choir members or a public link is only sent to its
+creator and the catalog librarian, otherwise it is `null`; it is also
+`null` for links restored from a backup. The database holds the token only
+as hash and encrypted (`notarch_links.token`, `token_secret`, migration
+`Version001100Date20261029100000`). `own` says whether the account made the
+link; links name no account, only the display name of the creator. Lists
+leave out links to internal preservation copies for roles that may not view
+them.
 
 A link without `measure_from` and `measure_to` points to the whole piece.
 `scan_file_id` (`files[].id` of a PDF scan) is only set for links for choir

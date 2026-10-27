@@ -7,7 +7,9 @@
  * Active links: who can open them (archive roles, choir members or the
  * public), what they share (the whole piece or measures, with the scan or
  * not), until when they are valid, how often they were opened (a count
- * only, no names). The creator and the catalog role can revoke a link.
+ * only, no names). The creator and the catalog role can revoke a link and
+ * copy a link for choir members or a public link; the server sends its
+ * token only to them.
  */
 import type { ExcerptLink } from '../types.ts'
 
@@ -23,7 +25,7 @@ import { copyText } from '../clipboard.ts'
 import { formatDate, formatDateTime } from '../format.ts'
 import { referenceWords } from '../labels.ts'
 import { scopeText } from '../sharing/linkScope.ts'
-import { entriesById, isLibrarian, meta, openEntry } from '../store.ts'
+import { entriesById, isLibrarian, openEntry } from '../store.ts'
 
 withDefaults(defineProps<{
 	links: ExcerptLink[]
@@ -71,14 +73,14 @@ function circleLabel(link: ExcerptLink): string {
  * @param link - excerpt link
  */
 function canRevoke(link: ExcerptLink): boolean {
-	return isLibrarian.value || (link.created_by !== undefined && link.created_by === meta.value?.uid)
+	return isLibrarian.value || link.own
 }
 
 /**
  * @param link - excerpt link
  */
 async function copy(link: ExcerptLink): Promise<void> {
-	if (await copyText(linkUrl(link.token, link.circle))) {
+	if (link.token !== null && await copyText(linkUrl(link.token, link.circle))) {
 		showSuccess(t('notenarchiv', 'The link has been copied.'))
 	} else {
 		showError(t('notenarchiv', 'The link could not be copied. Please select and copy it by hand.'))
@@ -142,7 +144,10 @@ async function revoke(): Promise<void> {
 					</p>
 				</div>
 				<div class="link-list__actions no-print">
-					<NcButton variant="tertiary" :aria-label="t('notenarchiv', 'Copy link')" @click="copy(link)">
+					<NcButton v-if="link.token !== null"
+						variant="tertiary"
+						:aria-label="t('notenarchiv', 'Copy link')"
+						@click="copy(link)">
 						<template #icon>
 							<NcIconSvgWrapper :path="mdiContentCopy" />
 						</template>

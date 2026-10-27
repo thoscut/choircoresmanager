@@ -113,7 +113,7 @@ class TaskController extends Controller {
 	#[RequiresModule('excerpt_links')]
 	#[FrontpageRoute(verb: 'POST', url: '/api/copies/{id}/links', requirements: ['id' => '\d+'])]
 	public function createLink(int $id, array $link = []): JSONResponse {
-		return $this->run(fn (string $uid) => $this->links->create($id, $link, $uid));
+		return $this->run(fn (string $uid) => $this->links->view($this->links->create($id, $link, $uid), $uid));
 	}
 
 	/**

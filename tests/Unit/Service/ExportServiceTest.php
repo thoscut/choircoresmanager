@@ -90,8 +90,8 @@ final class ExportServiceTest extends TestCase {
 	}
 
 	public function testABackupHoldsNoLinkTokensAndASnapshotNoAccounts(): void {
-		$link = ['id' => 4, 'token' => 'abcdefghijklmnopqrstuvwxyz012345', 'created_by' => 'lena'];
-		self::assertSame(['id' => 4, 'token' => '', 'created_by' => 'lena'], FullBackupService::exportRow('notarch_links', $link, false));
+		$link = ['id' => 4, 'token' => hash('sha256', 'abcdefghijklmnopqrstuvwxyz012345'), 'token_secret' => 'encrypted', 'created_by' => 'lena'];
+		self::assertSame(['id' => 4, 'token' => '', 'token_secret' => null, 'created_by' => 'lena'], FullBackupService::exportRow('notarch_links', $link, false));
 		$version = ['id' => 2, 'confirmed_by' => 'lena', 'confirmed_by_name' => 'Lena', 'valid_set_by' => null, 'rights_status' => 'free'];
 		self::assertSame($version, FullBackupService::exportRow('notarch_versions', $version, false));
 		self::assertSame(['id' => 2, 'confirmed_by' => '', 'confirmed_by_name' => '', 'valid_set_by' => null, 'rights_status' => 'free'],

@@ -28,10 +28,13 @@ class ExcerptLinkMapper extends QBMapper {
 		return $this->findEntity($qb);
 	}
 
+	/**
+	 * The link of a token from an address; the table holds its hash.
+	 */
 	public function findByToken(string $token): ExcerptLink {
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('*')->from($this->getTableName())
-			->where($qb->expr()->eq('token', $qb->createNamedParameter($token)));
+			->where($qb->expr()->eq('token', $qb->createNamedParameter(ExcerptLink::hashToken($token))));
 		return $this->findEntity($qb);
 	}
 

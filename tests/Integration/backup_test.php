@@ -199,7 +199,7 @@ try {
 		}
 		if ($table === 'notarch_links') {
 			// Without their tokens, links come back revoked and with new tokens.
-			$strip = fn (array $rows): array => array_map(fn (array $row): array => array_diff_key($row, ['token' => 0, 'revoked' => 0]), $rows);
+			$strip = fn (array $rows): array => array_map(fn (array $row): array => array_diff_key($row, ['token' => 0, 'token_secret' => 0, 'revoked' => 0]), $rows);
 			$check('links restored, revoked and with new tokens', $strip($after) === $strip($before[$table])
 				&& array_filter($after, fn (array $row): bool => $row['revoked'] === null) === []
 				&& array_intersect(array_column($after, 'token'), array_column($before[$table], 'token')) === []);

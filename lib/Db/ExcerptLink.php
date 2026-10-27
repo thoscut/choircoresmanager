@@ -31,8 +31,18 @@ use OCP\AppFramework\Db\Entity;
  * (`notarch_files.id`, role `score_pdf`) offered besides the notes; null
  * for none.
  *
+ * `token` holds the SHA-256 hash of the token in the address (milestone
+ * 0.11): a link is found by the hash, so a copy of the table opens no link.
+ * `token_secret` holds the token encrypted with the secret of the instance,
+ * so that the creator and the catalog librarian can copy the link again;
+ * null for links whose token is gone (restored from a backup). Neither
+ * column is serialized; LinkService::view adds the token for those who may
+ * see it.
+ *
  * @method string getToken()
  * @method void setToken(string $token)
+ * @method string|null getTokenSecret()
+ * @method void setTokenSecret(?string $tokenSecret)
  * @method int getCopyId()
  * @method void setCopyId(int $copyId)
  * @method int|null getFileId()
@@ -69,7 +79,9 @@ use OCP\AppFramework\Db\Entity;
  * @method void setScanFileId(?int $scanFileId)
  */
 class ExcerptLink extends Entity implements JsonSerializable {
-	use FieldAccess;
+	use FieldAccess {
+		jsonSerialize as private columns;
+	}
 
 	public const CIRCLE_INTERNAL = 'internal';
 	public const CIRCLE_MEMBERS = 'members';
@@ -77,6 +89,7 @@ class ExcerptLink extends Entity implements JsonSerializable {
 	public const CIRCLES = [self::CIRCLE_INTERNAL, self::CIRCLE_MEMBERS, self::CIRCLE_PUBLIC];
 
 	protected string $token = '';
+	protected ?string $tokenSecret = null;
 	protected int $copyId = 0;
 	protected ?int $fileId = null;
 	protected ?string $fileEtag = null;
@@ -94,13 +107,48 @@ class ExcerptLink extends Entity implements JsonSerializable {
 	protected ?int $revoked = null;
 	protected int $hits = 0;
 	protected ?int $scanFileId = null;
+	/** The token of a link just made, for the answer to its creator; not a column */
+	private ?string $issued = null;
 
 	public function __construct() {
 		foreach (['copyId', 'fileId', 'verse', 'tempo', 'taskId', 'created', 'revoked', 'hits', 'scanFileId'] as $field) {
 			$this->addType($field, 'integer');
 		}
-		foreach (['token', 'fileEtag', 'measureFrom', 'measureTo', 'voice', 'note', 'circle', 'createdBy', 'expires'] as $field) {
+		foreach (['token', 'tokenSecret', 'fileEtag', 'measureFrom', 'measureTo', 'voice', 'note', 'circle', 'createdBy', 'expires'] as $field) {
 			$this->addType($field, 'string');
 		}
+	}
+
+	/**
+	 * Remembers the token of a link just made (LinkTokens::issue).
+	 */
+	public function issue(string $token): void {
+		$this->issued = $token;
+	}
+
+	/**
+	 * The token of a link just made; null for links read from the table.
+	 */
+	public function issuedToken(): ?string {
+		return $this->issued;
+	}
+
+	/**
+	 * The hash stored in `token` for a token of an address.
+	 */
+	public static function hashToken(string $token): string {
+		return hash('sha256', $token);
+	}
+
+	/**
+	 * The columns without the token hash and the encrypted token.
+	 *
+	 * @return array<string, string|int|bool|null> column => value
+	 */
+	#[\Override]
+	public function jsonSerialize(): array {
+		$data = $this->columns();
+		unset($data['token'], $data['token_secret']);
+		return $data;
 	}
 }

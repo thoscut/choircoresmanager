@@ -34,6 +34,7 @@ use OCA\Notenarchiv\Service\AppSettings;
 use OCA\Notenarchiv\Service\AuditLog;
 use OCA\Notenarchiv\Service\FieldValue;
 use OCA\Notenarchiv\Service\LinkService;
+use OCA\Notenarchiv\Service\LinkTokens;
 use OCA\Notenarchiv\Service\Modules;
 use OCA\Notenarchiv\Service\MusicXmlExcerpt;
 use OCA\Notenarchiv\Service\PracticeAudioService;
@@ -44,6 +45,7 @@ use OCA\Notenarchiv\Service\Roles;
 use OCA\Notenarchiv\Service\ScanService;
 use OCA\Notenarchiv\Service\ScoreService;
 use OCA\Notenarchiv\Service\SharedLinkService;
+use OCA\Notenarchiv\Tests\Unit\Support\FakeCrypto;
 use OCA\Notenarchiv\Tests\Unit\Support\ModuleSwitches;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -174,7 +176,7 @@ final class SharingTest extends TestCase {
 		$scans = $this->createStub(ScanService::class);
 		$scans->method('scan')->willReturn($this->createStub(File::class));
 		return new LinkService($mapper, $copies, $versions, $files, $scores, $this->policy($denials), $this->rights(), $this->auditLog(),
-			$this->createStub(Roles::class), $this->createStub(IUserManager::class), $random, $this->createStub(ITimeFactory::class),
+			$this->createStub(Roles::class), $this->createStub(IUserManager::class), new LinkTokens(new FakeCrypto(), $random), $this->createStub(ITimeFactory::class),
 			$this->modulesWithout($off), $scans);
 	}
 
@@ -333,6 +335,10 @@ final class SharingTest extends TestCase {
 		foreach ($values as $column => $value) {
 			$link->setValue($column, $value);
 		}
+		// stored like LinkTokens::issue: the hash, and the token encrypted
+		$token = $link->getToken();
+		$link->setToken(ExcerptLink::hashToken($token));
+		$link->setTokenSecret((new FakeCrypto())->encrypt($token));
 		return $link;
 	}
 
@@ -357,7 +363,7 @@ final class SharingTest extends TestCase {
 		$mapper = $this->createStub(ExcerptLinkMapper::class);
 		$mapper->method('findByToken')->willReturnCallback(function (string $token) use ($links): ExcerptLink {
 			foreach ($links as $link) {
-				if ($link->getToken() === $token) {
+				if ($link->getToken() === ExcerptLink::hashToken($token)) {
 					return $link;
 				}
 			}
@@ -405,7 +411,7 @@ final class SharingTest extends TestCase {
 		$roles = $this->createStub(Roles::class);
 		$roles->method('isMember')->willReturn($member);
 		return new SharedLinkService($mapper, $copies, $versions, $works, $files, $scores, $this->policy($denials), $this->rights(), $roles,
-			$this->modulesWithout(), $settings);
+			$this->modulesWithout(), $settings, new LinkTokens(new FakeCrypto(), $this->createStub(ISecureRandom::class)));
 	}
 
 	public function testChoirMembersSeeTheirLinksAndOnlyTheMeasures(): void {

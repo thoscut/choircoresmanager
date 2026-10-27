@@ -15,7 +15,6 @@ use OCA\Notenarchiv\Db\AuditEntry;
 use OCA\Notenarchiv\Db\AuditEntryMapper;
 use OCA\Notenarchiv\Db\Copy;
 use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\ExcerptLink;
 use OCA\Notenarchiv\Db\License;
 use OCA\Notenarchiv\Db\LicenseMapper;
 use OCA\Notenarchiv\Db\Proposal;
@@ -40,11 +39,12 @@ use OCP\IUserManager;
  * write roles of each field and recorded in the audit log.
  *
  * @psalm-import-type FieldInfo from Fields
+ * @psalm-import-type LinkView from LinkService
  * @psalm-import-type Proposal from ProtectionTerm as ProtectionProposal
  * @psalm-type Entry = array{work: Work, version: WorkVersion, copy: Copy, files: list<ArchiveFile>,
  *     score: ?array{fileId: int, fileName: string, canView: bool, canPlay: bool, reason: ?string, canExportAudio: bool, exportReason: ?string},
  *     licenses: list<License>,
- *     releases: array{portal: ?string, onPortal: bool, printStation: ?string}, tasks: list<Task>, links: list<ExcerptLink>,
+ *     releases: array{portal: ?string, onPortal: bool, printStation: ?string}, tasks: list<Task>, links: list<LinkView>,
  *     proposals: list<Proposal>, siblings: list<array{id: int, shelfmark: string, version_id: int, status: string}>,
  *     contributions: list<array<string, string|int|bool|null|array<string, string|int|bool|null>>>, protection: ?ProtectionProposal,
  *     merges: list<array<string, mixed>>, audit: list<AuditEntry>,

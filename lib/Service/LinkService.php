@@ -23,7 +23,6 @@ use OCA\Notenarchiv\Exception\UnknownLinkException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IUserManager;
-use OCP\Security\ISecureRandom;
 
 /**
  * Excerpt links: a shelf mark, printed measures, a voice as focus, verse,
@@ -44,6 +43,14 @@ use OCP\Security\ISecureRandom;
  * (guideline 2: an excerpt counts as much as the whole, a scan as much as
  * the notes).
  *
+ * Tokens (milestone 0.11): the table holds their hashes (LinkTokens). The
+ * token of a link for choir members or the public, a secret that opens the
+ * link to anyone who has it, is shown only to its creator and the catalog
+ * librarian; internal links need an archive role anyway, so every archive
+ * role sees their tokens. Lists name the creator by display name, not by
+ * account.
+ *
+ * @psalm-type LinkView = array<string, string|int|bool|null>
  * @psalm-type CircleOption = array{available: bool, allowed: bool, reason: ?string, playback: bool, practiceAudio: bool}
  * @psalm-type ScanOption = array{id: int, name: string}
  */
@@ -72,7 +79,7 @@ class LinkService {
 		private AuditLog $audit,
 		private Roles $roles,
 		private IUserManager $userManager,
-		private ISecureRandom $random,
+		private LinkTokens $tokens,
 		private ITimeFactory $time,
 		private Modules $modules,
 		private ScanService $scans,
@@ -136,7 +143,7 @@ class LinkService {
 		}
 
 		$link = new ExcerptLink();
-		$link->setToken($this->random->generate(32, ISecureRandom::CHAR_ALPHANUMERIC));
+		$this->tokens->issue($link);
 		$link->setCopyId($copyId);
 		if ($score !== null) {
 			$file = $this->files->find($score['fileId']);
@@ -346,9 +353,32 @@ class LinkService {
 		$data = $link->jsonSerialize();
 		unset($data['created_by']);
 		return $data + [
+			'token' => $token,
 			'shelfmark' => $copy->getShelfmark(),
 			'createdByName' => $createdBy === null ? null : $this->userManager->getDisplayName($createdBy),
 			'changed' => $changed,
+		];
+	}
+
+	/**
+	 * A link as lists and the dialog show it: without the account of the
+	 * creator (`own` says whether it is the account's own link,
+	 * `created_by_name` names the creator), with the token only for those who
+	 * may pass the link on (see the class comment); null for the others and
+	 * for links whose token is gone.
+	 *
+	 * @return LinkView
+	 */
+	public function view(ExcerptLink $link, string $uid): array {
+		$createdBy = $link->getCreatedBy();
+		$own = $createdBy !== null && $createdBy === $uid;
+		$mayCopy = $link->getCircle() === ExcerptLink::CIRCLE_INTERNAL || $own || $this->roles->hasAnyRole($uid, [Roles::LIBRARIAN]);
+		$data = $link->jsonSerialize();
+		unset($data['created_by']);
+		return $data + [
+			'token' => $mayCopy ? $this->tokens->reveal($link) : null,
+			'own' => $own,
+			'created_by_name' => $createdBy === null ? null : $this->userManager->getDisplayName($createdBy),
 		];
 	}
 
@@ -369,14 +399,37 @@ class LinkService {
 	}
 
 	/**
-	 * Active links (not revoked, not expired), optionally of one copy.
+	 * Active links (not revoked, not expired), optionally of one copy, as
+	 * view() shows them. Links to copies the account may not view (internal
+	 * preservation copies) are left out.
 	 *
-	 * @return list<ExcerptLink>
+	 * @return list<LinkView>
 	 */
 	public function active(?int $copyId, string $uid): array {
 		$today = $this->rights->today($uid);
-		return array_values(array_filter($this->links->findByCopy($copyId),
-			fn (ExcerptLink $l): bool => $l->getRevoked() === null && ($l->getExpires() === null || $l->getExpires() >= $today)));
+		$mayViewPreservation = $this->policy->mayViewPreservationCopies($uid);
+		$versions = $mayViewPreservation ? [] : $this->versions->findAllById();
+		$copies = [];
+		if (!$mayViewPreservation) {
+			foreach ($this->copies->findAll() as $copy) {
+				$copies[$copy->getId()] = $copy;
+			}
+		}
+		$rows = [];
+		foreach ($this->links->findByCopy($copyId) as $link) {
+			if ($link->getRevoked() !== null || ($link->getExpires() !== null && $link->getExpires() < $today)) {
+				continue;
+			}
+			if (!$mayViewPreservation) {
+				$copy = $copies[$link->getCopyId()] ?? null;
+				$version = $copy === null ? null : ($versions[$copy->getVersionId()] ?? null);
+				if ($copy === null || $version === null || RightsPolicy::isPreservationCopy($version, $copy)) {
+					continue;
+				}
+			}
+			$rows[] = $this->view($link, $uid);
+		}
+		return $rows;
 	}
 
 	private static function text(string|int|float|bool|null $value, int $max): ?string {

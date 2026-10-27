@@ -17,6 +17,7 @@ use Doctrine\DBAL\Types\IntegerType;
 use Doctrine\DBAL\Types\SmallIntType;
 use Doctrine\DBAL\Types\StringType;
 use OCA\Notenarchiv\AppInfo\Application;
+use OCA\Notenarchiv\Db\ExcerptLink;
 use OCA\Notenarchiv\Exception\InvalidInputException;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -146,6 +147,9 @@ class FullBackupService {
 		if ($table === 'notarch_links' && array_key_exists('token', $row)) {
 			$row['token'] = '';
 		}
+		if ($table === 'notarch_links' && array_key_exists('token_secret', $row)) {
+			$row['token_secret'] = null;
+		}
 		if ($snapshot) {
 			foreach (self::ACCOUNT_COLUMNS as $column) {
 				if (is_string($row[$column] ?? null)) {
@@ -212,7 +216,9 @@ class FullBackupService {
 				foreach ($rows as $index => $row) {
 					if ($table === 'notarch_links' && ($row['token'] ?? '') === '') {
 						// Backups hold no tokens: the link comes back revoked.
-						$row['token'] = $this->random->generate(32, ISecureRandom::CHAR_ALPHANUMERIC);
+						// Only the hash of a token nobody knows: the link stays dead.
+						$row['token'] = ExcerptLink::hashToken($this->random->generate(LinkTokens::LENGTH, ISecureRandom::CHAR_ALPHANUMERIC));
+						$row['token_secret'] = null;
 						$row['revoked'] ??= $this->time->getTime();
 					}
 					$qb = $this->db->getQueryBuilder();

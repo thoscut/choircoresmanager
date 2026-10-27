@@ -71,19 +71,19 @@ try {
 	$check('link with an unknown field is refused', $throws(fn () => $links->create($copy->getId(), ['created_by' => 'someone-else'], $uid)) !== null);
 	$check('task with an unknown field is refused', $throws(fn () => $tasks->create($copy->getId(), ['addressee' => 'conductor', 'question' => 'q', 'status' => 'applied'], $uid)) !== null);
 	$link = $links->create($copy->getId(), ['measure_from' => '62', 'measure_to' => '66', 'voice' => 'Tenor II', 'note' => 'please check', 'task_id' => $task->getId()], $uid);
-	$check('link created with token', strlen($link->getToken()) === 32 && $link->getExpires() !== null, (string)$link->getExpires());
-	$resolved = $links->resolve($link->getToken(), $uid);
+	$check('link created with token', strlen($link->issuedToken()) === 32 && $link->getExpires() !== null, (string)$link->getExpires());
+	$resolved = $links->resolve($link->issuedToken(), $uid);
 	$check('link resolves to the excerpt', $resolved['shelfmark'] === $shelfmark && $resolved['measure_from'] === '62' && $resolved['changed'] === false);
 	$check('link counts calls without names', !array_key_exists('created_by', $resolved));
 	$check('entry lists the active link and the task', count(Server::get(CatalogService::class)->entry($copy->getId(), $uid)['links']) >= 1);
 	$links->revoke($link->getId(), $uid);
-	$check('revoked link is dead', $throws(fn () => $links->resolve($link->getToken(), $uid)) !== null);
+	$check('revoked link is dead', $throws(fn () => $links->resolve($link->issuedToken(), $uid)) !== null);
 	$check('unknown token is refused', $throws(fn () => $links->resolve(str_repeat('a', 32), $uid)) !== null);
 
 	// A downgrade to preservation copy hides the excerpt from roles that may not see it
 	$link2 = $links->create($copy->getId(), [], $uid);
 	$version = Server::get(WorkVersionMapper::class)->find($copy->getVersionId());
-	$check('librarian still sees a preservation copy', $version->getPreservationCopy() === true || $links->resolve($link2->getToken(), $uid)['id'] === $link2->getId());
+	$check('librarian still sees a preservation copy', $version->getPreservationCopy() === true || $links->resolve($link2->issuedToken(), $uid)['id'] === $link2->getId());
 } finally {
 	$db->rollBack();
 	$roles->setGroups(Roles::CONDUCTOR, $conductorGroups);
