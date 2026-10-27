@@ -1515,6 +1515,7 @@ OC.L10N.register(
         "Valid version": "Geldende versie",
         "The version the conductor has chosen for the choir, at most one per work. It says nothing about the rights.": "De versie die de koorleiding voor het koor heeft gekozen, hooguit één per werk. Over de rechten zegt ze niets.",
         "A copy kept only for the archive, e.g. the scan of a protected print. It is never shared, played or exported.": "Een exemplaar dat alleen voor het archief wordt bewaard, bijv. de scan van een beschermde druk. Het wordt nooit gedeeld, afgespeeld of geëxporteerd.",
+        "A revision is one state of the MusicXML of a version, numbered 1, 2, 3 …: after a correction or a better transcription. The current revision is the one exports and printouts name.": "Een revisie is een stand van de MusicXML van een versie, genummerd 1, 2, 3 …: na een correctie of een betere transcriptie. De geldende revisie is die welke exports en afdrukken noemen.",
         "Check": "Controle",
         "Report": "Melding",
         "Applied": "Doorgevoerd",

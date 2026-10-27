@@ -25,6 +25,7 @@ import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextArea from '@nextcloud/vue/components/NcTextArea'
 import ActionDialog from './ActionDialog.vue'
 import GuideLink from './GuideLink.vue'
+import HelpTerm from './HelpTerm.vue'
 import { ApiError, errorMessage, fetchFileContent, fetchStates, setCurrentState } from '../api.ts'
 import { copyText } from '../clipboard.ts'
 import { USER_GUIDE, userGuideUrl } from '../docs.ts'
@@ -256,9 +257,12 @@ async function copyNote(): Promise<void> {
 
 <template>
 	<section class="states" aria-labelledby="states-heading">
-		<h3 id="states-heading">
-			{{ t('notenarchiv', 'Revisions of this version') }}
-		</h3>
+		<div class="states__title">
+			<h3 id="states-heading">
+				{{ t('notenarchiv', 'Revisions of this version') }}
+			</h3>
+			<HelpTerm term="revision" />
+		</div>
 		<p class="states__line">
 			{{ line }}
 		</p>
@@ -410,6 +414,12 @@ async function copyNote(): Promise<void> {
 	flex-direction: column;
 	gap: var(--default-grid-baseline);
 	padding-block: calc(2 * var(--default-grid-baseline));
+}
+
+.states__title {
+	display: flex;
+	align-items: center;
+	gap: var(--default-grid-baseline);
 }
 
 .states h3,

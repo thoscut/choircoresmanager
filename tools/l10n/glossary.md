@@ -32,6 +32,20 @@ speakers**. Corrections are welcome as an issue or a pull request against
   French « » with no-break spaces inside, Spanish, Italian and Dutch “ ”,
   Polish „ ”. French puts a no-break space before `:` `;` `!` `?`.
 
+## One word, one meaning
+
+In German each of these words has one meaning only; `translations.test.mjs`
+checks that a German text with the word translates a source that says so.
+The other languages follow the same split with the terms below.
+
+| German | means only | not |
+|---|---|---|
+| Stand | revision of a version | "as of" a date (*am {date}*, *erstellt am*), a state or status (*Status*), a snapshot (*Jahresstand*, *das Archiv einfrieren*) |
+| Ausgabe | loan of a choir folder | an edition (*Edition*; the legal term *wissenschaftliche Ausgabe* stays), outputs (*Exporte und Ausdrucke*) |
+| Freigabe, freigegeben | release by the rights | sharing in Nextcloud or with choir members (*teilen*, *Mit mir geteilt*) |
+| Schleife | the loop of the playback | the repeats of the score (*Wiederholungen*) |
+| H | the note B (German and Polish note names in the correction form) | B flat, which is *B* |
+
 ## Core terms
 
 | German | English source | fr | es | it | nl | pl |

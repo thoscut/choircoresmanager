@@ -22,6 +22,7 @@ export type HelpTermKey =
 	| 'release'
 	| 'validVersion'
 	| 'preservationCopy'
+	| 'revision'
 
 export interface HelpTermText {
 	/** the term as it appears in the interface */
@@ -80,6 +81,12 @@ export function helpTerm(term: HelpTermKey): HelpTermText {
 			name: t('notenarchiv', 'Internal preservation copy'),
 			text: t('notenarchiv', 'A copy kept only for the archive, e.g. the scan of a protected print. It is never shared, played or exported.'),
 			section: USER_GUIDE.termPreservationCopy,
+		}
+	case 'revision':
+		return {
+			name: t('notenarchiv', 'Revision'),
+			text: t('notenarchiv', 'A revision is one state of the MusicXML of a version, numbered 1, 2, 3 …: after a correction or a better transcription. The current revision is the one exports and printouts name.'),
+			section: USER_GUIDE.revisions,
 		}
 	}
 	return { name: '', text: '', section: USER_GUIDE.termVersion }

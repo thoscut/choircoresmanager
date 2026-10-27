@@ -146,7 +146,7 @@ sieht (**Ansicht anpassen**), bleibt in der App.
 | Chorleitung | Chorleitung und Vertretung | geltende Fassung festlegen; Tonart, Besetzung, Sprache, Dauer und Prüfung einer Übertragung; Rückfragen beantworten; Konzerte und Notenlisten planen |
 | Vorschläge (Werkzeuge) | Übertragungsrunden, Skripte | nur Änderungen vorschlagen, die die Archivverwaltung annimmt; Rückfragen stellen |
 | Lesen (Vorstand, Revision) | Vorstand, Revision | alles lesen, auch das Protokoll |
-| Chormitglieder (nur geteilte Ausschnitte) | die Chormitglieder | keine Archivrolle: nur die Seite „Für mich freigegeben“ mit den für Chormitglieder geteilten Ausschnitten, und nur, solange das Modul „Links für Chormitglieder“ eingeschaltet ist (siehe [Abschnitt 14](#14-mit-chormitgliedern-und-der-öffentlichkeit-teilen)) |
+| Chormitglieder (nur geteilte Ausschnitte) | die Chormitglieder | keine Archivrolle: nur die Seite „Mit mir geteilt“ mit den für Chormitglieder geteilten Ausschnitten, und nur, solange das Modul „Links für Chormitglieder“ eingeschaltet ist (siehe [Abschnitt 14](#14-mit-chormitgliedern-und-der-öffentlichkeit-teilen)) |
 
 Konzerte und Notenlisten planen die Chorleitung und die Rolle „Bestand“
 gemeinsam. Übe-Dateien erstellen die Rolle „Bestand“ und die Chorleitung;
@@ -836,7 +836,7 @@ können (siehe Abschnitt 16).
 | Nextcloud-Suche | – | ein | Die Suche der Nextcloud hat keinen Bereich „Notenarchiv“. |
 | Benachrichtigungen | – | ein | Die App sendet keine Benachrichtigungen; vorher gesendete Benachrichtigungen verschwinden, wenn sie angezeigt werden. |
 | Ein Schalter je Anlass | Benachrichtigungen und das Modul des Anlasses | ein | Diese Benachrichtigung wird nicht gesendet; die täglichen Prüfungen ziehen sie zurück. Anlässe: Vorschläge warten, Aus dem Chorportal entfernen, Lizenz endet bald, Lizenz ist abgelaufen, Wöchentliche Sicherung fehlgeschlagen, Neue Rückfrage oder Aufgabe, Rückfrage beantwortet, Konzertfristen, Gesungenes bestätigen, Schutzfrist abgelaufen, Gemeinfreiheit fraglich, Datei unbemerkt verändert, Neue Prüfpunkte, Korrektur eingetroffen, Abgleich der Druckstation fehlgeschlagen. |
-| Links für Chormitglieder | Ausschnitt-Links, Wiedergabe, Freigaben | aus (in keiner Voreinstellung) | Chormitglieder sehen weder die App noch „Für mich freigegeben“; ihre Routen antworten mit 404; es lassen sich keine Links für Chormitglieder erstellen. Vorhandene Links bleiben erhalten und laufen ab wie bisher. |
+| Links für Chormitglieder | Ausschnitt-Links, Wiedergabe, Freigaben | aus (in keiner Voreinstellung) | Chormitglieder sehen weder die App noch „Mit mir geteilt“; ihre Routen antworten mit 404; es lassen sich keine Links für Chormitglieder erstellen. Vorhandene Links bleiben erhalten und laufen ab wie bisher. |
 | Übe-Audio für Chormitglieder | Links für Chormitglieder, Übe-Audio-Dateien | aus (in keiner Voreinstellung) | Chormitglieder erstellen keine Übe-Dateien; der Server lehnt jede Anfrage ab. |
 | Öffentliche Links | Ausschnitt-Links, Wiedergabe, Veröffentlichung | aus (in keiner Voreinstellung) | Jeder öffentliche Link antwortet mit derselben 404-Seite; keine neuen öffentlichen Links. Vorhandene Links bleiben erhalten und laufen ab wie bisher. |
 | Öffentliche Repertoireseite | Rechtebestätigung und Lizenzen | aus (in keiner Voreinstellung) | `/apps/notenarchiv/repertoire` antwortet mit 404; die Werkfelder für die Seite sind ausgeblendet. |
@@ -943,7 +943,7 @@ zu „Vollständig“: Schalte sie einzeln ein, nachdem der Chor entschieden hat
 
 | Modul | Was es öffnet |
 |---|---|
-| **Links für Chormitglieder** | Die Rolle **Chormitglieder** sieht die Seite „Für mich freigegeben“: die ganzen Stücke oder Ausschnitte, die die Archivverwaltung oder die Chorleitung mit dem Chor teilt, zum Ansehen und Abspielen mit einer betonten Stimme, auf Wunsch mit dem Scan (PDF). Nur für Fassungen, die für das Chorportal freigegeben sind. |
+| **Links für Chormitglieder** | Die Rolle **Chormitglieder** sieht die Seite „Mit mir geteilt“: die ganzen Stücke oder Ausschnitte, die die Archivverwaltung oder die Chorleitung mit dem Chor teilt, zum Ansehen und Abspielen mit einer betonten Stimme, auf Wunsch mit dem Scan (PDF). Nur für Fassungen, die für das Chorportal freigegeben sind. |
 | **Übe-Audio für Chormitglieder** | Chormitglieder erstellen eine WAV- oder MIDI-Datei einer Stimme eines solchen Stücks oder Ausschnitts, wo die Rechte Übe-Audio-Dateien erlauben. Jede Datei steht im Protokoll. |
 | **Öffentliche Links** | Ein Link, der ein ganzes Stück oder einen Ausschnitt ohne Anmeldung zeigt und abspielt (`/apps/notenarchiv/p/<token>`), auf Wunsch mit dem Scan (PDF). Nur für Fassungen, die zur Veröffentlichung freigegeben sind und bestätigt gemeinfrei sind oder eine Lizenz zur Online-Veröffentlichung haben. |
 | **Öffentliche Repertoireseite** | `/apps/notenarchiv/repertoire`: die Werke, die die Archivverwaltung unter denen mit einer bestätigt gemeinfreien Fassung auswählt, mit Lebensdaten, Besetzung und Links zu CPDL und IMSLP. |
@@ -1000,7 +1000,7 @@ ohne Namen.
 | Problem | Was zu tun ist |
 |---|---|
 | Ein Chormitglied sieht die App nicht | Prüfe, ob **Links für Chormitglieder** eingeschaltet und aktiv ist (alle Voraussetzungen eingeschaltet) und ob das Konto in der Gruppe der Rolle **Chormitglieder** ist. |
-| Ein Chormitglied sieht das Archiv statt „Für mich freigegeben“ | Das Konto ist auch in einer Gruppe mit einer Archivrolle; nimm es dort heraus. |
+| Ein Chormitglied sieht das Archiv statt „Mit mir geteilt“ | Das Konto ist auch in einer Gruppe mit einer Archivrolle; nimm es dort heraus. |
 | Der Dialog sagt, ein Link sei nicht möglich | Er nennt den Grund und den nächsten Schritt: Meist sind die Rechte der Fassung nicht bestätigt, eine Lizenz für das Chorportal oder für die Online-Veröffentlichung fehlt, oder der Veröffentlichungsstatus ist nicht „Zur Veröffentlichung freigegeben“. |
 | Der Dialog sagt „Diese Art von Link ist abgeschaltet“ | Schalte das Modul in den Einstellungen ein (Module). |
 | „Die Noten dieses Links sind gerade nicht verfügbar.“ oder „Der Scan dieses Links ist gerade nicht verfügbar.“ | Das Konto, das den Archivordner gewählt hat (Einstellungen → Archivordner), muss noch vorhanden sein und den Ordner sehen. Die MusicXML-Datei oder der PDF-Scan muss noch darin liegen und mit dem Exemplar verknüpft sein. |

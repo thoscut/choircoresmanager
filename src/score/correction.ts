@@ -18,7 +18,23 @@
 import type { MeasureRange } from './range.ts'
 import type { PartStaves, VoiceMember } from './voices.ts'
 
+import { pitchName } from '../states.ts'
+
 export const STEPS = ['C', 'D', 'E', 'F', 'G', 'A', 'B'] as const
+
+/** Languages that call the step B "H" (and B flat "B"). */
+const H_LANGUAGES = ['de', 'pl', 'cs', 'sk', 'hu', 'da', 'nb', 'no', 'sv', 'fi']
+
+/**
+ * The name of a step for people: "H" instead of "B" in German, Polish and
+ * other languages with these note names, so that B never means B flat.
+ *
+ * @param step - step A–G as in MusicXML
+ * @param language - language of the interface, e.g. "de_DE"
+ */
+export function stepLabel(step: string, language: string): string {
+	return step === 'B' && H_LANGUAGES.includes(language.toLowerCase().split(/[-_]/)[0]) ? 'H' : step
+}
 
 /** Alterations offered in the form: double flat to double sharp. */
 export const ALTERATIONS = [-2, -1, 0, 1, 2] as const
@@ -447,8 +463,11 @@ export function applyValues(document: Document, rows: readonly NoteRow[], values
  * @param rows - the notes as listed
  * @param values - new values by row key
  * @param signs - pitches with ♯/♭ instead of #/b
+ * @param language - language of the interface; with signs, German note names where B is "H"
  */
-export function pendingChanges(rows: readonly NoteRow[], values: ReadonlyMap<string, NoteValues>, signs = false): NoteChange[] {
+export function pendingChanges(rows: readonly NoteRow[], values: ReadonlyMap<string, NoteValues>, signs = false, language = ''): NoteChange[] {
+	const named = signs && stepLabel('B', language) === 'H'
+	const pitch = (step: string, alter: number, octave: number) => named ? pitchName(step, alter, octave, true) : pitchText(step, alter, octave, signs)
 	const changes: NoteChange[] = []
 	for (const row of rows) {
 		const wanted = values.get(row.key)
@@ -461,8 +480,8 @@ export function pendingChanges(rows: readonly NoteRow[], values: ReadonlyMap<str
 				measure: row.measure,
 				kind: 'pitch',
 				verse: null,
-				old: pitchText(row.step, row.alter, row.octave, signs),
-				new: pitchText(wanted.step, wanted.alter, wanted.octave, signs),
+				old: pitch(row.step, row.alter, row.octave),
+				new: pitch(wanted.step, wanted.alter, wanted.octave),
 			})
 		}
 		if (row.pitched && wanted.accidental !== row.accidental) {

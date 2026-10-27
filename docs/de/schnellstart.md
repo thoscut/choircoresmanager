@@ -210,7 +210,7 @@ Lizenz für Übe-Audio, nie für interne Erhaltungskopien.
 #### So übst du eine Stelle in Schleife
 
 1. Trage die Stelle in **Von Takt** und **Bis Takt** ein.
-2. Schalte daneben **Wiederholen** ein. Die Stelle wird gezeigt und beim
+2. Schalte daneben **Schleife** ein. Die Stelle wird gezeigt und beim
    Abspielen immer wieder gespielt, bis du **Pause** oder **Stopp** wählst.
 3. Unter **Tempo und Lautstärke** wählst du einen **Einzähler** von 1 oder
    2 Takten. Die Wahl merkt sich dein Browser.
@@ -289,7 +289,7 @@ Notenarchiv; die App oder die Seite „Zugriff verboten“ sagt dir das. Rollen
 hängen an Nextcloud-Gruppen. Bitte die Administration, dein Konto in die
 Gruppe deiner Rolle aufzunehmen (siehe
 [Administrationshandbuch](administrationshandbuch.md#2-rollen-und-gruppen)).
-Chormitglieder sehen nur **Für mich freigegeben**, und das nur, wenn es
+Chormitglieder sehen nur **Mit mir geteilt**, und das nur, wenn es
 eingeschaltet ist.
 
 ### Datei lässt sich nicht öffnen

@@ -19,6 +19,7 @@ import {
 	rowValues,
 	sameMeasureLengths,
 	serializeScore,
+	stepLabel,
 	voiceTargets,
 } from '../score/correction.ts'
 import { loadScore } from '../score/model.ts'
@@ -179,6 +180,8 @@ describe('changing a voice', () => {
 			['lyric', '1', '1', 'Lie', 'Lieb'],
 		])
 		expect(pendingChanges(rows, values)).toEqual(result.changes)
+		expect(pendingChanges(rows, values, true, 'de')[0]).toMatchObject({ old: 'E4', new: 'Dis4' })
+		expect(pendingChanges(rows, values, true, 'en')[0]).toMatchObject({ old: 'E4', new: 'D♯4' })
 
 		const before = notes(SCORE)
 		const after = notes(result.xml)
@@ -238,5 +241,15 @@ describe('guards', () => {
 		expect(pitchText('C', 2, 5, true)).toBe('C𝄪5')
 		expect(pitchText('E', -2, 4, true)).toBe('E𝄫4')
 		expect(pitchText('D', 0.5, 4)).toBe('D(+0.5)4')
+	})
+})
+
+describe('note names', () => {
+	it('calls B "H" in German and Polish', () => {
+		expect(stepLabel('B', 'de_DE')).toBe('H')
+		expect(stepLabel('B', 'pl')).toBe('H')
+		expect(stepLabel('B', 'en')).toBe('B')
+		expect(stepLabel('B', 'nl')).toBe('B')
+		expect(stepLabel('A', 'de')).toBe('A')
 	})
 })

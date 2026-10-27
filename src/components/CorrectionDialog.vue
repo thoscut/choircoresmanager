@@ -26,6 +26,7 @@ import type { CorrectionResult, Detail, ReviewPoint } from '../types.ts'
 
 import { showSuccess } from '@nextcloud/dialogs'
 import { t } from '../l10n.ts'
+import { getLanguage } from '@nextcloud/l10n'
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, shallowRef, useId, watch } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
@@ -46,6 +47,7 @@ import {
 	rowValues,
 	sameMeasureLengths,
 	STEPS,
+	stepLabel,
 	voiceTargets,
 } from '../score/correction.ts'
 import { loadScore, renderPages, selectMeasures } from '../score/model.ts'
@@ -70,6 +72,9 @@ const emit = defineEmits<{
 	saved: [result: CorrectionResult]
 	close: []
 }>()
+
+/** Interface language, for the note names (H or B). */
+const language = getLanguage()
 
 const previewHeadingId = useId()
 const changesHeadingId = useId()
@@ -270,7 +275,7 @@ function setSyllable(row: NoteRow, lyric: number, text: number, raw: string): vo
 
 // ---- changes --------------------------------------------------------------------
 
-const changes = computed(() => pendingChanges(noteRows, valueMap(), true))
+const changes = computed(() => pendingChanges(noteRows, valueMap(), true, language))
 
 /**
  * One change in words.
@@ -510,7 +515,7 @@ function onUpdateOpen(open: boolean): void {
 									<td>
 										<select v-model="values[row.key].step" :aria-label="controlLabel(row, t('notenarchiv', 'Step'))">
 											<option v-for="step in STEPS" :key="step" :value="step">
-												{{ step }}
+												{{ stepLabel(step, language) }}
 											</option>
 										</select>
 									</td>

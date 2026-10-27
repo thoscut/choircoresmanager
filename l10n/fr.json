@@ -1514,6 +1514,7 @@
         "Valid version": "Version en vigueur",
         "The version the conductor has chosen for the choir, at most one per work. It says nothing about the rights.": "La version que la direction du chœur a choisie pour le chœur, au plus une par œuvre. Elle ne dit rien sur les droits.",
         "A copy kept only for the archive, e.g. the scan of a protected print. It is never shared, played or exported.": "Un exemplaire conservé uniquement pour les archives, p. ex. le scan d'une édition protégée. Il n'est jamais partagé, lu ni exporté.",
+        "A revision is one state of the MusicXML of a version, numbered 1, 2, 3 …: after a correction or a better transcription. The current revision is the one exports and printouts name.": "Une révision est un état du MusicXML d'une version, numéroté 1, 2, 3 … : après une correction ou une meilleure transcription. La révision en vigueur est celle que nomment les exports et les impressions.",
         "Check": "Vérification",
         "Report": "Signalement",
         "Applied": "Appliquée",

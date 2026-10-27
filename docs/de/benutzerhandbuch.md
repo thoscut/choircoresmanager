@@ -9,7 +9,7 @@
 Dieses Handbuch ist für alle, die sich um die Noten eines Chors kümmern: die
 Archivverwaltung, die Chorleitung, den Vorstand und die Revision.
 Chormitglieder finden ihren Teil unter
-[Für mich freigegeben](#für-mich-freigegeben). Zuerst erklärt das Handbuch
+[Mit mir geteilt](#mit-mir-geteilt). Zuerst erklärt das Handbuch
 einige Begriffe und wie du dich zurechtfindest, dann Aufgabe für Aufgabe, was
 jede Rolle tut, und am Ende, was bei häufigen Problemen hilft. Die Oberfläche
 gibt es auf Englisch und Deutsch (Du- und Sie-Form) sowie auf Französisch,
@@ -442,10 +442,10 @@ Stimmen, hervorgehobene Stimme, Tonart und Taktart).
 #### So übst du eine Stelle in Schleife
 
 1. Trage die Stelle in **Von Takt** und **Bis Takt** ein.
-2. Schalte daneben **Wiederholen** ein. Die Stelle wird gezeigt und beim
+2. Schalte daneben **Schleife** ein. Die Stelle wird gezeigt und beim
    Abspielen immer wieder gespielt, bis du **Pause** oder **Stopp** wählst.
-   Screenreader hören „Wiederholen an“ mit den Takten.
-3. Schalte **Wiederholen** aus, um wieder bis zum Ende zu spielen.
+   Screenreader hören „Schleife an“ mit den Takten.
+3. Schalte **Schleife** aus, um wieder bis zum Ende zu spielen.
 
 #### So zählst du vor dem Abspielen ein
 
@@ -565,7 +565,7 @@ Notenansicht:
 
 Hat die Administration es eingeschaltet, lässt sich ein ganzes Stück oder ein
 Ausschnitt über die Archivrollen hinaus teilen: mit den **Chormitgliedern**
-(sie melden sich an und sehen es unter „Für mich freigegeben“) oder mit
+(sie melden sich an und sehen es unter „Mit mir geteilt“) oder mit
 **allen** über einen öffentlichen Link ohne Anmeldung. Beide bekommen nur,
 was du teilst, das ganze Stück oder die gewählten Takte, nie die Notendatei;
 der Server sendet nur das und prüft bei jedem Aufruf die Rechte. Auf Wunsch
@@ -673,7 +673,7 @@ verlinkt, falls mitgegeben, den Scan. Läuft der Link ab, wird er widerrufen
 oder ist die Fassung nicht mehr freigegeben, zeigen die Seite und der Scan
 „nicht gefunden“ ohne Grund.
 
-![Die Seite eines öffentlichen Links im öffentlichen Layout von Nextcloud, ohne Anmeldung: Titel und Komposition von „Freude, schöner Götterfunken“, der Hinweis, dass die Wiedergabe von einem einfachen Synthesizer kommt, der Link „Scan (PDF) öffnen“, die Wiedergabe mit Einzähler und Wiederholen und die Noten des ganzen Stücks.](../screenshots/public-link.png)
+![Die Seite eines öffentlichen Links im öffentlichen Layout von Nextcloud, ohne Anmeldung: Titel und Komposition von „Freude, schöner Götterfunken“, der Hinweis, dass die Wiedergabe von einem einfachen Synthesizer kommt, der Link „Scan (PDF) öffnen“, die Wiedergabe mit Einzähler und Schleife und die Noten des ganzen Stücks.](../screenshots/public-link.png)
 
 ### Übertragungen prüfen
 
@@ -1401,9 +1401,9 @@ Die App ändert oder löscht einen Jahresstand nie.
 
 **So frierst du den Jahresstand ein**
 
-1. Öffne **Jahresstände**. Der Abschnitt **Stand einfrieren** sagt, für
+1. Öffne **Jahresstände**. Der Abschnitt **Archiv einfrieren** sagt, für
    welches Jahr und in welchen Ordner der Jahresstand angelegt wird.
-2. Wähle **Stand jetzt einfrieren …**. Der Dialog listet die drei Dateien
+2. Wähle **Archiv jetzt einfrieren …**. Der Dialog listet die drei Dateien
    und wie viele Archivdateien für die Prüfsummen gelesen werden.
 3. Wähle **Einfrieren** und lass die Seite offen; bei vielen Dateien dauert
    das einige Minuten. Eine Meldung nennt den Ordner des neuen Jahresstands.
@@ -1641,16 +1641,16 @@ mich freigegeben** mit den Stücken und Ausschnitten, die mit dem Chor geteilt
 sind. Siehst du gar kein Notenarchiv, lies
 [Kein Zugang zum Notenarchiv](#kein-zugang-zum-notenarchiv).
 
-### Für mich freigegeben
+### Mit mir geteilt
 
 Chormitglieder melden sich bei Nextcloud an und öffnen **Notenarchiv**. Sie
-sehen **Für mich freigegeben**: die mit dem Chor geteilten Stücke und
+sehen **Mit mir geteilt**: die mit dem Chor geteilten Stücke und
 Ausschnitte mit Titel, Komposition, **Ganzes Stück** oder den Takten,
 Stimme, der Notiz und wie lange jedes gilt, ob es sich abspielen lässt
 (**Abspielen: ja** oder **Abspielen: nein**) und ob der Scan dabei ist
 (**mit Scan (PDF)**).
 
-![Die Seite „Für mich freigegeben“ eines Chormitglieds: das ganze Stück „Der Mond ist aufgegangen“ mit der Notiz der Chorleitung, der Gültigkeit, dem Link „Scan (PDF) öffnen“, der Wiedergabe mit Einzähler und Wiederholen und den Noten mit hervorgehobenem Alt.](../screenshots/shared-with-me.png)
+![Die Seite „Mit mir geteilt“ eines Chormitglieds: das ganze Stück „Der Mond ist aufgegangen“ mit der Notiz der Chorleitung, der Gültigkeit, dem Link „Scan (PDF) öffnen“, der Wiedergabe mit Einzähler und Schleife und den Noten mit hervorgehobenem Alt.](../screenshots/shared-with-me.png)
 
 1. Wähle ein Stück in der Liste (ein Link, den du bekommen hast, öffnet es
    direkt). Die Noten erscheinen über der Liste, bei einem ganzen Stück alle
@@ -1667,7 +1667,7 @@ Stimme, der Notiz und wie lange jedes gilt, ob es sich abspielen lässt
    den Noten mit den Pfeiltasten links und rechts zum vorigen oder nächsten
    Takt.
 3. Um eine Stelle zu üben, gib **Von Takt** und **Bis Takt** an und wähle
-   **Anzeigen**; **Wiederholen** spielt die gezeigten Takte immer wieder.
+   **Anzeigen**; **Schleife** spielt die gezeigten Takte immer wieder.
    **Alle Takte** zeigt wieder alles.
 4. **Scan (PDF) öffnen** (wo mitgegeben) öffnet den Scan im PDF-Betrachter
    deines Browsers, in einem neuen Tab.
@@ -1704,7 +1704,7 @@ Notenarchiv; die App oder die Seite „Zugriff verboten“ sagt dir das. Rollen
 hängen an Nextcloud-Gruppen, nicht an Personen. Bitte die Administration,
 dein Konto in die Gruppe deiner Rolle aufzunehmen (siehe das
 [Administrationshandbuch](administrationshandbuch.md#2-rollen-und-gruppen)).
-Chormitglieder haben keine Rolle: Sie sehen nur **Für mich freigegeben**,
+Chormitglieder haben keine Rolle: Sie sehen nur **Mit mir geteilt**,
 und das nur, solange Links für Chormitglieder eingeschaltet sind.
 
 ### „Die Noten können nicht angezeigt werden“

@@ -56,7 +56,7 @@ describe('help at the place', () => {
 	})
 
 	it('explains every term with a sentence and a section of the guide', () => {
-		for (const term of ['version', 'copy', 'shelfmark', 'rightsStatus', 'release', 'validVersion', 'preservationCopy'] as const) {
+		for (const term of ['version', 'copy', 'shelfmark', 'rightsStatus', 'release', 'validVersion', 'preservationCopy', 'revision'] as const) {
 			const help = helpTerm(term)
 			expect(help.name, term).not.toBe('')
 			expect(help.text.length, term).toBeGreaterThan(20)

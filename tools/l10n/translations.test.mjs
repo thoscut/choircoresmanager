@@ -5,7 +5,7 @@
 
 // Checks every translation module: placeholders as in the English source,
 // complete plural forms, and plural rules of the server equal to those of the
-// browser (@nextcloud/l10n).
+// browser (@nextcloud/l10n). German terms keep one meaning each (TERMS).
 import { getPlural } from '@nextcloud/l10n'
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
@@ -26,7 +26,44 @@ function serverPlural(pluralForm) {
 	return new Function('n', `return Number(${expression})`)
 }
 
+/**
+ * German words with exactly one meaning (milestone 0.12, see glossary.md):
+ * a German text that contains the word must translate a source that says
+ * so. "Stand" is the revision of a version, "Ausgabe" the loan of a folder,
+ * "Freigabe" the release by the rights and "Schleife" the loop of the
+ * playback; sharing is "teilen", repeats in the score are "Wiederholungen".
+ */
+const TERMS = [
+	{ german: /\bStand(e?s)?\b|\bStände\b/, source: /revision/i },
+	{ german: /(?<![Ww]issenschaftliche[nr]? )\bAusgaben?\b|ausgegeben/, source: /loan|issu|hand|\bout\b|lent/i },
+	{ german: /Freigabe|freigegeben|freigeben|freizugeben/, source: /releas/i },
+	{ german: /Schleife/, source: /loop/i },
+	{ german: /Wiederhol/, source: /repeat|again|repetition/i },
+]
+
+/**
+ * Every German text of a translation entry.
+ *
+ * @param {string|string[]|{du: string[], sie: string[]}} value - entry
+ * @return {string[]}
+ */
+function texts(value) {
+	return typeof value === 'string' ? [value] : Array.isArray(value) ? value.flat() : [...value.du, ...value.sie]
+}
+
 describe('German translations', () => {
+	it('use each term in one meaning only', () => {
+		const wrong = []
+		for (const [source, value] of [...Object.entries(german.singular), ...Object.entries(german.plural)]) {
+			for (const { german: word, source: meaning } of TERMS) {
+				if (texts(value).some((text) => word.test(text)) && !meaning.test(source)) {
+					wrong.push(`${word}: ${source}`)
+				}
+			}
+		}
+		expect(wrong).toEqual([])
+	})
+
 	it('keep the placeholders of the source', () => {
 		for (const [source, value] of Object.entries(german.singular)) {
 			for (const text of Array.isArray(value) ? value : [value]) {

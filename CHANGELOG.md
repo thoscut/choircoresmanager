@@ -106,6 +106,12 @@ All notable changes to this app are documented in this file. The format follows
   separate columns for composer, lyricist and arranger (from the register
   of persons), the new version field "Work number (GEMA)", the rights
   status; headers in the language of the account.
+- **One word, one meaning** in German: "Stand" is only the revision of a
+  version (with help at its place), "Ausgabe" only the loan of a folder,
+  "Freigabe" only the release by the rights; sharing is "teilen" ("Mit mir
+  geteilt"), the loop of the playback is "Schleife", no longer
+  "Wiederholen". A check in `tools/l10n` keeps it so. The correction form
+  names the note B "H" in German and Polish.
 - Excerpts and whole pieces for choir members and the public no longer
   carry the encoder, the miscellaneous fields, XML comments or processing
   instructions of the MusicXML file.

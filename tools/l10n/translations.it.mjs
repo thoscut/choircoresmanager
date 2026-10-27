@@ -2251,6 +2251,8 @@ export const singular = {
 	"Work number (GEMA)": "Numero dell'opera (GEMA)",
 	"Revision valid since": "Revisione valida dal",
 	"The number of the work at the collecting society, e.g. from the GEMA repertoire search. It goes into the song order of a concert.": "Il numero dell'opera presso la società di gestione collettiva, ad es. dalla ricerca del repertorio GEMA. Compare nell'ordine dei brani di un concerto.",
+	"Revision": "Revisione",
+	"A revision is one state of the MusicXML of a version, numbered 1, 2, 3 …: after a correction or a better transcription. The current revision is the one exports and printouts name.": "Una revisione è uno stato del MusicXML di una versione, numerato 1, 2, 3 …: dopo una correzione o una trascrizione migliore. La revisione valida è quella indicata da esportazioni e stampe.",
 }
 
 export const plural = {
