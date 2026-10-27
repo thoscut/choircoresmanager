@@ -110,9 +110,11 @@ try {
 	$check('decided proposal cannot be decided again', $throws(fn () => $proposals->reject($created[0]->getId(), $uid, null)) !== null);
 	$check('read-only field cannot be proposed', $throws(fn () => $proposals->propose('version', $b->getId(), ['confirmed_by' => 'x'], $uid, null, null)) !== null);
 
-	// Backup: extended CSV and ODS in the export folder
-	$storedFiles = $export->storeBackup('integration-test', $uid);
-	$folder = Server::get(AppSettings::class)->exportFolder($uid);
+	// Backup: extended CSV and ODS in the backup folder (outside the archive folder, 0.10)
+	$storedFiles = $export->storeBackup('integration-test', $uid)['paths'];
+	$folder = Server::get(AppSettings::class)->backupFolder();
+	$check('the backup lies in the backup folder', count($storedFiles) === 3
+		&& str_starts_with($storedFiles[0], (string)Server::get(AppSettings::class)->backupFolderPath() . '/'), implode(', ', $storedFiles));
 	$ods = $folder->get(basename($storedFiles[1]))->getContent();
 	$zip = new ZipArchive();
 	$tmp = tempnam(sys_get_temp_dir(), 'ods');
@@ -125,7 +127,7 @@ try {
 	$db->rollBack();
 	$roles->setGroups(Roles::CONDUCTOR, $conductorGroups);
 	if ($storedFiles !== []) {
-		$folder = Server::get(AppSettings::class)->exportFolder($uid);
+		$folder = Server::get(AppSettings::class)->backupFolder();
 		foreach ($storedFiles as $path) {
 			if ($folder->nodeExists(basename($path))) {
 				$folder->get(basename($path))->delete();

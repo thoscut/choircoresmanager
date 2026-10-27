@@ -97,9 +97,10 @@ $autoBefore = $appConfig->hasKey(Application::APP_ID, AnnualSnapshotService::AUT
 	? $appConfig->getValueBool(Application::APP_ID, AnnualSnapshotService::AUTO_KEY) : null;
 
 // Snapshots lie in the backup folder, outside the archive folder (0.10).
-$archive = Server::get(AppSettings::class)->backupFolder();
+$archive = Server::get(AppSettings::class)->archiveFolder($uid);
+$backups = Server::get(AppSettings::class)->backupFolder();
 $snapshotPath = AnnualSnapshotService::FOLDER;
-$hadSnapshotFolder = $archive->nodeExists($snapshotPath);
+$hadSnapshotFolder = $backups->nodeExists($snapshotPath);
 /** @var list<string> $written names of the snapshot folders written by the test */
 $written = [];
 
@@ -280,7 +281,7 @@ try {
 	$first = $snapshots->createManually($uid);
 	$written[] = $first['name'];
 	$check('a snapshot is written', str_starts_with($first['name'], $year . '_') && $first['manifest']['files'] > 0, json_encode($first) ?: '');
-	$folder = $archive->get($snapshotPath . '/' . $first['name']);
+	$folder = $backups->get($snapshotPath . '/' . $first['name']);
 	$check('it holds the catalog as CSV and JSON and the manifest', $folder instanceof Folder
 		&& $folder->nodeExists(AnnualSnapshotService::CATALOG_CSV) && $folder->nodeExists(AnnualSnapshotService::CATALOG_JSON)
 		&& $folder->nodeExists(AnnualSnapshotService::MANIFEST));
@@ -298,8 +299,7 @@ try {
 		$csv = $folder->get(AnnualSnapshotService::CATALOG_CSV);
 		$check('the catalog of the snapshot names no accounts', $csv instanceof File && !str_contains(strtok($csv->getContent(), "\n") ?: '', 'confirmed_by'));
 	}
-	$check('the snapshot lies outside the archive folder', !str_starts_with($archive->getPath() . '/',
-		rtrim(Server::get(AppSettings::class)->archiveFolder($uid)->getPath(), '/') . '/'));
+	$check('the snapshot lies outside the archive folder', !str_starts_with($backups->getPath() . '/', rtrim($archive->getPath(), '/') . '/'));
 
 	// Changes between the snapshots
 	$kindBefore = $copy->getKind();
@@ -353,14 +353,14 @@ try {
 	$check('module configuration restored exactly', $switches() === $original);
 	// Delete by name: the rollback also removed the new folders from the file cache.
 	foreach ($written as $name) {
-		if ($archive->nodeExists($snapshotPath . '/' . $name)) {
-			$archive->get($snapshotPath . '/' . $name)->delete();
+		if ($backups->nodeExists($snapshotPath . '/' . $name)) {
+			$backups->get($snapshotPath . '/' . $name)->delete();
 		}
 	}
-	if (!$hadSnapshotFolder && $archive->nodeExists($snapshotPath)) {
-		$archive->get($snapshotPath)->delete();
+	if (!$hadSnapshotFolder && $backups->nodeExists($snapshotPath)) {
+		$backups->get($snapshotPath)->delete();
 	}
-	$check('the snapshot folders are deleted again', array_filter($written, fn (string $name): bool => $archive->nodeExists($snapshotPath . '/' . $name)) === []);
+	$check('the snapshot folders are deleted again', array_filter($written, fn (string $name): bool => $backups->nodeExists($snapshotPath . '/' . $name)) === []);
 }
 
 IntegrationTest::finish();

@@ -43,6 +43,7 @@ use OCA\Notenarchiv\Exception\NotSharedException;
 use OCA\Notenarchiv\Exception\UserFacingException;
 use OCA\Notenarchiv\Service\AppSettings;
 use OCA\Notenarchiv\Service\ArchiveAccess;
+use OCA\Notenarchiv\Service\AuditLog;
 use OCA\Notenarchiv\Service\FullBackupService;
 use OCA\Notenarchiv\Service\MetaService;
 use OCA\Notenarchiv\Service\Modules;
@@ -210,7 +211,7 @@ try {
 	$l = Server::get(IFactory::class)->get(Application::APP_ID, 'en');
 	$controller = fn (string $accountUid): SettingsController => new SettingsController(Server::get(IRequest::class), $accountUid,
 		$roles, $settings, Server::get(ArchiveAccess::class), Server::get(Modules::class), Server::get(RepertoireService::class),
-		Server::get(FullBackupService::class), $groups, $l, Server::get(LoggerInterface::class));
+		Server::get(FullBackupService::class), Server::get(AuditLog::class), $groups, $l, Server::get(LoggerInterface::class));
 	$refused = $controller($sharedUid)->access();
 	$check('an account without the settings page is refused', $refused->getStatus() === Http::STATUS_FORBIDDEN);
 	if ($delegation !== null) {
