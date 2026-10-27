@@ -312,10 +312,12 @@ jobs:
       - name: Install job tools and the PHP extensions Nextcloud needs
         run: |
           apt-get update -qq
-          apt-get install -y -qq --no-install-recommends git curl bzip2 ca-certificates libpng-dev libzip-dev libicu-dev >/dev/null
+          apt-get install -y -qq --no-install-recommends git curl bzip2 ca-certificates libpng-dev libfreetype-dev libzip-dev libicu-dev >/dev/null
+          # FreeType: Nextcloud draws the letter avatar of a new account
+          docker-php-ext-configure gd --with-freetype >/dev/null
           docker-php-ext-install -j"$(nproc)" gd intl pdo_mysql zip >/dev/null
           echo 'memory_limit = 1G' > /usr/local/etc/php/conf.d/zz-ci.ini
-          php -r 'foreach (["gd", "intl", "pdo_mysql", "zip"] as $e) { extension_loaded($e) || exit(1); }'
+          php -r 'foreach (["gd", "intl", "pdo_mysql", "zip"] as $e) { extension_loaded($e) || exit(1); } function_exists("imagettfbbox") || exit(1);'
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
