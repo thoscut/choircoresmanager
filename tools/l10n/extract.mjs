@@ -87,6 +87,10 @@ for (const f of files(join(root, 'lib'), ['.php'])) {
 	if (base.endsWith('Service/LinkService.php')) {
 		for (const m of src.matchAll(new RegExp('public const [A-Z_]+ = (' + STR + ');', 'g'))) add(unq(m[1]), 'link reason')
 	}
+	// Warnings about copies and files not covered by a license (translated by the controllers)
+	if (base.endsWith('Service/LicenseCoverage.php')) {
+		for (const m of src.matchAll(new RegExp('public const [A-Z_]+ = (' + STR + ');', 'g'))) add(unq(m[1]), 'license warning')
+	}
 	if (base.endsWith('RightsPolicy.php')) {
 		// Reasons why viewing or playback is denied (shown in the UI, also thrown)
 		for (const m of src.matchAll(new RegExp('(?:return|[?:])\\s*(' + STR + ')', 'g'))) add(unq(m[1]), base + ' reason')

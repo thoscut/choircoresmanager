@@ -69,15 +69,16 @@ export function measureProblem(scope: LinkScope, circle: LinkCircle, from: strin
 
 /**
  * Whether the dialog offers the scan: only for choir members and the
- * public, when the rights allow the link (the scan needs the same release
- * as the notes) and the copy has a PDF scan.
+ * public, when the rights allow the link and the scan (the scan needs the
+ * same release as the notes; for choir members of a protected version also
+ * a license for download and printing) and the copy has a PDF scan.
  *
  * @param circle - who can open the link
  * @param option - what the server says about that circle
  * @param scanCount - number of PDF scans of the copy
  */
 export function canOfferScan(circle: LinkCircle, option: CircleOption | null, scanCount: number): boolean {
-	return circle !== 'internal' && option !== null && option.available && option.allowed && scanCount > 0
+	return circle !== 'internal' && option !== null && option.available && option.allowed && option.scan && scanCount > 0
 }
 
 /**

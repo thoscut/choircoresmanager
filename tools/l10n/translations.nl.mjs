@@ -2209,6 +2209,17 @@ export const singular = {
 	"A file sync is already running. Wait until it has finished; the page shows its report afterwards.": "Er loopt al een bestandssynchronisatie. Wacht tot die klaar is; daarna toont de pagina het verslag.",
 	"The print station is already being synced. Wait until that run has finished.": "Het printstation wordt al gesynchroniseerd. Wacht tot die run klaar is.",
 	"An annual snapshot is already being made. Wait until it has finished.": "Er wordt al een jaaroverzicht gemaakt. Wacht tot het klaar is.",
+	"Photocopies without a license": "Fotokopieën zonder licentie",
+	"The whole PDF is shared, also with a link to some measures.": "De hele pdf wordt altijd gedeeld, ook bij een link naar enkele maten.",
+	"Current repertoire: photocopies without a license": "Actueel repertoire: fotokopieën zonder licentie",
+	"Online playback (audio on public links)": "Online afspelen (audio op openbare links)",
+	"Download and printing by choir members (scan in links)": "Downloaden en printen door koorleden (scan in links)",
+	"Digitisation (scans, MusicXML transcriptions)": "Digitalisering (scans, MusicXML-transcripties)",
+	"Photocopies of a version that is not confirmed public domain, without a license for copies for the binders.": "Fotokopieën van een versie zonder bevestigd publiek domein en zonder licentie voor kopieën voor de koormappen.",
+	"More copies than the licenses for the binders allow.": "Meer kopieën dan de licenties voor de koormappen toestaan.",
+	"Scans or transcriptions of a version that is not confirmed public domain, without a license for digitisation.": "Scans of transcripties van een versie zonder bevestigd publiek domein en zonder licentie voor digitalisering.",
+	"Choir members can save and print the scan: unless public domain is confirmed, it needs a license for download and printing by choir members. The catalog librarian records it on the tab \"Rights\".": "Koorleden kunnen de scan opslaan en printen: zonder bevestigd publiek domein is een licentie voor downloaden en printen door koorleden nodig. Het archiefbeheer legt die vast op het tabblad “Rechten”.",
+	"Playback on a public link needs public domain or a license for online playback (audio). The catalog librarian records it on the tab \"Rights\".": "Afspelen op een openbare link vraagt publiek domein of een licentie voor online afspelen (audio). Het archiefbeheer legt die vast op het tabblad “Rechten”.",
 }
 
 export const plural = {
@@ -2316,4 +2327,5 @@ export const plural = {
 	"Deadline %n week before the concert on %s.|Deadline %n weeks before the concert on %s.": ["Termijn %n week voor het concert op %s.", "Termijn %n weken voor het concert op %s."],
 	"The music archive keeps this folder up to date. It holds %n score (PDF) released for the print station.|The music archive keeps this folder up to date. It holds %n scores (PDF) released for the print station.": ["Het bladmuziekarchief houdt deze map actueel. Hij bevat %n bladmuziekbestand (PDF) dat is vrijgegeven voor het printstation.", "Het bladmuziekarchief houdt deze map actueel. Hij bevat %n bladmuziekbestanden (PDF) die zijn vrijgegeven voor het printstation."],
 	"%n shared link|%n shared links": ["%n gedeelde link", "%n gedeelde links"],
+	"Current repertoire: version with photocopies without a license|Current repertoire: versions with photocopies without a license": ["Actueel repertoire: versie met fotokopieën zonder licentie", "Actueel repertoire: versies met fotokopieën zonder licentie"],
 }

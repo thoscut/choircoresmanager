@@ -297,6 +297,7 @@ export async function fetchEntry(id: number): Promise<Detail> {
 		audit: list(data.audit),
 		score: data.score && typeof data.score === 'object' && typeof data.score.fileId === 'number' ? data.score : null,
 		licenses: list(data.licenses),
+		licenseWarnings: list(data.licenseWarnings),
 		releases,
 		proposals: list(data.proposals),
 		contributions: list(data.contributions),

@@ -235,6 +235,8 @@ final class RightsPolicyTest extends TestCase {
 	private const PUBLIC_NOT_RELEASED = 'Not released for publication. The catalog librarian sets the publication status of the version to "Released for publication".';
 	private const PUBLIC_UNCONFIRMED = 'Public domain is not confirmed yet. The catalog librarian confirms it on the tab "Rights"; then a public link can be made.';
 	private const PUBLIC_NO_LICENSE = 'A public link needs confirmed public domain or a valid license for online publication. The catalog librarian records it on the tab "Rights".';
+	private const PUBLIC_NO_AUDIO = 'Playback on a public link needs public domain or a license for online playback (audio). The catalog librarian records it on the tab "Rights".';
+	private const MEMBER_NO_DOWNLOAD = 'Choir members can save and print the scan: unless public domain is confirmed, it needs a license for download and printing by choir members. The catalog librarian records it on the tab "Rights".';
 
 	/**
 	 * @return iterable<string, array{0: array<string, mixed>, 1: list<array{0: string, 1?: ?string, 2?: ?string}>, 2: ?string, 3: ?string, 4: ?string}>
@@ -284,8 +286,12 @@ final class RightsPolicyTest extends TestCase {
 		yield 'confirmed public domain, blocked' => [$confirmed + ['publication_status' => 'blocked'], [], self::PUBLIC_NOT_RELEASED, self::PUBLIC_NOT_RELEASED];
 		yield 'unconfirmed public domain, released' => [['rights_status' => 'public_domain'] + $free, [], self::PUBLIC_UNCONFIRMED, self::PUBLIC_UNCONFIRMED];
 		yield 'unconfirmed public domain, online license' => [['rights_status' => 'public_domain'] + $free, [['online_publication']], null, null];
-		yield 'protected, online license' => [['rights_status' => 'protected'] + $free, [['online_publication']], null, self::PROTECTED_PLAY];
-		yield 'protected, online and practice audio' => [['rights_status' => 'protected'] + $free, [['online_publication,practice_audio']], null, null];
+		yield 'protected, online license' => [['rights_status' => 'protected'] + $free, [['online_publication']], null, self::PUBLIC_NO_AUDIO];
+		yield 'protected, online and practice audio: practice audio is no online playback' => [['rights_status' => 'protected'] + $free,
+			[['online_publication,practice_audio']], null, self::PUBLIC_NO_AUDIO];
+		yield 'protected, online publication and online playback' => [['rights_status' => 'protected'] + $free, [['online_publication,online_audio']], null, null];
+		yield 'protected, online playback ended' => [['rights_status' => 'protected'] + $free, [['online_publication'], ['online_audio', null, '2026-10-21']],
+			null, self::PUBLIC_NO_AUDIO];
 		yield 'protected, license for publication only' => [['rights_status' => 'protected'] + $free, [['publication']], self::PUBLIC_NO_LICENSE, self::PUBLIC_NO_LICENSE];
 		yield 'protected, online license ended' => [['rights_status' => 'protected'] + $free, [['online_publication', null, '2026-10-21']], self::PUBLIC_NO_LICENSE, self::PUBLIC_NO_LICENSE];
 		yield 'preservation copy' => [$confirmed + $free + ['preservation_copy' => true], [], self::PUBLIC_PRESERVATION, self::PUBLIC_PRESERVATION];
@@ -306,5 +312,35 @@ final class RightsPolicyTest extends TestCase {
 		$version = self::version($values);
 		self::assertSame($view, $policy->publicViewDenial($version, self::TODAY));
 		self::assertSame($play, $policy->publicPlayDenial($version, self::TODAY));
+	}
+
+	/**
+	 * @return iterable<string, array{0: array<string, mixed>, 1: list<array{0: string, 1?: ?string, 2?: ?string}>, 2: ?string}>
+	 */
+	public static function memberScanCases(): iterable {
+		$confirmed = ['rights_status' => 'public_domain', 'confirmed_at' => '2026-01-01'];
+		// version values, licenses, expected denial of the scan in a link for choir members
+		yield 'confirmed public domain' => [$confirmed, [], null];
+		yield 'protected, portal license only: viewing, no copies' => [['rights_status' => 'protected'], [['portal']], self::MEMBER_NO_DOWNLOAD];
+		yield 'protected, portal and download by members' => [['rights_status' => 'protected'], [['portal,member_download']], null];
+		yield 'protected, portal and self-printing' => [['rights_status' => 'protected'], [['portal'], ['self_print']], null];
+		yield 'protected, download license ended' => [['rights_status' => 'protected'], [['portal'], ['member_download', null, '2026-10-21']], self::MEMBER_NO_DOWNLOAD];
+		yield 'unconfirmed public domain, portal license' => [['rights_status' => 'public_domain'], [['portal']], self::MEMBER_NO_DOWNLOAD];
+		yield 'not released' => [['rights_status' => 'protected'], [['member_download']], self::MEMBER_NOT_RELEASED];
+		yield 'preservation copy' => [$confirmed + ['preservation_copy' => true], [['portal,member_download']], self::MEMBER_PRESERVATION];
+	}
+
+	/**
+	 * The scan in a link for choir members can be saved and printed: beyond
+	 * the release of the notes it needs confirmed public domain or a license
+	 * for download and printing by members (or self-printing).
+	 *
+	 * @param array<string, mixed> $values
+	 * @param list<array{0: string, 1?: ?string, 2?: ?string}> $licenseSpecs
+	 */
+	#[DataProvider('memberScanCases')]
+	public function testTheScanForChoirMembersNeedsALicenseForCopies(array $values, array $licenseSpecs, ?string $denial): void {
+		$licenses = array_map(fn (array $spec): License => self::license(...$spec), $licenseSpecs);
+		self::assertSame($denial, $this->practicePolicy([], $licenses)->memberScanDenial(self::version($values), self::TODAY));
 	}
 }

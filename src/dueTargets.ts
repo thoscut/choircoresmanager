@@ -45,6 +45,8 @@ export function dueTarget(key: string): DueTarget {
 		return { view: 'catalog', catalog: { repertoire: 'current', noValidVersion: true } }
 	case 'licenses_expiring':
 		return { view: 'licenses' }
+	case 'copies_unlicensed':
+		return { view: 'catalog', catalog: { repertoire: 'current', copiesUnlicensed: true } }
 	default:
 		return { view: 'catalog' }
 	}

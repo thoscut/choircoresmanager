@@ -39,6 +39,8 @@ export function dueCardLabel(key: string, count: number, fallback: string): stri
 		return n('notenarchiv', 'Current repertoire: preservation copy with originals to check', 'Current repertoire: preservation copies with originals to check', count)
 	case 'licenses_expiring':
 		return n('notenarchiv', 'License ending or ended', 'Licenses ending or ended', count)
+	case 'copies_unlicensed':
+		return n('notenarchiv', 'Current repertoire: version with photocopies without a license', 'Current repertoire: versions with photocopies without a license', count)
 	case 'valid_missing':
 		return n('notenarchiv', 'Current repertoire: work without a chosen valid version', 'Current repertoire: works without a chosen valid version', count)
 	default:

@@ -61,6 +61,7 @@ below explain the reasons.
 | Practice audio of choir members stays within the link and is recorded with the role | `SharingTest::testChoirMembersMakePracticeAudioOfTheirExcerptOnly`, `testTheAuditLogNamesTheRoleOfAChoirMember` |
 | The repertoire page lists only public-domain works and links only to `cpdl.org` and `imslp.org` over https | `SharingTest::testTheRepertoirePageShowsChosenPublicDomainWorksOnly`, `testLinksToCpdlAndImslpMustBeHttpsToTheirSite` |
 | The API for agents needs its module, a role and a limit on every route, and decides nothing | CS `testEveryApiV1RouteNeedsTheInterfaceItsModuleARoleAndALimit`, `testNoApiV1RouteDecidesOrCorrects`, `testASwitchedOffApiV1RouteAnswers404WithOcsMeta`; agent run in `tools/ci/integration-demo.sh` |
+| The scan in links for choir members needs a license for copies unless public domain is confirmed; public playback of protected versions a license for online playback | `RightsPolicyTest::testTheScanForChoirMembersNeedsALicenseForCopies`, `testPublicLinks`; `SharingTest::testTheDialogLearnsWhatTheRecipientsGet` |
 | Internal preservation copies (a version marked as one, or a copy of that kind) are listed and refused alike by the app's pages and the API for agents, for every role | `PreservationCopyParityTest::testBothInterfacesListTheSameCopies`, `testBothInterfacesRefuseTheSameCopies` |
 | Answers of the API for agents name no accounts; preservation copies only for the roles that may view them | `ApiV1ControllerTest::testACopyWithoutAccountNamesAndAPreservationCopyOnlyForItsRoles`, `testTheReviewOfACopyHasNoAccountNamesAndComesInPages`, `testPreservationCopiesOnlyForRolesThatMayViewThem` |
 | The MCP server never shows the app password and sends nothing in read-only mode | `tools/mcp/test`: "never appear in tool results" (secrets), "send nothing in read-only mode", "leaves out the writing tools in read-only mode" |
@@ -193,7 +194,12 @@ made and on every call the server checks:
 - never an internal preservation copy;
 - the same for the whole piece, an excerpt and the scan: legally an excerpt
   counts as much as the whole piece and a scan as much as the notes
-  (guideline 2), so none of them has a release of its own;
+  (guideline 2), so none of them has a release of its own; the scan in a
+  link for choir members, which they can save and print, additionally needs
+  confirmed public domain or a license for download and printing by
+  members (or self-printing);
+- on public links, playback of a protected version needs a license for
+  online playback (audio); a license for practice audio covers the choir;
 - playback and practice audio as in the archive (public domain or a license
   for practice audio; practice audio files additionally a confirmed status
   or that license). Every practice file of a choir member is recorded in the

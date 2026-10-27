@@ -372,10 +372,21 @@ The entry (`GET /api/entries/{id}`) additionally contains:
 ```json
 "licenses": [{ "id": 3, "version_id": 1, "holder": "…", "uses": "binder,practice_audio", "quantity": 30,
                "valid_from": null, "valid_until": "2027-12-31", "evidence": "…", "notes": null }],
+"licenseWarnings": ["Photocopies of a version that is not confirmed public domain, without a license for copies for the binders."],
 "releases": { "portal": "reason why not released, or null", "onPortal": false, "printStation": "… or null" },
 "proposals": [{ "id": 7, "object_type": "version", "object_id": 1, "field": "key_signature",
                 "new_value": "\"D major\"", "reason": "…", "source": "round 40", "status": "open", "created_by": "…", "created": 1761150000 }]
 ```
+
+`licenseWarnings` (translated, milestone 0.11; empty while the module
+`rights` is off) warns when the version is not confirmed public domain and
+its active copies have photocopies (kind `photocopy` or `copies_count`)
+without a valid license with the use `binder`, more copies than the
+quantities of those licenses (when all of them have one), or this copy has
+scans or transcriptions without a license with the use `digitisation`. The
+rows of `GET /api/entries` carry `copies_unlicensed` (the first two
+cases), the start page the card `copies_unlicensed` (current repertoire),
+and the lines of a concert the same warnings. Nothing is blocked.
 
 New version fields (see `meta.fields`): `publication_status`, `review_status`,
 `rule1_status`, `rule1_count`, `rule1_checked`, `confirmed_by`,
@@ -2051,10 +2062,11 @@ librarian, conductor, operations; the account must be allowed to view the
 version) tells the dialog what a link would allow, before it is made:
 
 ```json
-{ "members": { "available": true, "allowed": true, "reason": null, "playback": true, "practiceAudio": true },
+{ "members": { "available": true, "allowed": true, "reason": null, "scan": false,
+               "scanReason": "Choir members can save and print the scan: …", "playback": true, "practiceAudio": true },
   "public": { "available": true, "allowed": false,
               "reason": "Not released for publication. The catalog librarian sets the publication status of the version to \"Released for publication\".",
-              "playback": false, "practiceAudio": false },
+              "scan": false, "scanReason": null, "playback": false, "practiceAudio": false },
   "scans": [{ "id": 81, "name": "1-03_Grosser-Gott.pdf" }] }
 ```
 
@@ -2064,9 +2076,14 @@ of the music archive under "Modules".`). `allowed`: the rights allow the
 link. `reason` (translated) says why it is not allowed, or else why the
 recipients cannot play it. `playback`: the recipients can play it;
 `practiceAudio`: choir members can make practice files (always `false` for
-`public`). `scans`: the PDF scans of the copy (role `score_pdf`, still
-found) that an allowed link may offer; the dialog offers "Include the scan
-(PDF)" only when there is one and the circle is allowed.
+`public`). `scan`: the rights allow the link to offer the scan; for choir
+members a version that is not confirmed public domain needs a license with
+the use `member_download` or `self_print` (milestone 0.11), and
+`scanReason` (translated) says so. `scans`: the PDF scans of the copy (role
+`score_pdf`, still found) that an allowed link may offer; the dialog offers
+"Include the scan (PDF)" only when there is one and `scan` is true. A
+public link plays a protected version only with a license with the use
+`online_audio`; `practice_audio` covers the choir only.
 
 ### The page of the choir members
 

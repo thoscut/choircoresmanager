@@ -43,7 +43,7 @@ use OCP\IUserManager;
  * @psalm-import-type Proposal from ProtectionTerm as ProtectionProposal
  * @psalm-type Entry = array{work: Work, version: WorkVersion, copy: Copy, files: list<ArchiveFile>,
  *     score: ?array{fileId: int, fileName: string, canView: bool, canPlay: bool, reason: ?string, canExportAudio: bool, exportReason: ?string},
- *     licenses: list<License>,
+ *     licenses: list<License>, licenseWarnings: list<string>,
  *     releases: array{portal: ?string, onPortal: bool, printStation: ?string}, tasks: list<Task>, links: list<LinkView>,
  *     proposals: list<Proposal>, siblings: list<array{id: int, shelfmark: string, version_id: int, status: string}>,
  *     contributions: list<array<string, string|int|bool|null|array<string, string|int|bool|null>>>, protection: ?ProtectionProposal,
@@ -169,9 +169,22 @@ class CatalogService {
 		// Review state of the transcription (milestone 0.6); null while the review is switched off
 		$review = $this->modules->isEnabled(ReviewService::MODULE) ? $this->reviewPoints->countsPerCopy() : null;
 
+		$copies = $this->copies->findAll();
+		$copiesPerVersion = [];
+		foreach ($copies as $copy) {
+			$copiesPerVersion[$copy->getVersionId()][] = $copy;
+		}
+		// Photocopies without a license (milestone 0.11): only a warning, one value per version
+		$licenses = $this->licenses->findAllByVersion();
+		$day = $this->rights->today(null);
+		$unlicensed = [];
 		$rows = [];
-		foreach ($this->copies->findAll() as $copy) {
+		foreach ($copies as $copy) {
 			$version = $versions[$copy->getVersionId()] ?? null;
+			if ($version !== null && !isset($unlicensed[$version->getId()])) {
+				$unlicensed[$version->getId()] = LicenseCoverage::copies($version, $copiesPerVersion[$version->getId()] ?? [],
+					$licenses[$version->getId()] ?? [], $day) !== [];
+			}
 			$work = self::listedWork($version === null ? null : ($works[$version->getWorkId()] ?? null), $works);
 			$counts = $fileCounts[$copy->getId()] ?? [];
 			$rows[] = [
@@ -190,6 +203,7 @@ class CatalogService {
 				'rights_confirmed' => $version?->getValue('rights_confirmed'),
 				'confirmed_at' => $version?->getValue('confirmed_at'),
 				'preservation_copy' => $version !== null && RightsPolicy::isPreservationCopy($version, $copy),
+				'copies_unlicensed' => $version !== null && $unlicensed[$version->getId()],
 				'publication' => $version?->getPublication(),
 				'valid_since' => $version?->getValue('valid_since'),
 				'repertoire' => $work?->getValue('repertoire_import'),
@@ -203,6 +217,27 @@ class CatalogService {
 			];
 		}
 		return $rows;
+	}
+
+	/**
+	 * Whether the copies of a version and the files of this copy are covered
+	 * by its licenses (LicenseCoverage); English source strings.
+	 *
+	 * @param list<ArchiveFile> $files
+	 * @param list<License> $licenses
+	 * @return list<string>
+	 */
+	private function licenseWarnings(WorkVersion $version, array $files, array $licenses, string $day): array {
+		$counts = [];
+		foreach ($files as $file) {
+			if ($file->getFound() !== false) {
+				$type = (string)$file->getType();
+				$counts[$type] = ($counts[$type] ?? 0) + 1;
+			}
+		}
+		$warnings = LicenseCoverage::copies($version, $this->copies->findByVersion($version->getId()), $licenses, $day);
+		$digitised = LicenseCoverage::digitisation($version, $counts, $licenses, $day);
+		return $digitised === null ? $warnings : [...$warnings, $digitised];
 	}
 
 	/**
@@ -257,6 +292,7 @@ class CatalogService {
 			'score' => $score,
 			// Licenses still decide about releases and playback when their maintenance is switched off.
 			'licenses' => $active['rights'] ? $licenses : [],
+			'licenseWarnings' => $active['rights'] ? $this->licenseWarnings($version, $files, $licenses, $day) : [],
 			'releases' => [
 				'portal' => $this->rights->portalDenial($version, $licenses, $day),
 				'onPortal' => $this->rights->isOnPortal($version),

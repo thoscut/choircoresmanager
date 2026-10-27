@@ -103,6 +103,8 @@ export interface Entry {
 	/** date of the confirmation of the rights in the app, or null */
 	confirmed_at?: string | null
 	preservation_copy: boolean
+	/** photocopies of the version not covered by a license for the binders (only a warning) */
+	copies_unlicensed?: boolean
 	publication: string | null
 	valid_since: string | null
 	repertoire: string | null
@@ -384,6 +386,10 @@ export interface CircleOption {
 	allowed: boolean
 	/** translated reason with the next step when not available or not allowed */
 	reason: string | null
+	/** the rights allow the link to offer the scan (choir members: a license for download and printing unless public domain) */
+	scan: boolean
+	/** translated reason why an allowed link may not offer the scan */
+	scanReason: string | null
 	/** the recipients can play the excerpt */
 	playback: boolean
 	/** choir members can make practice files of it */
@@ -880,6 +886,8 @@ export interface Filters {
 	noValidVersion: boolean
 	/** only copies with open review points of a transcription */
 	reviewOpen: boolean
+	/** photocopies not covered by a license for the binders (milestone 0.11) */
+	copiesUnlicensed: boolean
 }
 
 /** Facts the filters need beyond the entry itself. */
@@ -1375,6 +1383,12 @@ export interface Detail {
 	/** null if the copy has no MusicXML */
 	score: ScoreInfo | null
 	licenses: License[]
+	/**
+	 * Translated warnings when copies or files of the version are not covered
+	 * by its licenses (photocopies, more copies than licensed, scans and
+	 * transcriptions); only a warning, nothing is blocked
+	 */
+	licenseWarnings?: string[]
 	releases: Releases
 	proposals: Proposal[]
 	tasks: Task[]

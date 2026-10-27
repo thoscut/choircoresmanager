@@ -113,7 +113,7 @@ class SharedLinkService {
 				'canExportAudio' => $playDenial === null && $this->modules->isEnabled(Modules::MEMBER_PRACTICE_AUDIO)
 					&& $this->policy->memberPracticeAudioDenial($version, $today, $copy) === null,
 				'reason' => $playDenial,
-				'scan' => $link->getScanFileId() !== null,
+				'scan' => $link->getScanFileId() !== null && $this->policy->memberScanDenial($version, $today, $copy) === null,
 			];
 		}
 		return $rows;
@@ -139,7 +139,12 @@ class SharedLinkService {
 	 * @throws UserFacingException
 	 */
 	public function memberScan(string $token, string $uid): File {
-		return $this->scan($this->memberLink($token, $uid)['link']);
+		['link' => $link, 'copy' => $copy, 'version' => $version] = $this->memberLink($token, $uid);
+		$denial = $this->policy->memberScanDenial($version, $this->rights->today($uid), $copy);
+		if ($denial !== null) {
+			throw new AccessDeniedException($denial);
+		}
+		return $this->scan($link);
 	}
 
 	/**

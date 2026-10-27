@@ -65,6 +65,7 @@ export const DEFAULT_FILTERS: Readonly<Filters> = Object.freeze({
 	unconfirmed: false,
 	noValidVersion: false,
 	reviewOpen: false,
+	copiesUnlicensed: false,
 })
 
 /**
@@ -83,6 +84,7 @@ export function moreFiltersActive(filters: Filters): number {
 		filters.unconfirmed,
 		filters.noValidVersion,
 		filters.reviewOpen,
+		filters.copiesUnlicensed,
 	].filter(Boolean).length
 }
 
@@ -213,6 +215,7 @@ export function hasActiveFilters(filters: Filters): boolean {
 		|| filters.unconfirmed
 		|| filters.noValidVersion
 		|| filters.reviewOpen
+		|| filters.copiesUnlicensed
 }
 
 /**
@@ -269,6 +272,9 @@ export function filterEntries(entries: Entry[], filters: Filters, index: Map<num
 			return false
 		}
 		if (filters.reviewOpen && !((entry.review_open ?? 0) > 0)) {
+			return false
+		}
+		if (filters.copiesUnlicensed && entry.copies_unlicensed !== true) {
 			return false
 		}
 		return true

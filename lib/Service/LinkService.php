@@ -51,7 +51,7 @@ use OCP\IUserManager;
  * account.
  *
  * @psalm-type LinkView = array<string, string|int|bool|null>
- * @psalm-type CircleOption = array{available: bool, allowed: bool, reason: ?string, playback: bool, practiceAudio: bool}
+ * @psalm-type CircleOption = array{available: bool, allowed: bool, reason: ?string, scan: bool, scanReason: ?string, playback: bool, practiceAudio: bool}
  * @psalm-type ScanOption = array{id: int, name: string}
  */
 class LinkService {
@@ -129,6 +129,10 @@ class LinkService {
 		if ($scanFileId !== null && $scanFileId !== '') {
 			if (!$shared) {
 				throw new InvalidInputException('Only links for choir members and public links offer the scan; the archive roles see it beside the score.');
+			}
+			$scanDenial = $circle === ExcerptLink::CIRCLE_MEMBERS ? $this->policy->memberScanDenial($version, $today, $copy) : null;
+			if ($scanDenial !== null) {
+				throw new AccessDeniedException($scanDenial);
 			}
 			$scanFileId = $this->checkScan($copyId, $scanFileId, $uid);
 		} else {
@@ -264,15 +268,19 @@ class LinkService {
 	 */
 	private function circleOption(string $circle, WorkVersion $version, Copy $copy, bool $hasScore, string $today): array {
 		if (!$this->modules->isEnabled(self::CIRCLE_MODULES[$circle] ?? '')) {
-			return ['available' => false, 'allowed' => false, 'reason' => self::SWITCHED_OFF, 'playback' => false, 'practiceAudio' => false];
+			return ['available' => false, 'allowed' => false, 'reason' => self::SWITCHED_OFF, 'scan' => false, 'scanReason' => null, 'playback' => false,
+				'practiceAudio' => false];
 		}
 		$members = $circle === ExcerptLink::CIRCLE_MEMBERS;
 		$denial = $this->shareDenial($circle, $version, $today, $copy) ?? ($hasScore ? null : self::NO_SCORE);
 		$playDenial = $members ? $this->policy->memberPlayDenial($version, $today, $copy) : $this->policy->publicPlayDenial($version, $today, $copy);
+		$scanDenial = $denial ?? ($members ? $this->policy->memberScanDenial($version, $today, $copy) : null);
 		return [
 			'available' => true,
 			'allowed' => $denial === null,
 			'reason' => $denial ?? $playDenial,
+			'scan' => $scanDenial === null,
+			'scanReason' => $denial === null ? $scanDenial : null,
 			'playback' => $denial === null && $playDenial === null,
 			'practiceAudio' => $members && $denial === null && $playDenial === null && $this->modules->isEnabled(Modules::MEMBER_PRACTICE_AUDIO)
 				&& $this->policy->memberPracticeAudioDenial($version, $today, $copy) === null,

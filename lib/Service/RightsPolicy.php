@@ -140,6 +140,27 @@ class RightsPolicy {
 	}
 
 	/**
+	 * Whether a link for choir members may offer the PDF scan, which choir
+	 * members can save and print: the release of the notes, and for a
+	 * version that is not confirmed public domain a license for download
+	 * and printing by choir members (or for self-printing). A license for
+	 * the singers' portal alone covers viewing, not copies (§ 53 (4) UrhG).
+	 *
+	 * @return string|null null when allowed, otherwise the reason with the next step
+	 */
+	public function memberScanDenial(WorkVersion $version, string $day, ?Copy $copy = null): ?string {
+		$denial = $this->memberViewDenial($version, $day, $copy);
+		if ($denial !== null || ($version->getRightsStatus() === 'public_domain' && $version->isConfirmed())) {
+			return $denial;
+		}
+		$licenses = $this->licenses->findByVersion($version->getId());
+		if ($this->rights->hasLicense($licenses, 'member_download', $day) || $this->rights->hasLicense($licenses, 'self_print', $day)) {
+			return null;
+		}
+		return 'Choir members can save and print the scan: unless public domain is confirmed, it needs a license for download and printing by choir members. The catalog librarian records it on the tab "Rights".';
+	}
+
+	/**
 	 * Playback of a link for choir members: the release for members and the
 	 * rights for playback (see playDenial).
 	 *
@@ -188,12 +209,22 @@ class RightsPolicy {
 	}
 
 	/**
-	 * Playback on the page of a public link.
+	 * Playback on the page of a public link: a public domain version plays,
+	 * a protected one only with a license for online playback; a license for
+	 * practice audio covers the use inside the choir, not making a sound
+	 * version available to everyone (§ 19a UrhG).
 	 *
 	 * @return string|null null when allowed, otherwise the reason
 	 */
 	public function publicPlayDenial(WorkVersion $version, string $day, ?Copy $copy = null): ?string {
-		return $this->publicViewDenial($version, $day, $copy) ?? $this->playRightsDenial($version, $day, $copy);
+		$denial = $this->publicViewDenial($version, $day, $copy);
+		if ($denial !== null || $version->getRightsStatus() === 'public_domain') {
+			return $denial;
+		}
+		if ($this->rights->hasLicense($this->licenses->findByVersion($version->getId()), 'online_audio', $day)) {
+			return null;
+		}
+		return 'Playback on a public link needs public domain or a license for online playback (audio). The catalog librarian records it on the tab "Rights".';
 	}
 
 	/**

@@ -547,7 +547,8 @@ Music librarians, operations and the conductor share from the score viewer
 6. Where the copy has a scan, **Include the scan (PDF)** offers it too (with
    several scans, choose one under **Which scan?**). The recipients open it
    in the PDF viewer of their browser. Whoever sees the scan can also save
-   it; share it only where that is fine.
+   it; share it only where that is fine. The whole PDF is shared, also with
+   a link to some measures.
 7. **What the recipients see** lists what is shared (**Whole piece** or the
    measures), the focus voice, verse, tempo, whether they can play it,
    whether they can make practice files, whether the scan is included, and
@@ -564,6 +565,13 @@ do instead of offering **Create link**, for example *Public domain is not
 confirmed yet. The catalog librarian confirms it on the tab "Rights"; then
 the version can be shared with choir members.* An excerpt needs both
 measures, and they must exist in the score.
+
+Choir members can save and print a scan, which a license for the singers'
+portal usually does not allow. Unless public domain is confirmed, the scan
+in a link for choir members therefore needs a license with the use
+"Download and printing by choir members (scan in links)" (or
+"Self-printing by singers"); without it the dialog offers the notes and says
+why the scan is missing.
 
 Playback follows the same rules as in the archive (public domain, or a
 license for practice audio). Practice files for choir members additionally
@@ -602,6 +610,11 @@ It is only possible when
   "Online publication (public links)" (a license for "Publication" alone is
   not enough),
 - and it is no internal preservation copy.
+
+A protected version plays on a public link only with a license with the use
+"Online playback (audio on public links)": a license for practice audio
+covers the use inside the choir, not a sound version for everyone. Public
+domain versions play as in the archive.
 
 The scan (PDF) can be included under the same conditions. The page shows
 title, composer, the whole piece or the measures, the focus voice and a text
@@ -963,13 +976,26 @@ confirmation.
 (at least one), number of copies, validity, evidence and notes. Each use is
 separate: copies for the binders, singers' portal, self-printing by singers,
 print station, practice audio, recording, publication, online publication
-(public links) and **transfer to a legal successor**. The last one records
+(public links), online playback (audio on public links), download and
+printing by choir members (scan in links), digitisation (scans, MusicXML
+transcriptions) and **transfer to a legal successor**. The last one records
 that the license may pass to a legal successor together with the archive,
 for example when choirs merge or another body takes over the archive; tick
 it only when the license says so. A license for printing does not allow the
 singers' portal. Licenses are never deleted; an ended license stays as a
 record. **Ending licenses** lists the licenses that end within the chosen
 period or have ended.
+
+Above the licenses the rights tab warns when copies or files of a version
+that is not confirmed public domain are not covered: photocopies (copies of
+the kind "Photocopy" or a number of copies) without a license for copies for
+the binders, more copies than the quantities of those licenses, and scans or
+transcriptions without a license for digitisation. Photocopies of sheet
+music need the consent of the rights holder, also for the choir's own use.
+The warnings block nothing. The start page counts the versions of the
+current repertoire with photocopies without a license, the catalog filter
+**Photocopies without a license** lists them, and the programme of a concert
+shows the warning at the piece.
 
 ### Releases: singers' portal and print station
 

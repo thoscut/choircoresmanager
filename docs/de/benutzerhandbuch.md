@@ -588,7 +588,8 @@ mit **Neuer Link** im Reiter für Aufgaben und Links eines Exemplars):
 6. Hat das Exemplar einen Scan, gibt **Scan (PDF) mitgeben** ihn ebenfalls
    mit (bei mehreren Scans wählst du einen unter **Welcher Scan?**). Wer den
    Link hat, öffnet ihn im PDF-Betrachter des Browsers. Wer den Scan sieht,
-   kann ihn auch speichern; gib ihn nur mit, wo das in Ordnung ist.
+   kann ihn auch speichern; gib ihn nur mit, wo das in Ordnung ist. Geteilt
+   wird immer das ganze PDF, auch bei einem Link auf einige Takte.
 7. **Das ist beim Öffnen des Links zu sehen** nennt, was geteilt wird
    (**Ganzes Stück** oder die Takte), die hervorgehobene Stimme, Strophe,
    Tempo, ob es sich abspielen lässt, ob sich Übe-Dateien erstellen lassen,
@@ -607,6 +608,13 @@ der Dialog statt **Link erstellen**, warum und was zu tun ist, zum Beispiel
 sie im Reiter „Rechte“; danach lässt sich die Fassung mit den
 Chormitgliedern teilen.* Ein Ausschnitt braucht beide Takte, und sie müssen
 in den Noten vorkommen.
+
+Chormitglieder können einen Scan speichern und ausdrucken; das erlaubt eine
+Lizenz für das Chorportal meist nicht. Ohne bestätigte Gemeinfreiheit
+braucht der Scan in einem Link für Chormitglieder deshalb eine Lizenz mit
+der Nutzung „Download und Ausdruck durch Chormitglieder (Scan in Links)“
+(oder „Selbstausdruck durch Chormitglieder“). Fehlt sie, bietet der Dialog
+die Noten an und sagt, warum der Scan fehlt.
 
 Für das Abspielen gelten dieselben Regeln wie im Archiv (gemeinfrei oder
 eine Lizenz für Übe-Audio). Übe-Dateien für Chormitglieder brauchen
@@ -648,6 +656,11 @@ Das geht nur, wenn
   „Online-Veröffentlichung (öffentliche Links)“ hat (eine Lizenz nur für
   „Veröffentlichung“ genügt nicht),
 - und sie keine interne Erhaltungskopie ist.
+
+Eine geschützte Fassung lässt sich auf einem öffentlichen Link nur mit einer
+Lizenz für die Nutzung „Online-Wiedergabe (Audio auf öffentlichen Links)“
+abspielen: Eine Lizenz für Übe-Audio deckt die Nutzung im Chor, nicht eine
+Klangfassung für alle. Gemeinfreie Fassungen spielen wie im Archiv.
 
 Unter denselben Bedingungen lässt sich der Scan (PDF) mitgeben. Die Seite
 zeigt Titel, Komposition, das ganze Stück oder die Takte, die hervorgehobene
@@ -1034,14 +1047,27 @@ vorhandene Bestätigung auf.
 (zum Beispiel ein Verlag), die Nutzungen (mindestens eine), die Anzahl der Kopien, die Gültigkeit, den
 Beleg und Notizen. Jede Nutzung zählt für sich: Kopien für die Chormappen,
 Chorportal, Selbstausdruck durch Chormitglieder, Druckstation, Übe-Audio,
-Aufnahme, Veröffentlichung, Online-Veröffentlichung (öffentliche Links) und
-**Weitergabe an die Rechtsnachfolge**. Die letzte hält fest, dass die Lizenz
+Aufnahme, Veröffentlichung, Online-Veröffentlichung (öffentliche Links),
+Online-Wiedergabe (Audio auf öffentlichen Links), Download und Ausdruck
+durch Chormitglieder (Scan in Links), Digitalisierung (Scans,
+MusicXML-Übertragungen) und **Weitergabe an die Rechtsnachfolge**. Die letzte hält fest, dass die Lizenz
 mit dem Archiv an eine Rechtsnachfolge übergehen darf, zum Beispiel wenn
 Chöre fusionieren oder ein anderer Träger das Archiv übernimmt. Hake sie nur
 an, wenn die Lizenz das sagt. Eine Lizenz zum Drucken erlaubt nicht das
 Chorportal. Lizenzen werden nie gelöscht; eine beendete Lizenz bleibt als
 Nachweis. **Endende Lizenzen** listet die Lizenzen, die im gewählten Zeitraum
 enden oder schon geendet haben.
+
+Über den Lizenzen warnt der Reiter „Rechte“, wenn Exemplare oder Dateien
+einer Fassung ohne bestätigte Gemeinfreiheit nicht gedeckt sind: Fotokopien
+(Exemplare der Art „Kopie“ oder eine Anzahl Kopien) ohne Lizenz für
+Kopien für die Chormappen, mehr Kopien, als diese Lizenzen zählen, und Scans
+oder Übertragungen ohne Lizenz für die Digitalisierung. Fotokopien von Noten
+brauchen die Einwilligung der Rechteinhaber, auch für den Gebrauch im Chor.
+Die Warnungen sperren nichts. Die Startseite zählt die Fassungen des
+aktuellen Repertoires mit Fotokopien ohne Lizenz, der Filter **Fotokopien
+ohne Lizenz** im Werkverzeichnis listet sie, und das Programm eines Konzerts
+zeigt die Warnung beim Stück.
 
 ### Freigaben: Chorportal und Druckstation
 

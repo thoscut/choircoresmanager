@@ -134,7 +134,7 @@ final class SharingTest extends TestCase {
 	 */
 	private function policy(array $denials = []): RightsPolicy {
 		$policy = $this->createStub(RightsPolicy::class);
-		foreach (['viewDenial', 'memberViewDenial', 'memberPlayDenial', 'memberPracticeAudioDenial', 'publicViewDenial', 'publicPlayDenial'] as $method) {
+		foreach (['viewDenial', 'memberViewDenial', 'memberPlayDenial', 'memberPracticeAudioDenial', 'memberScanDenial', 'publicViewDenial', 'publicPlayDenial'] as $method) {
 			$policy->method($method)->willReturn($denials[$method] ?? null);
 		}
 		return $policy;
@@ -308,15 +308,36 @@ final class SharingTest extends TestCase {
 		$options = $this->links(['publicPlayDenial' => 'Protected version: playback needs a license for practice audio.'], [Modules::MEMBER_PRACTICE_AUDIO])
 			->circleOptions(35, 'conductor');
 		self::assertSame([['id' => 5, 'name' => '1-03.pdf']], $options['scans'], 'the PDF scans of the copy that are still found');
-		self::assertSame(['available' => true, 'allowed' => true, 'reason' => null, 'playback' => true, 'practiceAudio' => false], $options['members'],
-			'practice audio for choir members is switched off');
+		self::assertSame(['available' => true, 'allowed' => true, 'reason' => null, 'scan' => true, 'scanReason' => null, 'playback' => true,
+			'practiceAudio' => false], $options['members'], 'practice audio for choir members is switched off');
 		self::assertSame(['available' => true, 'allowed' => true, 'reason' => 'Protected version: playback needs a license for practice audio.',
-			'playback' => false, 'practiceAudio' => false], $options['public']);
+			'scan' => true, 'scanReason' => null, 'playback' => false, 'practiceAudio' => false], $options['public']);
 
 		$options = $this->links([], [Modules::PUBLIC_LINKS])->circleOptions(35, 'conductor');
 		self::assertTrue($options['members']['practiceAudio']);
-		self::assertSame(['available' => false, 'allowed' => false, 'reason' => LinkService::SWITCHED_OFF, 'playback' => false, 'practiceAudio' => false],
-			$options['public']);
+		self::assertSame(['available' => false, 'allowed' => false, 'reason' => LinkService::SWITCHED_OFF, 'scan' => false, 'scanReason' => null,
+			'playback' => false, 'practiceAudio' => false], $options['public']);
+
+		$noDownload = 'Choir members can save and print the scan: unless public domain is confirmed, it needs a license for download and printing by choir members. The catalog librarian records it on the tab "Rights".';
+		$options = $this->links(['memberScanDenial' => $noDownload])->circleOptions(35, 'conductor');
+		self::assertTrue($options['members']['allowed'], 'the notes may be shared');
+		self::assertFalse($options['members']['scan'], 'the scan not');
+		self::assertSame($noDownload, $options['members']['scanReason']);
+		self::assertTrue($options['public']['scan'], 'public links follow the release for publication');
+		try {
+			$this->links(['memberScanDenial' => $noDownload])->create(35, ['circle' => 'members', 'scan_file_id' => 5], 'conductor');
+			self::fail('a scan without a license for copies was offered');
+		} catch (AccessDeniedException $e) {
+			self::assertSame($noDownload, $e->getMessage());
+		}
+		try {
+			$this->shared([$this->link('members', ['scan_file_id' => 5])], ['memberScanDenial' => $noDownload])->memberScan(self::TOKEN, 'singer');
+			self::fail('the scan was handed out without a license for copies');
+		} catch (AccessDeniedException $e) {
+			self::assertSame($noDownload, $e->getMessage());
+		}
+		$listed = $this->shared([$this->link('members', ['scan_file_id' => 5])], ['memberScanDenial' => $noDownload])->forMember('singer');
+		self::assertFalse($listed[0]['scan'], 'the page of the choir member offers no scan');
 	}
 
 	// ---- opening links ----------------------------------------------------------------

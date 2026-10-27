@@ -387,8 +387,12 @@ async function copyLink(): Promise<void> {
 			</fieldset>
 			<p class="action-dialog__hint">
 				{{ t('notenarchiv', 'The recipients open the scan in the PDF viewer of their browser. Whoever sees the scan can also save it.') }}
+				{{ t('notenarchiv', 'The whole PDF is shared, also with a link to some measures.') }}
 			</p>
 		</div>
+		<p v-else-if="option?.allowed && option.scanReason && scans.length > 0" class="action-dialog__hint">
+			{{ option.scanReason }}
+		</p>
 		<section v-if="preview.length > 0" class="link-dialog__preview" :aria-label="t('notenarchiv', 'What the recipients see')">
 			<h3 class="link-dialog__preview-title">
 				{{ t('notenarchiv', 'What the recipients see') }}

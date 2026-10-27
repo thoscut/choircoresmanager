@@ -57,6 +57,20 @@ All notable changes to this app are documented in this file. The format follows
   links to preservation copies for roles that may not view them.
   `SECURITY.md` names the web server logs, which record the addresses of
   public links.
+- **New license uses:** "Online playback (audio on public links)",
+  "Download and printing by choir members (scan in links)" and
+  "Digitisation (scans, MusicXML transcriptions)". A public link plays a
+  protected version only with a license for online playback; a license for
+  practice audio covers the choir only. The scan in a link for choir
+  members needs confirmed public domain or a license for download and
+  printing by members (or self-printing); the dialog says why it is
+  missing and that the whole PDF is shared.
+- **Copies without a license:** the rights tab warns when photocopies of a
+  version that is not confirmed public domain have no license for copies
+  for the binders, outnumber the licensed quantity, or when scans and
+  transcriptions have no license for digitisation. The start page counts
+  the current repertoire, a catalog filter lists the versions, concert
+  programmes show the warning. Nothing is blocked.
 - Excerpts and whole pieces for choir members and the public no longer
   carry the encoder, the miscellaneous fields, XML comments or processing
   instructions of the MusicXML file.

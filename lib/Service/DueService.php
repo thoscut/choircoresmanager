@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\Notenarchiv\Service;
 
+use OCA\Notenarchiv\Db\CopyMapper;
 use OCA\Notenarchiv\Db\Event;
 use OCA\Notenarchiv\Db\EventItem;
 use OCA\Notenarchiv\Db\EventItemMapper;
@@ -16,6 +17,7 @@ use OCA\Notenarchiv\Db\EventMapper;
 use OCA\Notenarchiv\Db\LicenseMapper;
 use OCA\Notenarchiv\Db\ProposalMapper;
 use OCA\Notenarchiv\Db\WorkMapper;
+use OCA\Notenarchiv\Db\WorkVersion;
 use OCA\Notenarchiv\Db\WorkVersionMapper;
 
 /**
@@ -40,6 +42,7 @@ class DueService {
 		private EventItemMapper $eventItems,
 		private EventMapper $events,
 		private Modules $modules,
+		private CopyMapper $copies,
 	) {
 	}
 
@@ -107,6 +110,10 @@ class DueService {
 				$cards[] = ['key' => 'rule1_current', 'count' => $rule1, 'label' => 'Current repertoire: check originals of preservation copies'];
 			}
 			$today = $this->rights->today($uid);
+			$uncovered = $current === [] ? 0 : $this->uncoveredCopies($current, $today);
+			if ($uncovered > 0) {
+				$cards[] = ['key' => 'copies_unlicensed', 'count' => $uncovered, 'label' => 'Current repertoire: photocopies without a license'];
+			}
 			$soon = (new \DateTimeImmutable($today))->modify('+30 days')->format('Y-m-d');
 			$expiring = 0;
 			foreach ($this->licenses->findAllByVersion() as $list) {
@@ -165,5 +172,26 @@ class DueService {
 		$derived = $this->repertoire->perWork();
 		return array_values(array_filter($this->versions->findAllById(),
 			fn ($v): bool => CatalogService::repertoireFigures($works[$v->getWorkId()] ?? null, $derived)['repertoire_class'] === 'current'));
+	}
+
+	/**
+	 * Versions whose photocopies are not covered by a license for the
+	 * binders (LicenseCoverage::copies).
+	 *
+	 * @param iterable<WorkVersion> $versions
+	 */
+	private function uncoveredCopies(iterable $versions, string $day): int {
+		$copies = [];
+		foreach ($this->copies->findAll() as $copy) {
+			$copies[$copy->getVersionId()][] = $copy;
+		}
+		$licenses = $this->licenses->findAllByVersion();
+		$count = 0;
+		foreach ($versions as $version) {
+			if (LicenseCoverage::copies($version, $copies[$version->getId()] ?? [], $licenses[$version->getId()] ?? [], $day) !== []) {
+				$count++;
+			}
+		}
+		return $count;
 	}
 }

@@ -362,8 +362,10 @@ class EventService {
 			}
 		}
 		$copies = [];
+		$copiesPerVersion = [];
 		foreach ($this->copies->findAll() as $copy) {
 			$copies[$copy->getId()] = $copy;
+			$copiesPerVersion[$copy->getVersionId()][] = $copy;
 		}
 		$licenses = $this->licenses->findAllByVersion();
 		$lines = [];
@@ -387,6 +389,7 @@ class EventService {
 				if ($version->getRightsStatus() !== 'public_domain' && $version->getRightsStatus() !== 'protected') {
 					$warnings[] = 'Rights not clarified.';
 				}
+				array_push($warnings, ...LicenseCoverage::copies($version, $copiesPerVersion[$version->getId()] ?? [], $versionLicenses, $day));
 				$valid = $validPerWork[$version->getWorkId()] ?? null;
 				if ($valid === null) {
 					$warnings[] = 'No valid version chosen for this work.';

@@ -116,6 +116,7 @@ class ApiController extends Controller {
 				$releases['printStation'] = $this->l->t($releases['printStation']);
 			}
 			$entry['releases'] = $releases;
+			$entry['licenseWarnings'] = array_map(fn (string $warning): string => $this->l->t($warning), $entry['licenseWarnings']);
 			$entry['protection'] = $entry['protection'] === null ? null : ProtectionText::apply($this->l, $entry['protection']);
 			return $entry;
 		});

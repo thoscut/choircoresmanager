@@ -65,6 +65,7 @@ export const CARD_MODULES: Readonly<Record<string, string>> = {
 	confirm_current: 'rights',
 	rule1_current: 'rights',
 	licenses_expiring: 'rights',
+	copies_unlicensed: 'rights',
 	valid_missing: 'valid_version',
 	[DUE_CONCERTS]: 'concerts',
 	[DUE_TASKS]: 'tasks',
@@ -108,6 +109,7 @@ export const HIDEABLE_CARDS: readonly { key: string, roles: readonly string[] | 
 	{ key: 'confirm_current', roles: ['librarian'] },
 	{ key: 'rule1_current', roles: ['librarian'] },
 	{ key: 'licenses_expiring', roles: ['librarian'] },
+	{ key: 'copies_unlicensed', roles: ['librarian'] },
 	{ key: 'valid_missing', roles: ['conductor'] },
 	{ key: DUE_TASKS, roles: null },
 ]

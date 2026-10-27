@@ -2856,6 +2856,18 @@ export const singular = {
 	'A file sync has been running since {time}. Its report appears here when it has finished.': 'Seit {time} läuft ein Dateiabgleich. Sein Bericht erscheint hier, wenn er fertig ist.',
 	'Last file sync: {time}, {files} files, {new} new, {changed} changed, {missing} not found.': 'Letzter Dateiabgleich: {time}, {files} Dateien, {new} neu, {changed} geändert, {missing} nicht gefunden.',
 	'A snapshot has been in the making since {time}.': 'Seit {time} wird ein Jahresstand angelegt.',
+	// ---- 0.11: license uses and copies without a license ----
+	'Photocopies without a license': 'Fotokopien ohne Lizenz',
+	'The whole PDF is shared, also with a link to some measures.': 'Geteilt wird immer das ganze PDF, auch bei einem Link auf einige Takte.',
+	'Current repertoire: photocopies without a license': 'Aktuelles Repertoire: Fotokopien ohne Lizenz',
+	'Online playback (audio on public links)': 'Online-Wiedergabe (Audio auf öffentlichen Links)',
+	'Download and printing by choir members (scan in links)': 'Download und Ausdruck durch Chormitglieder (Scan in Links)',
+	'Digitisation (scans, MusicXML transcriptions)': 'Digitalisierung (Scans, MusicXML-Übertragungen)',
+	'Photocopies of a version that is not confirmed public domain, without a license for copies for the binders.': 'Fotokopien einer Fassung ohne bestätigte Gemeinfreiheit und ohne Lizenz für Kopien für die Chormappen.',
+	'More copies than the licenses for the binders allow.': 'Mehr Kopien, als die Lizenzen für die Chormappen erlauben.',
+	'Scans or transcriptions of a version that is not confirmed public domain, without a license for digitisation.': 'Scans oder Übertragungen einer Fassung ohne bestätigte Gemeinfreiheit und ohne Lizenz für die Digitalisierung.',
+	'Choir members can save and print the scan: unless public domain is confirmed, it needs a license for download and printing by choir members. The catalog librarian records it on the tab "Rights".': 'Chormitglieder können den Scan speichern und ausdrucken: Ohne bestätigte Gemeinfreiheit braucht er eine Lizenz für Download und Ausdruck durch Chormitglieder. Die Archivverwaltung trägt sie im Reiter „Rechte“ ein.',
+	'Playback on a public link needs public domain or a license for online playback (audio). The catalog librarian records it on the tab "Rights".': 'Abspielen auf einem öffentlichen Link braucht Gemeinfreiheit oder eine Lizenz für die Online-Wiedergabe (Audio). Die Archivverwaltung trägt sie im Reiter „Rechte“ ein.',
 }
 
 export const plural = {
@@ -2955,6 +2967,7 @@ export const plural = {
 	'Current repertoire: public domain version to confirm|Current repertoire: public domain versions to confirm': ['Aktuelles Repertoire: Fassung, deren Gemeinfreiheit zu bestätigen ist', 'Aktuelles Repertoire: Fassungen, deren Gemeinfreiheit zu bestätigen ist'],
 	'Current repertoire: preservation copy with originals to check|Current repertoire: preservation copies with originals to check': ['Aktuelles Repertoire: Erhaltungskopie mit zu prüfenden Originalen', 'Aktuelles Repertoire: Erhaltungskopien mit zu prüfenden Originalen'],
 	'License ending or ended|Licenses ending or ended': ['Lizenz, die endet oder abgelaufen ist', 'Lizenzen, die enden oder abgelaufen sind'],
+	'Current repertoire: version with photocopies without a license|Current repertoire: versions with photocopies without a license': ['Aktuelles Repertoire: Fassung mit Fotokopien ohne Lizenz', 'Aktuelles Repertoire: Fassungen mit Fotokopien ohne Lizenz'],
 	'Current repertoire: work without a chosen valid version|Current repertoire: works without a chosen valid version': ['Aktuelles Repertoire: Werk ohne gewählte geltende Fassung', 'Aktuelles Repertoire: Werke ohne gewählte geltende Fassung'],
 	// ---- concerts in the calendar ----
 	'Calendar: %n upcoming concert|Calendar: %n upcoming concerts': ['Kalender: %n kommendes Konzert', 'Kalender: %n kommende Konzerte'],

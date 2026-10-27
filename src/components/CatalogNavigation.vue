@@ -382,6 +382,9 @@ function onFooterClick(event: Event, open: 'archive' | 'view'): void {
 					<NcCheckboxRadioSwitch v-if="isModuleActive('transcription_review')" v-model="filters.reviewOpen">
 						{{ t('notenarchiv', 'Open review points') }}
 					</NcCheckboxRadioSwitch>
+					<NcCheckboxRadioSwitch v-if="isModuleActive('rights')" v-model="filters.copiesUnlicensed">
+						{{ t('notenarchiv', 'Photocopies without a license') }}
+					</NcCheckboxRadioSwitch>
 				</div>
 
 				<NcButton v-if="filtersActive"

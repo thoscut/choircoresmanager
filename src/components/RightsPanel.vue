@@ -428,6 +428,10 @@ function onLicenseSaved(): void {
 			<h3 id="rights-panel-licenses">
 				{{ t('notenarchiv', 'Licenses') }}
 			</h3>
+			<p v-for="warning in detail.licenseWarnings ?? []" :key="warning" class="rights-panel__state rights-panel__state--warning">
+				<NcIconSvgWrapper :path="mdiAlertOutline" :size="20" inline />
+				{{ warning }}
+			</p>
 			<p v-if="sortedLicenses.length === 0" class="rights-panel__muted">
 				{{ t('notenarchiv', 'No licenses recorded.') }}
 			</p>

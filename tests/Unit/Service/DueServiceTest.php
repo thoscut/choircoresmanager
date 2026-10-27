@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\Notenarchiv\Tests\Unit\Service;
 
+use OCA\Notenarchiv\Db\CopyMapper;
 use OCA\Notenarchiv\Db\Event;
 use OCA\Notenarchiv\Db\EventItemMapper;
 use OCA\Notenarchiv\Db\EventMapper;
@@ -65,7 +66,7 @@ final class DueServiceTest extends TestCase {
 		return new DueService($roleService, $tasks, $proposals,
 			$this->createStub(ReleaseListService::class), $this->createStub(LicenseMapper::class), $this->createStub(WorkVersionMapper::class),
 			$this->createStub(WorkMapper::class), $rights, $this->createStub(RepertoireService::class), $this->createStub(EventItemMapper::class),
-			$events, $this->modulesWithout($off));
+			$events, $this->modulesWithout($off), $this->createStub(CopyMapper::class));
 	}
 
 	private static function concert(int $id, string $date, string $status = 'draft', bool $imported = false): Event {

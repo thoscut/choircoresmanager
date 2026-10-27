@@ -129,6 +129,8 @@ class TaskController extends Controller {
 			foreach (['members', 'public'] as $circle) {
 				$reason = $options[$circle]['reason'];
 				$options[$circle]['reason'] = $reason === null ? null : $this->l->t($reason);
+				$scanReason = $options[$circle]['scanReason'];
+				$options[$circle]['scanReason'] = $scanReason === null ? null : $this->l->t($scanReason);
 			}
 			return $options;
 		});

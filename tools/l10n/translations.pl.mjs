@@ -2209,6 +2209,17 @@ export const singular = {
 	"A file sync is already running. Wait until it has finished; the page shows its report afterwards.": "Synchronizacja plików już trwa. Poczekaj, aż się zakończy; potem strona pokaże jej raport.",
 	"The print station is already being synced. Wait until that run has finished.": "Stanowisko druku jest już synchronizowane. Poczekaj, aż ten przebieg się zakończy.",
 	"An annual snapshot is already being made. Wait until it has finished.": "Migawka roczna jest już tworzona. Poczekaj, aż się zakończy.",
+	"Photocopies without a license": "Fotokopie bez licencji",
+	"The whole PDF is shared, also with a link to some measures.": "Udostępniany jest zawsze cały PDF, także przy linku do kilku taktów.",
+	"Current repertoire: photocopies without a license": "Bieżący repertuar: fotokopie bez licencji",
+	"Online playback (audio on public links)": "Odtwarzanie online (audio w linkach publicznych)",
+	"Download and printing by choir members (scan in links)": "Pobieranie i drukowanie przez osoby z chóru (skan w linkach)",
+	"Digitisation (scans, MusicXML transcriptions)": "Digitalizacja (skany, transkrypcje MusicXML)",
+	"Photocopies of a version that is not confirmed public domain, without a license for copies for the binders.": "Fotokopie wersji bez potwierdzonej domeny publicznej i bez licencji na kopie do teczek.",
+	"More copies than the licenses for the binders allow.": "Więcej kopii, niż pozwalają licencje na kopie do teczek.",
+	"Scans or transcriptions of a version that is not confirmed public domain, without a license for digitisation.": "Skany lub transkrypcje wersji bez potwierdzonej domeny publicznej i bez licencji na digitalizację.",
+	"Choir members can save and print the scan: unless public domain is confirmed, it needs a license for download and printing by choir members. The catalog librarian records it on the tab \"Rights\".": "Osoby z chóru mogą zapisać i wydrukować skan: bez potwierdzonej domeny publicznej potrzebna jest licencja na pobieranie i drukowanie przez osoby z chóru. Rola „Katalog” wpisuje ją na karcie „Prawa”.",
+	"Playback on a public link needs public domain or a license for online playback (audio). The catalog librarian records it on the tab \"Rights\".": "Odtwarzanie w linku publicznym wymaga domeny publicznej lub licencji na odtwarzanie online (audio). Rola „Katalog” wpisuje ją na karcie „Prawa”.",
 }
 
 export const plural = {
@@ -2316,4 +2327,5 @@ export const plural = {
 	"Deadline %n week before the concert on %s.|Deadline %n weeks before the concert on %s.": ["Termin: %n tydzień przed koncertem w dniu %s.", "Termin: %n tygodnie przed koncertem w dniu %s.", "Termin: %n tygodni przed koncertem w dniu %s."],
 	"The music archive keeps this folder up to date. It holds %n score (PDF) released for the print station.|The music archive keeps this folder up to date. It holds %n scores (PDF) released for the print station.": ["Archiwum nut na bieżąco aktualizuje ten folder. Zawiera on %n plik z nutami (PDF) zatwierdzony dla stanowiska druku.", "Archiwum nut na bieżąco aktualizuje ten folder. Zawiera on %n pliki z nutami (PDF) zatwierdzone dla stanowiska druku.", "Archiwum nut na bieżąco aktualizuje ten folder. Zawiera on %n plików z nutami (PDF) zatwierdzonych dla stanowiska druku."],
 	"%n shared link|%n shared links": ["%n udostępniony link", "%n udostępnione linki", "%n udostępnionych linków"],
+	"Current repertoire: version with photocopies without a license|Current repertoire: versions with photocopies without a license": ["Bieżący repertuar: wersja z fotokopiami bez licencji", "Bieżący repertuar: wersje z fotokopiami bez licencji", "Bieżący repertuar: wersji z fotokopiami bez licencji"],
 }

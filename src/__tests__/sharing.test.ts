@@ -57,7 +57,7 @@ const words = {
 	verse: (verse: string) => `verse ${verse}`,
 }
 
-const allowed: CircleOption = { available: true, allowed: true, reason: null, playback: true, practiceAudio: true }
+const allowed: CircleOption = { available: true, allowed: true, reason: null, scan: true, scanReason: null, playback: true, practiceAudio: true }
 
 const previewWords = {
 	scope: 'Shared',
@@ -109,6 +109,7 @@ describe('the scope of a link', () => {
 		expect(canOfferScan('members', { ...allowed, allowed: false }, 1)).toBe(false)
 		expect(canOfferScan('public', { ...allowed, available: false }, 1)).toBe(false)
 		expect(canOfferScan('members', null, 1)).toBe(false)
+		expect(canOfferScan('members', { ...allowed, scan: false, scanReason: 'needs a license for download and printing' }, 1)).toBe(false)
 	})
 
 	it('names the whole piece or the measures in lists and text references', () => {
