@@ -25,6 +25,7 @@ import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
+import Attribution from './Attribution.vue'
 import ExcerptViewer from './ExcerptViewer.vue'
 import { focusAfterUpdate } from '../focus.ts'
 import { formatDate } from '../format.ts'
@@ -173,6 +174,7 @@ onMounted(() => {
 						<p v-if="selected.composer" class="member-app__muted">
 							{{ selected.composer }}
 						</p>
+						<Attribution :credits="selected.credits ?? []" :notices="selected.notices ?? []" />
 						<NcNoteCard v-if="selected.note" type="info" class="member-app__note">
 							<p class="member-app__note-text">
 								{{ t('notenarchiv', 'Note: {note}', { note: selected.note }) }}

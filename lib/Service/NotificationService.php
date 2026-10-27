@@ -38,6 +38,8 @@ class NotificationService {
 	public const CONCERT_CONFIRM = 'concert_confirm';
 	/** Milestone 0.5: a protected version whose protection term has ended by the proposal (task: check, nothing changes automatically) */
 	public const PROTECTION_ENDED = 'protection_ended';
+	/** Milestone 0.11: a version confirmed public domain whose proposal no longer says so after a change (task: check) */
+	public const PROTECTION_CONFLICT = 'protection_conflict';
 	/** Milestone 0.5: the content of an archive file changed without a visible modification (silent corruption) */
 	public const CHECKSUM_MISMATCH = 'checksum_mismatch';
 	/** Milestone 0.6: a transcription report created review points for a role (one per report and role) */

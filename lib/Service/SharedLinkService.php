@@ -10,10 +10,13 @@ declare(strict_types=1);
 namespace OCA\Notenarchiv\Service;
 
 use OCA\Notenarchiv\Db\ArchiveFileMapper;
+use OCA\Notenarchiv\Db\ContributionMapper;
 use OCA\Notenarchiv\Db\Copy;
 use OCA\Notenarchiv\Db\CopyMapper;
 use OCA\Notenarchiv\Db\ExcerptLink;
 use OCA\Notenarchiv\Db\ExcerptLinkMapper;
+use OCA\Notenarchiv\Db\LicenseMapper;
+use OCA\Notenarchiv\Db\PersonMapper;
 use OCA\Notenarchiv\Db\Work;
 use OCA\Notenarchiv\Db\WorkMapper;
 use OCA\Notenarchiv\Db\WorkVersion;
@@ -44,15 +47,23 @@ use OCP\Files\File;
  * What they see: title and composer of the work, the measures (null for the
  * whole piece), voice, verse and tempo of the link, for choir members also
  * its note. Never a shelf mark, an account name or an internal note of the
- * catalog.
+ * catalog. Since milestone 0.11 also the names of the lyricists, arrangers
+ * and translators from the person register (names only, no life dates; the
+ * arranger text of the version when the register has no arranger) and the
+ * notices of the licenses valid today ("Notice on shared pages"), so that
+ * the authors are named (§ 13 UrhG) and a license's condition can be met.
  *
+ * @psalm-type Credit = array{role: string, name: string}
  * @psalm-type MemberLink = array{token: string, title: string, composer: string, measure_from: ?string, measure_to: ?string,
  *     voice: ?string, verse: ?int, tempo: ?int, note: ?string, expires: ?string, canPlay: bool, canExportAudio: bool, reason: ?string,
- *     scan: bool}
+ *     scan: bool, credits: list<Credit>, notices: list<string>}
  * @psalm-type PublicExcerpt = array{title: string, composer: string, measureFrom: ?string, measureTo: ?string, voice: ?string,
- *     verse: ?int, tempo: ?int, canPlay: bool, scan: bool, xml: string}
+ *     verse: ?int, tempo: ?int, canPlay: bool, scan: bool, xml: string, credits: list<Credit>, notices: list<string>}
  */
 class SharedLinkService {
+	/** Roles of the person register named on the shared pages besides the composer */
+	private const CREDITED_ROLES = ['lyricist', 'arranger', 'translator'];
+
 	public function __construct(
 		private ExcerptLinkMapper $links,
 		private CopyMapper $copies,
@@ -66,6 +77,9 @@ class SharedLinkService {
 		private Modules $modules,
 		private AppSettings $settings,
 		private LinkTokens $tokens,
+		private ContributionMapper $contributions,
+		private PersonMapper $persons,
+		private LicenseMapper $licenses,
 	) {
 	}
 
@@ -114,7 +128,7 @@ class SharedLinkService {
 					&& $this->policy->memberPracticeAudioDenial($version, $today, $copy) === null,
 				'reason' => $playDenial,
 				'scan' => $link->getScanFileId() !== null && $this->policy->memberScanDenial($version, $today, $copy) === null,
-			];
+			] + $this->attribution($version, $today);
 		}
 		return $rows;
 	}
@@ -216,7 +230,7 @@ class SharedLinkService {
 			'canPlay' => $this->policy->publicPlayDenial($version, $today, $copy) === null,
 			'scan' => $link->getScanFileId() !== null,
 			'xml' => $xml,
-		];
+		] + $this->attribution($version, $today);
 	}
 
 	/**
@@ -257,6 +271,41 @@ class SharedLinkService {
 			return null;
 		}
 		return ['link' => $link, 'copy' => $copy, 'version' => $version, 'work' => $work, 'today' => $today];
+	}
+
+	/**
+	 * The authors to name besides the composer and the notices the licenses
+	 * ask for (milestone 0.11).
+	 *
+	 * @return array{credits: list<array{role: string, name: string}>, notices: list<string>}
+	 */
+	private function attribution(WorkVersion $version, string $today): array {
+		$credits = [];
+		$contributions = $this->contributions->findByVersion($version->getId());
+		foreach (self::CREDITED_ROLES as $role) {
+			foreach ($contributions as $contribution) {
+				if ($contribution->getRole() !== $role) {
+					continue;
+				}
+				try {
+					$credits[] = ['role' => $role, 'name' => $this->persons->find($contribution->getPersonId())->getName()];
+				} catch (DoesNotExistException) {
+				}
+			}
+		}
+		$arranger = trim((string)$version->getArrangerText());
+		if ($arranger !== '' && !in_array('arranger', array_column($credits, 'role'), true)) {
+			$credits[] = ['role' => 'arranger', 'name' => $arranger];
+		}
+		$notices = [];
+		foreach ($this->licenses->findByVersion($version->getId()) as $license) {
+			$notice = trim((string)$license->getShareNotice());
+			if ($notice !== '' && ($license->getValidFrom() === null || $license->getValidFrom() <= $today)
+				&& ($license->getValidUntil() === null || $license->getValidUntil() >= $today)) {
+				$notices[] = $notice;
+			}
+		}
+		return ['credits' => $credits, 'notices' => array_values(array_unique($notices))];
 	}
 
 	/**

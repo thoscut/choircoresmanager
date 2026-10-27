@@ -430,6 +430,7 @@ notifications. A notification is withdrawn when the matter is resolved.
 | Concert deadline | conductor and catalog role | 10, 8 and 6 weeks before a planned concert |
 | Confirm what was sung | conductor | after the date of the concert |
 | Protection term ended | catalog role | daily check: marked protected, but public domain by the life dates |
+| Public domain in doubt | catalog role | daily check: confirmed public domain, but protected by the suggestion after a change of persons or life dates |
 | File changed without modification | catalog role | when the checksum job finds a deviation |
 | Weekly backup failed | catalog role and admins | when the weekly backup fails |
 | New review points | the role responsible: conductor (musical points) and/or catalog role (material, questions without a measure) | a transcription report brings review points; one notification per report and role, withdrawn when none of them is open any more |
@@ -675,7 +676,7 @@ writes files into a folder others can open (see section 16).
 | Rights confirmation and licenses | – | on | No confirming, no licenses to add or change, no list of ending licenses, no license reminders; the file sync does not read the rights notices of MusicXML files. Existing licenses and confirmations still count for playback and releases. |
 | Valid version | – | on | The conductor cannot choose or clear the valid version; no card "no valid version chosen". A chosen version stays recorded. |
 | Register of persons | – | on | No register, no contributions, no import of a research list. |
-| Protection terms | Register of persons | on | No protection proposal (also none for the special cases scientific edition and posthumous work, whose switches are hidden), no resubmission list, no notification about ended protection terms. |
+| Protection terms | Register of persons | on | No protection proposal (also none for the special cases scientific edition and posthumous work, whose switches are hidden), no resubmission list, no notification about ended protection terms or public domain in doubt, no fields Melody and Text (traditional). |
 | Releases | Rights confirmation and licenses | on | The three releases below are inactive. |
 | Singers' portal | Releases | on | No portal list, no adding to or removing from the portal, no cards and notification; song lists without the portal column. |
 | Print station | Releases | off | No print station list. |
@@ -705,7 +706,7 @@ writes files into a folder others can open (see section 16).
 | Dashboard widget | – | on | Nextcloud does not offer the widget. |
 | Nextcloud search | – | on | The search of Nextcloud has no section "Music archive". |
 | Notifications | – | on | The app sends no notifications; notifications sent before disappear when they are shown. |
-| One switch per occasion | Notifications and the module of the occasion | on | That notification is not sent; the daily checks withdraw it. Occasions: proposals waiting, remove from the singers' portal, license ends soon, license has ended, weekly backup failed, new question or task, question answered, concert deadlines, confirm what was sung, protection term ended, file changed unnoticed, new review points, correction received, print station sync failed. |
+| One switch per occasion | Notifications and the module of the occasion | on | That notification is not sent; the daily checks withdraw it. Occasions: proposals waiting, remove from the singers' portal, license ends soon, license has ended, weekly backup failed, new question or task, question answered, concert deadlines, confirm what was sung, protection term ended, public domain in doubt, file changed unnoticed, new review points, correction received, print station sync failed. |
 | Links for choir members | Excerpt links, Playback, Releases | off (in no preset) | Choir members see neither the app nor "Shared with me"; their routes answer 404; no links for choir members can be made. Existing links are kept and expire as before. |
 | Practice audio for choir members | Links for choir members, Practice audio files | off (in no preset) | Choir members make no practice files; the server refuses every request. |
 | Public links | Excerpt links, Playback, Publication | off (in no preset) | Every public link answers the same 404 page; no new public links. Existing links are kept and expire as before. |

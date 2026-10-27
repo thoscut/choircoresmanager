@@ -1058,6 +1058,12 @@ Chorportal. Lizenzen werden nie gelöscht; eine beendete Lizenz bleibt als
 Nachweis. **Endende Lizenzen** listet die Lizenzen, die im gewählten Zeitraum
 enden oder schon geendet haben.
 
+**Vermerk auf geteilten Seiten** (höchstens 1000 Zeichen) erscheint auf den
+Seiten von Links für Chormitglieder und die Öffentlichkeit, solange die
+Lizenz gilt, zum Beispiel „Mit freundlicher Genehmigung von …“, wenn die
+Lizenz einen Vermerk verlangt. Diese Seiten nennen außerdem Text, Bearbeitung
+und Übersetzung der Fassung aus dem Personenregister, nur mit Namen.
+
 Über den Lizenzen warnt der Reiter „Rechte“, wenn Exemplare oder Dateien
 einer Fassung ohne bestätigte Gemeinfreiheit nicht gedeckt sind: Fotokopien
 (Exemplare der Art „Kopie“ oder eine Anzahl Kopien) ohne Lizenz für
@@ -1244,6 +1250,27 @@ geschützte Fassungen mit bekanntem Schutzende.
 > [!IMPORTANT]
 > Der Vorschlag ändert nie den Rechtestatus. Die Archivverwaltung prüft ihn
 > und bestätigt die Rechte.
+
+#### Komposition und Text, oder traditionell
+
+Ein Vorschlag „gemeinfrei“ braucht beide Teile des Stücks: eine Person mit
+der Rolle **Komposition** und eine mit der Rolle **Text**. Fehlt eine davon,
+lautet der Vorschlag „unbekannt“ und nennt die fehlende Rolle. Für ein
+Volkslied oder eine Melodie ohne bekannte Urheberschaft stellst du
+**Melodie** auf **Traditionell** und **Text** auf **Traditionell** oder
+**Ohne Text** (im Abschnitt **Rechte**, Modul „Schutzfristen“). Wähle
+„Traditionell“ nur mit Beleg und notiere die Quelle unter **Notizen**. Eine
+Fassung ohne Personen, deren Melodie und Text beide traditionell sind, wird
+als gemeinfrei vorgeschlagen.
+
+**Bestätigen** als gemeinfrei gegen einen Vorschlag, der nicht „gemeinfrei“
+lautet, bleibt möglich: Der Dialog zeigt die Begründung und bittet dich
+anzuhaken, dass du den Vorschlag geprüft hast.
+
+Die tägliche Prüfung benachrichtigt die Rolle „Bestand“ (**Gemeinfreiheit
+fraglich**), wenn eine als gemeinfrei bestätigte Fassung nach dem Vorschlag
+geschützt ist, zum Beispiel nachdem eine Person ergänzt oder Lebensdaten
+geändert wurden. Automatisch ändert sich nichts.
 
 #### Sonderfälle: wissenschaftliche Ausgaben und nachgelassene Werke
 

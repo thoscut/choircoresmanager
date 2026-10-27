@@ -185,6 +185,8 @@ const dialog = ref<DialogKind | null>(null)
 const busy = ref(false)
 const error = ref('')
 const draft = ref({ status: 'public_domain', reason: '', evidence: '', date: today })
+/** Confirming public domain against the protection proposal needs a second confirmation (milestone 0.11). */
+const proposalChecked = ref(false)
 
 /**
  * Open an action dialog with a fresh form.
@@ -198,6 +200,7 @@ function openDialog(kind: DialogKind): void {
 		evidence: '',
 		date: today,
 	}
+	proposalChecked.value = false
 	error.value = ''
 	dialog.value = kind
 }
@@ -244,6 +247,10 @@ const dialogSubmit = computed(() => {
 /** What the confirmation makes possible, for the chosen status. */
 const consequences = computed(() => confirmConsequences(draft.value.status, isPreservationCopy.value, isModuleActive))
 
+/** The protection proposal does not say "public domain", but public domain is about to be confirmed. */
+const againstProposal = computed(() => dialog.value === 'confirm' && draft.value.status === 'public_domain'
+	&& isModuleActive('protection_terms') && props.detail.protection !== null && props.detail.protection.status !== 'free')
+
 /** Whether the reason is required in the current dialog. */
 const reasonRequired = computed(() => dialog.value === 'confirm' || dialog.value === 'open' || dialog.value === 'portal-remove')
 
@@ -259,6 +266,10 @@ async function submitDialog(): Promise<void> {
 	}
 	if (kind === 'confirm' && draft.value.evidence.trim() === '') {
 		error.value = t('notenarchiv', 'Please name the evidence.')
+		return
+	}
+	if (againstProposal.value && !proposalChecked.value) {
+		error.value = t('notenarchiv', 'Please confirm that you have checked the protection proposal.')
 		return
 	}
 	busy.value = true
@@ -538,6 +549,15 @@ function onLicenseSaved(): void {
 					required
 					resize="vertical"
 					rows="2" />
+				<div v-if="againstProposal" class="rights-panel__against">
+					<p class="rights-panel__state rights-panel__state--warning">
+						<NcIconSvgWrapper :path="mdiAlertOutline" :size="20" inline />
+						<span>{{ t('notenarchiv', 'The protection proposal does not say "public domain": {reason}', { reason: detail.protection?.reasonText ?? '' }) }}</span>
+					</p>
+					<NcCheckboxRadioSwitch v-model="proposalChecked" type="checkbox">
+						{{ t('notenarchiv', 'I have checked the proposal and confirm public domain all the same.') }}
+					</NcCheckboxRadioSwitch>
+				</div>
 				<!-- what the confirmation leads to, updated when the status changes -->
 				<div aria-live="polite">
 					<p v-for="sentence in consequences" :key="sentence">

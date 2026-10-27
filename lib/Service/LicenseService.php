@@ -23,7 +23,9 @@ use OCP\AppFramework\Utility\ITimeFactory;
  * ended license keeps its end date as evidence.
  */
 class LicenseService {
-	private const EDITABLE = ['holder', 'uses', 'quantity', 'valid_from', 'valid_until', 'evidence', 'notes'];
+	private const EDITABLE = ['holder', 'uses', 'quantity', 'valid_from', 'valid_until', 'evidence', 'notes', 'share_notice'];
+	/** Length of the column share_notice */
+	private const MAX_NOTICE = 1000;
 
 	public function __construct(
 		private LicenseMapper $licenses,
@@ -126,6 +128,12 @@ class LicenseService {
 					throw new InvalidInputException('"%s" needs a valid date (YYYY-MM-DD).', [$field === 'valid_from' ? 'Valid from' : 'Valid until']);
 				}
 				return $value;
+			case 'share_notice':
+				$notice = Input::text($value, 'Notice on shared pages');
+				if ($notice !== null && mb_strlen($notice) > self::MAX_NOTICE) {
+					throw new InvalidInputException('"%1$s" may have at most %2$s characters.', ['Notice on shared pages', self::MAX_NOTICE]);
+				}
+				return $notice === null ? null : trim($notice);
 			default:
 				return Input::text($value, $field);
 		}

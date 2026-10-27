@@ -27,6 +27,8 @@ const RIGHTS_ORDER = [
 	'rights_assessment',
 	'rights_status_import',
 	// special cases of the protection term (module protection_terms)
+	'melody_origin',
+	'text_origin',
 	'scientific_edition',
 	'posthumous_work',
 	'first_published_year',

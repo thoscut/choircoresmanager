@@ -472,6 +472,7 @@ wenn die Sache erledigt ist.
 | Konzertfrist | Chorleitung und Rolle „Bestand“ | 10, 8 und 6 Wochen vor einem geplanten Konzert |
 | Gesungenes bestätigen | Chorleitung | nach dem Datum des Konzerts |
 | Schutzfrist abgelaufen | Rolle „Bestand“ | tägliche Prüfung: als geschützt markiert, nach den Lebensdaten aber gemeinfrei |
+| Gemeinfreiheit fraglich | Rolle „Bestand“ | tägliche Prüfung: als gemeinfrei bestätigt, nach dem Vorschlag aber geschützt, nachdem Personen oder Lebensdaten geändert wurden |
 | Datei ohne Änderung verändert | Rolle „Bestand“ | wenn der Prüfsummenjob eine Abweichung findet |
 | Wöchentliche Sicherung fehlgeschlagen | Rolle „Bestand“ und Administration | wenn die wöchentliche Sicherung fehlschlägt |
 | Neue Prüfpunkte | die zuständige Rolle: Chorleitung (musikalische Punkte) und/oder Rolle „Bestand“ (Material, Rückfragen ohne Takt) | ein Bericht einer Übertragung bringt Prüfpunkte; eine Benachrichtigung je Bericht und Rolle, zurückgezogen, wenn keiner davon mehr offen ist |
@@ -745,7 +746,7 @@ können (siehe Abschnitt 16).
 | Rechtebestätigung und Lizenzen | – | ein | Kein Bestätigen, keine Lizenzen hinzufügen oder ändern, keine Liste endender Lizenzen, keine Lizenzerinnerungen; der Dateiabgleich liest die Rechtevermerke von MusicXML-Dateien nicht. Vorhandene Lizenzen und Bestätigungen zählen weiter für Abspielen und Freigaben. |
 | Geltende Fassung | – | ein | Die Chorleitung kann die geltende Fassung nicht festlegen oder aufheben; keine Karte „keine geltende Fassung gewählt“. Eine festgelegte Fassung bleibt gespeichert. |
 | Personenregister | – | ein | Kein Register, keine Beteiligungen, kein Import einer Rechercheliste. |
-| Schutzfristen | Personenregister | ein | Kein Vorschlag zur Schutzfrist (auch keiner für die Sonderfälle wissenschaftliche Ausgabe und nachgelassenes Werk, deren Schalter ausgeblendet sind), keine Wiedervorlageliste, keine Benachrichtigung über abgelaufene Schutzfristen. |
+| Schutzfristen | Personenregister | ein | Kein Vorschlag zur Schutzfrist (auch keiner für die Sonderfälle wissenschaftliche Ausgabe und nachgelassenes Werk, deren Schalter ausgeblendet sind), keine Wiedervorlageliste, keine Benachrichtigung über abgelaufene Schutzfristen oder fragliche Gemeinfreiheit, keine Felder Melodie und Text (traditionell). |
 | Freigaben | Rechtebestätigung und Lizenzen | ein | Die drei Freigaben unten sind inaktiv. |
 | Chorportal | Freigaben | ein | Keine Liste des Chorportals, kein Hinzufügen zum oder Entfernen aus dem Chorportal, keine Karten und Benachrichtigung; Notenlisten ohne die Spalte für das Chorportal. |
 | Druckstation | Freigaben | aus | Keine Liste der Druckstation. |
@@ -775,7 +776,7 @@ können (siehe Abschnitt 16).
 | Dashboard-Widget | – | ein | Nextcloud bietet das Widget nicht an. |
 | Nextcloud-Suche | – | ein | Die Suche der Nextcloud hat keinen Bereich „Notenarchiv“. |
 | Benachrichtigungen | – | ein | Die App sendet keine Benachrichtigungen; vorher gesendete Benachrichtigungen verschwinden, wenn sie angezeigt werden. |
-| Ein Schalter je Anlass | Benachrichtigungen und das Modul des Anlasses | ein | Diese Benachrichtigung wird nicht gesendet; die täglichen Prüfungen ziehen sie zurück. Anlässe: Vorschläge warten, Aus dem Chorportal entfernen, Lizenz endet bald, Lizenz ist abgelaufen, Wöchentliche Sicherung fehlgeschlagen, Neue Rückfrage oder Aufgabe, Rückfrage beantwortet, Konzertfristen, Gesungenes bestätigen, Schutzfrist abgelaufen, Datei unbemerkt verändert, Neue Prüfpunkte, Korrektur eingetroffen, Abgleich der Druckstation fehlgeschlagen. |
+| Ein Schalter je Anlass | Benachrichtigungen und das Modul des Anlasses | ein | Diese Benachrichtigung wird nicht gesendet; die täglichen Prüfungen ziehen sie zurück. Anlässe: Vorschläge warten, Aus dem Chorportal entfernen, Lizenz endet bald, Lizenz ist abgelaufen, Wöchentliche Sicherung fehlgeschlagen, Neue Rückfrage oder Aufgabe, Rückfrage beantwortet, Konzertfristen, Gesungenes bestätigen, Schutzfrist abgelaufen, Gemeinfreiheit fraglich, Datei unbemerkt verändert, Neue Prüfpunkte, Korrektur eingetroffen, Abgleich der Druckstation fehlgeschlagen. |
 | Links für Chormitglieder | Ausschnitt-Links, Wiedergabe, Freigaben | aus (in keiner Voreinstellung) | Chormitglieder sehen weder die App noch „Für mich freigegeben“; ihre Routen antworten mit 404; es lassen sich keine Links für Chormitglieder erstellen. Vorhandene Links bleiben erhalten und laufen ab wie bisher. |
 | Übe-Audio für Chormitglieder | Links für Chormitglieder, Übe-Audio-Dateien | aus (in keiner Voreinstellung) | Chormitglieder erstellen keine Übe-Dateien; der Server lehnt jede Anfrage ab. |
 | Öffentliche Links | Ausschnitt-Links, Wiedergabe, Veröffentlichung | aus (in keiner Voreinstellung) | Jeder öffentliche Link antwortet mit derselben 404-Seite; keine neuen öffentlichen Links. Vorhandene Links bleiben erhalten und laufen ab wie bisher. |

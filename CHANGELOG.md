@@ -71,6 +71,17 @@ All notable changes to this app are documented in this file. The format follows
   transcriptions have no license for digitisation. The start page counts
   the current repertoire, a catalog filter lists the versions, concert
   programmes show the warning. Nothing is blocked.
+- **Public domain needs composer and lyricist.** The protection proposal
+  says "unknown" instead of public domain when no composer or no lyricist
+  is recorded; the new version fields "Melody" (Traditional) and "Text"
+  (Traditional, Without text) cover parts without a known author.
+  Confirming public domain against the proposal asks to tick that it was
+  checked. A new notification "Public domain in doubt" reports confirmed
+  public domain that the proposal now says is protected.
+- **Attribution on shared pages:** the pages of links for choir members and
+  the public name lyricists, arrangers and translators from the person
+  register (names only) and show the new license field "Notice on shared
+  pages".
 - Excerpts and whole pieces for choir members and the public no longer
   carry the encoder, the miscellaneous fields, XML comments or processing
   instructions of the MusicXML file.

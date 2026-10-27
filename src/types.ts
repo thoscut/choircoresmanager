@@ -204,6 +204,8 @@ export interface License {
 	valid_until: string | null
 	evidence: string | null
 	notes: string | null
+	/** shown on the pages for choir members and the public (milestone 0.11) */
+	share_notice: string | null
 }
 
 /** A license that ends soon or has ended (GET /api/licenses/ending). */
@@ -228,6 +230,7 @@ export interface LicenseInput {
 	valid_until: string | null
 	evidence: string | null
 	notes: string | null
+	share_notice: string | null
 }
 
 export interface Releases {
@@ -403,6 +406,12 @@ export interface LinkOptions {
 	scans: { id: number, name: string }[]
 }
 
+/** An author named on the shared pages besides the composer (milestone 0.11). */
+export interface Credit {
+	role: 'lyricist' | 'arranger' | 'translator'
+	name: string
+}
+
 /** A link for choir members, as the page "Shared with me" receives it. */
 export interface MemberLink {
 	token: string
@@ -423,6 +432,9 @@ export interface MemberLink {
 	reason: string | null
 	/** the link offers the scan (PDF) */
 	scan?: boolean
+	credits: Credit[]
+	/** notices the licenses ask for */
+	notices: string[]
 }
 
 /** Initial state `member` of the page for choir members. */
@@ -445,6 +457,9 @@ export interface PublicExcerpt {
 	scan?: boolean
 	/** MusicXML with only the measures of the excerpt, or the whole piece */
 	xml: string
+	credits: Credit[]
+	/** notices the licenses ask for */
+	notices: string[]
 }
 
 /** Body of POST /api/member/links/{token}/practice-audio (inside `export`). */

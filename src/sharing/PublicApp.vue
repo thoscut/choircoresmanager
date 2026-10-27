@@ -19,6 +19,7 @@ import { t } from '../l10n.ts'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
+import Attribution from './Attribution.vue'
 import ExcerptViewer from './ExcerptViewer.vue'
 
 /**
@@ -49,6 +50,7 @@ const scanUrl = window.location.pathname.replace(/\/+$/, '') + '/scan'
 			<p v-if="excerpt.composer" class="public-excerpt__composer">
 				{{ excerpt.composer }}
 			</p>
+			<Attribution :credits="excerpt.credits ?? []" :notices="excerpt.notices ?? []" />
 			<NcNoteCard type="info">
 				{{ excerpt.measureFrom === null
 					? t('notenarchiv', 'A piece shared by the choir. Playback comes from a simple synthesizer in your browser; it is no substitute for a recording.')

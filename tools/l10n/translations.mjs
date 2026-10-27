@@ -2868,6 +2868,48 @@ export const singular = {
 	'Scans or transcriptions of a version that is not confirmed public domain, without a license for digitisation.': 'Scans oder Übertragungen einer Fassung ohne bestätigte Gemeinfreiheit und ohne Lizenz für die Digitalisierung.',
 	'Choir members can save and print the scan: unless public domain is confirmed, it needs a license for download and printing by choir members. The catalog librarian records it on the tab "Rights".': 'Chormitglieder können den Scan speichern und ausdrucken: Ohne bestätigte Gemeinfreiheit braucht er eine Lizenz für Download und Ausdruck durch Chormitglieder. Die Archivverwaltung trägt sie im Reiter „Rechte“ ein.',
 	'Playback on a public link needs public domain or a license for online playback (audio). The catalog librarian records it on the tab "Rights".': 'Abspielen auf einem öffentlichen Link braucht Gemeinfreiheit oder eine Lizenz für die Online-Wiedergabe (Audio). Die Archivverwaltung trägt sie im Reiter „Rechte“ ein.',
+	// ---- 0.11: Komposition und Text, Konflikt, Namensnennung ----
+	'Notice on shared pages': 'Vermerk auf geteilten Seiten',
+	'Shown with excerpts for choir members and the public, for example: By kind permission of …': 'Erscheint bei Auszügen für Chormitglieder und die Öffentlichkeit, zum Beispiel: Mit freundlicher Genehmigung von …',
+	'Please confirm that you have checked the protection proposal.': [
+		'Bitte bestätige, dass du den Vorschlag zur Schutzfrist geprüft hast.',
+		'Bitte bestätigen Sie, dass Sie den Vorschlag zur Schutzfrist geprüft haben.',
+	],
+	'The protection proposal does not say "public domain": {reason}': 'Der Vorschlag zur Schutzfrist lautet nicht „gemeinfrei“: {reason}',
+	'I have checked the proposal and confirm public domain all the same.': 'Ich habe den Vorschlag geprüft und bestätige trotzdem „gemeinfrei“.',
+	'Text: {name}': 'Text: {name}',
+	'Translation: {name}': 'Übersetzung: {name}',
+	'Arrangement: {name}': 'Bearbeitung: {name}',
+	'%1$s %2$s is confirmed as public domain, but by the persons recorded now the protection proposal no longer says so. Please check the rights status; public links and the repertoire page stay online until you decide.': [
+		'%1$s %2$s ist als gemeinfrei bestätigt, nach den jetzt erfassten Personen lautet der Vorschlag zur Schutzfrist aber nicht mehr so. Bitte prüfe den Rechtestatus; öffentliche Links und die Repertoireseite bleiben online, bis du entscheidest.',
+		'%1$s %2$s ist als gemeinfrei bestätigt, nach den jetzt erfassten Personen lautet der Vorschlag zur Schutzfrist aber nicht mehr so. Bitte prüfen Sie den Rechtestatus; öffentliche Links und die Repertoireseite bleiben online, bis Sie entscheiden.',
+	],
+	'Melody': 'Melodie',
+	'Text': 'Text',
+	'Choose "Traditional" only with evidence, e.g. a folk song collection, and note it under "Notes". Then the protection proposal needs no composer; the arranger still counts.': [
+		'Wähle „Traditionell“ nur mit Beleg, z. B. einer Volksliedsammlung, und notiere ihn unter „Notizen“. Dann braucht der Vorschlag zur Schutzfrist keine Komposition; die Bearbeitung zählt weiter.',
+		'Wählen Sie „Traditionell“ nur mit Beleg, z. B. einer Volksliedsammlung, und notieren Sie ihn unter „Notizen“. Dann braucht der Vorschlag zur Schutzfrist keine Komposition; die Bearbeitung zählt weiter.',
+	],
+	'Choose "Traditional" only with evidence and note it under "Notes", or "Without text" for a version without words. Otherwise the protection proposal needs a lyricist.': [
+		'Wähle „Traditionell“ nur mit Beleg und notiere ihn unter „Notizen“, oder „Ohne Text“ für eine Fassung ohne Worte. Sonst braucht der Vorschlag zur Schutzfrist eine Person für den Text.',
+		'Wählen Sie „Traditionell“ nur mit Beleg und notieren Sie ihn unter „Notizen“, oder „Ohne Text“ für eine Fassung ohne Worte. Sonst braucht der Vorschlag zur Schutzfrist eine Person für den Text.',
+	],
+	'Traditional (public domain)': 'Traditionell (gemeinfrei)',
+	'Without text': 'Ohne Text',
+	'Public domain in doubt': 'Gemeinfreiheit fraglich',
+	'To the catalog librarian, daily: a version confirmed as public domain no longer is by the protection proposal, after a person or life dates were changed.': 'An die Archivverwaltung, täglich: Eine als gemeinfrei bestätigte Fassung ist es nach dem Vorschlag zur Schutzfrist nicht mehr, nachdem eine Person oder Lebensdaten geändert wurden.',
+	'No composer is recorded for this version. Add the composer under "Persons involved and protection" (tab Rights), or mark the melody as traditional with evidence; until then unknown means protected.': [
+		'Für diese Fassung ist keine Komposition erfasst. Ergänze sie unter „Beteiligte Personen und Schutzfrist“ (Reiter „Rechte“) oder markiere die Melodie mit Beleg als traditionell; bis dahin heißt unbekannt geschützt.',
+		'Für diese Fassung ist keine Komposition erfasst. Ergänzen Sie sie unter „Beteiligte Personen und Schutzfrist“ (Reiter „Rechte“) oder markieren Sie die Melodie mit Beleg als traditionell; bis dahin heißt unbekannt geschützt.',
+	],
+	'No lyricist is recorded for this version. Add the lyricist under "Persons involved and protection" (tab Rights), or mark the text as traditional or the version as without text; until then unknown means protected.': [
+		'Für diese Fassung ist kein Text erfasst. Ergänze die Person unter „Beteiligte Personen und Schutzfrist“ (Reiter „Rechte“) oder markiere den Text als traditionell oder die Fassung als ohne Text; bis dahin heißt unbekannt geschützt.',
+		'Für diese Fassung ist kein Text erfasst. Ergänzen Sie die Person unter „Beteiligte Personen und Schutzfrist“ (Reiter „Rechte“) oder markieren Sie den Text als traditionell oder die Fassung als ohne Text; bis dahin heißt unbekannt geschützt.',
+	],
+	'Melody and text are marked as traditional and no other person is recorded: no one has rights of their own. Check that no arranger or translator is missing.': [
+		'Melodie und Text sind als traditionell markiert und keine weitere Person ist erfasst: Niemand hat eigene Rechte. Prüfe, dass keine Bearbeitung oder Übersetzung fehlt.',
+		'Melodie und Text sind als traditionell markiert und keine weitere Person ist erfasst: Niemand hat eigene Rechte. Prüfen Sie, dass keine Bearbeitung oder Übersetzung fehlt.',
+	],
 }
 
 export const plural = {

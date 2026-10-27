@@ -110,7 +110,20 @@ final class Fields {
 			'scientific_edition' => 'Switch on for an edition of works that are no longer protected, made by scholarly work and clearly different from earlier editions, e.g. an urtext or critical edition (§ 70 UrhG): it is protected for 25 years after it appeared.',
 			'posthumous_work' => 'Switch on for a work whose protection had already ended when it first appeared or was first performed in public, e.g. a rediscovered manuscript (§ 71 UrhG): it is protected for 25 years after that.',
 			'first_published_year' => 'Year in which the edition appeared (§ 70) or in which the work first appeared or was first performed in public (§ 71), e.g. 1998. Needed for both special cases.',
+			'melody_origin' => 'Choose "Traditional" only with evidence, e.g. a folk song collection, and note it under "Notes". Then the protection proposal needs no composer; the arranger still counts.',
+			'text_origin' => 'Choose "Traditional" only with evidence and note it under "Notes", or "Without text" for a version without words. Otherwise the protection proposal needs a lyricist.',
 		],
+	];
+
+	/** A traditional melody (milestone 0.11); empty: the persons recorded wrote it */
+	public const MELODY_ORIGIN = [
+		'traditional' => 'Traditional (public domain)',
+	];
+
+	/** A traditional text or none (milestone 0.11); empty: the persons recorded wrote it */
+	public const TEXT_ORIGIN = [
+		'traditional' => 'Traditional (public domain)',
+		'none' => 'Without text',
 	];
 
 	public const COPY_KIND = [
@@ -190,7 +203,7 @@ final class Fields {
 			'publication_status' => 32, 'review_status' => 32, 'rule1_status' => 32, 'rule1_checked' => 255,
 			'confirmed_by' => 64, 'confirmed_by_name' => 255, 'confirmed_at' => 10, 'portal_removed_at' => 10,
 			'portal_removed_reason' => 1000, 'valid_reason' => 1000, 'key_signature' => 40, 'scoring' => 200,
-			'language' => 100,
+			'language' => 100, 'melody_origin' => 16, 'text_origin' => 16,
 		],
 		self::COPY => [
 			'shelfmark' => 20, 'status' => 20, 'status_reason' => 1000, 'status_since' => 10, 'kind' => 32,
@@ -311,6 +324,9 @@ final class Fields {
 				'scientific_edition' => self::field(self::TYPE_BOOLEAN, 'Scientific edition (§ 70 UrhG)', $librarian),
 				'posthumous_work' => self::field(self::TYPE_BOOLEAN, 'Posthumous work (§ 71 UrhG)', $librarian),
 				'first_published_year' => self::field(self::TYPE_NUMBER, 'Year first published', $librarian),
+				// Traditional parts (milestone 0.11, module protection_terms)
+				'melody_origin' => self::field(self::TYPE_CHOICE, 'Melody', $librarian, self::MELODY_ORIGIN),
+				'text_origin' => self::field(self::TYPE_CHOICE, 'Text', $librarian, self::TEXT_ORIGIN),
 			],
 			self::COPY => [
 				'binder' => self::field(self::TYPE_NUMBER, 'Binder', $readOnly),

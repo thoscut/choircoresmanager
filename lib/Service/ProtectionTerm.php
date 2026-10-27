@@ -36,6 +36,15 @@ use OCA\Notenarchiv\Db\Person;
  *   earlier editions (e.g. an urtext or a critical edition);
  * - posthumous work (§ 71 UrhG): a work whose protection has ended and that
  *   appeared (or was performed in public) for the first time afterwards.
+ * Who wrote it (milestone 0.11): when the roles are given, "public domain"
+ * is only proposed when a composer is recorded and, for a version with text,
+ * a lyricist, unless the catalog librarian marked the melody or the text as
+ * traditional (with evidence) or the version as without text; otherwise a
+ * missing person with rights of their own could be overlooked. A version
+ * whose melody and text are both traditional (or without text) is proposed
+ * by the other persons, and as public domain when there are none (an
+ * arrangement of a folk song still counts with its arranger).
+ *
  * With a special case, persons involved only as editors count with these
  * 25 years instead of 70 years after their death; every other person still
  * counts as usual, and the later of both ends decides. Without the year the
@@ -77,6 +86,12 @@ final class ProtectionTerm {
 
 	/** Role of a contribution that a special case counts with its own term */
 	public const EDITOR_ROLE = 'editor';
+	/** Roles that must be recorded unless the part is traditional */
+	public const COMPOSER_ROLE = 'composer';
+	public const LYRICIST_ROLE = 'lyricist';
+	/** Values of melody_origin and text_origin */
+	public const TRADITIONAL = 'traditional';
+	public const NO_TEXT = 'none';
 
 	/** Reasons why no date can be given, most serious first */
 	private const BLOCKING_ORDER = ['living', 'death_unknown', 'death_circa', 'identification_uncertain', 'year_missing'];
@@ -87,9 +102,48 @@ final class ProtectionTerm {
 	 * @param list<string> $cases special cases switched on for the version (SPECIAL_CASES)
 	 * @param ?int $publishedYear year in which the edition or the work first appeared
 	 * @param list<int> $editorIds persons involved in the version only as editors
+	 * @param list<string>|null $roles roles recorded in the version (Fields::CONTRIBUTION_ROLES); null: no check of who wrote it
+	 * @param ?string $melodyOrigin `traditional` or null (melody_origin)
+	 * @param ?string $textOrigin `traditional`, `none` or null (text_origin)
 	 * @return Proposal
 	 */
-	public static function propose(array $persons, int $currentYear, array $cases = [], ?int $publishedYear = null, array $editorIds = []): array {
+	public static function propose(array $persons, int $currentYear, array $cases = [], ?int $publishedYear = null, array $editorIds = [],
+		?array $roles = null, ?string $melodyOrigin = null, ?string $textOrigin = null): array {
+		$proposal = self::byPersonsAndCases($persons, $currentYear, $cases, $publishedYear, $editorIds);
+		if ($roles === null) {
+			return $proposal;
+		}
+		$melodyFree = $melodyOrigin === self::TRADITIONAL;
+		$textFree = in_array($textOrigin, [self::TRADITIONAL, self::NO_TEXT], true);
+		if ($persons === [] && $melodyFree && $textFree && array_intersect(self::SPECIAL_CASES, $cases) === []) {
+			// Nothing but traditional parts: no person has rights of their own.
+			return ['status' => self::FREE, 'until' => null, 'freeSince' => null, 'reason' => 'traditional',
+				'parameters' => [], 'decisivePersonId' => null, 'blocking' => []];
+		}
+		if ($proposal['status'] !== self::FREE) {
+			return $proposal;
+		}
+		$missing = match (true) {
+			!$melodyFree && !in_array(self::COMPOSER_ROLE, $roles, true) => 'composer_missing',
+			!$textFree && !in_array(self::LYRICIST_ROLE, $roles, true) => 'lyricist_missing',
+			default => null,
+		};
+		if ($missing === null) {
+			return $proposal;
+		}
+		return ['status' => self::UNKNOWN, 'until' => null, 'freeSince' => null, 'reason' => $missing, 'parameters' => [],
+			'decisivePersonId' => null, 'blocking' => []] + (isset($proposal['special']) ? ['special' => $proposal['special']] : []);
+	}
+
+	/**
+	 * The proposal by the persons and the special cases.
+	 *
+	 * @param list<Person> $persons
+	 * @param list<string> $cases
+	 * @param list<int> $editorIds
+	 * @return Proposal
+	 */
+	private static function byPersonsAndCases(array $persons, int $currentYear, array $cases, ?int $publishedYear, array $editorIds): array {
 		$cases = array_values(array_intersect(self::SPECIAL_CASES, $cases));
 		if ($cases === []) {
 			return self::byLifeDates($persons, $currentYear);

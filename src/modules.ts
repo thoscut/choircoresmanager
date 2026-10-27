@@ -79,6 +79,8 @@ export const FIELD_MODULES: Readonly<Record<string, string>> = {
 	public_repertoire: 'public_repertoire',
 	cpdl_url: 'public_repertoire',
 	imslp_url: 'public_repertoire',
+	melody_origin: 'protection_terms',
+	text_origin: 'protection_terms',
 	scientific_edition: 'protection_terms',
 	posthumous_work: 'protection_terms',
 	first_published_year: 'protection_terms',

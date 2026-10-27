@@ -424,7 +424,7 @@ Endpoints (all JSON, errors as `{ "error" }`):
 | `POST /api/versions/{id}/portal-remove` | `{ reason }` | librarian |
 | `POST /api/versions/{id}/valid` | `{ reason? }` | conductor |
 | `POST /api/versions/{id}/valid-clear` | `{ reason? }` | conductor |
-| `POST /api/versions/{id}/licenses` | `{ license: { holder, uses: [..], quantity, valid_from, valid_until, evidence, notes } }` | librarian |
+| `POST /api/versions/{id}/licenses` | `{ license: { holder, uses: [..], quantity, valid_from, valid_until, evidence, notes, share_notice } }` | librarian |
 | `PATCH /api/licenses/{id}` | `{ license: { …changed fields } }` | librarian |
 | `GET /api/proposals` (open proposals, each with `created_by_name`, the display name of the proposer) | – | librarian, contributor, reader |
 | `POST /api/proposals` | `{ level, id, fields: {..}, reason?, source? }` | contributor, librarian |
@@ -909,6 +909,18 @@ Reason keys: `no_persons`, `living`, `death_unknown`, `death_circa`,
 `identification_uncertain` (status `unknown`), `running` (`protected`),
 `ended` (`free`).
 
+**Composer and lyricist (milestone 0.11).** The version fields
+`melody_origin` (`traditional` or empty) and `text_origin` (`traditional`,
+`none` for a version without words, or empty; both librarian, module
+`protection_terms`) say that a part has no known author. A proposal that
+would say `free` becomes `unknown` with reason `composer_missing` or
+`lyricist_missing` when no person has the role `composer` or `lyricist` and
+the part is not marked `traditional` (or `none`). A version without persons
+whose parts are both marked and that has no special case gets `free` with
+reason `traditional`. Confirming public domain against a proposal that is
+not `free` stays possible; the UI asks to tick that the proposal was
+checked.
+
 **Special cases (milestone 0.8, module `protection_terms`).** The version
 fields `scientific_edition` (§ 70 UrhG) and `posthumous_work` (§ 71 UrhG)
 (boolean, librarian) and `first_published_year` (number, librarian; 1000 up
@@ -1153,6 +1165,7 @@ accepts the current content; the next run stores the new checksum.
 | Subject | To | When |
 |---|---|---|
 | `protection_ended` | librarian | daily: a version is marked protected, but by the life dates of all persons involved it is public domain since `date` (task: check; nothing changes automatically). Link `?copy={id}`. Withdrawn when the status changes. |
+| `protection_conflict` | librarian | daily (milestone 0.11): a version is confirmed public domain, but the protection proposal now says `protected` (a person or life dates were changed). Task: check; nothing changes automatically. Link `?copy={id}`. Withdrawn when the status or the proposal changes. |
 | `checksum_mismatch` | librarian | a file changed without a visible modification. Parameters: shelf mark, title, file type (no file name). Link `?copy={id}` or `?view=checksums`. Withdrawn when the file is restored or the change is accepted. |
 
 ## Statistics and annual report
@@ -1330,8 +1343,8 @@ audio and preservation copies applies whatever is switched on.
 (`portal`), `notify_license_expiring` and `notify_license_expired`
 (`rights`), `notify_export_failed`, `notify_task_new` and
 `notify_task_answered` (`tasks`), `notify_concert_deadline` and
-`notify_concert_confirm` (`concerts`), `notify_protection_ended`
-(`protection_terms`), `notify_checksum_mismatch` (`checksums`),
+`notify_concert_confirm` (`concerts`), `notify_protection_ended` and
+`notify_protection_conflict` (`protection_terms`), `notify_checksum_mismatch` (`checksums`),
 `notify_review_points` (`transcription_review`),
 `notify_correction_received` (`score_viewer`),
 `notify_print_mirror_failed` (`print_mirror`).
@@ -1394,7 +1407,7 @@ switch of the three releases (it gates `portal`, `print_station` and
 Fields of a switched-off module stay in the catalog, in `meta.fields`, in
 the CSV and in the backup; the UI hides their maintenance (`publication_*`:
 `publication`; `scientific_edition`, `posthumous_work`,
-`first_published_year`: `protection_terms`).
+`first_published_year`, `melody_origin`, `text_origin`: `protection_terms`).
 
 What else follows the modules:
 
@@ -2095,8 +2108,17 @@ role (module `member_links`) returns the page "Shared with me" (template
 ```json
 { "links": [{ "token": "…", "title": "Abendlied", "composer": "J. Rheinberger", "measure_from": null, "measure_to": null,
               "voice": "Alto", "verse": null, "tempo": null, "note": "Please practise until Thursday.",
-              "expires": "2027-04-23", "canPlay": true, "canExportAudio": false, "reason": null, "scan": true }] }
+              "expires": "2027-04-23", "canPlay": true, "canExportAudio": false, "reason": null, "scan": true,
+              "credits": [{ "role": "lyricist", "name": "Matthias Claudius" }], "notices": ["By kind permission of …"] }] }
 ```
+
+`credits` (milestone 0.11): the persons of the version with the role
+`lyricist`, `arranger` or `translator` in the person register, in this
+order, names only (no life dates); the version's arranger text as
+`arranger` when the register has none. `notices`: the "Notice on shared
+pages" (`share_notice`, at most 1000 characters) of the version's licenses
+valid today. The public page (initial state `excerpt`) has the same two
+keys.
 
 Only active links of the circle `members` whose version is still released,
 newest first; no shelf marks and no account names. `measure_from` and

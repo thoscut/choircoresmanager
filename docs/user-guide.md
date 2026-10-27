@@ -986,6 +986,12 @@ singers' portal. Licenses are never deleted; an ended license stays as a
 record. **Ending licenses** lists the licenses that end within the chosen
 period or have ended.
 
+**Notice on shared pages** (at most 1000 characters) is shown on the pages
+of links for choir members and the public while the license is valid, for
+example "By kind permission of …", when the license asks for a notice. These
+pages also name the lyricists, arrangers and translators of the version from
+the person register, by name only.
+
 Above the licenses the rights tab warns when copies or files of a version
 that is not confirmed public domain are not covered: photocopies (copies of
 the kind "Photocopy" or a number of copies) without a license for copies for
@@ -1160,6 +1166,26 @@ recorded persons do not allow, and protected versions with a known end.
 > [!IMPORTANT]
 > The suggestion never changes the rights status. A music librarian checks it
 > and confirms the rights.
+
+#### Composer and lyricist, or traditional
+
+A suggestion of public domain needs both parts of the piece: someone with
+the role **Composer** and someone with the role **Lyricist**. If one of them
+is missing, the suggestion says "unknown" and names the missing role. For a
+folk song or a melody without known author, set **Melody** to
+**Traditional**, and **Text** to **Traditional** or **Without text** (in the
+section **Rights**, module "Protection terms"). Choose "Traditional" only
+with evidence and note the source under **Notes**. A version without persons
+whose melody and text are both traditional is suggested as public domain.
+
+**Confirm** public domain against a suggestion that does not say public
+domain is still possible: the dialog shows the reason and asks you to tick
+that you checked the suggestion.
+
+The daily check notifies the catalog role (**Public domain in doubt**) when
+a version confirmed as public domain is protected by the suggestion, for
+example after a person was added or life dates were changed. Nothing changes
+automatically.
 
 #### Special cases: scientific editions and posthumous works
 

@@ -123,7 +123,7 @@ final class ModulesTest extends TestCase {
 
 	public function testEveryNotificationHasASwitch(): void {
 		$subjects = array_values((new \ReflectionClass(NotificationService::class))->getConstants());
-		self::assertCount(14, $subjects);
+		self::assertCount(15, $subjects);
 		foreach ($subjects as $subject) {
 			self::assertIsString($subject);
 			$key = Modules::notificationKey($subject);

@@ -42,6 +42,7 @@ const draft = reactive({
 	validUntil: props.license?.valid_until ?? '',
 	evidence: props.license?.evidence ?? '',
 	notes: props.license?.notes ?? '',
+	shareNotice: props.license?.share_notice ?? '',
 })
 
 const busy = ref(false)
@@ -76,6 +77,7 @@ async function save(): Promise<void> {
 		valid_until: orNull(draft.validUntil),
 		evidence: orNull(draft.evidence),
 		notes: orNull(draft.notes),
+		share_notice: orNull(draft.shareNotice),
 	}
 	busy.value = true
 	error.value = ''
@@ -131,6 +133,12 @@ async function save(): Promise<void> {
 			rows="2" />
 		<NcTextArea v-model="draft.notes"
 			:label="t('notenarchiv', 'Notes')"
+			resize="vertical"
+			rows="2" />
+		<NcTextArea v-model="draft.shareNotice"
+			:label="t('notenarchiv', 'Notice on shared pages')"
+			:helper-text="t('notenarchiv', 'Shown with excerpts for choir members and the public, for example: By kind permission of …')"
+			:maxlength="1000"
 			resize="vertical"
 			rows="2" />
 		<p class="action-dialog__hint">

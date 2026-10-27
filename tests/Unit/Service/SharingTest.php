@@ -19,6 +19,8 @@ use OCA\Notenarchiv\Db\Copy;
 use OCA\Notenarchiv\Db\CopyMapper;
 use OCA\Notenarchiv\Db\ExcerptLink;
 use OCA\Notenarchiv\Db\ExcerptLinkMapper;
+use OCA\Notenarchiv\Db\License;
+use OCA\Notenarchiv\Db\LicenseMapper;
 use OCA\Notenarchiv\Db\Person;
 use OCA\Notenarchiv\Db\PersonMapper;
 use OCA\Notenarchiv\Db\Work;
@@ -398,7 +400,7 @@ final class SharingTest extends TestCase {
 		$copies = $this->createStub(CopyMapper::class);
 		$copies->method('find')->willReturn($this->copy());
 		$versions = $this->createStub(WorkVersionMapper::class);
-		$versions->method('find')->willReturn($this->version());
+		$versions->method('find')->willReturn($this->version(['arranger_text' => 'K. Satz']));
 		$work = new Work();
 		$work->setId(7);
 		$work->setTitle('Abendlied');
@@ -431,8 +433,33 @@ final class SharingTest extends TestCase {
 		$settings->method('archiveFolder')->willReturn($folder);
 		$roles = $this->createStub(Roles::class);
 		$roles->method('isMember')->willReturn($member);
+		$contribution = new Contribution();
+		$contribution->setPersonId(1);
+		$contribution->setRole('lyricist');
+		$composer = new Contribution();
+		$composer->setPersonId(2);
+		$composer->setRole('composer');
+		$contributions = $this->createStub(ContributionMapper::class);
+		$contributions->method('findByVersion')->willReturn([$composer, $contribution]);
+		$persons = $this->createStub(PersonMapper::class);
+		$persons->method('find')->willReturnCallback(function (int $id): Person {
+			$person = new Person();
+			$person->setName($id === 1 ? 'H. Claudius' : 'J. Rheinberger');
+			$person->setBorn('1740-08-15');
+			return $person;
+		});
+		$licenses = [];
+		foreach ([['By kind permission of Carus', null], ['Ended', '2026-01-01'], ['', null]] as [$notice, $until]) {
+			$license = new License();
+			$license->setShareNotice($notice);
+			$license->setValidUntil($until);
+			$licenses[] = $license;
+		}
+		$licenseMapper = $this->createStub(LicenseMapper::class);
+		$licenseMapper->method('findByVersion')->willReturn($licenses);
 		return new SharedLinkService($mapper, $copies, $versions, $works, $files, $scores, $this->policy($denials), $this->rights(), $roles,
-			$this->modulesWithout(), $settings, new LinkTokens(new FakeCrypto(), $this->createStub(ISecureRandom::class)));
+			$this->modulesWithout(), $settings, new LinkTokens(new FakeCrypto(), $this->createStub(ISecureRandom::class)),
+			$contributions, $persons, $licenseMapper);
 	}
 
 	public function testChoirMembersSeeTheirLinksAndOnlyTheMeasures(): void {
@@ -443,7 +470,9 @@ final class SharingTest extends TestCase {
 		self::assertCount(1, $list, 'only active links for choir members');
 		self::assertSame(['token' => self::TOKEN, 'title' => 'Abendlied', 'composer' => 'J. Rheinberger', 'measure_from' => '2', 'measure_to' => '3',
 			'voice' => 'Alto', 'verse' => null, 'tempo' => null, 'note' => 'Please practise until Thursday.', 'expires' => '2026-12-31',
-			'canPlay' => true, 'canExportAudio' => true, 'reason' => null, 'scan' => false], $list[0]);
+			'canPlay' => true, 'canExportAudio' => true, 'reason' => null, 'scan' => false,
+			'credits' => [['role' => 'lyricist', 'name' => 'H. Claudius'], ['role' => 'arranger', 'name' => 'K. Satz']],
+			'notices' => ['By kind permission of Carus']], $list[0], 'the authors by name only, the notices of licenses valid today');
 
 		$xml = $shared->memberScore(self::TOKEN, 'singer');
 		self::assertStringContainsString('<measure number="2"', $xml);
@@ -533,8 +562,10 @@ final class SharingTest extends TestCase {
 	public function testAPublicLinkShowsOnlyTheExcerptAndNothingInternal(): void {
 		$excerpt = $this->shared([$this->link('public')])->publicExcerpt(self::TOKEN);
 		self::assertNotNull($excerpt);
-		self::assertSame(['title', 'composer', 'measureFrom', 'measureTo', 'voice', 'verse', 'tempo', 'canPlay', 'scan', 'xml'], array_keys($excerpt),
-			'no note, no shelf mark, no account');
+		self::assertSame(['title', 'composer', 'measureFrom', 'measureTo', 'voice', 'verse', 'tempo', 'canPlay', 'scan', 'xml', 'credits', 'notices'],
+			array_keys($excerpt), 'no note, no shelf mark, no account');
+		self::assertSame(['By kind permission of Carus'], $excerpt['notices']);
+		self::assertSame(['role', 'name'], array_keys($excerpt['credits'][0]), 'no life dates');
 		self::assertStringNotContainsString('<measure number="1"', $excerpt['xml']);
 		self::assertSame([9], $this->hits);
 

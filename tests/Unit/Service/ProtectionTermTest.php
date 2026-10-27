@@ -205,4 +205,47 @@ final class ProtectionTermTest extends TestCase {
 		self::assertSame('0062-12-31', $proposal['until']);
 		self::assertSame([$horace->getName(), -8, 62], $proposal['parameters']);
 	}
+
+	public function testPublicDomainNeedsAComposerAndALyricistUnlessTheyAreTraditional(): void {
+		$arranger = self::person('Friedrich Silcher', '1860-08-26', 'exact');
+		// Only the arranger (died 1860) is recorded; the composer of the melody is missing.
+		$proposal = ProtectionTerm::propose([$arranger], 2026, roles: ['arranger']);
+		self::assertSame(ProtectionTerm::UNKNOWN, $proposal['status']);
+		self::assertSame('composer_missing', $proposal['reason']);
+
+		$proposal = ProtectionTerm::propose([$arranger], 2026, roles: ['arranger'], melodyOrigin: ProtectionTerm::TRADITIONAL);
+		self::assertSame('lyricist_missing', $proposal['reason'], 'a version with text needs its lyricist too');
+
+		$proposal = ProtectionTerm::propose([$arranger], 2026, roles: ['arranger'], melodyOrigin: ProtectionTerm::TRADITIONAL,
+			textOrigin: ProtectionTerm::TRADITIONAL);
+		self::assertSame(ProtectionTerm::FREE, $proposal['status'], 'a folk song set by Silcher');
+		self::assertSame('1931-01-01', $proposal['freeSince']);
+
+		$proposal = ProtectionTerm::propose([$arranger], 2026, roles: ['composer'], textOrigin: ProtectionTerm::NO_TEXT);
+		self::assertSame(ProtectionTerm::FREE, $proposal['status'], 'without text no lyricist is needed');
+
+		$proposal = ProtectionTerm::propose([$arranger], 2026, roles: ['composer', 'lyricist']);
+		self::assertSame(ProtectionTerm::FREE, $proposal['status']);
+
+		$proposal = ProtectionTerm::propose([$arranger], 2026, roles: ['unspecified']);
+		self::assertSame('composer_missing', $proposal['reason'], 'a person without a role is no composer');
+
+		// Protected stays protected: the check only stops a "public domain" proposal.
+		$living = self::person('Living Arranger', null, 'living');
+		$proposal = ProtectionTerm::propose([$living], 2026, roles: ['arranger']);
+		self::assertSame('living', $proposal['reason']);
+
+		// Without roles (callers that do not know them) nothing changes.
+		self::assertSame(ProtectionTerm::FREE, ProtectionTerm::propose([$arranger], 2026)['status']);
+	}
+
+	public function testOnlyTraditionalPartsAndNoPersonsArePublicDomain(): void {
+		$proposal = ProtectionTerm::propose([], 2026, roles: [], melodyOrigin: ProtectionTerm::TRADITIONAL, textOrigin: ProtectionTerm::NO_TEXT);
+		self::assertSame(ProtectionTerm::FREE, $proposal['status']);
+		self::assertSame('traditional', $proposal['reason']);
+		self::assertSame('no_persons', ProtectionTerm::propose([], 2026, roles: [], melodyOrigin: ProtectionTerm::TRADITIONAL)['reason'],
+			'the text is not traditional: unknown means protected');
+		$proposal = ProtectionTerm::propose([], 2026, [ProtectionTerm::SCIENTIFIC_EDITION], null, [], [], ProtectionTerm::TRADITIONAL, ProtectionTerm::TRADITIONAL);
+		self::assertSame(ProtectionTerm::UNKNOWN, $proposal['status'], 'a special case without its year still counts as protected');
+	}
 }

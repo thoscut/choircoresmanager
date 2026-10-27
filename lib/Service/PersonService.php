@@ -288,7 +288,8 @@ class PersonService {
 			$version?->getPosthumousWork() === true ? ProtectionTerm::POSTHUMOUS_WORK : null,
 		]));
 		$editors = array_keys(array_filter($roles, fn (array $list): bool => array_diff($list, [ProtectionTerm::EDITOR_ROLE]) === []));
-		return ProtectionTerm::propose(array_values($persons), $currentYear, $cases, $version?->getFirstPublishedYear(), $editors);
+		return ProtectionTerm::propose(array_values($persons), $currentYear, $cases, $version?->getFirstPublishedYear(), $editors,
+			array_values(array_unique(array_merge([], ...array_values($roles)))), $version?->getMelodyOrigin(), $version?->getTextOrigin());
 	}
 
 	/**

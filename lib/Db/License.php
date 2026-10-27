@@ -31,6 +31,8 @@ use OCP\AppFramework\Db\Entity;
  * @method void setValidUntil(?string $validUntil)
  * @method string|null getEvidence()
  * @method void setEvidence(?string $evidence)
+ * @method string|null getShareNotice()
+ * @method void setShareNotice(?string $shareNotice)
  * @method string|null getNotes()
  * @method void setNotes(?string $notes)
  * @method int getCreated()
@@ -50,6 +52,8 @@ class License extends Entity implements JsonSerializable {
 	protected ?string $validUntil = null;
 	protected ?string $evidence = null;
 	protected ?string $notes = null;
+	/** Notice the license asks for on shared pages, written by hand (milestone 0.11) */
+	protected ?string $shareNotice = null;
 	protected int $created = 0;
 	protected int $modified = 0;
 
@@ -57,7 +61,7 @@ class License extends Entity implements JsonSerializable {
 		foreach (['versionId', 'quantity', 'created', 'modified'] as $field) {
 			$this->addType($field, 'integer');
 		}
-		foreach (['holder', 'uses', 'validFrom', 'validUntil', 'evidence', 'notes'] as $field) {
+		foreach (['holder', 'uses', 'validFrom', 'validUntil', 'evidence', 'notes', 'shareNotice'] as $field) {
 			$this->addType($field, 'string');
 		}
 	}

@@ -140,17 +140,27 @@ class DailyChecks extends TimedJob {
 		}
 
 		// Resubmission: marked protected, but by the life dates of all persons
-		// involved the protection has ended. A task to check; nothing changes
+		// involved the protection has ended; or confirmed public domain, but a
+		// later change (a person added, life dates changed) makes the proposal
+		// say protected (milestone 0.11; a proposal that is only unsure does
+		// not notify). A task to check; nothing changes
 		// automatically.
-		$protected = array_keys(array_filter($versions, fn ($v): bool => $v->getRightsStatus() === 'protected'));
-		$proposals = $this->modules->notificationEnabled(NotificationService::PROTECTION_ENDED)
-			? $this->persons->protectionForVersions($protected, (int)substr($today, 0, 4))
-			: [];
+		$ended = $this->modules->notificationEnabled(NotificationService::PROTECTION_ENDED);
+		$conflict = $this->modules->notificationEnabled(NotificationService::PROTECTION_CONFLICT);
+		$checked = array_keys(array_filter($versions, fn ($v): bool => ($ended && $v->getRightsStatus() === 'protected')
+			|| ($conflict && $v->getRightsStatus() === 'public_domain' && $v->isConfirmed())));
+		$proposals = $checked === [] ? [] : $this->persons->protectionForVersions($checked, (int)substr($today, 0, 4));
 		foreach ($versions as $version) {
 			$proposal = $proposals[$version->getId()] ?? null;
-			$ended = $proposal !== null && $proposal['status'] === ProtectionTerm::FREE;
-			$this->transition('notified_protection_' . $version->getId(), $ended ? 'ended' : '', 'version', (string)$version->getId(),
-				['ended' => NotificationService::PROTECTION_ENDED], $describe($version->getId()) + ['date' => $ended ? (string)$proposal['freeSince'] : '']);
+			$state = match (true) {
+				$proposal === null => '',
+				$version->getRightsStatus() === 'protected' && $proposal['status'] === ProtectionTerm::FREE => 'ended',
+				$version->getRightsStatus() === 'public_domain' && $proposal['status'] === ProtectionTerm::PROTECTED => 'conflict',
+				default => '',
+			};
+			$this->transition('notified_protection_' . $version->getId(), $state, 'version', (string)$version->getId(),
+				['ended' => NotificationService::PROTECTION_ENDED, 'conflict' => NotificationService::PROTECTION_CONFLICT],
+				$describe($version->getId()) + ['date' => $state === 'ended' ? ($proposal['freeSince'] ?? '') : '']);
 		}
 
 		// Folder book: the personal data of returned folders are removed after
