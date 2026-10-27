@@ -542,9 +542,6 @@ final class MusicXmlCorrection {
 	private static function attributes(\DOMElement $element): array {
 		$result = [];
 		$attributes = $element->attributes;
-		if ($attributes === null) {
-			return [];
-		}
 		for ($i = 0; $i < $attributes->length; $i++) {
 			$attribute = $attributes->item($i);
 			if ($attribute instanceof \DOMAttr) {

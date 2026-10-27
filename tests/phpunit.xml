@@ -27,6 +27,11 @@
 	displayDetailsOnTestsThatTriggerWarnings="true"
 	displayDetailsOnPhpunitDeprecations="true"
 >
+	<php>
+		<!-- PHP images without a php.ini allow 128 MB; the tests of the size
+		     limits hold files of up to 32 MB -->
+		<ini name="memory_limit" value="512M"/>
+	</php>
 	<testsuites>
 		<testsuite name="unit">
 			<directory suffix="Test.php">Unit</directory>

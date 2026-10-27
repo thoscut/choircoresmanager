@@ -40,6 +40,11 @@
 	},
 	"require": {
 		"php": "^8.2",
+		"ext-dom": "*",
+		"ext-intl": "*",
+		"ext-mbstring": "*",
+		"ext-xmlreader": "*",
+		"ext-zip": "*",
 		"bamarni/composer-bin-plugin": "^1.8"
 	},
 	"require-dev": {

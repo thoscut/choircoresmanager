@@ -337,7 +337,10 @@ jobs:
           mkdir -p ~/.cache/nextcloud
           cd ~/.cache/nextcloud
           curl -fsSL -o "$TARBALL.sha512" "https://download.nextcloud.com/server/releases/$TARBALL.sha512"
-          echo "sha512=$(cut -d' ' -f1 "$TARBALL.sha512")" >> "$GITHUB_OUTPUT"
+          # The file may list more than one archive: take the line of ours
+          sha512="$(grep " $TARBALL\$" "$TARBALL.sha512" | cut -d' ' -f1)"
+          [ -n "$sha512" ]
+          echo "sha512=$sha512" >> "$GITHUB_OUTPUT"
       - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.cache/nextcloud/latest-${{ matrix.nextcloud }}.tar.bz2

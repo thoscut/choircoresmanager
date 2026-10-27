@@ -10,6 +10,19 @@ All notable changes to this app are documented in this file. The format follows
 
 ## [Unreleased]
 
+### Fixed
+
+- Continuous integration: the unit tests get enough memory in PHP images
+  without a php.ini, Psalm knows the PHP extensions the app needs
+  (`ext-dom`, `ext-intl`, `ext-mbstring`, `ext-xmlreader` and `ext-zip` in
+  `composer.json`), the integration job reads the checksum of its own
+  Nextcloud archive, the tests of the MCP server are found again, and the
+  translation files come out in the same order on every machine.
+- Reading a file of a user (MusicXML, spreadsheets) no longer reserves the
+  whole size limit at once; the file is read in blocks.
+- The documentation checks also run when only documentation changed (own
+  workflow `Docs`).
+
 ## [0.9.1] - 2026-10-23
 
 ### Fixed

@@ -9,7 +9,7 @@ import { readFileSync, readdirSync, statSync } from 'node:fs'
 import { join, relative } from 'node:path'
 
 const root = process.argv[2]
-const files = (dir, ext) => readdirSync(dir).flatMap((name) => {
+const files = (dir, ext) => readdirSync(dir).sort().flatMap((name) => {
 	const p = join(dir, name)
 	return statSync(p).isDirectory() ? files(p, ext) : (ext.some((e) => p.endsWith(e)) ? [p] : [])
 })

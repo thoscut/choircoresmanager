@@ -64,14 +64,22 @@ class UserFiles {
 			throw $notAccessible;
 		}
 		try {
-			// One byte more than allowed: the size in the file cache may lag
-			// behind the content.
-			$content = stream_get_contents($handle, $maxBytes + 1);
+			// In blocks instead of reserving $maxBytes at once. One byte more
+			// than allowed: the size in the file cache may lag behind the
+			// content.
+			$content = '';
+			while (strlen($content) <= $maxBytes && !feof($handle)) {
+				$block = fread($handle, min(1024 * 1024, $maxBytes + 1 - strlen($content)));
+				if ($block === false) {
+					throw $notAccessible;
+				}
+				if ($block === '') {
+					break;
+				}
+				$content .= $block;
+			}
 		} finally {
 			fclose($handle);
-		}
-		if ($content === false) {
-			throw $notAccessible;
 		}
 		if (strlen($content) > $maxBytes) {
 			throw self::tooLarge($maxBytes);
