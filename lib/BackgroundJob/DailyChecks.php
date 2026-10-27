@@ -22,6 +22,7 @@ use OCA\Notenarchiv\Service\ConcertDeadlines;
 use OCA\Notenarchiv\Service\ExportService;
 use OCA\Notenarchiv\Service\FieldValue;
 use OCA\Notenarchiv\Service\FolderBookService;
+use OCA\Notenarchiv\Service\HandoverService;
 use OCA\Notenarchiv\Service\Modules;
 use OCA\Notenarchiv\Service\NotificationService;
 use OCA\Notenarchiv\Service\PersonService;
@@ -44,7 +45,8 @@ use OCP\IAppConfig;
  *
  * It also removes the personal data of the folder book after the retention
  * period (FolderBookService), syncs the mirror folder of the print station
- * (PrintMirrorService, which notifies its own failures) and notifies when
+ * and the hand-over folder for the choir system (PrintMirrorService,
+ * HandoverService, which notify their own failures) and notifies when
  * the last complete backup is older than eight days.
  *
  * Each case is notified once (state kept in lazy app config) and withdrawn
@@ -75,6 +77,7 @@ class DailyChecks extends TimedJob {
 		private FolderBookService $folderBook,
 		private PrintMirrorService $printMirror,
 		private ExportService $export,
+		private HandoverService $handover,
 	) {
 		parent::__construct($time);
 		$this->setInterval(24 * 3600);
@@ -167,8 +170,9 @@ class DailyChecks extends TimedJob {
 		// the retention period, also while the module is off (switching off
 		// never makes anything less safe).
 		$this->folderBook->anonymizeExpired($today);
-		// The mirror folder of the print station, while its module is on.
+		// The mirror folder of the print station and the hand-over folder, while their modules are on.
 		$this->printMirror->runDaily();
+		$this->handover->runDaily();
 
 		// A backup older than eight days: the weekly backup did not run.
 		if ($uid !== '') {

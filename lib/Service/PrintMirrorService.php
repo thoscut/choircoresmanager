@@ -25,6 +25,7 @@ use OCP\Files\IFilenameValidator;
 use OCP\Files\IRootFolder;
 use OCP\IAppConfig;
 use OCP\IDateTimeZone;
+use OCP\IL10N;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
 use Psr\Log\LoggerInterface;
@@ -60,6 +61,8 @@ class PrintMirrorService {
 	public const MODULE = Modules::PRINT_MIRROR;
 	public const README = 'LIESMICH.txt';
 	public const OBJECT_TYPE = 'print_mirror';
+	/** Name of this target folder in the manifest (notarch_mirror_files.mirror) */
+	public const MIRROR = 'print';
 
 	/** Why a file was skipped (keys; the controller translates them) */
 	public const FOREIGN = 'foreign';
@@ -70,36 +73,91 @@ class PrintMirrorService {
 	public const PRESERVATION = 'preservation';
 	public const WRITE_FAILED = 'write_failed';
 
-	private const KEY_FOLDER_ID = 'print_mirror_folder_id';
-	private const KEY_FOLDER_PATH = 'print_mirror_folder_path';
-	private const KEY_USER = 'print_mirror_user';
-	private const KEY_STARTED = 'print_mirror_started';
-	private const KEY_REPORT = 'print_mirror_report';
 	/** Longest file name without ".pdf" and a number */
 	private const MAX_BASE = 120;
 	/** Entries per list kept in the stored report */
 	private const MAX_REPORT_ENTRIES = 500;
 
 	public function __construct(
-		private IAppConfig $appConfig,
-		private IRootFolder $rootFolder,
-		private AppSettings $settings,
-		private ReleaseListService $releases,
-		private ArchiveFileMapper $archiveFiles,
-		private CopyMapper $copies,
-		private MirrorFileMapper $mirrorFiles,
-		private AuditLog $audit,
-		private Roles $roles,
-		private Modules $modules,
-		private NotificationService $notifications,
-		private IFilenameValidator $filenameValidator,
-		private IUserManager $userManager,
-		private IFactory $l10nFactory,
-		private ITimeFactory $time,
-		private IDateTimeZone $timeZone,
-		private LoggerInterface $logger,
-		private RunLock $runLock,
+		protected IAppConfig $appConfig,
+		protected IRootFolder $rootFolder,
+		protected AppSettings $settings,
+		protected ReleaseListService $releases,
+		protected ArchiveFileMapper $archiveFiles,
+		protected CopyMapper $copies,
+		protected MirrorFileMapper $mirrorFiles,
+		protected AuditLog $audit,
+		protected Roles $roles,
+		protected Modules $modules,
+		protected NotificationService $notifications,
+		protected IFilenameValidator $filenameValidator,
+		protected IUserManager $userManager,
+		protected IFactory $l10nFactory,
+		protected ITimeFactory $time,
+		protected IDateTimeZone $timeZone,
+		protected LoggerInterface $logger,
+		protected RunLock $runLock,
 	) {
+	}
+
+	/** Prefix of the app config keys (folder_id, folder_path, user, started, report) and of the log */
+	protected function prefix(): string {
+		return 'print_mirror';
+	}
+
+	/** Prefix of the other target folder, which must not be the same folder */
+	protected function otherPrefix(): string {
+		return 'choir_handover';
+	}
+
+	/** Name of this target folder in the manifest (notarch_mirror_files.mirror) */
+	protected function mirror(): string {
+		return self::MIRROR;
+	}
+
+	/** Object type of the audit log */
+	protected function objectType(): string {
+		return self::OBJECT_TYPE;
+	}
+
+	/** The module of this target folder */
+	protected function module(): string {
+		return self::MODULE;
+	}
+
+	/**
+	 * Messages about the target folder (English source strings); the
+	 * hand-over folder (HandoverService) has its own.
+	 */
+	protected function message(string $key): string {
+		return match ($key) {
+			'archive_first' => 'Please choose the archive folder first: the print station copies the scans from it.',
+			'inside_archive' => 'The target folder must be neither the archive folder nor inside it. Please choose a folder outside the archive folder, for example one shared with the print station.',
+			'none' => 'No target folder has been chosen for the print station yet. An administrator chooses it in the settings of the music archive.',
+			'gone' => 'The target folder of the print station is not accessible (deleted, moved or no longer shared). An administrator chooses it again in the settings.',
+			'moved_inside' => 'The target folder lies inside the archive folder, where the app never writes. An administrator chooses another target folder in the settings.',
+			'not_writable' => 'The account %s may not write into the target folder of the print station. Give it write permission, or let an administrator choose another folder in the settings.',
+			default => 'The account that chose the target folder of the print station no longer exists. An administrator chooses the target folder again in the settings.',
+		};
+	}
+
+	/** The app config key of a setting of this target folder */
+	private function key(string $name): string {
+		return $this->prefix() . '_' . $name;
+	}
+
+	/**
+	 * The run lock of this target folder
+	 *
+	 * @return RunLock::PRINT_MIRROR|RunLock::CHOIR_HANDOVER
+	 */
+	protected function lockName(): string {
+		return RunLock::PRINT_MIRROR;
+	}
+
+	/** The notification when the daily sync failed */
+	protected function failedSubject(): string {
+		return NotificationService::PRINT_MIRROR_FAILED;
 	}
 
 	/**
@@ -110,9 +168,9 @@ class PrintMirrorService {
 	 */
 	public function info(): array {
 		return [
-			'id' => $this->appConfig->getValueInt(Application::APP_ID, self::KEY_FOLDER_ID, 0),
-			'path' => $this->appConfig->getValueString(Application::APP_ID, self::KEY_FOLDER_PATH, ''),
-			'user' => $this->appConfig->getValueString(Application::APP_ID, self::KEY_USER, ''),
+			'id' => $this->appConfig->getValueInt(Application::APP_ID, $this->key('folder_id'), 0),
+			'path' => $this->appConfig->getValueString(Application::APP_ID, $this->key('folder_path'), ''),
+			'user' => $this->appConfig->getValueString(Application::APP_ID, $this->key('user'), ''),
 		];
 	}
 
@@ -130,15 +188,18 @@ class PrintMirrorService {
 			throw new InvalidInputException('The selected target folder is not a folder or not accessible. Please choose a folder.');
 		}
 		if ($this->settings->archiveInfo()['id'] === 0) {
-			throw new InvalidInputException('Please choose the archive folder first: the print station copies the scans from it.');
+			throw new InvalidInputException($this->message('archive_first'));
 		}
 		if ($this->insideArchive($uid, $folder)) {
-			throw new InvalidInputException('The target folder must be neither the archive folder nor inside it. Please choose a folder outside the archive folder, for example one shared with the print station.');
+			throw new InvalidInputException($this->message('inside_archive'));
 		}
 		try {
 			$this->settings->archiveFolder($uid);
 		} catch (UserFacingException) {
 			throw new InvalidInputException('Your account cannot read the archive folder. Please choose the target folder with an account that has access to the archive folder.');
+		}
+		if ($folder->getId() === $this->appConfig->getValueInt(Application::APP_ID, $this->otherPrefix() . '_folder_id', 0)) {
+			throw new InvalidInputException('This folder is already the target folder of the print station or of the hand-over to the choir system. Please choose a folder of its own.');
 		}
 		if (!$folder->isCreatable() || !$folder->isUpdateable()) {
 			throw new InvalidInputException('Your account may not create files in this folder. Please choose a folder where it may create, change and delete files.');
@@ -159,22 +220,22 @@ class PrintMirrorService {
 		$old = $this->info();
 		$new = $folderId === 0 ? ['id' => 0, 'path' => '', 'user' => ''] : $this->checkTargetFolder($uid, $folderId);
 		if ($new['id'] !== $old['id']) {
-			$this->mirrorFiles->deleteAll();
-			$this->appConfig->deleteKey(Application::APP_ID, self::KEY_STARTED);
-			$this->appConfig->deleteKey(Application::APP_ID, self::KEY_REPORT);
-			$this->notifications->withdraw(NotificationService::PRINT_MIRROR_FAILED, self::OBJECT_TYPE, 'sync');
+			$this->mirrorFiles->deleteAll($this->mirror());
+			$this->appConfig->deleteKey(Application::APP_ID, $this->key('started'));
+			$this->appConfig->deleteKey(Application::APP_ID, $this->key('report'));
+			$this->notifications->withdraw($this->failedSubject(), $this->objectType(), 'sync');
 		}
 		if ($new['id'] === 0) {
-			foreach ([self::KEY_FOLDER_ID, self::KEY_FOLDER_PATH, self::KEY_USER] as $key) {
+			foreach ([$this->key('folder_id'), $this->key('folder_path'), $this->key('user')] as $key) {
 				$this->appConfig->deleteKey(Application::APP_ID, $key);
 			}
 		} else {
-			$this->appConfig->setValueInt(Application::APP_ID, self::KEY_FOLDER_ID, $new['id']);
-			$this->appConfig->setValueString(Application::APP_ID, self::KEY_FOLDER_PATH, $new['path']);
-			$this->appConfig->setValueString(Application::APP_ID, self::KEY_USER, $new['user']);
+			$this->appConfig->setValueInt(Application::APP_ID, $this->key('folder_id'), $new['id']);
+			$this->appConfig->setValueString(Application::APP_ID, $this->key('folder_path'), $new['path']);
+			$this->appConfig->setValueString(Application::APP_ID, $this->key('user'), $new['user']);
 		}
 		if ($new['path'] !== $old['path'] || $new['id'] !== $old['id']) {
-			$this->audit->record($this->audit->newOperation(), $uid, 'settings', null, 'print_mirror_folder', 'target_folder',
+			$this->audit->record($this->audit->newOperation(), $uid, 'settings', null, $this->prefix() . '_folder', 'target_folder',
 				$old['id'] === 0 ? null : $old['path'], $new['id'] === 0 ? null : $new['path']);
 		}
 		return $new;
@@ -192,7 +253,7 @@ class PrintMirrorService {
 		return [
 			'folder' => $info['id'] === 0 ? null : $info,
 			'started' => $this->started(),
-			'report' => self::arrayOrNull(json_decode($this->appConfig->getValueString(Application::APP_ID, self::KEY_REPORT, '', true), true, 8)),
+			'report' => self::arrayOrNull(json_decode($this->appConfig->getValueString(Application::APP_ID, $this->key('report'), '', true), true, 8)),
 		];
 	}
 
@@ -218,7 +279,7 @@ class PrintMirrorService {
 		}
 		// The preview only reads; a real sync never runs twice at the same time.
 		return $dryRun ? $this->syncNow($uid, true)
-			: $this->runLock->run(RunLock::PRINT_MIRROR, $uid, fn (): array => $this->syncNow($uid, false));
+			: $this->runLock->run($this->lockName(), $uid, fn (): array => $this->syncNow($uid, false));
 	}
 
 	/**
@@ -227,27 +288,27 @@ class PrintMirrorService {
 	private function syncNow(?string $uid, bool $dryRun): array {
 		$info = $this->info();
 		if ($info['id'] === 0) {
-			throw new InvalidInputException('No target folder has been chosen for the print station yet. An administrator chooses it in the settings of the music archive.');
+			throw new InvalidInputException($this->message('none'));
 		}
 		$account = $info['user'];
 		$userFolder = $this->userFolder($account);
 		$target = $userFolder->getFirstNodeById($info['id']);
 		if (!$target instanceof Folder) {
-			throw new InvalidInputException('The target folder of the print station is not accessible (deleted, moved or no longer shared). An administrator chooses it again in the settings.');
+			throw new InvalidInputException($this->message('gone'));
 		}
 		if ($this->insideArchive($account, $target)) {
-			throw new InvalidInputException('The target folder lies inside the archive folder, where the app never writes. An administrator chooses another target folder in the settings.');
+			throw new InvalidInputException($this->message('moved_inside'));
 		}
 		$writable = $target->isCreatable();
 		if (!$dryRun && !$writable) {
-			throw new InvalidInputException('The account %s may not write into the target folder of the print station. Give it write permission, or let an administrator choose another folder in the settings.', [$account]);
+			throw new InvalidInputException($this->message('not_writable'), [$account]);
 		}
 
 		$report = ['time' => $this->time->getTime(), 'dryRun' => $dryRun, 'writable' => $writable, 'copied' => [], 'replaced' => [], 'removed' => [],
 			'skipped' => [], 'unchanged' => 0, 'files' => 0];
 		$operation = $this->audit->newOperation();
-		$manifest = $this->mirrorFiles->findAllByName();
-		$keep = [self::README => true];
+		$manifest = $this->mirrorFiles->findAllByName($this->mirror());
+		$keep = [];
 
 		foreach ($this->wanted($account) as $entry) {
 			$name = $entry['name'];
@@ -283,6 +344,14 @@ class PrintMirrorService {
 			$this->write($dryRun, $report, 'replaced', $item, fn () => $this->replace($existing, $row, $entry, $uid, $operation));
 		}
 
+		// Text files of this folder (the read-me, for the hand-over also the list
+		// and the notes); the number of files is final here, removals do not count
+		$files = $report['unchanged'] + count($report['copied']) + count($report['replaced']);
+		$texts = $this->textFiles($account, $files);
+		foreach ($texts as $text) {
+			$keep[$text['name']] = true;
+		}
+
 		foreach ($manifest as $name => $row) {
 			if (isset($keep[$name])) {
 				continue;
@@ -301,19 +370,22 @@ class PrintMirrorService {
 				$this->write($dryRun, $report, 'removed', $item, function () use ($existing, $row, $name, $uid, $operation): void {
 					$existing->delete();
 					$this->mirrorFiles->delete($row);
-					$this->audit->record($operation, $uid, self::OBJECT_TYPE, $row->getCopyId(), 'mirror_removed', 'file', $name, null);
+					$this->audit->record($operation, $uid, $this->objectType(), $row->getCopyId(), 'mirror_removed', 'file', $name, null);
 				});
 			}
 		}
-		$report['files'] = $report['unchanged'] + count($report['copied']) + count($report['replaced']);
-		$this->readme($target, $manifest[self::README] ?? null, $account, $dryRun, $report, $uid, $operation);
+		$report['files'] = $files;
+		$changes = count($report['copied']) + count($report['replaced']) + count($report['removed']);
+		foreach ($texts as $text) {
+			$this->writeText($target, $manifest[$text['name']] ?? null, $text, $changes, $dryRun, $report, $uid, $operation);
+		}
 
 		if (!$dryRun) {
-			$this->appConfig->setValueString(Application::APP_ID, self::KEY_REPORT, json_encode(self::bounded($report), JSON_THROW_ON_ERROR), true);
+			$this->appConfig->setValueString(Application::APP_ID, $this->key('report'), json_encode(self::bounded($report), JSON_THROW_ON_ERROR), true);
 			if ($uid !== null) {
-				$this->appConfig->setValueBool(Application::APP_ID, self::KEY_STARTED, true);
+				$this->appConfig->setValueBool(Application::APP_ID, $this->key('started'), true);
 			}
-			$this->notifications->withdraw(NotificationService::PRINT_MIRROR_FAILED, self::OBJECT_TYPE, 'sync');
+			$this->notifications->withdraw($this->failedSubject(), $this->objectType(), 'sync');
 		}
 		return $report;
 	}
@@ -324,7 +396,7 @@ class PrintMirrorService {
 	 * notified to the catalog librarian and the administrators.
 	 */
 	public function runDaily(): void {
-		if (!$this->modules->isEnabled(self::MODULE) || $this->info()['id'] === 0 || !$this->started()) {
+		if (!$this->modules->isEnabled($this->module()) || $this->info()['id'] === 0 || !$this->started()) {
 			return;
 		}
 		try {
@@ -333,12 +405,12 @@ class PrintMirrorService {
 			// A sync by hand is running at this moment.
 			return;
 		} catch (\Throwable $e) {
-			$this->logger->error('Notenarchiv: sync of the print station failed: ' . $e->getMessage(), ['exception' => $e]);
+			$this->logger->error('Notenarchiv: sync of ' . $this->prefix() . ' failed: ' . $e->getMessage(), ['exception' => $e]);
 			// Only messages meant for users go into the notification.
 			$parameters = $e instanceof UserFacingException
 				? ['error' => $e->getMessage(), 'errorParameters' => json_encode(array_map('strval', $e->getParameters()), JSON_THROW_ON_ERROR)]
 				: [];
-			$this->notifications->notifyRole(Roles::LIBRARIAN, NotificationService::PRINT_MIRROR_FAILED, self::OBJECT_TYPE, 'sync', $parameters, true);
+			$this->notifications->notifyRole(Roles::LIBRARIAN, $this->failedSubject(), $this->objectType(), 'sync', $parameters, true);
 		}
 	}
 
@@ -362,7 +434,7 @@ class PrintMirrorService {
 	 *
 	 * @return list<array{name: string, shelfmark: string, copyId: int, archiveFile: ArchiveFile, node: ?File, skip: ?string}>
 	 */
-	private function wanted(string $account): array {
+	protected function wanted(string $account): array {
 		// Scans are read only inside the archive folder, never elsewhere in
 		// the files of the account.
 		$archive = $this->settings->archiveFolder($account);
@@ -419,7 +491,7 @@ class PrintMirrorService {
 			try {
 				$action();
 			} catch (\Exception $e) {
-				$this->logger->warning('Notenarchiv: print station, ' . $item['name'] . ': ' . $e->getMessage(), ['exception' => $e]);
+				$this->logger->warning('Notenarchiv: ' . $this->prefix() . ', ' . $item['name'] . ': ' . $e->getMessage(), ['exception' => $e]);
 				$report['skipped'][] = ['reason' => self::WRITE_FAILED] + $item;
 				return;
 			}
@@ -448,6 +520,7 @@ class PrintMirrorService {
 			}
 		}
 		$row = new MirrorFile();
+		$row->setMirror($this->mirror());
 		$row->setName($name);
 		$row->setFileId($file->getId());
 		$row->setSha256(self::sha256($file));
@@ -456,7 +529,7 @@ class PrintMirrorService {
 		$row->setSourceEtag($source->getEtag());
 		$row->setWritten($this->time->getTime());
 		$this->mirrorFiles->insert($row);
-		$this->audit->record($operation, $uid, self::OBJECT_TYPE, $entry['copyId'], 'mirror_copied', 'file', null, $name);
+		$this->audit->record($operation, $uid, $this->objectType(), $entry['copyId'], 'mirror_copied', 'file', null, $name);
 	}
 
 	/**
@@ -485,26 +558,31 @@ class PrintMirrorService {
 		$row->setSourceEtag($source->getEtag());
 		$row->setWritten($this->time->getTime());
 		$this->mirrorFiles->update($row);
-		$this->audit->record($operation, $uid, self::OBJECT_TYPE, $entry['copyId'], 'mirror_replaced', 'file', $row->getName(), $row->getName());
+		$this->audit->record($operation, $uid, $this->objectType(), $entry['copyId'], 'mirror_replaced', 'file', $row->getName(), $row->getName());
 	}
 
 	/**
-	 * Writes LIESMICH.txt when the folder changed or it is missing; never
+	 * Writes a text file of the folder when it is missing, when files of the
+	 * folder changed, or (with `refresh`) when its text is another; never
 	 * over a file the app did not write or one changed since.
 	 *
+	 * @param array{name: string, text: string, refresh: bool, copyId: ?int} $text
 	 * @param MirrorReport $report
 	 */
-	private function readme(Folder $target, ?MirrorFile $row, string $account, bool $dryRun, array &$report, ?string $uid, string $operation): void {
-		$existing = $target->nodeExists(self::README) ? $target->get(self::README) : null;
-		$item = ['name' => self::README, 'shelfmark' => null, 'reason' => null];
+	private function writeText(Folder $target, ?MirrorFile $row, array $text, int $changes, bool $dryRun, array &$report, ?string $uid,
+		string $operation): void {
+		$name = $text['name'];
+		$existing = $target->nodeExists($name) ? $target->get($name) : null;
+		$item = ['name' => $name, 'shelfmark' => null, 'reason' => null];
 		$own = $existing instanceof File && $row !== null && $existing->getId() === $row->getFileId();
 		if ($existing !== null && !$own) {
 			$report['skipped'][] = ['reason' => self::FOREIGN] + $item;
 			$this->forget($row, $dryRun);
 			return;
 		}
-		$changes = count($report['copied']) + count($report['replaced']) + count($report['removed']);
-		if ($existing !== null && $changes === 0) {
+		$content = $text['text'];
+		$sha = hash('sha256', $content);
+		if ($existing !== null && $changes === 0 && (!$text['refresh'] || $row?->getSha256() === $sha)) {
 			return;
 		}
 		/** @var ?File $existing */
@@ -513,33 +591,53 @@ class PrintMirrorService {
 			$this->forget($row, $dryRun);
 			return;
 		}
-		$text = $this->readmeText($account, $report['files']);
+		$readme = $name === self::README;
 		$this->write($dryRun, $report, $existing === null ? 'copied' : 'replaced', $item,
-			function () use ($target, $existing, $row, $text, $uid, $operation): void {
-				$file = $existing ?? $target->newFile(self::README, $text);
+			function () use ($target, $existing, $row, $name, $content, $sha, $text, $readme, $uid, $operation): void {
+				$file = $existing ?? $target->newFile($name, $content);
 				if ($existing !== null) {
-					$existing->putContent($text);
+					$existing->putContent($content);
 				}
 				$entry = $row ?? new MirrorFile();
-				$entry->setName(self::README);
+				$entry->setMirror($this->mirror());
+				$entry->setName($name);
 				$entry->setFileId($file->getId());
-				$entry->setSha256(hash('sha256', $text));
+				$entry->setSha256($sha);
+				$entry->setCopyId($text['copyId']);
 				$entry->setWritten($this->time->getTime());
 				if ($row === null) {
 					$this->mirrorFiles->insert($entry);
 				} else {
 					$this->mirrorFiles->update($entry);
 				}
-				$this->audit->record($operation, $uid, self::OBJECT_TYPE, null, 'mirror_readme', 'file', null, self::README);
+				$action = $readme ? 'mirror_readme' : ($existing === null ? 'mirror_copied' : 'mirror_replaced');
+				$this->audit->record($operation, $uid, $this->objectType(), $text['copyId'], $action, 'file', $readme || $existing === null ? null : $name, $name);
 			});
+	}
+
+	/**
+	 * The text files of the folder: the read-me (rewritten only when files
+	 * changed, as it carries the time).
+	 *
+	 * @return list<array{name: string, text: string, refresh: bool, copyId: ?int}>
+	 */
+	protected function textFiles(string $account, int $files): array {
+		return [['name' => self::README, 'text' => $this->readmeText($account, $files), 'refresh' => false, 'copyId' => null]];
+	}
+
+	/**
+	 * The language of the account that chose the target folder.
+	 */
+	protected function l10nOf(string $account): IL10N {
+		$user = $this->userManager->get($account);
+		return $this->l10nFactory->get(Application::APP_ID, $this->l10nFactory->getUserLanguage($user));
 	}
 
 	/**
 	 * The text of LIESMICH.txt in the language of the account.
 	 */
-	private function readmeText(string $account, int $files): string {
-		$user = $this->userManager->get($account);
-		$l = $this->l10nFactory->get(Application::APP_ID, $this->l10nFactory->getUserLanguage($user));
+	protected function readmeText(string $account, int $files): string {
+		$l = $this->l10nOf($account);
 		$now = $this->time->getDateTime('now', $this->timeZone->getTimeZone(false, $account));
 		$lines = [
 			$l->t('Print station: mirror folder of the music archive'),
@@ -564,7 +662,7 @@ class PrintMirrorService {
 	}
 
 	private function started(): bool {
-		return $this->appConfig->getValueBool(Application::APP_ID, self::KEY_STARTED, false);
+		return $this->appConfig->getValueBool(Application::APP_ID, $this->key('started'), false);
 	}
 
 	/**
@@ -601,7 +699,7 @@ class PrintMirrorService {
 		try {
 			return $this->rootFolder->getUserFolder($account);
 		} catch (\Throwable) {
-			throw new InvalidInputException('The account that chose the target folder of the print station no longer exists. An administrator chooses the target folder again in the settings.');
+			throw new InvalidInputException($this->message('account_gone'));
 		}
 	}
 

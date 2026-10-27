@@ -163,7 +163,7 @@ try {
 	$preview = $mirror->sync($uid, true);
 	$check('the preview lists the scan and the note', in_array($expected, $names($preview['copied']), true)
 		&& in_array(PrintMirrorService::README, $names($preview['copied']), true), json_encode($names($preview['copied'])) ?: '');
-	$check('the preview writes nothing', count($target->getDirectoryListing()) === 1 && $manifest->findAllByName() === []);
+	$check('the preview writes nothing', count($target->getDirectoryListing()) === 1 && $manifest->findAllByName('print') === []);
 	$mirror->runDaily();
 	$check('the daily sync waits for the first sync by hand', count($target->getDirectoryListing()) === 1);
 
@@ -175,7 +175,7 @@ try {
 	$check('LIESMICH.txt is written', $target->nodeExists(PrintMirrorService::README));
 	$check('the foreign file stays', $target->nodeExists('Notes of the print station.txt')
 		&& $target->get('Notes of the print station.txt') instanceof File);
-	$check('the manifest knows the file', ($manifest->findAllByName()[$expected] ?? null)?->getSha256() === $sha($scan));
+	$check('the manifest knows the file', ($manifest->findAllByName('print')[$expected] ?? null)?->getSha256() === $sha($scan));
 	$copiedEntries = array_filter($auditEntries->findLatest(200), fn ($e): bool => $e->getObjectType() === PrintMirrorService::OBJECT_TYPE
 		&& $e->getAction() === 'mirror_copied' && $e->getNewValue() === $expected);
 	$check('the copy is in the audit log', $copiedEntries !== []);
@@ -186,7 +186,7 @@ try {
 		&& $again['unchanged'] >= 1, json_encode($again) ?: '');
 
 	// ---- a changed scan is replaced ----------------------------------------------------------
-	$row = $manifest->findAllByName()[$expected];
+	$row = $manifest->findAllByName('print')[$expected];
 	$row->setSourceEtag('changed-' . bin2hex(random_bytes(4)));
 	$manifest->update($row);
 	$replaced = $mirror->sync($uid, false);

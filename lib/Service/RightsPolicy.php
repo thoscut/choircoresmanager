@@ -183,6 +183,20 @@ class RightsPolicy {
 	}
 
 	/**
+	 * Whether an audio file of the archive folder (a practice recording) may
+	 * go into the hand-over folder for a choir system (module
+	 * "choir_handover"): released for choir members, and confirmed public
+	 * domain or a license for practice audio. Scans and MusicXML follow
+	 * memberScanDenial, as choir members can save and print them there.
+	 *
+	 * @return string|null null when allowed, otherwise the reason
+	 */
+	public function handoverAudioDenial(WorkVersion $version, string $day, ?Copy $copy = null): ?string {
+		return $this->memberViewDenial($version, $day, $copy) ?? $this->playRightsDenial($version, $day, $copy)
+			?? $this->practiceAudioRightsDenial($version, $day);
+	}
+
+	/**
 	 * Whether an excerpt of a version may be shown to everyone through a
 	 * public link: released for publication by the catalog librarian, and
 	 * confirmed public domain or a valid license for online publication;

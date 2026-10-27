@@ -13,8 +13,8 @@ use OCP\AppFramework\Db\QBMapper;
 use OCP\IDBConnection;
 
 /**
- * The manifest of the print station's target folder: the files the app
- * wrote there.
+ * The manifests of the target folders (print station, hand-over to the
+ * choir system): the files the app wrote there, per mirror.
  *
  * @template-extends QBMapper<MirrorFile>
  */
@@ -26,9 +26,11 @@ class MirrorFileMapper extends QBMapper {
 	/**
 	 * @return array<string, MirrorFile> keyed by file name
 	 */
-	public function findAllByName(): array {
+	public function findAllByName(string $mirror): array {
 		$qb = $this->db->getQueryBuilder();
-		$qb->select('*')->from($this->getTableName())->orderBy('id');
+		$qb->select('*')->from($this->getTableName())
+			->where($qb->expr()->eq('mirror', $qb->createNamedParameter($mirror)))
+			->orderBy('id');
 		$result = [];
 		foreach ($this->findEntities($qb) as $file) {
 			$result[$file->getName()] = $file;
@@ -40,8 +42,10 @@ class MirrorFileMapper extends QBMapper {
 	 * Forgets every file, e.g. when the target folder changes (the files stay
 	 * in the old folder).
 	 */
-	public function deleteAll(): void {
+	public function deleteAll(string $mirror): void {
 		$qb = $this->db->getQueryBuilder();
-		$qb->delete($this->getTableName())->executeStatement();
+		$qb->delete($this->getTableName())
+			->where($qb->expr()->eq('mirror', $qb->createNamedParameter($mirror)))
+			->executeStatement();
 	}
 }

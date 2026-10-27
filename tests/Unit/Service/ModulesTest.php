@@ -76,7 +76,7 @@ final class ModulesTest extends TestCase {
 	 */
 	public function testSharingBeyondTheRolesIsSwitchedOnlyByItself(): void {
 		$sharing = [Modules::MEMBER_LINKS, Modules::MEMBER_PRACTICE_AUDIO, Modules::PUBLIC_LINKS, Modules::PUBLIC_REPERTOIRE];
-		self::assertSame([Modules::AGENT_API, ...$sharing, Modules::PRINT_MIRROR], Modules::OUTSIDE_PRESETS);
+		self::assertSame([Modules::AGENT_API, ...$sharing, Modules::PRINT_MIRROR, Modules::CHOIR_HANDOVER], Modules::OUTSIDE_PRESETS);
 		foreach ($sharing as $key) {
 			self::assertSame('sharing', Modules::MODULES[$key]['group'], $key);
 			self::assertFalse(Modules::MODULES[$key]['simple'], $key);
@@ -123,7 +123,7 @@ final class ModulesTest extends TestCase {
 
 	public function testEveryNotificationHasASwitch(): void {
 		$subjects = array_values((new \ReflectionClass(NotificationService::class))->getConstants());
-		self::assertCount(15, $subjects);
+		self::assertCount(16, $subjects);
 		foreach ($subjects as $subject) {
 			self::assertIsString($subject);
 			$key = Modules::notificationKey($subject);

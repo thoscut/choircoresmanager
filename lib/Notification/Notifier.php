@@ -79,6 +79,7 @@ class Notifier implements INotifier {
 				? $l->t('%1$s %2$s: a new transcription has done review points.', [(string)($p['shelfmark'] ?? ''), (string)($p['title'] ?? '')])
 				: $l->t('%1$s %2$s: a corrected MusicXML file was saved in the app.', [(string)($p['shelfmark'] ?? ''), (string)($p['title'] ?? '')]),
 			NotificationService::PRINT_MIRROR_FAILED => $l->t('The sync of the mirror folder for the print station failed: %s', [self::exportError($l, $p)]),
+			NotificationService::CHOIR_HANDOVER_FAILED => $l->t('The sync of the hand-over folder for the choir system failed: %s', [self::exportError($l, $p)]),
 			default => throw new UnknownNotificationException(),
 		};
 
@@ -98,6 +99,8 @@ class Notifier implements INotifier {
 			$link .= '?view=checksums';
 		} elseif ($notification->getSubject() === NotificationService::PRINT_MIRROR_FAILED) {
 			$link .= '?view=print-station';
+		} elseif ($notification->getSubject() === NotificationService::CHOIR_HANDOVER_FAILED) {
+			$link .= '?view=portal';
 		}
 
 		$notification->setParsedSubject($subject)

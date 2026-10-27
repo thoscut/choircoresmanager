@@ -53,6 +53,8 @@ class Modules {
 	public const PUBLIC_REPERTOIRE = 'public_repertoire';
 	/** The mirror folder of the print station (milestone 0.7): writes files outside the archive folder */
 	public const PRINT_MIRROR = 'print_mirror';
+	/** The hand-over folder for a choir system (milestone 0.12): writes files outside the archive folder */
+	public const CHOIR_HANDOVER = 'choir_handover';
 	/** The folder book (milestone 0.7): issuing and taking back choir folders */
 	public const FOLDER_BOOK = 'folder_book';
 
@@ -63,11 +65,12 @@ class Modules {
 	 * purpose, and a preset chosen later neither opens nor closes it. The
 	 * same holds for every function that opens the archive beyond its roles
 	 * (choir members, the public) and for the mirror folder of the print
-	 * station, which writes files (an exception to guideline 4): the choir
-	 * decides on it, then the administration switches it on.
+	 * station and the hand-over folder for a choir system, which write files
+	 * (an exception to guideline 4): the choir decides on it, then the
+	 * administration switches it on.
 	 */
 	public const OUTSIDE_PRESETS = [self::AGENT_API, self::MEMBER_LINKS, self::MEMBER_PRACTICE_AUDIO, self::PUBLIC_LINKS, self::PUBLIC_REPERTOIRE,
-		self::PRINT_MIRROR];
+		self::PRINT_MIRROR, self::CHOIR_HANDOVER];
 	/** The action "Open in music archive" in the Files app */
 	public const FILES_INTEGRATION = 'files_integration';
 	/** Copies in the search of Nextcloud (milestone 0.8) */
@@ -152,6 +155,9 @@ class Modules {
 		self::PRINT_MIRROR => ['group' => 'releases', 'requires' => ['print_station'], 'simple' => false, 'standard' => false, 'planned' => false,
 			'label' => 'Mirror folder for the print station',
 			'description' => 'Copies the PDF scans of the versions on the list of the print station into a target folder of its own, daily and on request, and removes those no longer released. Writes only into this folder, never into the archive folder, and removes only files it wrote itself. Not part of any preset.'],
+		self::CHOIR_HANDOVER => ['group' => 'releases', 'requires' => ['portal'], 'simple' => false, 'standard' => false, 'planned' => false,
+			'label' => 'Hand-over to a choir system',
+			'description' => 'Puts the scans (PDF), MusicXML and practice audio files of the versions released for the singers\' portal into a hand-over folder of its own, with a list (version line and license notice per file) and the notes of the conductor per passage as text, daily and on request. Someone of the choir uploads them to the choir system; the app uploads nothing to a provider. Writes only into this folder and removes only files it wrote itself. Not part of any preset.'],
 		'publication' => ['group' => 'releases', 'requires' => ['releases'], 'simple' => false, 'standard' => true, 'planned' => false,
 			'label' => 'Publication',
 			'description' => 'Publication status of a version with its reasoning.'],
@@ -284,6 +290,9 @@ class Modules {
 		'notify_print_mirror_failed' => ['group' => 'notifications', 'requires' => ['notifications', 'print_mirror'], 'simple' => true, 'standard' => true, 'planned' => false,
 			'label' => 'Print station sync failed',
 			'description' => 'To the catalog librarian and the administrators: the sync of the mirror folder for the print station failed.'],
+		'notify_choir_handover_failed' => ['group' => 'notifications', 'requires' => ['notifications', 'choir_handover'], 'simple' => true, 'standard' => true, 'planned' => false,
+			'label' => 'Hand-over to the choir system failed',
+			'description' => 'To the catalog librarian and the administrators: the sync of the hand-over folder for the choir system failed.'],
 		self::AGENT_API => ['group' => 'interfaces', 'requires' => [], 'simple' => false, 'standard' => false, 'planned' => false,
 			'label' => 'Interface for agents',
 			'description' => 'A fixed, versioned interface (OCS API v1) for agents and tools that sign in with an app password of an account of their own. They can do only what the roles of that account allow and never take decisions: they read, propose changes and ask or answer questions. Not part of any preset.'],

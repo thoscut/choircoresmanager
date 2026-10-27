@@ -13,12 +13,15 @@ use JsonSerializable;
 use OCP\AppFramework\Db\Entity;
 
 /**
- * A file the app wrote into the target folder of the print station (module
- * "print_mirror"): its name, Nextcloud file id and the SHA-256 of what was
+ * A file the app wrote into a target folder: of the print station (module
+ * "print_mirror", mirror `print`) or of the hand-over to the choir system
+ * (module "choir_handover", mirror `handover`). Its name, Nextcloud file id and the SHA-256 of what was
  * written, and the scan it was copied from with its ETag at that time. The
  * app replaces or removes only files listed here whose content is still
  * the one it wrote.
  *
+ * @method string getMirror()
+ * @method void setMirror(string $mirror)
  * @method string getName()
  * @method void setName(string $name)
  * @method int getFileId()
@@ -37,6 +40,7 @@ use OCP\AppFramework\Db\Entity;
 class MirrorFile extends Entity implements JsonSerializable {
 	use FieldAccess;
 
+	protected string $mirror = 'print';
 	protected string $name = '';
 	protected int $fileId = 0;
 	protected string $sha256 = '';
@@ -49,7 +53,7 @@ class MirrorFile extends Entity implements JsonSerializable {
 		foreach (['fileId', 'copyId', 'sourceId', 'written'] as $field) {
 			$this->addType($field, 'integer');
 		}
-		foreach (['name', 'sha256', 'sourceEtag'] as $field) {
+		foreach (['mirror', 'name', 'sha256', 'sourceEtag'] as $field) {
 			$this->addType($field, 'string');
 		}
 	}

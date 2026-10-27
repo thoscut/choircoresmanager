@@ -26,6 +26,7 @@ use OCA\Notenarchiv\Service\AppSettings;
 use OCA\Notenarchiv\Service\ChecksumService;
 use OCA\Notenarchiv\Service\ExportService;
 use OCA\Notenarchiv\Service\FolderBookService;
+use OCA\Notenarchiv\Service\HandoverService;
 use OCA\Notenarchiv\Service\Modules;
 use OCA\Notenarchiv\Service\NotificationService;
 use OCA\Notenarchiv\Service\PersonService;
@@ -104,7 +105,8 @@ final class JobsTest extends TestCase {
 		return new DailyChecks($this->createStub(ITimeFactory::class), $settings, $this->createStub(LicenseMapper::class), $versions,
 			$works, $this->createStub(CopyMapper::class), $rights, $notifications, $config, $events,
 			$persons, $this->modulesWithout($off), $folderBook ?? $this->createStub(FolderBookService::class),
-			$printMirror ?? $this->createStub(PrintMirrorService::class), $export ?? $this->createStub(ExportService::class));
+			$printMirror ?? $this->createStub(PrintMirrorService::class), $export ?? $this->createStub(ExportService::class),
+			$this->createStub(HandoverService::class));
 	}
 
 	public function testABackupOlderThanEightDaysIsNotifiedOnce(): void {

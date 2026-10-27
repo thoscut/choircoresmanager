@@ -15,6 +15,7 @@ use OCA\Notenarchiv\Controller\ApiV1StatusController;
 use OCA\Notenarchiv\Controller\CalendarController;
 use OCA\Notenarchiv\Controller\FilesIntegrationController;
 use OCA\Notenarchiv\Controller\FolderBookController;
+use OCA\Notenarchiv\Controller\HandoverController;
 use OCA\Notenarchiv\Controller\MaintenanceController;
 use OCA\Notenarchiv\Controller\MemberController;
 use OCA\Notenarchiv\Controller\PageController;
@@ -30,8 +31,10 @@ use OCA\Notenarchiv\Controller\TaskController;
 use OCA\Notenarchiv\Db\ArchiveFileMapper;
 use OCA\Notenarchiv\Db\AuditEntryMapper;
 use OCA\Notenarchiv\Db\CopyMapper;
+use OCA\Notenarchiv\Db\ExcerptLinkMapper;
 use OCA\Notenarchiv\Db\FolderLoanMapper;
 use OCA\Notenarchiv\Db\FolderMapper;
+use OCA\Notenarchiv\Db\LicenseMapper;
 use OCA\Notenarchiv\Db\MirrorFileMapper;
 use OCA\Notenarchiv\Db\ReviewPointMapper;
 use OCA\Notenarchiv\Db\TranscriptionReportMapper;
@@ -59,6 +62,7 @@ use OCA\Notenarchiv\Service\FilesIntegrationService;
 use OCA\Notenarchiv\Service\FileSyncService;
 use OCA\Notenarchiv\Service\FolderBookService;
 use OCA\Notenarchiv\Service\FullBackupService;
+use OCA\Notenarchiv\Service\HandoverService;
 use OCA\Notenarchiv\Service\ImportService;
 use OCA\Notenarchiv\Service\LinkService;
 use OCA\Notenarchiv\Service\MetaService;
@@ -141,6 +145,7 @@ use Psr\Log\LoggerInterface;
 #[CoversClass(PublicRepertoireController::class)]
 #[CoversClass(FolderBookController::class)]
 #[CoversClass(PrintMirrorController::class)]
+#[CoversClass(HandoverController::class)]
 #[CoversClass(AnnualSnapshotController::class)]
 #[CoversClass(StateController::class)]
 final class ControllerSecurityTest extends TestCase {
@@ -157,6 +162,7 @@ final class ControllerSecurityTest extends TestCase {
 		'EventController::setThresholds', 'ModuleController::settings', 'ModuleController::update',
 		'FolderBookController::settings', 'FolderBookController::updateSettings',
 		'PrintMirrorController::settings', 'PrintMirrorController::check', 'PrintMirrorController::updateSettings',
+		'HandoverController::settings', 'HandoverController::check', 'HandoverController::updateSettings',
 	];
 
 	/**
@@ -215,6 +221,7 @@ final class ControllerSecurityTest extends TestCase {
 		// the folder book writes, and the print station reads and writes files
 		'FolderBookController::createFolder', 'FolderBookController::updateFolder', 'FolderBookController::issue',
 		'FolderBookController::takeBack', 'PrintMirrorController::preview', 'PrintMirrorController::sync',
+		'HandoverController::preview', 'HandoverController::sync',
 		// reads every archive file for the checksums, or two complete backups
 		'AnnualSnapshotController::create', 'AnnualSnapshotController::compare',
 		// setting the current revision of a version writes
@@ -1201,6 +1208,43 @@ final class ControllerSecurityTest extends TestCase {
 				$response->getData());
 		}
 		self::assertSame(Http::STATUS_FORBIDDEN, $this->printMirrorController('librarian')->check(5)->getStatus(), 'only administrators choose the folder');
+	}
+
+	private function handoverController(string $uid): HandoverController {
+		$roles = $this->rolesByName();
+		$service = new HandoverService($this->createStub(IAppConfig::class), $this->createStub(IRootFolder::class),
+			$this->createStub(AppSettings::class), $this->createStub(ReleaseListService::class), $this->createStub(ArchiveFileMapper::class),
+			$this->createStub(CopyMapper::class), $this->createStub(MirrorFileMapper::class), $this->createStub(AuditLog::class), $roles,
+			$this->modulesWithout(), $this->createStub(NotificationService::class), $this->createStub(IFilenameValidator::class),
+			$this->createStub(IUserManager::class), $this->createStub(IFactory::class), $this->createStub(ITimeFactory::class),
+			$this->createStub(IDateTimeZone::class), $this->createStub(LoggerInterface::class), $this->runLock(),
+			$this->createStub(WorkVersionMapper::class), $this->createStub(RightsPolicy::class), $this->createStub(RightsService::class),
+			$this->createStub(LicenseMapper::class), $this->createStub(ExcerptLinkMapper::class), $this->createStub(StateService::class));
+		return new HandoverController($this->createStub(IRequest::class), $uid, $roles, $service, $this->l10n(),
+			$this->createStub(LoggerInterface::class));
+	}
+
+	public function testTheHandOverIsSyncedByTheCatalogLibrarianAndAdministrators(): void {
+		foreach (array_keys(self::routes()) as $name) {
+			if (str_starts_with($name, 'HandoverController::')) {
+				self::assertSame([Modules::CHOIR_HANDOVER], ModuleMiddleware::required(HandoverController::class, explode('::', $name)[1]), $name);
+			}
+		}
+		self::assertSame('POST', self::routes()['HandoverController::sync']['verb']);
+		self::assertNotContains(NoCSRFRequired::class, self::routes()['HandoverController::sync']['attributes']);
+		foreach (['operations', 'conductor', 'reader', 'contributor', 'member'] as $uid) {
+			$controller = $this->handoverController($uid);
+			self::assertSame(Http::STATUS_FORBIDDEN, $controller->sync()->getStatus(), $uid . ' does not sync');
+			self::assertSame(Http::STATUS_FORBIDDEN, $controller->preview()->getStatus(), $uid . ' sees no preview');
+			self::assertSame(Http::STATUS_FORBIDDEN, $controller->updateSettings(5)->getStatus(), $uid . ' chooses no folder');
+		}
+		foreach (['librarian', 'admin'] as $uid) {
+			$response = $this->handoverController($uid)->sync();
+			self::assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus(), $uid . ' passes the role check');
+			self::assertSame(['error' => 'No hand-over folder has been chosen yet. An administrator chooses it in the settings of the music archive.'],
+				$response->getData());
+		}
+		self::assertSame(Http::STATUS_FORBIDDEN, $this->handoverController('librarian')->check(5)->getStatus(), 'only administrators choose the folder');
 	}
 
 	public function testFolderBookEntriesOfTheAuditLogAreHiddenFromOtherRoles(): void {

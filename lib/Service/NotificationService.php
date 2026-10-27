@@ -48,6 +48,8 @@ class NotificationService {
 	public const CORRECTION_RECEIVED = 'correction_received';
 	/** Milestone 0.7: the sync of the mirror folder for the print station failed */
 	public const PRINT_MIRROR_FAILED = 'print_mirror_failed';
+	/** Milestone 0.12: the sync of the hand-over folder for the choir system failed */
+	public const CHOIR_HANDOVER_FAILED = 'choir_handover_failed';
 
 	public function __construct(
 		private IManager $manager,

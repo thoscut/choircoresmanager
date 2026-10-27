@@ -104,6 +104,11 @@ for (const f of files(join(root, 'lib'), ['.php'])) {
 		}
 		for (const m of src.matchAll(new RegExp('public const \\w+_OFF = (' + STR + ');', 'g'))) add(unq(m[1]), 'module reason')
 	}
+	// Messages about the target folders (PrintMirrorService::message() and its subclass), thrown as exceptions
+	if (base.endsWith('Service/PrintMirrorService.php') || base.endsWith('Service/HandoverService.php')) {
+		const block = src.match(/protected function message\(string \$key\): string \{([\s\S]*?)\n\t\}/)
+		for (const m of (block?.[1] ?? '').matchAll(new RegExp("(?:'\\w+'|default) => (" + STR + '),', 'g'))) add(unq(m[1]), base + ' exception')
+	}
 	if (base.endsWith('Roles.php')) {
 		const block = src.match(/public const LABELS = \[([\s\S]*?)\];/)
 		for (const m of block[1].matchAll(new RegExp('=>\\s*(' + STR + ')', 'g'))) add(unq(m[1]), 'role label')

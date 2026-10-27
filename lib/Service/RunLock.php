@@ -31,6 +31,7 @@ use OCP\Lock\LockedException;
 class RunLock {
 	public const FILE_SYNC = 'file_sync';
 	public const PRINT_MIRROR = 'print_mirror';
+	public const CHOIR_HANDOVER = 'choir_handover';
 	public const ANNUAL_SNAPSHOT = 'annual_snapshot';
 
 	public function __construct(
@@ -44,7 +45,7 @@ class RunLock {
 	 * Runs `$run` while holding the lock of `$name`.
 	 *
 	 * @template T
-	 * @param self::FILE_SYNC|self::PRINT_MIRROR|self::ANNUAL_SNAPSHOT $name
+	 * @param self::FILE_SYNC|self::PRINT_MIRROR|self::CHOIR_HANDOVER|self::ANNUAL_SNAPSHOT $name
 	 * @param string|null $uid who started it; null for a background job
 	 * @param callable(): T $run
 	 * @return T
@@ -58,6 +59,7 @@ class RunLock {
 			throw match ($name) {
 				self::FILE_SYNC => new RunInProgressException('A file sync is already running. Wait until it has finished; the page shows its report afterwards.'),
 				self::PRINT_MIRROR => new RunInProgressException('The print station is already being synced. Wait until that run has finished.'),
+				self::CHOIR_HANDOVER => new RunInProgressException('The hand-over folder is already being synced. Wait until that run has finished.'),
 				self::ANNUAL_SNAPSHOT => new RunInProgressException('An annual snapshot is already being made. Wait until it has finished.'),
 			};
 		}
@@ -76,7 +78,7 @@ class RunLock {
 	/**
 	 * The run in progress, or null.
 	 *
-	 * @param self::FILE_SYNC|self::PRINT_MIRROR|self::ANNUAL_SNAPSHOT $name
+	 * @param self::FILE_SYNC|self::PRINT_MIRROR|self::CHOIR_HANDOVER|self::ANNUAL_SNAPSHOT $name
 	 * @return RunState|null
 	 */
 	public function state(string $name): ?array {
