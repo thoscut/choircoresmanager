@@ -178,6 +178,15 @@ try {
 	$check('repeated import adds nothing', $again['created'] === 0 && $again['contributions'] === 0 && $again['contributionsExisting'] === $report['contributions']
 		&& $again['snapshot'] !== null, (string)$again['snapshot']);
 
+	// The import leaves the roles open; a "free" proposal needs composer and lyricist.
+	$importedRoles = ['Friedrich Silcher' => 'composer', 'Simon Dach' => 'lyricist', 'Johann Gottfried Herder' => 'translator'];
+	foreach ($persons->forVersion($versionFree) as $row) {
+		$role = $importedRoles[$row['person']['name'] ?? ''] ?? null;
+		if ($role !== null) {
+			$persons->updateContribution((int)$row['id'], ['role' => $role], $uid);
+		}
+	}
+
 	// Protection proposal per version, in the entry, translated
 	$proposal = $persons->protection($versionFree, $year);
 	$check('protection proposal: free', $proposal['status'] === 'free' && $proposal['freeSince'] !== null, json_encode($proposal, JSON_UNESCAPED_UNICODE));

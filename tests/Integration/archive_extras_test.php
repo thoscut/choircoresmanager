@@ -154,7 +154,7 @@ try {
 		json_encode($proposal) ?: '');
 	$check('the editor counts with the special term', ($proposal['special'][0]['case'] ?? '') === ProtectionTerm::SCIENTIFIC_EDITION);
 
-	$catalog->update('version', $version->getId(), ['scientific_edition' => false, 'posthumous_work' => true, 'first_published_year' => 1900], $uid,
+	$catalog->update('version', $version->getId(), ['scientific_edition' => false, 'posthumous_work' => true, 'first_published_year' => 1900, 'text_origin' => 'none'], $uid,
 		'integration test');
 	$proposal = $persons->protection($version->getId(), $year);
 	$check('a posthumous work first published long ago is free', $proposal['status'] === ProtectionTerm::FREE
