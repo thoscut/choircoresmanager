@@ -1101,6 +1101,24 @@ links for choir members (see [Sharing with choir members and the public](#sharin
 Upload the files to the choir system, and remove there what has left the
 folder.
 
+### Comparing with the choir system
+
+If the choir system can export its list of pieces (CSV or Excel), you no
+longer have to keep "In singers' portal since" by hand. In the list
+**Singers' portal**, section **Compare with the choir system**, choose
+**Compare with an export …** and pick the file in your Nextcloud files. The
+app recognises a piece by its shelf mark at the start of a cell (a column
+with the shelf mark, titles like "2-3 Am Brunnen vor dem Tore" or the file
+names of the hand-over folder all work).
+
+The first result is a dry run. It names the pieces that are in the choir
+system but not recorded as in the portal, the pieces recorded as in the
+portal that are missing there, and the pieces that are in the choir system
+although they are not released for it: remove those there, the archive
+stays as it is. **Create proposals** puts the first two groups into the
+**Inbox**; the catalog changes only when you accept them there (see
+[Deciding proposals in the inbox](#deciding-proposals-in-the-inbox)).
+
 ### The public repertoire page
 
 The catalog librarian can list works on a public page of the choir

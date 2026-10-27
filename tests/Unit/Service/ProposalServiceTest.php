@@ -16,6 +16,7 @@ use OCA\Notenarchiv\Service\AuditLog;
 use OCA\Notenarchiv\Service\CatalogService;
 use OCA\Notenarchiv\Service\NotificationService;
 use OCA\Notenarchiv\Service\ProposalService;
+use OCA\Notenarchiv\Service\RightsService;
 use OCA\Notenarchiv\Service\Roles;
 use OCP\AppFramework\Utility\ITimeFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -27,6 +28,9 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(Proposal::class)]
 final class ProposalServiceTest extends TestCase {
 	private CatalogService&MockObject $catalog;
+	private RightsService&MockObject $rights;
+	/** @var list<Proposal> open proposals of the object asked for */
+	private array $open = [];
 	private ProposalService $service;
 	/** @var list<Proposal> */
 	private array $inserted = [];
@@ -42,11 +46,13 @@ final class ProposalServiceTest extends TestCase {
 		$mapper->method('find')->willReturnCallback(fn (int $id): Proposal => $this->inserted[$id - 1]);
 		$mapper->method('update')->willReturnArgument(0);
 		$mapper->method('countOpen')->willReturn(1);
+		$mapper->method('findOpenForObject')->willReturnCallback(fn (): array => $this->open);
+		$this->rights = $this->createMock(RightsService::class);
 		$this->catalog = $this->createMock(CatalogService::class);
 		$time = $this->createStub(ITimeFactory::class);
 		$time->method('getTime')->willReturn(1761134400);
 		$this->service = new ProposalService($mapper, $this->catalog, $this->createStub(AuditLog::class), $this->createStub(Roles::class),
-			$this->createStub(NotificationService::class), $time);
+			$this->createStub(NotificationService::class), $time, $this->rights);
 	}
 
 	/**
@@ -110,6 +116,29 @@ final class ProposalServiceTest extends TestCase {
 		$this->expectException(InvalidInputException::class);
 		$this->expectExceptionMessage('"%s" cannot be proposed.');
 		$this->service->propose('version', 10, ['confirmed_by' => 'mallory'], 'anna', null, null);
+	}
+
+	public function testThePortalIsChangedOnlyThroughTheRights(): void {
+		$this->service->proposePortal(10, '2026-10-27', 'bob', 'In the export of the choir system.', 'Choir system: Singste.csv');
+		$this->service->proposePortal(11, null, 'bob', 'Not in the export of the choir system.', 'Choir system: Singste.csv');
+		self::assertSame(['"2026-10-27"', 'null'], [$this->inserted[0]->getNewValue(), $this->inserted[1]->getNewValue()]);
+		$this->catalog->expects(self::never())->method('update');
+		$this->rights->expects(self::once())->method('addToPortal')->with(10, 'bob', '2026-10-27');
+		$this->rights->expects(self::once())->method('removeFromPortal')
+			->with(11, 'bob', 'Proposal #2 (Choir system: Singste.csv): Not in the export of the choir system.');
+		$this->service->accept(1, 'bob', null);
+		$this->service->accept(2, 'bob', null);
+	}
+
+	public function testThePortalIsNotProposedTwice(): void {
+		$open = new Proposal();
+		$open->setField(ProposalService::PORTAL_FIELD);
+		$open->setNewValue('"2026-10-01"');
+		$this->open = [$open];
+		$this->service->proposePortal(10, '2026-10-27', 'bob', '', 'Choir system');
+		self::assertSame([], $this->inserted);
+		$this->service->proposePortal(10, null, 'bob', '', 'Choir system');
+		self::assertCount(1, $this->inserted, 'the other direction is a proposal of its own');
 	}
 
 	public function testNestedValuesAreRefused(): void {

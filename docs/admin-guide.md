@@ -1042,8 +1042,8 @@ Setting up:
 4. Look at the preview and start the first sync (in the settings or in the
    list **Singers' portal**).
 
-What it copies, for every version on the list of the singers' portal (rows
-"add" and "not decided"), from its active copies, never from internal
+What it copies, for every version released for the singers' portal (rows
+"In order", "Add" and "No valid version chosen" of its list), from its active copies, never from internal
 preservation copies:
 
 - the scans (PDF) and MusicXML files, if choir members may save and print

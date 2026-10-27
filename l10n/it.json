@@ -352,6 +352,16 @@
         "File: {path}": "File: {path}",
         "Only if you know that the file was changed on purpose. The next check stores the checksum of the current content; the old content can then no longer be recognised as the original.": "Solo se sai che il file è stato modificato di proposito. La prossima verifica salva il checksum del contenuto attuale; il vecchio contenuto non potrà più essere riconosciuto come originale.",
         "Reason (optional)": "Motivo (facoltativo)",
+        "Choose the export of the choir system (.csv or .xlsx)": "Scegli l'esportazione del sistema del coro (.csv o .xlsx)",
+        "The differences are in the inbox as proposals.": "Le differenze sono nella posta in arrivo come proposte.",
+        "Compare with an export …": "Confronta con un'esportazione …",
+        "Create proposals": "Crea proposte",
+        "Comparing …": "Confronto in corso …",
+        "Comparison with the choir system": "Confronto con il sistema del coro",
+        "{file}: {matched} of {rows} rows are pieces of the archive. Nothing has been proposed yet.": "{file}: {matched} righe su {rows} sono brani dell'archivio. Non è ancora stato proposto nulla.",
+        "{file}: the proposals are in the inbox. The catalog changes only when they are accepted there.": "{file}: le proposte sono nella posta in arrivo. Il catalogo cambia solo quando vengono accettate lì.",
+        "The choir system has exactly what the list of the singers' portal says.": "Il sistema del coro ha esattamente ciò che dice l'elenco del portale del coro.",
+        "Another version of the work is valid for the choir.": "Per il coro vale un'altra versione dell'opera.",
         "Please choose a person and a role.": "Scegli una persona e un ruolo.",
         "The person has been added.": "La persona è stata aggiunta.",
         "The contribution has been changed.": "La partecipazione è stata modificata.",
@@ -1023,6 +1033,7 @@
         "This is what the sync would do now. Files that the app did not write stay as they are.": "Ecco cosa farebbe ora la sincronizzazione. I file che l'app non ha scritto restano invariati.",
         "Sync now": "Sincronizza ora",
         "unknown": "sconosciuto",
+        "Removed from the singers' portal": "Rimosso dal portale del coro",
         "The proposal has been accepted and applied.": "La proposta è stata accettata e applicata.",
         "The proposal has been rejected.": "La proposta è stata rifiutata.",
         "Inbox": "Posta in arrivo",
@@ -1070,7 +1081,9 @@
         "not assessed": "non valutato",
         "{status}, confirmed": "{status}, confermato",
         "The PDF scans of the versions this list shows (to add and not decided), copied into a folder of the print station.": "Le scansioni PDF delle versioni mostrate da questo elenco (da aggiungere e non decise), copiate in una cartella della postazione di stampa.",
-        "The files of the versions this list shows (to add and not decided), with a list of the pieces and the conductor's notes, copied into a folder that the choir system reads.": "I file delle versioni mostrate da questo elenco (da aggiungere e non decise), con un elenco dei brani e le indicazioni della direzione del coro, copiati in una cartella che il sistema del coro legge.",
+        "The files of the versions released for the portal (in order, to add and not decided), with a list of the pieces and the conductor's notes, copied into a folder that the choir system reads.": "I file delle versioni pubblicate per il portale (in ordine, da aggiungere e non decise), con un elenco dei brani e le indicazioni della direzione del coro, copiati in una cartella che il sistema del coro legge.",
+        "Compare with the choir system": "Confronta con il sistema del coro",
+        "Choose an export of the choir system (a list with the shelf mark, or titles that start with it). The app compares it with this list; what differs becomes a proposal in the inbox instead of a change.": "Scegli un'esportazione del sistema del coro (un elenco con la segnatura, o titoli che iniziano con essa). L'app la confronta con questo elenco; ciò che differisce diventa una proposta nella posta in arrivo invece di una modifica.",
         "Valid since": "Valida dal",
         "In the portal since": "Nel portale dal",
         "round {round}": "ciclo {round}",
@@ -1751,6 +1764,10 @@
         "A reason is required for this status.": "Per questo stato è necessario un motivo.",
         "Not found.": "Non trovato.",
         "There is no checksum difference to accept for this file.": "Per questo file non c'è alcuna differenza di checksum da accettare.",
+        "The file names no shelf mark of the archive. The export needs a column with the shelf mark, or titles that start with it, e.g. \"2-3 Am Brunnen vor dem Tore\".": "Il file non indica alcuna segnatura dell'archivio. L'esportazione deve avere una colonna con la segnatura, o titoli che iniziano con essa, ad es. «2-3 Am Brunnen vor dem Tore».",
+        "Choir system: %s": "Sistema del coro: %s",
+        "The choir system has this piece (export %s).": "Il sistema del coro ha questo brano (esportazione %s).",
+        "The choir system no longer has this piece (export %s).": "Il sistema del coro non ha più questo brano (esportazione %s).",
         "The selected calendar does not exist or you cannot add entries to it.": "Il calendario selezionato non esiste oppure non puoi aggiungervi voci.",
         "Only concerts can be added to a calendar.": "Solo i concerti possono essere aggiunti a un calendario.",
         "This concert has no date yet.": "Questo concerto non ha ancora una data.",
@@ -2387,6 +2404,26 @@
         "_Each hourly run reads up to %n file._::_Each hourly run reads up to %n files._": [
             "Ogni passaggio orario legge fino a %n file.",
             "Ogni passaggio orario legge fino a %n file."
+        ],
+        "_%n piece is in the choir system but not recorded as in the portal_::_%n pieces are in the choir system but not recorded as in the portal_": [
+            "%n brano è nel sistema del coro ma non è registrato come presente nel portale",
+            "%n brani sono nel sistema del coro ma non sono registrati come presenti nel portale"
+        ],
+        "_%n piece is recorded as in the portal but missing in the choir system_::_%n pieces are recorded as in the portal but missing in the choir system_": [
+            "%n brano è registrato come presente nel portale ma manca nel sistema del coro",
+            "%n brani sono registrati come presenti nel portale ma mancano nel sistema del coro"
+        ],
+        "_%n difference is already waiting in the inbox._::_%n differences are already waiting in the inbox._": [
+            "%n differenza è già in attesa nella posta in arrivo.",
+            "%n differenze sono già in attesa nella posta in arrivo."
+        ],
+        "_%n piece is in the choir system but not released for the singers' portal. Remove it there; the archive stays as it is._::_%n pieces are in the choir system but not released for the singers' portal. Remove them there; the archive stays as it is._": [
+            "%n brano è nel sistema del coro ma non è pubblicato per il portale del coro. Rimuovilo lì; l'archivio resta com'è.",
+            "%n brani sono nel sistema del coro ma non sono pubblicati per il portale del coro. Rimuovili lì; l'archivio resta com'è."
+        ],
+        "_%n row without a shelf mark of the archive_::_%n rows without a shelf mark of the archive_": [
+            "%n riga senza segnatura dell'archivio",
+            "%n righe senza segnatura dell'archivio"
         ],
         "_%n piece_::_%n pieces_": [
             "%n brano",

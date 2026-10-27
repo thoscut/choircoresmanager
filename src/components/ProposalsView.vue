@@ -115,6 +115,10 @@ function proposedValue(proposal: Proposal): string {
 	} catch {
 		value = proposal.new_value
 	}
+	if (proposal.object_type === 'version' && proposal.field === 'portal_since' && value === null) {
+		// from the comparison with the choir system (milestone 0.12)
+		return t('notenarchiv', 'Removed from the singers\' portal')
+	}
 	const shown = typeof value === 'object' && value !== null ? JSON.stringify(value) : value as string | number | boolean | null
 	return displayValue(fieldInfo(proposal.object_type, proposal.field), shown) || t('notenarchiv', '(empty)')
 }

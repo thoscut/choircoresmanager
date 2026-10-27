@@ -437,6 +437,7 @@ Endpoints (all JSON, errors as `{ "error" }`):
 | `POST /api/proposals/{id}/reject` | `{ reason? }` | librarian |
 | `GET /api/lists/portal?all=0\|1` | – | any role |
 | `GET /api/lists/print-station?all=0\|1` | – | any role |
+| `POST /api/lists/portal/compare` | `{ fileId, dryRun }` (an export of the choir system, `.csv` or `.xlsx`) | librarian (modules `portal` and `proposals`) |
 | `GET /api/licenses/ending?days=30` | – | any role |
 | `POST /api/backup` | – | librarian |
 
@@ -2367,7 +2368,8 @@ the translated text with what to do.
 Works like the mirror folder of the print station, with a target folder,
 manifest (column `mirror` = `handover`) and state of its own; the two
 target folders must differ (400). It hands over the versions on the list of
-the singers' portal (`GET /api/lists/portal`, rows `add` and `not_decided`).
+the singers' portal that are released for it (`GET /api/lists/portal`, rows
+`ok`, `add` and `not_decided`; not `remove`).
 Audit log: object type `choir_handover`, the same actions.
 
 | Method and path | Body | Role |
@@ -2400,6 +2402,38 @@ Status, preview and sync answer as for the print station. What is written:
 - `LIESMICH.txt`. List, notes and read-me are rewritten when their content
   changes.
 - A failed daily sync notifies (`notify_choir_handover_failed`).
+
+### Comparing with the choir system (milestone 0.12)
+
+`POST /api/lists/portal/compare` reads an export of the choir system from
+the files of the catalog librarian (`.csv` separated by semicolon, comma or
+tab, or `.xlsx`; at most 20 MB) and compares it with the list of the
+singers' portal. A row belongs to a copy when one of its cells starts with
+the shelf mark, followed by a space or nothing (`2-3`, `2-3 Am Brunnen vor
+dem Tore`, `2-3 Am Brunnen vor dem Tore.pdf`); a first row without one is
+the header. Without `dryRun` the differences become proposals in the inbox
+(source `Choir system: <file name>`), never changes:
+
+- in the export, rows `add` or `not_decided`: a proposal for the field
+  `portal_since` of the version with today's date;
+- not in the export, rows `ok` or `remove` (recorded as in the portal): a
+  proposal for `portal_since` with the value `null`, which means "removed
+  from the singers' portal";
+- in the export but not released (`remove`, `blocked`,
+  `other_version_valid`): no proposal, listed in `removeThere`.
+
+An open proposal of the same direction is not made again
+(`alreadyProposed`). Accepting such a proposal goes through
+`POST /api/versions/{id}/portal` or `…/portal-remove` with their checks; the
+field cannot be proposed through `POST /api/proposals`.
+
+```json
+{ "dryRun": true, "file": "Singste.csv", "rows": 41, "matched": 38,
+  "added": [{ "versionId": 12, "shelfmark": "2-35", "title": "Ave verum corpus" }],
+  "removed": [], "alreadyProposed": 0,
+  "removeThere": [{ "versionId": 3, "shelfmark": "1-1", "title": "Locus iste", "reason": "…" }],
+  "unknown": ["Warm-up"], "unknownCount": 3 }
+```
 ## Search of Nextcloud (module `unified_search`)
 
 `Search\CatalogSearchProvider` (`OCP\Search\IProvider`, id `notenarchiv`,

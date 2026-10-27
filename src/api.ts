@@ -15,6 +15,7 @@ import type {
 	CalendarAddResult,
 	CalendarUpdate,
 	ChecksumStatus,
+	ChoirSystemReport,
 	EndingLicense,
 	ChoirEvent,
 	Contribution,
@@ -814,6 +815,24 @@ export async function saveRepertoireThresholds(thresholds: RepertoireThresholds)
 export async function importPerformances(fileId: number, dryRun: boolean, ownChoir: string | null): Promise<PerformanceImportReport> {
 	const { data } = await axios.post<PerformanceImportReport>(apiUrl('/performances/import'), { fileId, dryRun, ownChoir })
 	return { ...data, unknownShelfmarks: list(data.unknownShelfmarks), sheets: list(data.sheets) }
+}
+
+/**
+ * Compare an export of the choir system (.csv or .xlsx) with the list of
+ * the singers' portal; without `dryRun` the differences become proposals.
+ *
+ * @param fileId - Nextcloud file id
+ * @param dryRun - only compare
+ */
+export async function compareChoirSystem(fileId: number, dryRun: boolean): Promise<ChoirSystemReport> {
+	const { data } = await axios.post<ChoirSystemReport>(apiUrl('/lists/portal/compare'), { fileId, dryRun })
+	return {
+		...data,
+		added: list(data.added),
+		removed: list(data.removed),
+		removeThere: list(data.removeThere),
+		unknown: list(data.unknown),
+	}
 }
 
 // ---- milestone 0.5: maintaining the catalog ---------------------------------

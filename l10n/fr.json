@@ -352,6 +352,16 @@
         "File: {path}": "Fichier : {path}",
         "Only if you know that the file was changed on purpose. The next check stores the checksum of the current content; the old content can then no longer be recognised as the original.": "Seulement si vous savez que le fichier a été modifié volontairement. La prochaine vérification enregistre la somme de contrôle du contenu actuel ; l'ancien contenu ne pourra alors plus être reconnu comme l'original.",
         "Reason (optional)": "Motif (facultatif)",
+        "Choose the export of the choir system (.csv or .xlsx)": "Choisir l'export du système du chœur (.csv ou .xlsx)",
+        "The differences are in the inbox as proposals.": "Les écarts se trouvent dans la boîte de réception sous forme de propositions.",
+        "Compare with an export …": "Comparer avec un export …",
+        "Create proposals": "Créer les propositions",
+        "Comparing …": "Comparaison …",
+        "Comparison with the choir system": "Comparaison avec le système du chœur",
+        "{file}: {matched} of {rows} rows are pieces of the archive. Nothing has been proposed yet.": "{file} : {matched} lignes sur {rows} sont des pièces de l'archive. Rien n'a encore été proposé.",
+        "{file}: the proposals are in the inbox. The catalog changes only when they are accepted there.": "{file} : les propositions sont dans la boîte de réception. Le catalogue ne change que lorsqu'elles y sont acceptées.",
+        "The choir system has exactly what the list of the singers' portal says.": "Le système du chœur contient exactement ce que dit la liste du portail du chœur.",
+        "Another version of the work is valid for the choir.": "Une autre version de l'œuvre est valable pour le chœur.",
         "Please choose a person and a role.": "Veuillez choisir une personne et un rôle.",
         "The person has been added.": "La personne a été ajoutée.",
         "The contribution has been changed.": "La participation a été modifiée.",
@@ -1023,6 +1033,7 @@
         "This is what the sync would do now. Files that the app did not write stay as they are.": "Voici ce que la synchronisation ferait maintenant. Les fichiers que l'application n'a pas écrits restent inchangés.",
         "Sync now": "Synchroniser maintenant",
         "unknown": "inconnu",
+        "Removed from the singers' portal": "Retiré du portail du chœur",
         "The proposal has been accepted and applied.": "La proposition a été acceptée et appliquée.",
         "The proposal has been rejected.": "La proposition a été rejetée.",
         "Inbox": "Boîte de réception",
@@ -1070,7 +1081,9 @@
         "not assessed": "non évalué",
         "{status}, confirmed": "{status}, confirmé",
         "The PDF scans of the versions this list shows (to add and not decided), copied into a folder of the print station.": "Les scans PDF des versions affichées dans cette liste (à ajouter et non décidées), copiés dans un dossier du poste d'impression.",
-        "The files of the versions this list shows (to add and not decided), with a list of the pieces and the conductor's notes, copied into a folder that the choir system reads.": "Les fichiers des versions affichées dans cette liste (à ajouter et non décidées), avec une liste des pièces et les remarques de la direction du chœur, copiés dans un dossier que le système du chœur lit.",
+        "The files of the versions released for the portal (in order, to add and not decided), with a list of the pieces and the conductor's notes, copied into a folder that the choir system reads.": "Les fichiers des versions publiées pour le portail (en ordre, à ajouter et non décidées), avec une liste des pièces et les remarques de la direction du chœur, copiés dans un dossier que le système du chœur lit.",
+        "Compare with the choir system": "Comparer avec le système du chœur",
+        "Choose an export of the choir system (a list with the shelf mark, or titles that start with it). The app compares it with this list; what differs becomes a proposal in the inbox instead of a change.": "Choisissez un export du système du chœur (une liste avec la cote, ou des titres qui commencent par elle). L'application le compare avec cette liste ; ce qui diffère devient une proposition dans la boîte de réception au lieu d'une modification.",
         "Valid since": "En vigueur depuis",
         "In the portal since": "Dans le portail depuis",
         "round {round}": "cycle {round}",
@@ -1751,6 +1764,10 @@
         "A reason is required for this status.": "Un motif est requis pour ce statut.",
         "Not found.": "Introuvable.",
         "There is no checksum difference to accept for this file.": "Il n'y a aucune différence de somme de contrôle à accepter pour ce fichier.",
+        "The file names no shelf mark of the archive. The export needs a column with the shelf mark, or titles that start with it, e.g. \"2-3 Am Brunnen vor dem Tore\".": "Le fichier ne cite aucune cote de l'archive. L'export doit contenir une colonne avec la cote, ou des titres qui commencent par elle, par ex. « 2-3 Am Brunnen vor dem Tore ».",
+        "Choir system: %s": "Système du chœur : %s",
+        "The choir system has this piece (export %s).": "Le système du chœur contient cette pièce (export %s).",
+        "The choir system no longer has this piece (export %s).": "Le système du chœur ne contient plus cette pièce (export %s).",
         "The selected calendar does not exist or you cannot add entries to it.": "L'agenda sélectionné n'existe pas ou vous ne pouvez pas y ajouter d'entrées.",
         "Only concerts can be added to a calendar.": "Seuls les concerts peuvent être ajoutés à un agenda.",
         "This concert has no date yet.": "Ce concert n'a pas encore de date.",
@@ -2387,6 +2404,26 @@
         "_Each hourly run reads up to %n file._::_Each hourly run reads up to %n files._": [
             "Chaque passage horaire lit jusqu'à %n fichier.",
             "Chaque passage horaire lit jusqu'à %n fichiers."
+        ],
+        "_%n piece is in the choir system but not recorded as in the portal_::_%n pieces are in the choir system but not recorded as in the portal_": [
+            "%n pièce est dans le système du chœur mais n'est pas enregistrée comme présente dans le portail",
+            "%n pièces sont dans le système du chœur mais ne sont pas enregistrées comme présentes dans le portail"
+        ],
+        "_%n piece is recorded as in the portal but missing in the choir system_::_%n pieces are recorded as in the portal but missing in the choir system_": [
+            "%n pièce est enregistrée comme présente dans le portail mais manque dans le système du chœur",
+            "%n pièces sont enregistrées comme présentes dans le portail mais manquent dans le système du chœur"
+        ],
+        "_%n difference is already waiting in the inbox._::_%n differences are already waiting in the inbox._": [
+            "%n écart attend déjà dans la boîte de réception.",
+            "%n écarts attendent déjà dans la boîte de réception."
+        ],
+        "_%n piece is in the choir system but not released for the singers' portal. Remove it there; the archive stays as it is._::_%n pieces are in the choir system but not released for the singers' portal. Remove them there; the archive stays as it is._": [
+            "%n pièce est dans le système du chœur mais n'est pas publiée pour le portail du chœur. Supprimez-la là-bas ; l'archive reste telle quelle.",
+            "%n pièces sont dans le système du chœur mais ne sont pas publiées pour le portail du chœur. Supprimez-les là-bas ; l'archive reste telle quelle."
+        ],
+        "_%n row without a shelf mark of the archive_::_%n rows without a shelf mark of the archive_": [
+            "%n ligne sans cote de l'archive",
+            "%n lignes sans cote de l'archive"
         ],
         "_%n piece_::_%n pieces_": [
             "%n morceau",

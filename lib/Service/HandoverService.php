@@ -168,6 +168,10 @@ class HandoverService extends PrintMirrorService {
 		$this->notes = [];
 		$entries = [];
 		foreach ($this->releases->portal($account) as $row) {
+			// "remove": still recorded in the portal, but no longer released
+			if ($row['status'] === 'remove') {
+				continue;
+			}
 			try {
 				$version = $this->versions->find($row['versionId']);
 			} catch (DoesNotExistException) {

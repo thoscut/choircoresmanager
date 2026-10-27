@@ -353,6 +353,16 @@ OC.L10N.register(
         "File: {path}": "Bestand: {path}",
         "Only if you know that the file was changed on purpose. The next check stores the checksum of the current content; the old content can then no longer be recognised as the original.": "Alleen als je weet dat het bestand met opzet is gewijzigd. De volgende controle slaat de controlesom van de huidige inhoud op; de oude inhoud is daarna niet meer als origineel te herkennen.",
         "Reason (optional)": "Reden (optioneel)",
+        "Choose the export of the choir system (.csv or .xlsx)": "Export van het koorsysteem kiezen (.csv of .xlsx)",
+        "The differences are in the inbox as proposals.": "De verschillen staan als voorstellen in de inbox.",
+        "Compare with an export …": "Vergelijken met een export …",
+        "Create proposals": "Voorstellen aanmaken",
+        "Comparing …": "Vergelijken …",
+        "Comparison with the choir system": "Vergelijking met het koorsysteem",
+        "{file}: {matched} of {rows} rows are pieces of the archive. Nothing has been proposed yet.": "{file}: {matched} van {rows} regels zijn stukken uit het archief. Er is nog niets voorgesteld.",
+        "{file}: the proposals are in the inbox. The catalog changes only when they are accepted there.": "{file}: de voorstellen staan in de inbox. De catalogus verandert pas als ze daar worden geaccepteerd.",
+        "The choir system has exactly what the list of the singers' portal says.": "Het koorsysteem heeft precies wat de lijst van het koorportaal zegt.",
+        "Another version of the work is valid for the choir.": "Voor het koor geldt een andere versie van het werk.",
         "Please choose a person and a role.": "Kies een persoon en een rol.",
         "The person has been added.": "De persoon is toegevoegd.",
         "The contribution has been changed.": "De bijdrage is gewijzigd.",
@@ -1024,6 +1034,7 @@ OC.L10N.register(
         "This is what the sync would do now. Files that the app did not write stay as they are.": "Dit zou de synchronisatie nu doen. Bestanden die de app niet heeft geschreven, blijven zoals ze zijn.",
         "Sync now": "Nu synchroniseren",
         "unknown": "onbekend",
+        "Removed from the singers' portal": "Uit het koorportaal verwijderd",
         "The proposal has been accepted and applied.": "Het voorstel is aangenomen en doorgevoerd.",
         "The proposal has been rejected.": "Het voorstel is afgewezen.",
         "Inbox": "Inbox",
@@ -1071,7 +1082,9 @@ OC.L10N.register(
         "not assessed": "niet beoordeeld",
         "{status}, confirmed": "{status}, bevestigd",
         "The PDF scans of the versions this list shows (to add and not decided), copied into a folder of the print station.": "De PDF-scans van de versies die deze lijst toont (toe te voegen en niet beslist), gekopieerd naar een map van het printstation.",
-        "The files of the versions this list shows (to add and not decided), with a list of the pieces and the conductor's notes, copied into a folder that the choir system reads.": "De bestanden van de versies die deze lijst toont (toe te voegen en niet beslist), met een lijst van de stukken en de aanwijzingen van de koorleiding, gekopieerd naar een map die het koorsysteem leest.",
+        "The files of the versions released for the portal (in order, to add and not decided), with a list of the pieces and the conductor's notes, copied into a folder that the choir system reads.": "De bestanden van de voor het portaal vrijgegeven versies (in orde, toe te voegen en niet beslist), met een lijst van de stukken en de aanwijzingen van de koorleiding, gekopieerd naar een map die het koorsysteem leest.",
+        "Compare with the choir system": "Vergelijken met het koorsysteem",
+        "Choose an export of the choir system (a list with the shelf mark, or titles that start with it). The app compares it with this list; what differs becomes a proposal in the inbox instead of a change.": "Kies een export van het koorsysteem (een lijst met de signatuur, of titels die ermee beginnen). De app vergelijkt die met deze lijst; wat afwijkt, wordt een voorstel in de inbox in plaats van een wijziging.",
         "Valid since": "Geldig sinds",
         "In the portal since": "In het portaal sinds",
         "round {round}": "ronde {round}",
@@ -1752,6 +1765,10 @@ OC.L10N.register(
         "A reason is required for this status.": "Voor deze status is een reden vereist.",
         "Not found.": "Niet gevonden.",
         "There is no checksum difference to accept for this file.": "Er is voor dit bestand geen afwijkende controlesom om te accepteren.",
+        "The file names no shelf mark of the archive. The export needs a column with the shelf mark, or titles that start with it, e.g. \"2-3 Am Brunnen vor dem Tore\".": "Het bestand noemt geen signatuur van het archief. De export heeft een kolom met de signatuur nodig, of titels die ermee beginnen, bijv. \"2-3 Am Brunnen vor dem Tore\".",
+        "Choir system: %s": "Koorsysteem: %s",
+        "The choir system has this piece (export %s).": "Het koorsysteem heeft dit stuk (export %s).",
+        "The choir system no longer has this piece (export %s).": "Het koorsysteem heeft dit stuk niet meer (export %s).",
         "The selected calendar does not exist or you cannot add entries to it.": "De gekozen agenda bestaat niet of je kunt er geen items aan toevoegen.",
         "Only concerts can be added to a calendar.": "Alleen concerten kunnen aan een agenda worden toegevoegd.",
         "This concert has no date yet.": "Dit concert heeft nog geen datum.",
@@ -2388,6 +2405,26 @@ OC.L10N.register(
         "_Each hourly run reads up to %n file._::_Each hourly run reads up to %n files._": [
             "Elke uurlijkse ronde leest maximaal %n bestand.",
             "Elke uurlijkse ronde leest maximaal %n bestanden."
+        ],
+        "_%n piece is in the choir system but not recorded as in the portal_::_%n pieces are in the choir system but not recorded as in the portal_": [
+            "%n stuk staat in het koorsysteem, maar is niet vastgelegd als in het portaal",
+            "%n stukken staan in het koorsysteem, maar zijn niet vastgelegd als in het portaal"
+        ],
+        "_%n piece is recorded as in the portal but missing in the choir system_::_%n pieces are recorded as in the portal but missing in the choir system_": [
+            "%n stuk is vastgelegd als in het portaal, maar ontbreekt in het koorsysteem",
+            "%n stukken zijn vastgelegd als in het portaal, maar ontbreken in het koorsysteem"
+        ],
+        "_%n difference is already waiting in the inbox._::_%n differences are already waiting in the inbox._": [
+            "%n verschil wacht al in de inbox.",
+            "%n verschillen wachten al in de inbox."
+        ],
+        "_%n piece is in the choir system but not released for the singers' portal. Remove it there; the archive stays as it is._::_%n pieces are in the choir system but not released for the singers' portal. Remove them there; the archive stays as it is._": [
+            "%n stuk staat in het koorsysteem, maar is niet vrijgegeven voor het koorportaal. Verwijder het daar; het archief blijft zoals het is.",
+            "%n stukken staan in het koorsysteem, maar zijn niet vrijgegeven voor het koorportaal. Verwijder ze daar; het archief blijft zoals het is."
+        ],
+        "_%n row without a shelf mark of the archive_::_%n rows without a shelf mark of the archive_": [
+            "%n regel zonder signatuur van het archief",
+            "%n regels zonder signatuur van het archief"
         ],
         "_%n piece_::_%n pieces_": [
             "%n stuk",

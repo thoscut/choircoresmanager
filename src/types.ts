@@ -659,6 +659,32 @@ export interface RepertoireThresholds {
 	dormant: number
 }
 
+/** One piece of the comparison with the choir system */
+export interface ComparedPiece {
+	versionId: number
+	shelfmark: string
+	title: string | null
+	/** why it is not released for the portal (pieces to remove there) */
+	reason?: string | null
+}
+
+/** POST /api/lists/portal/compare (milestone 0.12) */
+export interface ChoirSystemReport {
+	dryRun: boolean
+	file: string
+	rows: number
+	matched: number
+	/** in the export and released: proposed as in the portal */
+	added: ComparedPiece[]
+	/** recorded as in the portal, not in the export: proposed as removed */
+	removed: ComparedPiece[]
+	alreadyProposed: number
+	/** in the export but not released: to remove in the choir system */
+	removeThere: ComparedPiece[]
+	unknown: string[]
+	unknownCount: number
+}
+
 export interface PerformanceImportReport {
 	dryRun: boolean
 	source: string

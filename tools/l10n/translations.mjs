@@ -2989,7 +2989,6 @@ export const singular = {
 	],
 	'The app copies the PDF scans of the versions released for the print station into this folder and keeps it up to date. The folder must not be the archive folder or lie inside it.': 'Die App kopiert die PDF-Scans der für die Druckstation freigegebenen Fassungen in diesen Ordner und hält ihn aktuell. Der Ordner darf weder der Archivordner sein noch darin liegen.',
 	'The hand-over folder for the choir system has been synced.': 'Der Übergabeordner für das Chorsystem wurde abgeglichen.',
-	'The files of the versions this list shows (to add and not decided), with a list of the pieces and the conductor\'s notes, copied into a folder that the choir system reads.': 'Die Dateien der Fassungen, die diese Liste zeigt (hinzuzufügen und nicht entschieden), mit einer Liste der Stücke und den Hinweisen der Chorleitung, kopiert in einen Ordner, den das Chorsystem liest.',
 	'A file of this name is in the hand-over folder, but the app did not write it (or it was replaced). It stays as it is; rename or remove it there if the app should write it.': [
 		'Eine Datei dieses Namens liegt im Übergabeordner, aber die App hat sie nicht geschrieben (oder sie wurde ersetzt). Sie bleibt, wie sie ist; benenne sie dort um oder entferne sie, wenn die App sie schreiben soll.',
 		'Eine Datei dieses Namens liegt im Übergabeordner, aber die App hat sie nicht geschrieben (oder sie wurde ersetzt). Sie bleibt, wie sie ist; benennen Sie sie dort um oder entfernen Sie sie, wenn die App sie schreiben soll.',
@@ -3045,9 +3044,51 @@ export const singular = {
 		'Der Übergabeordner wird gerade abgeglichen. Warte, bis dieser Lauf fertig ist.',
 		'Der Übergabeordner wird gerade abgeglichen. Warten Sie, bis dieser Lauf fertig ist.',
 	],
+	// ---- 0.12: comparison with the choir system ----
+	'Choose the export of the choir system (.csv or .xlsx)': 'Export des Chorsystems wählen (.csv oder .xlsx)',
+	'The differences are in the inbox as proposals.': 'Die Abweichungen liegen als Vorschläge im Eingang.',
+	'Compare with an export …': 'Mit einem Export vergleichen …',
+	'Create proposals': 'Vorschläge anlegen',
+	'Comparing …': 'Vergleiche …',
+	'Comparison with the choir system': 'Vergleich mit dem Chorsystem',
+	'{file}: {matched} of {rows} rows are pieces of the archive. Nothing has been proposed yet.': '{file}: {matched} von {rows} Zeilen sind Stücke des Archivs. Noch ist nichts vorgeschlagen.',
+	'{file}: the proposals are in the inbox. The catalog changes only when they are accepted there.': '{file}: Die Vorschläge liegen im Eingang. Das Werkverzeichnis ändert sich erst, wenn sie dort angenommen werden.',
+	'The choir system has exactly what the list of the singers\' portal says.': 'Das Chorsystem hat genau das, was die Liste des Chorportals sagt.',
+	'Another version of the work is valid for the choir.': 'Für den Chor gilt eine andere Fassung des Werks.',
+	'Compare with the choir system': 'Mit dem Chorsystem vergleichen',
+	'Choose an export of the choir system (a list with the shelf mark, or titles that start with it). The app compares it with this list; what differs becomes a proposal in the inbox instead of a change.': [
+		'Wähle einen Export des Chorsystems (eine Liste mit der Signatur oder mit Titeln, die mit ihr beginnen). Die App vergleicht ihn mit dieser Liste; was abweicht, wird ein Vorschlag im Eingang statt einer Änderung.',
+		'Wählen Sie einen Export des Chorsystems (eine Liste mit der Signatur oder mit Titeln, die mit ihr beginnen). Die App vergleicht ihn mit dieser Liste; was abweicht, wird ein Vorschlag im Eingang statt einer Änderung.',
+	],
+	'The file names no shelf mark of the archive. The export needs a column with the shelf mark, or titles that start with it, e.g. "2-3 Am Brunnen vor dem Tore".': 'Die Datei nennt keine Signatur des Archivs. Der Export braucht eine Spalte mit der Signatur oder Titel, die mit ihr beginnen, z. B. „2-3 Am Brunnen vor dem Tore“.',
+	'Choir system: %s': 'Chorsystem: %s',
+	'The choir system has this piece (export %s).': 'Das Chorsystem hat dieses Stück (Export %s).',
+	'The choir system no longer has this piece (export %s).': 'Das Chorsystem hat dieses Stück nicht mehr (Export %s).',
+	'Removed from the singers\' portal': 'Aus dem Chorportal entfernt',
+	'The files of the versions released for the portal (in order, to add and not decided), with a list of the pieces and the conductor\'s notes, copied into a folder that the choir system reads.': 'Die Dateien der für das Portal freigegebenen Fassungen (in Ordnung, hinzuzufügen und nicht entschieden), mit einer Liste der Stücke und den Hinweisen der Chorleitung, kopiert in einen Ordner, den das Chorsystem liest.',
 }
 
 export const plural = {
+	'%n piece is in the choir system but not recorded as in the portal|%n pieces are in the choir system but not recorded as in the portal': [
+		'%n Stück ist im Chorsystem, aber nicht als im Portal vermerkt',
+		'%n Stücke sind im Chorsystem, aber nicht als im Portal vermerkt',
+	],
+	'%n piece is recorded as in the portal but missing in the choir system|%n pieces are recorded as in the portal but missing in the choir system': [
+		'%n Stück ist als im Portal vermerkt, fehlt aber im Chorsystem',
+		'%n Stücke sind als im Portal vermerkt, fehlen aber im Chorsystem',
+	],
+	'%n difference is already waiting in the inbox.|%n differences are already waiting in the inbox.': [
+		'%n Abweichung wartet schon im Eingang.',
+		'%n Abweichungen warten schon im Eingang.',
+	],
+	'%n piece is in the choir system but not released for the singers\' portal. Remove it there; the archive stays as it is.|%n pieces are in the choir system but not released for the singers\' portal. Remove them there; the archive stays as it is.': {
+		du: ['%n Stück ist im Chorsystem, aber nicht für das Chorportal freigegeben. Entferne es dort; das Archiv bleibt, wie es ist.', '%n Stücke sind im Chorsystem, aber nicht für das Chorportal freigegeben. Entferne sie dort; das Archiv bleibt, wie es ist.'],
+		sie: ['%n Stück ist im Chorsystem, aber nicht für das Chorportal freigegeben. Entfernen Sie es dort; das Archiv bleibt, wie es ist.', '%n Stücke sind im Chorsystem, aber nicht für das Chorportal freigegeben. Entfernen Sie sie dort; das Archiv bleibt, wie es ist.'],
+	},
+	'%n row without a shelf mark of the archive|%n rows without a shelf mark of the archive': [
+		'%n Zeile ohne Signatur des Archivs',
+		'%n Zeilen ohne Signatur des Archivs',
+	],
 	'The music archive keeps this folder up to date. It holds %n file released for choir members: scans (PDF), MusicXML and practice recordings.|The music archive keeps this folder up to date. It holds %n files released for choir members: scans (PDF), MusicXML and practice recordings.': [
 		'Das Notenarchiv hält diesen Ordner aktuell. Er enthält %n für Chormitglieder freigegebene Datei: Scans (PDF), MusicXML und Übe-Aufnahmen.',
 		'Das Notenarchiv hält diesen Ordner aktuell. Er enthält %n für Chormitglieder freigegebene Dateien: Scans (PDF), MusicXML und Übe-Aufnahmen.',

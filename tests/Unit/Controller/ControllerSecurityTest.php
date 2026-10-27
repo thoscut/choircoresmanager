@@ -13,6 +13,7 @@ use OCA\Notenarchiv\Controller\AnnualSnapshotController;
 use OCA\Notenarchiv\Controller\ApiController;
 use OCA\Notenarchiv\Controller\ApiV1StatusController;
 use OCA\Notenarchiv\Controller\CalendarController;
+use OCA\Notenarchiv\Controller\ChoirSystemController;
 use OCA\Notenarchiv\Controller\FilesIntegrationController;
 use OCA\Notenarchiv\Controller\FolderBookController;
 use OCA\Notenarchiv\Controller\HandoverController;
@@ -54,6 +55,7 @@ use OCA\Notenarchiv\Service\AppSettings;
 use OCA\Notenarchiv\Service\ArchiveAccess;
 use OCA\Notenarchiv\Service\AuditLog;
 use OCA\Notenarchiv\Service\CatalogService;
+use OCA\Notenarchiv\Service\ChoirSystemCompareService;
 use OCA\Notenarchiv\Service\ConcertCalendarService;
 use OCA\Notenarchiv\Service\CorrectionService;
 use OCA\Notenarchiv\Service\DueService;
@@ -146,6 +148,7 @@ use Psr\Log\LoggerInterface;
 #[CoversClass(FolderBookController::class)]
 #[CoversClass(PrintMirrorController::class)]
 #[CoversClass(HandoverController::class)]
+#[CoversClass(ChoirSystemController::class)]
 #[CoversClass(AnnualSnapshotController::class)]
 #[CoversClass(StateController::class)]
 final class ControllerSecurityTest extends TestCase {
@@ -222,6 +225,8 @@ final class ControllerSecurityTest extends TestCase {
 		'FolderBookController::createFolder', 'FolderBookController::updateFolder', 'FolderBookController::issue',
 		'FolderBookController::takeBack', 'PrintMirrorController::preview', 'PrintMirrorController::sync',
 		'HandoverController::preview', 'HandoverController::sync',
+		// reads an export of the choir system and may write proposals
+		'ChoirSystemController::compare',
 		// reads every archive file for the checksums, or two complete backups
 		'AnnualSnapshotController::create', 'AnnualSnapshotController::compare',
 		// setting the current revision of a version writes
@@ -1245,6 +1250,18 @@ final class ControllerSecurityTest extends TestCase {
 				$response->getData());
 		}
 		self::assertSame(Http::STATUS_FORBIDDEN, $this->handoverController('librarian')->check(5)->getStatus(), 'only administrators choose the folder');
+	}
+
+	public function testTheChoirSystemIsComparedByTheCatalogLibrarianOnly(): void {
+		self::assertSame(['portal', 'proposals'], ModuleMiddleware::required(ChoirSystemController::class, 'compare'));
+		self::assertSame('POST', self::routes()['ChoirSystemController::compare']['verb']);
+		$userFiles = $this->createMock(UserFiles::class);
+		$userFiles->expects(self::never())->method('read');
+		foreach (['operations', 'conductor', 'reader', 'contributor', 'member', 'admin'] as $uid) {
+			$controller = new ChoirSystemController($this->createStub(IRequest::class), $uid, $this->rolesByName(),
+				$this->createStub(ChoirSystemCompareService::class), $userFiles, $this->l10n(), $this->createStub(LoggerInterface::class));
+			self::assertSame(Http::STATUS_FORBIDDEN, $controller->compare(5, false)->getStatus(), $uid . ' compares nothing');
+		}
 	}
 
 	public function testFolderBookEntriesOfTheAuditLogAreHiddenFromOtherRoles(): void {

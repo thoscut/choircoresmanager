@@ -18,8 +18,12 @@ declare(strict_types=1);
  *   PDF scan and MusicXML file, Liste.csv (shelf mark and license notice),
  *   the notes of the conductor of a link for choir members and LIESMICH.txt,
  * - its manifest is apart from the one of the print station,
- * - a second sync changes nothing; a version no longer released leaves the
- *   folder; nothing is written into the archive folder,
+ * - a second sync changes nothing,
+ * - an export of the choir system with the piece becomes a proposal "in the
+ *   singers' portal" (not twice), accepted it records the version; an export
+ *   without the piece proposes the removal,
+ * - a version no longer released leaves the folder; nothing is written into
+ *   the archive folder,
  * - the routes answer 404 while the module is off.
  *
  * Usage (as the web server user):
@@ -48,10 +52,12 @@ use OCA\Notenarchiv\Db\WorkVersionMapper;
 use OCA\Notenarchiv\Exception\ModuleDisabledException;
 use OCA\Notenarchiv\Middleware\ModuleMiddleware;
 use OCA\Notenarchiv\Service\AppSettings;
+use OCA\Notenarchiv\Service\ChoirSystemCompareService;
 use OCA\Notenarchiv\Service\HandoverService;
 use OCA\Notenarchiv\Service\LinkService;
 use OCA\Notenarchiv\Service\Modules;
 use OCA\Notenarchiv\Service\PrintMirrorService;
+use OCA\Notenarchiv\Service\ProposalService;
 use OCA\Notenarchiv\Service\ReleaseListService;
 use OCA\Notenarchiv\Service\RightsService;
 use OCA\Notenarchiv\Service\Roles;
@@ -82,7 +88,7 @@ $archive = Server::get(AppSettings::class)->archiveFolder($uid);
 const HANDOVER_INSIDE = 'The hand-over folder must be neither the archive folder nor inside it. Please choose a folder outside the archive folder.';
 const TAKEN = 'This folder is already the target folder of the print station or of the hand-over to the choir system. Please choose a folder of its own.';
 
-$switchKeys = [Modules::CHOIR_HANDOVER, Modules::PRINT_MIRROR, Modules::MEMBER_LINKS, 'portal', 'print_station', 'releases', 'rights'];
+$switchKeys = [Modules::CHOIR_HANDOVER, Modules::PRINT_MIRROR, Modules::MEMBER_LINKS, 'portal', 'print_station', 'releases', 'rights', 'proposals'];
 $switches = function () use ($appConfig, $switchKeys): array {
 	$values = [];
 	foreach ($switchKeys as $key) {
@@ -109,7 +115,7 @@ $names = fn (array $entries): array => array_map(fn (array $entry): string => $e
 $db->beginTransaction();
 try {
 	$modules->change([Modules::CHOIR_HANDOVER => true, Modules::PRINT_MIRROR => true, Modules::MEMBER_LINKS => true,
-		'portal' => true, 'print_station' => true, 'releases' => true, 'rights' => true]);
+		'portal' => true, 'print_station' => true, 'releases' => true, 'rights' => true, 'proposals' => true]);
 	$user = Server::get(IUserManager::class)->get($uid);
 	$adminGroup = Server::get(IGroupManager::class)->get('admin');
 	if ($user !== null && $adminGroup !== null && !$adminGroup->inGroup($user)) {
@@ -137,7 +143,9 @@ try {
 	$notes = $base . HandoverService::NOTES;
 	$rights = Server::get(RightsService::class);
 	$releases = Server::get(ReleaseListService::class);
-	$onList = fn (): bool => in_array($version->getId(), array_column($releases->portal($uid), 'versionId'), true);
+	// Released for the portal: rows "ok", "add" and "not_decided" ("remove" is recorded but no longer released)
+	$onList = fn (): bool => in_array($version->getId(), array_column(array_filter($releases->portal($uid),
+		fn (array $row): bool => $row['status'] !== 'remove'), 'versionId'), true);
 	if (!$onList() || !$version->isConfirmed()) {
 		$rights->confirm($version->getId(), $uid, 'public_domain', 'hand-over test', 'test');
 	}
@@ -184,6 +192,31 @@ try {
 	$again = $handover->sync($uid, false);
 	$check('a second sync changes nothing', $again['copied'] === [] && $again['replaced'] === [] && $again['removed'] === [],
 		json_encode($again) ?: '');
+
+	// ---- the export of the choir system: differences become proposals --------------------------------
+	$compare = Server::get(ChoirSystemCompareService::class);
+	$proposals = Server::get(ProposalService::class);
+	$wasOnPortal = $rights->isOnPortal(Server::get(WorkVersionMapper::class)->find($version->getId()));
+	if ($wasOnPortal) {
+		$rights->removeFromPortal($version->getId(), $uid, 'hand-over test');
+	}
+	$export = "Titel;Datei\n" . $title . ';' . $pdf . "\n";
+	$dry = $compare->compare($export, 'Singste.csv', $uid, true);
+	$check('the dry run finds the piece that the portal does not record', in_array($shelfmark, array_column($dry['added'], 'shelfmark'), true)
+		&& !$proposals->hasOpenPortalProposal($version->getId(), true), json_encode($dry) ?: '');
+	$compare->compare($export, 'Singste.csv', $uid, false);
+	$open = array_values(array_filter($proposals->open(), fn ($p): bool => $p->getObjectId() === $version->getId()
+		&& $p->getField() === ProposalService::PORTAL_FIELD));
+	$check('a proposal waits in the inbox, the catalog is unchanged', count($open) === 1
+		&& !$rights->isOnPortal(Server::get(WorkVersionMapper::class)->find($version->getId())));
+	$check('comparing again proposes nothing twice', $compare->compare($export, 'Singste.csv', $uid, false)['alreadyProposed'] >= 1);
+	if ($open !== []) {
+		$proposals->accept($open[0]->getId(), $uid, null);
+	}
+	$check('accepted, the version is recorded as in the portal', $rights->isOnPortal(Server::get(WorkVersionMapper::class)->find($version->getId())));
+	$without = $compare->compare("Titel\n" . $shelfmark . "-none\n" . ($shelfmark === '2-3' ? '1-1' : '2-3') . " other\n", 'Singste.csv', $uid, true);
+	$check('missing in the export, removal is proposed', in_array($shelfmark, array_column($without['removed'], 'shelfmark'), true),
+		json_encode($without) ?: '');
 
 	// ---- no longer released: the files leave the folder ---------------------------------------------
 	$rights->setOpen($version->getId(), $uid, 'hand-over test');

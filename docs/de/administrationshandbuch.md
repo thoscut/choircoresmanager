@@ -1143,8 +1143,9 @@ So richtest du es ein:
 4. Sieh dir die Vorschau an und starte den ersten Abgleich (in den
    Einstellungen oder in der Liste **Chorportal**).
 
-Was kopiert wird, für jede Fassung auf der Liste des Chorportals (Zeilen
-„hinzufügen“ und „nicht entschieden“), aus ihren aktiven Exemplaren, nie aus
+Was kopiert wird, für jede für das Chorportal freigegebene Fassung (Zeilen
+„In Ordnung“, „Hinzufügen“ und „Keine geltende Fassung gewählt“ seiner
+Liste), aus ihren aktiven Exemplaren, nie aus
 internen Erhaltungskopien:
 
 - die Scans (PDF) und MusicXML-Dateien, wenn Chormitglieder sie speichern

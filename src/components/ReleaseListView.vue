@@ -20,13 +20,14 @@ import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
+import ChoirSystemCompare from './ChoirSystemCompare.vue'
 import PrintMirrorSync from './PrintMirrorSync.vue'
 import ViewHeader from './ViewHeader.vue'
 import { errorMessage, fetchReleaseList } from '../api.ts'
 import { formatDate, translateLabel } from '../format.ts'
 import { releaseStatusLabel } from '../labels.ts'
 import { navigate, releaseFilter } from '../navigation.ts'
-import { canSyncHandover, canSyncPrintMirror, choiceLabel, openEntry } from '../store.ts'
+import { canCompareChoirSystem, canSyncHandover, canSyncPrintMirror, choiceLabel, openEntry } from '../store.ts'
 
 const props = defineProps<{
 	target: 'portal' | 'print-station'
@@ -183,9 +184,20 @@ function rightsText(row: ReleaseRow): string {
 					{{ t('notenarchiv', 'Hand-over to the choir system') }}
 				</h3>
 				<p class="release-list__hint">
-					{{ t('notenarchiv', 'The files of the versions this list shows (to add and not decided), with a list of the pieces and the conductor\'s notes, copied into a folder that the choir system reads.') }}
+					{{ t('notenarchiv', 'The files of the versions released for the portal (in order, to add and not decided), with a list of the pieces and the conductor\'s notes, copied into a folder that the choir system reads.') }}
 				</p>
 				<PrintMirrorSync kind="handover" />
+			</section>
+			<section v-if="target === 'portal' && canCompareChoirSystem"
+				class="release-list__mirror no-print"
+				aria-labelledby="release-choir-compare">
+				<h3 id="release-choir-compare">
+					{{ t('notenarchiv', 'Compare with the choir system') }}
+				</h3>
+				<p class="release-list__hint">
+					{{ t('notenarchiv', 'Choose an export of the choir system (a list with the shelf mark, or titles that start with it). The app compares it with this list; what differs becomes a proposal in the inbox instead of a change.') }}
+				</p>
+				<ChoirSystemCompare />
 			</section>
 			<NcEmptyContent v-if="!loaded && loading" :name="t('notenarchiv', 'Loading …')">
 				<template #icon>

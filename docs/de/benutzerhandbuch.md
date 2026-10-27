@@ -1178,6 +1178,25 @@ die du an Links für Chormitglieder geschrieben hast (siehe
 in das Chorsystem hoch und entferne dort, was aus dem Ordner verschwunden
 ist.
 
+### Mit dem Chorsystem vergleichen
+
+Kann das Chorsystem seine Liste der Stücke exportieren (CSV oder Excel),
+musst du „Im Chorportal seit“ nicht mehr von Hand pflegen. Wähle in der
+Liste **Chorportal**, Abschnitt **Mit dem Chorsystem vergleichen**,
+**Mit einem Export vergleichen …** und die Datei in deinen Nextcloud-Dateien.
+Die App erkennt ein Stück an seiner Signatur am Anfang einer Zelle (eine
+Spalte mit der Signatur, Titel wie „2-3 Am Brunnen vor dem Tore“ oder die
+Dateinamen des Übergabeordners funktionieren alle).
+
+Das erste Ergebnis ist ein Probelauf. Es nennt die Stücke, die im
+Chorsystem sind, aber nicht als im Portal vermerkt, die Stücke, die als im
+Portal vermerkt sind, dort aber fehlen, und die Stücke, die im Chorsystem
+sind, obwohl sie dafür nicht freigegeben sind: Entferne sie dort, das
+Archiv bleibt, wie es ist. **Vorschläge anlegen** legt die ersten beiden
+Gruppen in den **Eingang**; das Werkverzeichnis ändert sich erst, wenn du
+sie dort annimmst (siehe
+[Vorschläge im Eingang entscheiden](#vorschläge-im-eingang-entscheiden)).
+
 ### Die öffentliche Repertoireseite
 
 Die Archivverwaltung kann Werke auf einer öffentlichen Seite des Chors

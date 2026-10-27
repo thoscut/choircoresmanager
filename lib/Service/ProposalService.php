@@ -25,6 +25,13 @@ use OCP\AppFramework\Utility\ITimeFactory;
 class ProposalService {
 	/** Roles that may propose changes */
 	public const PROPOSERS = [Roles::CONTRIBUTOR, Roles::LIBRARIAN];
+	/**
+	 * The field of a version that only the comparison with the choir system
+	 * proposes (milestone 0.12): a date records the version as in the
+	 * singers' portal since then, null as removed from it. Accepting goes
+	 * through RightsService, which checks the release again.
+	 */
+	public const PORTAL_FIELD = 'portal_since';
 
 	public function __construct(
 		private ProposalMapper $proposals,
@@ -33,6 +40,7 @@ class ProposalService {
 		private Roles $roles,
 		private NotificationService $notifications,
 		private ITimeFactory $time,
+		private RightsService $rights,
 	) {
 	}
 
@@ -94,6 +102,42 @@ class ProposalService {
 		return $created;
 	}
 
+	/**
+	 * A proposal to record a version as in the singers' portal since a day
+	 * (`$since`) or as removed from it (null), unless one is open already.
+	 */
+	public function proposePortal(int $versionId, ?string $since, string $uid, string $reason, string $source): void {
+		$this->roles->requireRole($uid, [Roles::LIBRARIAN]);
+		if ($this->hasOpenPortalProposal($versionId, $since !== null)) {
+			return;
+		}
+		$proposal = new Proposal();
+		$proposal->setObjectType(Fields::VERSION);
+		$proposal->setObjectId($versionId);
+		$proposal->setField(self::PORTAL_FIELD);
+		$proposal->setNewValue(json_encode($since, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR));
+		$proposal->setReason(trim($reason) === '' ? null : mb_substr($reason, 0, 2000));
+		$proposal->setSource(mb_substr($source, 0, 255));
+		$proposal->setStatus(Proposal::OPEN);
+		$proposal->setCreatedBy($uid);
+		$proposal->setCreated($this->time->getTime());
+		$this->proposals->insert($proposal);
+		$this->notifications->proposalsWaiting($this->proposals->countOpen());
+	}
+
+	/**
+	 * Whether a proposal to add the version to the singers' portal
+	 * (`$adding`) or to remove it is open.
+	 */
+	public function hasOpenPortalProposal(int $versionId, bool $adding): bool {
+		foreach ($this->proposals->findOpenForObject(Fields::VERSION, $versionId) as $open) {
+			if ($open->getField() === self::PORTAL_FIELD && ($open->value() !== null) === $adding) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public function accept(int $proposalId, string $uid, ?string $reason): void {
 		$this->roles->requireRole($uid, [Roles::LIBRARIAN]);
 		$proposal = $this->openProposal($proposalId);
@@ -101,7 +145,16 @@ class ProposalService {
 		$proposalReason = $proposal->getReason();
 		$note = trim('Proposal #' . $proposalId . ($source !== null ? ' (' . $source . ')' : '')
 			. ($reason !== null && trim($reason) !== '' ? ': ' . $reason : ($proposalReason !== null ? ': ' . $proposalReason : '')));
-		$this->catalog->update($proposal->getObjectType(), $proposal->getObjectId(), [$proposal->getField() => $proposal->value()], $uid, $note);
+		if ($proposal->getObjectType() === Fields::VERSION && $proposal->getField() === self::PORTAL_FIELD) {
+			$since = $proposal->value();
+			if (is_string($since)) {
+				$this->rights->addToPortal($proposal->getObjectId(), $uid, $since);
+			} else {
+				$this->rights->removeFromPortal($proposal->getObjectId(), $uid, $note);
+			}
+		} else {
+			$this->catalog->update($proposal->getObjectType(), $proposal->getObjectId(), [$proposal->getField() => $proposal->value()], $uid, $note);
+		}
 		$this->decide($proposal, Proposal::ACCEPTED, $uid, $reason);
 	}
 

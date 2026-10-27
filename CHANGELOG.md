@@ -137,6 +137,11 @@ All notable changes to this app are documented in this file. The format follows
   uploads nothing to the choir system. New routes `/api/choir-handover…`,
   `/api/settings/choir-handover…`; the table `notarch_mirror_files` gets
   the column `mirror`.
+- **Compare with the choir system:** an export of the choir system (CSV or
+  Excel) is compared with the list of the singers' portal; pieces there but
+  not recorded, and pieces recorded but missing there, become proposals in
+  the inbox for "In singers' portal since", pieces there but not released
+  are listed to be removed there. New route `POST /api/lists/portal/compare`.
 - Excerpts and whole pieces for choir members and the public no longer
   carry the encoder, the miscellaneous fields, XML comments or processing
   instructions of the MusicXML file.
