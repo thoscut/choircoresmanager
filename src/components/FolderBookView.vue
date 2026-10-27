@@ -64,6 +64,10 @@ const filterOptions = computed<FilterOption[]>(() => [
 	{ id: 'retired', label: t('notenarchiv', 'Out of service') },
 ])
 
+/** The filters in words, for the header of the printout */
+const printFilter = computed(() => [filterOption.value?.label ?? '',
+	search.value.trim() === '' ? '' : t('notenarchiv', 'Search: {text}', { text: search.value.trim() })].filter((part) => part !== '').join(', '))
+
 const filterOption = computed({
 	get: () => filterOptions.value.find((option) => option.id === filter.value) ?? filterOptions.value[0],
 	set: (option: FilterOption | null) => {
@@ -121,6 +125,7 @@ function hints(folder: Folder): string[] {
 		<ViewHeader :title="t('notenarchiv', 'Folder book')"
 			:description="t('notenarchiv', 'Which choir folder is out with whom since when, what it holds and what is missing.')"
 			printable
+			:print-filter="printFilter"
 			reloadable
 			:loading="loading"
 			@reload="load">

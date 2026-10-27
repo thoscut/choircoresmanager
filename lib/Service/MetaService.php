@@ -9,10 +9,13 @@ declare(strict_types=1);
 
 namespace OCA\Notenarchiv\Service;
 
+use OCP\Defaults;
+
 /**
  * What the UI needs on start: own roles, field registry, archive folder
- * (and whether the account can open it), the active modules and the personal
- * view of the account.
+ * (and whether the account can open it), the active modules, the personal
+ * view of the account and the name of the Nextcloud (Theming) for the header
+ * of printouts.
  */
 class MetaService {
 	public function __construct(
@@ -21,6 +24,7 @@ class MetaService {
 		private Modules $modules,
 		private PersonalView $personalView,
 		private ArchiveAccess $archiveAccess,
+		private Defaults $defaults,
 	) {
 	}
 
@@ -44,6 +48,7 @@ class MetaService {
 			'archiveAccessible' => $archive['id'] === 0 ? null : $this->archiveAccess->canOpen($uid),
 			'modules' => $this->modules->states(),
 			'personalView' => $this->personalView->get($uid),
+			'siteName' => $this->defaults->getName(),
 		];
 	}
 }

@@ -6,27 +6,36 @@
 /**
  * Header of a view: heading, optional description, actions and a print
  * button. Sticky on screen; in print only the heading and the description
- * remain. The notices about the whole app follow below it (not sticky).
+ * remain, under a line with choir, view, filter and date, and every page
+ * gets its number (printHeader.ts). The notices about the whole app follow
+ * below it (not sticky).
  */
 import { mdiPrinterOutline, mdiRefresh } from '@mdi/js'
 import { t } from '../l10n.ts'
-import { useTemplateRef } from 'vue'
+import { computed, onMounted, useTemplateRef } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import AppNotices from './AppNotices.vue'
+import { formatDate } from '../format.ts'
+import { addPageNumbers, printHeaderLine } from '../printHeader.ts'
 import { useStickyHeader } from '../stickyHeader.ts'
+import { meta } from '../store.ts'
+import { todayIso } from '../folderBook.ts'
 
-withDefaults(defineProps<{
+const props = withDefaults(defineProps<{
 	title: string
 	description?: string
 	printable?: boolean
+	/** the filters that are on, in words, for the header of the printout */
+	printFilter?: string
 	/** show a reload button */
 	reloadable?: boolean
 	loading?: boolean
 }>(), {
 	description: '',
 	printable: false,
+	printFilter: '',
 	reloadable: false,
 	loading: false,
 })
@@ -38,6 +47,19 @@ const emit = defineEmits<{
 // Focused elements scroll below this sticky header, not under it
 useStickyHeader(useTemplateRef<HTMLElement>('header'))
 
+const printLine = computed(() => printHeaderLine({
+	site: meta.value?.siteName ?? '',
+	view: props.title,
+	filter: props.printFilter,
+	date: formatDate(todayIso()),
+}))
+
+onMounted(() => {
+	if (props.printable) {
+		addPageNumbers()
+	}
+})
+
 function print(): void {
 	window.print()
 }
@@ -45,6 +67,9 @@ function print(): void {
 
 <template>
 	<header ref="header" class="view-header">
+		<p v-if="printable" class="view-header__print-line print-only" aria-hidden="true">
+			{{ printLine }}
+		</p>
 		<div class="view-header__text">
 			<h2 class="view-header__title">
 				{{ title }}
@@ -121,11 +146,22 @@ function print(): void {
 	gap: var(--default-grid-baseline);
 }
 
+.view-header__print-line {
+	display: none;
+}
+
 @media print {
 	.view-header {
 		position: static;
 		padding: 0 0 4mm;
 		border-bottom: 1px solid #000;
+	}
+
+	.view-header__print-line {
+		display: block;
+		flex: 1 0 100%;
+		margin: 0;
+		font-size: 9pt;
 	}
 }
 </style>

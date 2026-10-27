@@ -257,35 +257,55 @@ Protokoll gespeichert wird, und wähle **Speichern**.
 ### Hilfe neben einem Begriff
 
 Neben einigen Begriffen (Fassung, Exemplar, Signatur, Rechtestatus, Freigabe,
-geltende Fassung und interne Erhaltungskopie) zeigt die App eine kleine
-Schaltfläche **?**. Sie öffnet eine kurze Erklärung des Begriffs mit einem
-Link auf den passenden Abschnitt dieses Handbuchs (siehe
+geltende Fassung, interne Erhaltungskopie und Stand) zeigt die App eine
+kleine Schaltfläche **?**. Sie öffnet eine kurze Erklärung des Begriffs mit
+einem Link auf den passenden Abschnitt dieses Handbuchs (siehe
 [Begriffe](#begriffe)). Escape schließt die Erklärung.
+
+Jedes Wort hat in der App nur eine Bedeutung: **Stand** ist immer ein Stand
+einer Fassung, **Ausgabe** immer die Ausgabe einer Chormappe, **Freigabe**
+immer die Freigabe nach den Rechten. Mit anderen **geteilt** wird ein
+Ordner oder ein Ausschnitt.
 
 ### Dateien, die sich nicht öffnen lassen
 
 Die App öffnet Dateien nur mit den Rechten deines eigenen Kontos, genau wie
 die App **Dateien**. Noten, Scans und Übe-Dateien liegen im Archivordner. Ist
-dieser Ordner nicht für dich freigegeben, siehst du das Werkverzeichnis, aber
+dieser Ordner nicht mit dir geteilt, siehst du das Werkverzeichnis, aber
 keine Datei öffnet sich. Die App sagt dir das:
 
-- oben auf der Seite: *Der Archivordner ist für dein Konto nicht
-  freigegeben, deshalb öffnen sich seine Dateien (Noten, Scans, Übe-Dateien)
-  für dich nicht.*
+- oben auf der Seite: *Der Archivordner ist nicht mit deinem Konto geteilt,
+  deshalb öffnen sich seine Dateien (Noten, Scans, Übe-Dateien) für dich
+  nicht.*
 - im Reiter **Dateien** eines Exemplars und
 - in der Notenansicht: *Die Noten können nicht angezeigt werden – Die Datei
-  liegt in einem Ordner, der für dein Konto nicht freigegeben ist. Bitte die
-  Archivverwaltung, den Archivordner für dich oder deine Gruppe
-  freizugeben.*
+  liegt in einem Ordner, der nicht mit deinem Konto geteilt ist. Bitte die
+  Archivverwaltung, den Archivordner mit dir oder deiner Gruppe zu teilen.*
 
 Mit der Datei und mit deiner Rolle ist alles in Ordnung. Bitte die
-Archivverwaltung (oder die Administration), den Archivordner für dich oder,
-besser, für die Gruppe deiner Rolle freizugeben; Leserechte genügen. Lade
+Archivverwaltung (oder die Administration), den Archivordner mit dir oder,
+besser, mit der Gruppe deiner Rolle zu teilen; Leserechte genügen. Lade
 danach die Seite neu. Darfst du die Einstellungen selbst ändern, öffnet die
 Schaltfläche **Zugriff auf den Archivordner prüfen** die Zugriffsprüfung
 unter Verwaltungseinstellungen → Notenarchiv. Sie zeigt alle, die den Ordner
 nicht öffnen können (siehe
 [Administrationshandbuch](administrationshandbuch.md#prüfen-wer-den-archivordner-öffnen-kann)).
+
+### Fehlermeldungen
+
+Eine Fehlermeldung bleibt unten rechts stehen, bis du sie mit **×**
+schließt, und sagt, was zu tun ist: neu anmelden, nach einer Rolle fragen,
+die Seite neu laden oder es gleich noch einmal versuchen. Kann der Server
+etwas nicht abschließen, nennt die Meldung eine **Anfrage-ID**. Gib sie der
+Administration; damit findet sie den Fehler im Nextcloud-Protokoll.
+
+### Drucken
+
+**Drucken** in einer Ansicht druckt sie, wie sie angezeigt ist. Oben steht
+eine Kopfzeile mit dem Namen der Nextcloud (meist der Chor), der Ansicht,
+den eingeschalteten Filtern und dem Tag des Drucks; unten auf jeder Seite
+steht „Seite 1 von 3“, sofern dein Browser Seitenzahlen kann (zum Beispiel
+Chrome und Edge; Firefox druckt ohne).
 
 ### Benachrichtigungen
 

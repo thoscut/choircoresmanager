@@ -217,6 +217,7 @@ export function normalizeMeta(meta: Meta): Meta {
 		archiveAccessible: typeof meta.archiveAccessible === 'boolean' ? meta.archiveAccessible : null,
 		modules: normalizeModules(meta.modules),
 		personalView: normalizePersonalView(meta.personalView),
+		siteName: typeof meta.siteName === 'string' ? meta.siteName : '',
 	}
 }
 

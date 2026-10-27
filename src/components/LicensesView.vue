@@ -40,6 +40,9 @@ const periodOptions = computed(() => [30, 90, 180, 366].map((value) => ({
 		: n('notenarchiv', 'within %n day', 'within %n days', value),
 })))
 
+/** The period in words, for the header of the printout */
+const printFilter = computed(() => period.value?.label ?? '')
+
 const period = computed({
 	get: () => periodOptions.value.find((option) => option.id === days.value) ?? periodOptions.value[0],
 	set: (option: { id: number } | null) => {
@@ -94,6 +97,7 @@ const endedCount = computed(() => licenses.value.filter((license) => license.end
 		<ViewHeader :title="t('notenarchiv', 'Ending licenses')"
 			:description="t('notenarchiv', 'Licenses of protected versions that end soon or have ended. Renew the license or withdraw the copies from the singers\' portal and the print station in the rights tab of the copy.')"
 			printable
+			:print-filter="printFilter"
 			reloadable
 			:loading="loading"
 			@reload="load" />

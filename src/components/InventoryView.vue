@@ -35,6 +35,8 @@ const canCount = computed(() => hasAnyRole(['librarian', 'operations']))
 const inventory = ref<Inventory | null>(null)
 const binder = ref<number | null>(null)
 const showAll = ref(false)
+/** The filter in words, for the header of the printout */
+const printFilter = computed(() => showAll.value ? t('notenarchiv', 'Also copies that are not active') : '')
 const loading = ref(false)
 const error = ref('')
 
@@ -179,6 +181,7 @@ const today = parseIsoDate(toIsoDate(new Date()))
 		<ViewHeader :title="binder !== null ? t('notenarchiv', 'Inventory of binder {binder}', { binder }) : t('notenarchiv', 'Inventory')"
 			:description="t('notenarchiv', 'The copies of one archive binder in shelf order, to tick off on paper. As of {date}.', { date: printedOn })"
 			printable
+			:print-filter="printFilter"
 			reloadable
 			:loading="loading"
 			@reload="load" />

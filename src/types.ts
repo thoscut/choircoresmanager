@@ -79,6 +79,8 @@ export interface Meta {
 	modules: Record<string, boolean> | null
 	/** what the account has hidden in its own view */
 	personalView: PersonalView
+	/** name of the Nextcloud (Theming), usually the choir: header of printouts */
+	siteName: string
 }
 
 /** Role keys (see docs/api.md). */

@@ -54,6 +54,13 @@ const scope = computed({
 	},
 })
 
+/** The filters in words, for the header of the printout */
+const printFilter = computed(() => [
+	taskFilters.scope === 'all' ? t('notenarchiv', 'All') : t('notenarchiv', 'For my roles'),
+	status.value === 'open' ? t('notenarchiv', 'Only open') : status.value === 'answered' ? t('notenarchiv', 'Only answered') : t('notenarchiv', 'Open and answered'),
+	taskFilters.closed ? t('notenarchiv', 'Also closed tasks') : '',
+].filter((part) => part !== '').join(', '))
+
 const status = computed({
 	get: () => taskFilters.status || 'all',
 	set: (value: string) => {
@@ -96,6 +103,7 @@ function showAll(): void {
 		<ViewHeader :title="t('notenarchiv', 'Tasks')"
 			:description="n('notenarchiv', '%n task shown', '%n tasks shown', shown.length)"
 			printable
+			:print-filter="printFilter"
 			reloadable
 			:loading="loading"
 			@reload="load" />

@@ -30,6 +30,8 @@ import { isLibrarian, openEntry } from '../store.ts'
 
 const persons = ref<Person[]>([])
 const query = ref('')
+/** The search in words, for the header of the printout */
+const printFilter = computed(() => query.value.trim() === '' ? '' : t('notenarchiv', 'Search: {text}', { text: query.value.trim() }))
 const loaded = ref(false)
 const loading = ref(false)
 const error = ref('')
@@ -167,6 +169,7 @@ function dateText(value: string | null, precision: string | null): string {
 		<ViewHeader :title="t('notenarchiv', 'Persons')"
 			:description="t('notenarchiv', 'Composers, lyricists and arrangers with life dates. The life dates are the basis of the protection proposal; unknown or uncertain data counts as protected.')"
 			printable
+			:print-filter="printFilter"
 			reloadable
 			:loading="loading"
 			@reload="load">

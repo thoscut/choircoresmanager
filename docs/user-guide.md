@@ -243,7 +243,8 @@ a **Reason for the change**, which is stored in the audit log, and **Save**.
 ### Help next to a term
 
 Next to some terms (version, copy, shelf mark, rights status, release, valid
-version and internal preservation copy) the app shows a small **?** button.
+version, internal preservation copy and revision) the app shows a small **?**
+button.
 It opens a short explanation of the term with a link to the matching section
 of this guide (see [Terms](#terms)). Escape closes the explanation.
 
@@ -268,6 +269,22 @@ If you may change the settings yourself, the button **Check access to the
 archive folder** opens the access check under Administration → Music
 archive, which lists everybody who cannot open the folder (see the
 [administration guide](admin-guide.md#checking-who-can-open-the-archive-folder)).
+
+### Error messages
+
+An error message stays at the bottom right until you close it with **×**,
+and says what to do: log in again, ask for a role, reload the page or try
+again in a moment. When the server cannot finish something, the message
+gives a **request ID**. Pass it on to the administration; it finds the error
+in the Nextcloud log with it.
+
+### Printing
+
+**Print** in a view prints it as shown. At the top is a header with the
+name of the Nextcloud (usually the choir), the view, the filters that are on
+and the day of printing; at the foot of each page "Page 1 of 3", where your
+browser can print page numbers (for example Chrome and Edge; Firefox
+prints without).
 
 ### Notifications
 

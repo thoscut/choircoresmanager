@@ -2974,6 +2974,11 @@ export const singular = {
 		'Nichts wurde erfasst. Bitte korrigieren Sie diese Zeilen und erfassen Sie erneut:',
 	],
 	'Measures, voice and size': 'Takte, Stimme und Größe',
+	// ---- 0.12: header of printouts ----
+	'Search: {text}': 'Suche: {text}',
+	'Filter: {filter}': 'Filter: {filter}',
+	'Printed on {date}': 'Gedruckt am {date}',
+	'Page {page} of {pages}': 'Seite {page} von {pages}',
 }
 
 export const plural = {

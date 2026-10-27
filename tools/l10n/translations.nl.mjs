@@ -2262,6 +2262,10 @@ export const singular = {
 	"The server could not finish this. Please try again in a moment. If it happens again, tell the administration this request ID for the Nextcloud log: %s": "De server kon dit niet afronden. Probeer het zo opnieuw. Gebeurt het weer, geef de beheerder dan deze aanvraag-ID voor het Nextcloud-logboek: %s",
 	"Nothing was recorded. Please correct these rows and record again:": "Er is niets vastgelegd. Corrigeer deze regels en leg opnieuw vast:",
 	"Measures, voice and size": "Maten, stem en grootte",
+	"Search: {text}": "Zoeken: {text}",
+	"Filter: {filter}": "Filter: {filter}",
+	"Printed on {date}": "Afgedrukt op {date}",
+	"Page {page} of {pages}": "Pagina {page} van {pages}",
 }
 
 export const plural = {

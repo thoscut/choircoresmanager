@@ -77,6 +77,10 @@ const statusOptions = computed<Option[]>(() => [
 		.map((status) => ({ id: status, label: releaseStatusLabel(status) })),
 ])
 
+/** The filters in words, for the header of the printout */
+const printFilter = computed(() => [statusOption.value?.label ?? '',
+	all.value ? t('notenarchiv', 'Also versions that are not released or where another version is valid') : ''].filter((part) => part !== '').join(', '))
+
 const statusOption = computed({
 	get: () => statusOptions.value.find((option) => option.id === releaseFilter.value) ?? statusOptions.value[0],
 	set: (option: Option | null) => {
@@ -143,6 +147,7 @@ function rightsText(row: ReleaseRow): string {
 		<ViewHeader :title="title"
 			:description="description"
 			printable
+			:print-filter="printFilter"
 			reloadable
 			:loading="loading"
 			@reload="load" />

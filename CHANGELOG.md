@@ -124,6 +124,9 @@ All notable changes to this app are documented in this file. The format follows
   notes (on wide screens beside them); the score views remember the size
   of the notes in the browser; the score view of the archive shows only
   play and stop above the notes until "Measures, voice and size" is chosen.
+- **Printouts** carry a header with the name of the Nextcloud (usually the
+  choir), the view, the filters that are on and the day, and page numbers
+  where the browser supports them.
 - Excerpts and whole pieces for choir members and the public no longer
   carry the encoder, the miscellaneous fields, XML comments or processing
   instructions of the MusicXML file.

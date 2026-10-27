@@ -101,12 +101,14 @@ the archive roles"), while `member_links` is active; otherwise 403.
   "archive": { "id": 123, "path": "/Notenarchiv", "user": "admin" },
   "archiveAccessible": true,
   "modules": { "rights": true, "concerts": true, "statistics": false, "agent_api": false, "...": "..." },
-  "personalView": { "navigation": ["statistics"], "cards": ["proposals"] }
+  "personalView": { "navigation": ["statistics"], "cards": ["proposals"] },
+  "siteName": "Liederkranz Musterstadt"
 }
 ```
 
 `modules` tells which modules are active (see "Modules and the personal
-view" at the end); `personalView` what the account has hidden.
+view" at the end); `personalView` what the account has hidden; `siteName`
+is the name of the Nextcloud (Theming) for the header of printouts.
 `canChangeSettings` is true for admins and for members of the groups the
 administration has given the settings page (see "Settings"); it gives no
 role. `archiveAccessible` tells whether the account can open the archive

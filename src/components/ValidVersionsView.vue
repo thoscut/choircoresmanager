@@ -32,6 +32,8 @@ import { repertoireClassLabel } from '../labels.ts'
 import { entries, loadEntries, openEntry } from '../store.ts'
 
 const onlyCurrent = ref(false)
+/** The filter in words, for the header of the printout */
+const printFilter = computed(() => onlyCurrent.value ? t('notenarchiv', 'Only the current repertoire') : '')
 
 const choices = computed(() => openChoices(entries.value)
 	.filter((work) => !onlyCurrent.value || work.repertoireClass === 'current'))
@@ -87,7 +89,8 @@ async function confirm(): Promise<void> {
 	<div class="valid-versions">
 		<ViewHeader :title="t('notenarchiv', 'Choose valid versions')"
 			:description="t('notenarchiv', 'Works with several versions of which none is valid for the choir yet. Choose the version the choir sings; you can change it later in the tab Rights of a copy.')"
-			printable>
+			printable
+			:print-filter="printFilter">
 			<template #actions>
 				<HelpTerm term="validVersion" />
 			</template>
