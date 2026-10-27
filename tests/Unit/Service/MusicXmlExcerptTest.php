@@ -360,6 +360,29 @@ final class MusicXmlExcerptTest extends TestCase {
 		self::assertStringContainsString('encoding="UTF-8"', $whole);
 	}
 
+	public function testNamesAndNotesOutsideTheMusicDoNotLeaveTheServer(): void {
+		$xml = '<?xml version="1.0" encoding="UTF-8"?><!-- set by Lena, still to check --><?musescore internal?>'
+			. '<score-partwise version="4.0"><work><work-title>Abendlied</work-title></work>'
+			. '<identification><creator type="composer">J. Rheinberger</creator><rights>CC0 1.0</rights>'
+			. '<encoding><encoder>Lena Muster</encoder><software>MuseScore 4</software><encoding-date>2026-10-01</encoding-date></encoding>'
+			. '<miscellaneous><miscellaneous-field name="note">ask the conductor</miscellaneous-field></miscellaneous></identification>'
+			. '<credit page="1"><credit-words>Abendlied</credit-words></credit>'
+			. '<part-list><score-part id="P1"><part-name>Chor</part-name></score-part></part-list>'
+			. '<part id="P1"><measure number="1">' . self::START . '<!-- breath here? -->' . self::NOTE . '</measure>'
+			. '<measure number="2"><?editor mark?>' . self::NOTE . '</measure></part></score-partwise>';
+		foreach (['excerpt' => MusicXmlExcerpt::cut($xml, '1', '2'), 'whole piece' => MusicXmlExcerpt::whole($xml)] as $case => $result) {
+			foreach (['Lena', 'still to check', 'musescore internal', 'ask the conductor', 'breath here', 'editor mark', '<!--', '<?editor'] as $text) {
+				self::assertStringNotContainsString($text, $result, $case . ': ' . $text);
+			}
+			$xpath = self::xpath($result);
+			self::assertSame('CC0 1.0', self::text($xpath, '/score-partwise/identification/rights'), $case);
+			self::assertSame('J. Rheinberger', self::text($xpath, '/score-partwise/identification/creator'), $case);
+			self::assertSame('MuseScore 4', self::text($xpath, '/score-partwise/identification/encoding/software'), $case);
+			self::assertSame('Abendlied', self::text($xpath, '/score-partwise/credit/credit-words'), $case);
+			self::assertSame(['1', '2'], self::numbers($xpath, 'P1'), $case);
+		}
+	}
+
 	public function testTheWholePieceIsCheckedLikeAnExcerpt(): void {
 		$subset = '<?xml version="1.0"?><!DOCTYPE score-partwise [<!ENTITY x "y">]>' . substr(self::score([self::NOTE]), strlen('<?xml version="1.0" encoding="UTF-8"?>'));
 		foreach ([$subset => 'This file is not a MusicXML score.', '<html/>' => 'This file is not a MusicXML score.',

@@ -72,6 +72,8 @@ below explain the reasons.
 | The print station never writes into the archive folder and replaces only files it wrote itself | `print_mirror_test`; CS `testThePrintStationIsSyncedByTheCatalogLibrarianAndAdministrators` |
 | Backups and annual snapshots lie outside the archive folder | `workflow_test` ("the backup lies in the backup folder"), `archive_extras_test` ("the snapshot lies outside the archive folder"), `notifications_test` |
 | The database holds link tokens only as hash and encrypted; tokens of links for choir members and public links only for their creator and the catalog librarian, no account names in link lists | `LinkTokensTest::testTheTableHoldsTheHashAndTheEncryptedTokenOnly`, `testTheTokenIsReadBackOnlyWithTheSecretOfTheInstance`, `testOnlyTheCreatorAndTheLibrarianSeeTokensThatOpenALinkToOthers` |
+| Excerpts and whole pieces for choir members and the public carry no encoder, miscellaneous fields, comments or processing instructions | `MusicXmlExcerptTest::testNamesAndNotesOutsideTheMusicDoNotLeaveTheServer` |
+| The rights notice is not read from documents with an internal DTD subset, however long the prolog | `RightsNoticeServiceTest::testTheDoctypeOfMusicXmlIsAcceptedButNoInternalSubset` |
 | Backups hold no link tokens; a restore brings links back revoked | `ExportServiceTest::testABackupHoldsNoLinkTokensAndASnapshotNoAccounts`; `backup_test` |
 | Of the weekly backups the newest eight are kept | `ExportServiceTest::testOnlyTheNewestWeeklyBackupsAreKept` |
 | Annual snapshots name nobody: no accounts, folder book, audit log or links | `ExportServiceTest::testABackupHoldsNoLinkTokensAndASnapshotNoAccounts`; `backup_test`, `archive_extras_test`; CS `testAnnualSnapshotsCheckTheRolesOnTheServer` |
@@ -197,6 +199,11 @@ made and on every call the server checks:
   or that license). Every practice file of a choir member is recorded in the
   audit log with account, role `member`, measures, voice, mode and format;
   for an excerpt the measures of the link, whatever the request says.
+
+Choir members and the public get MusicXML cut on the server, not the file:
+without the encoder and the miscellaneous fields of `<identification>`,
+without XML comments and processing instructions, which may name people or
+hold internal notes. Title, credits, creators and the rights notice stay.
 
 A version that loses its release disappears from "Shared with me" and its
 public links stop working at once.
@@ -336,8 +343,8 @@ account can do; it offers a stable, documented and limited contract.
   origin.
 - The rights notice of a MusicXML file (`<identification><rights>`) is read
   by the file sync with the same size limits, without loading anything and
-  without expanding entities; documents with an internal DTD subset are not
-  read. The notice is shown as unchecked text (Vue escapes it) and never sets
+  without expanding entities; documents with an internal DTD subset
+  anywhere in the text are not read. The notice is shown as unchecked text (Vue escapes it) and never sets
   a rights status; at most it becomes a proposal.
 - Revisions of a version (module `version_states`) are records with a
   checksum; the app copies no file for them. The file sync hashes score

@@ -44,8 +44,10 @@ use OCA\Notenarchiv\Exception\InvalidInputException;
  *     coda lies in the excerpt after it; a direction that carries such a
  *     jump goes with it (its text belongs to the jump).
  * - Everything outside the measures stays: title, credits, rights notice,
- *   part list. The document type declaration is dropped; the result is
- *   UTF-8.
+ *   part list. Dropped are the document type declaration and what may name
+ *   people or hold internal notes (milestone 0.11): the encoder and the
+ *   miscellaneous fields of <identification>, XML comments and processing
+ *   instructions. The result is UTF-8.
  *
  * Pure functions on DOMDocument, no server needed.
  *
@@ -108,6 +110,13 @@ final class MusicXmlExcerpt {
 	private static function save(\DOMDocument $document): string {
 		if ($document->doctype !== null) {
 			$document->removeChild($document->doctype);
+		}
+		$xpath = new \DOMXPath($document);
+		$dropped = $xpath->query('//comment() | //processing-instruction() | /*/identification/encoding/encoder | /*/identification/miscellaneous');
+		if ($dropped !== false) {
+			foreach (iterator_to_array($dropped) as $node) {
+				$node->parentNode?->removeChild($node);
+			}
 		}
 		$document->encoding = 'UTF-8';
 		$result = $document->saveXML();

@@ -102,11 +102,12 @@ class RightsNoticeService {
 	/**
 	 * The text of the `<rights>` elements in `<identification>` of a
 	 * MusicXML document, white space collapsed, several joined with " · ";
-	 * null when there is none. Documents with an internal DTD subset are not
-	 * read (no entities are ever expanded, nothing is loaded).
+	 * null when there is none. Documents with an internal DTD subset anywhere
+	 * in the text are not read, however long the prolog before it (no
+	 * entities are ever expanded, nothing is loaded).
 	 */
 	public static function extract(string $xml): ?string {
-		if (preg_match('/<!DOCTYPE[^>\[]*\[/i', substr($xml, 0, 4096)) === 1) {
+		if (preg_match('/<!DOCTYPE[^>\[]*\[/i', $xml) === 1) {
 			return null;
 		}
 		$reader = new \XMLReader();

@@ -57,6 +57,9 @@ All notable changes to this app are documented in this file. The format follows
   links to preservation copies for roles that may not view them.
   `SECURITY.md` names the web server logs, which record the addresses of
   public links.
+- Excerpts and whole pieces for choir members and the public no longer
+  carry the encoder, the miscellaneous fields, XML comments or processing
+  instructions of the MusicXML file.
 - `SECURITY.md` starts with a table of what the app promises and which test
   checks it; a test makes sure every named test exists.
 
@@ -73,6 +76,8 @@ All notable changes to this app are documented in this file. The format follows
 - The documentation checks also run when only documentation changed (own
   workflow `Docs`).
 - The print station reads scans only from the archive folder.
+- The rights notice of a MusicXML file is not read when an internal DTD
+  subset follows a long prolog.
 - The integration job builds the PHP image extension `gd` with FreeType,
   which Nextcloud needs to draw the avatar of a new account.
 

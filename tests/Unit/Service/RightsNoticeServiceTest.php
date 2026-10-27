@@ -56,6 +56,9 @@ final class RightsNoticeServiceTest extends TestCase {
 		self::assertSame('© 2020 Publisher', RightsNoticeService::extract(self::score('<rights>© 2020 Publisher</rights>', $doctype)));
 		$subset = '<!DOCTYPE score-partwise [<!ENTITY a "public domain">]>';
 		self::assertNull(RightsNoticeService::extract(self::score('<rights>&a;</rights>', $subset)), 'no entities are expanded');
+		$prolog = '<!-- ' . str_repeat('padding ', 1000) . '-->';
+		self::assertNull(RightsNoticeService::extract(self::score('<rights>Notice &a;</rights>', $prolog . $subset)),
+			'an internal subset after a long prolog is refused as well');
 	}
 
 	public function testOnlyTheHeaderCounts(): void {
