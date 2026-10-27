@@ -157,7 +157,7 @@ class InventoryService {
 				'title' => $work?->getTitle(),
 				'composer' => $work?->getComposer(),
 				'arranger_text' => $version?->getArrangerText(),
-				'preservation_copy' => $version?->getPreservationCopy() === true,
+				'preservation_copy' => $version !== null && RightsPolicy::isPreservationCopy($version, $copy),
 			];
 			$keys[] = [$copy->getNumber()];
 		}

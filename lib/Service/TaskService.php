@@ -64,6 +64,14 @@ class TaskService {
 			}
 		}
 		$copy = $this->loadCopy($copyId);
+		try {
+			$version = $this->versions->find($copy->getVersionId());
+		} catch (DoesNotExistException) {
+			throw new NotFoundException('Not found.');
+		}
+		if (RightsPolicy::isPreservationCopy($version, $copy) && !$this->roles->hasAnyRole($uid, RightsPolicy::PRESERVATION_COPY_VIEWERS)) {
+			throw new AccessDeniedException('Internal preservation copy: only the catalog librarian and the conductor may view it.');
+		}
 		$task = new Task();
 		$task->setCopyId($copy->getId());
 		$task->setValue('kind', self::choice($data['kind'] ?? 'question', Task::KINDS, 'Kind of task'));

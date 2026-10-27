@@ -88,7 +88,7 @@ class ApiController extends Controller {
 	public function entries(): JSONResponse {
 		return $this->run(function (string $uid) {
 			$this->roles->requireAccess($uid);
-			return $this->catalog->entries();
+			return $this->catalog->entriesFor($uid);
 		});
 	}
 

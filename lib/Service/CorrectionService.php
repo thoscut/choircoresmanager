@@ -100,10 +100,10 @@ class CorrectionService {
 			|| $file->getFound() === false) {
 			throw $wrongFile;
 		}
-		if ($version->getPreservationCopy() === true) {
+		if (RightsPolicy::isPreservationCopy($version, $copy)) {
 			throw new InvalidInputException('Internal preservation copies cannot be corrected in the app.');
 		}
-		$denial = $this->policy->viewDenial($version, $uid);
+		$denial = $this->policy->viewDenial($version, $uid, $copy);
 		if ($denial !== null) {
 			throw new AccessDeniedException($denial);
 		}

@@ -101,7 +101,7 @@ class ApiV1ReviewController extends OCSController {
 			$status = ReviewView::status($status);
 			$role = ReviewView::role($role);
 			['copy' => $copy, 'version' => $version] = $this->catalog->copyWithContext($id);
-			$denial = $this->policy->viewDenial($version, $uid);
+			$denial = $this->policy->viewDenial($version, $uid, $copy);
 			if ($denial !== null) {
 				throw new AccessDeniedException($denial);
 			}
@@ -192,8 +192,8 @@ class ApiV1ReviewController extends OCSController {
 			if (($content === null) === ($report === null)) {
 				throw new InvalidInputException('Please send the report either as text or as an object.');
 			}
-			['version' => $version] = $this->catalog->copyWithContext($id);
-			$denial = $this->policy->viewDenial($version, $uid);
+			['copy' => $copy, 'version' => $version] = $this->catalog->copyWithContext($id);
+			$denial = $this->policy->viewDenial($version, $uid, $copy);
 			if ($denial !== null) {
 				throw new AccessDeniedException($denial);
 			}

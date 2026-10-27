@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\Notenarchiv\Service;
 
 use OCA\Notenarchiv\Db\ArchiveFileMapper;
+use OCA\Notenarchiv\Db\Copy;
 use OCA\Notenarchiv\Db\CopyMapper;
 use OCA\Notenarchiv\Db\ExcerptLink;
 use OCA\Notenarchiv\Db\ExcerptLinkMapper;
@@ -97,12 +98,12 @@ class LinkService {
 				throw new InvalidInputException('Unknown field: %s', [$field]);
 			}
 		}
-		[$version, $score] = $this->load($copyId, $uid);
+		[$version, $score, $copy] = $this->load($copyId, $uid);
 
 		$today = $this->rights->today($uid);
 		$shared = $module !== null;
 		if ($shared) {
-			$denial = $this->shareDenial($circle, $version, $today);
+			$denial = $this->shareDenial($circle, $version, $today, $copy);
 			if ($denial !== null) {
 				throw new AccessDeniedException($denial);
 			}
@@ -236,7 +237,7 @@ class LinkService {
 	 */
 	public function circleOptions(int $copyId, string $uid): array {
 		$this->roles->requireRole($uid, self::CREATORS);
-		[$version, $score] = $this->load($copyId, $uid);
+		[$version, $score, $copy] = $this->load($copyId, $uid);
 		$today = $this->rights->today($uid);
 		$scans = [];
 		foreach ($this->files->findByCopy($copyId) as $file) {
@@ -245,8 +246,8 @@ class LinkService {
 			}
 		}
 		return [
-			'members' => $this->circleOption(ExcerptLink::CIRCLE_MEMBERS, $version, $score !== null, $today),
-			'public' => $this->circleOption(ExcerptLink::CIRCLE_PUBLIC, $version, $score !== null, $today),
+			'members' => $this->circleOption(ExcerptLink::CIRCLE_MEMBERS, $version, $copy, $score !== null, $today),
+			'public' => $this->circleOption(ExcerptLink::CIRCLE_PUBLIC, $version, $copy, $score !== null, $today),
 			'scans' => $scans,
 		];
 	}
@@ -254,20 +255,20 @@ class LinkService {
 	/**
 	 * @return CircleOption
 	 */
-	private function circleOption(string $circle, WorkVersion $version, bool $hasScore, string $today): array {
+	private function circleOption(string $circle, WorkVersion $version, Copy $copy, bool $hasScore, string $today): array {
 		if (!$this->modules->isEnabled(self::CIRCLE_MODULES[$circle] ?? '')) {
 			return ['available' => false, 'allowed' => false, 'reason' => self::SWITCHED_OFF, 'playback' => false, 'practiceAudio' => false];
 		}
 		$members = $circle === ExcerptLink::CIRCLE_MEMBERS;
-		$denial = $this->shareDenial($circle, $version, $today) ?? ($hasScore ? null : self::NO_SCORE);
-		$playDenial = $members ? $this->policy->memberPlayDenial($version, $today) : $this->policy->publicPlayDenial($version, $today);
+		$denial = $this->shareDenial($circle, $version, $today, $copy) ?? ($hasScore ? null : self::NO_SCORE);
+		$playDenial = $members ? $this->policy->memberPlayDenial($version, $today, $copy) : $this->policy->publicPlayDenial($version, $today, $copy);
 		return [
 			'available' => true,
 			'allowed' => $denial === null,
 			'reason' => $denial ?? $playDenial,
 			'playback' => $denial === null && $playDenial === null,
 			'practiceAudio' => $members && $denial === null && $playDenial === null && $this->modules->isEnabled(Modules::MEMBER_PRACTICE_AUDIO)
-				&& $this->policy->memberPracticeAudioDenial($version, $today) === null,
+				&& $this->policy->memberPracticeAudioDenial($version, $today, $copy) === null,
 		];
 	}
 
@@ -275,17 +276,17 @@ class LinkService {
 	 * Why a version may not be shared with a circle beyond the archive roles,
 	 * with the next step; null when it may.
 	 */
-	private function shareDenial(string $circle, WorkVersion $version, string $day): ?string {
+	private function shareDenial(string $circle, WorkVersion $version, string $day, Copy $copy): ?string {
 		return $circle === ExcerptLink::CIRCLE_PUBLIC
-			? $this->policy->publicViewDenial($version, $day)
-			: $this->policy->memberViewDenial($version, $day);
+			? $this->policy->publicViewDenial($version, $day, $copy)
+			: $this->policy->memberViewDenial($version, $day, $copy);
 	}
 
 	/**
 	 * The version of a copy and its score, after checking that the account
 	 * may view it.
 	 *
-	 * @return array{0: WorkVersion, 1: array{fileId: int, fileName: string, canView: bool, canPlay: bool, reason: ?string, canExportAudio: bool, exportReason: ?string}|null}
+	 * @return array{0: WorkVersion, 1: array{fileId: int, fileName: string, canView: bool, canPlay: bool, reason: ?string, canExportAudio: bool, exportReason: ?string}|null, 2: Copy}
 	 */
 	private function load(int $copyId, string $uid): array {
 		try {
@@ -294,11 +295,11 @@ class LinkService {
 		} catch (DoesNotExistException) {
 			throw new NotFoundException('Not found.');
 		}
-		$denial = $this->policy->viewDenial($version, $uid);
+		$denial = $this->policy->viewDenial($version, $uid, $copy);
 		if ($denial !== null) {
 			throw new AccessDeniedException($denial);
 		}
-		return [$version, $this->scores->describe($version, $this->files->findByCopy($copyId), $uid)];
+		return [$version, $this->scores->describe($version, $this->files->findByCopy($copyId), $uid, $copy), $copy];
 	}
 
 	/**
@@ -326,7 +327,7 @@ class LinkService {
 		if ($link->getExpires() !== null && $link->getExpires() < $this->rights->today($uid)) {
 			throw new InvalidInputException('This link has expired.');
 		}
-		$denial = $this->policy->viewDenial($version, $uid);
+		$denial = $this->policy->viewDenial($version, $uid, $copy);
 		if ($denial !== null) {
 			throw new AccessDeniedException($denial);
 		}

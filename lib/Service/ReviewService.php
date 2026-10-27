@@ -258,7 +258,7 @@ class ReviewService {
 		foreach ($this->points->findByStatus([ReviewPoint::CORRECT]) as $point) {
 			$copy = $copies[$point->getCopyId()] ?? null;
 			$version = $versions[$point->getVersionId()] ?? null;
-			if ($version?->getPreservationCopy() === true && !$mayViewPreservation) {
+			if ($version !== null && RightsPolicy::isPreservationCopy($version, $copy) && !$mayViewPreservation) {
 				continue;
 			}
 			$work = $version === null ? null : ($works[$version->getWorkId()] ?? null);

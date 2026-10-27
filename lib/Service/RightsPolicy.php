@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\Notenarchiv\Service;
 
+use OCA\Notenarchiv\Db\Copy;
 use OCA\Notenarchiv\Db\LicenseMapper;
 use OCA\Notenarchiv\Db\WorkVersion;
 
@@ -35,6 +36,11 @@ use OCA\Notenarchiv\Db\WorkVersion;
  *   "free", set by the catalog librarian) and confirmed public domain or a
  *   license for online publication; playback as above.
  *
+ * What counts as an internal preservation copy is decided here alone, for
+ * every way out (internal API, API for agents, links, scans, print station):
+ * a version marked as one, or a copy of the kind "Preservation copy"
+ * (isPreservationCopy). Callers that know the copy pass it.
+ *
  * Messages are English source strings; callers translate them. Reasons for
  * the people who share say what to do next.
  */
@@ -43,6 +49,8 @@ class RightsPolicy {
 	public const PRESERVATION_COPY_VIEWERS = [Roles::LIBRARIAN, Roles::CONDUCTOR];
 	/** Roles allowed to make practice audio files */
 	public const PRACTICE_AUDIO_MAKERS = [Roles::LIBRARIAN, Roles::CONDUCTOR];
+	/** Kind of copy (Fields, copy.kind) that makes its files an internal preservation copy */
+	public const PRESERVATION_COPY_KIND = 'preservation_copy';
 
 	public function __construct(
 		private Roles $roles,
@@ -52,13 +60,23 @@ class RightsPolicy {
 	}
 
 	/**
+	 * Whether the files of a version (or of one of its copies) are an internal
+	 * preservation copy: the version is marked as one, or the copy is of the
+	 * kind "Preservation copy". The one rule for every way out.
+	 */
+	public static function isPreservationCopy(WorkVersion $version, ?Copy $copy = null): bool {
+		return $version->getPreservationCopy() === true || $copy?->getKind() === self::PRESERVATION_COPY_KIND;
+	}
+
+	/**
+	 * @param Copy|null $copy the copy, when the request is about one
 	 * @return string|null null when viewing is allowed, otherwise the reason
 	 */
-	public function viewDenial(WorkVersion $version, string $uid): ?string {
+	public function viewDenial(WorkVersion $version, string $uid, ?Copy $copy = null): ?string {
 		if (!$this->roles->hasAccess($uid)) {
 			return 'You have no access to the music archive.';
 		}
-		if ($version->getPreservationCopy() === true && !$this->mayViewPreservationCopies($uid)) {
+		if (self::isPreservationCopy($version, $copy) && !$this->mayViewPreservationCopies($uid)) {
 			return 'Internal preservation copy: only the catalog librarian and the conductor may view it.';
 		}
 		return null;
@@ -76,8 +94,8 @@ class RightsPolicy {
 	/**
 	 * @return string|null null when playback is allowed, otherwise the reason
 	 */
-	public function playDenial(WorkVersion $version, string $uid): ?string {
-		return $this->viewDenial($version, $uid) ?? $this->playRightsDenial($version, $this->rights->today($uid));
+	public function playDenial(WorkVersion $version, string $uid, ?Copy $copy = null): ?string {
+		return $this->viewDenial($version, $uid, $copy) ?? $this->playRightsDenial($version, $this->rights->today($uid), $copy);
 	}
 
 	/**
@@ -89,8 +107,8 @@ class RightsPolicy {
 	 *
 	 * @return string|null null when the export is allowed, otherwise the reason
 	 */
-	public function practiceAudioDenial(WorkVersion $version, string $uid): ?string {
-		$playDenial = $this->playDenial($version, $uid);
+	public function practiceAudioDenial(WorkVersion $version, string $uid, ?Copy $copy = null): ?string {
+		$playDenial = $this->playDenial($version, $uid, $copy);
 		if ($playDenial !== null) {
 			return $playDenial;
 		}
@@ -109,8 +127,8 @@ class RightsPolicy {
 	 * @param string $day today (YYYY-MM-DD), for the validity of licenses
 	 * @return string|null null when allowed, otherwise the reason with the next step
 	 */
-	public function memberViewDenial(WorkVersion $version, string $day): ?string {
-		if ($version->getPreservationCopy() === true) {
+	public function memberViewDenial(WorkVersion $version, string $day, ?Copy $copy = null): ?string {
+		if (self::isPreservationCopy($version, $copy)) {
 			return 'Internal preservation copy: it is never shared with choir members.';
 		}
 		if ($this->rights->portalDenial($version, $this->licenses->findByVersion($version->getId()), $day) === null) {
@@ -127,8 +145,8 @@ class RightsPolicy {
 	 *
 	 * @return string|null null when allowed, otherwise the reason
 	 */
-	public function memberPlayDenial(WorkVersion $version, string $day): ?string {
-		return $this->memberViewDenial($version, $day) ?? $this->playRightsDenial($version, $day);
+	public function memberPlayDenial(WorkVersion $version, string $day, ?Copy $copy = null): ?string {
+		return $this->memberViewDenial($version, $day, $copy) ?? $this->playRightsDenial($version, $day, $copy);
 	}
 
 	/**
@@ -139,8 +157,8 @@ class RightsPolicy {
 	 *
 	 * @return string|null null when allowed, otherwise the reason
 	 */
-	public function memberPracticeAudioDenial(WorkVersion $version, string $day): ?string {
-		return $this->memberPlayDenial($version, $day) ?? $this->practiceAudioRightsDenial($version, $day);
+	public function memberPracticeAudioDenial(WorkVersion $version, string $day, ?Copy $copy = null): ?string {
+		return $this->memberPlayDenial($version, $day, $copy) ?? $this->practiceAudioRightsDenial($version, $day);
 	}
 
 	/**
@@ -151,8 +169,8 @@ class RightsPolicy {
 	 *
 	 * @return string|null null when allowed, otherwise the reason with the next step
 	 */
-	public function publicViewDenial(WorkVersion $version, string $day): ?string {
-		if ($version->getPreservationCopy() === true) {
+	public function publicViewDenial(WorkVersion $version, string $day, ?Copy $copy = null): ?string {
+		if (self::isPreservationCopy($version, $copy)) {
 			return 'Internal preservation copy: it is never published.';
 		}
 		if ($version->getPublicationStatus() !== 'free') {
@@ -174,16 +192,16 @@ class RightsPolicy {
 	 *
 	 * @return string|null null when allowed, otherwise the reason
 	 */
-	public function publicPlayDenial(WorkVersion $version, string $day): ?string {
-		return $this->publicViewDenial($version, $day) ?? $this->playRightsDenial($version, $day);
+	public function publicPlayDenial(WorkVersion $version, string $day, ?Copy $copy = null): ?string {
+		return $this->publicViewDenial($version, $day, $copy) ?? $this->playRightsDenial($version, $day, $copy);
 	}
 
 	/**
 	 * The rights part of playDenial: public domain or a license for practice
 	 * audio; never a preservation copy. No role check.
 	 */
-	private function playRightsDenial(WorkVersion $version, string $day): ?string {
-		if ($version->getPreservationCopy() === true) {
+	private function playRightsDenial(WorkVersion $version, string $day, ?Copy $copy = null): ?string {
+		if (self::isPreservationCopy($version, $copy)) {
 			return 'Internal preservation copy: no playback.';
 		}
 		if ($version->getRightsStatus() === 'public_domain') {

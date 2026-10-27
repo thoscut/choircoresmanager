@@ -249,7 +249,7 @@ class PrintMirrorService {
 		$manifest = $this->mirrorFiles->findAllByName();
 		$keep = [self::README => true];
 
-		foreach ($this->wanted($account, $userFolder) as $entry) {
+		foreach ($this->wanted($account) as $entry) {
 			$name = $entry['name'];
 			$keep[$name] = true;
 			$item = ['name' => $name, 'shelfmark' => $entry['shelfmark'], 'reason' => null];
@@ -362,7 +362,10 @@ class PrintMirrorService {
 	 *
 	 * @return list<array{name: string, shelfmark: string, copyId: int, archiveFile: ArchiveFile, node: ?File, skip: ?string}>
 	 */
-	private function wanted(string $account, Folder $userFolder): array {
+	private function wanted(string $account): array {
+		// Scans are read only inside the archive folder, never elsewhere in
+		// the files of the account.
+		$archive = $this->settings->archiveFolder($account);
 		$scans = [];
 		foreach ($this->archiveFiles->findFound() as $file) {
 			$copyId = $file->getCopyId();
@@ -383,12 +386,14 @@ class PrintMirrorService {
 				foreach ($files as $index => $file) {
 					$name = $base . ($index > 0 ? ' (' . ($index + 1) . ')' : '') . '.pdf';
 					$node = null;
-					if (($kinds[$copy['id']] ?? null) === 'preservation_copy') {
+					// The list already leaves out versions marked as preservation copies;
+					// a copy of that kind is one as well (RightsPolicy, one rule).
+					if (($kinds[$copy['id']] ?? null) === RightsPolicy::PRESERVATION_COPY_KIND) {
 						$skip = self::PRESERVATION;
 					} elseif (!$this->filenameValidator->isFilenameValid($name)) {
 						$skip = self::INVALID_NAME;
 					} else {
-						$found = $userFolder->getFirstNodeById($file->getFileId());
+						$found = $archive->getFirstNodeById($file->getFileId());
 						$node = $found instanceof File ? $found : null;
 						$skip = $node === null ? self::NOT_ACCESSIBLE : (ScanService::isPdf($node) ? null : self::NOT_PDF);
 					}

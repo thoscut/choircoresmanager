@@ -92,10 +92,10 @@ class SharedLinkService {
 			} catch (DoesNotExistException) {
 				continue;
 			}
-			if ($this->policy->memberViewDenial($version, $today) !== null) {
+			if ($this->policy->memberViewDenial($version, $today, $copy) !== null) {
 				continue;
 			}
-			$playDenial = $this->policy->memberPlayDenial($version, $today);
+			$playDenial = $this->policy->memberPlayDenial($version, $today, $copy);
 			$rows[] = [
 				'token' => $link->getToken(),
 				'title' => (string)$work->getTitle(),
@@ -109,7 +109,7 @@ class SharedLinkService {
 				'expires' => $link->getExpires(),
 				'canPlay' => $playDenial === null,
 				'canExportAudio' => $playDenial === null && $this->modules->isEnabled(Modules::MEMBER_PRACTICE_AUDIO)
-					&& $this->policy->memberPracticeAudioDenial($version, $today) === null,
+					&& $this->policy->memberPracticeAudioDenial($version, $today, $copy) === null,
 				'reason' => $playDenial,
 				'scan' => $link->getScanFileId() !== null,
 			];
@@ -172,7 +172,7 @@ class SharedLinkService {
 		} catch (DoesNotExistException) {
 			throw new NotFoundException('This piece is no longer shared with choir members.');
 		}
-		if ($this->policy->memberViewDenial($version, $today) !== null) {
+		if ($this->policy->memberViewDenial($version, $today, $copy) !== null) {
 			throw new AccessDeniedException('This piece is no longer shared with choir members.');
 		}
 		return ['link' => $link, 'copy' => $copy, 'version' => $version];
@@ -191,7 +191,7 @@ class SharedLinkService {
 		if ($open === null) {
 			return null;
 		}
-		['link' => $link, 'version' => $version, 'work' => $work, 'today' => $today] = $open;
+		['link' => $link, 'copy' => $copy, 'version' => $version, 'work' => $work, 'today' => $today] = $open;
 		try {
 			$xml = $this->score($link);
 		} catch (UserFacingException) {
@@ -206,7 +206,7 @@ class SharedLinkService {
 			'voice' => $link->getVoice(),
 			'verse' => $link->getVerse(),
 			'tempo' => $link->getTempo(),
-			'canPlay' => $this->policy->publicPlayDenial($version, $today) === null,
+			'canPlay' => $this->policy->publicPlayDenial($version, $today, $copy) === null,
 			'scan' => $link->getScanFileId() !== null,
 			'xml' => $xml,
 		];
@@ -233,7 +233,7 @@ class SharedLinkService {
 	 * A public link that may be shown today, with its version and work; null
 	 * otherwise.
 	 *
-	 * @return array{link: ExcerptLink, version: WorkVersion, work: Work, today: string}|null
+	 * @return array{link: ExcerptLink, copy: Copy, version: WorkVersion, work: Work, today: string}|null
 	 */
 	private function publicLink(string $token): ?array {
 		try {
@@ -246,10 +246,10 @@ class SharedLinkService {
 		}
 		$today = $this->rights->today(null);
 		if ($link->getCircle() !== ExcerptLink::CIRCLE_PUBLIC || $link->getRevoked() !== null || self::expired($link, $today)
-			|| $this->policy->publicViewDenial($version, $today) !== null) {
+			|| $this->policy->publicViewDenial($version, $today, $copy) !== null) {
 			return null;
 		}
-		return ['link' => $link, 'version' => $version, 'work' => $work, 'today' => $today];
+		return ['link' => $link, 'copy' => $copy, 'version' => $version, 'work' => $work, 'today' => $today];
 	}
 
 	/**

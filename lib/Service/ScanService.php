@@ -52,7 +52,7 @@ class ScanService {
 		if ($file->getRole() !== 'score_pdf') {
 			throw $notScan;
 		}
-		$denial = $this->policy->viewDenial($version, $uid);
+		$denial = $this->policy->viewDenial($version, $uid, $copy);
 		if ($denial !== null) {
 			throw new AccessDeniedException($denial);
 		}

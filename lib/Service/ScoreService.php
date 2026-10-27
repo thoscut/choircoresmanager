@@ -11,6 +11,7 @@ namespace OCA\Notenarchiv\Service;
 
 use OCA\Notenarchiv\Db\ArchiveFile;
 use OCA\Notenarchiv\Db\ArchiveFileMapper;
+use OCA\Notenarchiv\Db\Copy;
 use OCA\Notenarchiv\Db\CopyMapper;
 use OCA\Notenarchiv\Db\WorkVersion;
 use OCA\Notenarchiv\Db\WorkVersionMapper;
@@ -64,15 +65,15 @@ class ScoreService {
 	 * @param list<ArchiveFile> $files files of the copy
 	 * @return array{fileId: int, fileName: string, canView: bool, canPlay: bool, reason: ?string, canExportAudio: bool, exportReason: ?string}|null
 	 */
-	public function describe(WorkVersion $version, array $files, string $uid): ?array {
+	public function describe(WorkVersion $version, array $files, string $uid, ?Copy $copy = null): ?array {
 		$file = self::pick($files);
 		if ($file === null) {
 			return null;
 		}
-		$viewDenial = $this->policy->viewDenial($version, $uid);
-		$playDenial = $this->policy->playDenial($version, $uid)
+		$viewDenial = $this->policy->viewDenial($version, $uid, $copy);
+		$playDenial = $this->policy->playDenial($version, $uid, $copy)
 			?? ($this->modules->isEnabled('playback') ? null : Modules::PLAYBACK_OFF);
-		$exportDenial = $playDenial ?? ($this->policy->practiceAudioDenial($version, $uid)
+		$exportDenial = $playDenial ?? ($this->policy->practiceAudioDenial($version, $uid, $copy)
 			?? ($this->modules->isEnabled('practice_audio') ? null : Modules::PRACTICE_AUDIO_OFF));
 		return [
 			'fileId' => $file->getId(),
@@ -106,7 +107,7 @@ class ScoreService {
 		if ($file->getRole() !== 'musicxml' || !isset(self::MIME_TYPES[$type])) {
 			throw new InvalidInputException('This file is not a MusicXML score.');
 		}
-		$denial = $this->policy->viewDenial($version, $uid);
+		$denial = $this->policy->viewDenial($version, $uid, $copy);
 		if ($denial !== null) {
 			throw new AccessDeniedException($denial);
 		}

@@ -26,6 +26,7 @@ use OCA\Notenarchiv\Db\Work;
 use OCA\Notenarchiv\Db\WorkMapper;
 use OCA\Notenarchiv\Db\WorkVersion;
 use OCA\Notenarchiv\Db\WorkVersionMapper;
+use OCA\Notenarchiv\Exception\AccessDeniedException;
 use OCA\Notenarchiv\Exception\InvalidInputException;
 use OCA\Notenarchiv\Exception\NotFoundException;
 use OCP\AppFramework\Db\DoesNotExistException;
@@ -188,7 +189,7 @@ class CatalogService {
 				'rights_status' => $version?->getRightsStatus(),
 				'rights_confirmed' => $version?->getValue('rights_confirmed'),
 				'confirmed_at' => $version?->getValue('confirmed_at'),
-				'preservation_copy' => $version?->getPreservationCopy() === true,
+				'preservation_copy' => $version !== null && RightsPolicy::isPreservationCopy($version, $copy),
 				'publication' => $version?->getPublication(),
 				'valid_since' => $version?->getValue('valid_since'),
 				'repertoire' => $work?->getValue('repertoire_import'),
@@ -205,6 +206,21 @@ class CatalogService {
 	}
 
 	/**
+	 * The rows of entries() an account may see: internal preservation copies
+	 * only for the roles of RightsPolicy::PRESERVATION_COPY_VIEWERS, as in
+	 * the API for agents.
+	 *
+	 * @return list<array<string, mixed>>
+	 */
+	public function entriesFor(string $uid): array {
+		$rows = $this->entries();
+		if ($this->roles->hasAnyRole($uid, RightsPolicy::PRESERVATION_COPY_VIEWERS)) {
+			return $rows;
+		}
+		return array_values(array_filter($rows, fn (array $row): bool => $row['preservation_copy'] !== true));
+	}
+
+	/**
 	 * Everything about one copy: work, version, files, other copies of the same
 	 * work, persons involved with the protection proposal (display only),
 	 * merges that can be undone, audit log. Parts of switched-off modules are
@@ -214,6 +230,9 @@ class CatalogService {
 	 */
 	public function entry(int $copyId, string $uid): array {
 		['copy' => $copy, 'version' => $version, 'work' => $work] = $this->copyWithContext($copyId);
+		if (RightsPolicy::isPreservationCopy($version, $copy) && !$this->roles->hasAnyRole($uid, RightsPolicy::PRESERVATION_COPY_VIEWERS)) {
+			throw new AccessDeniedException('Internal preservation copy: only the catalog librarian and the conductor may view it.');
+		}
 
 		$siblings = [];
 		foreach ($this->versions->findByWork($work->getId()) as $otherVersion) {
@@ -229,7 +248,7 @@ class CatalogService {
 		$licenses = $this->licenses->findByVersion($version->getId());
 		$day = $this->rights->today($uid);
 		$active = $this->modules->states();
-		$score = $active['score_viewer'] ? $this->scores->describe($version, $files, $uid) : null;
+		$score = $active['score_viewer'] ? $this->scores->describe($version, $files, $uid, $copy) : null;
 		return [
 			'work' => $work,
 			'version' => $version,

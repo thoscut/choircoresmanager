@@ -165,7 +165,8 @@ class ApiV1TaskController extends OCSController {
 		$data = ['kind' => $kind, 'addressee' => $addressee, 'question' => $question, 'category' => $category, 'page' => $page,
 			'measure_from' => $measure_from, 'measure_to' => $measure_to, 'voice' => $voice, 'verse' => $verse, 'origin' => $origin, 'due' => $due];
 		return new DataResponse($this->ocs(function (string $uid) use ($id, $data): array {
-			$denial = $this->policy->viewDenial($this->catalog->copyWithContext($id)['version'], $uid);
+			['copy' => $copy, 'version' => $version] = $this->catalog->copyWithContext($id);
+			$denial = $this->policy->viewDenial($version, $uid, $copy);
 			if ($denial !== null) {
 				throw new AccessDeniedException($denial);
 			}

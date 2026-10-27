@@ -123,7 +123,7 @@ class ApiV1CatalogController extends OCSController {
 		return new DataResponse($this->ocs(function (string $uid) use ($id): array {
 			$this->roles->requireAccess($uid);
 			$entry = $this->catalog->entry($id, $uid);
-			$denial = $this->policy->viewDenial($entry['version'], $uid);
+			$denial = $this->policy->viewDenial($entry['version'], $uid, $entry['copy']);
 			if ($denial !== null) {
 				throw new AccessDeniedException($denial);
 			}
@@ -161,7 +161,7 @@ class ApiV1CatalogController extends OCSController {
 			$this->roles->requireAccess($uid);
 			$place = TextReference::place($page, $measure_from, $measure_to, $voice, $verse, $note);
 			['copy' => $copy, 'version' => $version, 'work' => $work] = $this->catalog->copyWithContext($id);
-			$denial = $this->policy->viewDenial($version, $uid);
+			$denial = $this->policy->viewDenial($version, $uid, $copy);
 			if ($denial !== null) {
 				throw new AccessDeniedException($denial);
 			}

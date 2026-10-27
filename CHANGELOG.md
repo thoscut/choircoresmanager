@@ -42,6 +42,13 @@ All notable changes to this app are documented in this file. The format follows
   going when the page is closed. Archive management shows a running file
   sync and the counts of the last one.
 - The file sync only writes the rows of files that changed.
+- **Preservation copies checked in one place.** A copy of the kind
+  "Preservation copy" now counts as an internal preservation copy
+  everywhere, like a version marked as one: in the list, the search, the
+  inventory, scores, scans, links, corrections, the print station and the
+  API for agents. The app's own pages leave preservation copies out of the
+  list for roles that may not view them and refuse to open them or to file
+  a task on them (403), as the API for agents already did.
 - `SECURITY.md` starts with a table of what the app promises and which test
   checks it; a test makes sure every named test exists.
 
@@ -57,6 +64,7 @@ All notable changes to this app are documented in this file. The format follows
   whole size limit at once; the file is read in blocks.
 - The documentation checks also run when only documentation changed (own
   workflow `Docs`).
+- The print station reads scans only from the archive folder.
 - The integration job builds the PHP image extension `gd` with FreeType,
   which Nextcloud needs to draw the avatar of a new account.
 

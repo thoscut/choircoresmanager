@@ -62,7 +62,7 @@ class CatalogSearch {
 		$keys = [];
 		foreach ($this->copies->findAll() as $copy) {
 			$version = $versions[$copy->getVersionId()] ?? null;
-			$preservation = $version?->getPreservationCopy() === true;
+			$preservation = $version !== null && RightsPolicy::isPreservationCopy($version, $copy);
 			if ($preservation && !$withPreservationCopies) {
 				continue;
 			}
