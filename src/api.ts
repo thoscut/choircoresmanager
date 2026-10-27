@@ -533,10 +533,10 @@ export async function fetchReleaseList(target: 'portal' | 'print-station', all: 
 	return list(data)
 }
 
-/** Store a complete backup (CSV and ODS) in the archive folder. */
-export async function storeBackup(): Promise<string[]> {
-	const { data } = await axios.post<{ paths?: string[] }>(apiUrl('/backup'))
-	return list(data.paths)
+/** Store a complete backup (CSV, ODS and JSON) in the backup folder, outside the archive folder. */
+export async function storeBackup(): Promise<{ paths: string[], account: string }> {
+	const { data } = await axios.post<{ paths?: string[], account?: string }>(apiUrl('/backup'))
+	return { paths: list(data.paths), account: data.account ?? '' }
 }
 
 // ---- milestone 0.3: tasks, links, start page --------------------------------

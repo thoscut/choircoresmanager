@@ -50,6 +50,12 @@ possible and mentioned in the changelog.
   the page "Administration → Music archive" under Administration privileges
   (`#[AuthorizedAdminSetting]`, checked again by the app). That gives no
   role, and the settings give nothing to Nextcloud's generic app config API.
+  Those groups cannot give a role to a group they belong to, cannot set or
+  change the archive folder and cannot switch on the modules that open the
+  archive to the outside (agents, choir members, the public, the print
+  station); these stay with administrators. Changes of roles and groups and
+  of the archive folder are in the audit log with the old and the new
+  value, as are changes of modules.
   Admins write catalog data only if they also hold a role; restoring a
   backup into an empty catalog is the one exception (after a reinstall). It
   stays with admins and the catalog role and cannot be delegated.
@@ -237,7 +243,16 @@ account can do; it offers a stable, documented and limited contract.
 - Files are read through the requesting user's own view of Nextcloud; the app
   never grants access to files a user could not open otherwise. Background
   jobs read through the account that configured the archive folder and only
-  write into `_notenarchiv-app/` inside it.
+  write into `_notenarchiv-app/` inside it (exports of the catalog) and into
+  the backup folder of that account.
+- The backup folder holds what names people or accounts or opens links: the
+  weekly and manual backups (ODS with the audit log, complete JSON backup)
+  and the annual snapshots. It lies outside the archive folder, in the files
+  of the account that set the archive folder, so that sharing the archive
+  folder with the role groups shares none of it. The app reads and writes it
+  only as that account and never uses a folder inside the archive folder for
+  it. Only an administrator sets the archive folder, and with it that
+  account.
 - The mirror folder for the print station (module `print_mirror`, part of
   no preset) is the one place outside the archive folder where the app
   writes. An administrator chooses the target folder; the server refuses the
@@ -292,9 +307,15 @@ account can do; it offers a stable, documented and limited contract.
   catalog including the audit log, tasks, the register of persons and the
   folder book. The roles that read all of it in the app (catalog,
   operations, conductor, read only) and admins may download it; the role
-  "Proposals (tools)" may not, as it does not read the folder book. Share the
-  archive folder (which holds the weekly backups in `_notenarchiv-app/`)
-  only with people who may read this.
+  "Proposals (tools)" may not, as it does not read the folder book. Backups
+  hold no link tokens: after a restore every link is revoked. Of the weekly
+  backups the newest eight are kept.
+- Annual snapshots (module `annual_snapshot`) are kept for years and name
+  nobody: they hold the catalog tables without accounts, without the folder
+  book, audit log, tasks, proposals, links and reviews, plus a list of
+  checksums and paths of the archive files. Only the catalog librarian makes
+  one (rate limited, the job as the account that set the archive folder);
+  the app never overwrites or deletes them.
 
 ### Folder book and personal data
 
@@ -310,19 +331,12 @@ account can do; it offers a stable, documented and limited contract.
   notes of the loan, in the loan and in its own entries of the audit log,
   also while the module is switched off. This is the only change the app
   ever makes to the audit log; it notes the removal without the name.
-- Backups made before still contain the names; the administration guide
-  asks to keep them no longer than the retention period.
-  catalog including the audit log, tasks and the register of persons. Every
-  role holder may download it, as they may read all of it in the app anyway.
-  Share the archive folder (which holds the weekly backups in
-  `_notenarchiv-app/`) only with people who may read this.
-- Annual snapshots (module `annual_snapshot`) hold the same complete backup
-  plus a list of checksums and paths of the archive files, in
-  `_notenarchiv-app/annual-snapshots/`. Only the catalog librarian makes one
-  (rate limited, the job as the account that set the archive folder); the
-  app never overwrites or deletes them. A comparison reads them through the
-  requesting account's own view of the archive folder, so it grants no
-  access to files the account could not open otherwise.
+- Backups made before still contain the names until the weekly backups are
+  rotated out after eight weeks; backups stored by hand or downloaded, the
+  trash bin and file versions of Nextcloud and server backups keep them
+  longer. The administration guide asks to keep them no longer than the
+  retention period and names the settings of Nextcloud for trash bin and
+  versions.
 
 ### Search of Nextcloud
 

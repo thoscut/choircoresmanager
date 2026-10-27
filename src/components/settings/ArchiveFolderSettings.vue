@@ -29,6 +29,10 @@ import { accessRows } from '../../settings.ts'
 
 const props = defineProps<{
 	archive: ArchiveInfo
+	/** the backup folder outside the archive folder */
+	backups: Settings['backups']
+	/** only administrators change the archive folder */
+	admin: boolean
 	/** role key => English label */
 	roleLabels: Record<string, string>
 }>()
@@ -142,8 +146,18 @@ async function save(): Promise<void> {
 <template>
 	<div class="settings-block">
 		<p class="settings-block__text">
-			{{ t('notenarchiv', 'The folder in Nextcloud that holds the score files (for example one subfolder per binder). The app only reads files. Exports and snapshots are stored in its subfolder "_notenarchiv-app".') }}
+			{{ t('notenarchiv', 'The folder in Nextcloud that holds the score files (for example one subfolder per binder). The app only reads files. Exports of the catalog are stored in its subfolder "_notenarchiv-app".') }}
 		</p>
+		<p v-if="archive.id > 0" class="settings-block__text">
+			{{ t('notenarchiv', 'Backups and annual snapshots name choir members and accounts. They lie outside the archive folder, in a folder of the account that set it, which the role groups do not see unless it is shared with them.') }}
+			<template v-if="backups.path">
+				<strong>{{ t('notenarchiv', 'Backup folder:') }}</strong>
+				{{ backups.path }}
+			</template>
+		</p>
+		<NcNoteCard v-if="backups.oldBackups" type="warning">
+			{{ t('notenarchiv', 'The subfolder "_notenarchiv-app" of the archive folder still holds backups or annual snapshots of an earlier version, which everyone with access to the archive folder can read. Move them into the backup folder or delete them.') }}
+		</NcNoteCard>
 		<p v-if="archive.id > 0">
 			<strong>{{ t('notenarchiv', 'Current archive folder:') }}</strong>
 			{{ archive.path }}
@@ -159,13 +173,16 @@ async function save(): Promise<void> {
 		</p>
 
 		<div class="settings-block__actions">
-			<NcButton ref="chooseButton" :disabled="saving" @click="choose">
+			<NcButton ref="chooseButton" :disabled="saving || (!admin && archive.id > 0)" @click="choose">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiFolderOutline" />
 				</template>
 				{{ t('notenarchiv', 'Choose folder …') }}
 			</NcButton>
 		</div>
+		<p v-if="!admin && archive.id > 0" class="settings-block__text settings-block__muted">
+			{{ t('notenarchiv', 'Only an administrator can change the archive folder: background jobs and backups run as the account that sets it.') }}
+		</p>
 		<template v-if="pending">
 			<p>
 				<strong>{{ t('notenarchiv', 'New archive folder:') }}</strong>
@@ -175,7 +192,7 @@ async function save(): Promise<void> {
 
 			<!-- What saving does, before saving -->
 			<p class="settings-block__text">
-				{{ t('notenarchiv', 'Saving makes this folder the archive folder: the app reads the score files from it as your account sees it, and the weekly backups are written through your account into its subfolder "_notenarchiv-app".') }}
+				{{ t('notenarchiv', 'Saving makes this folder the archive folder: the app reads the score files from it as your account sees it, and writes the weekly backups into a folder of your own files outside it ("Music archive backups").') }}
 				<template v-if="archive.id > 0">
 					{{ t('notenarchiv', 'Files in the former folder are not moved or deleted; after the next file sync they are listed as "not found" until they are in the new folder too.') }}
 				</template>

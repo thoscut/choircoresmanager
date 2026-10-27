@@ -23,6 +23,7 @@ use OCA\Notenarchiv\Db\WorkVersionMapper;
 use OCA\Notenarchiv\Service\AnnualSnapshotService;
 use OCA\Notenarchiv\Service\AppSettings;
 use OCA\Notenarchiv\Service\ChecksumService;
+use OCA\Notenarchiv\Service\ExportService;
 use OCA\Notenarchiv\Service\FolderBookService;
 use OCA\Notenarchiv\Service\Modules;
 use OCA\Notenarchiv\Service\NotificationService;
@@ -59,7 +60,7 @@ final class JobsTest extends TestCase {
 	 * @param list<string> $off modules switched off
 	 */
 	private function daily(array $off, NotificationService $notifications, ?PersonService $persons = null,
-		?FolderBookService $folderBook = null, ?PrintMirrorService $printMirror = null): DailyChecks {
+		?FolderBookService $folderBook = null, ?PrintMirrorService $printMirror = null, ?ExportService $export = null): DailyChecks {
 		$settings = $this->createStub(AppSettings::class);
 		$settings->method('archiveInfo')->willReturn(['id' => 1, 'path' => '/Notenarchiv', 'user' => 'lena']);
 		$rights = $this->createStub(RightsService::class);
@@ -102,7 +103,22 @@ final class JobsTest extends TestCase {
 		return new DailyChecks($this->createStub(ITimeFactory::class), $settings, $this->createStub(LicenseMapper::class), $versions,
 			$works, $this->createStub(CopyMapper::class), $rights, $notifications, $config, $events,
 			$persons, $this->modulesWithout($off), $folderBook ?? $this->createStub(FolderBookService::class),
-			$printMirror ?? $this->createStub(PrintMirrorService::class));
+			$printMirror ?? $this->createStub(PrintMirrorService::class), $export ?? $this->createStub(ExportService::class));
+	}
+
+	public function testABackupOlderThanEightDaysIsNotifiedOnce(): void {
+		$export = $this->createStub(ExportService::class);
+		$export->method('lastBackupAge')->willReturn(9 * 24 * 3600);
+		$notifications = $this->notifications();
+		$notifications->expects(self::once())->method('notifyRoles')->with(['librarian'], NotificationService::EXPORT_FAILED, 'export', 'stale',
+			self::callback(fn (array $p): bool => str_contains((string)$p['error'], 'older than %s days') && $p['errorParameters'] === '["8"]'));
+		self::runJob($this->daily(['concerts', 'portal'], $notifications, null, null, null, $export));
+		self::runJob($this->daily(['concerts', 'portal'], $notifications, null, null, null, $export));
+
+		// A new backup withdraws it
+		$notifications = $this->notifications();
+		$notifications->expects(self::once())->method('withdraw')->with(NotificationService::EXPORT_FAILED, 'export', 'stale');
+		self::runJob($this->daily(['concerts', 'portal'], $notifications));
 	}
 
 	public function testTheFolderBookIsAnonymisedEvenWithItsModuleOff(): void {

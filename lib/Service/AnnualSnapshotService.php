@@ -23,12 +23,15 @@ use OCP\IDateTimeZone;
 
 /**
  * Annual snapshots of the archive (module "annual_snapshot", milestone 0.8):
- * a dated folder in the export folder of the archive, like the weekly
- * backup, with
+ * a dated folder in the backup folder (AppSettings::backupFolder(), outside
+ * the archive folder), like the weekly backup, with
  * - `catalog.csv`: the catalog in the extended CSV format (ExportService),
- * - `catalog.json`: the complete backup of all app tables (FullBackupService),
+ * - `catalog.json`: the catalog tables of the app (FullBackupService), both
+ *   without accounts, the folder book, the audit log and link tokens, so
+ *   that a snapshot kept for years names no choir members,
  * - `manifest.csv`: SHA-256, size and path of every archive file the file
- *   sync knows, computed from the content when the snapshot is made.
+ *   sync knows: the checksum stored by the checksum job while the file is
+ *   unchanged since, else computed from the content.
  *
  * Snapshots are written on request by the catalog librarian or, while the
  * setting is on, in January for the year before (AnnualSnapshotJob). They
@@ -37,8 +40,8 @@ use OCP\IDateTimeZone;
  *
  * Two snapshots can be compared: new, removed and changed copies, changes
  * of rights and licenses, and files that are new, gone or changed by the
- * manifest. Files are read and written through the account's own view of
- * Nextcloud (the job: the account that set the archive folder).
+ * manifest. Snapshots are read and written as the account that set the
+ * archive folder; the archive files for the manifest as well.
  *
  * @psalm-import-type Backup from FullBackupService
  * @psalm-type Row = array<string, string|int|float|bool|null>
@@ -53,7 +56,7 @@ use OCP\IDateTimeZone;
  * @psalm-type Comparison = array{copies: array{added: list<CopyRow>, removed: list<CopyRow>, changed: list<ChangedRow>}, rights: list<ChangedRow>, licenses: list<LicenseRow>, files: array{added: list<FileRow>, removed: list<FileRow>, changed: list<FileRow>, compared: bool}}
  */
 class AnnualSnapshotService {
-	/** Sub folder of the export folder (AppSettings::EXPORT_FOLDER) */
+	/** Sub folder of the backup folder (AppSettings::backupFolder()) */
 	public const FOLDER = 'annual-snapshots';
 	public const CATALOG_CSV = 'catalog.csv';
 	public const CATALOG_JSON = 'catalog.json';
@@ -98,7 +101,7 @@ class AnnualSnapshotService {
 	 */
 	public function overview(string $uid): array {
 		$this->roles->requireAccess($uid);
-		$snapshots = $this->snapshots($uid);
+		$snapshots = $this->snapshots();
 		$year = $this->currentYear($uid);
 		$archiveFiles = 0;
 		$bytes = 0;
@@ -112,7 +115,7 @@ class AnnualSnapshotService {
 			'lastError' => $this->lastError(),
 			'next' => [
 				'year' => $year,
-				'folder' => ltrim($this->settings->archiveInfo()['path'] . '/' . AppSettings::EXPORT_FOLDER . '/' . self::FOLDER, '/'),
+				'folder' => $this->folderPath(),
 				'files' => self::FILES,
 				'archiveFiles' => $archiveFiles,
 				'bytes' => $bytes,
@@ -139,8 +142,8 @@ class AnnualSnapshotService {
 	 * @return array{name: string, folder: string, files: list<string>, manifest: array{files: int, bytes: int, missing: int}}
 	 */
 	public function create(string $uid, int $year, string $occasion): array {
-		$parent = $this->writableFolder($uid);
-		$archive = $this->settings->archiveFolder($uid);
+		$parent = $this->writableFolder();
+		$archive = $this->settings->archiveFolder($this->settings->archiveInfo()['user']);
 		$now = $this->time->getDateTime('now', $this->timeZone->getTimeZone(false, $uid));
 		$base = sprintf('%04d', $year) . '_' . $now->format('Ymd-His');
 		$name = $base;
@@ -149,17 +152,18 @@ class AnnualSnapshotService {
 		}
 		try {
 			$folder = $parent->newFolder($name);
-			$folder->newFile(self::CATALOG_CSV, $this->export->csv(true));
-			$folder->newFile(self::CATALOG_JSON, $this->backup->export());
+			$folder->newFile(self::CATALOG_CSV, $this->export->csv(true, true));
+			// Nextcloud closes the stream after writing it.
+			$folder->newFile(self::CATALOG_JSON, $this->backup->exportStream(true));
 			// The manifest last: a folder without it is an incomplete snapshot.
 			[$manifest, $totals] = $this->manifest($archive);
 			$folder->newFile(self::MANIFEST, $manifest);
 		} catch (NotPermittedException) {
-			throw new InvalidInputException('No write permission for exports in the archive folder. Ask the administration to give the account that sets the archive folder write access to it.');
+			throw new InvalidInputException('The account %s may not write into the backup folder.', [$this->settings->archiveInfo()['user']]);
 		}
 		$this->audit->record($this->audit->newOperation(), $uid, 'annual_snapshot', null, 'created', null, null,
 			$name . ' (' . $occasion . ', ' . $totals['files'] . ' files)');
-		return ['name' => $name, 'folder' => ltrim($this->settings->archiveInfo()['path'] . '/' . AppSettings::EXPORT_FOLDER . '/' . self::FOLDER . '/' . $name, '/'),
+		return ['name' => $name, 'folder' => $this->folderPath() . '/' . $name,
 			'files' => self::FILES, 'manifest' => $totals];
 	}
 
@@ -171,7 +175,7 @@ class AnnualSnapshotService {
 	public function compare(string $uid, string $older, string $newer): array {
 		$this->roles->requireAccess($uid);
 		$byName = [];
-		foreach ($this->snapshots($uid) as $snapshot) {
+		foreach ($this->snapshots() as $snapshot) {
 			$byName[$snapshot['name']] = $snapshot;
 		}
 		foreach ([$older, $newer] as $name) {
@@ -185,7 +189,7 @@ class AnnualSnapshotService {
 		if ($older === $newer) {
 			throw new InvalidInputException('Choose two different snapshots.');
 		}
-		$folder = $this->existingFolder($uid);
+		$folder = $this->existingFolder();
 		if ($folder === null) {
 			throw new NotFoundException('This snapshot does not exist. Reload the list and choose another one.');
 		}
@@ -338,8 +342,8 @@ class AnnualSnapshotService {
 	/**
 	 * Whether a snapshot of a year exists already (for the automatic one).
 	 */
-	public function hasYear(string $uid, int $year): bool {
-		return array_filter($this->snapshots($uid), fn (array $s): bool => $s['year'] === $year) !== [];
+	public function hasYear(int $year): bool {
+		return array_filter($this->snapshots(), fn (array $s): bool => $s['year'] === $year) !== [];
 	}
 
 	/**
@@ -373,8 +377,8 @@ class AnnualSnapshotService {
 	/**
 	 * @return list<Snapshot> newest first
 	 */
-	private function snapshots(string $uid): array {
-		$folder = $this->existingFolder($uid);
+	private function snapshots(): array {
+		$folder = $this->existingFolder();
 		if ($folder === null) {
 			return [];
 		}
@@ -397,41 +401,40 @@ class AnnualSnapshotService {
 	}
 
 	/**
-	 * The folder of the snapshots as the account sees it, created when
-	 * needed (for writing).
+	 * The folder of the snapshots in the backup folder, created when needed
+	 * (for writing).
 	 */
-	private function writableFolder(string $uid): Folder {
+	private function writableFolder(): Folder {
+		$backups = $this->settings->backupFolder();
 		try {
-			$export = $this->settings->exportFolder($uid);
-			$folder = $export->nodeExists(self::FOLDER) ? $export->get(self::FOLDER) : $export->newFolder(self::FOLDER);
+			$folder = $backups->nodeExists(self::FOLDER) ? $backups->get(self::FOLDER) : $backups->newFolder(self::FOLDER);
 		} catch (NotPermittedException) {
-			throw new InvalidInputException('No write permission for exports in the archive folder. Ask the administration to give the account that sets the archive folder write access to it.');
+			throw new InvalidInputException('The account %s may not write into the backup folder.', [$this->settings->archiveInfo()['user']]);
 		}
 		if (!$folder instanceof Folder) {
-			throw new InvalidInputException('The archive folder contains a file named %s.', [AppSettings::EXPORT_FOLDER . '/' . self::FOLDER]);
+			throw new InvalidInputException('The backup folder contains a file named %s.', [self::FOLDER]);
 		}
 		return $folder;
 	}
 
 	/**
-	 * The folder of the snapshots as the account sees it, or null when
-	 * there is none yet.
+	 * The folder of the snapshots, or null when there is none yet.
 	 */
-	private function existingFolder(string $uid): ?Folder {
-		try {
-			$archive = $this->settings->archiveFolder($uid);
-		} catch (InvalidInputException $e) {
-			if ($e->getMessage() === 'The archive folder is not accessible for this account.') {
-				throw new InvalidInputException('The snapshots lie in the archive folder, which is not shared with your account. Ask the catalog librarian to share the archive folder with you or to print the comparison for you.');
-			}
-			throw $e;
-		}
-		$path = AppSettings::EXPORT_FOLDER . '/' . self::FOLDER;
-		if (!$archive->nodeExists($path)) {
+	private function existingFolder(): ?Folder {
+		$backups = $this->settings->backupFolder();
+		if (!$backups->nodeExists(self::FOLDER)) {
 			return null;
 		}
-		$folder = $archive->get($path);
+		$folder = $backups->get(self::FOLDER);
 		return $folder instanceof Folder ? $folder : null;
+	}
+
+	/**
+	 * Path of the snapshots in the files of the account that set the
+	 * archive folder.
+	 */
+	private function folderPath(): string {
+		return ltrim(($this->settings->backupFolderPath() ?? '') . '/' . self::FOLDER, '/');
 	}
 
 	/**
@@ -474,7 +477,12 @@ class AnnualSnapshotService {
 				continue;
 			}
 			try {
-				$hash = ChecksumService::hash($node);
+				// The checksum of the checksum job while the file is unchanged
+				// since then (same ETag and size), else from the content.
+				$stored = $file->getSha256();
+				$hash = $stored !== null && $file->getSha256Mismatch() !== true && $file->getEtag() === $node->getEtag()
+					&& $file->getSize() === (int)$node->getSize() && $file->getMtime() === $node->getMTime()
+					? $stored : ChecksumService::hash($node);
 			} catch (\Throwable) {
 				$totals['missing']++;
 				continue;

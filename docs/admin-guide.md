@@ -160,16 +160,29 @@ management, so that changing a setting does not need an admin:
 2. At **Music archive**, add the group.
 
 Members of that group then see **Administration → Music archive** and may
-change the archive folder, the roles and groups, the modules and the
-repertoire thresholds, and run the access check. This gives them **no role**:
-they see the app only if they hold a role as well. Complete backup and
-restore stay with admins (and with the catalog role in the archive
-management of the app); the page does not show them to the group.
+change the roles and groups, the modules and the repertoire thresholds, and
+run the access check. This gives them **no role**: they see the app only if
+they hold a role as well. Some things stay with admins:
+
+- giving a role to a group the person belongs to (they can arrange the roles
+  of other groups);
+- setting or changing the archive folder, because background jobs and
+  backups run as the account that sets it;
+- switching on the modules that open the archive to the outside: the
+  interface for agents, links for choir members and the public, the public
+  repertoire and the mirror folder of the print station (switching them off
+  is allowed);
+- complete backup and restore (also with the catalog role in the archive
+  management of the app); the page does not show them to the group.
+
+Every change of roles and groups and of the archive folder is in the audit
+log, with the old and the new value.
 
 > [!WARNING]
-> Whoever may change the settings can give any group any role, also a group
-> of their own. Give the page only to people you would also entrust with the
-> catalog role.
+> Whoever may change the settings can still give a role to a group they do
+> not belong to, and add themselves to that group if they may manage groups.
+> Give the page only to people you would also entrust with the catalog
+> role.
 
 On self-hosted instances the roles can also be set with
 `occ notenarchiv:setup <account> --role librarian=<group>,<group> --role conductor=<group> …`
@@ -192,7 +205,10 @@ their own Nextcloud. The app reads files through the account of the person
 who uses it, so everybody only sees files they may see anyway. Background
 jobs (weekly backup, checksums) read through the account that chose the
 folder. The app never changes, moves or deletes files; it only writes into
-its own subfolder `_notenarchiv-app`, for exports, snapshots and backups.
+its own subfolder `_notenarchiv-app`, for exports of the catalog, and into
+the backup folder outside the archive folder (section 5). Only an
+administrator sets or changes the archive folder: background jobs and
+backups run as the account that set it.
 The one exception is a small correction of a MusicXML in the score view
 (module "Small corrections"): the app saves it as a **new file**
 next to the old one, with the Nextcloud permissions of the person who
@@ -228,12 +244,12 @@ folder, too.
   **team folder** (group folder) that these groups can open. Sharing with
   single persons works, but a group follows a change of office by itself.
 - **Read permission is enough.** Permission to edit is only needed by those
-  who put corrected files into the folder, and by those who store exports and
-  backups in its subfolder `_notenarchiv-app`: the catalog role (archive
-  management) and the account that chose the folder, through which the
-  weekly backups are written.
-- Never share the folder with all singers: the backups in it contain the
-  whole catalog including the audit log (see [section 5](#5-backups-and-restore)).
+  who put corrected files into the folder, and by those who store exports in
+  its subfolder `_notenarchiv-app`: the catalog role (archive management) and
+  the account that chose the folder.
+- The backups and annual snapshots do not lie in the archive folder (see
+  [section 5](#5-backups-and-restore)), so sharing it with the role groups
+  shares no audit log, folder book or link tokens.
 
 ### Checking who can open the archive folder
 
@@ -308,7 +324,11 @@ invented archive of a fictitious choir with step-by-step instructions.
 ## 5. Backups and restore
 
 Nextcloud is no backup: synchronisation also replicates deletions. The app
-therefore writes, every week, into `_notenarchiv-app/`:
+therefore writes, every week, into the **backup folder**: a folder
+"Music archive backups" (in German "Notenarchiv-Sicherungen") in the files
+of the account that set the archive folder, **outside the archive folder**.
+The role groups do not see it unless that account shares it with them; the
+settings page shows its path. The app writes:
 
 - `…_catalog_weekly.csv`: the catalog in the legacy column layout plus all
   fields, readable in any spreadsheet program
@@ -318,28 +338,54 @@ therefore writes, every week, into `_notenarchiv-app/`:
   versions, copies, files, licenses, proposals, tasks, links, concerts and
   song lists with their programme lines, persons, contributions, merges,
   transcription reports and review points, the revisions of the versions,
-  the folder book with its loans, audit log) for a lossless restore
+  the folder book with its loans, audit log) for a lossless restore. Links
+  are kept **without their tokens**: after a restore they are revoked and
+  have to be shared again.
 
 ![The backup sections of the archive management: storing a complete backup now, downloading the complete backup as JSON, and restoring a backup into an empty catalog.](screenshots/backup-restore.png)
 
 In **Archive management**, **Store a complete backup now** writes the same
 three files at once, for example before larger changes, and **Download
-complete backup (JSON)** saves the backup on your computer.
+complete backup (JSON)** saves the backup on your computer. The backup is
+written piece by piece and is never held in memory as a whole.
 
 > [!WARNING]
 > The backups hold the complete catalog including the audit log (who changed
 > what), tasks, the register of persons and the folder book (names of choir
-> members until the retention period ends, section 15). Share the archive
-> folder only with people who may read all of this, the role holders, and not
-> for example with all choir members. The role "Proposals (tools)" cannot
-> download the complete backup.
+> members until the retention period ends, section 15). Share the backup
+> folder only with people who may read all of this, and never with all choir
+> members. The role "Proposals (tools)" cannot download the complete backup.
 
-The files in `_notenarchiv-app` are part of the archive folder and are
-covered by your regular file backup of that folder. Keep yearly snapshots
-that are never overwritten: the module **Annual snapshots** writes one into
-`_notenarchiv-app/annual-snapshots/` at the turn of the year (catalog as CSV
-and JSON, SHA-256 checksums of every archive file), as the account that set
-the archive folder, which therefore needs write access to it. Open the CSV files in a spreadsheet program
+**How long backups are kept.** Of the weekly backups the newest **eight**
+stay; older ones are deleted when a new one is written. Backups stored by
+hand stay until you delete them. Deleted files go to the **trash bin** of
+the account, and Nextcloud keeps older **versions** of changed files: both
+can still hold names after the retention period of the folder book. Set
+`trashbin_retention_obligation` and `versions_retention_obligation` in
+`config.php` (for example `auto, 30`) so that Nextcloud removes them, and
+keep your server backups no longer than you need them.
+
+**Missing backups.** The daily check notifies the catalog role when the last
+complete backup is older than eight days, for example because the background
+jobs of Nextcloud do not run.
+
+**Annual snapshots.** Keep yearly snapshots that are never overwritten: the
+module **Annual snapshots** writes one into `annual-snapshots/` of the backup
+folder at the turn of the year (catalog as CSV and JSON, SHA-256 checksums of
+every archive file), as the account that set the archive folder. A snapshot
+is kept for years and therefore names **nobody**: it holds the catalog
+without accounts, without the folder book, the audit log, tasks, proposals
+and links. The checksums come from the checksum job while a file is
+unchanged since, otherwise they are computed. Snapshots made before 0.10
+still hold names; delete them when you no longer need them.
+
+**Updating from a version before 0.10.** Earlier versions wrote backups and
+snapshots into `_notenarchiv-app` inside the archive folder. The first
+backup after the update moves them into the backup folder. Whatever cannot
+be moved (for example without permission to delete in the archive folder)
+is named on the settings page; move it by hand or delete it.
+
+Open the CSV files in a spreadsheet program
 through its import dialog (all columns as text) rather than by double-click,
 or use the ODS file: the catalog CSV keeps every cell exactly as stored, so a
 cell starting with `=` could be read as a formula; the ODS file stores every
@@ -835,10 +881,12 @@ never makes anything less safe. It needs Nextcloud's background jobs (cron).
 
 > [!WARNING]
 > Backups made before the removal still contain the names: the weekly files
-> in `_notenarchiv-app/` (CSV, ODS with the audit log, complete JSON backup),
-> downloaded backups and the regular backups of the server. The app never
-> deletes files. Keep these backups no longer than the retention period, or
-> record in your register of processing activities how long they are kept.
+> in the backup folder (CSV, ODS with the audit log, complete JSON backup)
+> until they are rotated out after eight weeks, backups stored by hand,
+> downloaded backups, the trash bin and file versions of Nextcloud and the
+> regular backups of the server (section 5). Annual snapshots name nobody.
+> Keep these backups no longer than the retention period, or record in your
+> register of processing activities how long they are kept.
 
 Write the purpose and the period into your register of processing
 activities (GDPR Art. 30) and tell the choir members (GDPR Art. 13), for
@@ -933,8 +981,10 @@ für Exporte im Archivordner.*)
   when that account loses access (the catalog role and admins are notified).
 - **To do:** give the catalog role permission to edit the folder (at least
   its subfolder `_notenarchiv-app`), and make sure the account shown as
-  "chosen by" under **Archive folder** still has access, or choose the folder
-  again with an account that has.
+  "chosen by" under **Archive folder** still has access, or let an
+  administrator choose the folder again with an account that has. Backups
+  go into the backup folder of that account (section 5), which it must be
+  allowed to create in its files.
 
 ### No access to the music archive
 

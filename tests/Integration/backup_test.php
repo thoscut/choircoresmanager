@@ -135,6 +135,12 @@ try {
 	$json = $backup->export();
 	$parsed = FullBackupService::parse($json);
 	$check('backup passes its own format check with all tables', count($parsed['tables']) === count($tables), count($tables) . ' tables, ' . strlen($json) . ' bytes');
+	$check('the backup holds no link tokens', ($parsed['tables']['notarch_links'] ?? []) !== []
+		&& array_filter(array_column($parsed['tables']['notarch_links'], 'token'), fn ($t): bool => $t !== '') === []);
+	$snapshot = FullBackupService::parse((string)stream_get_contents($backup->exportStream(true)));
+	$check('an annual snapshot leaves out the folder book, the audit log and the links',
+		array_intersect(array_keys($snapshot['tables']), ['notarch_folder_loans', 'notarch_audit', 'notarch_links']) === []
+		&& isset($snapshot['tables']['notarch_copies']));
 
 	try {
 		$backup->restore($json, $uid);
@@ -189,6 +195,14 @@ try {
 			// The restore itself adds one audit entry.
 			$check('audit log restored plus one entry', count($after) === count($before[$table]) + 1
 				&& array_slice($after, 0, count($before[$table])) === $before[$table]);
+			continue;
+		}
+		if ($table === 'notarch_links') {
+			// Without their tokens, links come back revoked and with new tokens.
+			$strip = fn (array $rows): array => array_map(fn (array $row): array => array_diff_key($row, ['token' => 0, 'revoked' => 0]), $rows);
+			$check('links restored, revoked and with new tokens', $strip($after) === $strip($before[$table])
+				&& array_filter($after, fn (array $row): bool => $row['revoked'] === null) === []
+				&& array_intersect(array_column($after, 'token'), array_column($before[$table], 'token')) === []);
 			continue;
 		}
 		$check('table ' . $table . ' identical (' . count($after) . ' rows)', $after === $before[$table]);

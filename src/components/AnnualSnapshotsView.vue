@@ -5,7 +5,7 @@
 <script setup lang="ts">
 /**
  * Annual snapshots (module "annual_snapshot", milestone 0.8): freeze the
- * state of the archive into a dated folder of the archive folder (catalog
+ * state of the archive into a dated folder of the backup folder (catalog
  * as CSV and JSON, checksums of the archive files), optionally at the turn
  * of the year, and compare two snapshots as a printable A4 list.
  */
@@ -264,7 +264,7 @@ function licenseChangeLabel(change: 'added' | 'changed' | 'removed'): string {
 <template>
 	<div class="snapshots-view">
 		<ViewHeader :title="t('notenarchiv', 'Annual snapshots')"
-			:description="t('notenarchiv', 'A snapshot freezes the state of the archive: the catalog as CSV and JSON and a list of checksums of the archive files, in a dated folder of the archive folder. Two snapshots can be compared and printed.')"
+			:description="t('notenarchiv', 'A snapshot freezes the state of the archive: the catalog as CSV and JSON, without accounts and the folder book, and a list of checksums of the archive files, in a dated folder of the backup folder outside the archive folder. Two snapshots can be compared and printed.')"
 			printable
 			reloadable
 			:loading="loading"
@@ -303,7 +303,7 @@ function licenseChangeLabel(change: 'added' | 'changed' | 'removed'): string {
 						{{ t('notenarchiv', 'Freeze the state') }}
 					</h3>
 					<p>
-						{{ t('notenarchiv', 'A new snapshot of the year {year} is written to the folder "{folder}" of the archive folder. Existing snapshots are never changed.', { year: overview.next.year, folder: overview.next.folder }) }}
+						{{ t('notenarchiv', 'A new snapshot of the year {year} is written to the folder "{folder}" of the account that set the archive folder. Existing snapshots are never changed.', { year: overview.next.year, folder: overview.next.folder }) }}
 					</p>
 					<p v-if="overview.next.exists" class="snapshots-view__muted">
 						{{ t('notenarchiv', 'There is a snapshot of {year} already; the new one is added next to it.', { year: overview.next.year }) }}

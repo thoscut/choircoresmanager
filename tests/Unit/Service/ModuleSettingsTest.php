@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\Notenarchiv\Tests\Unit\Service;
 
+use OCA\Notenarchiv\Exception\AccessDeniedException;
 use OCA\Notenarchiv\Exception\InvalidInputException;
 use OCA\Notenarchiv\Migration\ModuleDefaults;
 use OCA\Notenarchiv\Service\AuditLog;
@@ -64,6 +65,21 @@ final class ModuleSettingsTest extends TestCase {
 		$settings->applyPreset(Modules::SIMPLE, null);
 		self::assertContains([null, 'settings', 'module_concerts', 'on', 'off', 'preset simple'], $this->audit);
 		self::assertNotContains('module_playback', array_column($this->audit, 2), 'unchanged switches are not recorded');
+	}
+
+	public function testOnlyAdministratorsSwitchOnWhatOpensTheArchive(): void {
+		$settings = $this->settings($this->modulesWithout([Modules::AGENT_API, Modules::PRINT_MIRROR, 'notify_print_mirror_failed', 'concerts']));
+		foreach ([[Modules::AGENT_API => true], ['notify_print_mirror_failed' => true]] as $wanted) {
+			try {
+				$settings->change($wanted, 'anna', false);
+				self::fail('a group given the settings page switched on ' . json_encode($wanted));
+			} catch (AccessDeniedException) {
+				self::assertSame([], $this->audit);
+			}
+		}
+		// Other modules, and switching off, stay with the groups given the page
+		self::assertSame(['concerts'], $settings->change(['concerts' => true, Modules::PUBLIC_LINKS => false], 'anna', false)['enabled']);
+		self::assertSame([Modules::AGENT_API], $settings->change([Modules::AGENT_API => true], 'admin')['enabled']);
 	}
 
 	public function testRequestValuesAreChecked(): void {

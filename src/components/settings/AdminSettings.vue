@@ -135,7 +135,11 @@ onMounted(async () => {
 			<NcSettingsSection :id="sections.archive"
 				:name="t('notenarchiv', 'Archive folder')"
 				:doc-url="adminGuideUrl(ADMIN_GUIDE.archive)">
-				<ArchiveFolderSettings :archive="settings.archive" :role-labels="settings.roleLabels" @saved="apply" />
+				<ArchiveFolderSettings :archive="settings.archive"
+					:backups="settings.backups"
+					:admin="settings.admin"
+					:role-labels="settings.roleLabels"
+					@saved="apply" />
 			</NcSettingsSection>
 
 			<NcSettingsSection :id="sections.roles"

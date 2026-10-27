@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\Notenarchiv\Service;
 
+use OCA\Notenarchiv\Exception\AccessDeniedException;
 use OCA\Notenarchiv\Exception\InvalidInputException;
 use OCP\IL10N;
 
@@ -32,13 +33,25 @@ class ModuleSettings {
 	 * @return ModuleChanges
 	 * @throws InvalidInputException
 	 */
-	public function change(array $wanted, ?string $uid): array {
+	public function change(array $wanted, ?string $uid, bool $admin = true): array {
 		if ($wanted === []) {
 			throw new InvalidInputException('Please choose a module or a preset.');
 		}
 		$values = [];
 		foreach (array_keys($wanted) as $key) {
 			$values[(string)$key] = Input::bool($wanted[$key], (string)$key);
+		}
+		if (!$admin) {
+			// The modules that open the archive to the outside (agents, choir
+			// members, the public, the print station) are switched on by an
+			// administrator only, also when another module needs them.
+			foreach (array_keys(array_filter($values)) as $key) {
+				foreach ([$key, ...Modules::requirements($key)] as $module) {
+					if (in_array($module, Modules::OUTSIDE_PRESETS, true) && !$this->modules->isSwitchedOn($module)) {
+						throw new AccessDeniedException('Only an administrator can switch on the modules that open the archive to agents, choir members, the public or the print station.');
+					}
+				}
+			}
 		}
 		return $this->record($this->modules->change($values), $uid, null);
 	}

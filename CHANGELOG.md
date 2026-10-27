@@ -10,6 +10,32 @@ All notable changes to this app are documented in this file. The format follows
 
 ## [Unreleased]
 
+### Changed
+
+- **Backups outside the archive folder.** The weekly and manual backups
+  (CSV, ODS with the audit log, complete JSON backup) and the annual
+  snapshots are written into a backup folder "Music archive backups"
+  ("Notenarchiv-Sicherungen") in the files of the account that set the
+  archive folder, no longer into `_notenarchiv-app` inside it, which all
+  role groups read. The first backup after the update moves the old backups
+  and snapshots there; the settings page names what is left. Exports of the
+  catalog stay in `_notenarchiv-app`.
+- Backups hold **no link tokens**: after a restore every link is revoked.
+- **Retention:** of the weekly backups the newest eight are kept. Annual
+  snapshots name nobody: no accounts, no folder book, audit log, tasks,
+  proposals, links or reviews. The checksums of a snapshot come from the
+  checksum job while a file is unchanged since.
+- The complete backup is written piece by piece instead of as a whole in
+  memory. The daily check notifies the catalog role when the last complete
+  backup is older than eight days.
+- **Delegated settings:** a group given the settings page can no longer give
+  a role to a group it belongs to, set or change the archive folder, or
+  switch on the modules that open the archive to the outside (agents,
+  choir members, the public, the print station). Changes of roles, groups
+  and the archive folder are in the audit log.
+- The administration guide names the trash bin and the file versions of
+  Nextcloud, which keep deleted backups.
+
 ### Fixed
 
 - Continuous integration: the unit tests get enough memory in PHP images

@@ -112,12 +112,14 @@ export function normalizeSettings(data: unknown): Settings {
 	const roleLabels = strings(raw.roleLabels)
 	const thresholds = object(raw.repertoire)
 	const catalog = object(raw.catalog)
+	const backups = object(raw.backups)
 	return {
 		roles,
 		groupNames: strings(raw.groupNames),
 		groupsMissing: list(raw.groupsMissing).filter((group): group is string => typeof group === 'string'),
 		roleLabels,
 		archive: archive(raw.archive),
+		backups: { path: typeof backups.path === 'string' ? backups.path : null, oldBackups: backups.oldBackups === true },
 		repertoire: raw.repertoire === null || raw.repertoire === undefined
 			? null
 			: { current: count(thresholds.current), dormant: count(thresholds.dormant) },

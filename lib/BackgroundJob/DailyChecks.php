@@ -16,8 +16,10 @@ use OCA\Notenarchiv\Db\EventMapper;
 use OCA\Notenarchiv\Db\LicenseMapper;
 use OCA\Notenarchiv\Db\WorkMapper;
 use OCA\Notenarchiv\Db\WorkVersionMapper;
+use OCA\Notenarchiv\Exception\InvalidInputException;
 use OCA\Notenarchiv\Service\AppSettings;
 use OCA\Notenarchiv\Service\ConcertDeadlines;
+use OCA\Notenarchiv\Service\ExportService;
 use OCA\Notenarchiv\Service\FieldValue;
 use OCA\Notenarchiv\Service\FolderBookService;
 use OCA\Notenarchiv\Service\Modules;
@@ -41,8 +43,9 @@ use OCP\IAppConfig;
  *   persons involved (resubmission; the rights status is not changed)
  *
  * It also removes the personal data of the folder book after the retention
- * period (FolderBookService) and syncs the mirror folder of the print
- * station (PrintMirrorService, which notifies its own failures).
+ * period (FolderBookService), syncs the mirror folder of the print station
+ * (PrintMirrorService, which notifies its own failures) and notifies when
+ * the last complete backup is older than eight days.
  *
  * Each case is notified once (state kept in lazy app config) and withdrawn
  * when it is resolved.
@@ -53,6 +56,8 @@ use OCP\IAppConfig;
  */
 class DailyChecks extends TimedJob {
 	private const WARN_DAYS = 30;
+	/** Days after which a missing backup is notified */
+	public const BACKUP_STALE_DAYS = 8;
 
 	public function __construct(
 		ITimeFactory $time,
@@ -69,6 +74,7 @@ class DailyChecks extends TimedJob {
 		private Modules $modules,
 		private FolderBookService $folderBook,
 		private PrintMirrorService $printMirror,
+		private ExportService $export,
 	) {
 		parent::__construct($time);
 		$this->setInterval(24 * 3600);
@@ -153,6 +159,17 @@ class DailyChecks extends TimedJob {
 		$this->folderBook->anonymizeExpired($today);
 		// The mirror folder of the print station, while its module is on.
 		$this->printMirror->runDaily();
+
+		// A backup older than eight days: the weekly backup did not run.
+		if ($uid !== '') {
+			$stale = $this->export->lastBackupAge() > self::BACKUP_STALE_DAYS * 24 * 3600;
+			$message = new InvalidInputException('The last complete backup is older than %s days. Check that the background jobs of Nextcloud run, or store a backup by hand.',
+				[self::BACKUP_STALE_DAYS]);
+			$this->transition('notified_backup_stale', $stale ? 'stale' : '', 'export', 'stale', ['stale' => NotificationService::EXPORT_FAILED], [
+				'error' => $message->getMessage(),
+				'errorParameters' => json_encode(array_map('strval', $message->getParameters()), JSON_THROW_ON_ERROR),
+			]);
+		}
 	}
 
 	/**

@@ -178,17 +178,30 @@ geändert werden kann:
 2. Füge bei **Notenarchiv** die Gruppe hinzu.
 
 Die Mitglieder dieser Gruppe sehen dann **Verwaltungseinstellungen →
-Notenarchiv** und dürfen den Archivordner, die Rollen und Gruppen, die Module
-und die Repertoire-Grenzen ändern und die Zugriffsprüfung starten. Eine
-**Rolle** bekommen sie dadurch **nicht**: Die App sehen sie nur, wenn sie
-auch eine Rolle haben. Vollständige Sicherung und Wiederherstellung bleiben
-bei der Administration (und bei der Rolle „Bestand“ in der Archivverwaltung
-der App); die Seite zeigt sie der Gruppe nicht.
+Notenarchiv** und dürfen die Rollen und Gruppen, die Module und die
+Repertoire-Grenzen ändern und die Zugriffsprüfung starten. Eine **Rolle**
+bekommen sie dadurch **nicht**: Die App sehen sie nur, wenn sie auch eine
+Rolle haben. Einiges bleibt bei der Administration:
+
+- einer Gruppe eine Rolle geben, zu der die Person selbst gehört (die Rollen
+  anderer Gruppen darf sie ordnen);
+- den Archivordner festlegen oder ändern, weil Hintergrundjobs und
+  Sicherungen mit dem Konto laufen, das ihn festlegt;
+- die Module einschalten, die das Archiv nach außen öffnen: die Schnittstelle
+  für Agenten, Links für Chormitglieder und die Öffentlichkeit, das
+  öffentliche Repertoire und den Spiegelordner der Druckstation (Ausschalten
+  ist erlaubt);
+- vollständige Sicherung und Wiederherstellung (auch bei der Rolle „Bestand“
+  in der Archivverwaltung der App); die Seite zeigt sie der Gruppe nicht.
+
+Jede Änderung an Rollen und Gruppen und am Archivordner steht im Protokoll,
+mit altem und neuem Wert.
 
 > [!WARNING]
-> Wer die Einstellungen ändern darf, kann jeder Gruppe jede Rolle geben, auch
-> einer eigenen Gruppe. Übertrage die Seite nur Menschen, denen du auch die
-> Rolle „Bestand“ anvertrauen würdest.
+> Wer die Einstellungen ändern darf, kann weiterhin einer Gruppe, zu der er
+> nicht gehört, eine Rolle geben und sich selbst in diese Gruppe aufnehmen,
+> wenn er Gruppen verwalten darf. Übertrage die Seite nur Menschen, denen du
+> auch die Rolle „Bestand“ anvertrauen würdest.
 
 Auf selbst betriebenen Instanzen lassen sich die Rollen auch mit
 `occ notenarchiv:setup <account> --role librarian=<group>,<group> --role conductor=<group> …`
@@ -213,7 +226,10 @@ Konto der Person, die sie benutzt; so sieht jede Person nur Dateien, die sie
 ohnehin sehen darf. Hintergrundjobs (wöchentliche Sicherung, Prüfsummen)
 lesen über das Konto, das den Ordner gewählt hat. Die App ändert, verschiebt
 oder löscht nie Dateien; sie schreibt nur in ihren eigenen Unterordner
-`_notenarchiv-app`, für Exporte, Jahresstände und Sicherungen. Die einzige
+`_notenarchiv-app`, für Exporte des Werkverzeichnisses, und in den
+Sicherungsordner außerhalb des Archivordners (Abschnitt 5). Nur die
+Administration legt den Archivordner fest oder ändert ihn: Hintergrundjobs
+und Sicherungen laufen mit dem Konto, das ihn festgelegt hat. Die einzige
 Ausnahme ist eine kleine Korrektur einer MusicXML-Datei in der Notenansicht
 (Modul „Kleine Korrekturen“): Die App speichert sie als **neue Datei** neben
 der alten, mit den Nextcloud-Rechten der Person, die korrigiert (zum
@@ -251,13 +267,13 @@ Ausnahme: Um Noten zu öffnen, braucht auch sie Zugriff auf den Ordner.
   Teilen mit einzelnen Personen geht auch, aber eine Gruppe folgt einem
   Wechsel im Amt von selbst.
 - **Leserechte genügen.** Bearbeitungsrechte brauchen nur, wer korrigierte
-  Dateien in den Ordner legt, und wer Exporte und Sicherungen in seinem
-  Unterordner `_notenarchiv-app` ablegt: die Rolle „Bestand“
-  (Archivverwaltung) und das Konto, das den Ordner gewählt hat und über das
-  die wöchentlichen Sicherungen geschrieben werden.
-- Teile den Ordner nie mit allen Chormitgliedern: Die Sicherungen darin
-  enthalten das ganze Werkverzeichnis einschließlich Protokoll (siehe
-  [Abschnitt 5](#5-sicherung-und-wiederherstellung)).
+  Dateien in den Ordner legt, und wer Exporte in seinem Unterordner
+  `_notenarchiv-app` ablegt: die Rolle „Bestand“ (Archivverwaltung) und das
+  Konto, das den Ordner gewählt hat.
+- Sicherungen und Jahresstände liegen nicht im Archivordner (siehe
+  [Abschnitt 5](#5-sicherung-und-wiederherstellung)). Wer ihn mit den
+  Rollengruppen teilt, teilt also weder Protokoll noch Mappenbuch noch
+  Link-Token.
 
 ### Prüfen, wer den Archivordner öffnen kann
 
@@ -338,7 +354,11 @@ Anleitung Schritt für Schritt.
 ## 5. Sicherung und Wiederherstellung
 
 Nextcloud ist keine Sicherung: Die Synchronisation überträgt auch
-Löschungen. Die App schreibt deshalb jede Woche nach `_notenarchiv-app/`:
+Löschungen. Die App schreibt deshalb jede Woche in den **Sicherungsordner**:
+einen Ordner „Notenarchiv-Sicherungen“ in den Dateien des Kontos, das den
+Archivordner festgelegt hat, **außerhalb des Archivordners**. Die
+Rollengruppen sehen ihn nicht, solange dieses Konto ihn nicht mit ihnen
+teilt; die Einstellungsseite zeigt seinen Pfad. Die App schreibt:
 
 - `…_catalog_weekly.csv`: das Werkverzeichnis im bisherigen Spaltenaufbau
   plus alle Felder, lesbar in jeder Tabellenkalkulation
@@ -349,31 +369,58 @@ Löschungen. Die App schreibt deshalb jede Woche nach `_notenarchiv-app/`:
   Links, Konzerte und Notenlisten mit ihren Programmpunkten, Personen,
   Beteiligungen, Zusammenführungen, Berichte von Übertragungen und
   Prüfpunkte, die Stände der Fassungen, das Mappenbuch mit seinen Ausgaben,
-  Protokoll) für eine verlustfreie Wiederherstellung
+  Protokoll) für eine verlustfreie Wiederherstellung. Links stehen **ohne
+  ihre Token** darin: Nach einer Wiederherstellung sind sie widerrufen und
+  müssen neu geteilt werden.
 
 ![Die Bereiche zur Sicherung in der Archivverwaltung: eine vollständige Sicherung jetzt ablegen, die vollständige Sicherung als JSON herunterladen und eine Sicherung in ein leeres Werkverzeichnis wiederherstellen.](../screenshots/backup-restore.png)
 
 In der **Archivverwaltung** schreibt **Vollständige Sicherung jetzt ablegen**
 dieselben drei Dateien sofort, zum Beispiel vor größeren Änderungen, und
 **Vollständige Sicherung herunterladen (JSON)** speichert die Sicherung auf
-deinem Computer.
+deinem Computer. Die Sicherung entsteht Stück für Stück und liegt nie ganz
+im Speicher.
 
 > [!WARNING]
 > Die Sicherungen enthalten das vollständige Werkverzeichnis einschließlich
 > Protokoll (wer was geändert hat), Aufgaben, Personenregister und Mappenbuch
 > (Namen von Chormitgliedern bis zum Ende der Löschfrist, Abschnitt 15).
-> Teile den Archivordner nur mit Menschen, die all das lesen dürfen, den
-> Konten mit einer Rolle, und nicht etwa mit allen Chormitgliedern. Die Rolle
-> „Vorschläge (Werkzeuge)“ kann die vollständige Sicherung nicht
-> herunterladen.
+> Teile den Sicherungsordner nur mit Menschen, die all das lesen dürfen, und
+> nie mit allen Chormitgliedern. Die Rolle „Vorschläge (Werkzeuge)“ kann die
+> vollständige Sicherung nicht herunterladen.
 
-Die Dateien in `_notenarchiv-app` gehören zum Archivordner und sind von
-deiner regelmäßigen Dateisicherung dieses Ordners erfasst. Bewahre
-Jahresstände auf, die nie überschrieben werden: Das Modul **Jahresstände**
-schreibt zum Jahreswechsel einen nach `_notenarchiv-app/annual-snapshots/`
-(Werkverzeichnis als CSV und JSON, SHA-256-Prüfsummen jeder Archivdatei),
-als das Konto, das den Archivordner festgelegt hat und deshalb Schreibrechte
-darauf braucht. Öffne die CSV-Dateien in einer Tabellenkalkulation über
+**Wie lange Sicherungen bleiben.** Von den Wochensicherungen bleiben die
+**acht** neuesten; ältere löscht die App, sobald eine neue geschrieben ist.
+Von Hand abgelegte Sicherungen bleiben, bis du sie löschst. Gelöschte Dateien
+landen im **Papierkorb** des Kontos, und die Nextcloud bewahrt ältere
+**Versionen** geänderter Dateien auf: Beide können nach Ablauf der Löschfrist
+des Mappenbuchs noch Namen enthalten. Setze `trashbin_retention_obligation`
+und `versions_retention_obligation` in der `config.php` (zum Beispiel
+`auto, 30`), damit die Nextcloud sie entfernt, und bewahre deine
+Server-Sicherungen nicht länger auf als nötig.
+
+**Fehlende Sicherungen.** Die tägliche Prüfung benachrichtigt die Rolle
+„Bestand“, wenn die letzte vollständige Sicherung älter als acht Tage ist,
+zum Beispiel weil die Hintergrundjobs der Nextcloud nicht laufen.
+
+**Jahresstände.** Bewahre Jahresstände auf, die nie überschrieben werden:
+Das Modul **Jahresstände** schreibt zum Jahreswechsel einen nach
+`annual-snapshots/` im Sicherungsordner (Werkverzeichnis als CSV und JSON,
+SHA-256-Prüfsummen jeder Archivdatei), als das Konto, das den Archivordner
+festgelegt hat. Ein Jahresstand bleibt über Jahre und nennt deshalb
+**niemanden**: Er enthält das Werkverzeichnis ohne Konten, ohne Mappenbuch,
+Protokoll, Aufgaben, Vorschläge und Links. Die Prüfsummen stammen aus dem
+Prüfsummen-Job, solange eine Datei seitdem unverändert ist, sonst werden sie
+berechnet. Jahresstände von vor 0.10 enthalten noch Namen; lösche sie, wenn
+du sie nicht mehr brauchst.
+
+**Update von einer Version vor 0.10.** Frühere Versionen schrieben
+Sicherungen und Jahresstände nach `_notenarchiv-app` im Archivordner. Die
+erste Sicherung nach dem Update verschiebt sie in den Sicherungsordner. Was
+sich nicht verschieben lässt (zum Beispiel ohne Löschrecht im Archivordner),
+nennt die Einstellungsseite; verschiebe es von Hand oder lösche es.
+
+Öffne die CSV-Dateien in einer Tabellenkalkulation über
 deren Importdialog (alle Spalten als Text) statt per Doppelklick, oder nimm
 die ODS-Datei: Die CSV-Datei des Werkverzeichnisses bewahrt jede Zelle genau
 so, wie sie gespeichert ist; eine Zelle, die mit `=` beginnt, könnte daher
@@ -922,12 +969,13 @@ Nextcloud (Cron).
 
 > [!WARNING]
 > Sicherungen, die vor dem Entfernen entstanden sind, enthalten die Namen
-> noch: die wöchentlichen Dateien in `_notenarchiv-app/` (CSV, ODS mit dem
-> Protokoll, vollständige JSON-Sicherung), heruntergeladene Sicherungen und
-> die regelmäßigen Sicherungen des Servers. Die App löscht nie Dateien.
-> Bewahre diese Sicherungen nicht länger als die Löschfrist auf, oder halte
-> in deinem Verzeichnis von Verarbeitungstätigkeiten fest, wie lange sie
-> aufbewahrt werden.
+> noch: die wöchentlichen Dateien im Sicherungsordner (CSV, ODS mit dem
+> Protokoll, vollständige JSON-Sicherung), bis sie nach acht Wochen rotiert
+> werden, von Hand abgelegte und heruntergeladene Sicherungen, Papierkorb und
+> Dateiversionen der Nextcloud und die regelmäßigen Sicherungen des Servers
+> (Abschnitt 5). Jahresstände nennen niemanden. Bewahre diese Sicherungen
+> nicht länger als die Löschfrist auf, oder halte in deinem Verzeichnis von
+> Verarbeitungstätigkeiten fest, wie lange sie aufbewahrt werden.
 
 Schreibe Zweck und Frist in dein Verzeichnis von Verarbeitungstätigkeiten
 (DSGVO Art. 30) und informiere die Chormitglieder (DSGVO Art. 13), zum
@@ -1031,8 +1079,10 @@ exports in the archive folder.*)
 - **Zu tun:** Gib der Rolle „Bestand“ das Recht, den Ordner zu bearbeiten
   (mindestens seinen Unterordner `_notenarchiv-app`), und stelle sicher,
   dass das Konto, das unter **Archivordner** als „gewählt von“ angezeigt
-  wird, noch Zugriff hat, oder wähle den Ordner mit einem Konto, das ihn
-  hat, neu.
+  wird, noch Zugriff hat, oder lass die Administration den Ordner mit einem
+  Konto, das ihn hat, neu wählen. Sicherungen gehen in den Sicherungsordner
+  dieses Kontos (Abschnitt 5), den es in seinen Dateien anlegen dürfen
+  muss.
 
 ### Kein Zugang zum Notenarchiv
 

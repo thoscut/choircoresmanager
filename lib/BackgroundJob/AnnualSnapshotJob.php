@@ -57,7 +57,7 @@ class AnnualSnapshotJob extends TimedJob {
 		}
 		$year = (int)substr($today, 0, 4) - 1;
 		try {
-			if ($this->snapshots->hasYear($uid, $year)) {
+			if ($this->snapshots->hasYear($year)) {
 				return;
 			}
 			$result = $this->snapshots->create($uid, $year, AnnualSnapshotService::TURN_OF_YEAR);

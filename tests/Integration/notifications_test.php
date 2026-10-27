@@ -27,6 +27,7 @@ use OCA\Notenarchiv\BackgroundJob\WeeklyBackup;
 use OCA\Notenarchiv\Db\CopyMapper;
 use OCA\Notenarchiv\Notification\Notifier;
 use OCA\Notenarchiv\Service\AppSettings;
+use OCA\Notenarchiv\Service\FullBackupService;
 use OCA\Notenarchiv\Service\LicenseService;
 use OCA\Notenarchiv\Service\NotificationService;
 use OCA\Notenarchiv\Service\ProposalService;
@@ -54,8 +55,9 @@ $db = Server::get(IDBConnection::class);
 $copy = Server::get(CopyMapper::class)->findAllByShelfmark()[$shelfmark];
 $settings = Server::get(AppSettings::class);
 $check('archive user is the test user', $settings->archiveInfo()['user'] === $uid);
-$exportFolder = $settings->exportFolder($uid);
-$before = array_map(fn ($n) => $n->getName(), $exportFolder->getDirectoryListing());
+// The weekly backup goes into the backup folder, outside the archive folder.
+$backupFolder = $settings->backupFolder();
+$before = array_map(fn ($n) => $n->getName(), $backupFolder->getDirectoryListing());
 
 $db->beginTransaction();
 try {
@@ -83,15 +85,20 @@ try {
 
 	// Weekly backup writes CSV and ODS
 	$runJob(Server::get(WeeklyBackup::class));
-	$after = array_map(fn ($n) => $n->getName(), $settings->exportFolder($uid)->getDirectoryListing());
+	$after = array_map(fn ($n) => $n->getName(), $settings->backupFolder()->getDirectoryListing());
 	$new = array_values(array_diff($after, $before));
-	$check('weekly backup stored CSV and ODS', count(preg_grep('/_weekly\.csv$/', $new)) === 1 && count(preg_grep('/_weekly\.ods$/', $new)) === 1, implode(', ', $new));
+	$check('weekly backup stored CSV, ODS and JSON', count(preg_grep('/_weekly\.csv$/', $new)) === 1 && count(preg_grep('/_weekly\.ods$/', $new)) === 1
+		&& count(preg_grep('/_backup_weekly\.json$/', $new)) === 1, implode(', ', $new));
+	$json = array_values(preg_grep('/_backup_weekly\.json$/', $new) ?: [])[0] ?? null;
+	$jsonFile = $json === null ? null : $settings->backupFolder()->get($json);
+	$links = $jsonFile instanceof \OCP\Files\File ? (FullBackupService::parse($jsonFile->getContent())['tables']['notarch_links'] ?? []) : [];
+	$check('the backup holds no link tokens', array_filter(array_column($links, 'token'), fn ($t): bool => $t !== '') === []);
 } finally {
 	$db->rollBack();
 	Server::get(IAppConfig::class)->deleteKey(Application::APP_ID, 'notified_license_' . ($license ?? null)?->getId());
 	// Delete by name: the rollback also removed the new files from the file
 	// cache, so they no longer show up in a directory listing.
-	$folder = $settings->exportFolder($uid);
+	$folder = $settings->backupFolder();
 	foreach ($new ?? [] as $name) {
 		if ($folder->nodeExists($name)) {
 			$folder->get($name)->delete();

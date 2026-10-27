@@ -47,7 +47,7 @@ class WeeklyBackup extends TimedJob {
 		try {
 			$paths = $this->export->storeBackup('weekly', $uid);
 			$this->notifications->withdraw(NotificationService::EXPORT_FAILED, 'export', 'weekly');
-			$this->logger->info('Notenarchiv: weekly backup stored: ' . implode(', ', $paths));
+			$this->logger->info('Notenarchiv: weekly backup stored: ' . implode(', ', $paths['paths']));
 		} catch (\Throwable $e) {
 			$this->logger->error('Notenarchiv: weekly backup failed: ' . $e->getMessage(), ['exception' => $e]);
 			// Only messages meant for users go into the notification (translated

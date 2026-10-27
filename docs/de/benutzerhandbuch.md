@@ -1315,13 +1315,16 @@ in einem leeren Werkverzeichnis wieder her. Siehe das
 
 Mit dem Modul **Jahresstände** friert die App den Stand des Archivs einmal
 im Jahr ein, für die Unterlagen von Vorstand und Revision. Ein Jahresstand
-ist ein datierter Ordner im Archivordner
-(`_notenarchiv-app/annual-snapshots/<year>_<date-time>/`) mit drei Dateien:
+ist ein datierter Ordner
+(`annual-snapshots/<year>_<date-time>/` im Sicherungsordner des Kontos, das
+den Archivordner festgelegt hat, außerhalb des Archivordners) mit drei
+Dateien. Ein Jahresstand bleibt über Jahre und nennt deshalb niemanden:
+keine Konten, kein Mappenbuch, kein Protokoll.
 
 | Datei | Inhalt |
 |---|---|
-| `catalog.csv` | das Werkverzeichnis mit allen Feldern, wie in der wöchentlichen Sicherung |
-| `catalog.json` | die vollständige Sicherung: Werkverzeichnis, Lizenzen, Personen, Protokoll |
+| `catalog.csv` | das Werkverzeichnis mit allen Feldern, wie in der wöchentlichen Sicherung, ohne Konten |
+| `catalog.json` | die Tabellen des Werkverzeichnisses: Werke, Fassungen, Exemplare, Dateien, Lizenzen, Personen, Konzerte, Mappen |
 | `manifest.csv` | SHA-256-Prüfsumme, Größe und Pfad jeder Archivdatei, die der Dateiabgleich kennt |
 
 Die App ändert oder löscht einen Jahresstand nie.

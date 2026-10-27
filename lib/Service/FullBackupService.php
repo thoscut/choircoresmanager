@@ -23,6 +23,7 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IConfig;
 use OCP\IDBConnection;
+use OCP\Security\ISecureRandom;
 
 /**
  * Complete, lossless backup of all app tables as JSON, and restore into an
@@ -68,27 +69,91 @@ class FullBackupService {
 		private ITimeFactory $time,
 		private AuditLog $audit,
 		private IConfig $config,
+		private ISecureRandom $random,
 	) {
 	}
 
+	/**
+	 * Tables of an annual snapshot: the catalog without the folder book,
+	 * the audit log, links, tasks, proposals and reviews, which name people
+	 * or accounts or hold link tokens.
+	 */
+	public const SNAPSHOT_TABLES = [
+		'notarch_works', 'notarch_versions', 'notarch_copies', 'notarch_files', 'notarch_states', 'notarch_licenses',
+		'notarch_events', 'notarch_event_items', 'notarch_persons', 'notarch_contributions', 'notarch_folders',
+	];
+	/** Columns with accounts or their names, emptied in an annual snapshot */
+	public const ACCOUNT_COLUMNS = ['confirmed_by', 'confirmed_by_name', 'valid_set_by', 'created_by', 'created_by_name', 'checked_by'];
+
 	public function export(): string {
-		$tables = [];
-		foreach ($this->existingTables() as $table) {
-			$qb = $this->db->getQueryBuilder();
-			$qb->select('*')->from($table)->orderBy('id');
-			$result = $qb->executeQuery();
-			$rows = $result->fetchAllAssociative();
-			$result->closeCursor();
-			$tables[$table] = $rows;
+		$stream = $this->exportStream();
+		try {
+			return (string)stream_get_contents($stream);
+		} finally {
+			fclose($stream);
 		}
-		return json_encode([
+	}
+
+	/**
+	 * The backup as a stream, written row by row into a temporary stream
+	 * that moves to disk when it grows (not the whole backup in memory).
+	 * Link tokens are left out: links come back revoked after a restore.
+	 * For an annual snapshot only SNAPSHOT_TABLES, without accounts.
+	 *
+	 * @return resource at its start
+	 */
+	public function exportStream(bool $snapshot = false) {
+		$stream = fopen('php://temp/maxmemory:' . (2 * 1024 * 1024), 'w+b');
+		if ($stream === false) {
+			throw new \RuntimeException('cannot open a temporary stream');
+		}
+		$flags = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR;
+		$head = json_encode([
 			'format' => self::FORMAT,
 			'formatVersion' => self::FORMAT_VERSION,
 			'app' => Application::APP_ID,
 			'appVersion' => $this->appManager->getAppVersion(Application::APP_ID),
 			'created' => $this->time->getDateTime()->format(DATE_ATOM),
-			'tables' => $tables,
-		], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR);
+		], $flags);
+		fwrite($stream, substr($head, 0, -1) . ",\n\"tables\": {");
+		$tables = $snapshot ? array_values(array_intersect($this->existingTables(), self::SNAPSHOT_TABLES)) : $this->existingTables();
+		foreach ($tables as $t => $table) {
+			fwrite($stream, ($t === 0 ? '' : ',') . "\n" . json_encode($table, $flags) . ': [');
+			$qb = $this->db->getQueryBuilder();
+			$qb->select('*')->from($table)->orderBy('id');
+			$result = $qb->executeQuery();
+			$first = true;
+			while (($row = $result->fetchAssociative()) !== false) {
+				fwrite($stream, ($first ? '' : ',') . "\n" . json_encode(self::exportRow($table, $row, $snapshot), $flags));
+				$first = false;
+			}
+			$result->closeCursor();
+			fwrite($stream, ']');
+		}
+		fwrite($stream, "\n}}\n");
+		rewind($stream);
+		return $stream;
+	}
+
+	/**
+	 * A row as it goes into the backup: without the token of a link, and in
+	 * an annual snapshot without accounts.
+	 *
+	 * @param array<array-key, mixed> $row
+	 * @return array<array-key, mixed>
+	 */
+	public static function exportRow(string $table, array $row, bool $snapshot): array {
+		if ($table === 'notarch_links' && array_key_exists('token', $row)) {
+			$row['token'] = '';
+		}
+		if ($snapshot) {
+			foreach (self::ACCOUNT_COLUMNS as $column) {
+				if (is_string($row[$column] ?? null)) {
+					$row[$column] = '';
+				}
+			}
+		}
+		return $row;
 	}
 
 	/**
@@ -145,6 +210,11 @@ class FullBackupService {
 				}
 				$columns = $this->columns($schema, $table);
 				foreach ($rows as $index => $row) {
+					if ($table === 'notarch_links' && ($row['token'] ?? '') === '') {
+						// Backups hold no tokens: the link comes back revoked.
+						$row['token'] = $this->random->generate(32, ISecureRandom::CHAR_ALPHANUMERIC);
+						$row['revoked'] ??= $this->time->getTime();
+					}
 					$qb = $this->db->getQueryBuilder();
 					$qb->insert($table);
 					$written = 0;

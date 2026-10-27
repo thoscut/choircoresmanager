@@ -418,7 +418,10 @@ Release list rows:
 ```
 
 `all=1` also lists `blocked` and `other_version_valid` rows.
-`POST /api/backup` returns `{ "paths": ["_notenarchiv-app/…csv", "…ods", "…json"] }`.
+`POST /api/backup` returns `{ "paths": ["Music archive backups/…csv", "…ods", "…json"], "account": "lena" }`:
+the paths in the files of `account`, the account that set the archive folder,
+whose backup folder lies outside the archive folder. Links are in the JSON
+without their tokens.
 
 `GET /api/licenses/ending` lists licenses that end within `days` (1–366,
 default 30, as the start page card and the daily reminder) or have ended,
@@ -1029,15 +1032,19 @@ catalog yet). The UI shows it as the printable view `?view=shelfmark-gaps`.
 
 ### Annual snapshots (milestone 0.8, module `annual_snapshot`)
 
-A snapshot is a folder `_notenarchiv-app/annual-snapshots/<year>_<YYYYMMDD-HHMMSS>[-n]`
-in the archive folder with `catalog.csv` (extended CSV, as the export),
-`catalog.json` (the complete backup, as `GET /api/backup/full`) and
+A snapshot is a folder `annual-snapshots/<year>_<YYYYMMDD-HHMMSS>[-n]` in the
+backup folder (outside the archive folder, in the files of the account that
+set it) with `catalog.csv` (extended CSV, as the export, without the columns
+that hold accounts), `catalog.json` (the catalog tables in the format of
+`GET /api/backup/full`, without the folder book, audit log, tasks,
+proposals, links and reviews, and with the account columns emptied) and
 `manifest.csv` (`sha256;size;path`, UTF-8 with BOM, one row per archive file
-the file sync knows, SHA-256 of the current content, sorted by path; cells
-that start like a formula get a leading `'`). The manifest is written last;
-a folder without one of the three files is listed as incomplete. Snapshots
-are never overwritten or deleted by the app. Files are read and written
-through the account's own view of the archive folder.
+the file sync knows, sorted by path; the SHA-256 of the checksum job while
+the file is unchanged since, else of the current content; cells that start
+like a formula get a leading `'`). The manifest is written last; a folder
+without one of the three files is listed as incomplete. Snapshots are never
+overwritten or deleted by the app. They are read and written as the account
+that set the archive folder.
 
 | Method and path | Body | Role |
 |---|---|---|
@@ -1049,7 +1056,7 @@ through the account's own view of the archive folder.
 ```json
 { "snapshots": [{ "name": "2026_20261022-153000", "year": 2026, "created": "2026-10-22 15:30:00", "complete": true }],
   "auto": true, "lastError": null,
-  "next": { "year": 2026, "folder": "Notenarchiv/_notenarchiv-app/annual-snapshots",
+  "next": { "year": 2026, "folder": "Music archive backups/annual-snapshots",
             "files": ["catalog.csv", "catalog.json", "manifest.csv"], "archiveFiles": 128, "bytes": 52428800, "exists": true } }
 ```
 

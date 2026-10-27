@@ -10,9 +10,11 @@ declare(strict_types=1);
 namespace OCA\Notenarchiv\Controller;
 
 use OCA\Notenarchiv\AppInfo\Application;
+use OCA\Notenarchiv\Exception\AccessDeniedException;
 use OCA\Notenarchiv\Exception\InvalidInputException;
 use OCA\Notenarchiv\Service\AppSettings;
 use OCA\Notenarchiv\Service\ArchiveAccess;
+use OCA\Notenarchiv\Service\AuditLog;
 use OCA\Notenarchiv\Service\FullBackupService;
 use OCA\Notenarchiv\Service\Input;
 use OCA\Notenarchiv\Service\Modules;
@@ -37,7 +39,10 @@ use Psr\Log\LoggerInterface;
  *
  * For admins and for the groups the administration has given the page under
  * Administration privileges: Nextcloud checks #[AuthorizedAdminSetting]
- * before the app, Roles::requireSettingsAccess() checks again. The modules
+ * before the app, Roles::requireSettingsAccess() checks again. Those groups
+ * cannot give a role to a group they belong to, change the archive folder
+ * or switch on modules that open the archive to the outside; changes of
+ * roles and of the archive folder are logged. The modules
  * (ModuleController) and the repertoire thresholds (EventController) follow
  * the same rule. Restoring a backup does not (WorkflowController::restore).
  *
@@ -59,6 +64,7 @@ class SettingsController extends Controller {
 		private Modules $modules,
 		private RepertoireService $repertoire,
 		private FullBackupService $backup,
+		private AuditLog $audit,
 		private IGroupManager $groupManager,
 		private IL10N $l,
 		private LoggerInterface $logger,
@@ -83,16 +89,48 @@ class SettingsController extends Controller {
 	public function update(?array $roles = null, ?int $archiveFolderId = null): JSONResponse {
 		return $this->run(function (string $uid) use ($roles, $archiveFolderId) {
 			$this->roles->requireSettingsAccess($uid);
+			$admin = $this->roles->isAdmin($uid);
 			$roles ??= [];
+			$wanted = [];
 			foreach (array_keys($roles) as $role) {
 				$role = (string)$role;
 				if (!in_array($role, Roles::GROUP_ROLES, true)) {
 					throw new InvalidInputException('Unknown role: %s', [$role]);
 				}
-				$this->roles->setGroups($role, Input::stringList($roles[$role], 'Groups'));
+				$wanted[$role] = array_values(array_unique(Input::stringList($roles[$role], 'Groups')));
+				if (!$admin) {
+					// Given the settings page, a group may arrange the roles of
+					// others, but not give a role to itself.
+					foreach (array_diff($wanted[$role], $this->roles->groups($role)) as $group) {
+						if ($this->groupManager->isInGroup($uid, $group)) {
+							throw new AccessDeniedException('Only an administrator can give a role to a group you belong to.');
+						}
+					}
+				}
+			}
+			if ($archiveFolderId !== null && !$admin) {
+				if ($archiveFolderId !== $this->settings->archiveInfo()['id']) {
+					throw new AccessDeniedException('Only an administrator can change the archive folder: background jobs and backups run as the account that sets it.');
+				}
+				// Saved again unchanged: it stays with the account that set it.
+				$archiveFolderId = null;
+			}
+			$operation = $this->audit->newOperation();
+			foreach ($wanted as $role => $groups) {
+				$old = $this->roles->groups($role);
+				if ($old !== $groups) {
+					$this->roles->setGroups($role, $groups);
+					$this->audit->record($operation, $uid, 'settings', null, 'changed', 'groups_' . $role,
+						implode(', ', $old), implode(', ', $groups));
+				}
 			}
 			if ($archiveFolderId !== null) {
-				$this->settings->setArchiveFolder($uid, $archiveFolderId);
+				$old = $this->settings->archiveInfo();
+				$path = $this->settings->setArchiveFolder($uid, $archiveFolderId);
+				if ($old['id'] !== $archiveFolderId || $old['user'] !== $uid) {
+					$this->audit->record($operation, $uid, 'settings', null, 'changed', 'archive_folder',
+						$old['id'] === 0 ? null : $old['path'] . ' (' . $old['user'] . ')', $path . ' (' . $uid . ')');
+				}
 			}
 			return $this->data($uid);
 		});
@@ -163,6 +201,12 @@ class SettingsController extends Controller {
 			'groupsMissing' => $groupsMissing,
 			'roleLabels' => Roles::LABELS,
 			'archive' => $this->settings->archiveInfo(),
+			// Backups and annual snapshots: a folder of the account above,
+			// outside the archive folder; oldBackups: some are still in it
+			'backups' => [
+				'path' => $this->settings->backupFolderPath(),
+				'oldBackups' => $this->settings->hasOldBackups($uid),
+			],
 			// The thresholds belong to the module "repertoire".
 			'repertoire' => $this->modules->isEnabled('repertoire') ? $this->repertoire->thresholds() : null,
 			// Sections of modules that start off (milestone 0.7)

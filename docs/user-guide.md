@@ -1220,13 +1220,16 @@ it into an empty catalog. See the
 
 With the module **Annual snapshots** the app freezes the state of the
 archive once a year, for the records of the board and the auditors. A
-snapshot is a dated folder in the archive folder
-(`_notenarchiv-app/annual-snapshots/<year>_<date-time>/`) with three files:
+snapshot is a dated folder
+(`annual-snapshots/<year>_<date-time>/` in the backup folder of the account
+that set the archive folder, outside the archive folder) with three files.
+A snapshot is kept for years, so it names nobody: no accounts, no folder
+book, no audit log.
 
 | File | Content |
 |---|---|
-| `catalog.csv` | the catalog with all fields, as in the weekly backup |
-| `catalog.json` | the complete backup: catalog, licenses, persons, audit log |
+| `catalog.csv` | the catalog with all fields, as in the weekly backup, without accounts |
+| `catalog.json` | the catalog tables: works, versions, copies, files, licenses, persons, concerts, folders |
 | `manifest.csv` | SHA-256 checksum, size and path of every archive file the file sync knows |
 
 The app never changes or deletes a snapshot.

@@ -241,7 +241,9 @@ instances can also use `occ notenarchiv:setup`.
   are part of the app; there is no CDN and no telemetry.
 - **Files stay where they are.** The app reads the archive folder through each
   user's own view of Nextcloud and never changes, moves or deletes a file; it
-  only writes exports and backups into its own sub folder `_notenarchiv-app`.
+  only writes exports of the catalog into its own sub folder
+  `_notenarchiv-app`, and backups and annual snapshots into a backup folder
+  outside the archive folder.
 - **Server-side checks.** Every request checks the caller's role. The only
   pages without login are a public link and the public repertoire page, and
   only while their modules are switched on (they start off); they are

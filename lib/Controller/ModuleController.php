@@ -72,7 +72,7 @@ class ModuleController extends Controller {
 			}
 			$changes = $preset !== null
 				? $this->moduleSettings->applyPreset($preset, $uid)
-				: $this->moduleSettings->change($modules ?? [], $uid);
+				: $this->moduleSettings->change($modules ?? [], $uid, $this->roles->isAdmin($uid));
 			return $this->moduleSettings->describe($this->l) + ['changes' => $changes];
 		});
 	}

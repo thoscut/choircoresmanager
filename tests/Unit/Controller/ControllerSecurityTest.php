@@ -684,7 +684,7 @@ final class ControllerSecurityTest extends TestCase {
 		$roles->method('requireSettingsAccess')->willThrowException(new AccessDeniedException('Only administrators may change this.'));
 		$controller = new SettingsController($this->createStub(IRequest::class), 'carla', $roles, $this->createStub(AppSettings::class),
 			$this->createStub(ArchiveAccess::class), $this->modulesWithout(), $this->createStub(RepertoireService::class),
-			$this->createStub(FullBackupService::class), $this->createStub(IGroupManager::class), $this->l10n(),
+			$this->createStub(FullBackupService::class), $this->createStub(AuditLog::class), $this->createStub(IGroupManager::class), $this->l10n(),
 			$this->createStub(LoggerInterface::class));
 		$responses = [$controller->index(), $controller->update(['librarian' => ['everyone']]), $controller->groups('a'), $controller->access()];
 		foreach ($responses as $response) {
@@ -707,7 +707,8 @@ final class ControllerSecurityTest extends TestCase {
 		$groups->method('search')->willReturn([$board]);
 		$controller = fn (string $uid): SettingsController => new SettingsController($this->createStub(IRequest::class), $uid, $roles,
 			$this->createStub(AppSettings::class), $this->createStub(ArchiveAccess::class), $this->modulesWithout(['repertoire']),
-			$this->createStub(RepertoireService::class), $backup, $groups, $this->l10n(), $this->createStub(LoggerInterface::class));
+			$this->createStub(RepertoireService::class), $backup, $this->createStub(AuditLog::class), $groups, $this->l10n(),
+			$this->createStub(LoggerInterface::class));
 
 		$data = $controller('root')->index()->getData();
 		self::assertIsArray($data);
@@ -728,6 +729,47 @@ final class ControllerSecurityTest extends TestCase {
 
 		// Groups to choose, also for the groups given the settings page
 		self::assertSame([['id' => 'board', 'displayName' => 'Board']], $controller('anna')->groups('bo')->getData());
+	}
+
+	public function testDelegatedSettingsCannotGrantRolesOrMoveTheArchiveFolder(): void {
+		$stored = [Roles::LIBRARIAN => ['archive'], Roles::READER => []];
+		$roles = $this->createStub(Roles::class);
+		$roles->method('isAdmin')->willReturnCallback(fn (string $uid): bool => $uid === 'root');
+		$roles->method('groups')->willReturnCallback(function (string $role) use (&$stored): array {
+			return $stored[$role] ?? [];
+		});
+		$roles->method('setGroups')->willReturnCallback(function (string $role, array $groups) use (&$stored): void {
+			$stored[$role] = $groups;
+		});
+		$groups = $this->createStub(IGroupManager::class);
+		$groups->method('isInGroup')->willReturnCallback(fn (string $uid, string $group): bool => $uid === 'anna' && $group === 'settings-team');
+		$settings = $this->createStub(AppSettings::class);
+		$settings->method('archiveInfo')->willReturn(['id' => 7, 'path' => 'Archiv', 'user' => 'root']);
+		$recorded = [];
+		$audit = $this->createStub(AuditLog::class);
+		$audit->method('record')->willReturnCallback(function (string $operation, ?string $uid, string $type, ?int $id, string $action,
+			?string $field = null, mixed $old = null, mixed $new = null) use (&$recorded): void {
+			$recorded[] = [$uid, (string)$field, $old, $new];
+		});
+		$controller = fn (string $uid): SettingsController => new SettingsController($this->createStub(IRequest::class), $uid, $roles,
+			$settings, $this->createStub(ArchiveAccess::class), $this->modulesWithout(), $this->createStub(RepertoireService::class),
+			$this->createStub(FullBackupService::class), $audit, $groups, $this->l10n(), $this->createStub(LoggerInterface::class));
+
+		// A group given the settings page cannot give a role to itself ...
+		$response = $controller('anna')->update([Roles::LIBRARIAN => ['archive', 'settings-team']]);
+		self::assertSame(Http::STATUS_FORBIDDEN, $response->getStatus());
+		self::assertSame(['archive'], $stored[Roles::LIBRARIAN]);
+		// ... nor move the archive folder, but it can save it unchanged
+		self::assertSame(Http::STATUS_FORBIDDEN, $controller('anna')->update(null, 8)->getStatus());
+		self::assertSame(Http::STATUS_OK, $controller('anna')->update(null, 7)->getStatus());
+		self::assertSame([], $recorded);
+		// It arranges the roles of other groups, and every change is logged
+		self::assertSame(Http::STATUS_OK, $controller('anna')->update([Roles::READER => ['board']])->getStatus());
+		self::assertSame(['board'], $stored[Roles::READER]);
+		self::assertSame([['anna', 'groups_reader', '', 'board']], $recorded);
+		// An administrator may give the role to any group
+		self::assertSame(Http::STATUS_OK, $controller('root')->update([Roles::LIBRARIAN => ['archive', 'settings-team']])->getStatus());
+		self::assertSame(['archive', 'settings-team'], $stored[Roles::LIBRARIAN]);
 	}
 
 	#[CoversNothing]

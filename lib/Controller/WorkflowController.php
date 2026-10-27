@@ -239,7 +239,7 @@ class WorkflowController extends Controller {
 	public function backup(): JSONResponse {
 		return $this->run(function (string $uid) {
 			$this->roles->requireRole($uid, [Roles::LIBRARIAN]);
-			return ['paths' => $this->export->storeBackup('manual', $uid)];
+			return $this->export->storeBackup('manual', $uid);
 		});
 	}
 

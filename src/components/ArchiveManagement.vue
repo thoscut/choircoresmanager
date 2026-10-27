@@ -176,13 +176,16 @@ async function doStoreExport(): Promise<void> {
 // ---- backup ----
 
 const backupPaths = ref<string[]>([])
+const backupAccount = ref('')
 const backupBusy = ref(false)
 
 async function doBackup(): Promise<void> {
 	backupBusy.value = true
 	try {
-		backupPaths.value = await storeBackup()
-		showSuccess(t('notenarchiv', 'The backup has been stored in the archive folder.'))
+		const stored = await storeBackup()
+		backupPaths.value = stored.paths
+		backupAccount.value = stored.account
+		showSuccess(t('notenarchiv', 'The backup has been stored in the backup folder.'))
 	} catch (error) {
 		showError(errorMessage(error))
 	} finally {
@@ -356,7 +359,7 @@ function onUpdateOpen(open: boolean): void {
 				{{ t('notenarchiv', 'Backup') }}
 			</h3>
 			<p>
-				{{ t('notenarchiv', 'A complete backup (CSV, spreadsheet with the audit log and JSON for a restore) is stored in the archive folder every week. Store one now, e.g. before larger changes.') }}
+				{{ t('notenarchiv', 'A complete backup (CSV, spreadsheet with the audit log and JSON for a restore) is stored every week in the backup folder, outside the archive folder; the newest eight weekly backups are kept. Store one now, e.g. before larger changes.') }}
 			</p>
 			<div class="archive-management__actions">
 				<NcButton ref="backupButton" :disabled="backupBusy || !hasArchiveFolder" @click="doBackup">
@@ -368,7 +371,7 @@ function onUpdateOpen(open: boolean): void {
 				</NcButton>
 			</div>
 			<NcNoteCard v-if="backupPaths.length > 0" type="success">
-				<p>{{ t('notenarchiv', 'Stored in the archive folder:') }}</p>
+				<p>{{ t('notenarchiv', 'Stored in the files of the account {account}:', { account: backupAccount }) }}</p>
 				<ul class="archive-management__paths">
 					<li v-for="path in backupPaths" :key="path">
 						{{ path }}

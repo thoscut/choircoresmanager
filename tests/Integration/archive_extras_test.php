@@ -42,6 +42,7 @@ use OCA\Notenarchiv\Service\AppSettings;
 use OCA\Notenarchiv\Service\CatalogSearch;
 use OCA\Notenarchiv\Service\CatalogService;
 use OCA\Notenarchiv\Service\CopyAssistantService;
+use OCA\Notenarchiv\Service\FullBackupService;
 use OCA\Notenarchiv\Service\InventoryService;
 use OCA\Notenarchiv\Service\LicenseService;
 use OCA\Notenarchiv\Service\Modules;
@@ -95,9 +96,9 @@ $original = $switches();
 $autoBefore = $appConfig->hasKey(Application::APP_ID, AnnualSnapshotService::AUTO_KEY, null)
 	? $appConfig->getValueBool(Application::APP_ID, AnnualSnapshotService::AUTO_KEY) : null;
 
-$archive = Server::get(AppSettings::class)->archiveFolder($uid);
-$snapshotPath = AppSettings::EXPORT_FOLDER . '/' . AnnualSnapshotService::FOLDER;
-$hadExportFolder = $archive->nodeExists(AppSettings::EXPORT_FOLDER);
+// Snapshots lie in the backup folder, outside the archive folder (0.10).
+$archive = Server::get(AppSettings::class)->backupFolder();
+$snapshotPath = AnnualSnapshotService::FOLDER;
 $hadSnapshotFolder = $archive->nodeExists($snapshotPath);
 /** @var list<string> $written names of the snapshot folders written by the test */
 $written = [];
@@ -289,7 +290,16 @@ try {
 		$fileEntry = $entriesOfManifest[$musicxml->getPath()] ?? null;
 		$check('the manifest has the SHA-256 and size of an archive file', $node instanceof File && $fileEntry !== null
 			&& $fileEntry['sha256'] === hash('sha256', $node->getContent()) && $fileEntry['size'] === (int)$node->getSize());
+		$json = $folder->get(AnnualSnapshotService::CATALOG_JSON);
+		$tablesOfSnapshot = $json instanceof File ? array_keys(FullBackupService::parse($json->getContent())['tables']) : [];
+		$check('the snapshot holds no folder book, audit log or links', $tablesOfSnapshot !== []
+			&& array_intersect($tablesOfSnapshot, ['notarch_folder_loans', 'notarch_audit', 'notarch_links', 'notarch_tasks']) === [],
+			implode(', ', $tablesOfSnapshot));
+		$csv = $folder->get(AnnualSnapshotService::CATALOG_CSV);
+		$check('the catalog of the snapshot names no accounts', $csv instanceof File && !str_contains(strtok($csv->getContent(), "\n") ?: '', 'confirmed_by'));
 	}
+	$check('the snapshot lies outside the archive folder', !str_starts_with($archive->getPath() . '/',
+		rtrim(Server::get(AppSettings::class)->archiveFolder($uid)->getPath(), '/') . '/'));
 
 	// Changes between the snapshots
 	$kindBefore = $copy->getKind();
@@ -349,9 +359,6 @@ try {
 	}
 	if (!$hadSnapshotFolder && $archive->nodeExists($snapshotPath)) {
 		$archive->get($snapshotPath)->delete();
-	}
-	if (!$hadExportFolder && $archive->nodeExists(AppSettings::EXPORT_FOLDER)) {
-		$archive->get(AppSettings::EXPORT_FOLDER)->delete();
 	}
 	$check('the snapshot folders are deleted again', array_filter($written, fn (string $name): bool => $archive->nodeExists($snapshotPath . '/' . $name)) === []);
 }

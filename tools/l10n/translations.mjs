@@ -241,7 +241,6 @@ export const singular = {
 	],
 	'The archive folder has been saved.': 'Der Archivordner wurde gespeichert.',
 	'The roles have been saved.': 'Die Rollen wurden gespeichert.',
-	'The folder in Nextcloud that holds the score files (for example one subfolder per binder). The app only reads files. Exports and snapshots are stored in its subfolder "_notenarchiv-app".': 'Der Ordner in der Nextcloud mit den Notendateien (zum Beispiel ein Unterordner je Archivmappe). Die App liest Dateien nur. Exporte und Schnappschüsse legt sie im Unterordner „_notenarchiv-app“ ab.',
 	'Current archive folder:': 'Aktueller Archivordner:',
 	'(chosen by {user})': '(gewählt von {user})',
 	'No archive folder has been chosen yet.': 'Es ist noch kein Archivordner gewählt.',
@@ -302,10 +301,6 @@ export const singular = {
 	'Sharing the archive folder (administration guide)': 'Den Archivordner freigeben (Administrationshandbuch)',
 	'Roles and groups (administration guide)': 'Rollen und Gruppen (Administrationshandbuch)',
 	'Setting up in five steps (administration guide)': 'Einrichten in fünf Schritten (Administrationshandbuch)',
-	'Saving makes this folder the archive folder: the app reads the score files from it as your account sees it, and the weekly backups are written through your account into its subfolder "_notenarchiv-app".': [
-		'Beim Speichern wird dieser Ordner zum Archivordner: Die App liest die Notendateien daraus so, wie dein Konto ihn sieht, und die wöchentlichen Sicherungen werden über dein Konto in seinen Unterordner „_notenarchiv-app“ geschrieben.',
-		'Beim Speichern wird dieser Ordner zum Archivordner: Die App liest die Notendateien daraus so, wie Ihr Konto ihn sieht, und die wöchentlichen Sicherungen werden über Ihr Konto in seinen Unterordner „_notenarchiv-app“ geschrieben.',
-	],
 	'Files in the former folder are not moved or deleted; after the next file sync they are listed as "not found" until they are in the new folder too.': 'Dateien im bisherigen Ordner werden weder verschoben noch gelöscht; nach dem nächsten Dateiabgleich stehen sie als „nicht gefunden“ da, bis sie auch im neuen Ordner liegen.',
 	'Checking who of the role groups can open this folder …': 'Es wird geprüft, wer aus den Rollengruppen diesen Ordner öffnen kann …',
 	'It could not be checked who can open this folder: {error}': 'Es ließ sich nicht prüfen, wer diesen Ordner öffnen kann: {error}',
@@ -1666,12 +1661,10 @@ export const singular = {
 	'Nothing is due for your roles.': ['Für deine Rollen ist nichts fällig.', 'Für Ihre Rollen ist nichts fällig.'],
 
 	// ---- archive management and settings ----
-	'The backup has been stored in the archive folder.': 'Die Sicherung wurde im Archivordner abgelegt.',
 	'Import performances and song lists': 'Aufführungen und Notenlisten importieren',
 	'Imports the history of concerts and song lists from a spreadsheet (.xlsx or .csv). First a dry run shows what would be imported. Lines with an unclear shelf mark can be assigned afterwards under "Unclear programme lines".': 'Importiert frühere Konzerte und Notenlisten aus einer Tabelle (.xlsx oder .csv). Zuerst zeigt ein Probelauf, was importiert würde. Zeilen mit unklarer Signatur lassen sich danach unter „Unklare Programmpunkte“ zuordnen.',
 	Backup: 'Sicherung',
 	'Store a complete backup now': 'Vollständige Sicherung jetzt ablegen',
-	'Stored in the archive folder:': 'Im Archivordner abgelegt:',
 	'Choose the list of performances (.xlsx or .csv)': 'Liste der Aufführungen wählen (.xlsx oder .csv)',
 	'The performances have been imported.': 'Die Aufführungen wurden importiert.',
 	'Choose file …': 'Datei wählen …',
@@ -1984,10 +1977,6 @@ export const singular = {
 	'Show checksums': 'Prüfsummen anzeigen',
 
 	// complete backup and restore
-	'A complete backup (CSV, spreadsheet with the audit log and JSON for a restore) is stored in the archive folder every week. Store one now, e.g. before larger changes.': [
-		'Jede Woche wird eine vollständige Sicherung (CSV, Tabelle mit Protokoll und JSON zum Wiederherstellen) im Archivordner abgelegt. Lege jetzt eine ab, z. B. vor größeren Änderungen.',
-		'Jede Woche wird eine vollständige Sicherung (CSV, Tabelle mit Protokoll und JSON zum Wiederherstellen) im Archivordner abgelegt. Legen Sie jetzt eine ab, z. B. vor größeren Änderungen.',
-	],
 	'Complete backup and restore': 'Vollständige Sicherung und Wiederherstellung',
 	'The complete backup contains all data of the music archive (catalog, rights, licenses, tasks, programmes, persons and the audit log) in one JSON file. The files of the archive folder are not part of it.': 'Die vollständige Sicherung enthält alle Daten des Notenarchivs (Werkverzeichnis, Rechte, Lizenzen, Aufgaben, Programme, Personen und Protokoll) in einer JSON-Datei. Die Dateien im Archivordner gehören nicht dazu.',
 	'Download complete backup (JSON)': 'Vollständige Sicherung herunterladen (JSON)',
@@ -2573,7 +2562,6 @@ export const singular = {
 	'Missing shelf marks': 'Fehlende Signaturen',
 	'Annual snapshots': 'Jahresstände',
 	'Freezes the state of the archive once a year, on request or at the turn of the year: the catalog as CSV and JSON and a list of checksums of the archive files, in a dated folder in the archive folder. Two snapshots can be compared and printed.': 'Friert einmal im Jahr den Stand des Archivs ein, auf Knopfdruck oder zum Jahreswechsel: das Werkverzeichnis als CSV und JSON und eine Prüfsummenliste der Archivdateien, in einem datierten Ordner im Archivordner. Zwei Stände lassen sich vergleichen und drucken.',
-	'A snapshot freezes the state of the archive: the catalog as CSV and JSON and a list of checksums of the archive files, in a dated folder of the archive folder. Two snapshots can be compared and printed.': 'Ein Jahresstand friert den Stand des Archivs ein: das Werkverzeichnis als CSV und JSON und eine Prüfsummenliste der Archivdateien, in einem datierten Ordner des Archivordners. Zwei Stände lassen sich vergleichen und drucken.',
 	'Year {year}, frozen on {date}': 'Jahr {year}, eingefroren am {date}',
 	'The snapshot has been stored in {folder}.': 'Der Jahresstand liegt jetzt in {folder}.',
 	'The state is frozen automatically at the turn of the year.': 'Der Stand wird zum Jahreswechsel automatisch eingefroren.',
@@ -2589,7 +2577,6 @@ export const singular = {
 	'Freeze the state now': 'Stand jetzt einfrieren',
 	'Freeze the state now …': 'Stand jetzt einfrieren …',
 	Freeze: 'Einfrieren',
-	'A new snapshot of the year {year} is written to the folder "{folder}" of the archive folder. Existing snapshots are never changed.': 'Ein neuer Jahresstand {year} wird in den Ordner „{folder}“ des Archivordners geschrieben. Vorhandene Jahresstände bleiben unverändert.',
 	'There is a snapshot of {year} already; the new one is added next to it.': 'Es gibt schon einen Jahresstand {year}; der neue kommt daneben.',
 	'Freeze automatically at the turn of the year': 'Zum Jahreswechsel automatisch einfrieren',
 	'In January, once, for the year before; written as the account that set the archive folder.': 'Im Januar, einmal, für das Vorjahr; geschrieben mit dem Konto, das den Archivordner festgelegt hat.',
@@ -2615,10 +2602,6 @@ export const singular = {
 		'Der automatische Jahresstand ist fehlgeschlagen. Einzelheiten stehen im Nextcloud-Protokoll; friere den Stand von Hand ein oder wende dich an die Administration.',
 		'Der automatische Jahresstand ist fehlgeschlagen. Einzelheiten stehen im Nextcloud-Protokoll; frieren Sie den Stand von Hand ein oder wenden Sie sich an die Administration.',
 	],
-	'No write permission for exports in the archive folder. Ask the administration to give the account that sets the archive folder write access to it.': [
-		'Keine Schreibrechte für Exporte im Archivordner. Bitte die Administration, dem Konto, das den Archivordner festlegt, Schreibrechte darauf zu geben.',
-		'Keine Schreibrechte für Exporte im Archivordner. Bitten Sie die Administration, dem Konto, das den Archivordner festlegt, Schreibrechte darauf zu geben.',
-	],
 	'This snapshot does not exist. Reload the list and choose another one.': [
 		'Diesen Jahresstand gibt es nicht. Lade die Liste neu und wähle einen anderen.',
 		'Diesen Jahresstand gibt es nicht. Laden Sie die Liste neu und wählen Sie einen anderen.',
@@ -2634,10 +2617,6 @@ export const singular = {
 	'The manifest of a snapshot cannot be read. Choose another snapshot.': [
 		'Die Prüfsummenliste eines Jahresstands lässt sich nicht lesen. Wähle einen anderen Jahresstand.',
 		'Die Prüfsummenliste eines Jahresstands lässt sich nicht lesen. Wählen Sie einen anderen Jahresstand.',
-	],
-	'The snapshots lie in the archive folder, which is not shared with your account. Ask the catalog librarian to share the archive folder with you or to print the comparison for you.': [
-		'Die Jahresstände liegen im Archivordner, der nicht mit deinem Konto geteilt ist. Bitte die Archivverwaltung, den Archivordner mit dir zu teilen oder dir den Vergleich auszudrucken.',
-		'Die Jahresstände liegen im Archivordner, der nicht mit Ihrem Konto geteilt ist. Bitten Sie die Archivverwaltung, den Archivordner mit Ihnen zu teilen oder Ihnen den Vergleich auszudrucken.',
 	],
 	'Rights notice in the file: “{notice}”': 'Rechtevermerk in der Datei: „{notice}“',
 	'Taken from the MusicXML file as it is. It changes no rights status; the catalog librarian checks it and confirms the rights in the tab Rights.': 'So aus der MusicXML-Datei übernommen. Er ändert keinen Rechtestatus; die Archivverwaltung prüft ihn und bestätigt die Rechte im Reiter „Rechte“.',
@@ -2824,6 +2803,42 @@ export const singular = {
 	'This piece is no longer shared with choir members.': 'Dieses Stück ist nicht mehr für die Chormitglieder freigegeben.',
 	'The score of this link is not available at the moment.': 'Die Noten dieses Links sind gerade nicht verfügbar.',
 	'The scan of this link is not available at the moment.': 'Der Scan dieses Links ist gerade nicht verfügbar.',
+	// ---- 0.10: backups outside the archive folder, delegated settings ----
+	'Music archive backups': 'Notenarchiv-Sicherungen',
+	'The folder in Nextcloud that holds the score files (for example one subfolder per binder). The app only reads files. Exports of the catalog are stored in its subfolder "_notenarchiv-app".': 'Der Ordner in der Nextcloud mit den Notendateien (zum Beispiel ein Unterordner je Archivmappe). Die App liest Dateien nur. Exporte des Werkverzeichnisses legt sie im Unterordner „_notenarchiv-app“ ab.',
+	'Backups and annual snapshots name choir members and accounts. They lie outside the archive folder, in a folder of the account that set it, which the role groups do not see unless it is shared with them.': 'Sicherungen und Jahresstände nennen Chormitglieder und Konten. Sie liegen außerhalb des Archivordners in einem Ordner des Kontos, das ihn festgelegt hat. Die Rollengruppen sehen ihn nicht, solange er nicht mit ihnen geteilt wird.',
+	'Backup folder:': 'Sicherungsordner:',
+	'The subfolder "_notenarchiv-app" of the archive folder still holds backups or annual snapshots of an earlier version, which everyone with access to the archive folder can read. Move them into the backup folder or delete them.': [
+		'Im Unterordner „_notenarchiv-app“ des Archivordners liegen noch Sicherungen oder Jahresstände einer früheren Version, die alle mit Zugriff auf den Archivordner lesen können. Verschiebe sie in den Sicherungsordner oder lösche sie.',
+		'Im Unterordner „_notenarchiv-app“ des Archivordners liegen noch Sicherungen oder Jahresstände einer früheren Version, die alle mit Zugriff auf den Archivordner lesen können. Verschieben Sie sie in den Sicherungsordner oder löschen Sie sie.',
+	],
+	'Only an administrator can change the archive folder: background jobs and backups run as the account that sets it.': 'Nur die Administration kann den Archivordner ändern: Hintergrundjobs und Sicherungen laufen mit dem Konto, das ihn festlegt.',
+	'Saving makes this folder the archive folder: the app reads the score files from it as your account sees it, and writes the weekly backups into a folder of your own files outside it ("Music archive backups").': [
+		'Beim Speichern wird dieser Ordner zum Archivordner: Die App liest die Notendateien daraus so, wie dein Konto ihn sieht, und schreibt die wöchentlichen Sicherungen in einen Ordner deiner eigenen Dateien außerhalb davon („Notenarchiv-Sicherungen“).',
+		'Beim Speichern wird dieser Ordner zum Archivordner: Die App liest die Notendateien daraus so, wie Ihr Konto ihn sieht, und schreibt die wöchentlichen Sicherungen in einen Ordner Ihrer eigenen Dateien außerhalb davon („Notenarchiv-Sicherungen“).',
+	],
+	'The backup has been stored in the backup folder.': 'Die Sicherung wurde im Sicherungsordner abgelegt.',
+	'Stored in the files of the account {account}:': 'In den Dateien des Kontos {account} abgelegt:',
+	'A complete backup (CSV, spreadsheet with the audit log and JSON for a restore) is stored every week in the backup folder, outside the archive folder; the newest eight weekly backups are kept. Store one now, e.g. before larger changes.': [
+		'Jede Woche wird eine vollständige Sicherung (CSV, Tabelle mit dem Protokoll und JSON zum Wiederherstellen) im Sicherungsordner außerhalb des Archivordners abgelegt; die acht neuesten Wochensicherungen bleiben erhalten. Lege jetzt eine an, z. B. vor größeren Änderungen.',
+		'Jede Woche wird eine vollständige Sicherung (CSV, Tabelle mit dem Protokoll und JSON zum Wiederherstellen) im Sicherungsordner außerhalb des Archivordners abgelegt; die acht neuesten Wochensicherungen bleiben erhalten. Legen Sie jetzt eine an, z. B. vor größeren Änderungen.',
+	],
+	'A snapshot freezes the state of the archive: the catalog as CSV and JSON, without accounts and the folder book, and a list of checksums of the archive files, in a dated folder of the backup folder outside the archive folder. Two snapshots can be compared and printed.': 'Ein Jahresstand friert den Stand des Archivs ein: das Werkverzeichnis als CSV und JSON, ohne Konten und Mappenbuch, und eine Prüfsummenliste der Archivdateien, in einem datierten Ordner des Sicherungsordners außerhalb des Archivordners. Zwei Stände lassen sich vergleichen und drucken.',
+	'A new snapshot of the year {year} is written to the folder "{folder}" of the account that set the archive folder. Existing snapshots are never changed.': 'Ein neuer Jahresstand {year} wird in den Ordner „{folder}“ des Kontos geschrieben, das den Archivordner festgelegt hat. Vorhandene Jahresstände bleiben unverändert.',
+	'The last complete backup is older than %s days. Check that the background jobs of Nextcloud run, or store a backup by hand.': [
+		'Die letzte vollständige Sicherung ist älter als %s Tage. Prüfe, ob die Hintergrundjobs der Nextcloud laufen, oder lege eine Sicherung von Hand an.',
+		'Die letzte vollständige Sicherung ist älter als %s Tage. Prüfen Sie, ob die Hintergrundjobs der Nextcloud laufen, oder legen Sie eine Sicherung von Hand an.',
+	],
+	'Only an administrator can give a role to a group you belong to.': [
+		'Nur die Administration kann einer Gruppe, zu der du gehörst, eine Rolle geben.',
+		'Nur die Administration kann einer Gruppe, zu der Sie gehören, eine Rolle geben.',
+	],
+	'The account %s may not write into the backup folder.': 'Das Konto %s darf nicht in den Sicherungsordner schreiben.',
+	'The backup folder contains a file named %s.': 'Im Sicherungsordner liegt eine Datei namens %s.',
+	'The account that set the archive folder no longer exists. An administrator sets the archive folder again in the settings.': 'Das Konto, das den Archivordner festgelegt hat, gibt es nicht mehr. Die Administration legt den Archivordner in den Einstellungen neu fest.',
+	'The archive folder is the whole of the files of the account %s, so the backups would lie inside it. An administrator chooses a sub folder as archive folder.': 'Der Archivordner umfasst alle Dateien des Kontos %s, die Sicherungen lägen also darin. Die Administration wählt einen Unterordner als Archivordner.',
+	'The account %s may not create the backup folder in its files.': 'Das Konto %s darf in seinen Dateien keinen Sicherungsordner anlegen.',
+	'Only an administrator can switch on the modules that open the archive to agents, choir members, the public or the print station.': 'Nur die Administration kann die Module einschalten, die das Archiv für Agenten, Chormitglieder, die Öffentlichkeit oder die Druckstation öffnen.',
 }
 
 export const plural = {
