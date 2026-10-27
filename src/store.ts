@@ -14,6 +14,7 @@ import { loadState } from '@nextcloud/initial-state'
 import { computed, reactive, ref, shallowRef } from 'vue'
 import { errorMessage, fetchEntries, fetchEntry, fetchMeta, fetchReleaseList, normalizeMeta } from './api.ts'
 import { DEFAULT_FILTERS, filterEntries, hasActiveFilters, searchText, sortEntries, worksWithValidVersion } from './catalog.ts'
+import { focusAfterUpdate } from './focus.ts'
 import { optionLabel, translateLabel } from './format.ts'
 import { cardShown, fieldActive, moduleActive, viewActive, viewShown } from './modules.ts'
 
@@ -333,6 +334,19 @@ export const detailError = ref('')
 
 let detailRequest = 0
 
+/** Id of the sidebar of a copy (NcAppSidebar). */
+export const SIDEBAR_ID = 'app-sidebar-vue'
+
+/**
+ * The control that had the focus when the sidebar opened (the row of the
+ * list, a link in a view), to get the focus back when it closes (WCAG
+ * 2.4.3). Null when the sidebar opened without one, e.g. from the address.
+ */
+let returnFocus: HTMLElement | null = null
+
+/** Set when the sidebar opened from a control: the sidebar takes the focus once it shows the copy. */
+export const sidebarTakesFocus = ref(false)
+
 /**
  * Open an entry in the sidebar.
  *
@@ -348,6 +362,11 @@ export async function openEntry(id: number, tab?: string): Promise<void> {
 	}
 	if (selectedId.value !== id) {
 		highlightedTaskId.value = null
+	}
+	if (selectedId.value === null) {
+		const active = document.activeElement
+		returnFocus = active instanceof HTMLElement && active !== document.body && !active.closest(`#${SIDEBAR_ID}`) ? active : null
+		sidebarTakesFocus.value = returnFocus !== null
 	}
 	selectedId.value = id
 	if (detail.value?.copy.id !== id) {
@@ -385,8 +404,18 @@ export async function loadDetail(showSpinner = false): Promise<void> {
 	}
 }
 
+/**
+ * Close the sidebar. The focus goes back to the control it was opened
+ * from, if that is still in the page.
+ */
 export function closeEntry(): void {
 	detailRequest++
+	const target = returnFocus
+	returnFocus = null
+	sidebarTakesFocus.value = false
+	if (target !== null) {
+		focusAfterUpdate(() => target)
+	}
 	selectedId.value = null
 	highlightedTaskId.value = null
 	scoreRequest.value = null

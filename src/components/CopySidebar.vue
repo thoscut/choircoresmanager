@@ -41,6 +41,7 @@ import RightsPanel from './RightsPanel.vue'
 import StatesPanel from './StatesPanel.vue'
 import { songListCount, songListNames } from '../catalog.ts'
 import { OVERVIEW_SECTIONS, RIGHTS_SECTIONS, sectionFields } from '../fieldGroups.ts'
+import { focusElement } from '../focus.ts'
 import { formatDate } from '../format.ts'
 import { repertoireClassLabel, repertoireSourceLabel } from '../labels.ts'
 import { showError } from '../toasts.ts'
@@ -60,7 +61,9 @@ import {
 	openEntry,
 	scoreRequest,
 	selectedId,
+	SIDEBAR_ID,
 	sidebarTab,
+	sidebarTakesFocus,
 } from '../store.ts'
 
 // The score view (with Verovio) is loaded only when it is opened
@@ -126,7 +129,7 @@ const sidebarName = computed(() => [shelfmark.value, title.value].filter((part) 
  * that screen readers announce the sidebar with the copy's name.
  */
 function labelSidebar(): void {
-	const aside = document.getElementById('app-sidebar-vue')
+	const aside = document.getElementById(SIDEBAR_ID)
 	const id = aside?.getAttribute('aria-labelledby')
 	if (aside && id && document.getElementById(id) === null) {
 		aside.querySelector('.app-sidebar-header__mainname')?.setAttribute('id', id)
@@ -135,6 +138,24 @@ function labelSidebar(): void {
 
 onMounted(labelSidebar)
 watch([sidebarName, detail, detailLoading], labelSidebar, { flush: 'post' })
+
+/**
+ * Opened from a row or link: the focus moves to the name of the copy in the
+ * sidebar, so that keyboard and screen reader users are where the content
+ * is. closeEntry() takes it back to the row.
+ */
+function takeFocus(): void {
+	if (!sidebarTakesFocus.value || detailLoading.value) {
+		return
+	}
+	const heading = document.querySelector<HTMLElement>(`#${SIDEBAR_ID} .app-sidebar-header__mainname`)
+	if (heading !== null && focusElement(heading)) {
+		sidebarTakesFocus.value = false
+	}
+}
+
+onMounted(takeFocus)
+watch(detailLoading, takeFocus, { flush: 'post' })
 
 const status = computed(() => String(detail.value?.copy.status ?? listEntry.value?.status ?? 'active'))
 

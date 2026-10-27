@@ -55,6 +55,7 @@ import { measureStarts, nextPass, noteStarts } from '../score/timeline.ts'
 import { createToolkit } from '../score/toolkit.ts'
 import { voiceLabel } from '../score/voices.ts'
 import { encodeWav } from '../score/wav.ts'
+import { nextZoom, storedZoom, storeZoom, ZOOM_DEFAULT, ZOOM_STEPS } from '../score/zoom.ts'
 import { resolveRange } from '../score/range.ts'
 import { excerptTempo, TEMPO_MAX, TEMPO_MIN, voiceForServer, voiceOfLink } from './excerpt.ts'
 import { scopeText } from './linkScope.ts'
@@ -85,10 +86,6 @@ const props = withDefaults(defineProps<{
 	playReason: null,
 	exportAudio: null,
 })
-
-/** Verovio scale per zoom step; ZOOM_DEFAULT is shown as 100 %. */
-const ZOOM_STEPS = [16, 20, 24, 28, 32, 36, 40, 46, 52, 60, 70, 80]
-const ZOOM_DEFAULT = 6
 
 const summaryId = useId()
 const tempoId = useId()
@@ -155,7 +152,7 @@ async function load(): Promise<void> {
 
 // ---- layout and rendering ---------------------------------------------------
 
-const zoomIndex = ref(ZOOM_DEFAULT)
+const zoomIndex = ref(storedZoom())
 const zoomPercent = computed(() => Math.round(ZOOM_STEPS[zoomIndex.value] / ZOOM_STEPS[ZOOM_DEFAULT] * 100))
 
 function layout(): void {
@@ -235,9 +232,10 @@ function showAllMeasures(): void {
  * @param step - +1 bigger, -1 smaller
  */
 function zoomBy(step: number): void {
-	const next = Math.min(ZOOM_STEPS.length - 1, Math.max(0, zoomIndex.value + step))
+	const next = nextZoom(zoomIndex.value, step)
 	if (next !== zoomIndex.value) {
 		zoomIndex.value = next
+		storeZoom(next)
 		layout()
 	}
 }

@@ -2261,6 +2261,7 @@ export const singular = {
 	"The server refused the request (HTTP {status}). Please reload the page and try again.": "Serwer odrzucił żądanie (HTTP {status}). Przeładuj stronę i spróbuj ponownie.",
 	"The server could not finish this. Please try again in a moment. If it happens again, tell the administration this request ID for the Nextcloud log: %s": "Serwer nie mógł tego dokończyć. Spróbuj ponownie za chwilę. Jeśli to się powtórzy, przekaż administracji ten identyfikator żądania do dziennika Nextcloud: %s",
 	"Nothing was recorded. Please correct these rows and record again:": "Nic nie zostało zapisane. Popraw te wiersze i zapisz ponownie:",
+	"Measures, voice and size": "Takty, głos i rozmiar",
 }
 
 export const plural = {

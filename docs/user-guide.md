@@ -402,6 +402,10 @@ sounds are part of the app; nothing is loaded from other servers.
    and volume and the switches **Play repeats** and **Scroll along**.
 4. **Play**, **Pause** and **Stop** control the playback.
 
+**Smaller** and **Larger** change the size of the notes; your browser
+remembers it for the next piece. On a phone only **Play** and **Stop** are
+above the notes at first; **Measures, voice and size** shows the other bars.
+
 Keyboard: Space plays and pauses unless a control has the focus, `+` and `-`
 change the size while the score has the focus, Escape closes the viewer. The
 current measure is announced to screen readers during playback, and the score
@@ -1547,9 +1551,10 @@ long each is valid, whether it can be played (**Playback: yes** or
 ![The page "Shared with me" of a choir member: the whole piece "Der Mond ist aufgegangen" with the note of the conductor, the validity, the link "Open the scan (PDF)", the playback controls with count-in and loop, and the score with the alto highlighted.](screenshots/shared-with-me.png)
 
 1. Choose a piece in the list (a link sent to you opens it directly). The
-   notes appear above the list, for a whole piece all pages of it.
-2. **Play**, **Pause** and **Stop**, **Smaller** and **Larger** (the size)
-   and **Settings** are in a bar that stays at the top while you scroll
+   notes appear below the list, on a wide screen beside it, for a whole
+   piece all pages of it.
+2. **Play**, **Pause** and **Stop**, **Smaller** and **Larger** (the size;
+   your browser remembers it for the next piece) and **Settings** are in a bar that stays at the top while you scroll
    through the notes. **Settings** shows or hides the other choices; on a
    phone they are hidden at first. Under **Voices during playback** choose
    **All equal**, **Focus voice louder** or **Focus voice only**, and set

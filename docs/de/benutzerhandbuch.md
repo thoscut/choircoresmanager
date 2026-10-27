@@ -433,6 +433,11 @@ geladen.
    **Mitscrollen**.
 4. **Abspielen**, **Pause** und **Stopp** steuern die Wiedergabe.
 
+**Kleiner** und **Größer** ändern die Größe der Noten; dein Browser merkt
+sie sich für das nächste Stück. Auf dem Handy stehen über den Noten zuerst
+nur **Abspielen** und **Stopp**; **Takte, Stimme und Größe** zeigt die
+übrigen Leisten.
+
 Tastatur: Die Leertaste spielt ab und hält an, außer ein Bedienelement hat
 den Fokus. `+` und `-` ändern die Größe, solange die Noten den Fokus haben;
 Escape schließt die Notenansicht. Beim Abspielen wird Screenreadern der
@@ -836,8 +841,8 @@ Niemand muss etwas nummerieren; die Stände zählen je Fassung 1, 2, 3 …
 2. Unter **Stände dieser Fassung** steht der neueste Stand zuerst: Nummer,
    Herkunft, Datum und Person, geänderte Takte und Stimmen, die Notiz, die
    Datei und der Anfang ihrer Prüfsumme.
-3. Die Zeile über der Liste ist die **Fassungszeile**, wie Ausgaben sie
-   drucken: Signatur · Fassung · Stand · gültig seit.
+3. Die Zeile über der Liste ist die **Fassungszeile**, wie Exporte und
+   Ausdrucke sie drucken: Signatur · Fassung · Stand · gültig seit.
 
 Jede Archivrolle sieht die Stände, Chormitglieder nicht.
 
@@ -1653,10 +1658,11 @@ Stimme, der Notiz und wie lange jedes gilt, ob es sich abspielen lässt
 ![Die Seite „Mit mir geteilt“ eines Chormitglieds: das ganze Stück „Der Mond ist aufgegangen“ mit der Notiz der Chorleitung, der Gültigkeit, dem Link „Scan (PDF) öffnen“, der Wiedergabe mit Einzähler und Schleife und den Noten mit hervorgehobenem Alt.](../screenshots/shared-with-me.png)
 
 1. Wähle ein Stück in der Liste (ein Link, den du bekommen hast, öffnet es
-   direkt). Die Noten erscheinen über der Liste, bei einem ganzen Stück alle
-   seine Seiten.
+   direkt). Die Noten erscheinen unter der Liste, auf einem breiten
+   Bildschirm daneben, bei einem ganzen Stück alle seine Seiten.
 2. **Abspielen**, **Pause** und **Stopp**, **Kleiner** und **Größer** (die
-   Größe) und **Einstellungen** stehen in einer Leiste, die oben bleibt,
+   Größe; dein Browser merkt sie sich für das nächste Stück) und
+   **Einstellungen** stehen in einer Leiste, die oben bleibt,
    während du durch die Noten scrollst. **Einstellungen** zeigt oder
    verbirgt die übrigen Einstellungen; auf dem Handy sind sie zuerst
    verborgen. Wähle unter **Stimmen beim Abspielen** **Alle gleich**,

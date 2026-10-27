@@ -7,8 +7,10 @@
  * The page "Shared with me" for choir members (role "member", module
  * "member_links", milestone 0.7). Choir members see nothing of the catalog:
  * only the links that the conductor or the music librarians made for them,
- * and above the list the score view of the chosen link: the whole piece or
- * the measures the server cuts, and the scan (PDF) when the link offers it.
+ * and the score view of the chosen link: the whole piece or the measures
+ * the server cuts, and the scan (PDF) when the link offers it. The list comes
+ * first (milestone 0.12): on a phone it is above the notes, on a wide screen
+ * beside them.
  * The server sends the list with the page and checks the role, the link and
  * the rights again on every call.
  */
@@ -17,7 +19,7 @@ import type { MemberLink, MemberPageState, MemberPracticeAudioInput } from '../t
 import { mdiAlertCircleOutline, mdiMusicNoteOutline } from '@mdi/js'
 import { loadState } from '@nextcloud/initial-state'
 import { n, t } from '../l10n.ts'
-import { computed, onMounted, ref, useId } from 'vue'
+import { computed, nextTick, onMounted, ref, useId } from 'vue'
 import NcAppContent from '@nextcloud/vue/components/NcAppContent'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcContent from '@nextcloud/vue/components/NcContent'
@@ -98,8 +100,8 @@ async function loadSelectedScore(): Promise<void> {
 }
 
 /**
- * Show an excerpt above the list; the address names it, so that it can be
- * bookmarked.
+ * Show an excerpt next to or below the list; the address names it, so
+ * that it can be bookmarked.
  *
  * @param link - member link
  * @param moveFocus - put the focus on its heading (after a click in the list)
@@ -133,7 +135,9 @@ onMounted(() => {
 	const token = new URLSearchParams(window.location.search).get('link')
 	const linked = token === null ? null : links.find((link) => link.token === token)
 	if (linked) {
+		// from a bookmark or a message: straight to the notes, also on a phone
 		select(linked, false)
+		nextTick(() => excerptHeading.value?.scrollIntoView?.({ block: 'start' }))
 	} else if (token !== null) {
 		notice.value = t('notenarchiv', 'This link is not available to you, or no longer: it may have expired or been revoked. Please ask the conductor or the music librarians for a new link. Everything else shared with you is listed below.')
 	} else if (links.length === 1) {
@@ -167,102 +171,103 @@ onMounted(() => {
 				</NcEmptyContent>
 
 				<template v-else>
-					<section v-if="selected" class="member-app__excerpt" :aria-labelledby="excerptHeadingId">
-						<h3 :id="excerptHeadingId" ref="excerptHeading" class="member-app__excerpt-title">
-							{{ selected.title }}
-						</h3>
-						<p v-if="selected.composer" class="member-app__muted">
-							{{ selected.composer }}
-						</p>
-						<Attribution :credits="selected.credits ?? []" :notices="selected.notices ?? []" />
-						<NcNoteCard v-if="selected.note" type="info" class="member-app__note">
-							<p class="member-app__note-text">
-								{{ t('notenarchiv', 'Note: {note}', { note: selected.note }) }}
+					<div class="member-app__layout">
+						<section class="member-app__list" :aria-labelledby="listHeadingId">
+							<h3 :id="listHeadingId" class="member-app__list-title">
+								{{ n('notenarchiv', '%n shared link', '%n shared links', links.length) }}
+							</h3>
+							<ul class="member-app__items">
+								<li v-for="link in links"
+									:key="link.token"
+									class="member-app__item"
+									:class="{ 'member-app__item--selected': link.token === selectedToken }">
+									<button type="button"
+										class="member-app__open"
+										:aria-current="link.token === selectedToken ? 'true' : undefined"
+										@click="select(link)">
+										{{ link.title }}
+									</button>
+									<p v-if="link.composer" class="member-app__muted">
+										{{ link.composer }}
+									</p>
+									<p>{{ place(link) }}</p>
+									<p v-if="link.note" class="member-app__note-text">
+										{{ t('notenarchiv', 'Note: {note}', { note: link.note }) }}
+									</p>
+									<p class="member-app__muted">
+										<template v-if="link.expires">
+											{{ t('notenarchiv', 'Valid until {date}', { date: formatDate(link.expires) }) }} ·
+										</template>
+										{{ link.canPlay ? t('notenarchiv', 'Playback: yes') : t('notenarchiv', 'Playback: no') }}
+										<template v-if="link.canExportAudio">
+											· {{ t('notenarchiv', 'Practice files: yes') }}
+										</template>
+										<template v-if="link.scan">
+											· {{ t('notenarchiv', 'with scan (PDF)') }}
+										</template>
+									</p>
+								</li>
+							</ul>
+						</section>
+						<section v-if="selected" class="member-app__excerpt" :aria-labelledby="excerptHeadingId">
+							<h3 :id="excerptHeadingId" ref="excerptHeading" class="member-app__excerpt-title">
+								{{ selected.title }}
+							</h3>
+							<p v-if="selected.composer" class="member-app__muted">
+								{{ selected.composer }}
 							</p>
-						</NcNoteCard>
-						<p v-if="selected.expires" class="member-app__muted">
-							{{ t('notenarchiv', 'Valid until {date}', { date: formatDate(selected.expires) }) }}
-						</p>
-						<p v-if="selected.scan">
-							<!-- The browser's own PDF viewer, in a tab of its own -->
-							<a :href="memberScanUrl(selected.token)"
-								class="member-app__scan"
-								target="_blank"
-								rel="noopener noreferrer">{{ t('notenarchiv', 'Open the scan (PDF)') }}<span class="hidden-visually"> {{ t('notenarchiv', '(opens in a new tab)') }}</span></a>
-						</p>
+							<Attribution :credits="selected.credits ?? []" :notices="selected.notices ?? []" />
+							<NcNoteCard v-if="selected.note" type="info" class="member-app__note">
+								<p class="member-app__note-text">
+									{{ t('notenarchiv', 'Note: {note}', { note: selected.note }) }}
+								</p>
+							</NcNoteCard>
+							<p v-if="selected.expires" class="member-app__muted">
+								{{ t('notenarchiv', 'Valid until {date}', { date: formatDate(selected.expires) }) }}
+							</p>
+							<p v-if="selected.scan">
+								<!-- The browser's own PDF viewer, in a tab of its own -->
+								<a :href="memberScanUrl(selected.token)"
+									class="member-app__scan"
+									target="_blank"
+									rel="noopener noreferrer">{{ t('notenarchiv', 'Open the scan (PDF)') }}<span class="hidden-visually"> {{ t('notenarchiv', '(opens in a new tab)') }}</span></a>
+							</p>
 
-						<NcEmptyContent v-if="scoreStatus === 'loading'" :name="t('notenarchiv', 'Loading the score …')">
-							<template #icon>
-								<NcLoadingIcon :size="64" />
-							</template>
-						</NcEmptyContent>
-						<NcEmptyContent v-else-if="scoreStatus === 'error'"
-							:name="t('notenarchiv', 'The score cannot be shown')"
-							:description="scoreError">
-							<template #icon>
-								<NcIconSvgWrapper :path="mdiAlertCircleOutline" />
-							</template>
-							<template #action>
-								<NcButton @click="loadSelectedScore">
-									{{ t('notenarchiv', 'Try again') }}
-								</NcButton>
-							</template>
-						</NcEmptyContent>
-						<ExcerptViewer v-else-if="scoreStatus === 'ready'"
-							:key="selected.token"
-							:xml="scoreXml"
-							:title="selected.title"
-							:composer="selected.composer"
-							:measure-from="selected.measure_from"
-							:measure-to="selected.measure_to"
-							:voice="selected.voice"
-							:verse="selected.verse"
-							:tempo="selected.tempo"
-							:can-play="selected.canPlay"
-							:play-reason="selected.reason"
-							:export-audio="selected.canExportAudio ? exportAudio : null" />
-					</section>
-					<p v-else class="member-app__muted">
-						{{ t('notenarchiv', 'Choose a piece from the list to see and hear it.') }}
-					</p>
-
-					<section class="member-app__list" :aria-labelledby="listHeadingId">
-						<h3 :id="listHeadingId" class="member-app__list-title">
-							{{ n('notenarchiv', '%n shared link', '%n shared links', links.length) }}
-						</h3>
-						<ul class="member-app__items">
-							<li v-for="link in links"
-								:key="link.token"
-								class="member-app__item"
-								:class="{ 'member-app__item--selected': link.token === selectedToken }">
-								<button type="button"
-									class="member-app__open"
-									:aria-current="link.token === selectedToken ? 'true' : undefined"
-									@click="select(link)">
-									{{ link.title }}
-								</button>
-								<p v-if="link.composer" class="member-app__muted">
-									{{ link.composer }}
-								</p>
-								<p>{{ place(link) }}</p>
-								<p v-if="link.note" class="member-app__note-text">
-									{{ t('notenarchiv', 'Note: {note}', { note: link.note }) }}
-								</p>
-								<p class="member-app__muted">
-									<template v-if="link.expires">
-										{{ t('notenarchiv', 'Valid until {date}', { date: formatDate(link.expires) }) }} ·
-									</template>
-									{{ link.canPlay ? t('notenarchiv', 'Playback: yes') : t('notenarchiv', 'Playback: no') }}
-									<template v-if="link.canExportAudio">
-										· {{ t('notenarchiv', 'Practice files: yes') }}
-									</template>
-									<template v-if="link.scan">
-										· {{ t('notenarchiv', 'with scan (PDF)') }}
-									</template>
-								</p>
-							</li>
-						</ul>
-					</section>
+							<NcEmptyContent v-if="scoreStatus === 'loading'" :name="t('notenarchiv', 'Loading the score …')">
+								<template #icon>
+									<NcLoadingIcon :size="64" />
+								</template>
+							</NcEmptyContent>
+							<NcEmptyContent v-else-if="scoreStatus === 'error'"
+								:name="t('notenarchiv', 'The score cannot be shown')"
+								:description="scoreError">
+								<template #icon>
+									<NcIconSvgWrapper :path="mdiAlertCircleOutline" />
+								</template>
+								<template #action>
+									<NcButton @click="loadSelectedScore">
+										{{ t('notenarchiv', 'Try again') }}
+									</NcButton>
+								</template>
+							</NcEmptyContent>
+							<ExcerptViewer v-else-if="scoreStatus === 'ready'"
+								:key="selected.token"
+								:xml="scoreXml"
+								:title="selected.title"
+								:composer="selected.composer"
+								:measure-from="selected.measure_from"
+								:measure-to="selected.measure_to"
+								:voice="selected.voice"
+								:verse="selected.verse"
+								:tempo="selected.tempo"
+								:can-play="selected.canPlay"
+								:play-reason="selected.reason"
+								:export-audio="selected.canExportAudio ? exportAudio : null" />
+						</section>
+						<p v-else class="member-app__muted">
+							{{ t('notenarchiv', 'Choose a piece from the list to see and hear it.') }}
+						</p>
+					</div>
 				</template>
 			</div>
 		</NcAppContent>
@@ -293,12 +298,36 @@ onMounted(() => {
 	max-width: 80ch;
 }
 
+.member-app__layout {
+	display: flex;
+	flex-direction: column;
+	gap: calc(3 * var(--default-grid-baseline));
+}
+
 .member-app__excerpt {
 	display: flex;
 	flex-direction: column;
 	gap: var(--default-grid-baseline);
+	min-width: 0;
+}
+
+.member-app__list {
 	padding-bottom: calc(3 * var(--default-grid-baseline));
 	border-bottom: 1px solid var(--color-border);
+}
+
+/* Wide screens: the list beside the notes */
+@media (min-width: 1024px) {
+	.member-app__layout {
+		display: grid;
+		grid-template-columns: minmax(16rem, 22rem) minmax(0, 1fr);
+		align-items: start;
+	}
+
+	.member-app__list {
+		padding-bottom: 0;
+		border-bottom: none;
+	}
 }
 
 .member-app__excerpt-title,

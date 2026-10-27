@@ -117,6 +117,13 @@ All notable changes to this app are documented in this file. The format follows
   again with the request ID for the Nextcloud log, instead of "HTTP 500".
   The inventory names the rows it could not record (shelf mark and reason)
   and records nothing until they are corrected.
+- **Focus of the sidebar:** opened from a row or a link, the focus moves to
+  the name of the copy in the sidebar; closing it takes the focus back to
+  the row.
+- **On the phone:** the page "Shared with me" shows the list before the
+  notes (on wide screens beside them); the score views remember the size
+  of the notes in the browser; the score view of the archive shows only
+  play and stop above the notes until "Measures, voice and size" is chosen.
 - Excerpts and whole pieces for choir members and the public no longer
   carry the encoder, the miscellaneous fields, XML comments or processing
   instructions of the MusicXML file.

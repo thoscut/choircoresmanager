@@ -82,6 +82,7 @@ import { sanitizeSvg } from '../score/sanitize.ts'
 import { measureStarts, nextPass, noteStarts } from '../score/timeline.ts'
 import { createToolkit } from '../score/toolkit.ts'
 import { voiceLabel } from '../score/voices.ts'
+import { nextZoom, storedZoom, storeZoom, ZOOM_DEFAULT, ZOOM_STEPS } from '../score/zoom.ts'
 import { copyText } from '../clipboard.ts'
 import { focusAfterDialog } from '../focus.ts'
 import { referenceWords } from '../labels.ts'
@@ -113,10 +114,6 @@ const emit = defineEmits<{
 	/** a task or link was created */
 	changed: []
 }>()
-
-/** Verovio scale per zoom step; ZOOM_DEFAULT is shown as 100 %. */
-const ZOOM_STEPS = [16, 20, 24, 28, 32, 36, 40, 46, 52, 60, 70, 80]
-const ZOOM_DEFAULT = 6
 
 const headingId = useId()
 const summaryId = useId()
@@ -529,7 +526,7 @@ const scanName = computed(() => scans.value.find((file) => file.id === scanFileI
 
 // ---- layout and rendering ---------------------------------------------------
 
-const zoomIndex = ref(ZOOM_DEFAULT)
+const zoomIndex = ref(storedZoom())
 const zoomPercent = computed(() => Math.round(ZOOM_STEPS[zoomIndex.value] / ZOOM_STEPS[ZOOM_DEFAULT] * 100))
 
 /** Render the current range at the current width and zoom. */
@@ -562,9 +559,10 @@ function layout(): void {
  * @param step - +1 bigger, -1 smaller
  */
 function zoomBy(step: number): void {
-	const next = Math.min(ZOOM_STEPS.length - 1, Math.max(0, zoomIndex.value + step))
+	const next = nextZoom(zoomIndex.value, step)
 	if (next !== zoomIndex.value) {
 		zoomIndex.value = next
+		storeZoom(next)
 		layout()
 	}
 }
@@ -740,6 +738,19 @@ const playing = ref(false)
 const settingsShown = ref(false)
 /** The actions for the shown passage (text reference, link, task) */
 const placeShown = ref(false)
+/**
+ * On a phone the bars of playback, measures and voice are behind a button,
+ * so that the notes start right below play and stop (milestone 0.12).
+ */
+const NARROW = '(max-width: 600px)'
+const narrowQuery = typeof window.matchMedia === 'function' ? window.matchMedia(NARROW) : null
+const narrow = ref(narrowQuery?.matches ?? false)
+const controlsShown = ref(false)
+const controlsId = useId()
+
+function onNarrowChange(event: MediaQueryListEvent): void {
+	narrow.value = event.matches
+}
 const mode = ref<PlayMode>('all')
 const repeats = ref(true)
 const follow = ref(true)
@@ -1236,6 +1247,7 @@ function onKeydown(event: KeyboardEvent): void {
 onMounted(() => {
 	load()
 	loadReview()
+	narrowQuery?.addEventListener('change', onNarrowChange)
 })
 
 // Lay out again when the width changes (window, phone rotation)
@@ -1250,6 +1262,7 @@ watch(scoreElement, (element) => {
 
 onBeforeUnmount(() => {
 	disposed = true
+	narrowQuery?.removeEventListener('change', onNarrowChange)
 	resizeObserver?.disconnect()
 	if (resizeTimer !== null) {
 		clearTimeout(resizeTimer)
@@ -1275,7 +1288,7 @@ onBeforeUnmount(() => {
 				</h2>
 				<p v-if="composer || score" class="score-viewer__subtitle">
 					<span v-if="composer">{{ composer }}</span>
-					<span v-if="score" class="score-viewer__file">{{ t('notenarchiv', 'File: {name}', { name: score.fileName }) }}</span>
+					<span v-if="score" class="score-viewer__file score-viewer__file-name">{{ t('notenarchiv', 'File: {name}', { name: score.fileName }) }}</span>
 					<span v-if="versionLineText" class="score-viewer__file">{{ versionLineText }}</span>
 				</p>
 				<div class="score-viewer__state">
@@ -1354,9 +1367,20 @@ onBeforeUnmount(() => {
 						{{ t('notenarchiv', 'Stop') }}
 					</NcButton>
 				</div>
+				<NcButton v-if="narrow"
+					class="score-viewer__controls-toggle"
+					variant="secondary"
+					:aria-expanded="controlsShown ? 'true' : 'false'"
+					:aria-controls="controlsId"
+					@click="controlsShown = !controlsShown">
+					<template #icon>
+						<NcIconSvgWrapper :path="controlsShown ? mdiChevronUp : mdiTuneVariant" />
+					</template>
+					{{ t('notenarchiv', 'Measures, voice and size') }}
+				</NcButton>
 				<!-- Three compact bars, so that the score itself starts high up:
 				     playback, then measures and voice, then review and scan -->
-				<div class="score-viewer__controls">
+				<div v-show="!narrow || controlsShown" :id="controlsId" class="score-viewer__controls">
 					<section v-if="canPlay"
 						class="score-viewer__bar"
 						:aria-label="t('notenarchiv', 'Playback')">
@@ -1726,6 +1750,10 @@ onBeforeUnmount(() => {
 	overflow-wrap: anywhere;
 }
 
+.score-viewer__controls-toggle {
+	align-self: flex-start;
+}
+
 .score-viewer__subtitle {
 	display: flex;
 	flex-wrap: wrap;
@@ -2072,6 +2100,11 @@ onBeforeUnmount(() => {
 @media (max-width: 512px) {
 	.score-viewer {
 		padding: calc(2 * var(--default-grid-baseline));
+	}
+
+	/* the file name is in the tab Files; the version line stays */
+	.score-viewer__file-name {
+		display: none;
 	}
 
 	.score-viewer__slider,
