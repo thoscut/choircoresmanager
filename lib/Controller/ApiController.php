@@ -185,6 +185,18 @@ class ApiController extends Controller {
 	}
 
 	/**
+	 * Whether a file sync is running, and the counts of the last one.
+	 */
+	#[NoAdminRequired]
+	#[FrontpageRoute(verb: 'GET', url: '/api/file-sync')]
+	public function fileSyncStatus(): JSONResponse {
+		return $this->run(function (string $uid) {
+			$this->roles->requireRole($uid, [Roles::LIBRARIAN]);
+			return $this->fileSync->status();
+		});
+	}
+
+	/**
 	 * Plain download link, therefore without CSRF token. Read-only.
 	 */
 	#[NoAdminRequired]

@@ -9,7 +9,7 @@
  * list of persons, sync files with the archive folder, export, backup and
  * restore.
  */
-import type { FileSyncReport, ImportReport as ImportReportData } from '../types.ts'
+import type { FileSyncReport, FileSyncStatus, ImportReport as ImportReportData } from '../types.ts'
 
 import {
 	mdiDownload,
@@ -21,7 +21,7 @@ import {
 } from '@mdi/js'
 import { FilePickerClosed, FilePickerType, getFilePickerBuilder, showError, showSuccess } from '@nextcloud/dialogs'
 import { t } from '../l10n.ts'
-import { computed, ref, useTemplateRef } from 'vue'
+import { computed, onMounted, ref, useTemplateRef } from 'vue'
 import NcButton from '@nextcloud/vue/components/NcButton'
 import NcDialog from '@nextcloud/vue/components/NcDialog'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
@@ -32,7 +32,8 @@ import FileSyncReportView from './FileSyncReport.vue'
 import ImportReport from './ImportReport.vue'
 import PerformanceImport from './PerformanceImport.vue'
 import PersonImport from './PersonImport.vue'
-import { adminSettingsUrl, errorMessage, exportUrl, runFileSync, runImport, storeBackup, storeExport } from '../api.ts'
+import { adminSettingsUrl, errorMessage, exportUrl, fetchFileSyncStatus, runFileSync, runImport, storeBackup, storeExport } from '../api.ts'
+import { formatDateTime } from '../format.ts'
 import { focusAfterDialog, focusAfterUpdate } from '../focus.ts'
 import {
 	archiveDialogOpen,
@@ -139,6 +140,21 @@ function resetImport(): void {
 const syncReport = ref<FileSyncReport | null>(null)
 const syncBusy = ref(false)
 const syncError = ref('')
+const syncStatus = ref<FileSyncStatus | null>(null)
+
+/** A sync started elsewhere (another page, occ) is running */
+const syncRunning = computed(() => syncStatus.value?.running !== null && syncStatus.value?.running !== undefined)
+
+async function loadSyncStatus(): Promise<void> {
+	try {
+		syncStatus.value = await fetchFileSyncStatus()
+	} catch {
+		// The status is only a hint; the sync itself reports its errors.
+		syncStatus.value = null
+	}
+}
+
+onMounted(loadSyncStatus)
 
 async function doFileSync(): Promise<void> {
 	syncBusy.value = true
@@ -152,6 +168,7 @@ async function doFileSync(): Promise<void> {
 	} finally {
 		syncBusy.value = false
 	}
+	await loadSyncStatus()
 	await focusAfterUpdate(() => (syncError.value === '' ? syncSection.value?.querySelector('.file-sync-report .notecard') : syncButton.value))
 }
 
@@ -305,14 +322,29 @@ function onUpdateOpen(open: boolean): void {
 				{{ t('notenarchiv', 'Links the files in the archive folder to the copies. A file belongs to a copy if its name starts with the shelf mark, e.g. "6-08_Title.pdf" belongs to 6-8. Files are only read, never changed.') }}
 			</p>
 			<div class="archive-management__actions">
-				<NcButton ref="syncButton" :disabled="syncBusy || !hasArchiveFolder" @click="doFileSync">
+				<NcButton ref="syncButton" :disabled="syncBusy || syncRunning || !hasArchiveFolder" @click="doFileSync">
 					<template #icon>
 						<NcLoadingIcon v-if="syncBusy" />
 						<NcIconSvgWrapper v-else :path="mdiFileSyncOutline" />
 					</template>
 					{{ t('notenarchiv', 'Run file sync') }}
 				</NcButton>
+				<NcButton v-if="syncRunning" variant="tertiary" @click="loadSyncStatus">
+					{{ t('notenarchiv', 'Check again') }}
+				</NcButton>
 			</div>
+			<NcNoteCard v-if="syncRunning && !syncBusy && syncStatus?.running" type="info">
+				{{ t('notenarchiv', 'A file sync has been running since {time}. Its report appears here when it has finished.', { time: formatDateTime(syncStatus.running.since) }) }}
+			</NcNoteCard>
+			<p v-else-if="syncStatus?.last && !syncReport" class="archive-management__muted">
+				{{ t('notenarchiv', 'Last file sync: {time}, {files} files, {new} new, {changed} changed, {missing} not found.', {
+					time: formatDateTime(syncStatus.last.time),
+					files: syncStatus.last.files,
+					new: syncStatus.last.new,
+					changed: syncStatus.last.changed,
+					missing: syncStatus.last.missing,
+				}) }}
+			</p>
 			<NcNoteCard v-if="syncError" type="error">
 				{{ syncError }}
 			</NcNoteCard>

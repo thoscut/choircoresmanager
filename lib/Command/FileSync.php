@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\Notenarchiv\Command;
 
+use OCA\Notenarchiv\Exception\RunInProgressException;
 use OCA\Notenarchiv\Service\FileSyncService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -31,7 +32,12 @@ class FileSync extends Command {
 
 	#[\Override]
 	protected function execute(InputInterface $input, OutputInterface $output): int {
-		$report = $this->fileSync->sync((string)$input->getArgument('user'));
+		try {
+			$report = $this->fileSync->sync((string)$input->getArgument('user'));
+		} catch (RunInProgressException $e) {
+			$output->writeln('<error>' . $e->getMessage() . '</error>');
+			return 1;
+		}
 		$output->writeln((string)json_encode($report, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
 		return 0;
 	}

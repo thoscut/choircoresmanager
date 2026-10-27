@@ -682,6 +682,18 @@ export interface FileSyncReports {
 	switchedOff: boolean
 }
 
+/** A run in progress (file sync, print station, annual snapshot): since when and by whom; null by: a background job */
+export interface RunState {
+	since: number
+	by: string | null
+}
+
+/** The file sync in progress and the counts of the last one */
+export interface FileSyncStatus {
+	running: RunState | null
+	last: { time: number, by: string | null, files: number, new: number, changed: number, missing: number } | null
+}
+
 export interface FileSyncReport {
 	files: number
 	assigned: number

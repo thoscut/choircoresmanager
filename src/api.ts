@@ -33,6 +33,7 @@ import type {
 	FieldMap,
 	FieldValue,
 	FileSyncReport,
+	FileSyncStatus,
 	GroupOption,
 	ImportReport,
 	Inventory,
@@ -360,6 +361,14 @@ export async function runImport(fileId: number, dryRun: boolean): Promise<Import
 
 export async function runFileSync(): Promise<FileSyncReport> {
 	const { data } = await axios.post<FileSyncReport>(apiUrl('/file-sync'))
+	return data
+}
+
+/**
+ * Whether a file sync is running, and the counts of the last one.
+ */
+export async function fetchFileSyncStatus(): Promise<FileSyncStatus> {
+	const { data } = await axios.get<FileSyncStatus>(apiUrl('/file-sync'))
 	return data
 }
 

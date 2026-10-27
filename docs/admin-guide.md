@@ -538,7 +538,7 @@ commands are a convenience for self-hosted instances:
 | `occ notenarchiv:setup <account> [<folder>] [--role role=groups]` | sets the archive folder and the role groups; with an archive folder it names the accounts of the role groups that cannot open it |
 | `occ notenarchiv:import <account> <file> [--execute]` | imports the catalog CSV; a dry run unless `--execute` is given |
 | `occ notenarchiv:export [--extended] [--full]` | writes the catalog CSV, all fields, or the complete backup (JSON) to standard output |
-| `occ notenarchiv:file-sync <account>` | runs the file sync |
+| `occ notenarchiv:file-sync <account>` | runs the file sync; refused (exit code 1) while another one is running |
 | `occ notenarchiv:restore <file> [<account>]` | restores a complete backup into an empty catalog |
 | `occ notenarchiv:modules list\|enable\|disable\|preset` | shows and switches the modules (section 12) |
 
@@ -985,6 +985,23 @@ für Exporte im Archivordner.*)
   administrator choose the folder again with an account that has. Backups
   go into the backup folder of that account (section 5), which it must be
   allowed to create in its files.
+
+### A run is already in progress
+
+*"A file sync is already running."* (*Ein Dateiabgleich läuft bereits.*),
+the same for the print station or an annual snapshot
+
+- **Cause:** the file sync, the sync of the print station and the annual
+  snapshot never run twice at the same time, whether they were started in
+  the app, with `occ` or by a background job. The app uses the file locking
+  of Nextcloud for this (`filelocking.enabled`, on by default; with Redis as
+  `memcache.locking` the lock lives there). A run started in the app keeps
+  going when the page is closed; **Archive management → File sync** shows
+  since when a sync is running and, afterwards, the counts of the last one.
+- **To do:** wait until the other run has finished and start again. A run
+  that was cut off (server restart) gives its lock back after the lock
+  lifetime of Nextcloud, at most an hour. The background jobs skip their run
+  while one started by hand is in progress and try again later.
 
 ### No access to the music archive
 

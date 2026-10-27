@@ -90,6 +90,7 @@ class AnnualSnapshotService {
 		private IAppConfig $appConfig,
 		private ITimeFactory $time,
 		private IDateTimeZone $timeZone,
+		private RunLock $runLock,
 	) {
 	}
 
@@ -97,7 +98,7 @@ class AnnualSnapshotService {
 	 * The snapshots (newest first), the setting, the last error of the
 	 * automatic snapshot and what a new snapshot would write where.
 	 *
-	 * @return array{snapshots: list<Snapshot>, auto: bool, lastError: ?array{message: string, parameters: list<string>}, next: array{year: int, folder: string, files: list<string>, archiveFiles: int, bytes: int, exists: bool}}
+	 * @return array{snapshots: list<Snapshot>, auto: bool, lastError: ?array{message: string, parameters: list<string>}, running: array{since: int, by: string|null}|null, next: array{year: int, folder: string, files: list<string>, archiveFiles: int, bytes: int, exists: bool}}
 	 */
 	public function overview(string $uid): array {
 		$this->roles->requireAccess($uid);
@@ -113,6 +114,7 @@ class AnnualSnapshotService {
 			'snapshots' => $snapshots,
 			'auto' => $this->isAuto(),
 			'lastError' => $this->lastError(),
+			'running' => $this->runLock->state(RunLock::ANNUAL_SNAPSHOT),
 			'next' => [
 				'year' => $year,
 				'folder' => $this->folderPath(),
@@ -142,6 +144,26 @@ class AnnualSnapshotService {
 	 * @return array{name: string, folder: string, files: list<string>, manifest: array{files: int, bytes: int, missing: int}}
 	 */
 	public function create(string $uid, int $year, string $occasion): array {
+		return $this->runLock->run(RunLock::ANNUAL_SNAPSHOT, $uid, fn (): array => $this->write($uid, $year, $occasion));
+	}
+
+	/**
+	 * The snapshot at the turn of the year (background job), unless the year
+	 * already has one; checked while holding the lock, so two jobs never
+	 * write the same year.
+	 *
+	 * @return array{name: string, folder: string, files: list<string>, manifest: array{files: int, bytes: int, missing: int}}|null
+	 */
+	public function createAtTurnOfYear(string $uid, int $year): ?array {
+		return $this->runLock->run(RunLock::ANNUAL_SNAPSHOT, null,
+			fn (): ?array => $this->hasYear($year) ? null : $this->write($uid, $year, self::TURN_OF_YEAR));
+	}
+
+	/**
+	 * @param self::MANUAL|self::TURN_OF_YEAR $occasion
+	 * @return array{name: string, folder: string, files: list<string>, manifest: array{files: int, bytes: int, missing: int}}
+	 */
+	private function write(string $uid, int $year, string $occasion): array {
 		$parent = $this->writableFolder();
 		$archive = $this->settings->archiveFolder($this->settings->archiveInfo()['user']);
 		$now = $this->time->getDateTime('now', $this->timeZone->getTimeZone(false, $uid));

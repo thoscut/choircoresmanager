@@ -35,6 +35,13 @@ All notable changes to this app are documented in this file. The format follows
   and the archive folder are in the audit log.
 - The administration guide names the trash bin and the file versions of
   Nextcloud, which keep deleted backups.
+- **Runs never twice at the same time:** the file sync, the sync of the
+  print station and the annual snapshot are refused (409) while the same
+  run is in progress, whether it came from the app, `occ` or a background
+  job; the jobs skip and try again later. A run started in the app keeps
+  going when the page is closed. Archive management shows a running file
+  sync and the counts of the last one.
+- The file sync only writes the rows of files that changed.
 
 ### Fixed
 
@@ -48,6 +55,8 @@ All notable changes to this app are documented in this file. The format follows
   whole size limit at once; the file is read in blocks.
 - The documentation checks also run when only documentation changed (own
   workflow `Docs`).
+- The integration job builds the PHP image extension `gd` with FreeType,
+  which Nextcloud needs to draw the avatar of a new account.
 
 ## [0.9.1] - 2026-10-23
 

@@ -13,6 +13,7 @@ use OCA\Notenarchiv\Exception\AccessDeniedException;
 use OCA\Notenarchiv\Exception\ModuleDisabledException;
 use OCA\Notenarchiv\Exception\NotFoundException;
 use OCA\Notenarchiv\Exception\NotSharedException;
+use OCA\Notenarchiv\Exception\RunInProgressException;
 use OCA\Notenarchiv\Exception\UnknownLinkException;
 use OCA\Notenarchiv\Exception\UserFacingException;
 use OCP\AppFramework\Http;
@@ -56,13 +57,15 @@ trait RunsActions {
 
 	/**
 	 * `{ error }` with 403 for a refused permission, 404 for something not
-	 * there (or not for this account), 400 otherwise. A file or folder that is
+	 * there (or not for this account), 409 for a run already in progress,
+	 * 400 otherwise. A file or folder that is
 	 * not shared with the account adds `reason: "not_shared"`.
 	 */
 	private function errorResponse(UserFacingException $e): JSONResponse {
 		$status = match (true) {
 			$e instanceof AccessDeniedException => Http::STATUS_FORBIDDEN,
 			$e instanceof NotFoundException => Http::STATUS_NOT_FOUND,
+			$e instanceof RunInProgressException => Http::STATUS_CONFLICT,
 			default => Http::STATUS_BAD_REQUEST,
 		};
 		$data = ['error' => $this->translate($e->getMessage(), $e->getParameters())];

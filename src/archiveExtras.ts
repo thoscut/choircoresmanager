@@ -10,6 +10,8 @@
  * requests are in archiveExtrasApi.ts. See docs/api.md.
  */
 
+import type { RunState } from './types.ts'
+
 // ---- gaps in the shelf marks ----------------------------------------------------
 
 /** One binder of `GET /api/inventory/gaps`. */
@@ -54,6 +56,8 @@ export interface SnapshotOverview {
 	auto: boolean
 	/** translated message of the last failed automatic snapshot */
 	lastError: string | null
+	/** a snapshot being made at this moment */
+	running?: RunState | null
 	/** what a new snapshot writes where */
 	next: {
 		year: number

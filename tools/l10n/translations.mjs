@@ -2839,6 +2839,23 @@ export const singular = {
 	'The archive folder is the whole of the files of the account %s, so the backups would lie inside it. An administrator chooses a sub folder as archive folder.': 'Der Archivordner umfasst alle Dateien des Kontos %s, die Sicherungen lägen also darin. Die Administration wählt einen Unterordner als Archivordner.',
 	'The account %s may not create the backup folder in its files.': 'Das Konto %s darf in seinen Dateien keinen Sicherungsordner anlegen.',
 	'Only an administrator can switch on the modules that open the archive to agents, choir members, the public or the print station.': 'Nur die Administration kann die Module einschalten, die das Archiv für Agenten, Chormitglieder, die Öffentlichkeit oder die Druckstation öffnen.',
+	// ---- 0.10: runs never twice at the same time ----
+	'A file sync is already running. Wait until it has finished; the page shows its report afterwards.': [
+		'Ein Dateiabgleich läuft bereits. Warte, bis er fertig ist; danach zeigt die Seite seinen Bericht.',
+		'Ein Dateiabgleich läuft bereits. Warten Sie, bis er fertig ist; danach zeigt die Seite seinen Bericht.',
+	],
+	'The print station is already being synced. Wait until that run has finished.': [
+		'Die Druckstation wird gerade abgeglichen. Warte, bis dieser Lauf fertig ist.',
+		'Die Druckstation wird gerade abgeglichen. Warten Sie, bis dieser Lauf fertig ist.',
+	],
+	'An annual snapshot is already being made. Wait until it has finished.': [
+		'Gerade wird ein Jahresstand angelegt. Warte, bis er fertig ist.',
+		'Gerade wird ein Jahresstand angelegt. Warten Sie, bis er fertig ist.',
+	],
+	'Check again': 'Erneut prüfen',
+	'A file sync has been running since {time}. Its report appears here when it has finished.': 'Seit {time} läuft ein Dateiabgleich. Sein Bericht erscheint hier, wenn er fertig ist.',
+	'Last file sync: {time}, {files} files, {new} new, {changed} changed, {missing} not found.': 'Letzter Dateiabgleich: {time}, {files} Dateien, {new} neu, {changed} geändert, {missing} nicht gefunden.',
+	'A snapshot has been in the making since {time}.': 'Seit {time} wird ein Jahresstand angelegt.',
 }
 
 export const plural = {

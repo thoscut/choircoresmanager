@@ -20,6 +20,7 @@ use OCA\Notenarchiv\Db\Work;
 use OCA\Notenarchiv\Db\WorkMapper;
 use OCA\Notenarchiv\Db\WorkVersion;
 use OCA\Notenarchiv\Db\WorkVersionMapper;
+use OCA\Notenarchiv\Exception\RunInProgressException;
 use OCA\Notenarchiv\Service\AnnualSnapshotService;
 use OCA\Notenarchiv\Service\AppSettings;
 use OCA\Notenarchiv\Service\ChecksumService;
@@ -198,7 +199,7 @@ final class JobsTest extends TestCase {
 		$snapshots = $this->createMock(AnnualSnapshotService::class);
 		$snapshots->method('isAuto')->willReturn(true);
 		$snapshots->method('hasYear')->willReturnOnConsecutiveCalls(false, true);
-		$snapshots->expects(self::once())->method('create')->with('lena', 2026, AnnualSnapshotService::TURN_OF_YEAR)
+		$snapshots->expects(self::once())->method('createAtTurnOfYear')->with('lena', 2026)
 			->willReturn(['name' => '2026_20270101-010000', 'folder' => 'x', 'files' => [], 'manifest' => ['files' => 0, 'bytes' => 0, 'missing' => 0]]);
 		$job = $this->annualJob([], $snapshots, '2027-01-01');
 		self::runJob($job);
@@ -209,13 +210,13 @@ final class JobsTest extends TestCase {
 		$snapshots = $this->createMock(AnnualSnapshotService::class);
 		$snapshots->method('isAuto')->willReturn(true);
 		$snapshots->method('hasYear')->willReturn(false);
-		$snapshots->expects(self::never())->method('create');
+		$snapshots->expects(self::never())->method('createAtTurnOfYear');
 		self::runJob($this->annualJob([], $snapshots, '2026-10-22'));
 		self::runJob($this->annualJob([Modules::ANNUAL_SNAPSHOT], $snapshots, '2027-01-02'));
 
 		$off = $this->createMock(AnnualSnapshotService::class);
 		$off->method('isAuto')->willReturn(false);
-		$off->expects(self::never())->method('create');
+		$off->expects(self::never())->method('createAtTurnOfYear');
 		self::runJob($this->annualJob([], $off, '2027-01-02'));
 	}
 
@@ -223,9 +224,18 @@ final class JobsTest extends TestCase {
 		$snapshots = $this->createMock(AnnualSnapshotService::class);
 		$snapshots->method('isAuto')->willReturn(true);
 		$snapshots->method('hasYear')->willReturn(false);
-		$snapshots->method('create')->willThrowException(new \RuntimeException('disk full'));
+		$snapshots->method('createAtTurnOfYear')->willThrowException(new \RuntimeException('disk full'));
 		$snapshots->expects(self::once())->method('setLastError')
 			->with(self::stringStartsWith('The automatic snapshot failed.'), []);
+		self::runJob($this->annualJob([], $snapshots, '2027-01-03'));
+	}
+
+	public function testTheAnnualSnapshotWaitsWhileOneIsMadeByHand(): void {
+		$snapshots = $this->createMock(AnnualSnapshotService::class);
+		$snapshots->method('isAuto')->willReturn(true);
+		$snapshots->method('hasYear')->willReturn(false);
+		$snapshots->method('createAtTurnOfYear')->willThrowException(new RunInProgressException('An annual snapshot is already being made. Wait until it has finished.'));
+		$snapshots->expects(self::never())->method('setLastError');
 		self::runJob($this->annualJob([], $snapshots, '2027-01-03'));
 	}
 

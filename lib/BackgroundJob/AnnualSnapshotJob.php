@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\Notenarchiv\BackgroundJob;
 
 use OCA\Notenarchiv\Exception\InvalidInputException;
+use OCA\Notenarchiv\Exception\RunInProgressException;
 use OCA\Notenarchiv\Exception\UserFacingException;
 use OCA\Notenarchiv\Service\AnnualSnapshotService;
 use OCA\Notenarchiv\Service\AppSettings;
@@ -60,9 +61,15 @@ class AnnualSnapshotJob extends TimedJob {
 			if ($this->snapshots->hasYear($year)) {
 				return;
 			}
-			$result = $this->snapshots->create($uid, $year, AnnualSnapshotService::TURN_OF_YEAR);
+			$result = $this->snapshots->createAtTurnOfYear($uid, $year);
+			if ($result === null) {
+				return;
+			}
 			$this->snapshots->setLastError(null);
 			$this->logger->info('Notenarchiv: annual snapshot ' . $result['name'] . ' stored');
+		} catch (RunInProgressException) {
+			// A snapshot by hand is being made; the job checks again in six hours.
+			return;
 		} catch (\Throwable $e) {
 			$this->logger->error('Notenarchiv: annual snapshot failed: ' . $e->getMessage(), ['exception' => $e]);
 			// Only messages meant for users are shown; internal details stay in the log.

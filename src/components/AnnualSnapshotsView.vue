@@ -28,7 +28,7 @@ import ViewHeader from './ViewHeader.vue'
 import { errorMessage } from '../api.ts'
 import { defaultPair, differenceCount } from '../archiveExtras.ts'
 import { compareSnapshots, createSnapshot, fetchSnapshots, setSnapshotAuto } from '../archiveExtrasApi.ts'
-import { displayValue, formatDate, formatSize } from '../format.ts'
+import { displayValue, formatDate, formatDateTime, formatSize } from '../format.ts'
 import { licenseUseLabel } from '../labels.ts'
 import { fieldInfo, fieldLabel, isLibrarian } from '../store.ts'
 
@@ -296,6 +296,9 @@ function licenseChangeLabel(change: 'added' | 'changed' | 'removed'): string {
 				</NcNoteCard>
 				<NcNoteCard v-if="overview.lastError" type="warning" class="no-print">
 					{{ t('notenarchiv', 'The last automatic snapshot failed: {error}', { error: overview.lastError }) }}
+				</NcNoteCard>
+				<NcNoteCard v-if="overview.running" type="info" class="no-print">
+					{{ t('notenarchiv', 'A snapshot has been in the making since {time}.', { time: formatDateTime(overview.running.since) }) }}
 				</NcNoteCard>
 
 				<section v-if="isLibrarian" class="snapshots-view__section no-print" aria-labelledby="snapshots-make">

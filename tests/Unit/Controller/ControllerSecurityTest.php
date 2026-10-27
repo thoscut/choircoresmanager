@@ -73,6 +73,7 @@ use OCA\Notenarchiv\Service\ReviewService;
 use OCA\Notenarchiv\Service\RightsPolicy;
 use OCA\Notenarchiv\Service\RightsService;
 use OCA\Notenarchiv\Service\Roles;
+use OCA\Notenarchiv\Service\RunLock;
 use OCA\Notenarchiv\Service\ScanService;
 use OCA\Notenarchiv\Service\ScoreService;
 use OCA\Notenarchiv\Service\SharedLinkService;
@@ -167,8 +168,8 @@ final class ControllerSecurityTest extends TestCase {
 	private const CORE = [
 		'PageController::index',
 		'ApiController::meta', 'ApiController::entries', 'ApiController::entry', 'ApiController::update',
-		'ApiController::import', 'ApiController::fileSync', 'ApiController::export', 'ApiController::exportStore',
-		'ApiController::audit',
+		'ApiController::import', 'ApiController::fileSync', 'ApiController::fileSyncStatus', 'ApiController::export',
+		'ApiController::exportStore', 'ApiController::audit',
 		'SettingsController::index', 'SettingsController::update', 'SettingsController::groups', 'SettingsController::access',
 		'WorkflowController::backup', 'WorkflowController::fullBackup', 'WorkflowController::restore',
 		'TaskController::due',
@@ -909,7 +910,7 @@ final class ControllerSecurityTest extends TestCase {
 		$service = new AnnualSnapshotService($this->createStub(AppSettings::class), $this->createStub(ExportService::class),
 			$this->createStub(FullBackupService::class), $this->createStub(ArchiveFileMapper::class), $this->createStub(RightsService::class),
 			$roleService, $this->createStub(AuditLog::class), $this->createStub(IAppConfig::class), $this->createStub(ITimeFactory::class),
-			$this->createStub(IDateTimeZone::class));
+			$this->createStub(IDateTimeZone::class), $this->runLock());
 		return new AnnualSnapshotController($this->createStub(IRequest::class), 'carla', $service, $this->l10n(),
 			$this->createStub(LoggerInterface::class));
 	}
@@ -1159,6 +1160,13 @@ final class ControllerSecurityTest extends TestCase {
 		self::assertSame(['error' => 'Unknown field: owner'], $response->getData(), 'unknown fields are refused');
 	}
 
+	/** A lock that is always free */
+	private function runLock(): RunLock {
+		$lock = $this->createStub(RunLock::class);
+		$lock->method('run')->willReturnCallback(fn (string $name, ?string $uid, callable $run): mixed => $run());
+		return $lock;
+	}
+
 	private function printMirrorController(string $uid): PrintMirrorController {
 		$roles = $this->rolesByName();
 		$service = new PrintMirrorService($this->createStub(IAppConfig::class), $this->createStub(IRootFolder::class),
@@ -1166,7 +1174,7 @@ final class ControllerSecurityTest extends TestCase {
 			$this->createStub(CopyMapper::class), $this->createStub(MirrorFileMapper::class), $this->createStub(AuditLog::class), $roles,
 			$this->modulesWithout(), $this->createStub(NotificationService::class), $this->createStub(IFilenameValidator::class),
 			$this->createStub(IUserManager::class), $this->createStub(IFactory::class), $this->createStub(ITimeFactory::class),
-			$this->createStub(IDateTimeZone::class), $this->createStub(LoggerInterface::class));
+			$this->createStub(IDateTimeZone::class), $this->createStub(LoggerInterface::class), $this->runLock());
 		return new PrintMirrorController($this->createStub(IRequest::class), $uid, $roles, $service, $this->l10n(),
 			$this->createStub(LoggerInterface::class));
 	}

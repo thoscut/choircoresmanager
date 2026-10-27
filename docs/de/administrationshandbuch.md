@@ -591,7 +591,7 @@ Erleichterung für selbst betriebene Instanzen:
 | `occ notenarchiv:setup <account> [<folder>] [--role role=groups]` | setzt den Archivordner und die Rollengruppen; mit Archivordner nennt er die Konten der Rollengruppen, die ihn nicht öffnen können |
 | `occ notenarchiv:import <account> <file> [--execute]` | importiert die CSV-Datei des Werkverzeichnisses; ein Probelauf, solange `--execute` fehlt |
 | `occ notenarchiv:export [--extended] [--full]` | schreibt die CSV-Datei des Werkverzeichnisses, alle Felder oder die vollständige Sicherung (JSON) auf die Standardausgabe |
-| `occ notenarchiv:file-sync <account>` | startet den Dateiabgleich |
+| `occ notenarchiv:file-sync <account>` | startet den Dateiabgleich; abgelehnt (Exit-Code 1), solange ein anderer läuft |
 | `occ notenarchiv:restore <file> [<account>]` | stellt eine vollständige Sicherung in ein leeres Werkverzeichnis wieder her |
 | `occ notenarchiv:modules list\|enable\|disable\|preset` | zeigt und schaltet die Module (Abschnitt 12) |
 
@@ -1083,6 +1083,25 @@ exports in the archive folder.*)
   Konto, das ihn hat, neu wählen. Sicherungen gehen in den Sicherungsordner
   dieses Kontos (Abschnitt 5), den es in seinen Dateien anlegen dürfen
   muss.
+
+### Ein Lauf ist schon im Gange
+
+*„Ein Dateiabgleich läuft bereits.“* (*A file sync is already running.*),
+ebenso für die Druckstation oder einen Jahresstand
+
+- **Ursache:** Dateiabgleich, Abgleich der Druckstation und Jahresstand
+  laufen nie doppelt, egal ob sie in der App, mit `occ` oder von einem
+  Hintergrundjob gestartet wurden. Die App nutzt dafür die Dateisperren der
+  Nextcloud (`filelocking.enabled`, standardmäßig an; mit Redis als
+  `memcache.locking` liegt die Sperre dort). Ein in der App gestarteter Lauf
+  läuft weiter, wenn die Seite geschlossen wird; **Archivverwaltung →
+  Dateiabgleich** zeigt, seit wann ein Abgleich läuft, und danach die Zahlen
+  des letzten.
+- **Zu tun:** Warte, bis der andere Lauf fertig ist, und starte erneut. Ein
+  abgebrochener Lauf (Neustart des Servers) gibt seine Sperre nach der
+  Sperrdauer der Nextcloud frei, höchstens nach einer Stunde. Die
+  Hintergrundjobs lassen ihren Lauf aus, solange ein von Hand gestarteter
+  läuft, und versuchen es später wieder.
 
 ### Kein Zugang zum Notenarchiv
 

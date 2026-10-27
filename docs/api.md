@@ -231,6 +231,21 @@ than `active` requires `status_reason` in the same request.
   "unassignable": [], "byType": { "pdf": 40 }, "copiesWithoutFile": [], "skippedFolders": ["_notenarchiv-app"] }
 ```
 
+`changed` counts the rows that were written because a file changed; a sync
+without changes writes no row. While a file sync runs (also one started by
+`occ`), another one is refused with **409** and `{ error }`; the same holds
+for `POST /api/print-mirror/sync` and `POST /api/annual-snapshots`.
+`GET /api/file-sync` (catalog role) tells whether one is running and gives
+the counts of the last one:
+
+```json
+{ "running": { "since": 1793000000, "by": "lena" },
+  "last": { "time": 1792990000, "by": "lena", "files": 128, "new": 0, "changed": 2, "missing": 0 } }
+```
+
+`running` is `null` when no sync runs; `by` is `null` for a background job.
+`GET /api/annual-snapshots` has `running` in the same form.
+
 `files` counts files named after a shelf mark; `ignored` counts other files
 (instructions, lists). `unassignable` lists files whose shelf mark is not in
 the catalog. Paths are relative to the archive folder without a leading slash.

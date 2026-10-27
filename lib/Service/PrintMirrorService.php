@@ -16,6 +16,7 @@ use OCA\Notenarchiv\Db\CopyMapper;
 use OCA\Notenarchiv\Db\MirrorFile;
 use OCA\Notenarchiv\Db\MirrorFileMapper;
 use OCA\Notenarchiv\Exception\InvalidInputException;
+use OCA\Notenarchiv\Exception\RunInProgressException;
 use OCA\Notenarchiv\Exception\UserFacingException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Files\File;
@@ -97,6 +98,7 @@ class PrintMirrorService {
 		private ITimeFactory $time,
 		private IDateTimeZone $timeZone,
 		private LoggerInterface $logger,
+		private RunLock $runLock,
 	) {
 	}
 
@@ -214,6 +216,15 @@ class PrintMirrorService {
 		if ($uid !== null) {
 			$this->requireOperator($uid);
 		}
+		// The preview only reads; a real sync never runs twice at the same time.
+		return $dryRun ? $this->syncNow($uid, true)
+			: $this->runLock->run(RunLock::PRINT_MIRROR, $uid, fn (): array => $this->syncNow($uid, false));
+	}
+
+	/**
+	 * @return MirrorReport
+	 */
+	private function syncNow(?string $uid, bool $dryRun): array {
 		$info = $this->info();
 		if ($info['id'] === 0) {
 			throw new InvalidInputException('No target folder has been chosen for the print station yet. An administrator chooses it in the settings of the music archive.');
@@ -318,6 +329,9 @@ class PrintMirrorService {
 		}
 		try {
 			$this->sync(null, false);
+		} catch (RunInProgressException) {
+			// A sync by hand is running at this moment.
+			return;
 		} catch (\Throwable $e) {
 			$this->logger->error('Notenarchiv: sync of the print station failed: ' . $e->getMessage(), ['exception' => $e]);
 			// Only messages meant for users go into the notification.

@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\Notenarchiv\Service;
 
+use OCA\Notenarchiv\AppInfo\Application;
 use OCA\Notenarchiv\Db\ArchiveFile;
 use OCA\Notenarchiv\Db\ArchiveFileMapper;
 use OCA\Notenarchiv\Db\Copy;
@@ -21,6 +22,7 @@ use OCA\Notenarchiv\Exception\UserFacingException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Files\File;
 use OCP\Files\Folder;
+use OCP\IAppConfig;
 use OCP\IDBConnection;
 use OCP\IL10N;
 use Psr\Log\LoggerInterface;
@@ -48,9 +50,15 @@ use Psr\Log\LoggerInterface;
  * While the module "version_states" is active, the score file of each copy
  * becomes a new revision of its version after the sync when it is new or
  * changed (StateService); the first sync records the first revisions.
+ *
+ * Only rows whose file changed are written. A sync never runs twice at the
+ * same time (RunLock); the counts of the last one are kept for the status.
+ *
+ * @psalm-type LastSync = array{time: int, by: string|null, files: int, new: int, changed: int, missing: int}
  */
 class FileSyncService {
 	public const ROLE_REPORT = 'transcription_report';
+	public const LAST_SYNC_KEY = 'last_file_sync';
 
 	public const ROLE_BY_TYPE = [
 		'pdf' => 'score_pdf',
@@ -87,6 +95,8 @@ class FileSyncService {
 		private LoggerInterface $logger,
 		private RightsNoticeService $rightsNotices,
 		private StateService $states,
+		private RunLock $runLock,
+		private IAppConfig $appConfig,
 	) {
 	}
 
@@ -110,8 +120,53 @@ class FileSyncService {
 
 	/**
 	 * @return array<string, mixed> report
+	 * @throws \OCA\Notenarchiv\Exception\RunInProgressException while another sync runs
 	 */
 	public function sync(string $uid): array {
+		return $this->runLock->run(RunLock::FILE_SYNC, $uid, function () use ($uid): array {
+			$report = $this->syncNow($uid);
+			$this->appConfig->setValueString(Application::APP_ID, self::LAST_SYNC_KEY, json_encode([
+				'time' => $this->time->getTime(), 'by' => $uid, 'files' => $report['files'],
+				'new' => $report['new'], 'changed' => $report['changed'], 'missing' => $report['missing'],
+			], JSON_THROW_ON_ERROR));
+			return $report;
+		});
+	}
+
+	/**
+	 * The sync in progress and the counts of the last one.
+	 *
+	 * @return array{running: array{since: int, by: string|null}|null, last: LastSync|null}
+	 */
+	public function status(): array {
+		return [
+			'running' => $this->runLock->state(RunLock::FILE_SYNC),
+			'last' => self::lastSync(json_decode($this->appConfig->getValueString(Application::APP_ID, self::LAST_SYNC_KEY), true)),
+		];
+	}
+
+	/**
+	 * @return LastSync|null
+	 */
+	private static function lastSync(mixed $data): ?array {
+		if (!is_array($data) || !isset($data['time']) || !is_int($data['time'])) {
+			return null;
+		}
+		$count = fn (string $key): int => isset($data[$key]) && is_int($data[$key]) ? $data[$key] : 0;
+		return [
+			'time' => $data['time'],
+			'by' => isset($data['by']) && is_string($data['by']) ? $data['by'] : null,
+			'files' => $count('files'),
+			'new' => $count('new'),
+			'changed' => $count('changed'),
+			'missing' => $count('missing'),
+		];
+	}
+
+	/**
+	 * @return array{files: int, new: int, changed: int, missing: int, ...<string, mixed>}
+	 */
+	private function syncNow(string $uid): array {
 		$archive = $this->settings->archiveFolder($uid);
 		$now = $this->time->getTime();
 		$copies = $this->copies->findAllByShelfmark();
@@ -222,7 +277,6 @@ class FileSyncService {
 				$file->setListed($listed);
 				$file->setMusicxmlValid($version !== null && $version->getMusicxmlValid() === $name);
 				$file->setFound(true);
-				$file->setSyncedAt($now);
 
 				$contentChanged = $isNew || array_intersect(array_keys($file->getUpdatedFields()), ['size', 'mtime', 'etag', 'fileId']) !== [];
 				if ($contentChanged && !$isNew && $file->getRightsReadAt() !== null) {
@@ -230,14 +284,16 @@ class FileSyncService {
 					$file->setRightsNotice(null);
 					$file->setRightsReadAt(null);
 				}
+				// Only rows that changed are written: synced_at says when the row
+				// last changed.
 				if ($isNew) {
+					$file->setSyncedAt($now);
 					$file = $this->files->insert($file);
 					$report['new']++;
-				} else {
-					if (array_diff(array_keys($file->getUpdatedFields()), ['syncedAt']) !== []) {
-						$report['changed']++;
-					}
+				} elseif ($file->getUpdatedFields() !== []) {
+					$file->setSyncedAt($now);
 					$file = $this->files->update($file);
+					$report['changed']++;
 				}
 				if ($isReport) {
 					$reportFiles[] = ['file' => $file, 'node' => $node, 'copy' => $copy, 'path' => $path, 'changed' => $contentChanged];

@@ -50,6 +50,7 @@ use OCA\Notenarchiv\Service\PersonService;
 use OCA\Notenarchiv\Service\ProtectionTerm;
 use OCA\Notenarchiv\Service\ProtectionText;
 use OCA\Notenarchiv\Service\RightsService;
+use OCA\Notenarchiv\Service\RunLock;
 use OCP\IAppConfig;
 use OCP\IDBConnection;
 use OCP\L10N\IFactory;
@@ -249,6 +250,13 @@ try {
 	$assistant->unlinkFile($row->getId(), $uid);
 	Server::get(FileSyncService::class)->sync($uid);
 	$check('after unlinking the name decides again', $fileMapper->findByFileId((int)$linkFile?->getFileId())->getCopyId() === $copyA->getId());
+	$again = Server::get(FileSyncService::class)->sync($uid);
+	$check('a sync without changes writes no row', $again['changed'] === 0 && $again['new'] === 0, json_encode(['changed' => $again['changed']]));
+	$refused = Server::get(RunLock::class)->run(RunLock::FILE_SYNC, $uid,
+		fn () => $throws(fn () => Server::get(FileSyncService::class)->sync($uid)));
+	$check('a second file sync is refused while one runs', is_string($refused) && str_starts_with($refused, 'A file sync is already running.'), (string)$refused);
+	$status = Server::get(FileSyncService::class)->status();
+	$check('the status keeps the last sync and shows no run', $status['running'] === null && $status['last']['by'] === $uid);
 	$assistant->setOpenBinders([$binder, $binder + 1], $uid);
 	$check('a new binder starts at 1', $assistant->next($binder + 1)['proposal']['number'] === 1);
 	$labels = $assistant->labels([$copyA->getId()]);
