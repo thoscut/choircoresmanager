@@ -102,6 +102,10 @@ All notable changes to this app are documented in this file. The format follows
   publishers, imprint and privacy policy of public pages, agents. The guides
   no longer give the scan of a protected print as an example of a
   preservation copy and explain §§ 70 and 71 UrhG more precisely.
+- **Song order like the GEMA music report:** rows with the event first,
+  separate columns for composer, lyricist and arranger (from the register
+  of persons), the new version field "Work number (GEMA)", the rights
+  status; headers in the language of the account.
 - Excerpts and whole pieces for choir members and the public no longer
   carry the encoder, the miscellaneous fields, XML comments or processing
   instructions of the MusicXML file.

@@ -111,6 +111,7 @@ final class Fields {
 			'posthumous_work' => 'Switch on for a work whose protection had already ended when it first appeared or was first performed in public, e.g. a rediscovered manuscript (§ 71 UrhG): whoever first published or performed it has a right for 25 years after the earlier of the two.',
 			'first_published_year' => 'Year in which the edition appeared (§ 70) or in which the work first appeared or was first performed in public (§ 71), e.g. 1998. Needed for both special cases.',
 			'melody_origin' => 'Choose "Traditional" only with evidence, e.g. a folk song collection, and note it under "Notes". Then the protection proposal needs no composer; the arranger still counts.',
+			'society_work_no' => 'The number of the work at the collecting society, e.g. from the GEMA repertoire search. It goes into the song order of a concert.',
 			'text_origin' => 'Choose "Traditional" only with evidence and note it under "Notes", or "Without text" for a version without words. Otherwise the protection proposal needs a lyricist.',
 		],
 	];
@@ -203,7 +204,7 @@ final class Fields {
 			'publication_status' => 32, 'review_status' => 32, 'rule1_status' => 32, 'rule1_checked' => 255,
 			'confirmed_by' => 64, 'confirmed_by_name' => 255, 'confirmed_at' => 10, 'portal_removed_at' => 10,
 			'portal_removed_reason' => 1000, 'valid_reason' => 1000, 'key_signature' => 40, 'scoring' => 200,
-			'language' => 100, 'melody_origin' => 16, 'text_origin' => 16,
+			'language' => 100, 'melody_origin' => 16, 'text_origin' => 16, 'society_work_no' => 32,
 		],
 		self::COPY => [
 			'shelfmark' => 20, 'status' => 20, 'status_reason' => 1000, 'status_since' => 10, 'kind' => 32,
@@ -291,6 +292,7 @@ final class Fields {
 				'rights_confirmed' => self::field(self::TYPE_TEXT, 'Rights confirmed', $readOnly),
 				'portal_since' => self::field(self::TYPE_TEXT, 'In singers\' portal since', $readOnly),
 				'publisher' => self::field(self::TYPE_TEXT, 'Publisher / order no.', $librarian),
+				'society_work_no' => self::field(self::TYPE_TEXT, 'Work number (GEMA)', $librarian),
 				'license' => self::field(self::TYPE_TEXT, 'License', $librarian),
 				'proof_of_purchase' => self::field(self::TYPE_TEXT, 'Proof of purchase', $librarian),
 				'preservation_copy' => self::field(self::TYPE_BOOLEAN, 'Internal preservation copy', $librarian),

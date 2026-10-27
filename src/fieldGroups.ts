@@ -36,6 +36,7 @@ const RIGHTS_ORDER = [
 	'publication',
 	'publication_reason',
 	'publisher',
+	'society_work_no',
 	'license',
 	'proof_of_purchase',
 	'publication_status',

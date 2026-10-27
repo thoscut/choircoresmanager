@@ -106,6 +106,8 @@ use OCP\AppFramework\Db\Entity;
  * @method void setMelodyOrigin(?string $melodyOrigin)
  * @method string|null getTextOrigin()
  * @method void setTextOrigin(?string $textOrigin)
+ * @method string|null getSocietyWorkNo()
+ * @method void setSocietyWorkNo(?string $societyWorkNo)
  * @method int getCreated()
  * @method void setCreated(int $created)
  * @method int getModified()
@@ -161,6 +163,8 @@ class WorkVersion extends Entity implements JsonSerializable {
 	/** Traditional melody or text, or a version without text (milestone 0.11) */
 	protected ?string $melodyOrigin = null;
 	protected ?string $textOrigin = null;
+	/** Number of the work at the collecting society (GEMA), for the song order */
+	protected ?string $societyWorkNo = null;
 	protected int $created = 0;
 	protected int $modified = 0;
 
@@ -174,7 +178,7 @@ class WorkVersion extends Entity implements JsonSerializable {
 			'publicationReason', 'validSince', 'validSetBy', 'validReason', 'confirmedBy', 'confirmedByName',
 			'confirmedAt', 'confirmedReason', 'confirmedEvidence', 'portalRemovedAt', 'portalRemovedReason',
 			'publicationStatus', 'reviewStatus', 'rule1Status', 'rule1Checked', 'keySignature', 'scoring',
-			'language', 'melodyOrigin', 'textOrigin'] as $field) {
+			'language', 'melodyOrigin', 'textOrigin', 'societyWorkNo'] as $field) {
 			$this->addType($field, 'string');
 		}
 		foreach (['preservationCopy', 'scientificEdition', 'posthumousWork'] as $field) {

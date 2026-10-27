@@ -2244,6 +2244,13 @@ export const singular = {
 	"A choir member": "Un miembro del coro",
 	"Holder removed on {date}": "Titular eliminado el {date}",
 	"Before these pages go online: enter the addresses of the imprint and the privacy policy under Administration → Theming. The public pages show them; the privacy policy must name the server logs with IP addresses.": "Antes de que estas páginas se publiquen: indica las direcciones del aviso legal y de la política de privacidad en Administración → Personalización. Las páginas públicas las muestran; la política de privacidad debe mencionar los registros del servidor con direcciones IP.",
+	"Event": "Evento",
+	"Start": "Inicio",
+	"Position": "Posición",
+	"Publisher": "Editorial",
+	"Work number (GEMA)": "Número de obra (GEMA)",
+	"Revision valid since": "Revisión válida desde",
+	"The number of the work at the collecting society, e.g. from the GEMA repertoire search. It goes into the song order of a concert.": "El número de la obra en la entidad de gestión, p. ej. de la búsqueda de repertorio de la GEMA. Figura en el orden de las canciones de un concierto.",
 }
 
 export const plural = {

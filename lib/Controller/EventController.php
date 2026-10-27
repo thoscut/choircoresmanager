@@ -204,7 +204,7 @@ class EventController extends Controller {
 			return new JSONResponse(['error' => $this->l->t('You have no access to the music archive.')], Http::STATUS_FORBIDDEN);
 		}
 		try {
-			$csv = $this->events->songOrderCsv($id, $this->userId);
+			$csv = $this->events->songOrderCsv($id, $this->userId, $this->l);
 		} catch (UserFacingException $e) {
 			$status = $e instanceof AccessDeniedException ? Http::STATUS_FORBIDDEN : Http::STATUS_BAD_REQUEST;
 			return new JSONResponse(['error' => $this->translate($e->getMessage(), $e->getParameters())], $status);

@@ -264,7 +264,7 @@ try {
 	$sung = $events->detail($event->getId(), $uid)['items'][0] ?? [];
 	$check('the revision sung stays when another one becomes current', ($sung['revision'] ?? null) === $latest->getNumber()
 		&& ($sung['revision_sung'] ?? false) === true);
-	$csv = $events->songOrderCsv($event->getId(), $uid);
+	$csv = $events->songOrderCsv($event->getId(), $uid, Server::get(\OCP\L10N\IFactory::class)->get('notenarchiv', 'en'));
 	$check('the song order names the revision', str_contains($csv, 'Revision') && str_contains($csv, ';' . $latest->getNumber() . ";\r\n"),
 		strtok($csv, "\n") ?: '');
 } catch (Throwable $e) {

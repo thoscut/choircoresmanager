@@ -2918,6 +2918,14 @@ export const singular = {
 		'Bevor diese Seiten online gehen: Trage unter Verwaltung → Design die Adressen des Impressums und der Datenschutzerklärung ein. Die öffentlichen Seiten zeigen sie; die Datenschutzerklärung muss die Server-Logs mit IP-Adressen nennen.',
 		'Bevor diese Seiten online gehen: Tragen Sie unter Verwaltung → Design die Adressen des Impressums und der Datenschutzerklärung ein. Die öffentlichen Seiten zeigen sie; die Datenschutzerklärung muss die Server-Logs mit IP-Adressen nennen.',
 	],
+	// ---- 0.11: Liederfolge nach dem Musikfolgebogen ----
+	'Event': 'Veranstaltung',
+	'Start': 'Beginn',
+	'Position': 'Position',
+	'Publisher': 'Verlag',
+	'Work number (GEMA)': 'Werknummer (GEMA)',
+	'Revision valid since': 'Stand gilt seit',
+	'The number of the work at the collecting society, e.g. from the GEMA repertoire search. It goes into the song order of a concert.': 'Die Nummer des Werks bei der Verwertungsgesellschaft, z. B. aus der Repertoiresuche der GEMA. Sie steht in der Liederfolge eines Konzerts.',
 }
 
 export const plural = {

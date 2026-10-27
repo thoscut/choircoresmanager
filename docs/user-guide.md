@@ -889,9 +889,14 @@ notifications stop, and **Reopen concert** takes the cancellation back.
 On or after the date, **Confirm as sung** and tick the pieces that were not
 sung. All other pieces count as documented performances; the repertoire
 figures update by themselves, and the programme can no longer be changed.
-**Song order (CSV)** exports position, shelf mark, title, composer,
-arranger/lyrics, publisher and duration for the collecting society and the
-programme booklet. **Print** offers the programme, the concert binder list
+**Song order (CSV)** is laid out like the music report of GEMA: first the
+event (title, date, start, location), then per piece position, shelf mark,
+title, composer, lyricist, arranger, publisher, the **Work number (GEMA)**
+of the version, the rights status and the duration. Composer, lyricist and
+arranger come from the register of persons, otherwise from the text fields;
+the rights status matters because a public domain melody in a protected
+setting counts only for the arranger. The columns are in the language of
+your account. **Print** offers the programme, the concert binder list
 with columns to tick and the song list, also in large print. With the
 module "Revisions of a version" each piece keeps the
 [revision](#revisions-of-a-version) that was sung, and the programme, the

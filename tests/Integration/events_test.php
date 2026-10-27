@@ -33,6 +33,7 @@ use OCA\Notenarchiv\Service\RepertoireService;
 use OCA\Notenarchiv\Service\RightsService;
 use OCA\Notenarchiv\Service\Roles;
 use OCP\IDBConnection;
+use OCP\L10N\IFactory;
 use OCP\Server;
 
 $check = IntegrationTest::check(...);
@@ -105,8 +106,9 @@ try {
 		json_encode(array_column($detail['items'], 'warnings')));
 	$events->reorder($concert->getId(), [$itemB->getId(), $itemA->getId()], $uid);
 	$check('reordered', $events->detail($concert->getId(), $uid)['items'][0]['id'] === $itemB->getId());
-	$csv = $events->songOrderCsv($concert->getId(), $uid);
-	$check('song order CSV', substr_count($csv, "\r\n") === 3 && str_contains($csv, '3:05'));
+	$csv = $events->songOrderCsv($concert->getId(), $uid, Server::get(IFactory::class)->get('notenarchiv', 'en'));
+	$check('song order CSV: four rows of the event, an empty one, the header, two pieces', substr_count($csv, "\r\n") === 8
+		&& str_contains($csv, '3:05') && str_contains($csv, 'Work number (GEMA)') && str_contains($csv, 'Lyricist'), $csv);
 	$events->setFixed($concert->getId(), $uid);
 	$check('future concert cannot be confirmed', $throws(function () use ($events, $uid) {
 		$future = $events->create('concert', ['title' => 'Later', 'event_date' => '2099-01-01'], $uid);

@@ -889,8 +889,7 @@ gelesen, wie in der Notenansicht.
 - In Übe-Dateien (WAV und MIDI) als Kommentar, damit eine Datei zeigt, aus
   welchem Stand sie erstellt wurde.
 - Im Programm eines Konzerts und seinen gedruckten Listen (Spalte „Stand“)
-  und in der Liederfolge (CSV, Spalten „Revision“ und „Revision valid
-  since“).
+  und in der Liederfolge (CSV, Spalten „Stand“ und „Stand gilt seit“).
 - Wird ein Konzert als gesungen bestätigt, behält jedes Stück den Stand, der
   gesungen wurde: den geltenden Stand oder den neuesten, wenn keiner
   festgelegt ist. Ein späterer Stand ändert daran nichts.
@@ -952,9 +951,14 @@ nimmt die Absage zurück.
 Wähle am Konzerttag oder danach **Als gesungen bestätigen** und hake die
 Stücke an, die nicht gesungen wurden. Alle übrigen Stücke zählen als belegte
 Aufführungen; die Zahlen zum Repertoire aktualisieren sich von selbst, und
-das Programm lässt sich nicht mehr ändern. **Liederfolge (CSV)** exportiert
-Position, Signatur, Titel, Komposition, Bearbeitung/Text, Verlag und Dauer
-für die Verwertungsgesellschaft und das Programmheft. **Drucken** bietet das
+das Programm lässt sich nicht mehr ändern. **Liederfolge (CSV)** ist wie
+der Musikfolgebogen der GEMA aufgebaut: zuerst die Veranstaltung (Titel,
+Datum, Beginn, Ort), dann je Stück Position, Signatur, Titel, Komposition,
+Text, Bearbeitung, Verlag, die **Werknummer (GEMA)** der Fassung, der
+Rechtestatus und die Dauer. Komposition, Text und Bearbeitung kommen aus dem
+Personenregister, sonst aus den Textfeldern; der Rechtestatus zählt, weil
+eine gemeinfreie Melodie in einem geschützten Satz nur für die Bearbeitung
+zählt. Die Spalten stehen in der Sprache deines Kontos. **Drucken** bietet das
 Programm, die Liste für die Konzertmappen mit Spalten zum Abhaken und die
 Notenliste, auch in Großdruck. Mit dem Modul „Stände einer Fassung“ behält
 jedes Stück den [Stand](#stände-einer-fassung), der gesungen wurde, und das

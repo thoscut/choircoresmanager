@@ -702,7 +702,7 @@ valid version).
 | `POST /api/events/{id}/reopen` | – | conductor, librarian; cancelled concerts; returns the event (status `draft`) |
 | `GET /api/event-items/ambiguous` | – | any role |
 | `POST /api/event-items/{id}/resolve` | `{ copyId }` or `{ copyId: null }` (= not in the catalog) | conductor, librarian |
-| `GET /api/events/{id}/song-order` | – | download CSV (position, shelf mark, title, composer, arranger/lyrics, publisher, duration); cells starting with `=`, `+`, `-`, `@`, tab or carriage return get a leading `'` so that spreadsheet programs do not evaluate them |
+| `GET /api/events/{id}/song-order` | – | download CSV in the language of the account, laid out like the GEMA music report (milestone 0.11): four rows with event, date, start and location, an empty row, then the header and one row per piece (position, shelf mark, title, composer, lyricist, arranger, publisher, work number (GEMA) from the version field `society_work_no`, rights status, duration, note); composer, lyricist and arranger from the register of persons, else from `composer`/`composer_text` and `arranger_text`; cells starting with `=`, `+`, `-`, `@`, tab or carriage return get a leading `'` so that spreadsheet programs do not evaluate them |
 | `GET /api/repertoire` | – | `{ thresholds: { current, dormant }, works: { workId: { performances, first, last, class, songLists } } }` |
 | `PUT /api/repertoire/thresholds` | `{ current, dormant }` (years) | settings (admins and the groups given the settings page); the current values are in `GET /api/settings` |
 | `POST /api/performances/import` | `{ fileId, dryRun, ownChoir? }` | librarian; `.xlsx` or `.csv` |

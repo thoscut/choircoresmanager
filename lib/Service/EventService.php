@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace OCA\Notenarchiv\Service;
 
+use OCA\Notenarchiv\Db\ContributionMapper;
 use OCA\Notenarchiv\Db\Copy;
 use OCA\Notenarchiv\Db\CopyMapper;
 use OCA\Notenarchiv\Db\Event;
@@ -16,6 +17,7 @@ use OCA\Notenarchiv\Db\EventItem;
 use OCA\Notenarchiv\Db\EventItemMapper;
 use OCA\Notenarchiv\Db\EventMapper;
 use OCA\Notenarchiv\Db\LicenseMapper;
+use OCA\Notenarchiv\Db\PersonMapper;
 use OCA\Notenarchiv\Db\Work;
 use OCA\Notenarchiv\Db\WorkMapper;
 use OCA\Notenarchiv\Db\WorkVersion;
@@ -26,6 +28,7 @@ use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IDateTimeZone;
 use OCP\IDBConnection;
+use OCP\IL10N;
 
 /**
  * Concert programmes and song lists.
@@ -68,6 +71,8 @@ class EventService {
 		private Roles $roles,
 		private ITimeFactory $time,
 		private IDateTimeZone $timeZone,
+		private ContributionMapper $contributions,
+		private PersonMapper $persons,
 	) {
 	}
 
@@ -414,24 +419,53 @@ class EventService {
 	}
 
 	/**
-	 * Song order for the collecting society, programme booklet and binders.
+	 * Song order for the collecting society, programme booklet and binders,
+	 * laid out like the music report of GEMA (milestone 0.11): rows with the
+	 * data of the event first, then one row per piece with composer,
+	 * lyricist and arranger in columns of their own (from the register of
+	 * persons, else from the text fields), the work number at the collecting
+	 * society and the rights status (a public domain melody in a protected
+	 * setting counts only for the arranger). Headers in the language of the
+	 * account.
 	 */
-	public function songOrderCsv(int $eventId, string $uid): string {
-		$lines = $this->lines($eventId, $uid)['lines'];
+	public function songOrderCsv(int $eventId, string $uid, IL10N $l): string {
+		['event' => $event, 'lines' => $lines] = $this->lines($eventId, $uid);
 		// The revision of each piece (module "version_states"): two more columns
 		$withRevisions = $this->states->isActive();
 		$revisions = $withRevisions ? $this->states->forItems(array_map(fn (array $line): EventItem => $line['item'], $lines)) : [];
-		$rows = [];
+		$statuses = [];
+		foreach (Fields::RIGHTS_STATUS as $key => $label) {
+			$statuses[$key] = $l->t($label);
+		}
+		$rows = [
+			[$l->t('Event'), (string)$event->getTitle()],
+			[$l->t('Date'), (string)$event->getEventDate()],
+			[$l->t('Start'), (string)$event->getStartTime()],
+			[$l->t('Location'), (string)$event->getLocation()],
+			[],
+		];
+		$header = [$l->t('Position'), $l->t('Shelf mark'), $l->t('Title'), $l->t('Composer'), $l->t('Lyricist'), $l->t('Arranger'),
+			$l->t('Publisher'), $l->t('Work number (GEMA)'), $l->t('Rights status'), $l->t('Duration'), $l->t('Note')];
+		if ($withRevisions) {
+			$header = [...$header, $l->t('Revision'), $l->t('Revision valid since')];
+		}
+		$rows[] = $header;
 		foreach ($lines as ['item' => $item, 'copy' => $copy, 'version' => $version, 'work' => $work]) {
 			if ($item->getStruck() === true) {
 				continue;
 			}
+			$names = $version === null ? [] : $this->namesByRole($version->getId());
 			$duration = $item->getDuration();
+			$status = $version?->getRightsStatus();
 			$row = [
 				(string)$item->getPosition(), $copy?->getShelfmark() ?? '', $work?->getTitle() ?? $item->getTitleText() ?? '',
-				$work?->getComposer() ?? $item->getComposerText() ?? '', $version?->getArrangerText() ?? '', $version?->getPublisher() ?? '',
+				$names['composer'] ?? $work?->getComposer() ?? $item->getComposerText() ?? '',
+				$names['lyricist'] ?? '',
+				$names['arranger'] ?? $version?->getArrangerText() ?? '',
+				$version?->getPublisher() ?? '', $version?->getSocietyWorkNo() ?? '',
+				$status === null ? '' : ($statuses[$status] ?? $status),
 				$duration === null ? '' : sprintf('%d:%02d', intdiv($duration, 60), $duration % 60),
-				$item->getEncore() === true ? 'encore' : '',
+				$item->getEncore() === true ? $l->t('Encore') : '',
 			];
 			if ($withRevisions) {
 				$revision = $revisions[$item->getId()] ?? null;
@@ -440,8 +474,23 @@ class EventService {
 			}
 			$rows[] = $row;
 		}
-		$header = ['Position', 'Shelf mark', 'Title', 'Composer', 'Arranger / lyrics', 'Publisher', 'Duration', 'Note'];
-		return CatalogCsv::writeForPeople($withRevisions ? [...$header, 'Revision', 'Revision valid since'] : $header, $rows);
+		return CatalogCsv::writeForPeople(array_shift($rows), $rows);
+	}
+
+	/**
+	 * Names of the persons of a version per role, joined with "; ".
+	 *
+	 * @return array<string, string>
+	 */
+	private function namesByRole(int $versionId): array {
+		$names = [];
+		foreach ($this->contributions->findByVersion($versionId) as $contribution) {
+			try {
+				$names[$contribution->getRole()][] = $this->persons->find($contribution->getPersonId())->getName();
+			} catch (DoesNotExistException) {
+			}
+		}
+		return array_map(fn (array $list): string => implode('; ', $list), $names);
 	}
 
 	private function editable(int $eventId, string $uid): Event {
