@@ -4,6 +4,8 @@
 -->
 # Data protection: templates for the choir
 
+**English** | [Deutsch](de/datenschutz-vorlagen.md)
+
 These templates help a choir add the music archive to its data protection
 records. They describe what the app stores (as of version 0.11). They are
 **no legal advice**: adapt them to your choir, your Nextcloud and your

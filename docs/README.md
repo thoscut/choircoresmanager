@@ -12,6 +12,7 @@ documentation for developers is in English.
 | Using the app | [User guide](user-guide.md) | [Benutzerhandbuch](de/benutzerhandbuch.md) |
 | Running the app | [Administration guide](admin-guide.md) | [Administrationshandbuch](de/administrationshandbuch.md) |
 | The essentials in a few minutes | – | [Schnellstart](de/schnellstart.md) |
+| The law behind the rights checks | [Legal background](legal-background.md) | [Rechtlicher Hintergrund](de/rechtlicher-hintergrund.md) |
 | Data protection templates for the choir | [Privacy templates](privacy-templates.md) | [Datenschutz-Vorlagen](de/datenschutz-vorlagen.md) |
 
 ## Using the app

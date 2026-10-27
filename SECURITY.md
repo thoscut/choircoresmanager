@@ -237,8 +237,9 @@ public links stop working at once.
   longer released and a switched-off module all get the same 404 page
   without a reason, and each counts as a failed attempt; the scan route
   answers the same way, also for a link without a scan.
-- A public link shows no account names, no note, no download of the score
-  file and no practice audio; the page is marked `noindex` for search engines and has
+- A public link shows no account names, no note, no download button for the
+  score file and no practice audio (the MusicXML the page shows is in the
+  page and can still be saved, see below); the page is marked `noindex` for search engines and has
   the policy of the app page (WebAssembly for the bundled notation engine,
   no JavaScript `eval`, no external sources, no frames).
 - The repertoire page has no script of its own and Nextcloud's default
@@ -257,6 +258,10 @@ public links stop working at once.
   header can prevent that. The dialog says so before a scan is included
   ("Whoever sees the scan can also save it."). Legally an excerpt counts as
   much as the whole sheet, which is why only released versions are shared.
+- Practice audio files are made in the browser: the server only grants the
+  permission and records it. Once made, a file stays with whoever made it.
+  That is an organisational protection, not a technical one; when a license
+  ends, pass on its duties to delete to the choir members.
 - Links can be passed on. They expire after at most 183 days and can be
   revoked at any time by their creator or the catalog librarian; calls are
   counted without recording who made them.

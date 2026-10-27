@@ -35,6 +35,8 @@ const PLANNED = new Set(['docs/screenshots/admin-settings.png'])
 const PAIRS = [
 	['docs/user-guide.md', 'docs/de/benutzerhandbuch.md'],
 	['docs/admin-guide.md', 'docs/de/administrationshandbuch.md'],
+	['docs/legal-background.md', 'docs/de/rechtlicher-hintergrund.md'],
+	['docs/privacy-templates.md', 'docs/de/datenschutz-vorlagen.md'],
 ] as const
 
 /** The pages whose links are checked. */

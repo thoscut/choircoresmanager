@@ -84,7 +84,12 @@ protected or open (see
 ### Internal preservation copy
 
 An internal preservation copy is kept only for the archive, for example a
-scan of a protected print. It is never shared, played or exported. Only the
+paper copy of the choir's own original, kept as a reserve. It is never
+shared, played or exported. A scan or a MusicXML transcription of a
+protected print is a copy as well; for a choir archive the exception for
+archive copies (§ 53 (2) UrhG) rarely covers a digital copy, so it usually
+needs the consent of the publisher (license use "Digitisation"; see
+[Legal background](legal-background.md#preservation-copies)). Only the
 catalog librarian and the conductor see it; the catalog marks it with the
 badge *Internal preservation copy – do not share* (see
 [Finding a copy](#finding-a-copy)).
@@ -1189,15 +1194,19 @@ automatically.
 
 #### Special cases: scientific editions and posthumous works
 
-Two special cases of German law protect an edition for 25 years after the
-end of the year in which it appeared, independent of the life dates:
+Two special cases of German law give a right of 25 years after the end of a
+year, independent of the life dates:
 
 - **Scientific edition (§ 70 UrhG):** an edition of works that are no longer
   protected, made by scholarly work and clearly different from earlier
-  editions, for example an urtext or critical edition.
+  editions, for example an urtext or critical edition. The right ends 25
+  years after the edition appeared, or 25 years after it was made if it did
+  not appear in that time; the app counts from the appearance, which is
+  cautious.
 - **Posthumous work (§ 71 UrhG):** a work whose protection had already ended
   when it first appeared or was first performed in public, for example a
-  rediscovered manuscript.
+  rediscovered manuscript. The right belongs to whoever first published or
+  performed it and counts from the earlier of the two events.
 
 To use a special case:
 
@@ -1211,7 +1220,12 @@ To use a special case:
 
 With a special case, persons recorded only as **Editor** count with the 25
 years instead of 70 years after their death; all other persons still count
-as usual, and the later end decides. The suggestion stays a suggestion: a
+as usual, and the later end decides. Reconstructions, completions or
+realisations of a figured bass by an editor are often an arrangement of
+their own (§ 3 UrhG): record that person as **Arranger**, so that 70 years
+after their death count. An editor without creative work of their own is
+not protected at all outside § 70; the app still counts them with 70 years,
+which is cautious. The suggestion stays a suggestion: a
 music librarian decides whether a special case applies and confirms the
 rights.
 

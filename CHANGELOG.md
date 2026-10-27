@@ -95,6 +95,13 @@ All notable changes to this app are documented in this file. The format follows
   the information of choir members and the privacy policy of the public
   pages (`docs/privacy-templates.md`, `docs/de/datenschutz-vorlagen.md`);
   agents are recommended the role "Proposals (tools)" only.
+- **Legal background** (`docs/legal-background.md`,
+  `docs/de/rechtlicher-hintergrund.md`): protection terms, photocopies of
+  sheet music, preservation copies and their limits for digital copies,
+  transcriptions, sharing (§ 19a UrhG, no § 60a for choirs), GEMA and
+  publishers, imprint and privacy policy of public pages, agents. The guides
+  no longer give the scan of a protected print as an example of a
+  preservation copy and explain §§ 70 and 71 UrhG more precisely.
 - Excerpts and whole pieces for choir members and the public no longer
   carry the encoder, the miscellaneous fields, XML comments or processing
   instructions of the MusicXML file.

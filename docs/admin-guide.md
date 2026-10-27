@@ -610,6 +610,9 @@ reads to the provider of the model (processor, Art. 28 GDPR; possibly a
 third country, Art. 44 ff.). Give agents the role **Proposals (tools)**:
 it does not read the folder book or its audit entries (section 13).
 
+The [legal background](legal-background.md) explains the copyright rules
+the rights checks rest on.
+
 **Templates.** [privacy-templates.md](privacy-templates.md) has entries for
 the register of processing activities (Art. 30 GDPR) and text blocks for
 the information of choir members (Art. 13 GDPR) and the privacy policy of

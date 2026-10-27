@@ -669,6 +669,9 @@ DSGVO; unter Umständen ein Drittland, Art. 44 ff.). Gib Agenten die Rolle
 **Vorschläge (Werkzeuge)**: Sie liest weder das Mappenbuch noch seine
 Einträge im Protokoll (Abschnitt 13).
 
+Der [rechtliche Hintergrund](rechtlicher-hintergrund.md) erklärt die Regeln
+des Urheberrechts, auf denen die Rechteprüfung beruht.
+
 **Vorlagen.** [datenschutz-vorlagen.md](datenschutz-vorlagen.md) enthält
 Einträge für das Verzeichnis von Verarbeitungstätigkeiten (Art. 30 DSGVO)
 und Textbausteine für die Information der Chormitglieder (Art. 13 DSGVO) und

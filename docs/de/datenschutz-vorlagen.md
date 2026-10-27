@@ -4,6 +4,8 @@
 -->
 # Datenschutz: Vorlagen für den Verein
 
+[English](../privacy-templates.md) | **Deutsch**
+
 Diese Vorlagen helfen dem Verein, das Notenarchiv in seine
 Datenschutzunterlagen aufzunehmen. Sie beschreiben, was die App speichert
 (Stand: Version 0.11). Sie sind **keine Rechtsberatung**: Passe sie an deinen
@@ -28,7 +30,7 @@ Allgemeine Angaben für alle Einträge:
   Kontos, das den Archivordner eingerichtet hat; [weitere Maßnahmen der
   Nextcloud, z. B. Zwei-Faktor-Anmeldung].
 
-### 1.1 Notenarchiv: Werkverzeichnis und Protokoll
+**1.1 Notenarchiv: Werkverzeichnis und Protokoll**
 
 | Feld | Eintrag |
 |---|---|
@@ -40,7 +42,7 @@ Allgemeine Angaben für alle Einträge:
 | Drittland | [nein / ja: …] |
 | Löschfrist | Das Protokoll wird nicht gelöscht (Nachweis). Wird ein Konto gelöscht, entfernt die App das Konto aus dem Protokoll; der Anzeigename bleibt. |
 
-### 1.2 Personenregister (Urheberinnen und Urheber)
+**1.2 Personenregister (Urheberinnen und Urheber)**
 
 | Feld | Eintrag |
 |---|---|
@@ -52,7 +54,7 @@ Allgemeine Angaben für alle Einträge:
 | Empfänger | die Rollen des Notenarchivs; mit dem Modul „Öffentliche Repertoireseite“ die Öffentlichkeit (nur Komposition und Text bestätigt gemeinfreier Werke) |
 | Löschfrist | solange eine Fassung im Bestand die Person für die Rechte braucht; Lebensdaten auf Widerspruch sofort |
 
-### 1.3 Mappenbuch (nur mit dem Modul „Mappenbuch“)
+**1.3 Mappenbuch (nur mit dem Modul „Mappenbuch“)**
 
 | Feld | Eintrag |
 |---|---|
@@ -63,7 +65,7 @@ Allgemeine Angaben für alle Einträge:
 | Empfänger | Rollen „Bestand“, „Betrieb“, „Chorleitung“ und „Lesen“ |
 | Löschfrist | [12] Monate nach der Rücknahme (einstellbar); eine Mappe, die nicht zurückkommt, 36 Monate nach der Ausgabe; bei gelöschtem Konto sofort (offene Ausgabe: nur das Konto). Sicherungen enthalten die Daten bis zu ihrer Rotation nach acht Wochen. |
 
-### 1.4 Teilen mit Chormitgliedern (nur mit den Modulen „Links für Chormitglieder“ und „Übe-Audio für Chormitglieder“)
+**1.4 Teilen mit Chormitgliedern (nur mit den Modulen „Links für Chormitglieder“ und „Übe-Audio für Chormitglieder“)**
 
 | Feld | Eintrag |
 |---|---|
@@ -74,7 +76,7 @@ Allgemeine Angaben für alle Einträge:
 | Empfänger | die Rollen des Notenarchivs mit Zugriff auf das Protokoll |
 | Löschfrist | Das Protokoll wird nicht gelöscht; es enthält keine personenbezogenen Daten der Mitglieder. |
 
-### 1.5 Öffentliche Seiten (nur mit den Modulen „Öffentliche Links“ und „Öffentliche Repertoireseite“)
+**1.5 Öffentliche Seiten (nur mit den Modulen „Öffentliche Links“ und „Öffentliche Repertoireseite“)**
 
 | Feld | Eintrag |
 |---|---|
@@ -85,7 +87,7 @@ Allgemeine Angaben für alle Einträge:
 | Empfänger | Betreiber des Servers [Anbieter] |
 | Löschfrist | Log des Webservers: [z. B. 7 Tage]; Brute-Force-Schutz: [Nextcloud: 48 Stunden]; `nextcloud.log`: [Rotation …]. Die App setzt keine Cookies für Besucher ohne Konto und lädt nichts von Dritten. |
 
-### 1.6 Agenten (nur mit dem Modul „Schnittstelle für Agenten“)
+**1.6 Agenten (nur mit dem Modul „Schnittstelle für Agenten“)**
 
 | Feld | Eintrag |
 |---|---|

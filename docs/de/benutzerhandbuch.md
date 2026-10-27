@@ -91,8 +91,12 @@ eine geltende Fassung kann geschützt oder offen sein (siehe
 ### Interne Erhaltungskopie
 
 Eine interne Erhaltungskopie wird nur für das Archiv aufbewahrt, zum Beispiel
-der Scan eines geschützten Drucks. Sie wird nie geteilt, abgespielt oder
-exportiert. Nur die Rolle „Bestand“ der Archivverwaltung und die Chorleitung
+eine Papierkopie eines eigenen Originals als Reserve. Sie wird nie geteilt,
+abgespielt oder exportiert. Auch ein Scan oder eine MusicXML-Übertragung
+eines geschützten Drucks ist eine Kopie; für ein Vereinsarchiv deckt die
+Ausnahme für Archivkopien (§ 53 Abs. 2 UrhG) eine digitale Kopie selten,
+sie braucht meist die Einwilligung des Verlags (Nutzung „Digitalisierung“;
+siehe [Rechtlicher Hintergrund](rechtlicher-hintergrund.md#erhaltungskopien)). Nur die Rolle „Bestand“ der Archivverwaltung und die Chorleitung
 sehen sie; das Werkverzeichnis kennzeichnet sie mit *Interne Erhaltungskopie
 – keine Weitergabe* (siehe [Ein Exemplar finden](#ein-exemplar-finden)).
 
@@ -1274,17 +1278,20 @@ geändert wurden. Automatisch ändert sich nichts.
 
 #### Sonderfälle: wissenschaftliche Ausgaben und nachgelassene Werke
 
-Zwei Sonderfälle des deutschen Rechts schützen eine Ausgabe 25 Jahre lang
-nach Ablauf des Jahres, in dem sie erschienen ist, unabhängig von den
-Lebensdaten:
+Zwei Sonderfälle des deutschen Rechts geben ein Recht für 25 Jahre nach
+Ablauf eines Jahres, unabhängig von den Lebensdaten:
 
 - **Wissenschaftliche Ausgabe (§ 70 UrhG):** eine Ausgabe nicht mehr
   geschützter Werke, die auf wissenschaftlicher Arbeit beruht und sich
   deutlich von früheren Ausgaben unterscheidet, zum Beispiel eine Urtext-
-  oder kritische Ausgabe.
+  oder kritische Ausgabe. Das Recht endet 25 Jahre nach dem Erscheinen der
+  Ausgabe oder 25 Jahre nach ihrer Herstellung, wenn sie in dieser Zeit nicht
+  erschienen ist; die App rechnet vorsichtig ab dem Erscheinen.
 - **Nachgelassenes Werk (§ 71 UrhG):** ein Werk, dessen Schutz schon
   abgelaufen war, als es zum ersten Mal erschien oder öffentlich aufgeführt
-  wurde, zum Beispiel eine wiederentdeckte Handschrift.
+  wurde, zum Beispiel eine wiederentdeckte Handschrift. Das Recht hat, wer es
+  zuerst erscheinen ließ oder wiedergab; es zählt ab dem früheren der beiden
+  Ereignisse.
 
 So nutzt du einen Sonderfall:
 
@@ -1301,7 +1308,13 @@ So nutzt du einen Sonderfall:
 
 Bei einem Sonderfall zählen Personen, die nur mit **Herausgabe** erfasst
 sind, mit den 25 Jahren statt mit 70 Jahren nach ihrem Tod; alle anderen
-Personen zählen weiter wie gewohnt, und das spätere Ende entscheidet. Der
+Personen zählen weiter wie gewohnt, und das spätere Ende entscheidet.
+Rekonstruktionen, Ergänzungen oder Generalbass-Aussetzungen einer
+Herausgeberin oder eines Herausgebers sind oft eine eigene Bearbeitung (§ 3
+UrhG): Erfasse die Person dann mit **Bearbeitung**, damit 70 Jahre nach
+ihrem Tod zählen. Eine Herausgabe ohne eigene Schöpfung ist außerhalb des
+§ 70 gar nicht geschützt; die App rechnet trotzdem vorsichtig mit 70
+Jahren. Der
 Vorschlag bleibt ein Vorschlag: Die Archivverwaltung entscheidet, ob ein
 Sonderfall vorliegt, und bestätigt die Rechte.
 
