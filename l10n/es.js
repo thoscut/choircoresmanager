@@ -251,7 +251,8 @@ OC.L10N.register(
         "Corrected": "Corregido",
         "Issue": "Préstamo",
         "Take back": "Devolución",
-        "Name removed after the retention period": "Nombre eliminado tras el plazo de conservación",
+        "Name removed": "Nombre eliminado",
+        "Personal data erased on request": "Datos personales borrados a petición",
         "Copied": "Copiado",
         "Replaced": "Sustituido",
         "Removed": "Eliminado",
@@ -265,6 +266,7 @@ OC.L10N.register(
         "Measures {from} to {to}": "Compases {from} a {to}",
         "without repeats": "sin repeticiones",
         "with repeats": "con repeticiones",
+        "A choir member": "Un miembro del coro",
         "System": "Sistema",
         "No changes yet": "Todavía no hay cambios",
         "Every change is recorded here: who, when, old and new value, reason.": "Aquí se registra cada cambio: quién, cuándo, valor anterior y nuevo, motivo.",
@@ -639,6 +641,7 @@ OC.L10N.register(
         "Actions": "Acciones",
         "Out of service since {date}: {reason}": "Fuera de servicio desde el {date}: {reason}",
         "available": "disponible",
+        "Holder removed on {date}": "Titular eliminado el {date}",
         "No contents entered": "No se ha registrado contenido",
         "Hint: the folder contains a version that no longer applies.": "Indicación: la carpeta de coro contiene una versión que ya no es vigente.",
         "Missing: {sheets}": "Falta: {sheets}",
@@ -873,6 +876,7 @@ OC.L10N.register(
         "Programme lines move along. The rights status of the versions does not change.": "Los puntos del programa se mueven con él. El estado de los derechos de las versiones no cambia.",
         "Needs: {modules}.": "Necesita: {modules}.",
         "Switched on, but not working at the moment, because this is switched off: {modules}.": "Activado, pero ahora mismo no funciona porque esto está desactivado: {modules}.",
+        "Before these pages go online: enter the addresses of the imprint and the privacy policy under Administration → Theming. The public pages show them; the privacy policy must name the server logs with IP addresses.": "Antes de que estas páginas se publiquen: indica las direcciones del aviso legal y de la política de privacidad en Administración → Personalización. Las páginas públicas las muestran; la política de privacidad debe mencionar los registros del servidor con direcciones IP.",
         "Switched on: {modules}.": "Activado: {modules}.",
         "Also switched on, because it is needed: {modules}.": "También activado, porque se necesita: {modules}.",
         "Switched off: {modules}.": "Desactivado: {modules}.",
@@ -2631,6 +2635,10 @@ OC.L10N.register(
         "_Names, Nextcloud accounts and notes of a loan are removed automatically %n month after the folder came back. The loan itself stays as \"former loan\"._::_Names, Nextcloud accounts and notes of a loan are removed automatically %n months after the folder came back. The loan itself stays as \"former loan\"._": [
             "Los nombres, las cuentas de Nextcloud y las notas de un préstamo se eliminan automáticamente %n mes después de la devolución de la carpeta de coro. El préstamo en sí se conserva como “préstamo anterior”.",
             "Los nombres, las cuentas de Nextcloud y las notas de un préstamo se eliminan automáticamente %n meses después de la devolución de la carpeta de coro. El préstamo en sí se conserva como “préstamo anterior”."
+        ],
+        "_A folder that does not come back loses its holder %n month after it was issued; it stays recorded as out._::_A folder that does not come back loses its holder %n months after it was issued; it stays recorded as out._": [
+            "Una carpeta que no se devuelve pierde su titular %n mes después de entregarse; sigue registrada como prestada.",
+            "Una carpeta que no se devuelve pierde su titular %n meses después de entregarse; sigue registrada como prestada."
         ],
         "_%n shared link_::_%n shared links_": [
             "%n enlace compartido",

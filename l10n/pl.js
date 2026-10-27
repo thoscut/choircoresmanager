@@ -251,7 +251,8 @@ OC.L10N.register(
         "Corrected": "Poprawiono",
         "Issue": "Wypożycz",
         "Take back": "Przyjmij zwrot",
-        "Name removed after the retention period": "Usunięto nazwisko po upływie okresu przechowywania",
+        "Name removed": "Usunięto nazwisko",
+        "Personal data erased on request": "Dane osobowe usunięte na wniosek",
         "Copied": "Skopiowano",
         "Replaced": "Zastąpiono",
         "Removed": "Usunięto",
@@ -265,6 +266,7 @@ OC.L10N.register(
         "Measures {from} to {to}": "Takty od {from} do {to}",
         "without repeats": "bez powtórzeń",
         "with repeats": "z powtórzeniami",
+        "A choir member": "Członek chóru",
         "System": "System",
         "No changes yet": "Brak zmian",
         "Every change is recorded here: who, when, old and new value, reason.": "Tutaj zapisywana jest każda zmiana: kto, kiedy, stara i nowa wartość, uzasadnienie.",
@@ -639,6 +641,7 @@ OC.L10N.register(
         "Actions": "Działania",
         "Out of service since {date}: {reason}": "Wycofana z użytku od {date}: {reason}",
         "available": "dostępna",
+        "Holder removed on {date}": "Osoba zostanie usunięta {date}",
         "No contents entered": "Nie wpisano zawartości",
         "Hint: the folder contains a version that no longer applies.": "Uwaga: teczka zawiera wersję, która już nie obowiązuje.",
         "Missing: {sheets}": "Brakuje: {sheets}",
@@ -873,6 +876,7 @@ OC.L10N.register(
         "Programme lines move along. The rights status of the versions does not change.": "Punkty programu są przenoszone razem z egzemplarzem. Status praw wersji się nie zmienia.",
         "Needs: {modules}.": "Wymaga: {modules}.",
         "Switched on, but not working at the moment, because this is switched off: {modules}.": "Włączone, ale obecnie nie działa, ponieważ wyłączono: {modules}.",
+        "Before these pages go online: enter the addresses of the imprint and the privacy policy under Administration → Theming. The public pages show them; the privacy policy must name the server logs with IP addresses.": "Zanim te strony trafią do sieci: wpisz adresy noty prawnej i polityki prywatności w Administracja → Motyw. Strony publiczne je pokazują; polityka prywatności musi wymieniać logi serwera z adresami IP.",
         "Switched on: {modules}.": "Włączono: {modules}.",
         "Also switched on, because it is needed: {modules}.": "Włączono także, bo jest potrzebne: {modules}.",
         "Switched off: {modules}.": "Wyłączono: {modules}.",
@@ -2731,6 +2735,11 @@ OC.L10N.register(
             "Imiona i nazwiska, konta Nextcloud i notatki wypożyczenia są automatycznie usuwane %n miesiąc po zwrocie teczki. Samo wypożyczenie pozostaje jako „dawne wypożyczenie”.",
             "Imiona i nazwiska, konta Nextcloud i notatki wypożyczenia są automatycznie usuwane %n miesiące po zwrocie teczki. Samo wypożyczenie pozostaje jako „dawne wypożyczenie”.",
             "Imiona i nazwiska, konta Nextcloud i notatki wypożyczenia są automatycznie usuwane %n miesięcy po zwrocie teczki. Samo wypożyczenie pozostaje jako „dawne wypożyczenie”."
+        ],
+        "_A folder that does not come back loses its holder %n month after it was issued; it stays recorded as out._::_A folder that does not come back loses its holder %n months after it was issued; it stays recorded as out._": [
+            "Teczka, która nie wraca, traci osobę %n miesiąc po wydaniu; pozostaje zapisana jako wydana.",
+            "Teczka, która nie wraca, traci osobę %n miesiące po wydaniu; pozostaje zapisana jako wydana.",
+            "Teczka, która nie wraca, traci osobę %n miesięcy po wydaniu; pozostaje zapisana jako wydana."
         ],
         "_%n shared link_::_%n shared links_": [
             "%n udostępniony link",

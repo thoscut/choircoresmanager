@@ -251,7 +251,8 @@ OC.L10N.register(
         "Corrected": "Korrigiert",
         "Issue": "Ausgeben",
         "Take back": "Zurücknehmen",
-        "Name removed after the retention period": "Name nach der Löschfrist entfernt",
+        "Name removed": "Name entfernt",
+        "Personal data erased on request": "Personenbezogene Daten auf Antrag gelöscht",
         "Copied": "Kopiert",
         "Replaced": "Ersetzt",
         "Removed": "Entfernt",
@@ -265,6 +266,7 @@ OC.L10N.register(
         "Measures {from} to {to}": "Takte {from} bis {to}",
         "without repeats": "ohne Wiederholungen",
         "with repeats": "mit Wiederholungen",
+        "A choir member": "Ein Chormitglied",
         "System": "System",
         "No changes yet": "Noch keine Änderungen",
         "Every change is recorded here: who, when, old and new value, reason.": "Hier steht jede Änderung: wer, wann, alter und neuer Wert, Begründung.",
@@ -639,6 +641,7 @@ OC.L10N.register(
         "Actions": "Aktionen",
         "Out of service since {date}: {reason}": "Außer Dienst seit {date}: {reason}",
         "available": "verfügbar",
+        "Holder removed on {date}": "Person wird am {date} entfernt",
         "No contents entered": "Kein Inhalt eingetragen",
         "Hint: the folder contains a version that no longer applies.": "Hinweis: Die Mappe enthält eine nicht mehr geltende Fassung.",
         "Missing: {sheets}": "Fehlt: {sheets}",
@@ -873,6 +876,7 @@ OC.L10N.register(
         "Programme lines move along. The rights status of the versions does not change.": "Programmpunkte wandern mit. Der Rechtestatus der Fassungen ändert sich nicht.",
         "Needs: {modules}.": "Braucht: {modules}.",
         "Switched on, but not working at the moment, because this is switched off: {modules}.": "Eingeschaltet, wirkt aber gerade nicht, weil dies ausgeschaltet ist: {modules}.",
+        "Before these pages go online: enter the addresses of the imprint and the privacy policy under Administration → Theming. The public pages show them; the privacy policy must name the server logs with IP addresses.": "Bevor diese Seiten online gehen: Tragen Sie unter Verwaltung → Design die Adressen des Impressums und der Datenschutzerklärung ein. Die öffentlichen Seiten zeigen sie; die Datenschutzerklärung muss die Server-Logs mit IP-Adressen nennen.",
         "Switched on: {modules}.": "Eingeschaltet: {modules}.",
         "Also switched on, because it is needed: {modules}.": "Mit eingeschaltet, weil es gebraucht wird: {modules}.",
         "Switched off: {modules}.": "Ausgeschaltet: {modules}.",
@@ -2631,6 +2635,10 @@ OC.L10N.register(
         "_Names, Nextcloud accounts and notes of a loan are removed automatically %n month after the folder came back. The loan itself stays as \"former loan\"._::_Names, Nextcloud accounts and notes of a loan are removed automatically %n months after the folder came back. The loan itself stays as \"former loan\"._": [
             "Namen, Nextcloud-Konten und Notizen einer Ausgabe werden %n Monat nach der Rücknahme der Mappe automatisch entfernt. Die Ausgabe selbst bleibt als „ehemalige Ausgabe“ stehen.",
             "Namen, Nextcloud-Konten und Notizen einer Ausgabe werden %n Monate nach der Rücknahme der Mappe automatisch entfernt. Die Ausgabe selbst bleibt als „ehemalige Ausgabe“ stehen."
+        ],
+        "_A folder that does not come back loses its holder %n month after it was issued; it stays recorded as out._::_A folder that does not come back loses its holder %n months after it was issued; it stays recorded as out._": [
+            "Eine Mappe, die nicht zurückkommt, verliert %n Monat nach der Ausgabe die Person; sie bleibt als ausgegeben vermerkt.",
+            "Eine Mappe, die nicht zurückkommt, verliert %n Monate nach der Ausgabe die Person; sie bleibt als ausgegeben vermerkt."
         ],
         "_%n shared link_::_%n shared links_": [
             "%n freigegebener Link",

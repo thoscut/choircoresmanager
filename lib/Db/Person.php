@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\Notenarchiv\Db;
 
 use JsonSerializable;
+use OCA\Notenarchiv\Service\LifeDates;
 use OCP\AppFramework\Db\Entity;
 
 /**
@@ -87,6 +88,28 @@ class Person extends Entity implements JsonSerializable {
 			'identification', 'checkedBy', 'checkedAt', 'notes'] as $field) {
 			$this->addType($field, 'string');
 		}
+	}
+
+	/**
+	 * Without a known death only the year of birth is kept, also in the
+	 * free text (milestone 0.11, data minimisation).
+	 *
+	 * @return bool whether something changed
+	 */
+	public function keepBirthYearOnly(): bool {
+		if ($this->died !== null) {
+			return false;
+		}
+		$before = [$this->born, $this->bornPrecision, $this->lifeDatesText, $this->notes];
+		$born = LifeDates::birthYearOnly(['born' => $this->born, 'born_precision' => $this->bornPrecision, 'died' => $this->died]);
+		$this->setValue('born', $born['born']);
+		$this->setValue('born_precision', $born['born_precision']);
+		foreach (['life_dates_text' => $this->lifeDatesText, 'notes' => $this->notes] as $field => $text) {
+			if ($text !== null) {
+				$this->setValue($field, LifeDates::yearsOnly($text));
+			}
+		}
+		return $before !== [$this->born, $this->bornPrecision, $this->lifeDatesText, $this->notes];
 	}
 
 	/**

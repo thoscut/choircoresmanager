@@ -595,29 +595,85 @@ Erleichterung für selbst betriebene Instanzen:
 | `occ notenarchiv:file-sync <account>` | startet den Dateiabgleich; abgelehnt (Exit-Code 1), solange ein anderer läuft |
 | `occ notenarchiv:restore <file> [<account>]` | stellt eine vollständige Sicherung in ein leeres Werkverzeichnis wieder her |
 | `occ notenarchiv:modules list\|enable\|disable\|preset` | zeigt und schaltet die Module (Abschnitt 12) |
+| `occ notenarchiv:privacy-report <Konto oder Name>` | schreibt, was die App über eine Person speichert, als JSON (Auskunft, Art. 15 DSGVO; Abschnitt 10) |
+| `occ notenarchiv:privacy-erase <Konto oder Name> [--execute]` | entfernt eine Person aus Mappenbuch und Protokoll (Löschung, Art. 17 DSGVO); ein Probelauf, solange `--execute` fehlt |
 
 ## 10. Datenschutz
 
-Die App speichert Daten des Werkverzeichnisses und die Namen der
-Konten, die sie geändert haben (Protokoll, als Momentaufnahme des
-Anzeigenamens). Das Personenregister enthält Namen, Lebensdaten und Rollen
-der Personen aus Komposition, Bearbeitung und Text und weiterer Beteiligter;
-für lebende Personen sind das personenbezogene Daten aus öffentlichen
-Quellen (Drucke, Verlagsverzeichnisse), aufbewahrt für die Einschätzung der
-Rechte. Berichte von Übertragungen werden so aufbewahrt, wie sie
-eingegangen sind (als Beleg, mit ihrer Prüfsumme); ihr Abschnitt zu den
-Rechten kann die an einem Werk beteiligten Personen nennen. Prüfpunkte
-halten fest, wer sie wann entschieden hat.
+Was die App über Menschen speichert:
 
-Ohne das Mappenbuch speichert die App keine Daten über Chormitglieder. Das
-Mappenbuch (Abschnitt 15) speichert den Namen oder das Nextcloud-Konto der
-Person, die eine Chormappe hat, und Notizen zur Ausgabe; sie werden nach der
-Löschfrist entfernt. Ausschnitt-Links zählen Aufrufe, ohne festzuhalten, wer
-sie geöffnet hat. Die Auswertungen enthalten keine personenbezogenen Daten
-von Chormitgliedern und keine Kontonamen; Kalendereinträge enthalten keine
-Notizen und keine Personen; das Dashboard-Widget zeigt keine Texte von
-Rückfragen und keine Namen. Trage die Verarbeitung in dein Verzeichnis von
-Verarbeitungstätigkeiten ein (DSGVO Art. 30).
+- **Funktionsträger.** Das Protokoll hält fest, wer was geändert hat, als
+  Momentaufnahme des Anzeigenamens mit dem Konto. Das ist der Nachweis des
+  Werkverzeichnisses (berechtigtes Interesse, Art. 6 Abs. 1 lit. f DSGVO).
+- **Personenregister.** Namen, Lebensdaten und Rollen der Personen aus
+  Komposition, Bearbeitung, Text und weiterer Beteiligter, aus öffentlichen
+  Quellen (Drucke, Verlagsverzeichnisse), aufbewahrt für die Einschätzung der
+  Rechte (Art. 6 Abs. 1 lit. f DSGVO). Jede dieser Personen einzeln zu
+  informieren, wäre ein unverhältnismäßiger Aufwand (Art. 14 Abs. 5 lit. b
+  DSGVO); schreibe das in deine Datenschutzhinweise. Für Personen ohne
+  bekannten Tod speichert die App nur das Geburtsjahr, auch im freien Text
+  der Lebensdaten und in den Notizen (seit 0.11; ältere Einträge wurden beim
+  Update gekürzt). Verstorbene fallen nicht unter die DSGVO. Widerspricht eine
+  lebende Person (Art. 21 DSGVO), entferne die Lebensdaten in der App; der
+  Name bleibt, solange eine Fassung ihn für die Rechte braucht.
+- **Chormitglieder.** Das Mappenbuch (Abschnitt 15) speichert den Namen oder
+  das Nextcloud-Konto der Person, die eine Chormappe hat, und Notizen zur
+  Ausgabe. Übe-Dateien von Chormitgliedern werden nur mit der Rolle
+  protokolliert, ohne Konto und Namen (seit 0.11; ältere Einträge wurden beim
+  Update anonymisiert). Ausschnitt-Links zählen Aufrufe, ohne festzuhalten,
+  wer sie geöffnet hat.
+- **Berichte und Prüfpunkte.** Berichte von Übertragungen werden so
+  aufbewahrt, wie sie eingegangen sind (als Beleg, mit ihrer Prüfsumme); ihr
+  Abschnitt zu den Rechten kann die an einem Werk beteiligten Personen
+  nennen. Prüfpunkte halten fest, wer sie wann entschieden hat.
+
+Die Auswertungen enthalten keine personenbezogenen Daten von Chormitgliedern
+und keine Kontonamen; Kalendereinträge enthalten keine Notizen und keine
+Personen; das Dashboard-Widget zeigt keine Texte von Rückfragen und keine
+Namen.
+
+**Gelöschte Konten.** Wird ein Nextcloud-Konto gelöscht, entfernt die App
+es aus Mappenbuch und Protokoll: Zurückgenommene Ausgaben verlieren ihre
+personenbezogenen Daten; eine offene Ausgabe behält den Namen der Person (die
+Mappe ist noch draußen), aber nicht mehr das Konto; Protokolleinträge
+verlieren das Konto und behalten den Anzeigenamen dessen, der etwas geändert
+hat.
+
+**Auskunft und Löschung.** Auf selbst betriebenen Instanzen listet `occ
+notenarchiv:privacy-report <Konto oder Name>` die Ausgaben, die
+Protokolleinträge der Person und Personen gleichen Namens im
+Personenregister (JSON). `occ notenarchiv:privacy-erase <Konto oder Name>
+--execute` entfernt die personenbezogenen Daten der Ausgaben (auch aus ihren
+Protokolleinträgen; eine offene Ausgabe bleibt als ausgegeben vermerkt, ohne
+Person) und Konto und Namen aus den Protokolleinträgen der Person; die
+Löschung selbst wird ohne Namen protokolliert. Ohne `--execute` zeigt der
+Befehl nur, was gelöscht würde. Personen des Registers werden nur genannt.
+Beim verwalteten Hosting bitte den Anbieter, die Befehle auszuführen, oder
+entferne die Daten von Hand: das Mappenbuch und das Personenregister in der
+App.
+
+**Öffentliche Seiten.** Öffentliche Links und die öffentliche
+Repertoireseite sind Seiten für alle. Die Nextcloud verarbeitet dabei die
+IP-Adressen der Besucher: im Log des Webservers (mit der Adresse des Links),
+im Schutz gegen Brute-Force-Angriffe und in der Begrenzung der Aufrufe, bei
+Fehlern in `nextcloud.log`. Die App setzt für Besucher ohne Konto keine
+Cookies und lädt nichts von Dritten. Bevor du diese Module einschaltest,
+trage unter *Verwaltung → Design* die Adressen des **Impressums** und der
+**Datenschutzerklärung** ein: Die öffentlichen Seiten zeigen beide in ihrer
+Fußzeile, und die Moduleinstellungen warnen, solange eines fehlt. Die
+Datenschutzerklärung muss die Server-Logs und ihre Speicherdauer nennen.
+
+**Agenten.** Ein Agent, der auf einem Cloud-Sprachmodell läuft, gibt weiter,
+was er liest, an den Anbieter des Modells (Auftragsverarbeitung, Art. 28
+DSGVO; unter Umständen ein Drittland, Art. 44 ff.). Gib Agenten die Rolle
+**Vorschläge (Werkzeuge)**: Sie liest weder das Mappenbuch noch seine
+Einträge im Protokoll (Abschnitt 13).
+
+**Vorlagen.** [datenschutz-vorlagen.md](datenschutz-vorlagen.md) enthält
+Einträge für das Verzeichnis von Verarbeitungstätigkeiten (Art. 30 DSGVO)
+und Textbausteine für die Information der Chormitglieder (Art. 13 DSGVO) und
+die Datenschutzerklärung der öffentlichen Seiten. Passe sie an; sie sind
+keine Rechtsberatung.
 
 ## 11. Barrierefreiheit
 
@@ -842,8 +898,9 @@ So richtest du es ein:
    Übertragungen**.
 2. Lege ein Konto an, das nur der Agent benutzt, und eine Gruppe dafür, und
    gib der Gruppe die Rolle **Vorschläge (Werkzeuge)** (liest, schlägt vor,
-   fragt) oder **Lesen (Vorstand, Revision)**. Gib Agenten nicht die Rollen
-   „Bestand“, „Betrieb“ oder „Chorleitung“.
+   fragt). Gib Agenten nicht die Rolle **Lesen (Vorstand, Revision)**: Sie
+   liest auch das Mappenbuch mit den Namen von Chormitgliedern. Gib Agenten
+   nicht die Rollen „Bestand“, „Betrieb“ oder „Chorleitung“.
 3. Lege für dieses Konto ein App-Passwort an (Persönliche Einstellungen →
    Sicherheit, angemeldet mit dem Konto des Agenten) und gib es nur in die
    MCP-Konfiguration des Agenten. Widerrufe es, wenn der Agent nicht mehr
@@ -854,6 +911,15 @@ des Agentenkontos und die Module geprüft; jede Route ist je Konto begrenzt;
 interne Erhaltungskopien bleiben vor Rollen verborgen, die sie nicht ansehen
 dürfen; Antworten enthalten keine Kontonamen. Vorschläge, Rückfragen und
 Berichte des Agenten erscheinen im Protokoll unter seinem Konto.
+
+**Datenschutz.** Ein Agent gibt, was er liest, an den Anbieter seines
+Sprachmodells weiter. Wähle einen Anbieter mit Vertrag zur
+Auftragsverarbeitung (Art. 28 DSGVO), prüfe, wo die Daten verarbeitet werden
+(Art. 44 ff. DSGVO), und trage den Agenten in dein Verzeichnis von
+Verarbeitungstätigkeiten ein. Mit der Rolle „Vorschläge (Werkzeuge)“ liest
+der Agent das Werkverzeichnis, das Personenregister (bei lebenden Personen
+nur das Geburtsjahr) und das Protokoll ohne das Mappenbuch; Übe-Dateien von
+Chormitgliedern stehen dort ohne Konto und Namen.
 
 Um alle Agenten auf einmal zu stoppen, schalte das Modul ab: Die
 Schnittstelle antwortet sofort mit 404. Das Löschen eines App-Passworts oder
@@ -963,6 +1029,8 @@ die personenbezogenen Daten einer Ausgabe entfernt:
 | Die Mappe ist ausgegeben | Name oder Konto und die Notiz bleiben; sie werden gebraucht. |
 | Die Mappe kommt zurück | Die Ausgabe behält Name, Tage, Zustand, fehlende Blätter und Notizen. |
 | Löschfrist nach der Rücknahme | Die tägliche Prüfung entfernt Name, Konto und beide Notizen aus der Ausgabe und aus ihren Einträgen im Protokoll (angezeigt als `(anonymised)`). Die Ausgabe bleibt als „ehemalige Ausgabe“ mit ihren Tagen, ihrem Zustand und den fehlenden Blättern; das Protokoll vermerkt „Name nach der Löschfrist entfernt“, ohne den Namen und ohne Konto. |
+| Die Mappe kommt nicht zurück | 36 Monate nach der Ausgabe (ein Anspruch auf Rückgabe verjährt nach drei Jahren, § 195 BGB) entfernt die tägliche Prüfung Name, Konto und die Notiz ebenso; die Mappe bleibt als ausgegeben vermerkt. Das Mappenbuch zeigt den Tag 90 Tage vorher an. |
+| Das Konto wird gelöscht | Zurückgenommene Ausgaben des Kontos verlieren ihre personenbezogenen Daten sofort; eine offene Ausgabe behält den Namen, aber nicht mehr das Konto (Abschnitt 10). |
 
 Das Entfernen läuft auch, während das Mappenbuch abgeschaltet ist:
 Abschalten macht nie etwas unsicherer. Es braucht die Hintergrundjobs der

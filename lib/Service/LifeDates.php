@@ -124,6 +124,35 @@ final class LifeDates {
 	}
 
 	/**
+	 * Data minimisation for persons without a known death (milestone 0.11):
+	 * only the year of birth, also in free text. A full date of birth is not
+	 * needed for the protection term (Art. 5 (1) c GDPR).
+	 *
+	 * @param array{born: ?string, born_precision: ?string, died: ?string} $dates
+	 * @return array{born: ?string, born_precision: ?string}
+	 */
+	public static function birthYearOnly(array $dates): array {
+		$born = $dates['born'];
+		if ($dates['died'] !== null || $dates['born_precision'] !== 'exact' || $born === null
+			|| preg_match('/^(-?\d{1,4})-\d{2}-\d{2}$/', $born, $m) !== 1) {
+			return ['born' => $born, 'born_precision' => $dates['born_precision']];
+		}
+		return ['born' => (string)(int)$m[1], 'born_precision' => 'year'];
+	}
+
+	/**
+	 * Free text with every full date reduced to its year: "12.03.1960",
+	 * "1960-03-12" and "12. März 1960" become "1960".
+	 */
+	public static function yearsOnly(string $text): string {
+		$months = 'januar|jänner|februar|märz|april|mai|juni|juli|august|september|oktober|november|dezember|january|february|march|may|june|july|october|december'
+			. '|jan|feb|mär|mar|apr|jun|jul|aug|sep|sept|okt|oct|nov|dez|dec';
+		$text = (string)preg_replace('/(?<!\d)\d{1,2}\.\s?\d{1,2}\.\s?(\d{4})(?!\d)/u', '$1', $text);
+		$text = (string)preg_replace('/(?<!\d)(\d{4})-\d{2}-\d{2}(?!\d)/u', '$1', $text);
+		return (string)preg_replace('/(?<!\d)\d{1,2}\.?\s+(?:' . $months . ')\.?\s+(\d{4})(?!\d)/iu', '$1', $text);
+	}
+
+	/**
 	 * The year of a stored date or year value ("1850", "1850-03-12", "-8").
 	 */
 	public static function year(?string $value): ?int {

@@ -71,6 +71,13 @@ class FolderBookService {
 	public const RETENTION_DEFAULT = 12;
 	public const RETENTION_MIN = 1;
 	public const RETENTION_MAX = 120;
+	/**
+	 * Months after the issue after which the personal data of a loan that
+	 * never came back are removed (milestone 0.11): a claim for the return
+	 * expires after three years (§ 195 BGB). The folder stays recorded as
+	 * issued.
+	 */
+	public const OPEN_LOAN_MONTHS = 36;
 	/** Fields of a loan that are personal data and removed after the retention period */
 	public const PERSONAL_FIELDS = ['holder_uid', 'holder_name', 'issue_note', 'return_note'];
 	/** What the audit log shows instead of a removed value */
@@ -103,7 +110,7 @@ class FolderBookService {
 	 * All folders with their contents, the current loan and the history,
 	 * active folders first in natural order of their labels.
 	 *
-	 * @return array{folders: list<FolderRow>, retentionMonths: int, canEdit: bool}
+	 * @return array{folders: list<FolderRow>, retentionMonths: int, openLoanMonths: int, canEdit: bool}
 	 */
 	public function overview(string $uid): array {
 		$this->roles->requireRole($uid, self::READERS);
@@ -167,6 +174,7 @@ class FolderBookService {
 		return [
 			'folders' => Sort::byKeys($rows, $keys),
 			'retentionMonths' => $this->retentionMonths(),
+			'openLoanMonths' => self::OPEN_LOAN_MONTHS,
 			'canEdit' => $this->roles->hasAnyRole($uid, self::MAINTAINERS),
 		];
 	}
@@ -426,23 +434,33 @@ class FolderBookService {
 	public function anonymizeExpired(string $today): void {
 		$months = $this->retentionMonths();
 		foreach ($this->loans->findToAnonymize(self::monthsBefore($today, $months)) as $loan) {
-			$operation = $this->audit->newOperation();
-			$this->db->beginTransaction();
-			try {
-				foreach (self::PERSONAL_FIELDS as $field) {
-					$loan->setValue($field, null);
-				}
-				$loan->setAnonymized($this->time->getTime());
-				$loan->setModified($this->time->getTime());
-				$this->loans->update($loan);
-				$this->auditEntries->anonymizeFields(self::OBJECT_LOAN, $loan->getId(), self::PERSONAL_FIELDS, self::ANONYMIZED);
-				$this->audit->record($operation, null, self::OBJECT_LOAN, $loan->getId(), 'anonymized', null, null, null,
-					'retention period of ' . $months . ' months after the return ended');
-				$this->db->commit();
-			} catch (\Throwable $e) {
-				$this->db->rollBack();
-				throw $e;
+			$this->anonymizeLoan($loan, 'retention period of ' . $months . ' months after the return ended');
+		}
+		foreach ($this->loans->findOpenToAnonymize(self::monthsBefore($today, self::OPEN_LOAN_MONTHS)) as $loan) {
+			$this->anonymizeLoan($loan, 'not returned ' . self::OPEN_LOAN_MONTHS . ' months after the issue');
+		}
+	}
+
+	/**
+	 * Removes the personal data of a loan, also from its audit entries, and
+	 * records why (without a name). An open loan stays open.
+	 */
+	public function anonymizeLoan(FolderLoan $loan, string $reason): void {
+		$operation = $this->audit->newOperation();
+		$this->db->beginTransaction();
+		try {
+			foreach (self::PERSONAL_FIELDS as $field) {
+				$loan->setValue($field, null);
 			}
+			$loan->setAnonymized($this->time->getTime());
+			$loan->setModified($this->time->getTime());
+			$this->loans->update($loan);
+			$this->auditEntries->anonymizeFields(self::OBJECT_LOAN, $loan->getId(), self::PERSONAL_FIELDS, self::ANONYMIZED);
+			$this->audit->record($operation, null, self::OBJECT_LOAN, $loan->getId(), 'anonymized', null, null, null, $reason);
+			$this->db->commit();
+		} catch (\Throwable $e) {
+			$this->db->rollBack();
+			throw $e;
 		}
 	}
 

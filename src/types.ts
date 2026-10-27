@@ -862,6 +862,10 @@ export interface ModuleSettings {
 	presets: ModulePreset[]
 	/** the core, always on (translated) */
 	core: string[]
+	/** modules with pages for everyone (milestone 0.11) */
+	publicModules: string[]
+	/** imprint and privacy policy set in Nextcloud's theming */
+	legalPages?: { imprint: boolean, privacy: boolean }
 }
 
 /** What changed with `PUT /api/settings/modules`. */

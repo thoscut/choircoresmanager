@@ -437,6 +437,8 @@ function normalizeModuleSettings(data: ModuleSettings): ModuleSettings {
 		presets: list<ModuleSettings['presets'][number]>(data.presets)
 			.map((preset) => ({ ...preset, modules: preset.modules && !Array.isArray(preset.modules) ? preset.modules : {} })),
 		core: list(data.core),
+		publicModules: list<string>(data.publicModules),
+		legalPages: data.legalPages,
 	}
 }
 

@@ -250,7 +250,6 @@ export const singular = {
 	"Corrected": "Gecorrigeerd",
 	"Issue": "Uitlenen",
 	"Take back": "Terugnemen",
-	"Name removed after the retention period": "Naam verwijderd na de bewaartermijn",
 	"Copied": "Gekopieerd",
 	"Replaced": "Vervangen",
 	"Removed": "Verwijderd",
@@ -2240,6 +2239,11 @@ export const singular = {
 	"No composer is recorded for this version. Add the composer under \"Persons involved and protection\" (tab Rights), or mark the melody as traditional with evidence; until then unknown means protected.": "Voor deze versie is geen compositie vastgelegd. Voeg die toe bij “Betrokken personen en bescherming” (tabblad Rechten) of markeer de melodie met bewijs als traditioneel; tot dan betekent onbekend beschermd.",
 	"No lyricist is recorded for this version. Add the lyricist under \"Persons involved and protection\" (tab Rights), or mark the text as traditional or the version as without text; until then unknown means protected.": "Voor deze versie is geen tekst vastgelegd. Voeg de persoon toe bij “Betrokken personen en bescherming” (tabblad Rechten) of markeer de tekst als traditioneel of de versie als zonder tekst; tot dan betekent onbekend beschermd.",
 	"Melody and text are marked as traditional and no other person is recorded: no one has rights of their own. Check that no arranger or translator is missing.": "Melodie en tekst zijn als traditioneel gemarkeerd en er is geen andere persoon vastgelegd: niemand heeft eigen rechten. Controleer dat er geen bewerking of vertaling ontbreekt.",
+	"Name removed": "Naam verwijderd",
+	"Personal data erased on request": "Persoonsgegevens op verzoek gewist",
+	"A choir member": "Een koorlid",
+	"Holder removed on {date}": "Houder verwijderd op {date}",
+	"Before these pages go online: enter the addresses of the imprint and the privacy policy under Administration → Theming. The public pages show them; the privacy policy must name the server logs with IP addresses.": "Voordat deze pagina's online gaan: vul bij Beheer → Thema de adressen van het colofon en de privacyverklaring in. De openbare pagina's tonen ze; de privacyverklaring moet de serverlogs met IP-adressen noemen.",
 }
 
 export const plural = {
@@ -2348,4 +2352,5 @@ export const plural = {
 	"The music archive keeps this folder up to date. It holds %n score (PDF) released for the print station.|The music archive keeps this folder up to date. It holds %n scores (PDF) released for the print station.": ["Het bladmuziekarchief houdt deze map actueel. Hij bevat %n bladmuziekbestand (PDF) dat is vrijgegeven voor het printstation.", "Het bladmuziekarchief houdt deze map actueel. Hij bevat %n bladmuziekbestanden (PDF) die zijn vrijgegeven voor het printstation."],
 	"%n shared link|%n shared links": ["%n gedeelde link", "%n gedeelde links"],
 	"Current repertoire: version with photocopies without a license|Current repertoire: versions with photocopies without a license": ["Actueel repertoire: versie met fotokopieën zonder licentie", "Actueel repertoire: versies met fotokopieën zonder licentie"],
+	"A folder that does not come back loses its holder %n month after it was issued; it stays recorded as out.|A folder that does not come back loses its holder %n months after it was issued; it stays recorded as out.": ["Een koormap die niet terugkomt, verliest haar houder %n maand na de uitgifte; ze blijft geregistreerd als uitgegeven.", "Een koormap die niet terugkomt, verliest haar houder %n maanden na de uitgifte; ze blijft geregistreerd als uitgegeven."],
 }

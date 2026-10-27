@@ -97,7 +97,9 @@ function actionLabel(action: string): string {
 	case 'folder_taken_back':
 		return t('notenarchiv', 'Take back')
 	case 'anonymized':
-		return t('notenarchiv', 'Name removed after the retention period')
+		return t('notenarchiv', 'Name removed')
+	case 'erased':
+		return t('notenarchiv', 'Personal data erased on request')
 	case 'mirror_copied':
 		return t('notenarchiv', 'Copied')
 	case 'mirror_replaced':
@@ -180,6 +182,10 @@ function value(entry: AuditEntry, value: string | null): string {
 }
 
 function who(entry: AuditEntry): string {
+	if (!entry.user_name && !entry.user_id && entry.roles === 'member') {
+		// Choir members are recorded without account or name (milestone 0.11)
+		return t('notenarchiv', 'A choir member')
+	}
 	return entry.user_name || entry.user_id || t('notenarchiv', 'System')
 }
 </script>

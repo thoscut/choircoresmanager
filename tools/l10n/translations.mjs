@@ -1041,7 +1041,6 @@ export const singular = {
 	// ---- milestone 0.7: folder book (UI) ----
 	'Folder book': 'Mappenbuch',
 	'Loan of a folder': 'Ausgabe einer Mappe',
-	'Name removed after the retention period': 'Name nach der Löschfrist entfernt',
 	'Which choir folder is out with whom since when, what it holds and what is missing.': 'Welche Chormappe ist seit wann bei wem, was enthält sie und was fehlt.',
 	'New folder': 'Neue Mappe',
 	'The folder book could not be loaded': 'Das Mappenbuch konnte nicht geladen werden',
@@ -2910,9 +2909,22 @@ export const singular = {
 		'Melodie und Text sind als traditionell markiert und keine weitere Person ist erfasst: Niemand hat eigene Rechte. Prüfe, dass keine Bearbeitung oder Übersetzung fehlt.',
 		'Melodie und Text sind als traditionell markiert und keine weitere Person ist erfasst: Niemand hat eigene Rechte. Prüfen Sie, dass keine Bearbeitung oder Übersetzung fehlt.',
 	],
+	// ---- 0.11: Datenschutz ----
+	'Name removed': 'Name entfernt',
+	'Personal data erased on request': 'Personenbezogene Daten auf Antrag gelöscht',
+	'A choir member': 'Ein Chormitglied',
+	'Holder removed on {date}': 'Person wird am {date} entfernt',
+	'Before these pages go online: enter the addresses of the imprint and the privacy policy under Administration → Theming. The public pages show them; the privacy policy must name the server logs with IP addresses.': [
+		'Bevor diese Seiten online gehen: Trage unter Verwaltung → Design die Adressen des Impressums und der Datenschutzerklärung ein. Die öffentlichen Seiten zeigen sie; die Datenschutzerklärung muss die Server-Logs mit IP-Adressen nennen.',
+		'Bevor diese Seiten online gehen: Tragen Sie unter Verwaltung → Design die Adressen des Impressums und der Datenschutzerklärung ein. Die öffentlichen Seiten zeigen sie; die Datenschutzerklärung muss die Server-Logs mit IP-Adressen nennen.',
+	],
 }
 
 export const plural = {
+	'A folder that does not come back loses its holder %n month after it was issued; it stays recorded as out.|A folder that does not come back loses its holder %n months after it was issued; it stays recorded as out.': [
+		'Eine Mappe, die nicht zurückkommt, verliert %n Monat nach der Ausgabe die Person; sie bleibt als ausgegeben vermerkt.',
+		'Eine Mappe, die nicht zurückkommt, verliert %n Monate nach der Ausgabe die Person; sie bleibt als ausgegeben vermerkt.',
+	],
 	'%n copy|%n copies': ['%n Exemplar', '%n Exemplare'],
 	'%n checked account can open it|All %n checked accounts can open it': ['%n geprüftes Konto kann ihn öffnen', 'Alle %n geprüften Konten können ihn öffnen'],
 	'%n account cannot open it|%n accounts cannot open it': ['%n Konto kann ihn nicht öffnen', '%n Konten können ihn nicht öffnen'],

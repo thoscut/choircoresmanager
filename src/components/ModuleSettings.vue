@@ -91,6 +91,20 @@ function inactiveText(module: ModuleInfo): string {
 }
 
 /**
+ * The warning at a public module while Nextcloud's theming has no imprint or
+ * no privacy policy: the public pages show both in their footer.
+ *
+ * @param module - the module
+ */
+function legalText(module: ModuleInfo): string {
+	const legal = settings.value?.legalPages
+	if (!legal || !settings.value?.publicModules.includes(module.key) || (legal.imprint && legal.privacy)) {
+		return ''
+	}
+	return t('notenarchiv', 'Before these pages go online: enter the addresses of the imprint and the privacy policy under Administration → Theming. The public pages show them; the privacy policy must name the server logs with IP addresses.')
+}
+
+/**
  * Announce what a change did.
  *
  * @param changes - changes reported by the server
@@ -125,7 +139,14 @@ async function apply(change: { modules: Record<string, boolean> } | { preset: st
 	statusText.value = ''
 	try {
 		const result = await saveModules(change)
-		settings.value = { modules: result.modules, groups: result.groups, presets: result.presets, core: result.core }
+		settings.value = {
+			modules: result.modules,
+			groups: result.groups,
+			presets: result.presets,
+			core: result.core,
+			publicModules: result.publicModules,
+			legalPages: result.legalPages,
+		}
 		announce(result.changes)
 		// E.g. the repertoire thresholds of the page follow the new state
 		emit('changed', result.modules)
@@ -295,6 +316,7 @@ function alsoOnText(module: ModuleInfo): string {
 							<span class="module-settings__description">{{ module.description }}</span>
 							<span v-if="needsText(module)" class="module-settings__description">{{ needsText(module) }}</span>
 							<span v-if="alsoOnText(module)" class="module-settings__description">{{ alsoOnText(module) }}</span>
+							<span v-if="legalText(module)" class="module-settings__description module-settings__description--inactive">{{ legalText(module) }}</span>
 							<span v-if="inactiveText(module)" class="module-settings__description module-settings__description--inactive">
 								{{ inactiveText(module) }}
 							</span>

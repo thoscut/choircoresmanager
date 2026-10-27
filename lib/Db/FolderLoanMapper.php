@@ -68,4 +68,20 @@ class FolderLoanMapper extends QBMapper {
 			->orderBy('id');
 		return $this->findEntities($qb);
 	}
+
+	/**
+	 * Open loans whose personal data are still there and that were issued
+	 * on or before the given day.
+	 *
+	 * @return list<FolderLoan>
+	 */
+	public function findOpenToAnonymize(string $issuedUntil): array {
+		$qb = $this->db->getQueryBuilder();
+		$qb->select('*')->from($this->getTableName())
+			->where($qb->expr()->isNull('returned_on'))
+			->andWhere($qb->expr()->lte('issued_on', $qb->createNamedParameter($issuedUntil)))
+			->andWhere($qb->expr()->isNull('anonymized'))
+			->orderBy('id');
+		return $this->findEntities($qb);
+	}
 }

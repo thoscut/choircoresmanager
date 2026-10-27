@@ -12,6 +12,7 @@ namespace OCA\Notenarchiv\AppInfo;
 use OCA\Files\Event\LoadAdditionalScriptsEvent;
 use OCA\Notenarchiv\Dashboard\DueWidget;
 use OCA\Notenarchiv\Listener\FilesScriptListener;
+use OCA\Notenarchiv\Listener\UserDeletedListener;
 use OCA\Notenarchiv\Middleware\ModuleMiddleware;
 use OCA\Notenarchiv\Notification\Notifier;
 use OCA\Notenarchiv\Search\CatalogSearchProvider;
@@ -25,6 +26,7 @@ use OCP\INavigationManager;
 use OCP\IURLGenerator;
 use OCP\IUserSession;
 use OCP\L10N\IFactory;
+use OCP\User\Events\UserDeletedEvent;
 
 class Application extends App implements IBootstrap {
 	public const APP_ID = 'notenarchiv';
@@ -45,6 +47,8 @@ class Application extends App implements IBootstrap {
 		// The action "Open in music archive" in the Files app (module
 		// "files_integration"), only for accounts with access.
 		$context->registerEventListener(LoadAdditionalScriptsEvent::class, FilesScriptListener::class);
+		// A deleted account no longer stays in the folder book and the audit log.
+		$context->registerEventListener(UserDeletedEvent::class, UserDeletedListener::class);
 		// Copies in the search of Nextcloud (module "unified_search"), only
 		// for accounts with a role of the catalog.
 		$context->registerSearchProvider(CatalogSearchProvider::class);

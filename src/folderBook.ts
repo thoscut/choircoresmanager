@@ -66,6 +66,8 @@ export interface Folder {
 export interface FolderBook {
 	folders: Folder[]
 	retentionMonths: number
+	/** months after the issue after which a folder that never came back loses its holder (milestone 0.11) */
+	openLoanMonths: number
 	canEdit: boolean
 }
 
@@ -117,6 +119,7 @@ export async function fetchFolderBook(): Promise<FolderBook> {
 	return {
 		folders: list<Folder>(data.folders).map((folder) => ({ ...folder, contents: list(folder.contents), history: list(folder.history) })),
 		retentionMonths: data.retentionMonths,
+		openLoanMonths: typeof data.openLoanMonths === 'number' ? data.openLoanMonths : 36,
 		canEdit: data.canEdit === true,
 	}
 }
@@ -226,6 +229,41 @@ export function retentionText(months: number): string {
 		'Names, Nextcloud accounts and notes of a loan are removed automatically %n month after the folder came back. The loan itself stays as "former loan".',
 		'Names, Nextcloud accounts and notes of a loan are removed automatically %n months after the folder came back. The loan itself stays as "former loan".',
 		months)
+}
+
+/**
+ * The term of a loan that never comes back, in words.
+ *
+ * @param months - months after the issue
+ */
+export function openLoanText(months: number): string {
+	return n('notenarchiv',
+		'A folder that does not come back loses its holder %n month after it was issued; it stays recorded as out.',
+		'A folder that does not come back loses its holder %n months after it was issued; it stays recorded as out.',
+		months)
+}
+
+/**
+ * The day on which an open loan loses its holder, when that is within the
+ * next 90 days (or past); otherwise null.
+ *
+ * @param issuedOn - day of the issue (YYYY-MM-DD)
+ * @param months - OPEN_LOAN_MONTHS of the server
+ * @param today - today (YYYY-MM-DD)
+ */
+export function openLoanEnd(issuedOn: string, months: number, today: string): string | null {
+	const [year, month, day] = issuedOn.split('-').map(Number)
+	if (!year || !month || !day) {
+		return null
+	}
+	const total = year * 12 + (month - 1) + months
+	const endYear = Math.floor(total / 12)
+	const endMonth = total % 12 + 1
+	const lastDay = new Date(Date.UTC(endYear, endMonth, 0)).getUTCDate()
+	const end = `${endYear}-${String(endMonth).padStart(2, '0')}-${String(Math.min(day, lastDay)).padStart(2, '0')}`
+	const soon = new Date(`${today}T00:00:00Z`)
+	soon.setUTCDate(soon.getUTCDate() + 90)
+	return end <= soon.toISOString().slice(0, 10) ? end : null
 }
 
 export type FolderFilter = 'all' | 'out' | 'available' | 'hints' | 'retired'

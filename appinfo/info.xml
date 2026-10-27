@@ -100,6 +100,8 @@ Keine fremden Server und keine Telemetrie: Notensatz, Schriften und Klänge sind
 		<command>OCA\Notenarchiv\Command\FileSync</command>
 		<command>OCA\Notenarchiv\Command\Restore</command>
 		<command>OCA\Notenarchiv\Command\ModulesCommand</command>
+		<command>OCA\Notenarchiv\Command\PrivacyReport</command>
+		<command>OCA\Notenarchiv\Command\PrivacyErase</command>
 	</commands>
 	<!-- Administration → Music archive; the administration can give the page
 	     to a group under Administration privileges. -->

@@ -35,14 +35,19 @@ final class ModuleSettingsTest extends TestCase {
 	/** @var list<array{?string, string, string, mixed, mixed, ?string}> uid, object type, field, old, new, reason */
 	private array $audit = [];
 
-	private function settings(Modules $modules): ModuleSettings {
+	/**
+	 * @param array<string, string> $theming keys of the app theming
+	 */
+	private function settings(Modules $modules, array $theming = []): ModuleSettings {
 		$audit = $this->createStub(AuditLog::class);
 		$audit->method('newOperation')->willReturn('op');
 		$audit->method('record')->willReturnCallback(function (string $operation, ?string $uid, string $objectType, ?int $objectId, string $action,
 			?string $field = null, mixed $old = null, mixed $new = null, ?string $reason = null): void {
 			$this->audit[] = [$uid, $objectType, (string)$field, $old, $new, $reason];
 		});
-		return new ModuleSettings($modules, $audit);
+		$config = $this->createStub(IAppConfig::class);
+		$config->method('getValueString')->willReturnCallback(fn (string $app, string $key): string => $app === 'theming' ? ($theming[$key] ?? '') : '');
+		return new ModuleSettings($modules, $audit, $config);
 	}
 
 	private function l10n(): IL10N {
@@ -111,6 +116,10 @@ final class ModuleSettingsTest extends TestCase {
 		}
 		self::assertSame('[Simple]', $described['presets'][0]['label']);
 		self::assertCount(count(Modules::CORE), $described['core']);
+		self::assertSame([Modules::PUBLIC_LINKS, Modules::PUBLIC_REPERTOIRE], $described['publicModules']);
+		self::assertSame(['imprint' => false, 'privacy' => false], $described['legalPages'], 'the settings warn before public pages go online');
+		$themed = $this->settings($this->modulesWithout(), ['imprintUrl' => 'https://choir.example/imprint', 'privacyUrl' => ' '])->describe($this->l10n());
+		self::assertSame(['imprint' => true, 'privacy' => false], $themed['legalPages']);
 	}
 
 	/**

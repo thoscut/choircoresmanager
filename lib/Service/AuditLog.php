@@ -16,7 +16,8 @@ use OCP\IUserManager;
 
 /**
  * Writes the audit log: who, when, what, old, new, reason. Changes that belong
- * together share one operation id.
+ * together share one operation id. Choir members are recorded by their role
+ * only, without account or name.
  */
 class AuditLog {
 	public function __construct(
@@ -45,14 +46,16 @@ class AuditLog {
 		$entry = new AuditEntry();
 		$entry->setOperation($operation);
 		$entry->setTime($this->time->getTime());
-		$entry->setUserId($uid);
-		$entry->setUserName($uid === null ? null : $this->userManager->getDisplayName($uid));
 		$roles = $uid === null ? [] : $this->roles->rolesOf($uid);
 		if ($uid !== null && $roles === [] && $this->roles->isMember($uid)) {
-			// A choir member (practice audio of a shared excerpt)
+			// A choir member (practice audio of a shared excerpt): recorded
+			// without account and name, only the role (milestone 0.11).
 			$roles = [Roles::MEMBER];
+			$uid = null;
 		}
-		$entry->setRoles($uid === null ? null : implode(',', $roles));
+		$entry->setUserId($uid);
+		$entry->setUserName($uid === null ? null : $this->userManager->getDisplayName($uid));
+		$entry->setRoles($roles === [] && $uid === null ? null : implode(',', $roles));
 		$entry->setObjectType($objectType);
 		$entry->setObjectId($objectId);
 		$entry->setAction($action);

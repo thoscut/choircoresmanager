@@ -687,7 +687,7 @@ final class SharingTest extends TestCase {
 		self::assertSame('"%s" must be an https link to the page of the work on cpdl.org or imslp.org.', FieldValue::check($info, 'https://example.com/'));
 	}
 
-	public function testTheAuditLogNamesTheRoleOfAChoirMember(): void {
+	public function testTheAuditLogNamesOnlyTheRoleOfAChoirMember(): void {
 		$entries = [];
 		$mapper = $this->createStub(AuditEntryMapper::class);
 		$mapper->method('insert')->willReturnCallback(function (AuditEntry $entry) use (&$entries): AuditEntry {
@@ -697,9 +697,14 @@ final class SharingTest extends TestCase {
 		$roles = $this->createStub(Roles::class);
 		$roles->method('rolesOf')->willReturn([]);
 		$roles->method('isMember')->willReturnCallback(fn (string $uid): bool => $uid === 'singer');
-		$log = new AuditLog($mapper, $this->createStub(IUserManager::class), $roles, $this->createStub(ITimeFactory::class));
+		$users = $this->createStub(IUserManager::class);
+		$users->method('getDisplayName')->willReturnCallback(fn (string $uid): string => ucfirst($uid));
+		$log = new AuditLog($mapper, $users, $roles, $this->createStub(ITimeFactory::class));
 		$log->record('op', 'singer', 'version', 3, PracticeAudioService::ACTION);
 		$log->record('op', 'stranger', 'version', 3, PracticeAudioService::ACTION);
 		self::assertSame(['member', ''], array_map(fn (AuditEntry $entry): ?string => $entry->getRoles(), $entries));
+		self::assertNull($entries[0]->getUserId(), 'no account of a choir member');
+		self::assertNull($entries[0]->getUserName(), 'and no name');
+		self::assertSame('stranger', $entries[1]->getUserId());
 	}
 }

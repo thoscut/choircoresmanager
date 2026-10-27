@@ -25,7 +25,7 @@ import FolderDialog from './FolderDialog.vue'
 import FolderLoanDialog from './FolderLoanDialog.vue'
 import ViewHeader from './ViewHeader.vue'
 import { errorMessage } from '../api.ts'
-import { fetchFolderBook, filterFolders, folderSummary, holderText, outdatedText, retentionText, wearLabel } from '../folderBook.ts'
+import { fetchFolderBook, filterFolders, folderSummary, holderText, openLoanEnd, openLoanText, outdatedText, retentionText, todayIso, wearLabel } from '../folderBook.ts'
 import { formatDate } from '../format.ts'
 
 const book = ref<FolderBook | null>(null)
@@ -156,6 +156,7 @@ function hints(folder: Folder): string[] {
 			<template v-else-if="book !== null">
 				<NcNoteCard type="info" class="no-print">
 					{{ retentionText(book.retentionMonths) }}
+					{{ openLoanText(book.openLoanMonths) }}
 				</NcNoteCard>
 				<NcNoteCard v-if="error" type="error" role="alert">
 					{{ error }}
@@ -244,7 +245,13 @@ function hints(folder: Folder): string[] {
 										</template>
 										<span v-else class="folder-book__muted">{{ t('notenarchiv', 'available') }}</span>
 									</td>
-									<td>{{ folder.loan ? formatDate(folder.loan.issuedOn) : '–' }}</td>
+									<td>
+										{{ folder.loan ? formatDate(folder.loan.issuedOn) : '–' }}
+										<span v-if="folder.loan && !folder.loan.anonymized && openLoanEnd(folder.loan.issuedOn, book.openLoanMonths, todayIso())"
+											class="folder-book__muted">
+											{{ t('notenarchiv', 'Holder removed on {date}', { date: formatDate(openLoanEnd(folder.loan.issuedOn, book.openLoanMonths, todayIso()) ?? '') }) }}
+										</span>
+									</td>
 									<td>
 										<ul v-if="folder.contents.length > 0" class="folder-book__items">
 											<li v-for="item in folder.contents" :key="item.copyId">

@@ -264,6 +264,22 @@ final class FolderBookServiceTest extends TestCase {
 		self::assertSame([['folder_loan', 3, 'anonymized', null, null]], $this->recorded, 'noted without the name');
 	}
 
+	public function testFoldersThatNeverComeBackLoseTheHolderAfterThreeYears(): void {
+		$loan = $this->loan();
+		$loan->setIssuedOn('2023-10-01');
+		$loan->setHolderUid('kim');
+		$loans = $this->createMock(FolderLoanMapper::class);
+		$loans->method('findToAnonymize')->willReturn([]);
+		$loans->expects(self::once())->method('findOpenToAnonymize')->with('2023-10-22')->willReturn([$loan]);
+		$loans->method('update')->willReturnArgument(0);
+		$this->service(['loans' => $loans])->anonymizeExpired('2026-10-22');
+		self::assertNull($loan->getHolderName());
+		self::assertNull($loan->getHolderUid());
+		self::assertNotNull($loan->getAnonymized());
+		self::assertSame(7, $loan->getOpenFolderId(), 'the folder stays recorded as issued');
+		self::assertSame([['folder_loan', 3, 'anonymized', null, null]], $this->recorded);
+	}
+
 	public function testTheRetentionPeriodHasLimits(): void {
 		$service = $this->service();
 		self::assertSame('Please enter the retention period as a whole number of months between 1 and 120.',

@@ -250,7 +250,8 @@
         "Corrected": "Corrigé",
         "Issue": "Prêter",
         "Take back": "Reprendre",
-        "Name removed after the retention period": "Nom supprimé après la durée de conservation",
+        "Name removed": "Nom supprimé",
+        "Personal data erased on request": "Données personnelles effacées sur demande",
         "Copied": "Copié",
         "Replaced": "Remplacé",
         "Removed": "Supprimé",
@@ -264,6 +265,7 @@
         "Measures {from} to {to}": "Mesures {from} à {to}",
         "without repeats": "sans reprises",
         "with repeats": "avec reprises",
+        "A choir member": "Un membre du chœur",
         "System": "Système",
         "No changes yet": "Pas encore de modifications",
         "Every change is recorded here: who, when, old and new value, reason.": "Chaque modification est consignée ici : qui, quand, ancienne et nouvelle valeur, motif.",
@@ -638,6 +640,7 @@
         "Actions": "Actions",
         "Out of service since {date}: {reason}": "Hors service depuis le {date} : {reason}",
         "available": "disponible",
+        "Holder removed on {date}": "Détenteur supprimé le {date}",
         "No contents entered": "Aucun contenu saisi",
         "Hint: the folder contains a version that no longer applies.": "Remarque : le classeur contient une version qui n'est plus en vigueur.",
         "Missing: {sheets}": "Manquant : {sheets}",
@@ -872,6 +875,7 @@
         "Programme lines move along. The rights status of the versions does not change.": "Les éléments du programme suivent. Le statut des droits des versions ne change pas.",
         "Needs: {modules}.": "Nécessite : {modules}.",
         "Switched on, but not working at the moment, because this is switched off: {modules}.": "Activé, mais inopérant pour le moment, car ceci est désactivé : {modules}.",
+        "Before these pages go online: enter the addresses of the imprint and the privacy policy under Administration → Theming. The public pages show them; the privacy policy must name the server logs with IP addresses.": "Avant la mise en ligne de ces pages : saisissez les adresses des mentions légales et de la politique de confidentialité sous Administration → Personnalisation. Les pages publiques les affichent ; la politique de confidentialité doit mentionner les journaux du serveur avec les adresses IP.",
         "Switched on: {modules}.": "Activé : {modules}.",
         "Also switched on, because it is needed: {modules}.": "Également activé, car nécessaire : {modules}.",
         "Switched off: {modules}.": "Désactivé : {modules}.",
@@ -2630,6 +2634,10 @@
         "_Names, Nextcloud accounts and notes of a loan are removed automatically %n month after the folder came back. The loan itself stays as \"former loan\"._::_Names, Nextcloud accounts and notes of a loan are removed automatically %n months after the folder came back. The loan itself stays as \"former loan\"._": [
             "Les noms, comptes Nextcloud et notes d'un prêt sont supprimés automatiquement %n mois après le retour du classeur. Le prêt lui-même reste sous la forme « ancien prêt ».",
             "Les noms, comptes Nextcloud et notes d'un prêt sont supprimés automatiquement %n mois après le retour du classeur. Le prêt lui-même reste sous la forme « ancien prêt »."
+        ],
+        "_A folder that does not come back loses its holder %n month after it was issued; it stays recorded as out._::_A folder that does not come back loses its holder %n months after it was issued; it stays recorded as out._": [
+            "Un classeur qui ne revient pas perd son détenteur %n mois après sa remise ; il reste enregistré comme sorti.",
+            "Un classeur qui ne revient pas perd son détenteur %n mois après sa remise ; il reste enregistré comme sorti."
         ],
         "_%n shared link_::_%n shared links_": [
             "%n lien partagé",

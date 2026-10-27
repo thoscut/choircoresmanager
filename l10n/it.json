@@ -250,7 +250,8 @@
         "Corrected": "Corretto",
         "Issue": "Consegna",
         "Take back": "Ritira",
-        "Name removed after the retention period": "Nome rimosso dopo il periodo di conservazione",
+        "Name removed": "Nome rimosso",
+        "Personal data erased on request": "Dati personali cancellati su richiesta",
         "Copied": "Copiato",
         "Replaced": "Sostituito",
         "Removed": "Rimosso",
@@ -264,6 +265,7 @@
         "Measures {from} to {to}": "Battute da {from} a {to}",
         "without repeats": "senza ripetizioni",
         "with repeats": "con ripetizioni",
+        "A choir member": "Un membro del coro",
         "System": "Sistema",
         "No changes yet": "Ancora nessuna modifica",
         "Every change is recorded here: who, when, old and new value, reason.": "Qui viene registrata ogni modifica: chi, quando, valore vecchio e nuovo, motivo.",
@@ -638,6 +640,7 @@
         "Actions": "Azioni",
         "Out of service since {date}: {reason}": "Fuori servizio dal {date}: {reason}",
         "available": "disponibile",
+        "Holder removed on {date}": "Detentore rimosso il {date}",
         "No contents entered": "Nessun contenuto inserito",
         "Hint: the folder contains a version that no longer applies.": "Avviso: la cartellina contiene una versione non più valida.",
         "Missing: {sheets}": "Mancano: {sheets}",
@@ -872,6 +875,7 @@
         "Programme lines move along. The rights status of the versions does not change.": "Le voci del programma vengono spostate insieme. Lo stato dei diritti delle versioni non cambia.",
         "Needs: {modules}.": "Richiede: {modules}.",
         "Switched on, but not working at the moment, because this is switched off: {modules}.": "Attivato, ma al momento non funziona perché questo è disattivato: {modules}.",
+        "Before these pages go online: enter the addresses of the imprint and the privacy policy under Administration → Theming. The public pages show them; the privacy policy must name the server logs with IP addresses.": "Prima che queste pagine vadano online: inserisci gli indirizzi delle note legali e dell'informativa sulla privacy in Amministrazione → Aspetto. Le pagine pubbliche li mostrano; l'informativa sulla privacy deve citare i log del server con gli indirizzi IP.",
         "Switched on: {modules}.": "Attivati: {modules}.",
         "Also switched on, because it is needed: {modules}.": "Attivati anche, perché necessari: {modules}.",
         "Switched off: {modules}.": "Disattivati: {modules}.",
@@ -2630,6 +2634,10 @@
         "_Names, Nextcloud accounts and notes of a loan are removed automatically %n month after the folder came back. The loan itself stays as \"former loan\"._::_Names, Nextcloud accounts and notes of a loan are removed automatically %n months after the folder came back. The loan itself stays as \"former loan\"._": [
             "Nomi, account Nextcloud e note di un prestito vengono rimossi automaticamente %n mese dopo il rientro della cartellina. Il prestito stesso resta come “prestito precedente”.",
             "Nomi, account Nextcloud e note di un prestito vengono rimossi automaticamente %n mesi dopo il rientro della cartellina. Il prestito stesso resta come “prestito precedente”."
+        ],
+        "_A folder that does not come back loses its holder %n month after it was issued; it stays recorded as out._::_A folder that does not come back loses its holder %n months after it was issued; it stays recorded as out._": [
+            "Una cartellina che non torna perde il detentore %n mese dopo la consegna; resta registrata come in prestito.",
+            "Una cartellina che non torna perde il detentore %n mesi dopo la consegna; resta registrata come in prestito."
         ],
         "_%n shared link_::_%n shared links_": [
             "%n link condiviso",

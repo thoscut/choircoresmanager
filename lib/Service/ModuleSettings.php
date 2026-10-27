@@ -11,6 +11,7 @@ namespace OCA\Notenarchiv\Service;
 
 use OCA\Notenarchiv\Exception\AccessDeniedException;
 use OCA\Notenarchiv\Exception\InvalidInputException;
+use OCP\IAppConfig;
 use OCP\IL10N;
 
 /**
@@ -22,10 +23,33 @@ use OCP\IL10N;
  * @psalm-type ModuleChanges = array{enabled: list<string>, alsoEnabled: list<string>, disabled: list<string>, inactive: list<string>, activated: list<string>}
  */
 class ModuleSettings {
+	/** Modules whose pages anyone can open without an account */
+	public const PUBLIC_MODULES = [Modules::PUBLIC_LINKS, Modules::PUBLIC_REPERTOIRE];
+
 	public function __construct(
 		private Modules $modules,
 		private AuditLog $audit,
+		private IAppConfig $appConfig,
 	) {
+	}
+
+	/**
+	 * Whether the addresses of the imprint and the privacy policy are set in
+	 * Nextcloud's theming: the public pages show them in their footer
+	 * (milestone 0.11). The settings warn before public pages go online
+	 * without them.
+	 *
+	 * @return array{imprint: bool, privacy: bool}
+	 */
+	public function legalPages(): array {
+		$set = function (string $key): bool {
+			try {
+				return trim($this->appConfig->getValueString('theming', $key)) !== '';
+			} catch (\Throwable) {
+				return false;
+			}
+		};
+		return ['imprint' => $set('imprintUrl'), 'privacy' => $set('privacyUrl')];
 	}
 
 	/**
@@ -69,7 +93,7 @@ class ModuleSettings {
 	 * switch (`enabled`) and whether they are active (`active`), the groups,
 	 * the presets and the core.
 	 *
-	 * @return array{modules: list<array{key: string, group: string, label: string, description: string, requires: list<string>, enabled: bool, active: bool}>, groups: list<array{key: string, label: string}>, presets: list<array{key: string, label: string, description: string, modules: array<string, bool>}>, core: list<string>}
+	 * @return array{modules: list<array{key: string, group: string, label: string, description: string, requires: list<string>, enabled: bool, active: bool}>, groups: list<array{key: string, label: string}>, presets: list<array{key: string, label: string, description: string, modules: array<string, bool>}>, core: list<string>, publicModules: list<string>, legalPages: array{imprint: bool, privacy: bool}}
 	 */
 	public function describe(IL10N $l): array {
 		$active = $this->modules->states();
@@ -103,6 +127,8 @@ class ModuleSettings {
 				array_keys($groups)),
 			'presets' => $presets,
 			'core' => array_map(fn (string $text): string => $l->t($text), Modules::CORE),
+			'publicModules' => self::PUBLIC_MODULES,
+			'legalPages' => $this->legalPages(),
 		];
 	}
 

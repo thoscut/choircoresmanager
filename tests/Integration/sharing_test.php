@@ -282,8 +282,9 @@ try {
 	$exports = array_values(array_filter(Server::get(AuditEntryMapper::class)->findForObjects([['version', $public->getVersionId()]], 50),
 		fn (AuditEntry $e): bool => $e->getAction() === PracticeAudioService::ACTION));
 	$details = json_decode((string)(($exports[0] ?? null)?->getNewValue() ?? ''), true);
-	$check('practice audio of a choir member is recorded with the measures of the link', is_array($details) && $details['measures'] === '2-4'
-		&& ($exports[0] ?? null)?->getRoles() === Roles::MEMBER && ($exports[0] ?? null)?->getUserId() === $memberUid, (string)(($exports[0] ?? null)?->getNewValue() ?? ''));
+	$check('practice audio of a choir member is recorded with the measures of the link and the role, without account or name', is_array($details)
+		&& $details['measures'] === '2-4' && ($exports[0] ?? null)?->getRoles() === Roles::MEMBER && ($exports[0] ?? null)?->getUserId() === null
+		&& ($exports[0] ?? null)?->getUserName() === null, (string)(($exports[0] ?? null)?->getNewValue() ?? ''));
 	$practiceAudio->authorizeForMember($wholeLink->issuedToken(), ['voice' => 'Alto', 'mode' => 'focus', 'format' => 'midi', 'measure_from' => '1',
 		'measure_to' => '16'], $memberUid);
 	$wholeExports = array_filter(Server::get(AuditEntryMapper::class)->findForObjects([['version', $public->getVersionId()]], 50),

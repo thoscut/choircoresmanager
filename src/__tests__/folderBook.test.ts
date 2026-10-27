@@ -7,7 +7,7 @@
 import type { Folder, FolderLoan } from '../folderBook.ts'
 
 import { describe, expect, it } from 'vitest'
-import { contentsInput, filterFolders, folderSummary, holderText, outdatedText, retentionText, todayIso } from '../folderBook.ts'
+import { contentsInput, filterFolders, folderSummary, holderText, openLoanEnd, openLoanText, outdatedText, retentionText, todayIso } from '../folderBook.ts'
 import { HIDEABLE_VIEWS, VIEW_MODULES, viewShown } from '../modules.ts'
 import { normalizeReport, reportSections } from '../printMirror.ts'
 import { buildQuery, parseStartParams } from '../startParams.ts'
@@ -93,6 +93,16 @@ describe('the folder book', () => {
 	it('says when names are removed', () => {
 		expect(retentionText(12)).toContain('12 months after the folder came back')
 		expect(retentionText(1)).toContain('1 month after the folder came back')
+		expect(openLoanText(36)).toContain('36 months after it was issued')
+	})
+
+	it('names the day a folder that never came back loses its holder, 90 days ahead', () => {
+		expect(openLoanEnd('2023-12-15', 36, '2026-10-27')).toBe('2026-12-15')
+		expect(openLoanEnd('2024-03-15', 36, '2026-10-27')).toBeNull()
+		expect(openLoanEnd('2023-02-28', 36, '2026-10-27')).toBe('2026-02-28')
+		expect(openLoanEnd('2021-05-31', 36, '2024-05-01')).toBe('2024-05-31')
+		expect(openLoanEnd('2023-11-30', 3, '2024-01-01')).toBe('2024-02-29')
+		expect(openLoanEnd('', 36, '2026-10-27')).toBeNull()
 	})
 
 	it('adds up the same copy and checks the numbers', () => {

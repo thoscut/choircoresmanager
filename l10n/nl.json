@@ -250,7 +250,8 @@
         "Corrected": "Gecorrigeerd",
         "Issue": "Uitlenen",
         "Take back": "Terugnemen",
-        "Name removed after the retention period": "Naam verwijderd na de bewaartermijn",
+        "Name removed": "Naam verwijderd",
+        "Personal data erased on request": "Persoonsgegevens op verzoek gewist",
         "Copied": "Gekopieerd",
         "Replaced": "Vervangen",
         "Removed": "Verwijderd",
@@ -264,6 +265,7 @@
         "Measures {from} to {to}": "Maten {from} tot {to}",
         "without repeats": "zonder herhalingen",
         "with repeats": "met herhalingen",
+        "A choir member": "Een koorlid",
         "System": "Systeem",
         "No changes yet": "Nog geen wijzigingen",
         "Every change is recorded here: who, when, old and new value, reason.": "Hier staat elke wijziging: wie, wanneer, oude en nieuwe waarde, reden.",
@@ -638,6 +640,7 @@
         "Actions": "Acties",
         "Out of service since {date}: {reason}": "Buiten gebruik sinds {date}: {reason}",
         "available": "beschikbaar",
+        "Holder removed on {date}": "Houder verwijderd op {date}",
         "No contents entered": "Geen inhoud ingevoerd",
         "Hint: the folder contains a version that no longer applies.": "Let op: de koormap bevat een versie die niet meer geldt.",
         "Missing: {sheets}": "Ontbreekt: {sheets}",
@@ -872,6 +875,7 @@
         "Programme lines move along. The rights status of the versions does not change.": "Programmaonderdelen gaan mee. De rechtenstatus van de versies verandert niet.",
         "Needs: {modules}.": "Vereist: {modules}.",
         "Switched on, but not working at the moment, because this is switched off: {modules}.": "Ingeschakeld, maar werkt op dit moment niet, omdat dit is uitgeschakeld: {modules}.",
+        "Before these pages go online: enter the addresses of the imprint and the privacy policy under Administration → Theming. The public pages show them; the privacy policy must name the server logs with IP addresses.": "Voordat deze pagina's online gaan: vul bij Beheer → Thema de adressen van het colofon en de privacyverklaring in. De openbare pagina's tonen ze; de privacyverklaring moet de serverlogs met IP-adressen noemen.",
         "Switched on: {modules}.": "Ingeschakeld: {modules}.",
         "Also switched on, because it is needed: {modules}.": "Ook ingeschakeld, omdat het nodig is: {modules}.",
         "Switched off: {modules}.": "Uitgeschakeld: {modules}.",
@@ -2630,6 +2634,10 @@
         "_Names, Nextcloud accounts and notes of a loan are removed automatically %n month after the folder came back. The loan itself stays as \"former loan\"._::_Names, Nextcloud accounts and notes of a loan are removed automatically %n months after the folder came back. The loan itself stays as \"former loan\"._": [
             "Namen, Nextcloud-accounts en notities van een uitlening worden %n maand nadat de koormap is teruggekomen automatisch verwijderd. De uitlening zelf blijft staan als “vroegere uitlening”.",
             "Namen, Nextcloud-accounts en notities van een uitlening worden %n maanden nadat de koormap is teruggekomen automatisch verwijderd. De uitlening zelf blijft staan als “vroegere uitlening”."
+        ],
+        "_A folder that does not come back loses its holder %n month after it was issued; it stays recorded as out._::_A folder that does not come back loses its holder %n months after it was issued; it stays recorded as out._": [
+            "Een koormap die niet terugkomt, verliest haar houder %n maand na de uitgifte; ze blijft geregistreerd als uitgegeven.",
+            "Een koormap die niet terugkomt, verliest haar houder %n maanden na de uitgifte; ze blijft geregistreerd als uitgegeven."
         ],
         "_%n shared link_::_%n shared links_": [
             "%n gedeelde link",

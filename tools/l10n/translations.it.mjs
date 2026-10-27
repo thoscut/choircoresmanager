@@ -250,7 +250,6 @@ export const singular = {
 	"Corrected": "Corretto",
 	"Issue": "Consegna",
 	"Take back": "Ritira",
-	"Name removed after the retention period": "Nome rimosso dopo il periodo di conservazione",
 	"Copied": "Copiato",
 	"Replaced": "Sostituito",
 	"Removed": "Rimosso",
@@ -2240,6 +2239,11 @@ export const singular = {
 	"No composer is recorded for this version. Add the composer under \"Persons involved and protection\" (tab Rights), or mark the melody as traditional with evidence; until then unknown means protected.": "Per questa versione non è registrata alcuna composizione. Aggiungila in “Persone coinvolte e protezione” (scheda “Diritti”) o segna la melodia come tradizionale con una prova; fino ad allora sconosciuto significa protetto.",
 	"No lyricist is recorded for this version. Add the lyricist under \"Persons involved and protection\" (tab Rights), or mark the text as traditional or the version as without text; until then unknown means protected.": "Per questa versione non è registrato alcun testo. Aggiungi la persona in “Persone coinvolte e protezione” (scheda “Diritti”) o segna il testo come tradizionale o la versione come senza testo; fino ad allora sconosciuto significa protetto.",
 	"Melody and text are marked as traditional and no other person is recorded: no one has rights of their own. Check that no arranger or translator is missing.": "Melodia e testo sono segnati come tradizionali e nessun'altra persona è registrata: nessuno ha diritti propri. Controlla che non manchino arrangiamento o traduzione.",
+	"Name removed": "Nome rimosso",
+	"Personal data erased on request": "Dati personali cancellati su richiesta",
+	"A choir member": "Un membro del coro",
+	"Holder removed on {date}": "Detentore rimosso il {date}",
+	"Before these pages go online: enter the addresses of the imprint and the privacy policy under Administration → Theming. The public pages show them; the privacy policy must name the server logs with IP addresses.": "Prima che queste pagine vadano online: inserisci gli indirizzi delle note legali e dell'informativa sulla privacy in Amministrazione → Aspetto. Le pagine pubbliche li mostrano; l'informativa sulla privacy deve citare i log del server con gli indirizzi IP.",
 }
 
 export const plural = {
@@ -2348,4 +2352,5 @@ export const plural = {
 	"The music archive keeps this folder up to date. It holds %n score (PDF) released for the print station.|The music archive keeps this folder up to date. It holds %n scores (PDF) released for the print station.": ["L'archivio di spartiti mantiene aggiornata questa cartella. Contiene %n spartito (PDF) autorizzato per la postazione di stampa.", "L'archivio di spartiti mantiene aggiornata questa cartella. Contiene %n spartiti (PDF) autorizzati per la postazione di stampa."],
 	"%n shared link|%n shared links": ["%n link condiviso", "%n link condivisi"],
 	"Current repertoire: version with photocopies without a license|Current repertoire: versions with photocopies without a license": ["Repertorio attuale: versione con fotocopie senza licenza", "Repertorio attuale: versioni con fotocopie senza licenza"],
+	"A folder that does not come back loses its holder %n month after it was issued; it stays recorded as out.|A folder that does not come back loses its holder %n months after it was issued; it stays recorded as out.": ["Una cartellina che non torna perde il detentore %n mese dopo la consegna; resta registrata come in prestito.", "Una cartellina che non torna perde il detentore %n mesi dopo la consegna; resta registrata come in prestito."],
 }

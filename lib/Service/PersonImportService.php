@@ -261,6 +261,13 @@ class PersonImportService {
 				$notes[] = $column . ': ' . $value;
 			}
 		}
+		$notes = $notes === [] ? null : implode("\n", $notes);
+		if ($dates['died'] === null) {
+			// Without a known death only the year of birth (data minimisation)
+			$dates = LifeDates::birthYearOnly(['born' => $dates['born'], 'born_precision' => $dates['born_precision'], 'died' => null]) + $dates;
+			$text = LifeDates::yearsOnly($text);
+			$notes = $notes === null ? null : LifeDates::yearsOnly($notes);
+		}
 		return [
 			'born' => $dates['born'],
 			'born_precision' => $dates['born_precision'],
@@ -269,7 +276,7 @@ class PersonImportService {
 			'life_dates_text' => $text === '' ? null : mb_substr($text, 0, 255),
 			'source' => ($r['Quelle'] ?? '') === '' ? null : mb_substr($r['Quelle'], 0, 1000),
 			'identification' => !$notFound && $dated ? 'probable' : 'uncertain',
-			'notes' => $notes === [] ? null : implode("\n", $notes),
+			'notes' => $notes,
 		];
 	}
 

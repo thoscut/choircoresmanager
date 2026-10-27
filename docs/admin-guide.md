@@ -542,26 +542,78 @@ commands are a convenience for self-hosted instances:
 | `occ notenarchiv:file-sync <account>` | runs the file sync; refused (exit code 1) while another one is running |
 | `occ notenarchiv:restore <file> [<account>]` | restores a complete backup into an empty catalog |
 | `occ notenarchiv:modules list\|enable\|disable\|preset` | shows and switches the modules (section 12) |
+| `occ notenarchiv:privacy-report <account or name>` | writes what the app stores about a person as JSON (access, Art. 15 GDPR; section 10) |
+| `occ notenarchiv:privacy-erase <account or name> [--execute]` | removes a person from the folder book and the audit log (erasure, Art. 17 GDPR); a dry run unless `--execute` is given |
 
 ## 10. Data protection
 
-The app stores catalog data and the names of the function holders who changed
-it (audit log, as a snapshot of the display name). The register of persons
-holds names, life dates and roles of composers, arrangers, lyricists and
-other persons involved; for living persons this is personal data from public
-sources (prints, publisher catalogues) kept for the rights assessment.
-Transcription reports are kept as received (as evidence, with their
-checksum); their rights section may name the persons involved in a work.
-Review points record who decided them and when.
+What the app stores about people:
 
-Without the folder book the app stores no data about choir members. The
-folder book (section 15) stores the name or the Nextcloud account of the
-person who has a choir folder and notes about the loan; they are removed
-after the retention period. Excerpt links count calls without
-recording who opened them. The statistics contain no personal data of choir
-members and no account names; calendar entries contain no notes and no
-persons; the dashboard widget shows no question texts and no names. Record
-the processing in your register of processing activities (GDPR Art. 30).
+- **Function holders.** The audit log records who changed what, as a
+  snapshot of the display name with the account. That is the record of the
+  catalog (legitimate interest, Art. 6 (1) f GDPR).
+- **Register of persons.** Names, life dates and roles of composers,
+  arrangers, lyricists and other persons involved, from public sources
+  (prints, publisher catalogues), kept for the rights assessment (Art. 6 (1)
+  f GDPR). Informing each of them individually would take a
+  disproportionate effort (Art. 14 (5) b GDPR); say so in your privacy
+  notice. For persons without a known death the app keeps only the year of
+  birth, also in the free text of the life dates and the notes (since 0.11,
+  older entries were shortened on the update). The dead are not covered by
+  the GDPR. If a living person objects (Art. 21 GDPR), remove the life dates
+  in the app; the name stays as long as a version needs it for the rights.
+- **Choir members.** The folder book (section 15) stores the name or the
+  Nextcloud account of the person who has a choir folder and notes about
+  the loan. Practice audio files of choir members are recorded with the role
+  only, without account or name (since 0.11; older entries were anonymised on
+  the update). Excerpt links count calls without recording who opened them.
+- **Reports and review points.** Transcription reports are kept as received
+  (as evidence, with their checksum); their rights section may name the
+  persons involved in a work. Review points record who decided them and
+  when.
+
+The statistics contain no personal data of choir members and no account
+names; calendar entries contain no notes and no persons; the dashboard
+widget shows no question texts and no names.
+
+**Deleted accounts.** When a Nextcloud account is deleted, the app removes
+it from the folder book and the audit log: returned loans lose their
+personal data; an open loan keeps the name of the holder (the folder is
+still out), but no longer the account; audit entries lose the account and
+keep the display name of who made a change.
+
+**Access and erasure.** On self-hosted instances `occ
+notenarchiv:privacy-report <account or name>` lists the loans, the audit
+entries made by the person and persons of the same name in the register of
+persons (JSON). `occ notenarchiv:privacy-erase <account or name> --execute`
+removes the personal data of the loans (also from their audit entries; an
+open loan stays recorded as out, without the holder) and the account and
+name from the audit entries made by the person; the erasure itself is
+recorded without the name. Without `--execute` it only shows what would be
+erased. Persons of the register are only reported. On managed hosting ask
+the provider to run the commands, or remove the data by hand: the folder
+book in the app, the register of persons in the app.
+
+**Public pages.** Public links and the public repertoire page are pages for
+everyone. Nextcloud records the IP addresses of their visitors: in the web
+server log (with the address of the link), in the brute-force protection
+and the rate limit, and in `nextcloud.log` on errors. The app sets no cookies
+for visitors without an account and loads nothing from third parties.
+Before you switch these modules on, enter the addresses of the **imprint**
+and the **privacy policy** under *Administration → Theming*: the public pages
+show both in their footer, and the module settings warn while one is
+missing. The privacy policy must name the server logs and how long they are
+kept.
+
+**Agents.** An agent that runs on a cloud language model passes what it
+reads to the provider of the model (processor, Art. 28 GDPR; possibly a
+third country, Art. 44 ff.). Give agents the role **Proposals (tools)**:
+it does not read the folder book or its audit entries (section 13).
+
+**Templates.** [privacy-templates.md](privacy-templates.md) has entries for
+the register of processing activities (Art. 30 GDPR) and text blocks for
+the information of choir members (Art. 13 GDPR) and the privacy policy of
+the public pages. Adapt them; they are no legal advice.
 
 ## 11. Accessibility
 
@@ -764,8 +816,9 @@ Setting up:
    **Proposals inbox** must be on as well; for questions, **Questions and
    tasks**; for review points and reports, **Reviewing transcriptions**.
 2. Create an account that only the agent uses and a group for it, and give
-   the group the role **Proposals (tools)** (reads, proposes, asks) or
-   **Read only**. Do not give agents the roles of the catalog or operations
+   the group the role **Proposals (tools)** (reads, proposes, asks). Do not
+   give agents **Read only**: it also reads the folder book with the names of
+   choir members. Do not give agents the roles of the catalog or operations
    librarian or the conductor.
 3. Create an app password for that account (Personal settings → Security,
    logged in as the agent's account) and give it to the agent's MCP
@@ -776,6 +829,14 @@ the agent's account and the modules, as in the app; every route is limited
 per account; internal preservation copies stay hidden from roles that may
 not view them; answers contain no account names. Proposals, questions and
 reports of the agent appear in the audit log under its account.
+
+**Data protection.** An agent passes what it reads to the provider of its
+language model. Choose a provider with a data processing agreement (Art. 28
+GDPR), check where the data are processed (Art. 44 ff. GDPR) and record the
+agent in your register of processing activities. With the role "Proposals
+(tools)" the agent reads the catalog, the register of persons (for living
+persons only the year of birth) and the audit log without the folder book;
+practice audio of choir members appears there without account or name.
 
 To stop all agents at once, switch the module off: the interface answers
 404 immediately. Deleting an app password or the account ends the access of
@@ -876,6 +937,8 @@ removes the personal data of a loan:
 | The folder is out | Name or account and the note stay; they are needed. |
 | The folder comes back | The loan keeps name, days, condition, missing sheets and notes. |
 | Retention period after the return | The daily check removes name, account and both notes from the loan and from its entries in the audit log (shown as `(anonymised)`). The loan stays as "former loan" with its days, condition and missing sheets; the audit log notes "Name removed after the retention period" without the name and without a user. |
+| The folder does not come back | 36 months after the issue (a claim for the return expires after three years, § 195 BGB) the daily check removes name, account and the note in the same way; the folder stays recorded as out. The folder book shows the day 90 days ahead. |
+| The account is deleted | Returned loans of the account lose their personal data at once; an open loan keeps the name, but no longer the account (section 10). |
 
 The removal also runs while the folder book is switched off: switching off
 never makes anything less safe. It needs Nextcloud's background jobs (cron).

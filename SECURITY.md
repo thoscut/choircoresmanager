@@ -58,7 +58,7 @@ below explain the reasons.
 | Every failure of a public link gets the same 404 and counts for the brute-force protection | CS `testPublicLinksAnswerTheSame404ForEveryFailure`, `testResolvingALinkHasBruteForceProtection`, `testAnUnknownTokenIsThrottled` |
 | A public link shows title, composer and the measures of the link, no account names and no note | `SharingTest::testAPublicLinkShowsOnlyTheExcerptAndNothingInternal`, `testChoirMembersSeeTheirLinksAndOnlyTheMeasures`; `sharing_test` |
 | A scan is shown only by the browser's PDF viewer, after the same checks as the link | CS `testScansAreOnlyShownByThePdfViewer`, `testTheScanOfAMemberLinkIsShownInlineAfterTheSameChecks`, `testAScanIsRefusedWithoutTheRightToView` |
-| Practice audio of choir members stays within the link and is recorded with the role | `SharingTest::testChoirMembersMakePracticeAudioOfTheirExcerptOnly`, `testTheAuditLogNamesTheRoleOfAChoirMember` |
+| Practice audio of choir members stays within the link and is recorded with the role only, without account or name | `SharingTest::testChoirMembersMakePracticeAudioOfTheirExcerptOnly`, `testTheAuditLogNamesOnlyTheRoleOfAChoirMember` |
 | The repertoire page lists only public-domain works and links only to `cpdl.org` and `imslp.org` over https | `SharingTest::testTheRepertoirePageShowsChosenPublicDomainWorksOnly`, `testLinksToCpdlAndImslpMustBeHttpsToTheirSite` |
 | The API for agents needs its module, a role and a limit on every route, and decides nothing | CS `testEveryApiV1RouteNeedsTheInterfaceItsModuleARoleAndALimit`, `testNoApiV1RouteDecidesOrCorrects`, `testASwitchedOffApiV1RouteAnswers404WithOcsMeta`; agent run in `tools/ci/integration-demo.sh` |
 | The scan in links for choir members needs a license for copies unless public domain is confirmed; public playback of protected versions a license for online playback | `RightsPolicyTest::testTheScanForChoirMembersNeedsALicenseForCopies`, `testPublicLinks`; `SharingTest::testTheDialogLearnsWhatTheRecipientsGet` |
@@ -76,6 +76,8 @@ below explain the reasons.
 | Excerpts and whole pieces for choir members and the public carry no encoder, miscellaneous fields, comments or processing instructions | `MusicXmlExcerptTest::testNamesAndNotesOutsideTheMusicDoNotLeaveTheServer` |
 | The rights notice is not read from documents with an internal DTD subset, however long the prolog | `RightsNoticeServiceTest::testTheDoctypeOfMusicXmlIsAcceptedButNoInternalSubset` |
 | Backups hold no link tokens; a restore brings links back revoked | `ExportServiceTest::testABackupHoldsNoLinkTokensAndASnapshotNoAccounts`; `backup_test` |
+| A deleted account leaves no account in the folder book and the audit log; access and erasure for one person record no name | `PrivacyTest::testADeletedAccountLeavesNoAccountBehind`, `testErasureAnonymisesTheLoansAndTheAuditEntriesAndRecordsNoName`, `testTheReportNamesLoansEntriesAndPersonsOfAnAccountOrAName` |
+| Folders that never come back lose their holder after 36 months; persons without a known death keep only the year of birth | `FolderBookServiceTest::testFoldersThatNeverComeBackLoseTheHolderAfterThreeYears`; `PrivacyTest::testPersonsWithoutAKnownDeathKeepOnlyTheYearOfBirth` |
 | Of the weekly backups the newest eight are kept | `ExportServiceTest::testOnlyTheNewestWeeklyBackupsAreKept` |
 | Annual snapshots name nobody: no accounts, folder book, audit log or links | `ExportServiceTest::testABackupHoldsNoLinkTokensAndASnapshotNoAccounts`; `backup_test`, `archive_extras_test`; CS `testAnnualSnapshotsCheckTheRolesOnTheServer` |
 | A restore writes only into an empty catalog, checks every value against its column and writes nothing when it fails | `backup_test`; `FullBackupServiceTest::testColumnValue`, `testRefusesDeeplyNestedJson`, `testRefusesWhatIsNoBackup` |
@@ -203,8 +205,10 @@ made and on every call the server checks:
 - playback and practice audio as in the archive (public domain or a license
   for practice audio; practice audio files additionally a confirmed status
   or that license). Every practice file of a choir member is recorded in the
-  audit log with account, role `member`, measures, voice, mode and format;
-  for an excerpt the measures of the link, whatever the request says.
+  audit log with the role `member` only (no account, no name; since 0.11,
+  older entries were anonymised on the update), measures, voice, mode and
+  format; for an excerpt the measures of the link, whatever the request
+  says.
 
 Choir members and the public get MusicXML cut on the server, not the file:
 without the encoder and the miscellaneous fields of `<identification>`,

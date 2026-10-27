@@ -485,6 +485,7 @@ class PersonService {
 			$person->setValue($field, $value);
 			$person->setValue($precisionField, $precision);
 		}
+		$person->keepBirthYearOnly();
 
 		$currentYear = (int)substr($this->rights->today($uid), 0, 4);
 		$bornYear = LifeDates::year($person->getBorn());

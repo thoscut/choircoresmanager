@@ -250,7 +250,6 @@ export const singular = {
 	"Corrected": "Poprawiono",
 	"Issue": "Wypożycz",
 	"Take back": "Przyjmij zwrot",
-	"Name removed after the retention period": "Usunięto nazwisko po upływie okresu przechowywania",
 	"Copied": "Skopiowano",
 	"Replaced": "Zastąpiono",
 	"Removed": "Usunięto",
@@ -2240,6 +2239,11 @@ export const singular = {
 	"No composer is recorded for this version. Add the composer under \"Persons involved and protection\" (tab Rights), or mark the melody as traditional with evidence; until then unknown means protected.": "Dla tej wersji nie zapisano kompozycji. Dodaj ją w „Zaangażowane osoby i ochrona” (karta „Prawa”) albo oznacz melodię z dowodem jako tradycyjną; do tego czasu nieznane oznacza chronione.",
 	"No lyricist is recorded for this version. Add the lyricist under \"Persons involved and protection\" (tab Rights), or mark the text as traditional or the version as without text; until then unknown means protected.": "Dla tej wersji nie zapisano tekstu. Dodaj osobę w „Zaangażowane osoby i ochrona” (karta „Prawa”) albo oznacz tekst jako tradycyjny lub wersję jako bez tekstu; do tego czasu nieznane oznacza chronione.",
 	"Melody and text are marked as traditional and no other person is recorded: no one has rights of their own. Check that no arranger or translator is missing.": "Melodia i tekst są oznaczone jako tradycyjne i nie zapisano żadnej innej osoby: nikt nie ma własnych praw. Sprawdź, czy nie brakuje aranżacji ani tłumaczenia.",
+	"Name removed": "Usunięto nazwisko",
+	"Personal data erased on request": "Dane osobowe usunięte na wniosek",
+	"A choir member": "Członek chóru",
+	"Holder removed on {date}": "Osoba zostanie usunięta {date}",
+	"Before these pages go online: enter the addresses of the imprint and the privacy policy under Administration → Theming. The public pages show them; the privacy policy must name the server logs with IP addresses.": "Zanim te strony trafią do sieci: wpisz adresy noty prawnej i polityki prywatności w Administracja → Motyw. Strony publiczne je pokazują; polityka prywatności musi wymieniać logi serwera z adresami IP.",
 }
 
 export const plural = {
@@ -2348,4 +2352,5 @@ export const plural = {
 	"The music archive keeps this folder up to date. It holds %n score (PDF) released for the print station.|The music archive keeps this folder up to date. It holds %n scores (PDF) released for the print station.": ["Archiwum nut na bieżąco aktualizuje ten folder. Zawiera on %n plik z nutami (PDF) zatwierdzony dla stanowiska druku.", "Archiwum nut na bieżąco aktualizuje ten folder. Zawiera on %n pliki z nutami (PDF) zatwierdzone dla stanowiska druku.", "Archiwum nut na bieżąco aktualizuje ten folder. Zawiera on %n plików z nutami (PDF) zatwierdzonych dla stanowiska druku."],
 	"%n shared link|%n shared links": ["%n udostępniony link", "%n udostępnione linki", "%n udostępnionych linków"],
 	"Current repertoire: version with photocopies without a license|Current repertoire: versions with photocopies without a license": ["Bieżący repertuar: wersja z fotokopiami bez licencji", "Bieżący repertuar: wersje z fotokopiami bez licencji", "Bieżący repertuar: wersji z fotokopiami bez licencji"],
+	"A folder that does not come back loses its holder %n month after it was issued; it stays recorded as out.|A folder that does not come back loses its holder %n months after it was issued; it stays recorded as out.": ["Teczka, która nie wraca, traci osobę %n miesiąc po wydaniu; pozostaje zapisana jako wydana.", "Teczka, która nie wraca, traci osobę %n miesiące po wydaniu; pozostaje zapisana jako wydana.", "Teczka, która nie wraca, traci osobę %n miesięcy po wydaniu; pozostaje zapisana jako wydana."],
 }

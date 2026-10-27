@@ -82,6 +82,19 @@ All notable changes to this app are documented in this file. The format follows
   the public name lyricists, arrangers and translators from the person
   register (names only) and show the new license field "Notice on shared
   pages".
+- **Data protection package.** Practice audio of choir members is recorded
+  with the role only, without account or name (older entries are
+  anonymised on the update). Persons without a known death keep only the
+  year of birth, also in the free text. A deleted Nextcloud account is
+  removed from the folder book and the audit log. A folder that never comes
+  back loses its holder 36 months after the issue; the folder book shows
+  the day 90 days ahead. New commands `occ notenarchiv:privacy-report` and
+  `notenarchiv:privacy-erase` for access and erasure. The module settings
+  warn before public pages go online without imprint or privacy policy in
+  Nextcloud's theming. Templates for the register of processing activities,
+  the information of choir members and the privacy policy of the public
+  pages (`docs/privacy-templates.md`, `docs/de/datenschutz-vorlagen.md`);
+  agents are recommended the role "Proposals (tools)" only.
 - Excerpts and whole pieces for choir members and the public no longer
   carry the encoder, the miscellaneous fields, XML comments or processing
   instructions of the MusicXML file.

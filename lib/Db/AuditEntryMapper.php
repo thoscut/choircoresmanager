@@ -15,9 +15,11 @@ use OCP\IDBConnection;
 
 /**
  * The audit log is append-only. There is deliberately no method to delete
- * entries, and only one to change them: the retention period of the folder
- * book (FolderBookService) replaces the personal data of a folder loan in
- * that loan's own entries.
+ * entries, and only few to change them, all for data protection: the
+ * retention period of the folder book (FolderBookService) replaces the
+ * personal data of a folder loan in that loan's own entries; a deleted
+ * account and an erasure on request (PrivacyService) remove the account or
+ * the name of who made an entry.
  *
  * @template-extends QBMapper<AuditEntry>
  */
@@ -91,5 +93,51 @@ class AuditEntryMapper extends QBMapper {
 				->andWhere($qb->expr()->isNotNull($column));
 			$qb->executeStatement();
 		}
+	}
+
+	/**
+	 * Entries made by an account or under a display name.
+	 *
+	 * @return list<AuditEntry> oldest first
+	 */
+	public function findByActor(string $uid, string $name): array {
+		$qb = $this->db->getQueryBuilder();
+		$qb->select('*')->from($this->getTableName())
+			->where($qb->expr()->orX(
+				$qb->expr()->eq('user_id', $qb->createNamedParameter($uid)),
+				$qb->expr()->eq('user_name', $qb->createNamedParameter($name)),
+			))
+			->orderBy('id');
+		return $this->findEntities($qb);
+	}
+
+	/**
+	 * Removes the account from the entries it made; the display name
+	 * becomes the given one, or stays when null.
+	 *
+	 * @return int the number of entries changed
+	 */
+	public function removeAccount(string $uid, ?string $name): int {
+		$qb = $this->db->getQueryBuilder();
+		$qb->update($this->getTableName())
+			->set('user_id', $qb->createNamedParameter(null, IQueryBuilder::PARAM_NULL))
+			->where($qb->expr()->eq('user_id', $qb->createNamedParameter($uid)));
+		if ($name !== null) {
+			$qb->set('user_name', $qb->createNamedParameter($name));
+		}
+		return $qb->executeStatement();
+	}
+
+	/**
+	 * Replaces a display name in the entries made under it.
+	 *
+	 * @return int the number of entries changed
+	 */
+	public function replaceName(string $name, string $placeholder): int {
+		$qb = $this->db->getQueryBuilder();
+		$qb->update($this->getTableName())
+			->set('user_name', $qb->createNamedParameter($placeholder))
+			->where($qb->expr()->eq('user_name', $qb->createNamedParameter($name)));
+		return $qb->executeStatement();
 	}
 }

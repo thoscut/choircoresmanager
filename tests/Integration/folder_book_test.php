@@ -19,6 +19,7 @@ declare(strict_types=1);
  *   before it ends, then name, account and notes disappear from the loan
  *   and from its entries of the audit log; the loan stays and the audit
  *   log notes the anonymisation without the name,
+ * - a folder that never comes back, access and erasure by name,
  * - the roles: catalog librarian and operations maintain it, conductor and
  *   reader read it, contributors do not see it (nor its audit entries),
  * - the routes answer 404 while the module is off; the data stay.
@@ -46,6 +47,7 @@ use OCA\Notenarchiv\Exception\ModuleDisabledException;
 use OCA\Notenarchiv\Middleware\ModuleMiddleware;
 use OCA\Notenarchiv\Service\FolderBookService;
 use OCA\Notenarchiv\Service\Modules;
+use OCA\Notenarchiv\Service\PrivacyService;
 use OCA\Notenarchiv\Service\RightsService;
 use OCA\Notenarchiv\Service\Roles;
 use OCP\DB\Exception as DbException;
@@ -213,6 +215,21 @@ try {
 	$check('entries of the folder itself are kept', array_filter($folderEntries, fn ($e): bool => $e->getNewValue() === $label) !== []);
 	$book->anonymizeExpired($day($months + 1));
 	$check('anonymising again changes nothing', count(array_filter($loanAudit($first), fn (array $e): bool => $e[0] === 'anonymized')) === 1);
+
+	// ---- a folder that never comes back, access and erasure (milestone 0.11) -------------------
+	$open = $book->issue($id, ['holderName' => 'Privacy Test Person'], $uid)['id'];
+	$book->anonymizeExpired($day(FolderBookService::OPEN_LOAN_MONTHS, -1));
+	$check('an open loan keeps its holder until the term ends', $loans->find($open)->getHolderName() === 'Privacy Test Person');
+	$privacy = Server::get(PrivacyService::class);
+	$report = $privacy->report('privacy test person');
+	$check('the report finds the loan by name', array_column($report['loans'], 'id') === [$open], json_encode($report['loans']) ?: '');
+	$erased = $privacy->erase('Privacy Test Person');
+	$check('erasure anonymises the loan', $erased['loans'] === 1 && $loans->find($open)->getHolderName() === null
+		&& $loans->find($open)->getOpenFolderId() === $id);
+	$check('nothing of the loan names the person afterwards', array_filter($loanAudit($open),
+		fn (array $e): bool => str_contains(json_encode($e) ?: '', 'Privacy Test Person')) === []);
+	$check('the report is empty afterwards', $privacy->report('Privacy Test Person')['loans'] === []);
+	$book->takeBack($open, ['wear' => 'good'], $uid);
 
 	// ---- out of service ----------------------------------------------------------------
 	$book->updateFolder($id, ['status' => 'retired', 'statusReason' => 'pages torn'], $uid);
