@@ -480,7 +480,7 @@ Tempo der Stelle, an der die Wiedergabe beginnt, die erste Zählzeit jedes
 Takts höher. Ein Auftakt setzt auf den letzten Zählzeiten des Einzählers ein.
 Die Wahl merkt sich dein Browser, auch für geteilte Ausschnitte.
 
-#### So übst du mit Anfangstönen, Metronom, Tonhöhe und Mischpult
+#### So übst du mit Anfangstönen, Metronom, Tonhöhe, Mischpult und Stellen
 
 Diese Werkzeuge stehen unter **Tempo, Lautstärke und Üben**, in der
 Notenansicht und bei geteilten Stücken und Ausschnitten. Sie arbeiten nur in
@@ -500,6 +500,10 @@ deinem Browser: Über dein Üben wird nichts auf dem Server gespeichert.
   **Stimmen beim Abspielen**: Bei 0 % ist eine Stimme stumm, bei 50 % halb so
   laut. **Alle Stimmen auf 100 %** setzt es zurück. Eine Übe-Datei eines
   geteilten Stücks klingt wie das Mischpult.
+- **… merken** hält die gezeigten Takte als Stelle fest, auf Wunsch mit
+  Namen („Fuge“, „Einsatz Tenor“). Ein Klick auf eine gemerkte Stelle zeigt
+  sie und spielt sie in Schleife; das Kreuz entfernt sie. Die Stellen bleiben
+  je Stück nur in diesem Browser.
 
 #### So startest du an einer bestimmten Note
 
@@ -1754,8 +1758,8 @@ Stimme, der Notiz und wie lange jedes gilt, ob es sich abspielen lässt
 3. Um eine Stelle zu üben, gib **Von Takt** und **Bis Takt** an und wähle
    **Anzeigen**; **Schleife** spielt die gezeigten Takte immer wieder.
    **Alle Takte** zeigt wieder alles. **Anfangstöne**, **Metronom**,
-   **Tonhöhe** und **Mischpult** arbeiten wie in der Notenansicht (siehe
-   [So übst du mit Anfangstönen, Metronom, Tonhöhe und Mischpult](#so-übst-du-mit-anfangstönen-metronom-tonhöhe-und-mischpult)).
+   **Tonhöhe**, **Mischpult** und gemerkte Stellen arbeiten wie in der Notenansicht (siehe
+   [So übst du mit Anfangstönen, Metronom, Tonhöhe, Mischpult und Stellen](#so-übst-du-mit-anfangstönen-metronom-tonhöhe-mischpult-und-stellen)).
 4. **Scan (PDF) öffnen** (wo mitgegeben) öffnet den Scan im PDF-Betrachter
    deines Browsers, in einem neuen Tab.
 5. **Textverweis** und **Beschreibung des Stücks** (oder **des

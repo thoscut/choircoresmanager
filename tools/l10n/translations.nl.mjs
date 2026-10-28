@@ -2332,6 +2332,13 @@ export const singular = {
 	"mixer as set above": "mengpaneel zoals hierboven ingesteld",
 	"All voices, {tempo}": "Alle stemmen, {tempo}",
 	"Measures, tempo, pitch and repeats are taken from the score view; change them there.": "Maten, tempo, toonhoogte en herhalingen komen uit de bladmuziekweergave; wijzig ze daar.",
+	"Name of the passage": "Naam van de passage",
+	"Remember {measures}": "{measures} onthouden",
+	"Remembered passages": "Onthouden passages",
+	"Remove passage \"{name}\"": "Passage „{name}” verwijderen",
+	"A remembered passage is shown and played in a loop. The passages are kept in this browser only.": "Een onthouden passage wordt getoond en in een lus afgespeeld. De passages blijven alleen in deze browser.",
+	"Passage {measures} remembered in this browser.": "Passage {measures} onthouden in deze browser.",
+	"Passage \"{name}\" removed.": "Passage „{name}” verwijderd.",
 }
 
 export const plural = {

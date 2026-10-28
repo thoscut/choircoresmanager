@@ -2332,6 +2332,13 @@ export const singular = {
 	"mixer as set above": "mezclador como arriba",
 	"All voices, {tempo}": "Todas las voces, {tempo}",
 	"Measures, tempo, pitch and repeats are taken from the score view; change them there.": "Los compases, el tempo, la altura y las repeticiones se toman de la vista de partitura; cámbialos allí.",
+	"Name of the passage": "Nombre del pasaje",
+	"Remember {measures}": "Recordar {measures}",
+	"Remembered passages": "Pasajes recordados",
+	"Remove passage \"{name}\"": "Quitar el pasaje «{name}»",
+	"A remembered passage is shown and played in a loop. The passages are kept in this browser only.": "Un pasaje recordado se muestra y se reproduce en bucle. Los pasajes se guardan solo en este navegador.",
+	"Passage {measures} remembered in this browser.": "Pasaje {measures} recordado en este navegador.",
+	"Passage \"{name}\" removed.": "Pasaje «{name}» quitado.",
 }
 
 export const plural = {

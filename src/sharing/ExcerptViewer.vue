@@ -23,6 +23,7 @@ import type { Click, CountInBars } from '../score/countIn.ts'
 import type { MemberPracticeAudioInput } from '../types.ts'
 import type { PlayMode, ScorePlayer as ScorePlayerType } from '../score/player.ts'
 import type { PracticePart } from '../score/practice.ts'
+import type { Mark } from '../score/marks.ts'
 import type { Mix } from '../score/practising.ts'
 import type { MeasureRange } from '../score/range.ts'
 import type { ScoreModel } from '../score/model.ts'
@@ -43,6 +44,7 @@ import NcRadioGroup from '@nextcloud/vue/components/NcRadioGroup'
 import NcRadioGroupButton from '@nextcloud/vue/components/NcRadioGroupButton'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
+import PracticeMarks from '../components/PracticeMarks.vue'
 import PracticeTools from '../components/PracticeTools.vue'
 import { startingTonesText, transposeText } from '../practiceLabels.ts'
 import { countInFor, metronomeClicks, slotAt, storeCountIn, storedCountIn } from '../score/countIn.ts'
@@ -355,6 +357,20 @@ function gains(): (voice: string) => number {
 /** Clicks of the metronome, none while it is off. */
 function beats(): Click[] {
 	return metronome.value && model.value ? metronomeClicks(model.value, timeline.value) : []
+}
+
+/**
+ * Show a remembered passage and play it in a loop.
+ *
+ * @param mark - the passage
+ */
+function applyMark(mark: Mark): void {
+	rangeFrom.value = mark.from
+	rangeTo.value = mark.to
+	applyRange()
+	if (rangeError.value === '') {
+		loop.value = true
+	}
 }
 
 /** Display names of the voices for the mixer */
@@ -1060,6 +1076,11 @@ onBeforeUnmount(() => {
 						:voices="mixerVoices"
 						:playing="playing"
 						@tones="giveStartingTones" />
+					<PracticeMarks :piece="`shared:${title}|${composer}`"
+						:from="shownNumbers.first"
+						:to="shownNumbers.last"
+						@apply="applyMark"
+						@announce="announce" />
 				</section>
 
 				<NcSelect v-model="focusOption"

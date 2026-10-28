@@ -22,6 +22,7 @@
  */
 import type { Click, CountInBars } from '../score/countIn.ts'
 import type { PlayMode, ScorePlayer as ScorePlayerType } from '../score/player.ts'
+import type { Mark } from '../score/marks.ts'
 import type { Mix } from '../score/practising.ts'
 import type { MeasureRange } from '../score/range.ts'
 import type { ScoreModel } from '../score/model.ts'
@@ -65,6 +66,7 @@ import NcRadioGroupButton from '@nextcloud/vue/components/NcRadioGroupButton'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import GuideLink from './GuideLink.vue'
+import PracticeMarks from './PracticeMarks.vue'
 import PracticeTools from './PracticeTools.vue'
 import LinkDialog from './LinkDialog.vue'
 import ReviewPanel from './ReviewPanel.vue'
@@ -837,6 +839,23 @@ function beats(): Click[] {
 	return metronome.value && model.value ? metronomeClicks(model.value, timeline.value) : []
 }
 
+/** Printed numbers of the shown measures, for a passage to remember */
+const shownRange = computed(() => rangeNumbers.value ?? { from: numberSpan.value.first, to: numberSpan.value.last })
+
+/**
+ * Show a remembered passage and play it in a loop.
+ *
+ * @param mark - the passage
+ */
+function applyMark(mark: Mark): void {
+	rangeFrom.value = mark.from
+	rangeTo.value = mark.to
+	applyRange()
+	if (rangeError.value === '') {
+		loop.value = true
+	}
+}
+
 /** Display names of the voices for the mixer */
 const mixerVoices = computed(() => (model.value?.voices ?? []).map((voice) => ({ key: voice.key, label: labelOf(voice) })))
 
@@ -1496,6 +1515,11 @@ onBeforeUnmount(() => {
 								:voices="mixerVoices"
 								:playing="playing"
 								@tones="giveStartingTones" />
+							<PracticeMarks :piece="`copy:${detail.copy.id}`"
+								:from="shownRange.from"
+								:to="shownRange.to"
+								@apply="applyMark"
+								@announce="announce" />
 						</div>
 						<p v-if="!canExportAudio && exportReason" class="score-viewer__hint score-viewer__line">
 							{{ exportReason }}

@@ -468,7 +468,7 @@ Punkte:
   beim Abspielen“; die Übe-Datei eines geteilten Stücks klingt wie das
   Mischpult. – *umgesetzt.*
 - **Übe-Stellen merken:** Taktbereiche mit eigenem Namen je Stück, im
-  Browser gemerkt, mit einem Klick als Schleife.
+  Browser gemerkt, mit einem Klick als Schleife. – *umgesetzt.*
 - **Selbst aufnehmen:** zur Wiedergabe singen, die Aufnahme anhören und
   zusammen mit der Begleitung abspielen; die Aufnahme bleibt im Browser und
   kann nur heruntergeladen werden.

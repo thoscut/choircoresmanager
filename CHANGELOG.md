@@ -22,6 +22,8 @@ All notable changes to this app are documented in this file. The format follows
     written. Practice files take the pitch, MIDI files with the matching key.
   - **Mixer**: a level per voice on top of "Voices during playback"; the
     practice file of a shared piece sounds like it.
+  - **Passages**: remember the shown measures with a name, per piece in
+    this browser; a click shows the passage and plays it in a loop.
   Everything happens in the browser; nothing about practising is stored.
 
 ### Changed

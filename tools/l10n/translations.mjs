@@ -3083,6 +3083,13 @@ export const singular = {
 	'Starting tones: {tones}': 'Anfangstöne: {tones}',
 	'mixer as set above': 'Mischpult wie oben eingestellt',
 	'All voices, {tempo}': 'Alle Stimmen, {tempo}',
+	'Name of the passage': 'Name der Stelle',
+	'Remember {measures}': '{measures} merken',
+	'Remembered passages': 'Gemerkte Stellen',
+	'Remove passage "{name}"': 'Stelle „{name}“ entfernen',
+	'A remembered passage is shown and played in a loop. The passages are kept in this browser only.': 'Eine gemerkte Stelle wird gezeigt und in Schleife gespielt. Die Stellen bleiben nur in diesem Browser.',
+	'Passage {measures} remembered in this browser.': 'Stelle {measures} in diesem Browser gemerkt.',
+	'Passage "{name}" removed.': 'Stelle „{name}“ entfernt.',
 }
 
 export const plural = {

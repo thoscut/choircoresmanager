@@ -2332,6 +2332,13 @@ export const singular = {
 	"mixer as set above": "mikser jak ustawiono powyżej",
 	"All voices, {tempo}": "Wszystkie głosy, {tempo}",
 	"Measures, tempo, pitch and repeats are taken from the score view; change them there.": "Takty, tempo, wysokość i powtórzenia są pobierane z widoku nut; zmień je tam.",
+	"Name of the passage": "Nazwa fragmentu",
+	"Remember {measures}": "Zapamiętaj {measures}",
+	"Remembered passages": "Zapamiętane fragmenty",
+	"Remove passage \"{name}\"": "Usuń fragment „{name}”",
+	"A remembered passage is shown and played in a loop. The passages are kept in this browser only.": "Zapamiętany fragment jest pokazywany i odtwarzany w pętli. Fragmenty są przechowywane tylko w tej przeglądarce.",
+	"Passage {measures} remembered in this browser.": "Fragment {measures} zapamiętany w tej przeglądarce.",
+	"Passage \"{name}\" removed.": "Fragment „{name}” usunięty.",
 }
 
 export const plural = {
