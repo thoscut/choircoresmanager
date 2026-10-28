@@ -938,7 +938,7 @@ gleich bleibt.
 
 ## 14. Mit Chormitgliedern und der Öffentlichkeit teilen
 
-Vier Module in der Gruppe **Teilen über die Archivrollen hinaus** öffnen
+Fünf Module in der Gruppe **Teilen über die Archivrollen hinaus** öffnen
 Teile des Archivs für Menschen ohne Archivrolle. Sie sind auf jeder
 Installation ausgeschaltet und gehören zu keiner Voreinstellung, auch nicht
 zu „Vollständig“: Schalte sie einzeln ein, nachdem der Chor entschieden hat.
@@ -949,6 +949,7 @@ zu „Vollständig“: Schalte sie einzeln ein, nachdem der Chor entschieden hat
 | **Übe-Audio für Chormitglieder** | Chormitglieder erstellen eine WAV- oder MIDI-Datei einer Stimme eines solchen Stücks oder Ausschnitts, wo die Rechte Übe-Audio-Dateien erlauben. Jede Datei steht im Protokoll. |
 | **Öffentliche Links** | Ein Link, der ein ganzes Stück oder einen Ausschnitt ohne Anmeldung zeigt und abspielt (`/apps/notenarchiv/p/<token>`), auf Wunsch mit dem Scan (PDF). Nur für Fassungen, die zur Veröffentlichung freigegeben sind und bestätigt gemeinfrei sind oder eine Lizenz zur Online-Veröffentlichung haben. |
 | **Öffentliche Repertoireseite** | `/apps/notenarchiv/repertoire`: die Werke, die die Archivverwaltung unter denen mit einer bestätigt gemeinfreien Fassung auswählt, mit Lebensdaten, Besetzung und Links zu CPDL und IMSLP. |
+| **Üben ohne Netz** | Chormitglieder speichern Stücke aus „Mit mir geteilt“ auf ihrem Gerät und können sie dort ohne Netz ansehen, abspielen und üben: im Browser, ohne App zum Installieren. Nur für Links, deren Fassung Chormitglieder speichern und drucken dürfen. Braucht **Links für Chormitglieder**. |
 
 Was die Schalter auch sagen: Chormitglieder und die Öffentlichkeit bekommen
 immer nur den Inhalt für die Ansicht (das ganze Stück oder die Takte eines
@@ -997,6 +998,38 @@ weitergeben, bis sie ablaufen oder widerrufen werden. Die Notiz eines Links
 für Chormitglieder lesen alle Chormitglieder. Aufrufe werden gezählt, aber
 ohne Namen.
 
+**Üben ohne Netz** (Modul `offline`, `occ notenarchiv:modules enable
+offline`):
+
+- **Was gespeichert wird, und wo.** Nichts wird gespeichert, bevor ein
+  Chormitglied bei einem Stück **Auf diesem Gerät speichern** wählt, auf
+  Wunsch **Mit dem Scan (PDF)**. Dann liegen die Noten des Links, der Scan,
+  falls gewählt, die Seite „Mit mir geteilt“ und ihre Skripte im Browser
+  dieses Geräts (ein Service Worker der App unter
+  `/apps/notenarchiv/offline-worker`, der nur dann vom Gerät antwortet, wenn
+  das Netz nicht antwortet). Übe-Stellen und Übe-Einstellungen merkt sich
+  der Browser wie bisher. Ohne Netz wird nichts auf den Server geschrieben:
+  Übe-Dateien brauchen es, weil der Server die Rechte prüft und jede Datei
+  protokolliert.
+- **Rechte.** Nur wo Chormitglieder die Noten speichern und drucken dürfen
+  (dieselbe Regel wie für den Scan und den Übergabeordner): Eine Lizenz für
+  das Chorportal allein deckt das Ansehen, keine Kopie auf dem Gerät.
+- **Ablauf und Widerruf.** Bei jedem Start mit Netz gleicht die Seite die
+  gespeicherten Stücke mit dem Server ab; abgelaufene, widerrufene und
+  nicht mehr erlaubte werden entfernt. Nach 30 Tagen ohne Abgleich sind die
+  gespeicherten Stücke gesperrt, und ein abgelaufener Link wird nie
+  gezeigt, auch ohne Netz. Ein Stück, das vom Gerät kommt, zählt nicht als
+  Aufruf des Links.
+- **Geräte.** Es braucht HTTPS und einen aktuellen Browser. Auf iPhone und
+  iPad die Seite auf den Home-Bildschirm legen: Sonst kann Safari die
+  gespeicherten Stücke nach einigen Tagen ohne Nutzung löschen. Auf einem
+  geteilten Gerät löschen Chormitglieder alles mit **Alles auf diesem Gerät
+  löschen**; das Abmelden bei Nextcloud löscht es nicht. Öffnet ein anderes
+  Konto die Seite im selben Browser, werden die Stücke des vorigen entfernt.
+- **Ausschalten.** Der nächste Besuch mit Netz entfernt den Service Worker
+  und alles, was er gespeichert hat. Nach einem Update der App erneuert
+  sich der Worker und verwirft die alten Skripte.
+
 **Häufige Probleme:**
 
 | Problem | Was zu tun ist |
@@ -1008,6 +1041,8 @@ ohne Namen.
 | „Die Noten dieses Links sind gerade nicht verfügbar.“ oder „Der Scan dieses Links ist gerade nicht verfügbar.“ | Das Konto, das den Archivordner gewählt hat (Einstellungen → Archivordner), muss noch vorhanden sein und den Ordner sehen. Die MusicXML-Datei oder der PDF-Scan muss noch darin liegen und mit dem Exemplar verknüpft sein. |
 | Ein öffentlicher Scan zeigt „nicht gefunden“ | Dieselben Gründe wie bei der Seite, oder die PDF-Datei liegt nicht mehr im Archivordner; verknüpfe den Scan erneut und erstelle einen neuen Link. |
 | Ein öffentlicher Link zeigt „nicht gefunden“ | Er ist abgelaufen, wurde widerrufen, die Fassung ist nicht mehr freigegeben, oder das Modul ist ausgeschaltet; die Seite sagt nicht, was davon. Erstelle bei Bedarf einen neuen Link. |
+| **Auf diesem Gerät speichern** fehlt | Das Modul **Üben ohne Netz** ist aus, oder der Browser kann keine Stücke speichern (kein HTTPS, ein privates Fenster); die Seite sagt es unter **Auf diesem Gerät**. Bei einem einzelnen Stück steht „Lässt sich nicht auf diesem Gerät speichern“, wenn die Rechte das Speichern nicht erlauben. |
+| Gespeicherte Stücke sind auf iPhone oder iPad weg | Safari löscht den Speicher einer Seite nach einigen Tagen ohne Nutzung, wenn sie nicht auf dem Home-Bildschirm liegt. Lege sie dort ab, öffne sie einmal mit Netz und speichere die Stücke erneut. |
 
 ## 15. Mappenbuch: Löschfrist
 
@@ -1180,6 +1215,21 @@ Risiken:
 - Die App schreibt als das Konto, das den Ordner gewählt hat; wird dieses
   Konto gelöscht oder verliert es den Zugriff, hält der Abgleich an und
   benachrichtigt.
+
+**Ohne Netz, ohne die App: der Ordner in der Nextcloud-App.** Wo
+Chormitglieder Nextcloud-Konten haben, dient der Übergabeordner auch ihnen
+direkt. Teile ihn mit der Gruppe der Chormitglieder, nur zum Lesen. In der
+Nextcloud-App auf Handy oder Tablet markieren sie ihn als **Offline
+verfügbar** (Android: **Offline verfügbar machen**), oder der
+Desktop-Client gleicht ihn ab. Dann liegen die Scans, MusicXML-Dateien und
+Aufnahmen auf ihrem Gerät und öffnen sich in jedem PDF-Betrachter oder
+Player; eine Datei, die die Übergabe entfernt, verschwindet dort mit dem
+nächsten Abgleich. Das braucht kein Modul außer der Übergabe, hat aber
+keine Werkzeuge zum Üben: Dafür speichern Chormitglieder Stücke mit dem
+Modul **Üben ohne Netz** (siehe
+[Mit Chormitgliedern und der Öffentlichkeit teilen](#14-mit-chormitgliedern-und-der-öffentlichkeit-teilen)).
+Der Ordner enthält nur, was Chormitglieder ohnehin speichern und drucken
+dürfen.
 
 Wie sich Archiv und Chorsystem die Arbeit teilen und was das Archiv nie
 verlässt, steht in [Notenarchiv neben einem Chorsystem](neben-einem-chorsystem.md).

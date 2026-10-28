@@ -12,6 +12,26 @@ All notable changes to this app are documented in this file. The format follows
 
 ### Added
 
+- **Practising without a network** (milestone 0.15, module "Practising
+  without a network", off and part of no preset). On "Shared with me" a
+  choir member keeps a piece on the device with **Keep on this device**,
+  optionally **With the scan (PDF)**, and then views, plays and practises it
+  without a network, with all tools of 0.13 and 0.14; practice files still
+  need the network. No app to install: a service worker of the app in the
+  browser. Only where the rights allow saving the notes; every start with a
+  network checks the kept pieces, removes expired and revoked links and
+  locks them after 30 days without a check. **On this device** shows the
+  space used and deletes everything kept, passages and settings included.
+  New routes `GET /api/member/links` and `GET /offline-worker`.
+- **Practice settings remembered per piece** (milestone 0.15): tempo,
+  pitch, metronome and mixer of a shared piece stay in the browser, also
+  for a new link to the same version. Passages of shared pieces move from
+  title and composer to a key of the version (`practiceKey`), so that a
+  corrected title keeps them.
+- **Guide: the hand-over folder in the Nextcloud app** for choir members
+  with Nextcloud accounts, made available offline there (administration
+  guide, "Hand-over to a choir system").
+
 - **Practising in the score view and for shared pieces** (milestone 0.13,
   from a comparison with practice apps). Under "Tempo, volume and
   practising":

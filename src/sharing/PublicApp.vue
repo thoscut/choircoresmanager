@@ -71,7 +71,8 @@ const scanUrl = window.location.pathname.replace(/\/+$/, '') + '/scan'
 				:voice="excerpt.voice"
 				:verse="excerpt.verse"
 				:tempo="excerpt.tempo"
-				:can-play="excerpt.canPlay" />
+				:can-play="excerpt.canPlay"
+				:practice-key="excerpt.practiceKey ?? null" />
 		</template>
 		<NcEmptyContent v-else
 			:name="t('notenarchiv', 'The score cannot be shown')"

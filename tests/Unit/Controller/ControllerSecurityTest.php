@@ -88,6 +88,7 @@ use OCA\Notenarchiv\Service\TaskService;
 use OCA\Notenarchiv\Service\UserFiles;
 use OCA\Notenarchiv\Settings\Admin;
 use OCA\Notenarchiv\Tests\Unit\Support\ModuleSwitches;
+use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\AnonRateLimit;
@@ -203,6 +204,8 @@ final class ControllerSecurityTest extends TestCase {
 		'PublicLinkController::show', 'PublicRepertoireController::index',
 		// The scan of a link for choir members or of a public link, opened by the browser in a tab of its own.
 		'MemberController::scan', 'PublicLinkController::scan',
+		// The service worker of the page for choir members (milestone 0.15), fetched by the browser itself; no data.
+		'MemberController::offlineWorker',
 	];
 
 	/** Expensive endpoints: limited per user (the statistics aggregate the whole archive) */
@@ -220,6 +223,7 @@ final class ControllerSecurityTest extends TestCase {
 		'FilesIntegrationController::copyOfFile',
 		// the routes of the choir members and the public pages (milestone 0.7)
 		'MemberController::score', 'MemberController::practiceAudio', 'MemberController::scan',
+		'MemberController::links', 'MemberController::offlineWorker',
 		'PublicLinkController::show', 'PublicLinkController::scan', 'PublicRepertoireController::index',
 		// the folder book writes, and the print station reads and writes files
 		'FolderBookController::createFolder', 'FolderBookController::updateFolder', 'FolderBookController::issue',
@@ -257,6 +261,9 @@ final class ControllerSecurityTest extends TestCase {
 		'MemberController::score' => ['member_links'],
 		'MemberController::practiceAudio' => ['member_links', 'member_practice_audio'],
 		'MemberController::scan' => ['member_links'],
+		// practising without a network (milestone 0.15): the list for the check, the service worker
+		'MemberController::links' => ['member_links', 'offline'],
+		'MemberController::offlineWorker' => ['member_links'],
 	];
 
 	/**
@@ -511,7 +518,7 @@ final class ControllerSecurityTest extends TestCase {
 		$meta->method('forUser')->willReturn([]);
 		return new PageController($this->createStub(IRequest::class), 'singer', $roles, $meta, $this->createStub(IInitialState::class),
 			$this->l10n(), $moduleOn ? $this->modulesWithout() : $this->modulesWithout([Modules::MEMBER_LINKS]),
-			$shared ?? $this->createStub(SharedLinkService::class));
+			$shared ?? $this->createStub(SharedLinkService::class), $this->createStub(IAppManager::class));
 	}
 
 	public function testChoirMembersGetOnlyTheirPage(): void {
@@ -526,6 +533,8 @@ final class ControllerSecurityTest extends TestCase {
 		self::assertStringContainsString("media-src 'self' blob:", $policy, 'a recording plays from the browser');
 		self::assertStringContainsString("microphone 'self'", $response->getFeaturePolicy()->buildPolicy(), 'recording oneself');
 		self::assertStringContainsString("camera 'none'", $response->getFeaturePolicy()->buildPolicy(), 'nothing else is opened');
+		self::assertStringContainsString("worker-src 'self'", $policy, 'the service worker for practising without a network');
+		self::assertSame('member', self::headers($response)['X-Notenarchiv-Page'] ?? null, 'the only page the worker keeps');
 
 		$off = $this->pageController(false, true, false)->index();
 		self::assertSame(Http::STATUS_FORBIDDEN, $off->getStatus(), 'module switched off: no page');
@@ -622,7 +631,8 @@ final class ControllerSecurityTest extends TestCase {
 			return '<score-partwise/>';
 		});
 		$controller = fn (?string $uid): MemberController => new MemberController($this->createStub(IRequest::class), $uid, $shared,
-			$this->createStub(PracticeAudioService::class), $this->l10n(), $this->createStub(LoggerInterface::class));
+			$this->createStub(PracticeAudioService::class), $this->l10n(), $this->createStub(LoggerInterface::class), $this->modulesWithout(),
+			$this->createStub(IAppManager::class));
 
 		$response = $controller('singer')->score(str_repeat('a', 32));
 		$headers = self::headers($response);
@@ -636,6 +646,56 @@ final class ControllerSecurityTest extends TestCase {
 		self::assertSame(Http::STATUS_BAD_REQUEST, $unknown->getStatus());
 		self::assertTrue($unknown->isThrottled());
 		self::assertSame(Http::STATUS_UNAUTHORIZED, $controller(null)->score(str_repeat('a', 32))->getStatus());
+	}
+
+	/**
+	 * The service worker (milestone 0.15) is a script without data from the
+	 * app's own path. With the module offline off it is the worker that
+	 * removes everything kept on the device; it never comes from elsewhere.
+	 */
+	public function testTheOfflineWorkerIsAScriptOfTheAppOrRemovesItself(): void {
+		$apps = $this->createStub(IAppManager::class);
+		$apps->method('getAppVersion')->willReturn('0.15.0');
+		$controller = fn (bool $on): MemberController => new MemberController($this->createStub(IRequest::class), 'singer',
+			$this->createStub(SharedLinkService::class), $this->createStub(PracticeAudioService::class), $this->l10n(),
+			$this->createStub(LoggerInterface::class), $on ? $this->modulesWithout() : $this->modulesWithout([Modules::OFFLINE]), $apps);
+
+		$off = $controller(false)->offlineWorker();
+		self::assertSame(Http::STATUS_OK, $off->getStatus());
+		self::assertSame('text/javascript; charset=utf-8', self::headers($off)['Content-Type'] ?? null);
+		self::assertSame('nosniff', self::headers($off)['X-Content-Type-Options'] ?? null);
+		self::assertSame(MemberController::REMOVING_WORKER, $off->render());
+		self::assertStringContainsString('unregister()', $off->render());
+		self::assertStringContainsString("connect-src 'self'", $off->getContentSecurityPolicy()->buildPolicy());
+		self::assertStringNotContainsString('http', $off->getContentSecurityPolicy()->buildPolicy(), 'no other server');
+
+		$built = __DIR__ . '/../../../js/notenarchiv-offline-worker.js';
+		$on = $controller(true)->offlineWorker();
+		if (is_file($built)) {
+			self::assertSame(Http::STATUS_OK, $on->getStatus());
+			self::assertStringContainsString('"0.15.0"', $on->render(), 'the version names the cache of the scripts');
+			self::assertStringNotContainsString('__NOTENARCHIV_VERSION__', $on->render());
+		} else {
+			self::assertSame(Http::STATUS_NOT_FOUND, $on->getStatus(), 'without a build there is no worker');
+		}
+	}
+
+	public function testTheMemberLinksForTheDeviceAreThoseOfThePage(): void {
+		$shared = $this->createStub(SharedLinkService::class);
+		$shared->method('forMember')->willReturnCallback(function (string $uid): array {
+			if ($uid !== 'singer') {
+				throw new AccessDeniedException('This page is only for choir members. Roles are linked to groups; please ask an administrator.');
+			}
+			return [['token' => str_repeat('a', 32), 'reason' => 'Playback is switched off.', 'offline' => false]];
+		});
+		$controller = fn (?string $uid): MemberController => new MemberController($this->createStub(IRequest::class), $uid, $shared,
+			$this->createStub(PracticeAudioService::class), $this->l10n(), $this->createStub(LoggerInterface::class), $this->modulesWithout(),
+			$this->createStub(IAppManager::class));
+		$response = $controller('singer')->links();
+		self::assertSame(Http::STATUS_OK, $response->getStatus());
+		self::assertSame([['reason' => 'Playback is switched off.', 'token' => str_repeat('a', 32), 'offline' => false]], $response->getData()['links']);
+		self::assertSame(Http::STATUS_FORBIDDEN, $controller('librarian')->links()->getStatus());
+		self::assertSame(Http::STATUS_UNAUTHORIZED, $controller(null)->links()->getStatus());
 	}
 
 	public function testTheScanOfAMemberLinkIsShownInlineAfterTheSameChecks(): void {
@@ -653,7 +713,8 @@ final class ControllerSecurityTest extends TestCase {
 			return $this->createStub(File::class);
 		});
 		$controller = fn (?string $uid): MemberController => new MemberController($this->createStub(IRequest::class), $uid, $shared,
-			$this->createStub(PracticeAudioService::class), $this->l10n(), $this->createStub(LoggerInterface::class));
+			$this->createStub(PracticeAudioService::class), $this->l10n(), $this->createStub(LoggerInterface::class), $this->modulesWithout(),
+			$this->createStub(IAppManager::class));
 
 		$response = $controller('singer')->scan(str_repeat('a', 32));
 		$headers = self::headers($response);

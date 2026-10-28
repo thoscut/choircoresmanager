@@ -10,11 +10,20 @@
  * Kept apart from api.ts, so that the small bundle of this page does not
  * carry the catalog.
  */
-import type { MemberPracticeAudioInput } from '../types.ts'
+import type { MemberLink, MemberPracticeAudioInput } from '../types.ts'
 
 import axios, { isAxiosError } from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
 import { errorMessage } from '../api.ts'
+
+/**
+ * The links shared with the account, as on the page (milestone 0.15):
+ * the check of the pieces kept on the device. Throws without a network.
+ */
+export async function fetchMemberLinks(): Promise<MemberLink[]> {
+	const { data } = await axios.get<{ links?: MemberLink[] }>(generateUrl('/apps/notenarchiv/api/member/links'), { timeout: 8000 })
+	return Array.isArray(data?.links) ? data.links : []
+}
 
 /**
  * URL of an API endpoint of a member link.

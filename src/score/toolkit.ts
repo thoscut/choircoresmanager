@@ -16,6 +16,14 @@ export type { VerovioToolkit }
 let modulePromise: Promise<unknown> | null = null
 
 /**
+ * Load the modules of Verovio without starting it, so that the service
+ * worker keeps them for practising without a network (milestone 0.15).
+ */
+export async function preloadToolkit(): Promise<void> {
+	await Promise.all([import('verovio/wasm'), import('verovio/esm')])
+}
+
+/**
  * A new toolkit instance. Destroy it with `toolkit.destroy()` when done.
  */
 export async function createToolkit(): Promise<VerovioToolkit> {

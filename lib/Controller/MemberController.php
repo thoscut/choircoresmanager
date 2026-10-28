@@ -18,6 +18,7 @@ use OCA\Notenarchiv\Exception\UserFacingException;
 use OCA\Notenarchiv\Service\Modules;
 use OCA\Notenarchiv\Service\PracticeAudioService;
 use OCA\Notenarchiv\Service\SharedLinkService;
+use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
@@ -26,6 +27,7 @@ use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\Attribute\UserRateLimit;
+use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\AppFramework\Http\DataDisplayResponse;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\Http\Response;
@@ -37,7 +39,9 @@ use Psr\Log\LoggerInterface;
  * The routes of the choir members (milestone 0.7, module member_links): the
  * measures of a link shared with them (or the whole piece), the scan the
  * link offers and, with the module member_practice_audio, practice audio
- * files of one voice. Together with
+ * files of one voice; with the module offline (milestone 0.15) the list of
+ * their links as JSON and the service worker that keeps pieces on their
+ * device. Together with
  * their page (PageController::index) these are the only routes a choir
  * member without an archive role reaches; every other route checks for an
  * archive role (Roles::hasAccess) and refuses them. The service checks that
@@ -57,6 +61,8 @@ class MemberController extends Controller {
 		private PracticeAudioService $practiceAudio,
 		private IL10N $l,
 		private LoggerInterface $logger,
+		private Modules $modules,
+		private IAppManager $apps,
 	) {
 		parent::__construct(Application::APP_ID, $request);
 	}
@@ -143,4 +149,76 @@ class MemberController extends Controller {
 	public function practiceAudio(string $token, array $export = []): JSONResponse {
 		return $this->run(fn (string $uid) => $this->practiceAudio->authorizeForMember($token, $export, $uid));
 	}
+
+	/**
+	 * The links shared with the account, as on the page "Shared with me"
+	 * (milestone 0.15): the page compares the pieces kept on the device with
+	 * it at every start with a network and removes expired and revoked ones.
+	 */
+	#[NoAdminRequired]
+	#[RequiresModule(Modules::OFFLINE)]
+	#[UserRateLimit(limit: 120, period: 600)]
+	#[BruteForceProtection(action: 'notenarchiv_link')]
+	#[FrontpageRoute(verb: 'GET', url: '/api/member/links')]
+	public function links(): JSONResponse {
+		return $this->run(fn (string $uid): array => ['links' => $this->translatedLinks($uid)]);
+	}
+
+	/**
+	 * The links of a choir member with the reasons translated, as the page
+	 * gets them (PageController::memberPage).
+	 *
+	 * @return list<array<string, mixed>>
+	 * @throws UserFacingException
+	 */
+	private function translatedLinks(string $uid): array {
+		return array_map(fn (array $link): array => ['reason' => $link['reason'] === null ? null : $this->l->t($link['reason'])] + $link,
+			$this->shared->forMember($uid));
+	}
+
+	/**
+	 * The service worker of the page "Shared with me" (milestone 0.15),
+	 * served from the app's own path so that its scope covers the page. It
+	 * keeps nothing by itself: it only answers from what the page put on the
+	 * device, when there is no network. Registered by the browser, therefore
+	 * without CSRF token; it contains no data. With the module offline
+	 * switched off, a worker that deletes everything kept on the device and
+	 * unregisters itself.
+	 */
+	#[NoAdminRequired]
+	#[NoCSRFRequired]
+	#[UserRateLimit(limit: 60, period: 600)]
+	#[BruteForceProtection(action: 'notenarchiv_link')]
+	#[FrontpageRoute(verb: 'GET', url: '/offline-worker')]
+	public function offlineWorker(): Response {
+		$script = self::REMOVING_WORKER;
+		if ($this->modules->isEnabled(Modules::OFFLINE)) {
+			$built = @file_get_contents(__DIR__ . '/../../js/' . Application::APP_ID . '-offline-worker.js');
+			if ($built === false) {
+				return new JSONResponse(['error' => $this->l->t('The app is not built.')], Http::STATUS_NOT_FOUND);
+			}
+			// A new version of the app gives a new worker, which drops the old cache of the page
+			$script = str_replace('__NOTENARCHIV_VERSION__', $this->apps->getAppVersion(Application::APP_ID), $built);
+		}
+		$response = new DataDisplayResponse($script, Http::STATUS_OK, ['Content-Type' => 'text/javascript; charset=utf-8']);
+		$response->addHeader('X-Content-Type-Options', 'nosniff');
+		$response->cacheFor(0, false, false);
+		// The policy of the worker itself: requests to this server only
+		$policy = new ContentSecurityPolicy();
+		$response->setContentSecurityPolicy($policy);
+		return $response;
+	}
+
+	/** The worker while the module offline is off: it removes what the app kept on the device. */
+	public const REMOVING_WORKER = <<<'JS'
+		self.addEventListener('install', () => self.skipWaiting())
+		self.addEventListener('activate', (event) => event.waitUntil((async () => {
+			for (const key of await caches.keys()) {
+				if (key.startsWith('notenarchiv-')) {
+					await caches.delete(key)
+				}
+			}
+			await self.registration.unregister()
+		})()))
+		JS;
 }

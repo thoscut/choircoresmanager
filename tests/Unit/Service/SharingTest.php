@@ -470,7 +470,8 @@ final class SharingTest extends TestCase {
 		self::assertCount(1, $list, 'only active links for choir members');
 		self::assertSame(['token' => self::TOKEN, 'title' => 'Abendlied', 'composer' => 'J. Rheinberger', 'measure_from' => '2', 'measure_to' => '3',
 			'voice' => 'Alto', 'verse' => null, 'tempo' => null, 'note' => 'Please practise until Thursday.', 'expires' => '2026-12-31',
-			'canPlay' => true, 'canExportAudio' => true, 'reason' => null, 'scan' => false,
+			'canPlay' => true, 'canExportAudio' => true, 'reason' => null, 'scan' => false, 'offline' => true,
+			'practiceKey' => SharedLinkService::practiceKey($this->version()),
 			'credits' => [['role' => 'lyricist', 'name' => 'H. Claudius'], ['role' => 'arranger', 'name' => 'K. Satz']],
 			'notices' => ['By kind permission of Carus']], $list[0], 'the authors by name only, the notices of licenses valid today');
 
@@ -562,7 +563,7 @@ final class SharingTest extends TestCase {
 	public function testAPublicLinkShowsOnlyTheExcerptAndNothingInternal(): void {
 		$excerpt = $this->shared([$this->link('public')])->publicExcerpt(self::TOKEN);
 		self::assertNotNull($excerpt);
-		self::assertSame(['title', 'composer', 'measureFrom', 'measureTo', 'voice', 'verse', 'tempo', 'canPlay', 'scan', 'xml', 'credits', 'notices'],
+		self::assertSame(['title', 'composer', 'measureFrom', 'measureTo', 'voice', 'verse', 'tempo', 'canPlay', 'scan', 'practiceKey', 'xml', 'credits', 'notices'],
 			array_keys($excerpt), 'no note, no shelf mark, no account');
 		self::assertSame(['By kind permission of Carus'], $excerpt['notices']);
 		self::assertSame(['role', 'name'], array_keys($excerpt['credits'][0]), 'no life dates');

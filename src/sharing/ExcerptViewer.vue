@@ -60,6 +60,7 @@ import { targetNotes } from '../score/pitch.ts'
 import { ScorePlayer, voiceGains } from '../score/player.ts'
 import { partGains, practiceFileName, practiceMidi, SAMPLE_RATE } from '../score/practice.ts'
 import { mixChanged, mixedGains, startingTones, transposedFifths, transposeTimeline } from '../score/practising.ts'
+import { moveOldMarks, sharedPieceKey, storedPracticeSettings, storePracticeSettings } from '../score/practiceSettings.ts'
 import { RenderCancelled, renderTimeline } from '../score/render.ts'
 import { sanitizeSvg } from '../score/sanitize.ts'
 import { measureStarts, nextPass, noteStarts } from '../score/timeline.ts'
@@ -89,6 +90,10 @@ const props = withDefaults(defineProps<{
 	playReason?: string | null
 	/** asks the server before a practice file is made; without it there is no practice file */
 	exportAudio?: ((input: MemberPracticeAudioInput) => Promise<void>) | null
+	/** key of the piece for the passages and settings remembered in this browser (milestone 0.15) */
+	practiceKey?: string | null
+	/** shown from the device without a network: practice files need the server (milestone 0.15) */
+	offline?: boolean
 }>(), {
 	composer: '',
 	voice: null,
@@ -96,6 +101,8 @@ const props = withDefaults(defineProps<{
 	tempo: null,
 	playReason: null,
 	exportAudio: null,
+	practiceKey: null,
+	offline: false,
 })
 
 const summaryId = useId()
@@ -334,11 +341,16 @@ const countInChoice = computed<'0' | '1' | '2'>({
 		countInBars.value = Number(value) as CountInBars
 	},
 })
-const tempoPercent = ref(excerptTempo(props.tempo))
+// Passages and settings remembered per piece in this browser (milestone 0.15)
+moveOldMarks(props.practiceKey, props.title, props.composer)
+const marksKey = sharedPieceKey(props.practiceKey, props.title, props.composer)
+const remembered = props.practiceKey ? storedPracticeSettings(props.practiceKey, [TEMPO_MIN, TEMPO_MAX]) : null
+// the own tempo, unless the link now suggests another one
+const tempoPercent = ref(remembered && remembered.linkTempo === props.tempo ? remembered.tempo : excerptTempo(props.tempo))
 /** Tools for practising (milestone 0.13): level per voice, semitones, metronome */
-const mix = ref<Mix>({})
-const transpose = ref(0)
-const metronome = ref(false)
+const mix = ref<Mix>(remembered?.mix ?? {})
+const transpose = ref(remembered?.transpose ?? 0)
+const metronome = ref(remembered?.metronome ?? false)
 const position = ref(0)
 const timeline = shallowRef<Timeline>({ events: [], measures: [], duration: 0 })
 
@@ -617,6 +629,17 @@ watch(focusKey, (key) => {
 watch(tempoPercent, (value) => player?.setRate(value / 100))
 watch(repeats, () => updateTimeline())
 watch(countInBars, (bars) => storeCountIn(bars))
+watch([tempoPercent, transpose, metronome, mix], () => {
+	if (props.practiceKey) {
+		storePracticeSettings(props.practiceKey, {
+			tempo: tempoPercent.value,
+			linkTempo: props.tempo,
+			transpose: transpose.value,
+			metronome: metronome.value,
+			mix: mix.value,
+		})
+	}
+}, { deep: true })
 watch(loop, (on) => {
 	// The loop takes the measures of the fields "From measure" and "To measure"
 	const shown = shownNumbers.value
@@ -831,7 +854,7 @@ const description = computed(() => {
 
 // ---- practice file (choir members) -------------------------------------------------
 
-const canExport = computed(() => props.exportAudio !== null && props.canPlay)
+const canExport = computed(() => props.exportAudio !== null && props.canPlay && !props.offline)
 const format = ref<'wav' | 'midi'>('wav')
 const exporting = ref(false)
 const exportStatus = ref('')
@@ -1192,7 +1215,7 @@ onBeforeUnmount(() => {
 						:voice-label="focusVoice ? labelOf(focusVoice) : null"
 						:fifths="soundFifths"
 						@announce="announce" />
-					<PracticeMarks :piece="`shared:${title}|${composer}`"
+					<PracticeMarks :piece="marksKey"
 						:from="shownNumbers.first"
 						:to="shownNumbers.last"
 						@apply="applyMark"
@@ -1314,6 +1337,9 @@ onBeforeUnmount(() => {
 					{{ exportError }}
 				</NcNoteCard>
 			</section>
+			<p v-else-if="offline && exportAudio !== null && canPlay" class="excerpt-viewer__hint">
+				{{ t('notenarchiv', 'Practice files need a network: the server checks the rights and records each file first. Playing and practising work without one.') }}
+			</p>
 
 			<p class="hidden-visually" role="status">
 				{{ announcement }}

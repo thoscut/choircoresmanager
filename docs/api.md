@@ -1343,6 +1343,7 @@ audio and preservation copies applies whatever is switched on.
 | `member_practice_audio` | `member_links`, `practice_audio` | off, and part of no preset |
 | `public_links` | `excerpt_links`, `playback`, `publication` | off, and part of no preset |
 | `public_repertoire` | `rights` | off, and part of no preset |
+| `offline` | `member_links` | off, and part of no preset |
 | `agent_api` | – | off, and part of no preset (the API for agents, [api-v1.md](api-v1.md)) |
 
 `notify_{subject}` exists for every notification subject:
@@ -1390,6 +1391,7 @@ other check of the app. The routes and their modules:
 | `member_practice_audio` | `POST /api/member/links/{token}/practice-audio` (and `member_links`) |
 | `public_links` | `GET /p/{token}` (the 404 page of the public pages instead of the JSON message); `POST /api/copies/{id}/links` with `circle: "public"` |
 | `public_repertoire` | `GET /repertoire` (the 404 page of the public pages); setting `work.public_repertoire` to `true` |
+| `offline` | `GET /api/member/links` (and `member_links`); `GET /offline-worker` serves the worker that removes itself and everything kept while it is off |
 | `files_integration` | `GET /api/nextcloud-files/{fileId}/copy` (and the script of the Files app is not loaded) |
 | `tasks` | `GET /api/tasks`, `POST /api/copies/{id}/tasks`, `POST /api/tasks/{id}/answer`, `…/close` |
 | `proposals` | `GET /api/proposals`, `POST /api/proposals`, `…/accept`, `…/reject` |
@@ -2118,8 +2120,20 @@ role (module `member_links`) returns the page "Shared with me" (template
 { "links": [{ "token": "…", "title": "Abendlied", "composer": "J. Rheinberger", "measure_from": null, "measure_to": null,
               "voice": "Alto", "verse": null, "tempo": null, "note": "Please practise until Thursday.",
               "expires": "2027-04-23", "canPlay": true, "canExportAudio": false, "reason": null, "scan": true,
-              "credits": [{ "role": "lyricist", "name": "Matthias Claudius" }], "notices": ["By kind permission of …"] }] }
+              "offline": true, "practiceKey": "2922db9b58cb760f1724",
+              "credits": [{ "role": "lyricist", "name": "Matthias Claudius" }], "notices": ["By kind permission of …"] }],
+  "offline": { "enabled": true, "version": "0.15.0" } }
 ```
+
+`offline` (milestone 0.15) of a link: it may be kept on the device, with the
+module `offline` and where choir members may save and print the notes (the
+rule of `scan`, `RightsPolicy::memberScanDenial`). `practiceKey`: the key
+under which the browser remembers the passages and settings for practising
+of the version, the same for every link to it, a hash without catalog ids;
+the public page has it, too. `offline` of the page: the module is on, and
+the version of the app names the cache of the scripts. The page answers with
+the header `X-Notenarchiv-Page: member` (the only page the service worker
+keeps) and allows `worker-src 'self'`.
 
 `credits` (milestone 0.11): the persons of the version with the role
 `lyricist`, `arranger` or `translator` in the person register, in this
@@ -2141,6 +2155,8 @@ the link offers the scan.
 | `GET /api/member/links/{token}/score` | – | choir members; module `member_links` |
 | `GET /api/member/links/{token}/scan` | – | choir members; module `member_links` |
 | `POST /api/member/links/{token}/practice-audio` | `{ export: { voice, mode, format, tempo?, repeats?, measure_from?, measure_to? } }` | choir members; modules `member_links` and `member_practice_audio` |
+| `GET /api/member/links` | – | choir members; modules `member_links` and `offline` |
+| `GET /offline-worker` | – | logged in; module `member_links` |
 
 `…/score` returns the measures of the link, or the whole piece, as MusicXML
 (`application/vnd.recordare.musicxml+xml`, attachment `excerpt.musicxml`,
@@ -2178,6 +2194,26 @@ rights refuse it (`RightsPolicy::memberPracticeAudioDenial`: the release for
 the singers' portal, playback, and a confirmed status or a license for
 practice audio), for the whole piece as for an excerpt. Answer
 `{ "ok": true }`.
+
+`GET /api/member/links` (milestone 0.15) answers `{ "links": [...] }`, the
+same list as the initial state `member`, so that the page checks the pieces
+kept on the device at every start with a network: it removes those no longer
+listed or no longer `offline`, and a scan the link no longer offers.
+
+`GET /offline-worker` serves the service worker of the page
+(`text/javascript`, `nosniff`, not cached, a policy with `connect-src
+'self'`), built into `js/notenarchiv-offline-worker.js` and registered with
+the app's path as scope. The browser fetches it itself, so the route skips
+the CSRF check; it contains no data. With the module `offline` off it is a
+worker that deletes the caches of the app (`notenarchiv-…`) and unregisters
+itself. What the worker does: only while the page has kept a piece, it
+answers the page, its scripts and the score and scan of a kept link from the
+device when the network fails or takes longer than four seconds, and
+refreshes them from the network otherwise. It never answers an expired link,
+or any kept piece 30 days after the last check, from the device; it never
+caches other pages, writing requests, the APIs of Nextcloud or other routes
+of the app. A 403 or 404 for a kept score or scan removes it from the
+device.
 
 ### Public pages
 

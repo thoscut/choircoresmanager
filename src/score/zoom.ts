@@ -8,24 +8,21 @@
  * remembered in this browser (milestone 0.12): whoever needs larger notes
  * on the phone should not have to zoom in again for every piece.
  */
+import { readStored, writeStored } from '../storage.ts'
 
 /** Verovio scale per zoom step; ZOOM_DEFAULT is shown as 100 %. */
 export const ZOOM_STEPS = [16, 20, 24, 28, 32, 36, 40, 46, 52, 60, 70, 80]
 export const ZOOM_DEFAULT = 6
 
-const STORAGE_KEY = 'notenarchiv.zoom'
+const STORAGE_KEY = 'zoom'
 
 /**
  * The zoom step chosen last in this browser, or the default.
  */
 export function storedZoom(): number {
-	try {
-		const stored = window.localStorage.getItem(STORAGE_KEY)
-		const value = stored === null ? NaN : Number(stored)
-		return Number.isInteger(value) && value >= 0 && value < ZOOM_STEPS.length ? value : ZOOM_DEFAULT
-	} catch {
-		return ZOOM_DEFAULT
-	}
+	const stored = readStored(STORAGE_KEY)
+	const value = stored === null ? NaN : Number(stored)
+	return Number.isInteger(value) && value >= 0 && value < ZOOM_STEPS.length ? value : ZOOM_DEFAULT
 }
 
 /**
@@ -34,11 +31,7 @@ export function storedZoom(): number {
  * @param index - index into ZOOM_STEPS
  */
 export function storeZoom(index: number): void {
-	try {
-		window.localStorage.setItem(STORAGE_KEY, String(index))
-	} catch {
-		// private window or blocked storage: the size is simply not remembered
-	}
+	writeStored(STORAGE_KEY, String(index))
 }
 
 /**

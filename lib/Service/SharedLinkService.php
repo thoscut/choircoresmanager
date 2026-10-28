@@ -56,9 +56,9 @@ use OCP\Files\File;
  * @psalm-type Credit = array{role: string, name: string}
  * @psalm-type MemberLink = array{token: string, title: string, composer: string, measure_from: ?string, measure_to: ?string,
  *     voice: ?string, verse: ?int, tempo: ?int, note: ?string, expires: ?string, canPlay: bool, canExportAudio: bool, reason: ?string,
- *     scan: bool, credits: list<Credit>, notices: list<string>}
+ *     scan: bool, offline: bool, practiceKey: string, credits: list<Credit>, notices: list<string>}
  * @psalm-type PublicExcerpt = array{title: string, composer: string, measureFrom: ?string, measureTo: ?string, voice: ?string,
- *     verse: ?int, tempo: ?int, canPlay: bool, scan: bool, xml: string, credits: list<Credit>, notices: list<string>}
+ *     verse: ?int, tempo: ?int, canPlay: bool, scan: bool, practiceKey: string, xml: string, credits: list<Credit>, notices: list<string>}
  */
 class SharedLinkService {
 	/** Roles of the person register named on the shared pages besides the composer */
@@ -112,6 +112,7 @@ class SharedLinkService {
 				continue;
 			}
 			$playDenial = $this->policy->memberPlayDenial($version, $today, $copy);
+			$saveDenial = $this->policy->memberScanDenial($version, $today, $copy);
 			$rows[] = [
 				'token' => $token,
 				'title' => (string)$work->getTitle(),
@@ -127,7 +128,10 @@ class SharedLinkService {
 				'canExportAudio' => $playDenial === null && $this->modules->isEnabled(Modules::MEMBER_PRACTICE_AUDIO)
 					&& $this->policy->memberPracticeAudioDenial($version, $today, $copy) === null,
 				'reason' => $playDenial,
-				'scan' => $link->getScanFileId() !== null && $this->policy->memberScanDenial($version, $today, $copy) === null,
+				'scan' => $link->getScanFileId() !== null && $saveDenial === null,
+				// kept on the device (milestone 0.15): a copy, like saving the scan
+				'offline' => $saveDenial === null && $this->modules->isEnabled(Modules::OFFLINE),
+				'practiceKey' => self::practiceKey($version),
 			] + $this->attribution($version, $today);
 		}
 		return $rows;
@@ -229,6 +233,7 @@ class SharedLinkService {
 			'tempo' => $link->getTempo(),
 			'canPlay' => $this->policy->publicPlayDenial($version, $today, $copy) === null,
 			'scan' => $link->getScanFileId() !== null,
+			'practiceKey' => self::practiceKey($version),
 			'xml' => $xml,
 		] + $this->attribution($version, $today);
 	}
@@ -386,5 +391,15 @@ class SharedLinkService {
 
 	private static function expired(ExcerptLink $link, string $today): bool {
 		return $link->getExpires() !== null && $link->getExpires() < $today;
+	}
+
+	/**
+	 * The key under which the browser keeps the practice settings and
+	 * passages of a piece (milestone 0.15): the same for every link to the
+	 * same version, as its measures are the same, and unchanged when a title
+	 * is corrected. A hash, so that the page shows no ids of the catalog.
+	 */
+	public static function practiceKey(WorkVersion $version): string {
+		return substr(hash('sha256', 'notenarchiv-practice|' . $version->getId()), 0, 20);
 	}
 }

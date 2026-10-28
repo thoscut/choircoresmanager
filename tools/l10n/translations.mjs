@@ -3160,6 +3160,50 @@ export const singular = {
 		'Mit der Aufnahme beginnt die Wiedergabe. Die Aufnahme bleibt in diesem Browser und ist weg, wenn du die Seite verlässt, außer du speicherst sie. Nimm Kopfhörer, damit die Begleitung nicht mit aufgenommen wird.',
 		'Mit der Aufnahme beginnt die Wiedergabe. Die Aufnahme bleibt in diesem Browser und ist weg, wenn Sie die Seite verlassen, außer Sie speichern sie. Nehmen Sie Kopfhörer, damit die Begleitung nicht mit aufgenommen wird.',
 	],
+	// ---- milestone 0.15: practising without a network ----
+	'Practice files need a network: the server checks the rights and records each file first. Playing and practising work without one.':
+		'Übe-Dateien brauchen ein Netz: Der Server prüft zuerst die Rechte und protokolliert jede Datei. Abspielen und Üben gehen auch ohne.',
+	'This link has expired. It is removed from this device at the next start with a network.':
+		'Dieser Link ist abgelaufen. Er wird beim nächsten Start mit Netz von diesem Gerät entfernt.',
+	'There is no network, and this piece is not kept on this device.': 'Es gibt kein Netz, und dieses Stück ist nicht auf diesem Gerät gespeichert.',
+	'"{title}" is kept on this device.': '„{title}“ ist auf diesem Gerät gespeichert.',
+	'"{title}" is removed from this device.': '„{title}“ ist von diesem Gerät entfernt.',
+	'"{title}" could not be kept on this device: {reason}': '„{title}“ ließ sich nicht auf diesem Gerät speichern: {reason}',
+	'Please check the network and the space on the device.': [
+		'Bitte prüfe das Netz und den freien Speicher auf dem Gerät.',
+		'Bitte prüfen Sie das Netz und den freien Speicher auf dem Gerät.',
+	],
+	'Everything the music archive kept on this device is deleted.': 'Alles, was das Notenarchiv auf diesem Gerät gespeichert hatte, ist gelöscht.',
+	'{used} used on this device.': '{used} auf diesem Gerät belegt.',
+	'{used} of {available} used on this device.': '{used} von {available} auf diesem Gerät belegt.',
+	'Last checked with the server: {time}.': 'Zuletzt mit dem Server abgeglichen: {time}.',
+	'No network: the pieces kept on this device can be viewed, played and practised. {checked}':
+		'Kein Netz: Die auf diesem Gerät gespeicherten Stücke lassen sich ansehen, abspielen und üben. {checked}',
+	'No network, and no piece is kept on this device.': 'Kein Netz, und auf diesem Gerät ist kein Stück gespeichert.',
+	'Keep on this device': 'Auf diesem Gerät speichern',
+	'With the scan (PDF)': 'Mit dem Scan (PDF)',
+	'Keeping on this device …': 'Wird auf diesem Gerät gespeichert …',
+	'Cannot be kept on this device: the rights do not allow saving the notes.':
+		'Lässt sich nicht auf diesem Gerät speichern: Die Rechte erlauben das Speichern der Noten nicht.',
+	'Not on this device: needs a network.': 'Nicht auf diesem Gerät: braucht ein Netz.',
+	'The scan is not kept on this device.': 'Der Scan ist nicht auf diesem Gerät gespeichert.',
+	'On this device': 'Auf diesem Gerät',
+	'The browser keeps them even when space runs short.': 'Der Browser behält sie auch, wenn der Speicher knapp wird.',
+	'The browser may delete them when space runs short; on an iPhone or iPad, add this page to the home screen.': [
+		'Der Browser kann sie löschen, wenn der Speicher knapp wird; auf iPhone oder iPad lege diese Seite auf den Home-Bildschirm.',
+		'Der Browser kann sie löschen, wenn der Speicher knapp wird; auf iPhone oder iPad legen Sie diese Seite auf den Home-Bildschirm.',
+	],
+	'This browser cannot keep pieces for practising without a network.': 'Dieser Browser kann keine Stücke zum Üben ohne Netz speichern.',
+	'Passages and settings for practising are remembered in this browser only. On a shared device, delete them when you are done.': [
+		'Übe-Stellen und Übe-Einstellungen merkt sich nur dieser Browser. Auf einem geteilten Gerät lösche sie, wenn du fertig bist.',
+		'Übe-Stellen und Übe-Einstellungen merkt sich nur dieser Browser. Auf einem geteilten Gerät löschen Sie sie, wenn Sie fertig sind.',
+	],
+	'Delete everything on this device': 'Alles auf diesem Gerät löschen',
+	'Delete kept pieces, passages and settings': 'Gespeicherte Stücke, Übe-Stellen und Einstellungen löschen',
+	'The app is not built.': 'Die App ist nicht gebaut.',
+	'Practising without a network': 'Üben ohne Netz',
+	'Choir members keep pieces shared with them on their device and view, play and practise them without a network. Only for versions whose rights allow choir members to save and print the notes; expired and revoked links are removed at the next start with a network, and kept pieces are locked after 30 days without one. Nothing is written to the server without a network. Not part of any preset.':
+		'Chormitglieder speichern Stücke, die mit ihnen geteilt sind, auf ihrem Gerät und können sie ohne Netz ansehen, abspielen und üben. Nur für Fassungen, deren Rechte Chormitgliedern das Speichern und Drucken der Noten erlauben; abgelaufene und widerrufene Links werden beim nächsten Start mit Netz entfernt, gespeicherte Stücke nach 30 Tagen ohne Netz gesperrt. Ohne Netz wird nichts auf den Server geschrieben. Gehört zu keiner Voreinstellung.',
 }
 
 export const plural = {
@@ -3351,4 +3395,18 @@ export const plural = {
 	'%n shared link|%n shared links': ['%n geteilter Link', '%n geteilte Links'],
 	'%n semitone higher|%n semitones higher': ['%n Halbton höher', '%n Halbtöne höher'],
 	'%n semitone lower|%n semitones lower': ['%n Halbton tiefer', '%n Halbtöne tiefer'],
+	'Locked: not checked with the server for more than %n day. Please open this page once with a network.|Locked: not checked with the server for more than %n days. Please open this page once with a network.': {
+		du: [
+			'Gesperrt: seit mehr als %n Tag nicht mit dem Server abgeglichen. Bitte öffne diese Seite einmal mit Netz.',
+			'Gesperrt: seit mehr als %n Tagen nicht mit dem Server abgeglichen. Bitte öffne diese Seite einmal mit Netz.',
+		],
+		sie: [
+			'Gesperrt: seit mehr als %n Tag nicht mit dem Server abgeglichen. Bitte öffnen Sie diese Seite einmal mit Netz.',
+			'Gesperrt: seit mehr als %n Tagen nicht mit dem Server abgeglichen. Bitte öffnen Sie diese Seite einmal mit Netz.',
+		],
+	},
+	'%n piece is kept on this device for practising without a network.|%n pieces are kept on this device for practising without a network.': [
+		'%n Stück ist zum Üben ohne Netz auf diesem Gerät gespeichert.',
+		'%n Stücke sind zum Üben ohne Netz auf diesem Gerät gespeichert.',
+	],
 }

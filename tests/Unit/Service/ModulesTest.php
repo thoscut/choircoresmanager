@@ -75,7 +75,7 @@ final class ModulesTest extends TestCase {
 	 * "complete": the choir decides, then the administration switches it on.
 	 */
 	public function testSharingBeyondTheRolesIsSwitchedOnlyByItself(): void {
-		$sharing = [Modules::MEMBER_LINKS, Modules::MEMBER_PRACTICE_AUDIO, Modules::PUBLIC_LINKS, Modules::PUBLIC_REPERTOIRE];
+		$sharing = [Modules::MEMBER_LINKS, Modules::MEMBER_PRACTICE_AUDIO, Modules::PUBLIC_LINKS, Modules::PUBLIC_REPERTOIRE, Modules::OFFLINE];
 		self::assertSame([Modules::AGENT_API, ...$sharing, Modules::PRINT_MIRROR, Modules::CHOIR_HANDOVER], Modules::OUTSIDE_PRESETS);
 		foreach ($sharing as $key) {
 			self::assertSame('sharing', Modules::MODULES[$key]['group'], $key);
@@ -182,7 +182,7 @@ final class ModulesTest extends TestCase {
 		self::assertSame(['score_viewer', 'playback'], $changes['alsoEnabled']);
 		self::assertSame([], $changes['disabled']);
 		self::assertSame(['excerpt_links', 'transcription_review', 'corrections', Modules::VERSION_STATES, 'notify_review_points', 'notify_correction_received',
-			Modules::MEMBER_LINKS, Modules::MEMBER_PRACTICE_AUDIO, Modules::PUBLIC_LINKS], $changes['activated'],
+			Modules::MEMBER_LINKS, Modules::MEMBER_PRACTICE_AUDIO, Modules::OFFLINE, Modules::PUBLIC_LINKS], $changes['activated'],
 			'their switches were on');
 		self::assertTrue($modules->isEnabled('practice_audio'));
 		self::assertTrue($this->moduleConfig['module_score_viewer']);

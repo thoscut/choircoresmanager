@@ -8,6 +8,7 @@
  * one's own, per piece, remembered in this browser only. Nothing about them
  * goes to the server.
  */
+import { readStored, removeStored, writeStored } from '../storage.ts'
 
 /** A remembered passage, in printed measure numbers. */
 export interface Mark {
@@ -21,7 +22,7 @@ export const MAX_MARKS = 20
 /** Most characters of a name */
 export const MAX_NAME = 60
 
-const STORAGE_PREFIX = 'notenarchiv.marks.'
+const STORAGE_PREFIX = 'marks.'
 
 /**
  * Whether a value read from the storage is a passage.
@@ -37,11 +38,11 @@ function isMark(value: unknown): value is Mark {
 /**
  * The passages of a piece remembered in this browser.
  *
- * @param piece - key of the piece, e.g. "copy:12" or the title of a shared piece
+ * @param piece - key of the piece, e.g. "copy:12" or "piece:" and the practice key of a shared piece
  */
 export function storedMarks(piece: string): Mark[] {
 	try {
-		const parsed: unknown = JSON.parse(window.localStorage.getItem(STORAGE_PREFIX + piece) ?? '[]')
+		const parsed: unknown = JSON.parse(readStored(STORAGE_PREFIX + piece) ?? '[]')
 		return Array.isArray(parsed) ? parsed.filter(isMark).slice(0, MAX_MARKS) : []
 	} catch {
 		return []
@@ -55,14 +56,10 @@ export function storedMarks(piece: string): Mark[] {
  * @param marks - the passages; none removes the entry
  */
 export function storeMarks(piece: string, marks: Mark[]): void {
-	try {
-		if (marks.length === 0) {
-			window.localStorage.removeItem(STORAGE_PREFIX + piece)
-		} else {
-			window.localStorage.setItem(STORAGE_PREFIX + piece, JSON.stringify(marks))
-		}
-	} catch {
-		// private window or blocked storage: the passages are simply not remembered
+	if (marks.length === 0) {
+		removeStored(STORAGE_PREFIX + piece)
+	} else {
+		writeStored(STORAGE_PREFIX + piece, JSON.stringify(marks))
 	}
 }
 

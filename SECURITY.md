@@ -88,6 +88,7 @@ below explain the reasons.
 | CSV files for people neutralise formulas; the catalog CSV keeps its cells for the round trip | `CatalogCsvTest::testWriteForPeopleNeutralizesHeaderAndCells`, `testCatalogCsvKeepsFormulaLikeCellsForTheRoundTrip`; `StatisticsCsvTest::testCellsThatLookLikeFormulasAreNeutralized` |
 | Clients and notifications get no internal error texts | `NotifierTest::testExportFailureShowsNoInternalDetails`, `testLinksStayInsideTheApp`; `ApiV1ControllerTest::testErrorsBecomeOcsExceptions` |
 | The app page allows WebAssembly and nothing else beyond Nextcloud's policy | CS `testTheAppPageAllowsWebAssemblyButNoScriptEval` |
+| Pieces are kept on a device only where choir members may save them; the service worker holds no data, removes itself when the module is off and never answers an expired or unchecked piece from the device | `SharingTest::testChoirMembersSeeTheirLinksAndOnlyTheMeasures`; CS `testTheOfflineWorkerIsAScriptOfTheAppOrRemovesItself`, `testOnlyTheMemberRoutesLetChoirMembersIn`; `offline.test.ts` |
 | The audit log has no route to change or delete entries | review: the route list of CS `testEveryRouteIsCoreOrBelongsToAModule` names every route |
 
 ## Design notes
@@ -275,6 +276,24 @@ public links stop working at once.
   public is no secret.
 - A note on a link for choir members is read by all choir members: it is
   no place for internal remarks.
+- Practising without a network (module `offline`, milestone 0.15) keeps a
+  copy on the device: the notes of a link, on request its scan, the page
+  "Shared with me" with its initial state and request token, and its
+  scripts, in the browser's Cache Storage of that device. Only where choir
+  members may save and print the notes (`RightsPolicy::memberScanDenial`),
+  only after a click, and checked with the server at every start with a
+  network: expired, revoked and no longer allowed pieces are removed, and
+  the service worker does not answer from the device for an expired link or
+  30 days after the last check. Kept like a saved scan, a copy can still be
+  taken out of the browser's storage by whoever controls the device; the
+  rules above make it end, not impossible. Signing out of Nextcloud does
+  not delete it (the logout is outside the scope of the worker); the page
+  offers "Delete everything on this device", and another account opening
+  the page removes the pieces of the previous one. The worker
+  (`GET /offline-worker`) is a script of the app without data, served from
+  the app's path with `connect-src 'self'`; the pages allow `worker-src
+  'self'` only on "Shared with me". It caches nothing for the archive roles
+  and never caches writing requests or the APIs of Nextcloud.
 
 ### Interface for agents
 

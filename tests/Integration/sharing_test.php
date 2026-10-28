@@ -62,6 +62,7 @@ use OCA\Notenarchiv\Service\RightsService;
 use OCA\Notenarchiv\Service\Roles;
 use OCA\Notenarchiv\Service\ScoreService;
 use OCA\Notenarchiv\Service\SharedLinkService;
+use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\NotFoundResponse;
 use OCP\AppFramework\Http\Response;
@@ -212,7 +213,7 @@ try {
 		$check('a choir member gets no score file of the archive', $throws(fn () => Server::get(ScoreService::class)->content($scoreFile->getId(), $memberUid)) === NO_ACCESS);
 	}
 	$pageController = fn (string $account): PageController => new PageController(Server::get(IRequest::class), $account, $roles,
-		Server::get(MetaService::class), $initialState, $l, $modules, $shared);
+		Server::get(MetaService::class), $initialState, $l, $modules, $shared, Server::get(IAppManager::class));
 	$check('a choir member gets the page "Shared with me"', $pageController($memberUid)->index()->getTemplateName() === 'member');
 	$check('the archive roles get the archive', $pageController($uid)->index()->getTemplateName() === 'index');
 
@@ -242,7 +243,7 @@ try {
 	$check('listed as the whole piece with the scan', array_key_exists('measure_from', $wholeEntry) && $wholeEntry['measure_from'] === null
 		&& ($wholeEntry['scan'] ?? false) === true, json_encode($wholeEntry) ?: '');
 	$memberController = fn (string $account): MemberController => new MemberController(Server::get(IRequest::class), $account, $shared,
-		Server::get(PracticeAudioService::class), $l, Server::get(LoggerInterface::class));
+		Server::get(PracticeAudioService::class), $l, Server::get(LoggerInterface::class), $modules, Server::get(IAppManager::class));
 	$check('the choir member gets the scan inline for the PDF viewer', $isInlinePdf($memberController($memberUid)->scan($wholeLink->issuedToken())));
 	$check('a link without a scan offers none', $throws(fn () => $shared->memberScan($link->issuedToken(), $memberUid))
 		=== 'The scan of this link is not available at the moment.');

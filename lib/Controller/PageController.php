@@ -14,6 +14,7 @@ use OCA\Notenarchiv\Service\MetaService;
 use OCA\Notenarchiv\Service\Modules;
 use OCA\Notenarchiv\Service\Roles;
 use OCA\Notenarchiv\Service\SharedLinkService;
+use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\FrontpageRoute;
@@ -48,6 +49,7 @@ class PageController extends Controller {
 		private IL10N $l,
 		private Modules $modules,
 		private SharedLinkService $shared,
+		private IAppManager $apps,
 	) {
 		parent::__construct(Application::APP_ID, $request);
 	}
@@ -93,8 +95,20 @@ class PageController extends Controller {
 	private function memberPage(string $uid): TemplateResponse {
 		$links = array_map(fn (array $link): array => ['reason' => $link['reason'] === null ? null : $this->l->t($link['reason'])] + $link,
 			$this->shared->forMember($uid));
-		$this->initialState->provideInitialState('member', ['links' => $links]);
-		return self::withScorePolicy(new TemplateResponse(Application::APP_ID, 'member'), false);
+		$this->initialState->provideInitialState('member', [
+			'links' => $links,
+			// Practising without a network (milestone 0.15): the version names the cache of the page
+			'offline' => [
+				'enabled' => $this->modules->isEnabled(Modules::OFFLINE),
+				'version' => $this->apps->getAppVersion(Application::APP_ID),
+			],
+		]);
+		$response = self::withScorePolicy(new TemplateResponse(Application::APP_ID, 'member'), false);
+		// The service worker for practising without a network comes from the app's own route
+		$response->getContentSecurityPolicy()->addAllowedWorkerSrcDomain('\'self\'');
+		// The service worker keeps only this page on the device, never the archive or another page
+		$response->addHeader('X-Notenarchiv-Page', 'member');
+		return $response;
 	}
 
 	/**

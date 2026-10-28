@@ -12,7 +12,9 @@
  */
 import type { FileRef } from './types.ts'
 
-const PREFIX = 'notenarchiv.scanPage.'
+import { readStored, writeStored } from './storage.ts'
+
+const PREFIX = 'scanPage.'
 
 /**
  * PDF scans of a copy that can be shown.
@@ -40,11 +42,7 @@ export function parsePage(value: unknown): number | null {
  * @param fileId - `files[].id` of the PDF
  */
 export function storedScanPage(copyId: number, fileId: number): number {
-	try {
-		return parsePage(window.localStorage.getItem(`${PREFIX}${copyId}.${fileId}`)) ?? 1
-	} catch {
-		return 1
-	}
+	return parsePage(readStored(`${PREFIX}${copyId}.${fileId}`)) ?? 1
 }
 
 /**
@@ -55,9 +53,5 @@ export function storedScanPage(copyId: number, fileId: number): number {
  * @param page - page number
  */
 export function storeScanPage(copyId: number, fileId: number, page: number): void {
-	try {
-		window.localStorage.setItem(`${PREFIX}${copyId}.${fileId}`, String(page))
-	} catch {
-		// private window or blocked storage: the page is simply not remembered
-	}
+	writeStored(`${PREFIX}${copyId}.${fileId}`, String(page))
 }

@@ -132,11 +132,11 @@ begonnen.
 | 0.12 Klar bedienen und an das Chorsystem übergeben | im Review | PR #10 |
 | 0.13 Üben in der Notenansicht | im Review | PR #11 (baut auf PR #10 auf) |
 | 0.14 Text und Tonhöhe beim Mitsingen | im Review | PR #11 |
-| 0.15 Ohne Netz üben und vortragen | geplant | – |
+| 0.15 Ohne Netz üben und vortragen | im Review | PR #NN (baut auf PR #11 auf) |
 | 1.0 Stabil | geplant | – |
 
 Die aktuelle Version ist 0.9.1. Mit PR #10 und PR #11 kommen 0.10 bis 0.14
-dazu; danach sind 0.15 und 1.0 offen.
+dazu, mit PR #NN 0.15; danach ist 1.0 offen.
 
 ### 0.1 Fundament
 
@@ -534,39 +534,51 @@ Punkte:
 
 ### 0.15 Ohne Netz üben und vortragen
 
-*Geplant, noch nicht begonnen.* Aus der Planung „Offline-Betrieb ohne eigene
-Apps“ (Oktober 2026). Ziel: Stücke, die online bewusst „auf diesem Gerät
-gemerkt“ wurden, lassen sich ohne Netz ansehen, abspielen und üben, mit
-allen Werkzeugen aus 0.13 und 0.14. Keine native App, kein neuer Server: ein
-Service Worker innerhalb der Nextcloud-App.
+*Im Review (PR #NN), noch nicht in `main`. Umgesetzt bis auf die
+öffentlichen Links und die Abnahme auf echten Geräten.* Aus der Planung
+„Offline-Betrieb ohne eigene Apps“ (Oktober 2026). Ziel: Stücke, die online
+bewusst „auf diesem Gerät gespeichert“ wurden, lassen sich ohne Netz
+ansehen, abspielen und üben, mit allen Werkzeugen aus 0.13 und 0.14. Keine
+native App, kein neuer Server: ein Service Worker innerhalb der
+Nextcloud-App.
 
 - **Vorab, nur Doku:** Den Übergabeordner (`choir_handover`, 0.12)
   schreibgeschützt mit den Chormitgliedern teilen und in der Nextcloud-App
   „Offline verfügbar“ setzen. Liefert Scans und Dateien, aber keine
-  Übe-Werkzeuge.
-- **Lesen offline** für „Für mich freigegeben“ und öffentliche Links:
-  - Service Worker über einen eigenen Controller (Scope der App, CSP mit
-    `worker-src 'self'`), App-Shell aus dem Build vorab gespeichert
+  Übe-Werkzeuge. – *umgesetzt, im Administrationshandbuch unter „Übergabe
+  an ein Chorsystem“.*
+- **Lesen offline** für „Mit mir geteilt“: – *umgesetzt als Modul
+  `offline` (aus, in keiner Voreinstellung).*
+  - Service Worker über eine eigene Route (`GET /offline-worker`, Scope der
+    App, CSP mit `worker-src 'self'` nur auf dieser Seite), als eigenes
+    Skript gebaut; ist das Modul aus, entfernt er sich und alles Gespeicherte
   - Liste der Freigaben als JSON (`GET /api/member/links`)
-  - je Stück „Auf diesem Gerät merken“: MusicXML, auf Wunsch der Scan
+  - je Stück „Auf diesem Gerät speichern“: MusicXML, auf Wunsch der Scan;
+    dazu die Seite und ihre Skripte samt Notensatz
   - Abgleich bei jedem Start mit Netz; Ablauf und Widerruf werden
-    durchgesetzt, Höchstdauer ohne Abgleich (Vorschlag 30 Tage, nie länger
-    als der Link gilt)
-  - Offline-Anzeige mit Stand, Speicheranzeige und Knopf „Offline-Daten
-    dieses Geräts löschen“; Scan in der Seite statt im neuen Tab
+    durchgesetzt, gesperrt nach 30 Tagen ohne Abgleich, nie länger als der
+    Link gilt (auch der Service Worker antwortet dann nicht vom Gerät)
+  - Hinweis ohne Netz mit Stand, Bereich „Auf diesem Gerät“ mit
+    Speicheranzeige und „Alles auf diesem Gerät löschen“; ein anderes Konto
+    im selben Browser beginnt leer
   - offline nicht verfügbare Funktionen sichtbar abgeschaltet, mit Grund
-    (z. B. „Übe-Datei erstellen“, das eine Freigabe des Servers braucht)
-  - als Modul `offline`, standardmäßig aus; Abnahme auf iPad, Android und
-    Firefox
+    („Übe-Datei“ braucht die Freigabe des Servers)
+  - *offen:* öffentliche Links (kein Konto zum Trennen, kein Recht
+    „Speichern“ für die Öffentlichkeit); der Scan offline in der Seite statt
+    im neuen Tab; Abnahme auf iPad, Android und Firefox in einem echten
+    Nextcloud
 - **Übe-Daten offline:** Übe-Einstellungen je Stück dauerhaft und
-  versioniert, mit einem stabilen Schlüssel statt Titel und Komponist.
+  versioniert, mit einem stabilen Schlüssel statt Titel und Komposition. –
+  *umgesetzt: Tempo, Tonhöhe, Metronom und Mischpult je Fassung
+  (`practiceKey`, ein Hash ohne Katalog-IDs), Übe-Stellen ziehen einmal vom
+  alten Schlüssel um; alles im Browser gebündelt (`src/storage.ts`).*
   Aufnahmen bleiben wie bisher nur im Speicher.
 
 Dafür gilt: Geschrieben wird offline nur im Browser (Übe-Stellen,
 Einstellungen), nie auf den Server (Leitlinie 3). Gespeichert wird nur auf
-ausdrücklichen Wunsch, getrennt je Konto. Offen ist, ob ein Stück offline
-gemerkt werden darf, wenn die Freigabe nur Ansehen und Abspielen erlaubt,
-oder nur mit „Speichern und Drucken“.
+ausdrücklichen Wunsch, getrennt je Konto. Gespeichert werden darf ein Stück
+nur, wenn Chormitglieder die Noten speichern und drucken dürfen (wie beim
+Scan); eine Freigabe nur zum Ansehen und Abspielen reicht nicht.
 
 Nach 1.0: die Konzertmappe der Chorleitung (Programm eines Konzerts offline
 in der Archiv-App) und Schreiben ohne Netz.

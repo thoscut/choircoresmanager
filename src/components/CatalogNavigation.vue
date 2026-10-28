@@ -62,6 +62,7 @@ import { repertoireClassLabel } from '../labels.ts'
 import { helpUrl } from '../docs.ts'
 import { currentView, navigate } from '../navigation.ts'
 import { buildQuery } from '../startParams.ts'
+import { readStored, writeStored } from '../storage.ts'
 import { viewTitle } from '../viewTitles.ts'
 import {
 	archiveDialogOpen,
@@ -235,15 +236,11 @@ const statusSelectOptions = computed<Option<string>[]>(() => {
 
 // ---- "More filters": folded away, the state is remembered in this browser ----
 
-const MORE_FILTERS_KEY = 'notenarchiv.moreFilters'
+const MORE_FILTERS_KEY = 'moreFilters'
 
 /** Whether the section was open last time ('1'); storage may be blocked. */
 function readMoreFiltersOpen(): boolean {
-	try {
-		return window.localStorage.getItem(MORE_FILTERS_KEY) === '1'
-	} catch {
-		return false
-	}
+	return readStored(MORE_FILTERS_KEY) === '1'
 }
 
 const moreFiltersOpen = ref(readMoreFiltersOpen() || moreFiltersActive(filters) > 0)
@@ -260,11 +257,7 @@ watch(moreFiltersCount, (count, before) => {
 
 function toggleMoreFilters(): void {
 	moreFiltersOpen.value = !moreFiltersOpen.value
-	try {
-		window.localStorage.setItem(MORE_FILTERS_KEY, moreFiltersOpen.value ? '1' : '0')
-	} catch {
-		// Not remembered (private window, blocked storage); it still works.
-	}
+	writeStored(MORE_FILTERS_KEY, moreFiltersOpen.value ? '1' : '0')
 }
 
 const countText = computed(() => {

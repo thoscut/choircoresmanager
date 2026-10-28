@@ -5,6 +5,7 @@
 
 import { createAppConfig } from '@nextcloud/vite-config'
 import { join, resolve } from 'path'
+import { build } from 'vite'
 
 // Unit tests (npm test) run the pure logic in Node, without the build plugins;
 // tools/l10n checks the translations
@@ -12,6 +13,35 @@ const testConfig = {
 	test: {
 		include: ['src/**/*.test.ts', 'tools/l10n/*.test.mjs'],
 		environment: 'node',
+	},
+}
+
+/**
+ * The service worker of the page "Shared with me" (milestone 0.15): a
+ * classic script without imports, built after the app into
+ * js/notenarchiv-offline-worker.js; MemberController::offlineWorker serves it
+ * from the app's path, so that it covers the page.
+ */
+const offlineWorker = {
+	name: 'notenarchiv-offline-worker',
+	apply: 'build' as const,
+	async closeBundle() {
+		await build({
+			configFile: false,
+			logLevel: 'warn',
+			build: {
+				outDir: 'js',
+				emptyOutDir: false,
+				copyPublicDir: false,
+				minify: true,
+				lib: {
+					entry: resolve(join('src', 'offline', 'worker.ts')),
+					formats: ['iife'],
+					name: 'notenarchivOfflineWorker',
+					fileName: () => 'notenarchiv-offline-worker.js',
+				},
+			},
+		})
 	},
 }
 
@@ -34,5 +64,8 @@ export default process.env.VITEST
 			createEmptyCSSEntryPoints: true,
 			extractLicenseInformation: true,
 			thirdPartyLicense: false,
+			config: {
+				plugins: [offlineWorker],
+			},
 		},
 	)

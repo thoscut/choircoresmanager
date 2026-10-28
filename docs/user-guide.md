@@ -1680,6 +1680,38 @@ long each is valid, whether it can be played (**Playback: yes** or
    browser, and every practice file is recorded in the audit log of the
    music archive.
 
+Your browser remembers the tempo, **Pitch**, **Metronome**, the **Mixer**
+and the passages of each piece, also for a new link to the same piece.
+
+### Practising without a network
+
+Where the administration has switched it on, a piece can be kept on your
+device and then be viewed, played and practised without a network, for
+example on the train or in a church without Wi-Fi. No app to install: it
+works in the browser.
+
+1. With a network, open **Shared with me** and choose **Keep on this
+   device** in the list for each piece you need; **With the scan (PDF)**
+   also keeps the scan, which may need a lot of space. Some pieces say
+   "Cannot be kept on this device": their rights allow viewing, not saving.
+2. Without a network, open the same page as usual (a bookmark or the home
+   screen). A note says that the pieces kept on this device are shown.
+   Playing, count-in, metronome, pitch, mixer, passages, lyrics and
+   recording yourself all work; **Practice file** needs a network.
+3. Each start with a network checks the kept pieces: expired or revoked
+   links disappear from the device. After 30 days without a network the
+   kept pieces are locked until the page is opened once with one.
+4. **On this device**, at the bottom of the page, shows how many pieces are
+   kept and the space used. **Delete everything on this device** removes
+   the kept pieces, passages and settings; do this on a shared device.
+   Signing out of Nextcloud does not delete them.
+
+On an iPhone or iPad, add the page to the home screen (Share → **Add to
+Home Screen**) and open it from there: otherwise Safari may delete the kept
+pieces after some days without use. Without a network, the scan opens only
+where it was kept, and on an iPhone or iPad from the home screen it may
+open outside the page.
+
 ## As a contributor or tool
 
 The role **Proposals (tools)** is meant for transcription rounds and scripts.

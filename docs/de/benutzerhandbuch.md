@@ -1796,6 +1796,43 @@ Stimme, der Notiz und wie lange jedes gilt, ob es sich abspielen lässt
    Datei umfasst die gezeigten Takte; sie entsteht in deinem Browser, und
    jede Übe-Datei wird im Protokoll des Notenarchivs festgehalten.
 
+Dein Browser merkt sich das Tempo, **Tonhöhe**, **Metronom**, das
+**Mischpult** und die Stellen jedes Stücks, auch für einen neuen Link zum
+selben Stück.
+
+### Üben ohne Netz
+
+Wo die Administration es eingeschaltet hat, kannst du ein Stück auf deinem
+Gerät speichern und es dann ohne Netz ansehen, abspielen und üben, zum
+Beispiel im Zug oder in einer Kirche ohne WLAN. Keine App zum Installieren:
+Es geht im Browser.
+
+1. Öffne mit Netz **Mit mir geteilt** und wähle in der Liste bei jedem
+   Stück, das du brauchst, **Auf diesem Gerät speichern**; **Mit dem Scan
+   (PDF)** speichert auch den Scan, der viel Platz brauchen kann. Bei manchen
+   Stücken steht „Lässt sich nicht auf diesem Gerät speichern“: Ihre Rechte
+   erlauben das Ansehen, nicht das Speichern.
+2. Ohne Netz öffnest du dieselbe Seite wie gewohnt (ein Lesezeichen oder der
+   Home-Bildschirm). Ein Hinweis sagt, dass die auf diesem Gerät
+   gespeicherten Stücke gezeigt werden. Abspielen, Einzähler, Metronom,
+   Tonhöhe, Mischpult, Stellen, Text und Selbst aufnehmen gehen alle;
+   **Übe-Datei** braucht ein Netz.
+3. Jeder Start mit Netz gleicht die gespeicherten Stücke ab: Abgelaufene
+   oder widerrufene Links verschwinden vom Gerät. Nach 30 Tagen ohne Netz
+   sind die gespeicherten Stücke gesperrt, bis du die Seite einmal mit Netz
+   öffnest.
+4. **Auf diesem Gerät**, unten auf der Seite, zeigt, wie viele Stücke
+   gespeichert sind und wie viel Platz sie belegen. **Alles auf diesem Gerät
+   löschen** entfernt die gespeicherten Stücke, Stellen und Einstellungen;
+   tu das auf einem geteilten Gerät. Das Abmelden bei Nextcloud löscht sie
+   nicht.
+
+Lege die Seite auf iPhone oder iPad auf den Home-Bildschirm (Teilen →
+**Zum Home-Bildschirm**) und öffne sie von dort: Sonst kann Safari die
+gespeicherten Stücke nach einigen Tagen ohne Nutzung löschen. Ohne Netz
+öffnet sich der Scan nur, wo er gespeichert ist, und auf iPhone oder iPad
+vom Home-Bildschirm aus womöglich außerhalb der Seite.
+
 ## Für Mitwirkende und Werkzeuge
 
 Die Rolle **Vorschläge (Werkzeuge)** ist für Übertragungsrunden und Skripte

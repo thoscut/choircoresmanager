@@ -15,6 +15,8 @@
 import type { ScoreModel } from './model.ts'
 import type { MeasureSlot, Timeline } from './timeline.ts'
 
+import { readStored, writeStored } from '../storage.ts'
+
 /** Bars of count-in; 0 = none. */
 export type CountInBars = 0 | 1 | 2
 
@@ -36,7 +38,7 @@ export interface CountIn {
 }
 
 const EPSILON = 1e-6
-const STORAGE_KEY = 'notenarchiv.countIn'
+const STORAGE_KEY = 'countIn'
 
 /**
  * Measure slot that contains a time.
@@ -171,12 +173,8 @@ export function metronomeClicks(model: Pick<ScoreModel, 'timing' | 'signatures' 
  * The count-in chosen last in this browser.
  */
 export function storedCountIn(): CountInBars {
-	try {
-		const value = window.localStorage.getItem(STORAGE_KEY)
-		return value === '1' ? 1 : (value === '2' ? 2 : 0)
-	} catch {
-		return 0
-	}
+	const value = readStored(STORAGE_KEY)
+	return value === '1' ? 1 : (value === '2' ? 2 : 0)
 }
 
 /**
@@ -185,9 +183,5 @@ export function storedCountIn(): CountInBars {
  * @param bars - bars of count-in
  */
 export function storeCountIn(bars: CountInBars): void {
-	try {
-		window.localStorage.setItem(STORAGE_KEY, String(bars))
-	} catch {
-		// private window or blocked storage: the choice is simply not remembered
-	}
+	writeStored(STORAGE_KEY, String(bars))
 }

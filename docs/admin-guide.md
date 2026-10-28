@@ -853,7 +853,7 @@ documented contract that stays the same across updates of the app.
 
 ## 14. Sharing with choir members and the public
 
-Four modules in the group **Sharing beyond the archive roles** open parts of
+Five modules in the group **Sharing beyond the archive roles** open parts of
 the archive to people without an archive role. They are off on every
 installation and part of no preset, not even "Complete": switch them on
 one by one, after the choir has decided.
@@ -864,6 +864,7 @@ one by one, after the choir has decided.
 | **Practice audio for choir members** | Choir members make a WAV or MIDI file of one voice of such a piece or excerpt, where the rights allow practice audio files. Every file is recorded in the audit log. |
 | **Public links** | A link that shows and plays a whole piece or an excerpt without login (`/apps/notenarchiv/p/<token>`), optionally with the scan (PDF). Only for versions released for publication that are confirmed public domain or have a license for online publication. |
 | **Public repertoire page** | `/apps/notenarchiv/repertoire`: the works the catalog librarian chooses among those with a version confirmed as public domain, with life dates, scoring and links to CPDL and IMSLP. |
+| **Practising without a network** | Choir members keep pieces of "Shared with me" on their device and view, play and practise them there without a network: in the browser, no app to install. Only for links whose version choir members may save and print. Needs **Links for choir members**. |
 
 Whatever the switches say, choir members and the public only ever get the
 content for the view (the whole piece or the measures of an excerpt), never
@@ -907,6 +908,36 @@ be shared, the whole piece, an excerpt and the scan alike. Links can be passed o
 note of a link for choir members is read by all choir members. Calls are
 counted, but without names.
 
+**Practising without a network** (module `offline`, `occ notenarchiv:modules
+enable offline`):
+
+- **What is kept, and where.** Nothing is kept until a choir member chooses
+  **Keep on this device** for a piece, optionally **With the scan (PDF)**.
+  Then the notes of the link, the scan if chosen, the page "Shared with me"
+  and its scripts are stored in the browser of that device (a service
+  worker of the app at `/apps/notenarchiv/offline-worker`, which only
+  answers from the device when the network does not). Passages and settings
+  for practising are remembered in the browser as before. Nothing is
+  written to the server without a network: practice files need it, as the
+  server checks the rights and records each file.
+- **Rights.** Only where choir members may save and print the notes (the
+  same rule as for the scan and the hand-over folder): a license for the
+  singers' portal alone covers viewing, not a copy on the device.
+- **Expiry and revocation.** At every start with a network the page checks
+  the kept pieces with the server; expired, revoked and no longer allowed
+  ones are removed. Without a check for 30 days the kept pieces are locked,
+  and an expired link is never shown, also without a network. A piece shown
+  from the device does not count as a call of the link.
+- **Devices.** It needs HTTPS and a current browser. On iPhone and iPad,
+  add the page to the home screen: otherwise Safari may delete the kept
+  pieces after some days without use. On a shared device, choir members
+  delete everything with **Delete everything on this device**; signing out
+  of Nextcloud does not delete it. When another account opens the page in
+  the same browser, the pieces of the previous one are removed.
+- **Switching it off.** The next visit with a network removes the service
+  worker and everything it kept. After an update of the app the worker
+  renews itself and drops the old scripts.
+
 **Common problems:**
 
 | Problem | What to do |
@@ -918,6 +949,8 @@ counted, but without names.
 | "The score of this link is not available at the moment." or "The scan of this link is not available at the moment." | The account that chose the archive folder (Settings → Archive folder) must still exist and see the folder, and the MusicXML file or the PDF scan must still be in it and linked to the copy. |
 | A public scan shows "not found" | The same reasons as for the page, or the PDF is no longer in the archive folder; make a new link with the scan linked again. |
 | A public link shows "not found" | It has expired, was revoked, the version is no longer released, or the module is off; the page does not tell which. Make a new link if needed. |
+| **Keep on this device** is missing | The module **Practising without a network** is off, or the browser cannot keep pieces (no HTTPS, a private window); the page says so under **On this device**. For a single piece it says "Cannot be kept on this device" when the rights do not allow saving. |
+| Kept pieces are gone on an iPhone or iPad | Safari deletes the storage of a page after some days without use unless it was added to the home screen. Add it, open it once with a network and keep the pieces again. |
 
 ## 15. Folder book: retention period
 
@@ -1076,6 +1109,19 @@ Risks:
   removed from the folder must also be removed there. The read-me says so.
 - The app writes as the account that chose the folder; if that account is
   deleted or loses access, the sync stops and notifies.
+
+**Without a network, without the app: the folder in the Nextcloud app.**
+Where choir members have Nextcloud accounts, the hand-over folder also
+serves them directly. Share it with the group of the choir members, read
+only. In the Nextcloud app on a phone or tablet they mark it **Available
+offline** (Android: **Set as available offline**), or the desktop client
+syncs it. The scans, MusicXML files and recordings are then on their
+device and open in any PDF viewer or player; a file the hand-over removes
+disappears there with the next sync. This needs no module beyond the
+hand-over, but has none of the tools for practising: for those, keep
+pieces with the module **Practising without a network** (see
+[Sharing with choir members and the public](#14-sharing-with-choir-members-and-the-public)).
+The folder holds only what choir members may save and print anyway.
 
 How the archive and a choir system share the work, and what never leaves
 the archive, is in [Notenarchiv alongside a choir system](alongside-a-choir-system.md).

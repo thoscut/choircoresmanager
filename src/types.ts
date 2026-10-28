@@ -434,6 +434,10 @@ export interface MemberLink {
 	reason: string | null
 	/** the link offers the scan (PDF) */
 	scan?: boolean
+	/** the rights allow keeping the piece on the device (module "offline", milestone 0.15) */
+	offline?: boolean
+	/** key of the piece for what is remembered in the browser while practising (milestone 0.15) */
+	practiceKey?: string
 	credits: Credit[]
 	/** notices the licenses ask for */
 	notices: string[]
@@ -442,6 +446,12 @@ export interface MemberLink {
 /** Initial state `member` of the page for choir members. */
 export interface MemberPageState {
 	links: MemberLink[]
+	/** practising without a network (module "offline", milestone 0.15) */
+	offline?: {
+		enabled: boolean
+		/** version of the app, names the cache of the page */
+		version: string
+	}
 }
 
 /** Initial state `excerpt` of a public link: the excerpt, already cut by the server, or the whole piece. */
@@ -457,6 +467,8 @@ export interface PublicExcerpt {
 	canPlay: boolean
 	/** the link offers the scan (PDF) at `/p/{token}/scan` */
 	scan?: boolean
+	/** key of the piece for what is remembered in the browser while practising (milestone 0.15) */
+	practiceKey?: string
 	/** MusicXML with only the measures of the excerpt, or the whole piece */
 	xml: string
 	credits: Credit[]
