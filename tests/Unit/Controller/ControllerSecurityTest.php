@@ -559,8 +559,8 @@ final class ControllerSecurityTest extends TestCase {
 		self::assertStringNotContainsString('http', $policy, 'no external sources');
 		self::assertStringNotContainsString('frame-src', $policy);
 		self::assertStringContainsString("media-src 'self' blob:", $policy);
-		self::assertStringContainsString("microphone 'self';", PageController::recordingPolicy()->buildPolicy());
-		self::assertStringContainsString("geolocation 'none';", PageController::recordingPolicy()->buildPolicy());
+		self::assertStringContainsString("microphone 'self';", PublicLinkController::recordingPolicy()->buildPolicy());
+		self::assertStringContainsString("geolocation 'none';", PublicLinkController::recordingPolicy()->buildPolicy());
 
 		$scan = $this->createStub(File::class);
 		$failures = [

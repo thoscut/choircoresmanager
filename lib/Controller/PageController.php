@@ -123,7 +123,7 @@ class PageController extends Controller {
 	 * The microphone for this page only, for recording oneself while
 	 * practising; the browser still asks the person first.
 	 */
-	public static function recordingPolicy(): FeaturePolicy {
+	private static function recordingPolicy(): FeaturePolicy {
 		$policy = new FeaturePolicy();
 		$policy->addAllowedMicrophoneDomain('\'self\'');
 		return $policy;

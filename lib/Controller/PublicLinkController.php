@@ -24,6 +24,7 @@ use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\Attribute\PublicPage;
 use OCP\AppFramework\Http\Attribute\UserRateLimit;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
+use OCP\AppFramework\Http\FeaturePolicy;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\Template\PublicTemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
@@ -87,7 +88,7 @@ class PublicLinkController extends Controller {
 			? $this->l->t('Whole piece')
 			: $this->l->t('Measures %1$s to %2$s', [$excerpt['measureFrom'], $excerpt['measureTo']]));
 		$response->setContentSecurityPolicy(self::policy());
-		$response->setFeaturePolicy(PageController::recordingPolicy());
+		$response->setFeaturePolicy(self::recordingPolicy());
 		// A link that expires: not for search engines.
 		$response->addHeader('X-Robots-Tag', 'noindex, nofollow');
 		$response->cacheFor(0, false, false);
@@ -133,6 +134,16 @@ class PublicLinkController extends Controller {
 		$policy->allowEvalWasm(true);
 		// a recording made while practising is played from the browser's memory
 		$policy->addAllowedMediaDomain('blob:');
+		return $policy;
+	}
+
+	/**
+	 * The microphone for this page only, for recording oneself while
+	 * practising (as PageController); the browser still asks first.
+	 */
+	public static function recordingPolicy(): FeaturePolicy {
+		$policy = new FeaturePolicy();
+		$policy->addAllowedMicrophoneDomain('\'self\'');
 		return $policy;
 	}
 }
