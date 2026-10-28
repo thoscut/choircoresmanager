@@ -132,11 +132,11 @@ begonnen.
 | 0.12 Klar bedienen und an das Chorsystem übergeben | im Review | PR #10 |
 | 0.13 Üben in der Notenansicht | im Review | PR #11 (baut auf PR #10 auf) |
 | 0.14 Text und Tonhöhe beim Mitsingen | im Review | PR #11 |
-| 0.15 Ohne Netz üben und vortragen | im Review | PR #NN (baut auf PR #11 auf) |
+| 0.15 Ohne Netz üben und vortragen | im Review | PR #12 (baut auf PR #11 auf) |
 | 1.0 Stabil | geplant | – |
 
 Die aktuelle Version ist 0.9.1. Mit PR #10 und PR #11 kommen 0.10 bis 0.14
-dazu, mit PR #NN 0.15; danach ist 1.0 offen.
+dazu, mit PR #12 0.15; danach ist 1.0 offen.
 
 ### 0.1 Fundament
 
@@ -534,7 +534,7 @@ Punkte:
 
 ### 0.15 Ohne Netz üben und vortragen
 
-*Im Review (PR #NN), noch nicht in `main`. Umgesetzt bis auf die
+*Im Review (PR #12), noch nicht in `main`. Umgesetzt bis auf die
 öffentlichen Links und die Abnahme auf echten Geräten.* Aus der Planung
 „Offline-Betrieb ohne eigene Apps“ (Oktober 2026). Ziel: Stücke, die online
 bewusst „auf diesem Gerät gespeichert“ wurden, lassen sich ohne Netz
