@@ -488,7 +488,10 @@ Punkte:
   sitzt. – *umgesetzt, in drei Stufen bis zu den Anfangsbuchstaben.*
 - **Mitsingen mit Tonhöhen-Anzeige:** Mikrofon an, die gesungene Tonhöhe als
   Linie neben den Soll-Tönen der eigenen Stimme, Erkennung im Browser. Kein
-  Punktestand, keine Auswertung auf dem Server.
+  Punktestand, keine Auswertung auf dem Server. – *umgesetzt: Töne der
+  Fokusstimme als Kästchen, der Gesang als Linie in der Oktave der Stimme,
+  dazu in Worten (sauber bis 30 Cent, etwas oder zu hoch/tief); Erkennung
+  mit YIN im Browser, das Mikrofon nur, solange der Schalter an ist.*
 
 ### 1.0 Stabil
 

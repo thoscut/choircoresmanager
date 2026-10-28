@@ -46,6 +46,7 @@ import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import PracticeLyrics from '../components/PracticeLyrics.vue'
 import PracticeMarks from '../components/PracticeMarks.vue'
+import PracticePitch from '../components/PracticePitch.vue'
 import PracticeRecorder from '../components/PracticeRecorder.vue'
 import PracticeTools from '../components/PracticeTools.vue'
 import { startingTonesText, transposeText } from '../practiceLabels.ts'
@@ -55,6 +56,7 @@ import { followMeasure, turnSystem } from '../score/follow.ts'
 import { scoreTarget } from '../score/hit.ts'
 import { loadScore, playbackTimeline, renderPages, selectMeasures } from '../score/model.ts'
 import { lyricSyllables } from '../score/lyrics.ts'
+import { targetNotes } from '../score/pitch.ts'
 import { ScorePlayer, voiceGains } from '../score/player.ts'
 import { partGains, practiceFileName, practiceMidi, SAMPLE_RATE } from '../score/practice.ts'
 import { mixChanged, mixedGains, startingTones, transposedFifths, transposeTimeline } from '../score/practising.ts'
@@ -424,6 +426,26 @@ const lyricsStep = ref<'0' | '1' | '2' | '3'>('0')
 /** Syllables of that voice along the playback (milestone 0.14) */
 const syllables = computed(() => model.value && lyricsVoice.value ? lyricSyllables(model.value, timeline.value, lyricsVoice.value) : [])
 
+/** Singing along with the pitch display, and why the microphone did not work */
+const pitchShown = ref(false)
+const pitchProblem = ref('')
+
+/** Tones of the focus voice for the pitch display (milestone 0.14) */
+const pitchNotes = computed(() => focusVoice.value ? targetNotes(timeline.value, focusVoice.value) : [])
+
+/** Key signature of the sound, after transposing */
+const soundFifths = computed(() => {
+	const fifths = model.value?.signatures.fifths ?? null
+	return fifths === null ? null : transposedFifths(fifths, transpose.value)
+})
+
+// Without a focus voice there is nothing to compare with
+watch(focusVoice, (voice) => {
+	if (!voice) {
+		pitchShown.value = false
+	}
+})
+
 /** Display names of the voices for the mixer */
 const mixerVoices = computed(() => (model.value?.voices ?? []).map((voice) => ({ key: voice.key, label: labelOf(voice) })))
 
@@ -440,8 +462,7 @@ async function giveStartingTones(): Promise<void> {
 		? [focusVoice.value]
 		: loaded.voices.filter((voice) => (mix.value[voice.key] ?? 100) > 0)
 	const tones = startingTones(timeline.value, voices, player?.currentTime() ?? 0)
-	const fifths = loaded.signatures.fifths === null ? null : transposedFifths(loaded.signatures.fifths, transpose.value)
-	announce(startingTonesText(tones, labelOf, fifths))
+	announce(startingTonesText(tones, labelOf, soundFifths.value))
 	await ensurePlayer().playTones(tones.map((tone) => tone.pitch))
 }
 
@@ -1098,6 +1119,16 @@ onBeforeUnmount(() => {
 					:syllables="syllables"
 					:position="position"
 					:voice-label="labelOf(lyricsVoice)" />
+				<PracticePitch v-if="canPlay"
+					v-model:shown="pitchShown"
+					v-model:problem="pitchProblem"
+					part="display"
+					:notes="pitchNotes"
+					:position="position"
+					:playing="playing"
+					:voice-label="focusVoice ? labelOf(focusVoice) : null"
+					:fifths="soundFifths"
+					@announce="announce" />
 			</div>
 			<NcNoteCard v-if="!canPlay" type="info" class="excerpt-viewer__note">
 				{{ playReason || t('notenarchiv', 'Playback is not available for this excerpt.') }}
@@ -1152,6 +1183,15 @@ onBeforeUnmount(() => {
 						:syllables="syllables"
 						:position="position"
 						:voice-label="labelOf(lyricsVoice)" />
+					<PracticePitch v-model:shown="pitchShown"
+						v-model:problem="pitchProblem"
+						part="choices"
+						:notes="pitchNotes"
+						:position="position"
+						:playing="playing"
+						:voice-label="focusVoice ? labelOf(focusVoice) : null"
+						:fifths="soundFifths"
+						@announce="announce" />
 					<PracticeMarks :piece="`shared:${title}|${composer}`"
 						:from="shownNumbers.first"
 						:to="shownNumbers.last"

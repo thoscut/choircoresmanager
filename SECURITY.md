@@ -478,7 +478,9 @@ account can do; it offers a stable, documented and limited contract.
   (`microphone 'self'`) and media from the browser's memory (`media-src
   blob:`). The microphone is asked for only after a click on "Record
   myself"; the recording never leaves the browser unless the person saves it
-  as a file. Camera, location and payment stay off. Tested in
+  as a file. "Show my pitch" (0.14) uses the same permission while its
+  switch is on; the pitch is found in the browser and nothing is kept.
+  Camera, location and payment stay off. Tested in
   `ControllerSecurityTest`.
 - No external requests: notation, fonts and sounds are bundled.
 - The audit log is append-only; there is no API to change or delete entries.

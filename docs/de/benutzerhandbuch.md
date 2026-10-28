@@ -521,6 +521,14 @@ deinem Browser: Über dein Üben wird nichts auf dem Server gespeichert.
   Schritt für Schritt Buchstaben aus: **Einige ausgeblendet**, **Die meisten
   ausgeblendet** und **Nur Anfangsbuchstaben**, wo nur der erste Buchstabe
   jedes Wortes bleibt.
+- **Meine Tonhöhe zeigen** (mit einer Fokusstimme) fragt nach dem Mikrofon
+  und zeigt über den Noten die Töne der Fokusstimme als Kästchen und deinen
+  Gesang als Linie, dazu in Worten, etwa „Sopran: A4 · Gesungen: G4, zu tief
+  (−200 ct)“. Bis 30 Cent gilt ein Ton als sauber. Verglichen wird in der
+  Oktave der Stimme, so kann ein Mann eine Sopranlinie mitsingen. Die
+  Tonhöhe wird in deinem Browser erkannt; nichts wird aufgenommen,
+  gespeichert oder bewertet. Ausschalten gibt das Mikrofon frei. Nimm
+  Kopfhörer; es geht nur über https.
 
 #### So startest du an einer bestimmten Note
 

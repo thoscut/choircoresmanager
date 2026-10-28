@@ -35,6 +35,10 @@ All notable changes to this app are documented in this file. The format follows
   above the score, the sung syllable bold and underlined, the next line
   below and the verse of the current pass. **Learn the lyrics** hides
   letters in three steps down to the first letter of every word.
+- **Show my pitch** (milestone 0.14): with a focus voice, the microphone
+  listens while the switch is on; its tones are shown as boxes and the
+  singing as a line, and in words how far off it is. The pitch is found in
+  the browser; nothing is recorded, kept or scored.
 
 ### Changed
 

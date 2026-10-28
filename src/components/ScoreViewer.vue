@@ -68,6 +68,7 @@ import NcTextField from '@nextcloud/vue/components/NcTextField'
 import GuideLink from './GuideLink.vue'
 import PracticeLyrics from './PracticeLyrics.vue'
 import PracticeMarks from './PracticeMarks.vue'
+import PracticePitch from './PracticePitch.vue'
 import PracticeRecorder from './PracticeRecorder.vue'
 import PracticeTools from './PracticeTools.vue'
 import LinkDialog from './LinkDialog.vue'
@@ -83,6 +84,7 @@ import { followMeasure, turnSystem } from '../score/follow.ts'
 import { scoreTarget } from '../score/hit.ts'
 import { ArchiveLimitError, readScoreText } from '../score/mxl.ts'
 import { lyricSyllables } from '../score/lyrics.ts'
+import { targetNotes } from '../score/pitch.ts'
 import { ScorePlayer, voiceGains } from '../score/player.ts'
 import { mixedGains, startingTones, transposedFifths, transposeTimeline } from '../score/practising.ts'
 import { resolveRange, sameNumber } from '../score/range.ts'
@@ -892,6 +894,26 @@ const lyricsStep = ref<'0' | '1' | '2' | '3'>('0')
 /** Syllables of that voice along the playback (milestone 0.14) */
 const syllables = computed(() => model.value && lyricsVoice.value ? lyricSyllables(model.value, timeline.value, lyricsVoice.value) : [])
 
+/** Singing along with the pitch display, and why the microphone did not work */
+const pitchShown = ref(false)
+const pitchProblem = ref('')
+
+/** Tones of the focus voice for the pitch display (milestone 0.14) */
+const pitchNotes = computed(() => focusVoice.value ? targetNotes(timeline.value, focusVoice.value) : [])
+
+/** Key signature of the sound, after transposing */
+const soundFifths = computed(() => {
+	const fifths = model.value?.signatures.fifths ?? null
+	return fifths === null ? null : transposedFifths(fifths, transpose.value)
+})
+
+// Without a focus voice there is nothing to compare with
+watch(focusVoice, (voice) => {
+	if (!voice) {
+		pitchShown.value = false
+	}
+})
+
 /** Display names of the voices for the mixer */
 const mixerVoices = computed(() => (model.value?.voices ?? []).map((voice) => ({ key: voice.key, label: labelOf(voice) })))
 
@@ -908,8 +930,7 @@ async function giveStartingTones(): Promise<void> {
 		? [focusVoice.value]
 		: loaded.voices.filter((voice) => (mix.value[voice.key] ?? 100) > 0)
 	const tones = startingTones(timeline.value, voices, player?.currentTime() ?? 0)
-	const fifths = loaded.signatures.fifths === null ? null : transposedFifths(loaded.signatures.fifths, transpose.value)
-	announce(startingTonesText(tones, labelOf, fifths))
+	announce(startingTonesText(tones, labelOf, soundFifths.value))
 	await ensurePlayer().playTones(tones.map((tone) => tone.pitch))
 }
 
@@ -1568,6 +1589,15 @@ onBeforeUnmount(() => {
 								:syllables="syllables"
 								:position="position"
 								:voice-label="labelOf(lyricsVoice)" />
+							<PracticePitch v-model:shown="pitchShown"
+								v-model:problem="pitchProblem"
+								part="choices"
+								:notes="pitchNotes"
+								:position="position"
+								:playing="playing"
+								:voice-label="focusVoice ? labelOf(focusVoice) : null"
+								:fifths="soundFifths"
+								@announce="announce" />
 							<PracticeMarks :piece="`copy:${detail.copy.id}`"
 								:from="shownRange.from"
 								:to="shownRange.to"
@@ -1756,6 +1786,16 @@ onBeforeUnmount(() => {
 					:syllables="syllables"
 					:position="position"
 					:voice-label="labelOf(lyricsVoice)" />
+				<PracticePitch v-if="canPlay"
+					v-model:shown="pitchShown"
+					v-model:problem="pitchProblem"
+					part="display"
+					:notes="pitchNotes"
+					:position="position"
+					:playing="playing"
+					:voice-label="focusVoice ? labelOf(focusVoice) : null"
+					:fifths="soundFifths"
+					@announce="announce" />
 				<div class="score-viewer__workspace">
 					<!-- Scrollable score; focusable so it can be scrolled with the keyboard.
 					     A click on a note plays from there; the keyboard alternative are the

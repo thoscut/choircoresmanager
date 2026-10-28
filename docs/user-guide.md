@@ -485,6 +485,14 @@ about your practising is stored on the server.
   repeat it shows the next verse. **Learn the lyrics** hides letters step by
   step: **Some hidden**, **Most hidden**, and **First letters**, where only
   the first letter of every word stays.
+- **Show my pitch** (with a focus voice) asks for the microphone and shows
+  above the score the tones of the focus voice as boxes and your singing as
+  a line, and in words, for example "Soprano: A4 · You: G4, too low (−200
+  ct)". Within 30 cents a tone counts as in tune. Your singing is compared
+  in the octave of the voice, so a man can sing a soprano line along. The
+  pitch is found in your browser; nothing is recorded, kept or scored.
+  Switching it off releases the microphone. Use headphones, and it needs
+  https.
 
 #### How to start at a particular note
 
