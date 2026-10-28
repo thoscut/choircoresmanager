@@ -19,6 +19,15 @@ export interface MeiMeasure {
 	n: string
 }
 
+/** One syllable of the lyrics under a note. */
+export interface MeiSyllable {
+	/** `verse@n` */
+	verse: number
+	text: string
+	/** `syl@wordpos`: s single, i initial, m middle, t terminal; '' unknown */
+	wordpos: string
+}
+
 export interface MeiNote {
 	id: string
 	/** index into `MeiScore.measures` */
@@ -28,6 +37,8 @@ export interface MeiNote {
 	/** MIDI pitch, null if the note has no pitch */
 	pitch: number | null
 	grace: boolean
+	/** syllables of the lyrics under the note, one per verse (milestone 0.14) */
+	lyrics?: MeiSyllable[]
 }
 
 export interface MeiTie {
@@ -124,6 +135,26 @@ function readStaves(scoreDef: XmlElement | undefined): { staves: MeiStaff[], tra
 }
 
 /**
+ * The syllables under a note, from its own `<verse>` elements or those of
+ * its chord.
+ *
+ * @param note - `<note>` element
+ * @param chordVerses - `<verse>` elements of the enclosing chord
+ */
+function noteLyrics(note: XmlElement, chordVerses: XmlElement[]): MeiSyllable[] {
+	const own = childElements(note, 'verse')
+	const syllables: MeiSyllable[] = []
+	for (const verse of own.length > 0 ? own : chordVerses) {
+		const syls = descendants(verse, 'syl')
+		const text = syls.map((syl) => textOf(syl)).join('').trim()
+		if (text !== '') {
+			syllables.push({ verse: Number(verse.attrs.n) || 1, text, wordpos: syls[syls.length - 1]?.attrs.wordpos ?? '' })
+		}
+	}
+	return syllables
+}
+
+/**
  * Parse Verovio's MEI output.
  *
  * @param mei - MEI text from `toolkit.getMEI()`
@@ -136,10 +167,13 @@ export function parseMei(mei: string): MeiScore {
 	const ties: MeiTie[] = []
 
 	const collectNotes = (element: XmlElement, measure: number, staff: number, layer: number) => {
+		// lyrics of a chord stand at the chord, not at its notes
+		const chordVerses = element.name === 'chord' ? childElements(element, 'verse') : []
 		for (const child of childElements(element)) {
 			if (child.name === 'note') {
 				const id = child.attrs['xml:id']
 				if (id) {
+					const lyrics = noteLyrics(child, chordVerses)
 					notes.push({
 						id,
 						measure,
@@ -147,6 +181,7 @@ export function parseMei(mei: string): MeiScore {
 						layer,
 						pitch: notePitch(child, transposition.get(staff) ?? 0),
 						grace: child.attrs.grace !== undefined,
+						...(lyrics.length > 0 ? { lyrics } : {}),
 					})
 				}
 			}

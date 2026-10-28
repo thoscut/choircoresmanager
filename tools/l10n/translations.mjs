@@ -3108,6 +3108,13 @@ export const singular = {
 	],
 	'Nothing was recorded.': 'Es wurde nichts aufgenommen.',
 	'Recording deleted.': 'Aufnahme gelöscht.',
+	// lyrics (0.14)
+	'Read the lyrics along ({voice})': 'Text mitlesen ({voice})',
+	'Learn the lyrics': 'Text lernen',
+	'All letters': 'Alle Buchstaben',
+	'Some hidden': 'Einige ausgeblendet',
+	'Most hidden': 'Die meisten ausgeblendet',
+	'First letters': 'Nur Anfangsbuchstaben',
 	'recording': 'Aufnahme',
 	'Record myself': 'Selbst aufnehmen',
 	'Record again': 'Noch einmal aufnehmen',

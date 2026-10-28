@@ -479,6 +479,12 @@ about your practising is stored on the server.
   to keep it as a file, or **Delete recording**. The recording stays in your
   browser and is gone when you leave the page. Use headphones, otherwise the
   accompaniment is recorded, too. Recording needs https.
+- **Read the lyrics along** (where the score has lyrics) shows the line of
+  your focus voice (or of the first voice with lyrics) above the score, large,
+  with the sung syllable bold and underlined, and the next line below. In a
+  repeat it shows the next verse. **Learn the lyrics** hides letters step by
+  step: **Some hidden**, **Most hidden**, and **First letters**, where only
+  the first letter of every word stays.
 
 #### How to start at a particular note
 

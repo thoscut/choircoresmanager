@@ -481,9 +481,11 @@ Punkte:
 ### 0.14 Text und Tonhöhe beim Mitsingen
 
 - **Mitlaufender Text:** die Textzeile der gewählten Stimme groß unter den
-  Noten, die gesungene Silbe hervorgehoben; Strophe wählbar.
+  Noten, die gesungene Silbe hervorgehoben; Strophe wählbar. – *umgesetzt,
+  über den Noten in der Leiste, die oben stehen bleibt, mit der nächsten
+  Zeile darunter; die Strophe folgt dem Durchgang der Wiederholung.*
 - **Text-Lernmodus:** Buchstaben des Texts stufenweise ausblenden, bis er
-  sitzt.
+  sitzt. – *umgesetzt, in drei Stufen bis zu den Anfangsbuchstaben.*
 - **Mitsingen mit Tonhöhen-Anzeige:** Mikrofon an, die gesungene Tonhöhe als
   Linie neben den Soll-Tönen der eigenen Stimme, Erkennung im Browser. Kein
   Punktestand, keine Auswertung auf dem Server.

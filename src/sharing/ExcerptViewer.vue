@@ -44,6 +44,7 @@ import NcRadioGroup from '@nextcloud/vue/components/NcRadioGroup'
 import NcRadioGroupButton from '@nextcloud/vue/components/NcRadioGroupButton'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
+import PracticeLyrics from '../components/PracticeLyrics.vue'
 import PracticeMarks from '../components/PracticeMarks.vue'
 import PracticeRecorder from '../components/PracticeRecorder.vue'
 import PracticeTools from '../components/PracticeTools.vue'
@@ -53,6 +54,7 @@ import { markFocus } from '../score/emphasis.ts'
 import { followMeasure, turnSystem } from '../score/follow.ts'
 import { scoreTarget } from '../score/hit.ts'
 import { loadScore, playbackTimeline, renderPages, selectMeasures } from '../score/model.ts'
+import { lyricSyllables } from '../score/lyrics.ts'
 import { ScorePlayer, voiceGains } from '../score/player.ts'
 import { partGains, practiceFileName, practiceMidi, SAMPLE_RATE } from '../score/practice.ts'
 import { mixChanged, mixedGains, startingTones, transposedFifths, transposeTimeline } from '../score/practising.ts'
@@ -401,6 +403,26 @@ function applyMark(mark: Mark): void {
 		loop.value = true
 	}
 }
+
+/** The voice to read the lyrics along with: the focus voice, else the first with lyrics */
+const lyricsVoice = computed(() => {
+	const loaded = model.value
+	if (!loaded) {
+		return null
+	}
+	if (focusVoice.value) {
+		return focusVoice.value
+	}
+	const withLyrics = new Set(loaded.notesByMeasure.flat().filter((note) => note.lyrics).map((note) => note.staff))
+	return loaded.voices.find((voice) => voice.members.some((member) => withLyrics.has(member.staff))) ?? null
+})
+
+/** Reading the lyrics along, and the step of the learning mode */
+const lyricsShown = ref(false)
+const lyricsStep = ref<'0' | '1' | '2' | '3'>('0')
+
+/** Syllables of that voice along the playback (milestone 0.14) */
+const syllables = computed(() => model.value && lyricsVoice.value ? lyricSyllables(model.value, timeline.value, lyricsVoice.value) : [])
 
 /** Display names of the voices for the mixer */
 const mixerVoices = computed(() => (model.value?.voices ?? []).map((voice) => ({ key: voice.key, label: labelOf(voice) })))
@@ -1068,6 +1090,14 @@ onBeforeUnmount(() => {
 					</template>
 					<span class="excerpt-viewer__settings-label">{{ t('notenarchiv', 'Settings') }}</span>
 				</NcButton>
+				<!-- The lyrics stay in view with the bar while the score scrolls -->
+				<PracticeLyrics v-if="canPlay && lyricsVoice"
+					v-model:shown="lyricsShown"
+					v-model:step="lyricsStep"
+					part="text"
+					:syllables="syllables"
+					:position="position"
+					:voice-label="labelOf(lyricsVoice)" />
 			</div>
 			<NcNoteCard v-if="!canPlay" type="info" class="excerpt-viewer__note">
 				{{ playReason || t('notenarchiv', 'Playback is not available for this excerpt.') }}
@@ -1115,6 +1145,13 @@ onBeforeUnmount(() => {
 						:voices="mixerVoices"
 						:playing="playing"
 						@tones="giveStartingTones" />
+					<PracticeLyrics v-if="lyricsVoice"
+						v-model:shown="lyricsShown"
+						v-model:step="lyricsStep"
+						part="choices"
+						:syllables="syllables"
+						:position="position"
+						:voice-label="labelOf(lyricsVoice)" />
 					<PracticeMarks :piece="`shared:${title}|${composer}`"
 						:from="shownNumbers.first"
 						:to="shownNumbers.last"

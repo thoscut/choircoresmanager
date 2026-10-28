@@ -66,6 +66,7 @@ import NcRadioGroupButton from '@nextcloud/vue/components/NcRadioGroupButton'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import GuideLink from './GuideLink.vue'
+import PracticeLyrics from './PracticeLyrics.vue'
 import PracticeMarks from './PracticeMarks.vue'
 import PracticeRecorder from './PracticeRecorder.vue'
 import PracticeTools from './PracticeTools.vue'
@@ -81,6 +82,7 @@ import { markFocus } from '../score/emphasis.ts'
 import { followMeasure, turnSystem } from '../score/follow.ts'
 import { scoreTarget } from '../score/hit.ts'
 import { ArchiveLimitError, readScoreText } from '../score/mxl.ts'
+import { lyricSyllables } from '../score/lyrics.ts'
 import { ScorePlayer, voiceGains } from '../score/player.ts'
 import { mixedGains, startingTones, transposedFifths, transposeTimeline } from '../score/practising.ts'
 import { resolveRange, sameNumber } from '../score/range.ts'
@@ -870,6 +872,26 @@ function applyMark(mark: Mark): void {
 	}
 }
 
+/** The voice to read the lyrics along with: the focus voice, else the first with lyrics */
+const lyricsVoice = computed(() => {
+	const loaded = model.value
+	if (!loaded) {
+		return null
+	}
+	if (focusVoice.value) {
+		return focusVoice.value
+	}
+	const withLyrics = new Set(loaded.notesByMeasure.flat().filter((note) => note.lyrics).map((note) => note.staff))
+	return loaded.voices.find((voice) => voice.members.some((member) => withLyrics.has(member.staff))) ?? null
+})
+
+/** Reading the lyrics along, and the step of the learning mode */
+const lyricsShown = ref(false)
+const lyricsStep = ref<'0' | '1' | '2' | '3'>('0')
+
+/** Syllables of that voice along the playback (milestone 0.14) */
+const syllables = computed(() => model.value && lyricsVoice.value ? lyricSyllables(model.value, timeline.value, lyricsVoice.value) : [])
+
 /** Display names of the voices for the mixer */
 const mixerVoices = computed(() => (model.value?.voices ?? []).map((voice) => ({ key: voice.key, label: labelOf(voice) })))
 
@@ -1539,6 +1561,13 @@ onBeforeUnmount(() => {
 								:voices="mixerVoices"
 								:playing="playing"
 								@tones="giveStartingTones" />
+							<PracticeLyrics v-if="lyricsVoice"
+								v-model:shown="lyricsShown"
+								v-model:step="lyricsStep"
+								part="choices"
+								:syllables="syllables"
+								:position="position"
+								:voice-label="labelOf(lyricsVoice)" />
 							<PracticeMarks :piece="`copy:${detail.copy.id}`"
 								:from="shownRange.from"
 								:to="shownRange.to"
@@ -1720,6 +1749,13 @@ onBeforeUnmount(() => {
 				<p v-if="canPlay" :id="scoreHintId" class="hidden-visually">
 					{{ t('notenarchiv', 'Space plays and pauses. The arrow keys left and right go to the previous or next measure.') }}
 				</p>
+				<PracticeLyrics v-if="canPlay && lyricsVoice"
+					v-model:shown="lyricsShown"
+					v-model:step="lyricsStep"
+					part="text"
+					:syllables="syllables"
+					:position="position"
+					:voice-label="labelOf(lyricsVoice)" />
 				<div class="score-viewer__workspace">
 					<!-- Scrollable score; focusable so it can be scrolled with the keyboard.
 					     A click on a note plays from there; the keyboard alternative are the

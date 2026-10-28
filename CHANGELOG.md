@@ -31,6 +31,10 @@ All notable changes to this app are documented in this file. The format follows
   - **Page-turn pedals**: Page Down and Page Up turn the score by one
     system.
   Everything happens in the browser; nothing about practising is stored.
+- **Read the lyrics along** (milestone 0.14): the line of the focus voice
+  above the score, the sung syllable bold and underlined, the next line
+  below and the verse of the current pass. **Learn the lyrics** hides
+  letters in three steps down to the first letter of every word.
 
 ### Changed
 

@@ -514,6 +514,13 @@ deinem Browser: Über dein Üben wird nichts auf dem Server gespeichert.
   löschen**. Die Aufnahme bleibt in deinem Browser und ist weg, wenn du die
   Seite verlässt. Nimm Kopfhörer, sonst wird die Begleitung mit aufgenommen.
   Aufnehmen geht nur über https.
+- **Text mitlesen** (wenn die Noten Text haben) zeigt über den Noten die
+  Zeile deiner Fokusstimme (oder der ersten Stimme mit Text) groß an, die
+  gesungene Silbe fett und unterstrichen, darunter die nächste Zeile. Bei
+  einer Wiederholung kommt die nächste Strophe. **Text lernen** blendet
+  Schritt für Schritt Buchstaben aus: **Einige ausgeblendet**, **Die meisten
+  ausgeblendet** und **Nur Anfangsbuchstaben**, wo nur der erste Buchstabe
+  jedes Wortes bleibt.
 
 #### So startest du an einer bestimmten Note
 
