@@ -534,8 +534,8 @@ Punkte:
 
 ### 0.15 Ohne Netz üben und vortragen
 
-*Im Review (PR #12), noch nicht in `main`. Umgesetzt bis auf die
-öffentlichen Links und die Abnahme auf echten Geräten.* Aus der Planung
+*Im Review (PR #12), noch nicht in `main`. Umgesetzt bis auf die Abnahme
+auf echten Geräten.* Aus der Planung
 „Offline-Betrieb ohne eigene Apps“ (Oktober 2026). Ziel: Stücke, die online
 bewusst „auf diesem Gerät gespeichert“ wurden, lassen sich ohne Netz
 ansehen, abspielen und üben, mit allen Werkzeugen aus 0.13 und 0.14. Keine
@@ -550,8 +550,9 @@ Nextcloud-App.
 - **Lesen offline** für „Mit mir geteilt“: – *umgesetzt als Modul
   `offline` (aus, in keiner Voreinstellung).*
   - Service Worker über eine eigene Route (`GET /offline-worker`, Scope der
-    App, CSP mit `worker-src 'self'` nur auf dieser Seite), als eigenes
-    Skript gebaut; ist das Modul aus, entfernt er sich und alles Gespeicherte
+    App, CSP mit `worker-src 'self'` nur auf den Seiten, die Stücke
+    speichern), als eigenes Skript gebaut; je Seite ein eigener Speicher; ist
+    kein passendes Modul an, entfernt er sich und alles Gespeicherte
   - Liste der Freigaben als JSON (`GET /api/member/links`)
   - je Stück „Auf diesem Gerät speichern“: MusicXML, auf Wunsch der Scan;
     dazu die Seite und ihre Skripte samt Notensatz
@@ -563,10 +564,14 @@ Nextcloud-App.
     im selben Browser beginnt leer
   - offline nicht verfügbare Funktionen sichtbar abgeschaltet, mit Grund
     („Übe-Datei“ braucht die Freigabe des Servers)
-  - *offen:* öffentliche Links (kein Konto zum Trennen, kein Recht
-    „Speichern“ für die Öffentlichkeit); der Scan offline in der Seite statt
-    im neuen Tab; Abnahme auf iPad, Android und Firefox in einem echten
-    Nextcloud
+  - „Alle … Stücke auf diesem Gerät speichern“ auf einmal
+  - der Scan in der Seite statt im neuen Tab, ohne Netz aus dem Speicher
+    des Browsers (`frame-src blob:`)
+  - öffentliche Links: nur für bestätigt gemeinfreie Fassungen (eine Lizenz
+    deckt das öffentliche Zeigen, keine Kopie bei jedem Besucher), je
+    Browser gespeichert, jeder Besuch mit Netz ist der Abgleich
+  - *offen:* Abnahme auf iPad, Android und Firefox in einem echten
+    Nextcloud, mit beiden URL-Formen (`/index.php/apps/…` und `/apps/…`)
 - **Übe-Daten offline:** Übe-Einstellungen je Stück dauerhaft und
   versioniert, mit einem stabilen Schlüssel statt Titel und Komposition. –
   *umgesetzt: Tempo, Tonhöhe, Metronom und Mischpult je Fassung
@@ -580,8 +585,19 @@ ausdrücklichen Wunsch, getrennt je Konto. Gespeichert werden darf ein Stück
 nur, wenn Chormitglieder die Noten speichern und drucken dürfen (wie beim
 Scan); eine Freigabe nur zum Ansehen und Abspielen reicht nicht.
 
-Nach 1.0: die Konzertmappe der Chorleitung (Programm eines Konzerts offline
-in der Archiv-App) und Schreiben ohne Netz.
+- **Konzertmappe der Chorleitung** (Phase 3 der Planung): – *umgesetzt als
+  Modul `concert_folder` (aus, in keiner Voreinstellung).* Eine eigene
+  Seite für Chorleitung und Bestand mit den Programmen, die noch zu singen
+  sind, in ihrer Reihenfolge, je Stück Noten (mit allen Übe-Werkzeugen) und
+  Scan, „Weiter“ zum nächsten Stück; ein ganzes Programm auf einmal auf dem
+  Gerät speichern. Rechte wie in der Notenansicht, nie eine interne
+  Erhaltungskopie; Abgleich und Sperre wie bei „Mit mir geteilt“. Die Mappe
+  liest nur.
+
+Schreiben ohne Netz (eine Warteschlange, die offline gemachte Änderungen
+später an den Server schickt) ist nicht vorgesehen: Es verträgt sich nicht
+mit Leitlinie 3, und „gesungen“ bestätigt die Chorleitung ohnehin nach dem
+Konzert mit Netz.
 
 ### 1.0 Stabil
 

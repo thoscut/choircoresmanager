@@ -37,6 +37,7 @@ import {
 	mdiHelpRhombusOutline,
 	mdiHomeOutline,
 	mdiInboxArrowDownOutline,
+	mdiFolderMusicOutline,
 	mdiLinkVariant,
 	mdiNumericOff,
 	mdiPrinterOutline,
@@ -55,6 +56,7 @@ import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwit
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import { useIsMobile } from '@nextcloud/vue/composables/useIsMobile'
+import { generateUrl } from '@nextcloud/router'
 import { adminSettingsUrl } from '../api.ts'
 import { moreFiltersActive, REPERTOIRE_CLASSES } from '../catalog.ts'
 import { translateLabel } from '../format.ts'
@@ -87,6 +89,9 @@ import {
 
 /** The settings are a page under Administration → Music archive. */
 const settingsUrl = adminSettingsUrl()
+/** The concert folder is a page of its own, also without a network (milestone 0.15). */
+const concertFolderUrl = generateUrl('/apps/notenarchiv/concert-folder')
+const showConcertFolder = computed(() => isModuleActive('concert_folder') && (isConductor.value || isLibrarian.value))
 
 const isMobile = useIsMobile()
 
@@ -422,6 +427,15 @@ function onFooterClick(event: Event, open: 'archive' | 'view'): void {
 				@click="onViewClick($event, entry.view)">
 				<template #icon>
 					<NcIconSvgWrapper :path="entry.icon" />
+				</template>
+			</NcAppNavigationItem>
+
+			<!-- A link: the concert folder is a page of its own that also opens without a network -->
+			<NcAppNavigationItem v-if="showConcertFolder"
+				:name="t('notenarchiv', 'Concert folder')"
+				:href="concertFolderUrl">
+				<template #icon>
+					<NcIconSvgWrapper :path="mdiFolderMusicOutline" />
 				</template>
 			</NcAppNavigationItem>
 

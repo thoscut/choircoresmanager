@@ -53,6 +53,8 @@ class Modules {
 	public const PUBLIC_REPERTOIRE = 'public_repertoire';
 	/** Pieces shared with choir members kept on their device, for practising without a network (milestone 0.15) */
 	public const OFFLINE = 'offline';
+	/** The concert folder of the conductor, also without a network (milestone 0.15) */
+	public const CONCERT_FOLDER = 'concert_folder';
 	/** The mirror folder of the print station (milestone 0.7): writes files outside the archive folder */
 	public const PRINT_MIRROR = 'print_mirror';
 	/** The hand-over folder for a choir system (milestone 0.12): writes files outside the archive folder */
@@ -72,7 +74,7 @@ class Modules {
 	 * administration switches it on.
 	 */
 	public const OUTSIDE_PRESETS = [self::AGENT_API, self::MEMBER_LINKS, self::MEMBER_PRACTICE_AUDIO, self::PUBLIC_LINKS, self::PUBLIC_REPERTOIRE,
-		self::OFFLINE, self::PRINT_MIRROR, self::CHOIR_HANDOVER];
+		self::OFFLINE, self::CONCERT_FOLDER, self::PRINT_MIRROR, self::CHOIR_HANDOVER];
 	/** The action "Open in music archive" in the Files app */
 	public const FILES_INTEGRATION = 'files_integration';
 	/** Copies in the search of Nextcloud (milestone 0.8) */
@@ -196,6 +198,9 @@ class Modules {
 		'concerts' => ['group' => 'concerts', 'requires' => [], 'simple' => false, 'standard' => true, 'planned' => false,
 			'label' => 'Concerts and song lists',
 			'description' => 'Programmes with rights warnings and deadlines, confirmation of what was sung, song order and lists.'],
+		self::CONCERT_FOLDER => ['group' => 'concerts', 'requires' => ['concerts', 'score_viewer'], 'simple' => false, 'standard' => false, 'planned' => false,
+			'label' => 'Concert folder',
+			'description' => 'The conductor and the catalog librarian open the programmes still to be sung in their order, with score and scan of each item, and keep a whole programme on their device for the rehearsal and the concert without a network. Rights as in the score view; internal preservation copies are never kept on a device. Kept pieces are checked at every start with a network and locked after 30 days without one. Only reads. Not part of any preset.'],
 		'performance_import' => ['group' => 'concerts', 'requires' => ['concerts'], 'simple' => false, 'standard' => true, 'planned' => false,
 			'label' => 'Import of performance lists',
 			'description' => 'Imports an existing list of performances and song lists (.xlsx or .csv); unclear programme lines are resolved by hand.'],
@@ -283,9 +288,9 @@ class Modules {
 		self::MEMBER_PRACTICE_AUDIO => ['group' => 'sharing', 'requires' => [self::MEMBER_LINKS, 'practice_audio'], 'simple' => false, 'standard' => false, 'planned' => false,
 			'label' => 'Practice audio for choir members',
 			'description' => 'Choir members make a WAV or MIDI file of one voice of a shared excerpt, where the rights allow practice audio files. Every export is recorded. Not part of any preset.'],
-		self::OFFLINE => ['group' => 'sharing', 'requires' => [self::MEMBER_LINKS], 'simple' => false, 'standard' => false, 'planned' => false,
+		self::OFFLINE => ['group' => 'sharing', 'requires' => [], 'simple' => false, 'standard' => false, 'planned' => false,
 			'label' => 'Practising without a network',
-			'description' => 'Choir members keep pieces shared with them on their device and view, play and practise them without a network. Only for versions whose rights allow choir members to save and print the notes; expired and revoked links are removed at the next start with a network, and kept pieces are locked after 30 days without one. Nothing is written to the server without a network. Not part of any preset.'],
+			'description' => 'Choir members keep pieces shared with them on their device and view, play and practise them without a network (with the sharing with choir members); so can visitors of a public link to a piece whose public domain is confirmed (with public links). Only for versions whose rights allow choir members to save and print the notes; expired and revoked links are removed at the next start with a network, and kept pieces are locked after 30 days without one. Nothing is written to the server without a network. Not part of any preset.'],
 		self::PUBLIC_LINKS => ['group' => 'sharing', 'requires' => ['excerpt_links', 'playback', 'publication'], 'simple' => false, 'standard' => false, 'planned' => false,
 			'label' => 'Public links',
 			'description' => 'Links that show and play an excerpt without login, for versions released for publication that are confirmed public domain or licensed for online publication. They expire, can be revoked and count their calls; no downloads, no account names. Not part of any preset.'],

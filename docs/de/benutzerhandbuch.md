@@ -1039,6 +1039,26 @@ Notenliste, auch in Großdruck. Mit dem Modul „Stände einer Fassung“ behäl
 jedes Stück den [Stand](#stände-einer-fassung), der gesungen wurde, und das
 Programm, die gedruckten Listen und die Liederfolge nennen ihn.
 
+### Konzertmappe
+
+Mit dem Modul „Konzertmappe“ öffnen die Rollen „Chorleitung“ und „Bestand“ in der
+Navigation die **Konzertmappe**: eine eigene Seite mit den Programmen, die
+noch zu singen sind (Entwurf oder fest), das nächste zuerst, jedes Stück in
+seiner Reihenfolge. Wähle ein Stück, um es mit denselben Werkzeugen wie auf
+einer geteilten Seite anzusehen, abzuspielen und zu üben (Tempo, Stimmen,
+Einzähler, Metronom, Tonhöhe, Mischpult, Stellen, Text, Selbst aufnehmen);
+**Scan (PDF) zeigen** öffnet den Scan in der Seite, und **Weiter** blättert
+zum nächsten Stück des Programms.
+
+Für die Probe oder das Konzert ohne Netz wähle mit Netz bei einem Programm
+**Alle … Stücke auf diesem Gerät speichern**, auf Wunsch **Mit den Scans
+(PDF)**. Ohne Netz öffnest du die Konzertmappe wie gewohnt (ein Lesezeichen
+oder der Home-Bildschirm): Die gespeicherten Stücke kommen vom Gerät. Wie
+bei „Mit mir geteilt“ gleicht jeder Start mit Netz sie mit dem Server ab,
+und nach 30 Tagen ohne Netz sind sie gesperrt. Eine interne Erhaltungskopie
+lässt sich ansehen, aber nie auf einem Gerät speichern. Die Konzertmappe
+liest nur: **Als gesungen bestätigen** bleibt im Konzert im Archiv.
+
 ### Konzerte im eigenen Kalender
 
 ![Der Dialog „In meinen Kalender eintragen“ mit dem Kalender „Persönlich“ des Kontos zur Auswahl und den Hinweisen, dass die Vorbereitungsfristen als ganztägige Einträge dazukommen und ein vorhandener Eintrag aktualisiert und nicht doppelt angelegt wird.](../screenshots/calendar-dialog.png)
@@ -1809,7 +1829,9 @@ Es geht im Browser.
 
 1. Öffne mit Netz **Mit mir geteilt** und wähle in der Liste bei jedem
    Stück, das du brauchst, **Auf diesem Gerät speichern**; **Mit dem Scan
-   (PDF)** speichert auch den Scan, der viel Platz brauchen kann. Bei manchen
+   (PDF)** speichert auch den Scan, der viel Platz brauchen kann. **Alle …
+   Stücke auf diesem Gerät speichern** über der Liste speichert auf einmal
+   jedes Stück, das gespeichert werden darf, ohne die Scans. Bei manchen
    Stücken steht „Lässt sich nicht auf diesem Gerät speichern“: Ihre Rechte
    erlauben das Ansehen, nicht das Speichern.
 2. Ohne Netz öffnest du dieselbe Seite wie gewohnt (ein Lesezeichen oder der
@@ -1829,9 +1851,16 @@ Es geht im Browser.
 
 Lege die Seite auf iPhone oder iPad auf den Home-Bildschirm (Teilen →
 **Zum Home-Bildschirm**) und öffne sie von dort: Sonst kann Safari die
-gespeicherten Stücke nach einigen Tagen ohne Nutzung löschen. Ohne Netz
-öffnet sich der Scan nur, wo er gespeichert ist, und auf iPhone oder iPad
-vom Home-Bildschirm aus womöglich außerhalb der Seite.
+gespeicherten Stücke nach einigen Tagen ohne Nutzung löschen. **Scan (PDF)
+zeigen** öffnet den Scan in der Seite, ohne Netz auch dort, wo er
+gespeichert ist.
+
+Ein **öffentlicher Link** zu einem Stück, dessen Gemeinfreiheit bestätigt
+ist, bietet unten auf seiner Seite ebenfalls **Auf diesem Gerät
+speichern**: Dann öffnet sich die Seite ohne Netz, solange der Link gilt.
+Jeder Besuch mit Netz gleicht sie ab; ein widerrufener oder abgelaufener
+Link verschwindet beim nächsten Besuch vom Gerät. Öffne ihn mindestens alle
+30 Tage einmal mit Netz.
 
 ## Für Mitwirkende und Werkzeuge
 

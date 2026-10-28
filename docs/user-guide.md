@@ -972,6 +972,26 @@ module "Revisions of a version" each piece keeps the
 [revision](#revisions-of-a-version) that was sung, and the programme, the
 printed lists and the song order name it.
 
+### Concert folder
+
+With the module "Concert folder", conductors and music librarians open
+**Concert folder** in the navigation: a page of its own with the
+programmes still to be sung (draft or fixed), the next one first, each piece
+in its order. Choose a piece to see, play and practise it with the same
+tools as on a shared page (tempo, voices, count-in, metronome, pitch,
+mixer, passages, lyrics, recording yourself); **Show the scan (PDF)** opens
+the scan inside the page, and **Next** turns to the next piece of the
+programme.
+
+For the rehearsal or the concert without a network, choose **Keep all …
+pieces on this device** at a programme, with a network, optionally **With
+the scans (PDF)**. Without a network, open the concert folder as usual (a
+bookmark or the home screen): the kept pieces open from the device. As on
+"Shared with me", every start with a network checks them with the server,
+and after 30 days without one they are locked. An internal preservation copy
+can be viewed, but never kept on a device. The concert folder only reads:
+**Confirm as sung** stays in the concert in the archive.
+
 ### Concerts in your calendar
 
 ![The dialog "Add to my calendar" with the account's calendar "Personal" to choose and the notes that the preparation deadlines are added as all-day entries and that an existing entry is updated, not added twice.](screenshots/calendar-dialog.png)
@@ -1692,8 +1712,10 @@ works in the browser.
 
 1. With a network, open **Shared with me** and choose **Keep on this
    device** in the list for each piece you need; **With the scan (PDF)**
-   also keeps the scan, which may need a lot of space. Some pieces say
-   "Cannot be kept on this device": their rights allow viewing, not saving.
+   also keeps the scan, which may need a lot of space. **Keep all … pieces
+   on this device**, above the list, keeps every piece that may be kept at
+   once, without the scans. Some pieces say "Cannot be kept on this
+   device": their rights allow viewing, not saving.
 2. Without a network, open the same page as usual (a bookmark or the home
    screen). A note says that the pieces kept on this device are shown.
    Playing, count-in, metronome, pitch, mixer, passages, lyrics and
@@ -1708,9 +1730,14 @@ works in the browser.
 
 On an iPhone or iPad, add the page to the home screen (Share → **Add to
 Home Screen**) and open it from there: otherwise Safari may delete the kept
-pieces after some days without use. Without a network, the scan opens only
-where it was kept, and on an iPhone or iPad from the home screen it may
-open outside the page.
+pieces after some days without use. **Show the scan (PDF)** opens the scan
+inside the page, also without a network where it was kept.
+
+A **public link** to a piece whose public domain is confirmed offers
+**Keep on this device** at the bottom of its page, too: then the page opens
+without a network while the link is valid. Each visit with a network checks
+it; a link that was revoked or has expired disappears from the device at
+the next visit. Open it with a network at least every 30 days.
 
 ## As a contributor or tool
 

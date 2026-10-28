@@ -3202,8 +3202,52 @@ export const singular = {
 	'Delete kept pieces, passages and settings': 'Gespeicherte Stücke, Übe-Stellen und Einstellungen löschen',
 	'The app is not built.': 'Die App ist nicht gebaut.',
 	'Practising without a network': 'Üben ohne Netz',
-	'Choir members keep pieces shared with them on their device and view, play and practise them without a network. Only for versions whose rights allow choir members to save and print the notes; expired and revoked links are removed at the next start with a network, and kept pieces are locked after 30 days without one. Nothing is written to the server without a network. Not part of any preset.':
-		'Chormitglieder speichern Stücke, die mit ihnen geteilt sind, auf ihrem Gerät und können sie ohne Netz ansehen, abspielen und üben. Nur für Fassungen, deren Rechte Chormitgliedern das Speichern und Drucken der Noten erlauben; abgelaufene und widerrufene Links werden beim nächsten Start mit Netz entfernt, gespeicherte Stücke nach 30 Tagen ohne Netz gesperrt. Ohne Netz wird nichts auf den Server geschrieben. Gehört zu keiner Voreinstellung.',
+	'Choir members keep pieces shared with them on their device and view, play and practise them without a network (with the sharing with choir members); so can visitors of a public link to a piece whose public domain is confirmed (with public links). Only for versions whose rights allow choir members to save and print the notes; expired and revoked links are removed at the next start with a network, and kept pieces are locked after 30 days without one. Nothing is written to the server without a network. Not part of any preset.':
+		'Chormitglieder speichern Stücke, die mit ihnen geteilt sind, auf ihrem Gerät und können sie ohne Netz ansehen, abspielen und üben (mit dem Teilen mit Chormitgliedern); ebenso Besuchende eines öffentlichen Links zu einem Stück mit bestätigter Gemeinfreiheit (mit öffentlichen Links). Nur für Fassungen, deren Rechte Chormitgliedern das Speichern und Drucken der Noten erlauben; abgelaufene und widerrufene Links werden beim nächsten Start mit Netz entfernt, gespeicherte Stücke nach 30 Tagen ohne Netz gesperrt. Ohne Netz wird nichts auf den Server geschrieben. Gehört zu keiner Voreinstellung.',
+	'Not every piece could be kept on this device: {reason}': 'Nicht jedes Stück ließ sich auf diesem Gerät speichern: {reason}',
+	'With the scans (PDF)': 'Mit den Scans (PDF)',
+	'On this device, with the scan': 'Auf diesem Gerät, mit dem Scan',
+	'Cannot be kept on this device: {reason}': 'Lässt sich nicht auf diesem Gerät speichern: {reason}',
+	'No network: this piece is shown from this device. {checked}': 'Kein Netz: Dieses Stück wird von diesem Gerät gezeigt. {checked}',
+	'Kept in this browser: this page opens without a network, while the link is valid. Open it once with a network at least every {days} days.': [
+		'In diesem Browser gespeichert: Diese Seite öffnet sich ohne Netz, solange der Link gilt. Öffne sie mindestens alle {days} Tage einmal mit Netz.',
+		'In diesem Browser gespeichert: Diese Seite öffnet sich ohne Netz, solange der Link gilt. Öffnen Sie sie mindestens alle {days} Tage einmal mit Netz.',
+	],
+	'Keep this piece in this browser to view, play and practise it without a network.': [
+		'Speichere dieses Stück in diesem Browser, um es ohne Netz anzusehen, abzuspielen und zu üben.',
+		'Speichern Sie dieses Stück in diesem Browser, um es ohne Netz anzusehen, abzuspielen und zu üben.',
+	],
+	'The scan could not be loaded. Without a network, only a scan kept on this device opens.': 'Der Scan ließ sich nicht laden. Ohne Netz öffnet sich nur ein Scan, der auf diesem Gerät gespeichert ist.',
+	'Loading the scan …': 'Scan wird geladen …',
+	'Show the scan (PDF)': 'Scan (PDF) zeigen',
+	'Close the scan': 'Scan schließen',
+	'Scan of {title}': 'Scan von „{title}“',
+	// ---- milestone 0.15: the concert folder ----
+	'Concert folder': 'Konzertmappe',
+	'The conductor and the catalog librarian open the programmes still to be sung in their order, with score and scan of each item, and keep a whole programme on their device for the rehearsal and the concert without a network. Rights as in the score view; internal preservation copies are never kept on a device. Kept pieces are checked at every start with a network and locked after 30 days without one. Only reads. Not part of any preset.':
+		'Die Chorleitung und die Rolle „Bestand“ öffnen die noch zu singenden Programme in ihrer Reihenfolge, mit Partitur und Scan je Programmpunkt, und speichern ein ganzes Programm für Probe und Konzert ohne Netz auf ihrem Gerät. Rechte wie in der Notenansicht; interne Erhaltungskopien werden nie auf einem Gerät gespeichert. Gespeicherte Stücke werden bei jedem Start mit Netz abgeglichen und nach 30 Tagen ohne Netz gesperrt. Nur lesend. Gehört zu keiner Voreinstellung.',
+	'The concert folder is for the conductor and the catalog librarian.': 'Die Konzertmappe ist für die Chorleitung und die Rolle „Bestand“.',
+	'Internal preservation copy: it is not kept on a device.': 'Interne Erhaltungskopie: Sie wird nicht auf einem Gerät gespeichert.',
+	'This programme item has no score.': 'Dieser Programmpunkt hat keine Partitur.',
+	'This programme item has no scan.': 'Dieser Programmpunkt hat keinen Scan.',
+	'This programme item is no longer in the concert folder.': 'Dieser Programmpunkt ist nicht mehr in der Konzertmappe.',
+	'This programme item has no MusicXML score.': 'Dieser Programmpunkt hat keine MusicXML-Partitur.',
+	'Everything the concert folder kept on this device is deleted.': 'Alles, was die Konzertmappe auf diesem Gerät gespeichert hatte, ist gelöscht.',
+	'The programmes still to be sung, in their order: view, play and practise each piece, and keep a whole programme on this device for the rehearsal and the concert without a network.':
+		'Die noch zu singenden Programme in ihrer Reihenfolge: jedes Stück ansehen, abspielen und üben und ein ganzes Programm für Probe und Konzert ohne Netz auf diesem Gerät speichern.',
+	'Back to the music archive': 'Zurück zum Notenarchiv',
+	'No programme to be sung': 'Kein Programm zu singen',
+	'Concerts and song lists in draft or fixed appear here, the next one first.': 'Konzerte und Notenlisten im Entwurf oder festgelegt erscheinen hier, das nächste zuerst.',
+	'Programme fixed': 'Programm festgelegt',
+	'Draft programme': 'Programmentwurf',
+	'No score': 'Keine Partitur',
+	'Programme order': 'Programmfolge',
+	'Previous: {title}': 'Vorheriges: {title}',
+	'Next: {title}': 'Nächstes: {title}',
+	'Choose a piece of a programme to see and hear it.': [
+		'Wähle ein Stück eines Programms, um es zu sehen und zu hören.',
+		'Wählen Sie ein Stück eines Programms, um es zu sehen und zu hören.',
+	],
 }
 
 export const plural = {
@@ -3408,5 +3452,13 @@ export const plural = {
 	'%n piece is kept on this device for practising without a network.|%n pieces are kept on this device for practising without a network.': [
 		'%n Stück ist zum Üben ohne Netz auf diesem Gerät gespeichert.',
 		'%n Stücke sind zum Üben ohne Netz auf diesem Gerät gespeichert.',
+	],
+	'%n piece is kept on this device.|%n pieces are kept on this device.': [
+		'%n Stück ist auf diesem Gerät gespeichert.',
+		'%n Stücke sind auf diesem Gerät gespeichert.',
+	],
+	'Keep %n piece on this device|Keep all %n pieces on this device': [
+		'%n Stück auf diesem Gerät speichern',
+		'Alle %n Stücke auf diesem Gerät speichern',
 	],
 }

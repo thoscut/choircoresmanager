@@ -1343,7 +1343,8 @@ audio and preservation copies applies whatever is switched on.
 | `member_practice_audio` | `member_links`, `practice_audio` | off, and part of no preset |
 | `public_links` | `excerpt_links`, `playback`, `publication` | off, and part of no preset |
 | `public_repertoire` | `rights` | off, and part of no preset |
-| `offline` | `member_links` | off, and part of no preset |
+| `offline` | – (it acts with `member_links` and `public_links`) | off, and part of no preset |
+| `concert_folder` | `concerts`, `score_viewer` | off, and part of no preset |
 | `agent_api` | – | off, and part of no preset (the API for agents, [api-v1.md](api-v1.md)) |
 
 `notify_{subject}` exists for every notification subject:
@@ -1365,8 +1366,8 @@ question from a singer). Points are only set to `corrected` while
 
 Presets: `simple` (core, `score_viewer`, `playback`, `notifications` with all
 `notify_*` switches), `standard` (the column above), `complete` (everything
-except `agent_api`, the four modules of the group `sharing` and
-`print_mirror` and `choir_handover`). A preset sets every switch except these seven
+except `agent_api`, the five modules of the group `sharing`,
+`concert_folder`, `print_mirror` and `choir_handover`). A preset sets every switch except these nine
 (`Modules::OUTSIDE_PRESETS`), which only their own switch changes.
 
 ### Switched-off routes
@@ -1391,7 +1392,8 @@ other check of the app. The routes and their modules:
 | `member_practice_audio` | `POST /api/member/links/{token}/practice-audio` (and `member_links`) |
 | `public_links` | `GET /p/{token}` (the 404 page of the public pages instead of the JSON message); `POST /api/copies/{id}/links` with `circle: "public"` |
 | `public_repertoire` | `GET /repertoire` (the 404 page of the public pages); setting `work.public_repertoire` to `true` |
-| `offline` | `GET /api/member/links` (and `member_links`); `GET /offline-worker` serves the worker that removes itself and everything kept while it is off |
+| `offline` | `GET /api/member/links` (and `member_links`); `GET /offline-worker` serves the worker that removes itself and everything kept while `offline` and `concert_folder` are both off |
+| `concert_folder` | `GET /concert-folder` (the page), `GET /api/concert-folder`, `GET /api/concert-folder/items/{id}/score`, `…/scan` |
 | `files_integration` | `GET /api/nextcloud-files/{fileId}/copy` (and the script of the Files app is not loaded) |
 | `tasks` | `GET /api/tasks`, `POST /api/copies/{id}/tasks`, `POST /api/tasks/{id}/answer`, `…/close` |
 | `proposals` | `GET /api/proposals`, `POST /api/proposals`, `…/accept`, `…/reject` |
@@ -2132,8 +2134,9 @@ under which the browser remembers the passages and settings for practising
 of the version, the same for every link to it, a hash without catalog ids;
 the public page has it, too. `offline` of the page: the module is on, and
 the version of the app names the cache of the scripts. The page answers with
-the header `X-Notenarchiv-Page: member` (the only page the service worker
-keeps) and allows `worker-src 'self'`.
+the header `X-Notenarchiv-Page: member` (a page the service worker may keep)
+and allows `worker-src 'self'` and frames from `blob:` only: a scan is shown
+inside the page from the browser's memory (`frame-src blob:`).
 
 `credits` (milestone 0.11): the persons of the version with the role
 `lyricist`, `arranger` or `translator` in the person register, in this
@@ -2156,7 +2159,7 @@ the link offers the scan.
 | `GET /api/member/links/{token}/scan` | – | choir members; module `member_links` |
 | `POST /api/member/links/{token}/practice-audio` | `{ export: { voice, mode, format, tempo?, repeats?, measure_from?, measure_to? } }` | choir members; modules `member_links` and `member_practice_audio` |
 | `GET /api/member/links` | – | choir members; modules `member_links` and `offline` |
-| `GET /offline-worker` | – | logged in; module `member_links` |
+| `GET /offline-worker` | – | everybody, also without login (see "Public pages"); always on |
 
 `…/score` returns the measures of the link, or the whole piece, as MusicXML
 (`application/vnd.recordare.musicxml+xml`, attachment `excerpt.musicxml`,
@@ -2200,20 +2203,73 @@ same list as the initial state `member`, so that the page checks the pieces
 kept on the device at every start with a network: it removes those no longer
 listed or no longer `offline`, and a scan the link no longer offers.
 
-`GET /offline-worker` serves the service worker of the page
+`GET /offline-worker` serves the service worker of the pages that keep
+pieces: "Shared with me", the concert folder and the page of a public link
 (`text/javascript`, `nosniff`, not cached, a policy with `connect-src
 'self'`), built into `js/notenarchiv-offline-worker.js` and registered with
-the app's path as scope. The browser fetches it itself, so the route skips
-the CSRF check; it contains no data. With the module `offline` off it is a
-worker that deletes the caches of the app (`notenarchiv-…`) and unregisters
-itself. What the worker does: only while the page has kept a piece, it
-answers the page, its scripts and the score and scan of a kept link from the
-device when the network fails or takes longer than four seconds, and
-refreshes them from the network otherwise. It never answers an expired link,
+the app's path as scope. The browser fetches it itself, also on a public
+page, so the route skips login and the CSRF check (`#[PublicPage]`, core:
+always on); it contains no data. With the modules `offline` and
+`concert_folder` both off it is a worker that deletes the caches of the app
+(`notenarchiv-…`) and unregisters itself. Each page keeps its pieces in a
+cache of its own (`notenarchiv-offline`, `notenarchiv-folder`,
+`notenarchiv-public`, with a list `…-catalog.json`) and the scripts in
+`notenarchiv-shell-<version>`; a page whose module is off removes its cache,
+and the worker when nothing else is kept. What the worker does: only while
+a page has kept a piece, it answers that page, its scripts (only those
+fetched by such a page, never the archive's) and the score and scan of a kept
+piece from the device when the network fails or takes longer than four
+seconds, and refreshes them from the network otherwise. When the address of
+a page answers without its header (the archive, another account, no role
+any more), the pieces of that page are removed. It never answers an expired link,
 or any kept piece 30 days after the last check, from the device; it never
 caches other pages, writing requests, the APIs of Nextcloud or other routes
 of the app. A 403 or 404 for a kept score or scan removes it from the
 device.
+
+### The concert folder
+
+`GET /concert-folder` (module `concert_folder`, milestone 0.15) is a page
+of its own for the roles `conductor` and `librarian` (template
+`concert-folder`, script `js/notenarchiv-concert-folder.mjs`); other
+accounts get the page "Access forbidden" with 403. It answers with the
+header `X-Notenarchiv-Page: concert-folder` and the policy of the member
+page (`worker-src 'self'`, `frame-src blob:`). Initial state `folder`:
+
+```json
+{ "concerts": [{ "id": 4, "kind": "concert", "title": "Adventskonzert", "date": "2026-12-13", "startTime": "17:00",
+                 "location": "St. Marien", "status": "fixed",
+                 "items": [{ "id": 31, "position": 1, "title": "Abendlied", "composer": "J. Rheinberger", "shelfmark": "1-03",
+                             "participation": null, "note": null, "encore": false, "duration": 180, "score": true, "scan": true,
+                             "canPlay": true, "reason": null, "offline": true, "offlineReason": null,
+                             "practiceKey": "2922db9b58cb760f1724" }] }],
+  "version": "0.15.0" }
+```
+
+The programmes (`draft` or `fixed`, the next first, those without a date
+last) with their items in order; struck items are left out. `score` and
+`scan`: the copy of the item (or the first copy of its version with a
+score) has a MusicXML file or a PDF scan that the account may view
+(`RightsPolicy::viewDenial`). `canPlay` and `reason` (translated) as in the
+score view. `offline`: the item may be kept on the device: as viewing, and
+never an internal preservation copy (`offlineReason`, translated).
+
+| Method and path | Body | Who |
+|---|---|---|
+| `GET /api/concert-folder` | – | `conductor`, `librarian`; module `concert_folder` |
+| `GET /api/concert-folder/items/{id}/score` | – | the same |
+| `GET /api/concert-folder/items/{id}/scan` | – | the same |
+
+`GET /api/concert-folder` answers `{ "concerts": [...] }` as the initial
+state, for the check of the kept items at every start with a network.
+`…/score` returns the whole piece as MusicXML (a compressed `.mxl`
+unpacked; `application/vnd.recordare.musicxml+xml`, attachment
+`score.musicxml`, `nosniff`), `…/scan` the first PDF scan by name as the
+scan beside the score does. Errors: 403 `The concert folder is for the
+conductor and the catalog librarian.` or the reason of the rights; 404
+`This programme item is no longer in the concert folder.` (struck, or the
+programme is sung or cancelled), `This programme item has no score.` or
+`… no scan.`. Nothing is written.
 
 ### Public pages
 
@@ -2226,6 +2282,7 @@ protected by the brute-force protection:
 | `GET /p/{token}` | `public_links` | one piece or excerpt to view and play, in Nextcloud's public layout (template `public`, script `js/notenarchiv-public.mjs`) |
 | `GET /p/{token}/scan` | `public_links` | the scan the link offers, for the browser's own PDF viewer |
 | `GET /repertoire` | `public_repertoire` | the public repertoire page, rendered on the server without script |
+| `GET /offline-worker` | – (core) | the service worker of the pages that keep pieces on a device (see "The page of the choir members") |
 
 `GET /p/{token}` carries everything in the initial state `excerpt`; no
 download of the score file and no practice audio:
@@ -2233,13 +2290,24 @@ download of the score file and no practice audio:
 ```json
 { "title": "Abendlied", "composer": "J. Rheinberger", "measureFrom": "9", "measureTo": "12",
   "voice": "Alto", "verse": null, "tempo": null, "canPlay": true, "scan": false,
-  "xml": "<?xml …?><score-partwise …>…</score-partwise>" }
+  "practiceKey": "2922db9b58cb760f1724", "expires": "2027-04-23", "offline": false,
+  "served": "2026-10-28T12:00:00Z", "xml": "<?xml …?><score-partwise …>…</score-partwise>" }
 ```
+
+`offline` (milestone 0.15): the page may be kept on the device, with the
+module `offline` and only for a version whose public domain is confirmed
+(a license covers the public showing, not a copy on the visitor's device).
+`expires`: the last day of the link. `served`: when the server made the
+page (UTC); the page compares it with the last check stored on the device
+to tell whether it came from the device. A second initial state `version`
+names the cache of the scripts. The page answers with the header
+`X-Notenarchiv-Page: public`.
 
 `measureFrom` and `measureTo` are `null` for the whole piece (the header
 then says "Whole piece" instead of the measures). No note, no shelf mark, no
-account name. Policy: as the app page (`'wasm-unsafe-eval'` only), no
-frames; `X-Robots-Tag: noindex, nofollow`. An unknown, malformed, expired
+account name. Policy: as the app page (`'wasm-unsafe-eval'` only), frames
+only from `blob:` (the scan shown inside the page), `worker-src 'self'`;
+`X-Robots-Tag: noindex, nofollow`. An unknown, malformed, expired
 or revoked token, a link of another circle, a version no longer released
 (`RightsPolicy::publicViewDenial`) and a switched-off module all answer with
 the same 404 page of Nextcloud, without a reason, marked as a failed attempt

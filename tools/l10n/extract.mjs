@@ -91,6 +91,10 @@ for (const f of files(join(root, 'lib'), ['.php'])) {
 	if (base.endsWith('Service/LicenseCoverage.php')) {
 		for (const m of src.matchAll(new RegExp('public const [A-Z_]+ = (' + STR + ');', 'g'))) add(unq(m[1]), 'license warning')
 	}
+	// Why a piece of the concert folder is not kept on a device (translated by the controller)
+	if (base.endsWith('Service/ConcertFolderService.php')) {
+		for (const m of src.matchAll(new RegExp('public const [A-Z_]+ = (' + STR + ');', 'g'))) add(unq(m[1]), 'concert folder reason')
+	}
 	if (base.endsWith('RightsPolicy.php')) {
 		// Reasons why viewing or playback is denied (shown in the UI, also thrown)
 		for (const m of src.matchAll(new RegExp('(?:return|[?:])\\s*(' + STR + ')', 'g'))) add(unq(m[1]), base + ' reason')

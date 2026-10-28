@@ -9,18 +9,28 @@
  * in, inside Nextcloud's public layout. The server sends the score with the
  * page (the excerpt already cut to its measures): no download of the score
  * file, no practice file, no names of accounts, no notes. When the link
- * offers the scan, a link opens it in the browser's own PDF viewer.
+ * offers the scan, it opens inside the page.
+ * With the module "offline" (milestone 0.15) a piece whose public domain is
+ * confirmed can be kept on this device; then the page itself comes from the
+ * device when there is no network. Each visit with a network is its check.
  */
+import type { Catalog, PieceForDevice } from '../offline/rules.ts'
 import type { PublicExcerpt } from '../types.ts'
 
 import { mdiAlertCircleOutline } from '@mdi/js'
 import { loadState } from '@nextcloud/initial-state'
-import { t } from '../l10n.ts'
+import { n, t } from '../l10n.ts'
+import { computed, onMounted, ref } from 'vue'
+import NcCheckboxRadioSwitch from '@nextcloud/vue/components/NcCheckboxRadioSwitch'
 import NcEmptyContent from '@nextcloud/vue/components/NcEmptyContent'
 import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import Attribution from './Attribution.vue'
 import ExcerptViewer from './ExcerptViewer.vue'
+import ScanFrame from './ScanFrame.vue'
+import { formatDateTime } from '../format.ts'
+import { askToPersist, checkPublicPiece, forgetPieces, keepPieces, offlineSupported, setUpWorker } from '../offline/device.ts'
+import { MAX_DAYS_UNCHECKED, usable } from '../offline/rules.ts'
 
 /**
  * The excerpt from the page, or null if it is missing.
@@ -34,10 +44,104 @@ function initialExcerpt(): PublicExcerpt | null {
 	}
 }
 
-const excerpt = initialExcerpt()
+function initialVersion(): string {
+	try {
+		return String(loadState<string>('notenarchiv', 'version', ''))
+	} catch {
+		return ''
+	}
+}
 
-/** The scan of this link, next to the page's own address (/p/{token}/scan) */
-const scanUrl = window.location.pathname.replace(/\/+$/, '') + '/scan'
+const excerpt = initialExcerpt()
+const version = initialVersion()
+/** The token of this link, from the page's own address (/p/{token}) */
+const token = /\/p\/([A-Za-z0-9]{32})\/?$/.exec(window.location.pathname)?.[1] ?? ''
+
+// ---- kept on this device (milestone 0.15) ----------------------------------
+
+/** This piece may be kept: module on, rights, and the browser can */
+const offlineOn = excerpt?.offline === true && token !== '' && offlineSupported()
+const catalog = ref<Catalog | null>(null)
+/** The page came from the device: no network */
+const fromDevice = ref(false)
+const keeping = ref(false)
+const keepError = ref('')
+const deviceStatus = ref('')
+const kept = computed(() => catalog.value?.pieces[token] !== undefined)
+const scanKept = computed(() => catalog.value?.pieces[token]?.scan === true)
+
+const piece: PieceForDevice = {
+	key: token,
+	title: excerpt?.title ?? '',
+	composer: excerpt?.composer ?? '',
+	expires: excerpt?.expires ?? null,
+	offline: excerpt?.offline === true,
+	scan: excerpt?.scan === true,
+}
+
+const checkedText = computed(() => {
+	const kept = catalog.value?.pieces[token]
+	const checked = kept ? Date.parse(kept.checked ?? catalog.value?.checked ?? '') : NaN
+	return Number.isFinite(checked)
+		? t('notenarchiv', 'Last checked with the server: {time}.', { time: formatDateTime(Math.floor(checked / 1000)) })
+		: ''
+})
+
+/**
+ * Keep this piece on the device or remove it.
+ *
+ * @param keep - keep it
+ * @param withScan - with the scan (PDF)
+ */
+async function setKept(keep: boolean, withScan: boolean): Promise<void> {
+	keeping.value = true
+	keepError.value = ''
+	try {
+		if (keep) {
+			catalog.value = await keepPieces('public', [piece], withScan, version)
+			await askToPersist()
+			deviceStatus.value = t('notenarchiv', '"{title}" is kept on this device.', { title: piece.title })
+		} else {
+			catalog.value = await forgetPieces('public', [token])
+			deviceStatus.value = t('notenarchiv', '"{title}" is removed from this device.', { title: piece.title })
+		}
+	} catch (error) {
+		keepError.value = t('notenarchiv', '"{title}" could not be kept on this device: {reason}', {
+			title: piece.title,
+			reason: error instanceof Error && error.message !== '' ? error.message : t('notenarchiv', 'Please check the network and the space on the device.'),
+		})
+	} finally {
+		keeping.value = false
+	}
+}
+
+/** Why the kept piece will not open again without a network, or '' */
+const lockText = computed(() => {
+	switch (usable(catalog.value, token, new Date())) {
+	case 'expired':
+		return t('notenarchiv', 'This link has expired. It is removed from this device at the next start with a network.')
+	case 'unchecked':
+		return n('notenarchiv', 'Locked: not checked with the server for more than %n day. Please open this page once with a network.',
+			'Locked: not checked with the server for more than %n days. Please open this page once with a network.', MAX_DAYS_UNCHECKED)
+	default:
+		return ''
+	}
+})
+
+onMounted(async () => {
+	if (!offlineSupported() || token === '') {
+		return
+	}
+	// registers the worker, or removes this piece when it may no longer be kept
+	await setUpWorker('public', excerpt?.offline === true)
+	if (offlineOn) {
+		const checked = await checkPublicPiece(piece, excerpt?.served ?? '')
+		catalog.value = checked.catalog
+		fromDevice.value = checked.fromDevice
+	} else {
+		await forgetPieces('public', [token])
+	}
+})
 </script>
 
 <template>
@@ -56,12 +160,15 @@ const scanUrl = window.location.pathname.replace(/\/+$/, '') + '/scan'
 					? t('notenarchiv', 'A piece shared by the choir. Playback comes from a simple synthesizer in your browser; it is no substitute for a recording.')
 					: t('notenarchiv', 'An excerpt of a score, shared by the choir. Playback comes from a simple synthesizer in your browser; it is no substitute for a recording.') }}
 			</NcNoteCard>
-			<p v-if="excerpt.scan">
-				<!-- The browser's own PDF viewer, in a tab of its own -->
-				<a :href="scanUrl"
-					class="public-excerpt__scan"
-					target="_blank"
-					rel="noopener noreferrer">{{ t('notenarchiv', 'Open the scan (PDF)') }}<span class="hidden-visually"> {{ t('notenarchiv', '(opens in a new tab)') }}</span></a>
+			<NcNoteCard v-if="fromDevice" type="info" role="status">
+				{{ t('notenarchiv', 'No network: this piece is shown from this device. {checked}', { checked: checkedText }) }}
+			</NcNoteCard>
+			<ScanFrame v-if="excerpt.scan && (!fromDevice || scanKept)"
+				collection="public"
+				:piece-key="token"
+				:title="excerpt.title" />
+			<p v-else-if="excerpt.scan" class="public-excerpt__composer">
+				{{ t('notenarchiv', 'The scan is not kept on this device.') }}
 			</p>
 			<ExcerptViewer :xml="excerpt.xml"
 				:title="excerpt.title"
@@ -72,7 +179,40 @@ const scanUrl = window.location.pathname.replace(/\/+$/, '') + '/scan'
 				:verse="excerpt.verse"
 				:tempo="excerpt.tempo"
 				:can-play="excerpt.canPlay"
-				:practice-key="excerpt.practiceKey ?? null" />
+				:practice-key="excerpt.practiceKey ?? null"
+				:offline="fromDevice" />
+			<section v-if="offlineOn" class="public-excerpt__device" :aria-label="t('notenarchiv', 'On this device')">
+				<NcCheckboxRadioSwitch type="switch"
+					:model-value="kept"
+					:disabled="fromDevice || keeping"
+					@update:model-value="(on: boolean) => setKept(on, false)">
+					{{ t('notenarchiv', 'Keep on this device') }}
+				</NcCheckboxRadioSwitch>
+				<NcCheckboxRadioSwitch v-if="kept && excerpt.scan"
+					type="switch"
+					:model-value="scanKept"
+					:disabled="fromDevice || keeping"
+					@update:model-value="(on: boolean) => setKept(true, on)">
+					{{ t('notenarchiv', 'With the scan (PDF)') }}
+				</NcCheckboxRadioSwitch>
+				<p class="public-excerpt__composer">
+					{{ kept
+						? t('notenarchiv', 'Kept in this browser: this page opens without a network, while the link is valid. Open it once with a network at least every {days} days.', { days: MAX_DAYS_UNCHECKED })
+						: t('notenarchiv', 'Keep this piece in this browser to view, play and practise it without a network.') }}
+				</p>
+				<p v-if="kept && lockText" class="public-excerpt__composer">
+					{{ lockText }}
+				</p>
+				<p v-if="keeping" class="public-excerpt__composer">
+					{{ t('notenarchiv', 'Keeping on this device …') }}
+				</p>
+				<NcNoteCard v-if="keepError" type="error" role="alert">
+					{{ keepError }}
+				</NcNoteCard>
+				<p class="hidden-visually" role="status">
+					{{ deviceStatus }}
+				</p>
+			</section>
 		</template>
 		<NcEmptyContent v-else
 			:name="t('notenarchiv', 'The score cannot be shown')"
@@ -117,17 +257,18 @@ const scanUrl = window.location.pathname.replace(/\/+$/, '') + '/scan'
 	overflow-wrap: anywhere;
 }
 
-.public-excerpt__scan {
-	display: inline-block;
-	min-height: var(--default-clickable-area);
-	line-height: var(--default-clickable-area);
-	color: var(--color-main-text);
-	text-decoration: underline;
+.public-excerpt__device {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: var(--default-grid-baseline);
+	max-width: 80ch;
+	padding-top: calc(2 * var(--default-grid-baseline));
+	border-top: 1px solid var(--color-border);
 }
 
-.public-excerpt__scan:focus-visible {
-	outline: 2px solid var(--color-main-text);
-	outline-offset: 2px;
+.public-excerpt__device p {
+	margin: 0;
 }
 
 .public-excerpt__composer {

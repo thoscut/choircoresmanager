@@ -752,6 +752,7 @@ writes files into a folder others can open (see section 16).
 | Import of performance lists | Concerts and song lists | on | No import, no list of unclear programme lines. |
 | Repertoire figures | Concerts and song lists | on | The catalog shows the repertoire values of the imported catalog; no thresholds in the settings. |
 | Concerts in the calendar | Concerts and song lists | on | No calendar files and entries. Entries in calendars stay there. |
+| Concert folder | Concerts and song lists, Score view | off (in no preset) | No page "Concert folder" and no entry in the navigation; its routes answer 404. What conductors kept on their devices is removed at their next visit with a network. |
 | New accessions and shelf labels | – | on | No accession assistant and no labels. The import still creates copies. |
 | Merging works | – | on | No merge proposals, no merging and no undo. Merges done stay. |
 | Inventory | – | on | No inventory lists and no list of gaps in the shelf marks. Recorded counts stay in the catalog. |
@@ -767,6 +768,7 @@ writes files into a folder others can open (see section 16).
 | Practice audio for choir members | Links for choir members, Practice audio files | off (in no preset) | Choir members make no practice files; the server refuses every request. |
 | Public links | Excerpt links, Playback, Publication | off (in no preset) | Every public link answers the same 404 page; no new public links. Existing links are kept and expire as before. |
 | Public repertoire page | Rights confirmation and licenses | off (in no preset) | `/apps/notenarchiv/repertoire` answers 404; the work fields for the page are hidden. |
+| Practising without a network | – | off (in no preset) | Nothing can be kept on a device from "Shared with me" or a public link; the next visit with a network removes what was kept there. |
 | Interface for agents | – | off (in no preset) | The API for agents (`/ocs/v2.php/apps/notenarchiv/api/v1/…`) answers 404; the MCP server reports the interface as switched off. Nothing else changes. |
 
 ### Command line
@@ -864,7 +866,7 @@ one by one, after the choir has decided.
 | **Practice audio for choir members** | Choir members make a WAV or MIDI file of one voice of such a piece or excerpt, where the rights allow practice audio files. Every file is recorded in the audit log. |
 | **Public links** | A link that shows and plays a whole piece or an excerpt without login (`/apps/notenarchiv/p/<token>`), optionally with the scan (PDF). Only for versions released for publication that are confirmed public domain or have a license for online publication. |
 | **Public repertoire page** | `/apps/notenarchiv/repertoire`: the works the catalog librarian chooses among those with a version confirmed as public domain, with life dates, scoring and links to CPDL and IMSLP. |
-| **Practising without a network** | Choir members keep pieces of "Shared with me" on their device and view, play and practise them there without a network: in the browser, no app to install. Only for links whose version choir members may save and print. Needs **Links for choir members**. |
+| **Practising without a network** | Choir members keep pieces of "Shared with me" on their device and view, play and practise them there without a network: in the browser, no app to install. Only for links whose version choir members may save and print. With **Public links**, visitors can keep a public link the same way, only where the public domain of the version is confirmed. |
 
 Whatever the switches say, choir members and the public only ever get the
 content for the view (the whole piece or the measures of an excerpt), never
@@ -934,9 +936,28 @@ enable offline`):
   delete everything with **Delete everything on this device**; signing out
   of Nextcloud does not delete it. When another account opens the page in
   the same browser, the pieces of the previous one are removed.
+- **Public links.** Where the public domain of the version is confirmed,
+  the page of a public link offers **Keep on this device**, too. Visitors
+  have no account, so their pieces are kept per browser; each visit with a
+  network is the check, and a revoked or expired link is removed from the
+  device at the next one. A license is never enough here: it covers the
+  public showing, not a copy on every visitor's device.
 - **Switching it off.** The next visit with a network removes the service
   worker and everything it kept. After an update of the app the worker
   renews itself and drops the old scripts.
+
+**Concert folder** (module `concert_folder`, `occ notenarchiv:modules
+enable concert_folder`, group **Concerts and repertoire**, in no preset):
+the conductor and the catalog librarian get a page of their own,
+`/apps/notenarchiv/concert-folder` (also in the navigation), with the
+programmes still to be sung and the score and scan of each item; a whole
+programme can be kept on the device for the rehearsal and the concert
+without a network. The rights are those of the score view; an internal
+preservation copy is never kept on a device. It uses the same service
+worker, with a cache of its own, the same check at every start with a
+network and the same lock after 30 days. The folder only reads. Another
+account in the same browser, or a visit without the role, removes what was
+kept. It does not need the module **Practising without a network**.
 
 **Common problems:**
 

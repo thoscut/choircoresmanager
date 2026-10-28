@@ -6,7 +6,7 @@
 import type { Catalog } from '../offline/rules.ts'
 
 import { describe, expect, it } from 'vitest'
-import { localDay, MAX_DAYS_UNCHECKED, parseCatalog, requestKind, syncCatalog, usable } from '../offline/rules.ts'
+import { COLLECTIONS, localDay, MAX_DAYS_UNCHECKED, pageCollection, parseCatalog, requestKind, syncCatalog, usable } from '../offline/rules.ts'
 
 const SCOPE = '/index.php/apps/notenarchiv/'
 const TOKEN = 'a'.repeat(32)
@@ -23,10 +23,11 @@ function catalog(checked: string, expires: string | null = null): Catalog {
 
 describe('requests of the page for choir members', () => {
 	it('are the page, a score, a scan or an asset', () => {
-		expect(requestKind(SCOPE, SCOPE, 'document', true)).toEqual({ kind: 'page' })
-		expect(requestKind(`${SCOPE}api/member/links/${TOKEN}/score`, SCOPE, '', false)).toEqual({ kind: 'score', token: TOKEN })
-		// the scan opens in a tab of its own
-		expect(requestKind(`${SCOPE}api/member/links/${TOKEN}/scan`, SCOPE, 'document', true)).toEqual({ kind: 'scan', token: TOKEN })
+		expect(requestKind(SCOPE, SCOPE, 'document', true)).toEqual({ kind: 'page', collection: 'member' })
+		expect(requestKind(`${SCOPE}api/member/links/${TOKEN}/score`, SCOPE, '', false)).toEqual({ kind: 'score', collection: 'member', key: TOKEN })
+		// the scan opens in the page or in a tab of its own
+		expect(requestKind(`${SCOPE}api/member/links/${TOKEN}/scan`, SCOPE, 'document', true)).toEqual({ kind: 'scan', collection: 'member', key: TOKEN })
+		expect(requestKind(`${SCOPE}api/member/links/${TOKEN}/scan`, SCOPE, '', false)).toEqual({ kind: 'scan', collection: 'member', key: TOKEN })
 		expect(requestKind('/apps/notenarchiv/js/notenarchiv-member.mjs', SCOPE, 'script', false)).toEqual({ kind: 'asset' })
 		expect(requestKind('/apps/theming/theme/light.css', SCOPE, 'style', false)).toEqual({ kind: 'asset' })
 	})
@@ -35,12 +36,40 @@ describe('requests of the page for choir members', () => {
 		expect(requestKind(`${SCOPE}api/member/links`, SCOPE, '', false).kind).toBe('other')
 		expect(requestKind(`${SCOPE}api/member/links/${TOKEN}/practice-audio`, SCOPE, '', false).kind).toBe('other')
 		expect(requestKind(`${SCOPE}api/entries`, SCOPE, '', false).kind).toBe('other')
-		expect(requestKind(`${SCOPE}p/${TOKEN}`, SCOPE, 'document', true).kind).toBe('other')
+		expect(requestKind(`${SCOPE}concert-folder/x`, SCOPE, 'document', true).kind).toBe('other')
+		expect(requestKind(`${SCOPE}api/concert-folder`, SCOPE, '', false).kind).toBe('other')
+		// the page of a public link, fetched by the page itself (not opened), is not answered from the device
+		expect(requestKind(`${SCOPE}p/${TOKEN}`, SCOPE, '', false).kind).toBe('other')
+		expect(requestKind(`${SCOPE}p/short`, SCOPE, 'document', true).kind).toBe('other')
 		expect(requestKind('/ocs/v2.php/apps/notifications/api/v2/notifications', SCOPE, '', false).kind).toBe('other')
 		expect(requestKind('/index.php/avatar/anna/64', SCOPE, 'image', false).kind).toBe('other')
 		expect(requestKind('/index.php/login', SCOPE, 'document', true).kind).toBe('other')
 		expect(requestKind('/index.php/apps/files/', SCOPE, 'document', true).kind).toBe('other')
 		expect(requestKind('/index.php/csrftoken', SCOPE, '', false).kind).toBe('other')
+	})
+})
+
+describe('requests of the concert folder and of public links', () => {
+	it('are their page, a score or a scan', () => {
+		expect(requestKind(`${SCOPE}concert-folder`, SCOPE, 'document', true)).toEqual({ kind: 'page', collection: 'folder' })
+		expect(requestKind(`${SCOPE}api/concert-folder/items/42/score`, SCOPE, '', false)).toEqual({ kind: 'score', collection: 'folder', key: '42' })
+		expect(requestKind(`${SCOPE}api/concert-folder/items/42/scan`, SCOPE, '', false)).toEqual({ kind: 'scan', collection: 'folder', key: '42' })
+		expect(requestKind(`${SCOPE}p/${TOKEN}`, SCOPE, 'document', true)).toEqual({ kind: 'page', collection: 'public', key: TOKEN })
+		expect(requestKind(`${SCOPE}p/${TOKEN}/scan`, SCOPE, '', false)).toEqual({ kind: 'scan', collection: 'public', key: TOKEN })
+	})
+
+	it('name the page whose scripts are kept, never the archive', () => {
+		expect(pageCollection(SCOPE, SCOPE)).toBe('member')
+		expect(pageCollection(`${SCOPE}concert-folder`, SCOPE)).toBe('folder')
+		expect(pageCollection(`${SCOPE}p/${TOKEN}`, SCOPE)).toBe('public')
+		expect(pageCollection(`${SCOPE}settings`, SCOPE)).toBeNull()
+		expect(pageCollection('/index.php/apps/files/', SCOPE)).toBeNull()
+	})
+
+	it('have caches of their own', () => {
+		const caches = Object.values(COLLECTIONS).map((collection) => collection.cache)
+		expect(new Set(caches).size).toBe(caches.length)
+		expect(caches.every((cache) => cache.startsWith('notenarchiv-') && !cache.startsWith('notenarchiv-shell-'))).toBe(true)
 	})
 })
 
@@ -64,8 +93,8 @@ describe('pieces kept on the device', () => {
 	it('follow the links on the server at a check', () => {
 		const before = { ...catalog('2026-10-01T00:00:00.000Z'), pieces: { ...catalog('2026-10-01T00:00:00.000Z').pieces, [OTHER]: catalog('x').pieces[TOKEN] } }
 		const { catalog: after, removed, scansRemoved } = syncCatalog(before, [
-			{ token: TOKEN, title: 'Abendlied (neu)', composer: 'J. Rheinberger', expires: '2026-12-31', offline: true, scan: false },
-			{ token: OTHER, title: 'Other', composer: '', expires: null, offline: false },
+			{ key: TOKEN, title: 'Abendlied (neu)', composer: 'J. Rheinberger', expires: '2026-12-31', offline: true, scan: false },
+			{ key: OTHER, title: 'Other', composer: '', expires: null, offline: false },
 		], now)
 		expect(removed).toEqual([OTHER])
 		expect(scansRemoved).toEqual([TOKEN])
@@ -83,6 +112,20 @@ describe('pieces kept on the device', () => {
 		expect(parseCatalog(JSON.stringify({ ...good, v: 2 }))).toBeNull()
 		const odd = parseCatalog(JSON.stringify({ ...good, pieces: { short: good.pieces[TOKEN], [OTHER]: { title: 3 } } }))
 		expect(odd?.pieces).toEqual({})
+	})
+
+	it('of a public link count from their own last check', () => {
+		const list = catalog(new Date(2026, 8, 1).toISOString())
+		list.pieces[TOKEN].checked = new Date(2026, 9, 20).toISOString()
+		expect(usable(list, TOKEN, now)).toBe('ok')
+		delete list.pieces[TOKEN].checked
+		expect(usable(list, TOKEN, now)).toBe('unchecked')
+	})
+
+	it('of the concert folder are kept by the id of the programme item', () => {
+		const list = { v: 1, account: 'x', checked: 'x', pieces: { 42: catalog('x').pieces[TOKEN], [TOKEN]: catalog('x').pieces[TOKEN] } }
+		expect(Object.keys(parseCatalog(JSON.stringify(list), COLLECTIONS.folder.key)?.pieces ?? {})).toEqual(['42'])
+		expect(Object.keys(parseCatalog(JSON.stringify(list))?.pieces ?? {})).toEqual([TOKEN])
 	})
 
 	it('expire at the end of their last day on the device', () => {

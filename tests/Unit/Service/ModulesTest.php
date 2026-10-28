@@ -76,7 +76,7 @@ final class ModulesTest extends TestCase {
 	 */
 	public function testSharingBeyondTheRolesIsSwitchedOnlyByItself(): void {
 		$sharing = [Modules::MEMBER_LINKS, Modules::MEMBER_PRACTICE_AUDIO, Modules::PUBLIC_LINKS, Modules::PUBLIC_REPERTOIRE, Modules::OFFLINE];
-		self::assertSame([Modules::AGENT_API, ...$sharing, Modules::PRINT_MIRROR, Modules::CHOIR_HANDOVER], Modules::OUTSIDE_PRESETS);
+		self::assertSame([Modules::AGENT_API, ...$sharing, Modules::CONCERT_FOLDER, Modules::PRINT_MIRROR, Modules::CHOIR_HANDOVER], Modules::OUTSIDE_PRESETS);
 		foreach ($sharing as $key) {
 			self::assertSame('sharing', Modules::MODULES[$key]['group'], $key);
 			self::assertFalse(Modules::MODULES[$key]['simple'], $key);
@@ -181,8 +181,8 @@ final class ModulesTest extends TestCase {
 		self::assertSame(['practice_audio'], $changes['enabled']);
 		self::assertSame(['score_viewer', 'playback'], $changes['alsoEnabled']);
 		self::assertSame([], $changes['disabled']);
-		self::assertSame(['excerpt_links', 'transcription_review', 'corrections', Modules::VERSION_STATES, 'notify_review_points', 'notify_correction_received',
-			Modules::MEMBER_LINKS, Modules::MEMBER_PRACTICE_AUDIO, Modules::OFFLINE, Modules::PUBLIC_LINKS], $changes['activated'],
+		self::assertSame(['excerpt_links', 'transcription_review', 'corrections', Modules::VERSION_STATES, Modules::CONCERT_FOLDER, 'notify_review_points',
+			'notify_correction_received', Modules::MEMBER_LINKS, Modules::MEMBER_PRACTICE_AUDIO, Modules::PUBLIC_LINKS], $changes['activated'],
 			'their switches were on');
 		self::assertTrue($modules->isEnabled('practice_audio'));
 		self::assertTrue($this->moduleConfig['module_score_viewer']);
@@ -192,13 +192,13 @@ final class ModulesTest extends TestCase {
 		$modules = $this->modulesWithout(['statistics']);
 		$changes = $modules->change(['concerts' => false]);
 		self::assertSame(['concerts'], $changes['disabled']);
-		self::assertSame(['performance_import', 'repertoire', 'calendar', 'notify_concert_deadline', 'notify_concert_confirm'], $changes['inactive']);
+		self::assertSame([Modules::CONCERT_FOLDER, 'performance_import', 'repertoire', 'calendar', 'notify_concert_deadline', 'notify_concert_confirm'], $changes['inactive']);
 		self::assertTrue($modules->isSwitchedOn('calendar'));
 		self::assertFalse($modules->isEnabled('calendar'));
 
 		$changes = $modules->change(['concerts' => true]);
 		self::assertSame(['concerts'], $changes['enabled']);
-		self::assertSame(['performance_import', 'repertoire', 'calendar', 'notify_concert_deadline', 'notify_concert_confirm'], $changes['activated'],
+		self::assertSame([Modules::CONCERT_FOLDER, 'performance_import', 'repertoire', 'calendar', 'notify_concert_deadline', 'notify_concert_confirm'], $changes['activated'],
 			'switching on shows everything again');
 	}
 

@@ -14,6 +14,7 @@ use OCA\Notenarchiv\Attribute\RequiresModule;
 use OCA\Notenarchiv\Middleware\ModuleMiddleware;
 use OCA\Notenarchiv\Service\Modules;
 use OCA\Notenarchiv\Service\SharedLinkService;
+use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\AnonRateLimit;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
@@ -58,6 +59,7 @@ class PublicLinkController extends Controller {
 		private IInitialState $initialState,
 		private IL10N $l,
 		private LoggerInterface $logger,
+		private IAppManager $apps,
 	) {
 		parent::__construct(Application::APP_ID, $request);
 	}
@@ -82,6 +84,8 @@ class PublicLinkController extends Controller {
 			return ModuleMiddleware::notFoundPage();
 		}
 		$this->initialState->provideInitialState('excerpt', $excerpt);
+		// Practising without a network (milestone 0.15): the version names the cache of the page
+		$this->initialState->provideInitialState('version', $this->apps->getAppVersion(Application::APP_ID));
 		$response = new PublicTemplateResponse(Application::APP_ID, 'public', []);
 		$response->setHeaderTitle($excerpt['title'] !== '' ? $excerpt['title'] : $this->l->t('Score'));
 		$response->setHeaderDetails($excerpt['measureFrom'] === null || $excerpt['measureTo'] === null
@@ -91,6 +95,8 @@ class PublicLinkController extends Controller {
 		$response->setFeaturePolicy(self::recordingPolicy());
 		// A link that expires: not for search engines.
 		$response->addHeader('X-Robots-Tag', 'noindex, nofollow');
+		// The service worker keeps this page on the device only when the visitor asks for it (milestone 0.15)
+		$response->addHeader('X-Notenarchiv-Page', 'public');
 		$response->cacheFor(0, false, false);
 		return $response;
 	}
@@ -127,13 +133,18 @@ class PublicLinkController extends Controller {
 
 	/**
 	 * As the app page: the bundled notation engine needs WebAssembly
-	 * ('wasm-unsafe-eval'); no JavaScript eval, no other source, no frames.
+	 * ('wasm-unsafe-eval'); no JavaScript eval, no other source, frames only
+	 * from the browser's memory.
 	 */
 	public static function policy(): ContentSecurityPolicy {
 		$policy = new ContentSecurityPolicy();
 		$policy->allowEvalWasm(true);
 		// a recording made while practising is played from the browser's memory
 		$policy->addAllowedMediaDomain('blob:');
+		// practising without a network (milestone 0.15): the service worker of the app's own
+		// route, and a kept scan shown in the page from the browser's memory
+		$policy->addAllowedWorkerSrcDomain('\'self\'');
+		$policy->addAllowedFrameDomain('blob:');
 		return $policy;
 	}
 

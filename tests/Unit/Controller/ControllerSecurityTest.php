@@ -14,11 +14,13 @@ use OCA\Notenarchiv\Controller\ApiController;
 use OCA\Notenarchiv\Controller\ApiV1StatusController;
 use OCA\Notenarchiv\Controller\CalendarController;
 use OCA\Notenarchiv\Controller\ChoirSystemController;
+use OCA\Notenarchiv\Controller\ConcertFolderController;
 use OCA\Notenarchiv\Controller\FilesIntegrationController;
 use OCA\Notenarchiv\Controller\FolderBookController;
 use OCA\Notenarchiv\Controller\HandoverController;
 use OCA\Notenarchiv\Controller\MaintenanceController;
 use OCA\Notenarchiv\Controller\MemberController;
+use OCA\Notenarchiv\Controller\OfflineController;
 use OCA\Notenarchiv\Controller\PageController;
 use OCA\Notenarchiv\Controller\PracticeAudioController;
 use OCA\Notenarchiv\Controller\PrintMirrorController;
@@ -57,6 +59,7 @@ use OCA\Notenarchiv\Service\AuditLog;
 use OCA\Notenarchiv\Service\CatalogService;
 use OCA\Notenarchiv\Service\ChoirSystemCompareService;
 use OCA\Notenarchiv\Service\ConcertCalendarService;
+use OCA\Notenarchiv\Service\ConcertFolderService;
 use OCA\Notenarchiv\Service\CorrectionService;
 use OCA\Notenarchiv\Service\DueService;
 use OCA\Notenarchiv\Service\ExportService;
@@ -185,6 +188,8 @@ final class ControllerSecurityTest extends TestCase {
 		'TaskController::due',
 		'MaintenanceController::linkFile', 'MaintenanceController::unlinkFile',
 		'ModuleController::settings', 'ModuleController::update', 'ModuleController::personalView',
+		// the service worker (milestone 0.15): with its modules off it removes what was kept, so it is always there
+		'OfflineController::worker',
 	];
 
 	/**
@@ -204,8 +209,10 @@ final class ControllerSecurityTest extends TestCase {
 		'PublicLinkController::show', 'PublicRepertoireController::index',
 		// The scan of a link for choir members or of a public link, opened by the browser in a tab of its own.
 		'MemberController::scan', 'PublicLinkController::scan',
-		// The service worker of the page for choir members (milestone 0.15), fetched by the browser itself; no data.
-		'MemberController::offlineWorker',
+		// The service worker of the pages that keep pieces (milestone 0.15), fetched by the browser itself; no data.
+		'OfflineController::worker',
+		// The concert folder (milestone 0.15), a page opened by the browser, as the app page.
+		'ConcertFolderController::page',
 	];
 
 	/** Expensive endpoints: limited per user (the statistics aggregate the whole archive) */
@@ -223,7 +230,8 @@ final class ControllerSecurityTest extends TestCase {
 		'FilesIntegrationController::copyOfFile',
 		// the routes of the choir members and the public pages (milestone 0.7)
 		'MemberController::score', 'MemberController::practiceAudio', 'MemberController::scan',
-		'MemberController::links', 'MemberController::offlineWorker',
+		'MemberController::links', 'OfflineController::worker',
+		'ConcertFolderController::concerts', 'ConcertFolderController::score', 'ConcertFolderController::scan',
 		'PublicLinkController::show', 'PublicLinkController::scan', 'PublicRepertoireController::index',
 		// the folder book writes, and the print station reads and writes files
 		'FolderBookController::createFolder', 'FolderBookController::updateFolder', 'FolderBookController::issue',
@@ -239,14 +247,17 @@ final class ControllerSecurityTest extends TestCase {
 
 	/**
 	 * The only public routes (#[PublicPage], milestone 0.7) and their module:
-	 * the page of a public link with the scan it offers, and the public
-	 * repertoire page. Their controllers have no other route, so that the
-	 * exception cannot grow by a method added later.
+	 * the page of a public link with the scan it offers, the public
+	 * repertoire page, and the service worker that keeps a public link on a
+	 * device (milestone 0.15; core, null: a script without data). Their
+	 * controllers have no other route, so that the exception cannot grow by
+	 * a method added later.
 	 */
 	private const PUBLIC_ROUTES = [
 		'PublicLinkController::show' => 'public_links',
 		'PublicLinkController::scan' => 'public_links',
 		'PublicRepertoireController::index' => 'public_repertoire',
+		'OfflineController::worker' => null,
 	];
 
 	/**
@@ -261,9 +272,8 @@ final class ControllerSecurityTest extends TestCase {
 		'MemberController::score' => ['member_links'],
 		'MemberController::practiceAudio' => ['member_links', 'member_practice_audio'],
 		'MemberController::scan' => ['member_links'],
-		// practising without a network (milestone 0.15): the list for the check, the service worker
+		// practising without a network (milestone 0.15): the list for the check (the worker is public)
 		'MemberController::links' => ['member_links', 'offline'],
-		'MemberController::offlineWorker' => ['member_links'],
 	];
 
 	/**
@@ -441,7 +451,7 @@ final class ControllerSecurityTest extends TestCase {
 			[$class, $method] = explode('::', $name);
 			self::assertSame('GET', $route['verb'], $name);
 			self::assertFalse($route['ocs'], $name);
-			self::assertSame([$module], ModuleMiddleware::required('OCA\\Notenarchiv\\Controller\\' . $class, $method), $name . ' needs its module');
+			self::assertSame($module === null ? [] : [$module], ModuleMiddleware::required('OCA\\Notenarchiv\\Controller\\' . $class, $method), $name . ' needs its module');
 			self::assertContains(AnonRateLimit::class, $route['attributes'], $name . ' is limited per address');
 			self::assertContains(UserRateLimit::class, $route['attributes'], $name . ' is limited per account');
 			self::assertContains(BruteForceProtection::class, $route['attributes'], $name);
@@ -529,7 +539,7 @@ final class ControllerSecurityTest extends TestCase {
 		$policy = $response->getContentSecurityPolicy()->buildPolicy();
 		self::assertStringContainsString("'wasm-unsafe-eval'", $policy);
 		self::assertStringNotContainsString("'unsafe-eval'", $policy);
-		self::assertStringNotContainsString('frame-src', $policy, 'no scan beside the score for choir members');
+		self::assertStringContainsString('frame-src blob:;', $policy, 'no scan beside the score for choir members, only a kept scan from memory');
 		self::assertStringContainsString("media-src 'self' blob:", $policy, 'a recording plays from the browser');
 		self::assertStringContainsString("microphone 'self'", $response->getFeaturePolicy()->buildPolicy(), 'recording oneself');
 		self::assertStringContainsString("camera 'none'", $response->getFeaturePolicy()->buildPolicy(), 'nothing else is opened');
@@ -549,7 +559,7 @@ final class ControllerSecurityTest extends TestCase {
 		$shared->method('publicExcerpt')->willReturn($excerpt);
 		$shared->method('publicScan')->willReturn($scan);
 		return new PublicLinkController($this->createStub(IRequest::class), $shared, $this->createStub(IInitialState::class), $this->l10n(),
-			$this->createStub(LoggerInterface::class));
+			$this->createStub(LoggerInterface::class), $this->createStub(IAppManager::class));
 	}
 
 	/**
@@ -566,7 +576,8 @@ final class ControllerSecurityTest extends TestCase {
 		self::assertStringContainsString("'wasm-unsafe-eval'", $policy);
 		self::assertStringNotContainsString("'unsafe-eval'", $policy);
 		self::assertStringNotContainsString('http', $policy, 'no external sources');
-		self::assertStringNotContainsString('frame-src', $policy);
+		self::assertStringContainsString('frame-src blob:;', $policy, 'frames only from the browser\'s memory: the scan');
+		self::assertStringContainsString("worker-src 'self'", $policy);
 		self::assertStringContainsString("media-src 'self' blob:", $policy);
 		self::assertStringContainsString("microphone 'self';", PublicLinkController::recordingPolicy()->buildPolicy());
 		self::assertStringContainsString("geolocation 'none';", PublicLinkController::recordingPolicy()->buildPolicy());
@@ -631,8 +642,7 @@ final class ControllerSecurityTest extends TestCase {
 			return '<score-partwise/>';
 		});
 		$controller = fn (?string $uid): MemberController => new MemberController($this->createStub(IRequest::class), $uid, $shared,
-			$this->createStub(PracticeAudioService::class), $this->l10n(), $this->createStub(LoggerInterface::class), $this->modulesWithout(),
-			$this->createStub(IAppManager::class));
+			$this->createStub(PracticeAudioService::class), $this->l10n(), $this->createStub(LoggerInterface::class));
 
 		$response = $controller('singer')->score(str_repeat('a', 32));
 		$headers = self::headers($response);
@@ -650,34 +660,81 @@ final class ControllerSecurityTest extends TestCase {
 
 	/**
 	 * The service worker (milestone 0.15) is a script without data from the
-	 * app's own path. With the module offline off it is the worker that
-	 * removes everything kept on the device; it never comes from elsewhere.
+	 * app's own path. With the modules offline and concert_folder off it is
+	 * the worker that removes everything kept on the device; it never comes
+	 * from elsewhere.
 	 */
 	public function testTheOfflineWorkerIsAScriptOfTheAppOrRemovesItself(): void {
 		$apps = $this->createStub(IAppManager::class);
 		$apps->method('getAppVersion')->willReturn('0.15.0');
-		$controller = fn (bool $on): MemberController => new MemberController($this->createStub(IRequest::class), 'singer',
-			$this->createStub(SharedLinkService::class), $this->createStub(PracticeAudioService::class), $this->l10n(),
-			$this->createStub(LoggerInterface::class), $on ? $this->modulesWithout() : $this->modulesWithout([Modules::OFFLINE]), $apps);
+		$controller = fn (array $off): OfflineController => new OfflineController($this->createStub(IRequest::class),
+			$this->modulesWithout($off), $apps, $this->l10n());
 
-		$off = $controller(false)->offlineWorker();
+		$off = $controller([Modules::OFFLINE, Modules::CONCERT_FOLDER])->worker();
 		self::assertSame(Http::STATUS_OK, $off->getStatus());
 		self::assertSame('text/javascript; charset=utf-8', self::headers($off)['Content-Type'] ?? null);
 		self::assertSame('nosniff', self::headers($off)['X-Content-Type-Options'] ?? null);
-		self::assertSame(MemberController::REMOVING_WORKER, $off->render());
+		self::assertSame(OfflineController::REMOVING_WORKER, $off->render());
 		self::assertStringContainsString('unregister()', $off->render());
 		self::assertStringContainsString("connect-src 'self'", $off->getContentSecurityPolicy()->buildPolicy());
 		self::assertStringNotContainsString('http', $off->getContentSecurityPolicy()->buildPolicy(), 'no other server');
 
 		$built = __DIR__ . '/../../../js/notenarchiv-offline-worker.js';
-		$on = $controller(true)->offlineWorker();
-		if (is_file($built)) {
-			self::assertSame(Http::STATUS_OK, $on->getStatus());
-			self::assertStringContainsString('"0.15.0"', $on->render(), 'the version names the cache of the scripts');
-			self::assertStringNotContainsString('__NOTENARCHIV_VERSION__', $on->render());
-		} else {
-			self::assertSame(Http::STATUS_NOT_FOUND, $on->getStatus(), 'without a build there is no worker');
+		foreach (['both on' => [], 'only the concert folder' => [Modules::OFFLINE], 'only the shared pages' => [Modules::CONCERT_FOLDER]] as $case => $without) {
+			$on = $controller($without)->worker();
+			if (is_file($built)) {
+				self::assertSame(Http::STATUS_OK, $on->getStatus(), $case);
+				self::assertStringContainsString('"0.15.0"', $on->render(), $case . ': the version names the cache of the scripts');
+				self::assertStringNotContainsString('__NOTENARCHIV_VERSION__', $on->render(), $case);
+			} else {
+				self::assertSame(Http::STATUS_NOT_FOUND, $on->getStatus(), $case . ': without a build there is no worker');
+			}
 		}
+	}
+
+	private function concertFolderController(?string $uid, ConcertFolderService $folder): ConcertFolderController {
+		return new ConcertFolderController($this->createStub(IRequest::class), $uid, $folder, $this->createStub(IInitialState::class),
+			$this->createStub(IAppManager::class), $this->l10n(), $this->createStub(LoggerInterface::class));
+	}
+
+	/**
+	 * The concert folder (milestone 0.15) is a page of its own for the
+	 * conductor and the catalog librarian, which the service worker keeps;
+	 * everybody else gets the forbidden page. Its scores are never shown
+	 * inline, its scans only by the PDF viewer.
+	 */
+	public function testTheConcertFolderIsForTheConductorAndTheLibrarianOnly(): void {
+		$folder = $this->createStub(ConcertFolderService::class);
+		$folder->method('mayOpen')->willReturnCallback(fn (string $uid): bool => $uid === 'conductor');
+		$folder->method('concerts')->willReturn([]);
+		$folder->method('score')->willReturnCallback(function (int $id, string $uid): string {
+			if ($uid !== 'conductor') {
+				throw new AccessDeniedException('The concert folder is for the conductor and the catalog librarian.');
+			}
+			return '<score-partwise/>';
+		});
+		$folder->method('scan')->willThrowException(new NotFoundException('This programme item has no scan.'));
+
+		$page = $this->concertFolderController('conductor', $folder)->page();
+		self::assertSame('concert-folder', $page->getTemplateName());
+		self::assertSame('concert-folder', self::headers($page)['X-Notenarchiv-Page'] ?? null, 'the page the worker keeps');
+		$policy = $page->getContentSecurityPolicy()->buildPolicy();
+		self::assertStringContainsString("'wasm-unsafe-eval'", $policy);
+		self::assertStringNotContainsString("'unsafe-eval'", $policy);
+		self::assertStringContainsString("worker-src 'self'", $policy);
+		self::assertStringContainsString('frame-src blob:;', $policy, 'the scan from the browser\'s memory only');
+		$singer = $this->concertFolderController('singer', $folder)->page();
+		self::assertSame(Http::STATUS_FORBIDDEN, $singer->getStatus());
+		self::assertNull(self::headers($singer)['X-Notenarchiv-Page'] ?? null, 'the worker removes the kept folder for another account');
+
+		$score = $this->concertFolderController('conductor', $folder)->score(7);
+		self::assertSame(Http::STATUS_OK, $score->getStatus());
+		self::assertSame('attachment; filename="score.musicxml"', self::headers($score)['Content-Disposition'] ?? null);
+		self::assertSame('nosniff', self::headers($score)['X-Content-Type-Options'] ?? null);
+		self::assertSame(Http::STATUS_FORBIDDEN, $this->concertFolderController('singer', $folder)->score(7)->getStatus());
+		self::assertSame(Http::STATUS_UNAUTHORIZED, $this->concertFolderController(null, $folder)->score(7)->getStatus());
+		self::assertSame(Http::STATUS_NOT_FOUND, $this->concertFolderController('conductor', $folder)->scan(7)->getStatus());
+		self::assertSame([Modules::CONCERT_FOLDER], ModuleMiddleware::required(ConcertFolderController::class, 'page'));
 	}
 
 	public function testTheMemberLinksForTheDeviceAreThoseOfThePage(): void {
@@ -689,8 +746,7 @@ final class ControllerSecurityTest extends TestCase {
 			return [['token' => str_repeat('a', 32), 'reason' => 'Playback is switched off.', 'offline' => false]];
 		});
 		$controller = fn (?string $uid): MemberController => new MemberController($this->createStub(IRequest::class), $uid, $shared,
-			$this->createStub(PracticeAudioService::class), $this->l10n(), $this->createStub(LoggerInterface::class), $this->modulesWithout(),
-			$this->createStub(IAppManager::class));
+			$this->createStub(PracticeAudioService::class), $this->l10n(), $this->createStub(LoggerInterface::class));
 		$response = $controller('singer')->links();
 		self::assertSame(Http::STATUS_OK, $response->getStatus());
 		self::assertSame([['reason' => 'Playback is switched off.', 'token' => str_repeat('a', 32), 'offline' => false]], $response->getData()['links']);
@@ -713,8 +769,7 @@ final class ControllerSecurityTest extends TestCase {
 			return $this->createStub(File::class);
 		});
 		$controller = fn (?string $uid): MemberController => new MemberController($this->createStub(IRequest::class), $uid, $shared,
-			$this->createStub(PracticeAudioService::class), $this->l10n(), $this->createStub(LoggerInterface::class), $this->modulesWithout(),
-			$this->createStub(IAppManager::class));
+			$this->createStub(PracticeAudioService::class), $this->l10n(), $this->createStub(LoggerInterface::class));
 
 		$response = $controller('singer')->scan(str_repeat('a', 32));
 		$headers = self::headers($response);

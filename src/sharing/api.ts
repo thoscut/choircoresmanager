@@ -6,11 +6,12 @@
 /**
  * The calls of the page for choir members (milestone 0.7, see docs/api.md):
  * the score of a link (its measures, cut by the server, or the whole
- * piece), the address of its scan and the permission for a practice file.
+ * piece), the address of its scan and the permission for a practice file;
+ * and those of the concert folder (milestone 0.15).
  * Kept apart from api.ts, so that the small bundle of this page does not
  * carry the catalog.
  */
-import type { MemberLink, MemberPracticeAudioInput } from '../types.ts'
+import type { FolderConcert, MemberLink, MemberPracticeAudioInput } from '../types.ts'
 
 import axios, { isAxiosError } from '@nextcloud/axios'
 import { generateUrl } from '@nextcloud/router'
@@ -94,5 +95,31 @@ export async function authorizeMemberPracticeAudio(token: string, input: MemberP
 		await axios.post(memberUrl(token, 'practice-audio'), { export: input })
 	} catch (error) {
 		throw new Error(errorMessage(error))
+	}
+}
+
+/**
+ * The programmes of the concert folder, as on the page (milestone 0.15):
+ * the check of the pieces kept on the device. Throws without a network.
+ */
+export async function fetchFolderConcerts(): Promise<FolderConcert[]> {
+	const { data } = await axios.get<{ concerts?: FolderConcert[] }>(generateUrl('/apps/notenarchiv/api/concert-folder'), { timeout: 8000 })
+	return Array.isArray(data?.concerts) ? data.concerts : []
+}
+
+/**
+ * The MusicXML of a programme item in the concert folder. The server checks
+ * the role and the rights; without a network the device answers for a kept
+ * item.
+ *
+ * @param id - id of the programme item
+ */
+export async function fetchFolderScore(id: number): Promise<string> {
+	try {
+		const { data } = await axios.get<string>(generateUrl('/apps/notenarchiv/api/concert-folder/items/{id}/score', { id }),
+			{ responseType: 'text', transformResponse: [(raw) => raw] })
+		return data
+	} catch (error) {
+		throw new Error(textErrorMessage(error))
 	}
 }

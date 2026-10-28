@@ -54,6 +54,9 @@ class PageController extends Controller {
 		parent::__construct(Application::APP_ID, $request);
 	}
 
+	/**
+	 * @psalm-suppress PossiblyUnusedMethod a route; the class is also used for its policies
+	 */
 	#[NoCSRFRequired]
 	#[NoAdminRequired]
 	#[OpenAPI(OpenAPI::SCOPE_IGNORE)]
@@ -119,13 +122,15 @@ class PageController extends Controller {
 	 * microphone of this page and plays the recording from the browser's
 	 * memory (blob:); it never leaves the browser.
 	 */
-	private static function withScorePolicy(TemplateResponse $response, bool $scanFrames, bool $offlineWorker = false): TemplateResponse {
+	public static function withScorePolicy(TemplateResponse $response, bool $scanFrames, bool $offlineWorker = false): TemplateResponse {
 		$policy = new ContentSecurityPolicy();
 		$policy->allowEvalWasm(true);
 		$policy->addAllowedMediaDomain('blob:');
 		if ($offlineWorker) {
-			// The service worker for practising without a network comes from the app's own route
+			// The service worker for practising without a network comes from the app's own route;
+			// a kept scan is shown in the page from the browser's memory
 			$policy->addAllowedWorkerSrcDomain('\'self\'');
+			$policy->addAllowedFrameDomain('blob:');
 		}
 		if ($scanFrames) {
 			$policy->addAllowedFrameDomain('\'self\'');
@@ -139,7 +144,7 @@ class PageController extends Controller {
 	 * The microphone for this page only, for recording oneself while
 	 * practising; the browser still asks the person first.
 	 */
-	private static function recordingPolicy(): FeaturePolicy {
+	public static function recordingPolicy(): FeaturePolicy {
 		$policy = new FeaturePolicy();
 		$policy->addAllowedMicrophoneDomain('\'self\'');
 		return $policy;

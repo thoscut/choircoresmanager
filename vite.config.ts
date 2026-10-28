@@ -17,10 +17,10 @@ const testConfig = {
 }
 
 /**
- * The service worker of the page "Shared with me" (milestone 0.15): a
- * classic script without imports, built after the app into
- * js/notenarchiv-offline-worker.js; MemberController::offlineWorker serves it
- * from the app's path, so that it covers the page.
+ * The service worker of the pages that keep pieces on a device (milestone
+ * 0.15): a classic script without imports, built after the app into
+ * js/notenarchiv-offline-worker.js; OfflineController::worker serves it from
+ * the app's path, so that it covers the pages.
  */
 const offlineWorker = {
 	name: 'notenarchiv-offline-worker',
@@ -59,6 +59,8 @@ export default process.env.VITEST
 			member: resolve(join('src', 'member.ts')),
 			// Page of a public link (milestone 0.7: one excerpt, no further requests)
 			public: resolve(join('src', 'public.ts')),
+			// Concert folder of the conductor (milestone 0.15: programmes, also without a network)
+			'concert-folder': resolve(join('src', 'concertFolder.ts')),
 		},
 		{
 			createEmptyCSSEntryPoints: true,

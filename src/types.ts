@@ -454,6 +454,51 @@ export interface MemberPageState {
 	}
 }
 
+/** An item of a programme in the concert folder of the conductor (milestone 0.15). */
+export interface FolderItem {
+	id: number
+	position: number
+	title: string
+	composer: string
+	shelfmark: string | null
+	participation: string | null
+	note: string | null
+	encore: boolean
+	/** duration in seconds */
+	duration: number | null
+	/** the item has a score the account may view */
+	score: boolean
+	/** the item has a scan (PDF) the account may view */
+	scan: boolean
+	canPlay: boolean
+	/** translated reason why the score cannot be viewed or played */
+	reason: string | null
+	/** may be kept on the device */
+	offline: boolean
+	/** translated reason why it may not be kept */
+	offlineReason: string | null
+	practiceKey: string | null
+}
+
+/** A programme still to be sung, in the concert folder. */
+export interface FolderConcert {
+	id: number
+	kind: 'concert' | 'song_list'
+	title: string
+	date: string | null
+	startTime: string | null
+	location: string | null
+	status: 'draft' | 'fixed'
+	items: FolderItem[]
+}
+
+/** Initial state `folder` of the concert folder. */
+export interface FolderPageState {
+	concerts: FolderConcert[]
+	/** version of the app, names the cache of the page */
+	version: string
+}
+
 /** Initial state `excerpt` of a public link: the excerpt, already cut by the server, or the whole piece. */
 export interface PublicExcerpt {
 	title: string
@@ -469,6 +514,12 @@ export interface PublicExcerpt {
 	scan?: boolean
 	/** key of the piece for what is remembered in the browser while practising (milestone 0.15) */
 	practiceKey?: string
+	/** last valid day of the link (YYYY-MM-DD), null without end */
+	expires?: string | null
+	/** may be kept on a device (milestone 0.15): module "offline", confirmed public domain */
+	offline?: boolean
+	/** when the server made the page (ISO time): newer than the last check means it came from the server */
+	served?: string
 	/** MusicXML with only the measures of the excerpt, or the whole piece */
 	xml: string
 	credits: Credit[]

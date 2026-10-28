@@ -18,7 +18,7 @@
  * practised without a network (src/offline/). At every start with a network
  * the kept pieces are checked with the server.
  */
-import type { Catalog } from '../offline/rules.ts'
+import type { Catalog, PieceForDevice } from '../offline/rules.ts'
 import type { MemberLink, MemberPageState, MemberPracticeAudioInput } from '../types.ts'
 
 import { mdiAlertCircleOutline, mdiMusicNoteOutline } from '@mdi/js'
@@ -36,12 +36,13 @@ import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
 import Attribution from './Attribution.vue'
 import ExcerptViewer from './ExcerptViewer.vue'
+import ScanFrame from './ScanFrame.vue'
 import { focusAfterUpdate } from '../focus.ts'
 import { formatDate, formatDateTime, formatSize } from '../format.ts'
-import { askToPersist, checkWithServer, forgetPiece, keepPiece, offlineSupported, readCatalog, removeEverything, setUpWorker, storageInfo } from '../offline/device.ts'
+import { askToPersist, checkWithServer, forgetPieces, keepPieces, offlineSupported, readCatalog, removeEverything, setUpWorker, storageInfo } from '../offline/device.ts'
 import { MAX_DAYS_UNCHECKED, usable } from '../offline/rules.ts'
 import { forgetPractising } from '../score/practiceSettings.ts'
-import { authorizeMemberPracticeAudio, fetchMemberLinks, fetchMemberScore, memberScanUrl } from './api.ts'
+import { authorizeMemberPracticeAudio, fetchMemberLinks, fetchMemberScore } from './api.ts'
 import { scopeText } from './linkScope.ts'
 
 /**
@@ -100,6 +101,17 @@ const confirmingDelete = ref(false)
 const deviceStatus = ref('')
 const withoutNetwork = computed(() => offlineOn && !reachable.value)
 const keptCount = computed(() => Object.keys(catalog.value?.pieces ?? {}).length)
+/** Links that may be kept and are not yet */
+const notKept = computed(() => links.filter((link) => link.offline && !isKept(link)))
+
+/**
+ * What the server says about keeping a link.
+ *
+ * @param link - member link
+ */
+function forDevice(link: MemberLink): PieceForDevice {
+	return { key: link.token, title: link.title, composer: link.composer, expires: link.expires, offline: link.offline, scan: link.scan }
+}
 
 /**
  * Whether a link is kept on this device.
@@ -150,11 +162,11 @@ async function checkDevice(): Promise<void> {
 	if (!offlineOn) {
 		return
 	}
-	catalog.value = await readCatalog()
+	catalog.value = await readCatalog('member')
 	try {
 		const fresh = await fetchMemberLinks()
 		reachable.value = true
-		catalog.value = await checkWithServer(fresh)
+		catalog.value = await checkWithServer('member', fresh.map(forDevice))
 	} catch (error) {
 		// an answer of the server (e.g. not logged in) is no missing network
 		reachable.value = isAxiosError(error) && error.response !== undefined
@@ -174,11 +186,11 @@ async function setKept(link: MemberLink, keep: boolean, withScan: boolean): Prom
 	keepError.value = ''
 	try {
 		if (keep) {
-			catalog.value = await keepPiece(link, withScan, offlineConfig.version)
+			catalog.value = await keepPieces('member', [forDevice(link)], withScan, offlineConfig.version)
 			await askToPersist()
 			deviceStatus.value = t('notenarchiv', '"{title}" is kept on this device.', { title: link.title })
 		} else {
-			catalog.value = await forgetPiece(link.token)
+			catalog.value = await forgetPieces('member', [link.token])
 			deviceStatus.value = t('notenarchiv', '"{title}" is removed from this device.', { title: link.title })
 		}
 	} catch (error) {
@@ -186,7 +198,27 @@ async function setKept(link: MemberLink, keep: boolean, withScan: boolean): Prom
 			title: link.title,
 			reason: error instanceof Error && error.message !== '' ? error.message : t('notenarchiv', 'Please check the network and the space on the device.'),
 		})
-		catalog.value = await readCatalog()
+		catalog.value = await readCatalog('member')
+	} finally {
+		keeping.value = null
+		await refreshStorage()
+	}
+}
+
+/** Keep every piece on this device that may be kept, without the scans. */
+async function keepAll(): Promise<void> {
+	const pieces = notKept.value
+	keeping.value = 'all'
+	keepError.value = ''
+	try {
+		catalog.value = await keepPieces('member', pieces.map(forDevice), false, offlineConfig.version)
+		await askToPersist()
+		deviceStatus.value = n('notenarchiv', '%n piece is kept on this device.', '%n pieces are kept on this device.', pieces.length)
+	} catch (error) {
+		keepError.value = t('notenarchiv', 'Not every piece could be kept on this device: {reason}', {
+			reason: error instanceof Error && error.message !== '' ? error.message : t('notenarchiv', 'Please check the network and the space on the device.'),
+		})
+		catalog.value = await readCatalog('member')
 	} finally {
 		keeping.value = null
 		await refreshStorage()
@@ -195,7 +227,7 @@ async function setKept(link: MemberLink, keep: boolean, withScan: boolean): Prom
 
 /** Delete the kept pieces and everything remembered for practising, on this device only. */
 async function deleteDevice(): Promise<void> {
-	await removeEverything()
+	await removeEverything(null)
 	forgetPractising()
 	catalog.value = null
 	confirmingDelete.value = false
@@ -304,7 +336,7 @@ function exportAudio(input: MemberPracticeAudioInput): Promise<void> {
 onMounted(async () => {
 	if (offlineSupported()) {
 		// registers the worker, or removes it and what it kept when the module is off
-		await setUpWorker(offlineConfig.enabled)
+		await setUpWorker('member', offlineConfig.enabled)
 		await checkDevice()
 		window.addEventListener('online', onOnline)
 	}
@@ -359,6 +391,14 @@ onBeforeUnmount(() => window.removeEventListener('online', onOnline))
 							<h3 :id="listHeadingId" class="member-app__list-title">
 								{{ n('notenarchiv', '%n shared link', '%n shared links', links.length) }}
 							</h3>
+							<div v-if="offlineOn && !withoutNetwork && notKept.length > 1" class="member-app__keep-all">
+								<NcButton variant="secondary" :disabled="keeping !== null" @click="keepAll">
+									{{ n('notenarchiv', 'Keep %n piece on this device', 'Keep all %n pieces on this device', notKept.length) }}
+								</NcButton>
+								<p v-if="keeping === 'all'" class="member-app__muted">
+									{{ t('notenarchiv', 'Keeping on this device …') }}
+								</p>
+							</div>
 							<ul class="member-app__items">
 								<li v-for="link in links"
 									:key="link.token"
@@ -440,13 +480,11 @@ onBeforeUnmount(() => window.removeEventListener('online', onOnline))
 							<p v-if="selected.scan && withoutNetwork && !scanKept(selected)" class="member-app__muted">
 								{{ t('notenarchiv', 'The scan is not kept on this device.') }}
 							</p>
-							<p v-else-if="selected.scan">
-								<!-- The browser's own PDF viewer, in a tab of its own -->
-								<a :href="memberScanUrl(selected.token)"
-									class="member-app__scan"
-									target="_blank"
-									rel="noopener noreferrer">{{ t('notenarchiv', 'Open the scan (PDF)') }}<span class="hidden-visually"> {{ t('notenarchiv', '(opens in a new tab)') }}</span></a>
-							</p>
+							<ScanFrame v-else-if="selected.scan"
+								:key="selected.token"
+								collection="member"
+								:piece-key="selected.token"
+								:title="selected.title" />
 
 							<NcEmptyContent v-if="scoreStatus === 'loading'" :name="t('notenarchiv', 'Loading the score …')">
 								<template #icon>
@@ -645,21 +683,19 @@ onBeforeUnmount(() => window.removeEventListener('online', onOnline))
 	overflow-wrap: anywhere;
 }
 
-.member-app__scan {
-	display: inline-block;
-	min-height: var(--default-clickable-area);
-	line-height: var(--default-clickable-area);
-	color: var(--color-main-text);
-	text-decoration: underline;
-}
-
-.member-app__scan:focus-visible,
 .member-app__open:focus-visible {
 	outline: 2px solid var(--color-main-text);
 	outline-offset: 2px;
 }
 
 .member-app__device {
+	margin-top: var(--default-grid-baseline);
+}
+
+.member-app__keep-all {
+	display: flex;
+	flex-direction: column;
+	gap: var(--default-grid-baseline);
 	margin-top: var(--default-grid-baseline);
 }
 

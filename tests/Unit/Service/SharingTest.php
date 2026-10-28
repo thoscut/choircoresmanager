@@ -563,8 +563,9 @@ final class SharingTest extends TestCase {
 	public function testAPublicLinkShowsOnlyTheExcerptAndNothingInternal(): void {
 		$excerpt = $this->shared([$this->link('public')])->publicExcerpt(self::TOKEN);
 		self::assertNotNull($excerpt);
-		self::assertSame(['title', 'composer', 'measureFrom', 'measureTo', 'voice', 'verse', 'tempo', 'canPlay', 'scan', 'practiceKey', 'xml', 'credits', 'notices'],
-			array_keys($excerpt), 'no note, no shelf mark, no account');
+		self::assertSame(['title', 'composer', 'measureFrom', 'measureTo', 'voice', 'verse', 'tempo', 'canPlay', 'scan', 'practiceKey', 'expires', 'offline',
+			'served', 'xml', 'credits', 'notices'], array_keys($excerpt), 'no note, no shelf mark, no account');
+		self::assertMatchesRegularExpression('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/', $excerpt['served'], 'when the page was made, for the check on the device');
 		self::assertSame(['By kind permission of Carus'], $excerpt['notices']);
 		self::assertSame(['role', 'name'], array_keys($excerpt['credits'][0]), 'no life dates');
 		self::assertStringNotContainsString('<measure number="1"', $excerpt['xml']);

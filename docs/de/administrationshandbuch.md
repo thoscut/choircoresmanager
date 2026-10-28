@@ -827,6 +827,7 @@ können (siehe Abschnitt 16).
 | Import von Aufführungslisten | Konzerte und Notenlisten | ein | Kein Import, keine Liste unklarer Programmpunkte. |
 | Repertoirezahlen | Konzerte und Notenlisten | ein | Das Werkverzeichnis zeigt die Repertoirewerte des importierten Werkverzeichnisses; keine Grenzen in den Einstellungen. |
 | Konzerte im Kalender | Konzerte und Notenlisten | ein | Keine Kalenderdateien und -einträge. Einträge in Kalendern bleiben dort. |
+| Konzertmappe | Konzerte und Notenlisten, Notenansicht | aus (in keiner Voreinstellung) | Keine Seite „Konzertmappe“ und kein Eintrag in der Navigation; ihre Routen antworten mit 404. Was die Chorleitung auf ihren Geräten gespeichert hat, wird beim nächsten Besuch mit Netz entfernt. |
 | Neuzugänge und Etiketten | – | ein | Kein Assistent für Neuzugänge und keine Etiketten. Der Import legt weiterhin Exemplare an. |
 | Werke zusammenführen | – | ein | Keine Vorschläge zum Zusammenführen, kein Zusammenführen und kein Rückgängigmachen. Erfolgte Zusammenführungen bleiben. |
 | Inventur | – | ein | Keine Inventurlisten und keine Liste der Signaturlücken. Erfasste Zählungen bleiben im Werkverzeichnis. |
@@ -842,6 +843,7 @@ können (siehe Abschnitt 16).
 | Übe-Audio für Chormitglieder | Links für Chormitglieder, Übe-Audio-Dateien | aus (in keiner Voreinstellung) | Chormitglieder erstellen keine Übe-Dateien; der Server lehnt jede Anfrage ab. |
 | Öffentliche Links | Ausschnitt-Links, Wiedergabe, Veröffentlichung | aus (in keiner Voreinstellung) | Jeder öffentliche Link antwortet mit derselben 404-Seite; keine neuen öffentlichen Links. Vorhandene Links bleiben erhalten und laufen ab wie bisher. |
 | Öffentliche Repertoireseite | Rechtebestätigung und Lizenzen | aus (in keiner Voreinstellung) | `/apps/notenarchiv/repertoire` antwortet mit 404; die Werkfelder für die Seite sind ausgeblendet. |
+| Üben ohne Netz | – | aus (in keiner Voreinstellung) | Aus „Mit mir geteilt“ und von öffentlichen Links lässt sich nichts auf einem Gerät speichern; der nächste Besuch mit Netz entfernt, was dort gespeichert war. |
 | Schnittstelle für Agenten | – | aus (in keiner Voreinstellung) | Die API für Agenten (`/ocs/v2.php/apps/notenarchiv/api/v1/…`) antwortet mit 404; der MCP-Server meldet die Schnittstelle als abgeschaltet. Sonst ändert sich nichts. |
 
 ### Kommandozeile
@@ -949,7 +951,7 @@ zu „Vollständig“: Schalte sie einzeln ein, nachdem der Chor entschieden hat
 | **Übe-Audio für Chormitglieder** | Chormitglieder erstellen eine WAV- oder MIDI-Datei einer Stimme eines solchen Stücks oder Ausschnitts, wo die Rechte Übe-Audio-Dateien erlauben. Jede Datei steht im Protokoll. |
 | **Öffentliche Links** | Ein Link, der ein ganzes Stück oder einen Ausschnitt ohne Anmeldung zeigt und abspielt (`/apps/notenarchiv/p/<token>`), auf Wunsch mit dem Scan (PDF). Nur für Fassungen, die zur Veröffentlichung freigegeben sind und bestätigt gemeinfrei sind oder eine Lizenz zur Online-Veröffentlichung haben. |
 | **Öffentliche Repertoireseite** | `/apps/notenarchiv/repertoire`: die Werke, die die Archivverwaltung unter denen mit einer bestätigt gemeinfreien Fassung auswählt, mit Lebensdaten, Besetzung und Links zu CPDL und IMSLP. |
-| **Üben ohne Netz** | Chormitglieder speichern Stücke aus „Mit mir geteilt“ auf ihrem Gerät und können sie dort ohne Netz ansehen, abspielen und üben: im Browser, ohne App zum Installieren. Nur für Links, deren Fassung Chormitglieder speichern und drucken dürfen. Braucht **Links für Chormitglieder**. |
+| **Üben ohne Netz** | Chormitglieder speichern Stücke aus „Mit mir geteilt“ auf ihrem Gerät und können sie dort ohne Netz ansehen, abspielen und üben: im Browser, ohne App zum Installieren. Nur für Links, deren Fassung Chormitglieder speichern und drucken dürfen. Mit **Öffentliche Links** können Besucher einen öffentlichen Link ebenso speichern, nur wo die Gemeinfreiheit der Fassung bestätigt ist. |
 
 Was die Schalter auch sagen: Chormitglieder und die Öffentlichkeit bekommen
 immer nur den Inhalt für die Ansicht (das ganze Stück oder die Takte eines
@@ -1026,9 +1028,29 @@ offline`):
   geteilten Gerät löschen Chormitglieder alles mit **Alles auf diesem Gerät
   löschen**; das Abmelden bei Nextcloud löscht es nicht. Öffnet ein anderes
   Konto die Seite im selben Browser, werden die Stücke des vorigen entfernt.
+- **Öffentliche Links.** Wo die Gemeinfreiheit der Fassung bestätigt ist,
+  bietet auch die Seite eines öffentlichen Links **Auf diesem Gerät
+  speichern**. Besucher haben kein Konto, deshalb wird je Browser
+  gespeichert; jeder Besuch mit Netz ist der Abgleich, und ein widerrufener
+  oder abgelaufener Link wird beim nächsten vom Gerät entfernt. Eine Lizenz
+  reicht hier nie: Sie deckt das öffentliche Zeigen, keine Kopie auf dem
+  Gerät jedes Besuchers.
 - **Ausschalten.** Der nächste Besuch mit Netz entfernt den Service Worker
   und alles, was er gespeichert hat. Nach einem Update der App erneuert
   sich der Worker und verwirft die alten Skripte.
+
+**Konzertmappe** (Modul `concert_folder`, `occ notenarchiv:modules enable
+concert_folder`, Gruppe **Konzerte und Repertoire**, in keiner
+Voreinstellung): Die Rollen „Chorleitung“ und „Bestand“ bekommen eine eigene Seite,
+`/apps/notenarchiv/concert-folder` (auch in der Navigation), mit den
+Programmen, die noch zu singen sind, und Noten und Scan jedes Stücks; ein
+ganzes Programm lässt sich für Probe und Konzert ohne Netz auf dem Gerät
+speichern. Es gelten die Rechte der Notenansicht; eine interne
+Erhaltungskopie wird nie auf einem Gerät gespeichert. Sie nutzt denselben
+Service Worker mit einem eigenen Speicher, denselben Abgleich bei jedem
+Start mit Netz und dieselbe Sperre nach 30 Tagen. Die Mappe liest nur. Ein
+anderes Konto im selben Browser oder ein Besuch ohne die Rolle entfernt,
+was gespeichert war. Sie braucht das Modul **Üben ohne Netz** nicht.
 
 **Häufige Probleme:**
 

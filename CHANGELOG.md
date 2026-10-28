@@ -22,7 +22,24 @@ All notable changes to this app are documented in this file. The format follows
   network checks the kept pieces, removes expired and revoked links and
   locks them after 30 days without a check. **On this device** shows the
   space used and deletes everything kept, passages and settings included.
-  New routes `GET /api/member/links` and `GET /offline-worker`.
+  New routes `GET /api/member/links` and `GET /offline-worker` (public, as
+  public links register the worker, too).
+- **Concert folder** (milestone 0.15, module "Concert folder", off and part
+  of no preset): the conductor and the catalog librarian open the programmes
+  still to be sung on a page of their own, view, play and practise each
+  piece with its scan, turn to the next piece, and keep a whole programme on
+  the device for the rehearsal and the concert without a network. Rights as
+  in the score view; internal preservation copies are never kept. New
+  routes `GET /concert-folder`, `GET /api/concert-folder` and
+  `GET /api/concert-folder/items/{id}/score` and `…/scan`.
+- **Public links without a network** (milestone 0.15): a public link to a
+  piece whose public domain is confirmed can be kept in the browser, too;
+  each visit with a network checks it.
+- **The scan inside the page** (milestone 0.15): on "Shared with me", the
+  concert folder and public links, **Show the scan (PDF)** shows the scan in
+  the page, also without a network where it was kept; on an iPhone or iPad a
+  new tab would fail without a network.
+- **Keep all pieces on this device** on "Shared with me" (milestone 0.15).
 - **Practice settings remembered per piece** (milestone 0.15): tempo,
   pitch, metronome and mixer of a shared piece stay in the browser, also
   for a new link to the same version. Passages of shared pieces move from
@@ -62,6 +79,9 @@ All notable changes to this app are documented in this file. The format follows
 
 ### Changed
 
+- **The module "Practising without a network" no longer needs "Links for
+  choir members"**: it also acts for public links. The service worker moved
+  to a route of its own that is always on and needs no login.
 - **Backups outside the archive folder.** The weekly and manual backups
   (CSV, ODS with the audit log, complete JSON backup) and the annual
   snapshots are written into a backup folder "Music archive backups"

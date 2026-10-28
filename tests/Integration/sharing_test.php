@@ -152,7 +152,8 @@ $measures = function (string $xml): array {
 $isNotFoundPage = fn (Response $response): bool => $response instanceof NotFoundResponse && $response->getStatus() === Http::STATUS_NOT_FOUND
 	&& $response->isThrottled() && $response->getParams() === [];
 
-$publicController = new PublicLinkController(Server::get(IRequest::class), $shared, $initialState, $l, Server::get(LoggerInterface::class));
+$publicController = new PublicLinkController(Server::get(IRequest::class), $shared, $initialState, $l, Server::get(LoggerInterface::class),
+	Server::get(IAppManager::class));
 $middleware = new ModuleMiddleware($modules, $l);
 /** The answer of the public route: the middleware first, then the method. */
 $publicPage = function (string $token) use ($middleware, $publicController): Response {
@@ -243,7 +244,7 @@ try {
 	$check('listed as the whole piece with the scan', array_key_exists('measure_from', $wholeEntry) && $wholeEntry['measure_from'] === null
 		&& ($wholeEntry['scan'] ?? false) === true, json_encode($wholeEntry) ?: '');
 	$memberController = fn (string $account): MemberController => new MemberController(Server::get(IRequest::class), $account, $shared,
-		Server::get(PracticeAudioService::class), $l, Server::get(LoggerInterface::class), $modules, Server::get(IAppManager::class));
+		Server::get(PracticeAudioService::class), $l, Server::get(LoggerInterface::class));
 	$check('the choir member gets the scan inline for the PDF viewer', $isInlinePdf($memberController($memberUid)->scan($wholeLink->issuedToken())));
 	$check('a link without a scan offers none', $throws(fn () => $shared->memberScan($link->issuedToken(), $memberUid))
 		=== 'The scan of this link is not available at the moment.');
@@ -313,7 +314,8 @@ try {
 	$excerpt = $shared->publicExcerpt($link->issuedToken());
 	$check('the public excerpt has only the measures', $excerpt !== null && $measures($excerpt['xml']) === ['9', '10', '11', '12']);
 	$check('and nothing internal', $excerpt !== null && array_keys($excerpt) === ['title', 'composer', 'measureFrom', 'measureTo', 'voice', 'verse',
-		'tempo', 'canPlay', 'scan', 'practiceKey', 'xml', 'credits', 'notices']);
+		'tempo', 'canPlay', 'scan', 'practiceKey', 'expires',
+		'offline', 'served', 'xml', 'credits', 'notices']);
 
 	$publicWhole = $links->create($public->getId(), ['circle' => 'public', 'voice' => 'Alto', 'scan_file_id' => $scanId], $uid);
 	$wholeExcerpt = $shared->publicExcerpt($publicWhole->issuedToken());

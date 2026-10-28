@@ -58,7 +58,8 @@ use OCP\Files\File;
  *     voice: ?string, verse: ?int, tempo: ?int, note: ?string, expires: ?string, canPlay: bool, canExportAudio: bool, reason: ?string,
  *     scan: bool, offline: bool, practiceKey: string, credits: list<Credit>, notices: list<string>}
  * @psalm-type PublicExcerpt = array{title: string, composer: string, measureFrom: ?string, measureTo: ?string, voice: ?string,
- *     verse: ?int, tempo: ?int, canPlay: bool, scan: bool, practiceKey: string, xml: string, credits: list<Credit>, notices: list<string>}
+ *     verse: ?int, tempo: ?int, canPlay: bool, scan: bool, practiceKey: string, expires: ?string, offline: bool, served: string, xml: string,
+ *     credits: list<Credit>, notices: list<string>}
  */
 class SharedLinkService {
 	/** Roles of the person register named on the shared pages besides the composer */
@@ -234,6 +235,10 @@ class SharedLinkService {
 			'canPlay' => $this->policy->publicPlayDenial($version, $today, $copy) === null,
 			'scan' => $link->getScanFileId() !== null,
 			'practiceKey' => self::practiceKey($version),
+			// Kept on a device (milestone 0.15): only confirmed public domain, as visitors have no license
+			'expires' => $link->getExpires(),
+			'offline' => $this->modules->isEnabled(Modules::OFFLINE) && $version->getRightsStatus() === 'public_domain' && $version->isConfirmed(),
+			'served' => gmdate('Y-m-d\TH:i:s\Z'),
 			'xml' => $xml,
 		] + $this->attribution($version, $today);
 	}
