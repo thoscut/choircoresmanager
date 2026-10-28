@@ -67,6 +67,7 @@ import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import GuideLink from './GuideLink.vue'
 import PracticeMarks from './PracticeMarks.vue'
+import PracticeRecorder from './PracticeRecorder.vue'
 import PracticeTools from './PracticeTools.vue'
 import LinkDialog from './LinkDialog.vue'
 import ReviewPanel from './ReviewPanel.vue'
@@ -839,6 +840,19 @@ function beats(): Click[] {
 	return metronome.value && model.value ? metronomeClicks(model.value, timeline.value) : []
 }
 
+/** Current place of the playback, for a recording */
+function playbackPosition(): number {
+	return player?.currentTime() ?? 0
+}
+
+/** Pause without a message, at the end of a recording */
+function pausePlayback(): void {
+	if (player?.isPlaying) {
+		player.pause()
+		playing.value = false
+	}
+}
+
 /** Printed numbers of the shown measures, for a passage to remember */
 const shownRange = computed(() => rangeNumbers.value ?? { from: numberSpan.value.first, to: numberSpan.value.last })
 
@@ -1519,6 +1533,12 @@ onBeforeUnmount(() => {
 								:from="shownRange.from"
 								:to="shownRange.to"
 								@apply="applyMark"
+								@announce="announce" />
+							<PracticeRecorder :title="title"
+								:playing="playing"
+								:position="playbackPosition"
+								:start-playback="playFrom"
+								:pause-playback="pausePlayback"
 								@announce="announce" />
 						</div>
 						<p v-if="!canExportAudio && exportReason" class="score-viewer__hint score-viewer__line">

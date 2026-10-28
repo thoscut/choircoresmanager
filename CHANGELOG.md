@@ -24,6 +24,10 @@ All notable changes to this app are documented in this file. The format follows
     practice file of a shared piece sounds like it.
   - **Passages**: remember the shown measures with a name, per piece in
     this browser; a click shows the passage and plays it in a loop.
+  - **Record myself**: sing along with the playback, listen to the
+    recording alone or with the accompaniment, save or delete it. The pages
+    allow the microphone for themselves and media from the browser's memory;
+    the recording never leaves the browser.
   Everything happens in the browser; nothing about practising is stored.
 
 ### Changed

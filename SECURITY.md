@@ -473,7 +473,13 @@ account can do; it offers a stable, documented and limited contract.
 - The app page, the page "Shared with me" and the page of a public link
   allow WebAssembly compilation (`'wasm-unsafe-eval'`) for the bundled
   notation engine and nothing else beyond Nextcloud's default policy: no
-  JavaScript `eval`, no external sources.
+  JavaScript `eval`, no external sources. For recording oneself while
+  practising (milestone 0.13) they allow the microphone for the page itself
+  (`microphone 'self'`) and media from the browser's memory (`media-src
+  blob:`). The microphone is asked for only after a click on "Record
+  myself"; the recording never leaves the browser unless the person saves it
+  as a file. Camera, location and payment stay off. Tested in
+  `ControllerSecurityTest`.
 - No external requests: notation, fonts and sounds are bundled.
 - The audit log is append-only; there is no API to change or delete entries.
   The only change is the removal of personal data of the folder book after

@@ -45,6 +45,7 @@ import NcRadioGroupButton from '@nextcloud/vue/components/NcRadioGroupButton'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import PracticeMarks from '../components/PracticeMarks.vue'
+import PracticeRecorder from '../components/PracticeRecorder.vue'
 import PracticeTools from '../components/PracticeTools.vue'
 import { startingTonesText, transposeText } from '../practiceLabels.ts'
 import { countInFor, metronomeClicks, slotAt, storeCountIn, storedCountIn } from '../score/countIn.ts'
@@ -357,6 +358,34 @@ function gains(): (voice: string) => number {
 /** Clicks of the metronome, none while it is off. */
 function beats(): Click[] {
 	return metronome.value && model.value ? metronomeClicks(model.value, timeline.value) : []
+}
+
+/** Current place of the playback, for a recording */
+function playbackPosition(): number {
+	return player?.currentTime() ?? 0
+}
+
+/**
+ * Play from a place, with the count-in (a recording starts so).
+ *
+ * @param time - position in seconds of the timeline
+ */
+async function playFrom(time: number): Promise<void> {
+	const current = ensurePlayer()
+	if (current.isPlaying) {
+		moveTo(time)
+		return
+	}
+	current.seek(time)
+	await startPlaying(current)
+}
+
+/** Pause without a message, at the end of a recording */
+function pausePlayback(): void {
+	if (player?.isPlaying) {
+		player.pause()
+		playing.value = false
+	}
 }
 
 /**
@@ -1080,6 +1109,12 @@ onBeforeUnmount(() => {
 						:from="shownNumbers.first"
 						:to="shownNumbers.last"
 						@apply="applyMark"
+						@announce="announce" />
+					<PracticeRecorder :title="title"
+						:playing="playing"
+						:position="playbackPosition"
+						:start-playback="playFrom"
+						:pause-playback="pausePlayback"
 						@announce="announce" />
 				</section>
 

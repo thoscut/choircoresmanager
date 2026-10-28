@@ -21,6 +21,7 @@ use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
+use OCP\AppFramework\Http\FeaturePolicy;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IL10N;
@@ -102,14 +103,29 @@ class PageController extends Controller {
 	 * stays forbidden and no other source is allowed. The archive also shows
 	 * the scan beside the score: a PDF from the app's own route, shown by the
 	 * browser's PDF viewer in a frame. Nothing from other origins.
+	 * Recording oneself while practising (milestone 0.13) needs the
+	 * microphone of this page and plays the recording from the browser's
+	 * memory (blob:); it never leaves the browser.
 	 */
 	private static function withScorePolicy(TemplateResponse $response, bool $scanFrames): TemplateResponse {
 		$policy = new ContentSecurityPolicy();
 		$policy->allowEvalWasm(true);
+		$policy->addAllowedMediaDomain('blob:');
 		if ($scanFrames) {
 			$policy->addAllowedFrameDomain('\'self\'');
 		}
 		$response->setContentSecurityPolicy($policy);
+		$response->setFeaturePolicy(self::recordingPolicy());
 		return $response;
+	}
+
+	/**
+	 * The microphone for this page only, for recording oneself while
+	 * practising; the browser still asks the person first.
+	 */
+	public static function recordingPolicy(): FeaturePolicy {
+		$policy = new FeaturePolicy();
+		$policy->addAllowedMicrophoneDomain('\'self\'');
+		return $policy;
 	}
 }

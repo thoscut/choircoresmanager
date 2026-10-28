@@ -87,6 +87,7 @@ class PublicLinkController extends Controller {
 			? $this->l->t('Whole piece')
 			: $this->l->t('Measures %1$s to %2$s', [$excerpt['measureFrom'], $excerpt['measureTo']]));
 		$response->setContentSecurityPolicy(self::policy());
+		$response->setFeaturePolicy(PageController::recordingPolicy());
 		// A link that expires: not for search engines.
 		$response->addHeader('X-Robots-Tag', 'noindex, nofollow');
 		$response->cacheFor(0, false, false);
@@ -130,6 +131,8 @@ class PublicLinkController extends Controller {
 	public static function policy(): ContentSecurityPolicy {
 		$policy = new ContentSecurityPolicy();
 		$policy->allowEvalWasm(true);
+		// a recording made while practising is played from the browser's memory
+		$policy->addAllowedMediaDomain('blob:');
 		return $policy;
 	}
 }

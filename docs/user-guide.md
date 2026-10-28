@@ -446,7 +446,7 @@ tempo of the place where the playback starts, the first beat of each bar
 higher. A pickup comes in on the last beats of the count-in. The choice is
 remembered in your browser, also for shared excerpts.
 
-#### How to practise with starting tones, metronome, pitch, mixer and passages
+#### How to practise with starting tones, metronome, pitch, mixer, passages and recordings
 
 These tools are under **Tempo, volume and practising**, in the score view and
 for shared pieces and excerpts. They work only in your browser: nothing
@@ -470,6 +470,13 @@ about your practising is stored on the server.
   like ("Fugue", "Tenor entry"). A click on a remembered passage shows it
   and plays it in a loop; the cross removes it. The passages are kept per
   piece in this browser only.
+- **Record myself** asks for the microphone and starts the playback (with
+  the count-in) from the current place; sing along. **Stop recording** or
+  **Stop** ends it. Then listen to the recording, choose **Listen with the
+  accompaniment** to hear it together with the playback, **Save recording**
+  to keep it as a file, or **Delete recording**. The recording stays in your
+  browser and is gone when you leave the page. Use headphones, otherwise the
+  accompaniment is recorded, too. Recording needs https.
 
 #### How to start at a particular note
 
@@ -1643,8 +1650,9 @@ long each is valid, whether it can be played (**Playback: yes** or
 3. To practise a passage, enter **From measure** and **To measure** and
    choose **Show**; **Loop** plays the shown measures again and again.
    **All measures** shows everything again. **Starting tones**,
-   **Metronome**, **Pitch**, **Mixer** and remembered passages work as in the score view (see
-   [How to practise with starting tones, metronome, pitch, mixer and passages](#how-to-practise-with-starting-tones-metronome-pitch-mixer-and-passages)).
+   **Metronome**, **Pitch**, **Mixer**, remembered passages and **Record
+   myself** work as in the score view (see
+   [How to practise with starting tones, metronome, pitch, mixer, passages and recordings](#how-to-practise-with-starting-tones-metronome-pitch-mixer-passages-and-recordings)).
 4. **Open the scan (PDF)** (where included) opens the scan in the PDF viewer
    of your browser, in a new tab.
 5. **Text reference** and **Description of the piece** (or **of the

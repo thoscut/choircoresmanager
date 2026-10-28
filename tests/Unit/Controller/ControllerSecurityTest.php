@@ -523,6 +523,9 @@ final class ControllerSecurityTest extends TestCase {
 		self::assertStringContainsString("'wasm-unsafe-eval'", $policy);
 		self::assertStringNotContainsString("'unsafe-eval'", $policy);
 		self::assertStringNotContainsString('frame-src', $policy, 'no scan beside the score for choir members');
+		self::assertStringContainsString("media-src 'self' blob:", $policy, 'a recording plays from the browser');
+		self::assertStringContainsString("microphone 'self'", $response->getFeaturePolicy()->buildPolicy(), 'recording oneself');
+		self::assertStringContainsString("camera 'none'", $response->getFeaturePolicy()->buildPolicy(), 'nothing else is opened');
 
 		$off = $this->pageController(false, true, false)->index();
 		self::assertSame(Http::STATUS_FORBIDDEN, $off->getStatus(), 'module switched off: no page');
@@ -555,6 +558,9 @@ final class ControllerSecurityTest extends TestCase {
 		self::assertStringNotContainsString("'unsafe-eval'", $policy);
 		self::assertStringNotContainsString('http', $policy, 'no external sources');
 		self::assertStringNotContainsString('frame-src', $policy);
+		self::assertStringContainsString("media-src 'self' blob:", $policy);
+		self::assertStringContainsString("microphone 'self';", PageController::recordingPolicy()->buildPolicy());
+		self::assertStringContainsString("geolocation 'none';", PageController::recordingPolicy()->buildPolicy());
 
 		$scan = $this->createStub(File::class);
 		$failures = [

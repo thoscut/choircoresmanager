@@ -480,7 +480,7 @@ Tempo der Stelle, an der die Wiedergabe beginnt, die erste Zählzeit jedes
 Takts höher. Ein Auftakt setzt auf den letzten Zählzeiten des Einzählers ein.
 Die Wahl merkt sich dein Browser, auch für geteilte Ausschnitte.
 
-#### So übst du mit Anfangstönen, Metronom, Tonhöhe, Mischpult und Stellen
+#### So übst du mit Anfangstönen, Metronom, Tonhöhe, Mischpult, Stellen und Aufnahmen
 
 Diese Werkzeuge stehen unter **Tempo, Lautstärke und Üben**, in der
 Notenansicht und bei geteilten Stücken und Ausschnitten. Sie arbeiten nur in
@@ -504,6 +504,14 @@ deinem Browser: Über dein Üben wird nichts auf dem Server gespeichert.
   Namen („Fuge“, „Einsatz Tenor“). Ein Klick auf eine gemerkte Stelle zeigt
   sie und spielt sie in Schleife; das Kreuz entfernt sie. Die Stellen bleiben
   je Stück nur in diesem Browser.
+- **Selbst aufnehmen** fragt nach dem Mikrofon und startet die Wiedergabe
+  (mit Einzähler) ab der aktuellen Stelle; sing mit. **Aufnahme beenden**
+  oder **Stopp** beendet sie. Danach hörst du die Aufnahme an, wählst **Mit
+  Begleitung anhören**, um sie zusammen mit der Wiedergabe zu hören,
+  **Aufnahme speichern**, um sie als Datei zu behalten, oder **Aufnahme
+  löschen**. Die Aufnahme bleibt in deinem Browser und ist weg, wenn du die
+  Seite verlässt. Nimm Kopfhörer, sonst wird die Begleitung mit aufgenommen.
+  Aufnehmen geht nur über https.
 
 #### So startest du an einer bestimmten Note
 
@@ -1758,8 +1766,9 @@ Stimme, der Notiz und wie lange jedes gilt, ob es sich abspielen lässt
 3. Um eine Stelle zu üben, gib **Von Takt** und **Bis Takt** an und wähle
    **Anzeigen**; **Schleife** spielt die gezeigten Takte immer wieder.
    **Alle Takte** zeigt wieder alles. **Anfangstöne**, **Metronom**,
-   **Tonhöhe**, **Mischpult** und gemerkte Stellen arbeiten wie in der Notenansicht (siehe
-   [So übst du mit Anfangstönen, Metronom, Tonhöhe, Mischpult und Stellen](#so-übst-du-mit-anfangstönen-metronom-tonhöhe-mischpult-und-stellen)).
+   **Tonhöhe**, **Mischpult**, gemerkte Stellen und **Selbst aufnehmen**
+   arbeiten wie in der Notenansicht (siehe
+   [So übst du mit Anfangstönen, Metronom, Tonhöhe, Mischpult, Stellen und Aufnahmen](#so-übst-du-mit-anfangstönen-metronom-tonhöhe-mischpult-stellen-und-aufnahmen)).
 4. **Scan (PDF) öffnen** (wo mitgegeben) öffnet den Scan im PDF-Betrachter
    deines Browsers, in einem neuen Tab.
 5. **Textverweis** und **Beschreibung des Stücks** (oder **des

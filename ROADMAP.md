@@ -471,7 +471,9 @@ Punkte:
   Browser gemerkt, mit einem Klick als Schleife. – *umgesetzt.*
 - **Selbst aufnehmen:** zur Wiedergabe singen, die Aufnahme anhören und
   zusammen mit der Begleitung abspielen; die Aufnahme bleibt im Browser und
-  kann nur heruntergeladen werden.
+  kann nur heruntergeladen werden. – *umgesetzt; die Seiten erlauben dafür
+  das Mikrofon nur für sich selbst (`microphone 'self'`) und Medien aus dem
+  Browser-Speicher (`media-src blob:`).*
 - **Blättern mit Fußpedal:** Bild auf und Bild ab (wie sie Bluetooth-Pedale
   senden) gehen zum vorigen oder nächsten System.
 
