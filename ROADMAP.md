@@ -114,7 +114,33 @@ Meilensteinen.
 Jeder Meilenstein ergibt eine Minor-Version (0.6 → 0.6.0, 0.7 → 0.7.0);
 interne Zwischenstände heißen `0.7.0-dev.1` usw. (siehe `docs/release.md`).
 
+### Stand auf einen Blick
+
+Stand: 28. Oktober 2026. **Fertig** heißt: im Code, getestet und in einer
+Version auf `main`. **Im Review** heißt: fertig im Code und grün in der CI,
+aber noch nicht in `main` zusammengeführt. **Geplant** heißt: noch nicht
+begonnen.
+
+| Meilenstein | Stand | Wo |
+|---|---|---|
+| 0.1 Fundament bis 0.6 Agenten und Prüfung | fertig | Version 0.6.0 |
+| 0.7 Teilen, Mappen und Druckstation | fertig | Version 0.9.0 |
+| 0.8 Archiv und Abspielen | fertig (Übersetzungen außer Deutsch: muttersprachliche Prüfung offen) | Version 0.9.0 |
+| 0.9 Benutzerführung | fertig | Version 0.9.0, 0.9.1 |
+| 0.10 Verlässlich bauen und sichern | im Review | PR #10 |
+| 0.11 Rechte und Datenschutz schärfen | im Review | PR #10 |
+| 0.12 Klar bedienen und an das Chorsystem übergeben | im Review | PR #10 |
+| 0.13 Üben in der Notenansicht | im Review | PR #11 (baut auf PR #10 auf) |
+| 0.14 Text und Tonhöhe beim Mitsingen | im Review | PR #11 |
+| 0.15 Ohne Netz üben und vortragen | geplant | – |
+| 1.0 Stabil | geplant | – |
+
+Die aktuelle Version ist 0.9.1. Mit PR #10 und PR #11 kommen 0.10 bis 0.14
+dazu; danach sind 0.15 und 1.0 offen.
+
 ### 0.1 Fundament
+
+*Fertig, Version 0.6.0.*
 
 - **Datenmodell** in vier Ebenen:
   - Werk
@@ -136,6 +162,8 @@ interne Zwischenstände heißen `0.7.0-dev.1` usw. (siehe `docs/release.md`).
 - **CSV-Export**, rundlauffähig zum Import
 
 ### 0.2 Rechte und Verantwortung
+
+*Fertig, Version 0.6.0.*
 
 - **Rechte bestätigen**, mit Begründung und Beleg als Pflicht
 - **Drei getrennte Freigaben:**
@@ -159,6 +187,8 @@ interne Zwischenstände heißen `0.7.0-dev.1` usw. (siehe `docs/release.md`).
 
 ### 0.3 Aufgaben, Rückfragen und Teilen
 
+*Fertig, Version 0.6.0.*
+
 - **Rückfragen und Prüfaufgaben** mit Stelle: Seite, Takt von–bis, Stimme,
   Strophe. Dazu Adressat-Rolle und Status.
 - **Startseite „fällig“** je Rolle, mit Druckliste
@@ -178,6 +208,8 @@ interne Zwischenstände heißen `0.7.0-dev.1` usw. (siehe `docs/release.md`).
 
 ### 0.4 Programme, Listen und Aufführungen
 
+*Fertig, Version 0.6.0.*
+
 - **Programme und Notenlisten:**
   - Fassung je Programmpunkt
   - Status Entwurf → fest → gesungen
@@ -196,6 +228,8 @@ interne Zwischenstände heißen `0.7.0-dev.1` usw. (siehe `docs/release.md`).
   - wählbare wöchentliche Zusammenfassung statt Einzelmeldungen
 
 ### 0.5 Bestand pflegen
+
+*Fertig, Version 0.6.0.*
 
 - **Neuzugang-Assistent:**
   - schlägt die nächste freie Signatur vor
@@ -421,26 +455,29 @@ und Englisch. Die geführte Einrichtung kam schon mit den Einstellungen.*
 
 ### 0.10 Verlässlich bauen und sichern
 
-*Umgesetzt (Review Oktober 2026):* CI grün, Sicherungen außerhalb des
+*Im Review (PR #10), noch nicht in `main`. Umgesetzt (Review Oktober
+2026):* CI grün, Sicherungen außerhalb des
 Archivordners und ohne Link-Token, Löschfristen, Sicherung als Datenstrom mit
 Meldung bei alter Sicherung, Läufe gegeneinander gesperrt, Grenzen der
 delegierten Einstellungsseite, `SECURITY.md` als Tabelle „Zusage → Test“.
 
 ### 0.11 Rechte und Datenschutz schärfen
 
-*Umgesetzt:* eine Regel für Erhaltungskopien auf allen Wegen, Link-Token
+*Im Review (PR #10), noch nicht in `main`. Umgesetzt:* eine Regel für Erhaltungskopien auf allen Wegen, Link-Token
 gehasht und verschlüsselt, Ausschnitte ohne Kommentare und Zusatzfelder,
 neue Nutzungsarten für Lizenzen, Rechtekonflikte, Datenschutz-Paket,
 rechtlicher Hintergrund DE/EN.
 
 ### 0.12 Klar bedienen und an das Chorsystem übergeben
 
-*Umgesetzt:* Begriffe bereinigt, Fehlermeldungen mit nächstem Schritt, Fokus
+*Im Review (PR #10), noch nicht in `main`. Umgesetzt:* Begriffe bereinigt, Fehlermeldungen mit nächstem Schritt, Fokus
 und Handy-Ansichten, Ausdrucke mit Kopfzeile, Modul `choir_handover`
 (Übergabeordner) und Vergleich mit dem Export des Chorsystems, Leitfaden
 „Notenarchiv neben einem Chorsystem“, Erklärung zur Barrierefreiheit.
 
 ### 0.13 Üben in der Notenansicht
+
+*Im Review (PR #11), noch nicht in `main`. Alle Punkte umgesetzt.*
 
 Aus dem Vergleich mit der Chor-App cori (Oktober 2026): was Sänger beim Üben
 eines geteilten Stücks erwarten und der Notenansicht noch fehlt. Dafür gilt:
@@ -480,6 +517,8 @@ Punkte:
 
 ### 0.14 Text und Tonhöhe beim Mitsingen
 
+*Im Review (PR #11), noch nicht in `main`. Alle Punkte umgesetzt.*
+
 - **Mitlaufender Text:** die Textzeile der gewählten Stimme groß unter den
   Noten, die gesungene Silbe hervorgehoben; Strophe wählbar. – *umgesetzt,
   über den Noten in der Leiste, die oben stehen bleibt, mit der nächsten
@@ -493,7 +532,48 @@ Punkte:
   dazu in Worten (sauber bis 30 Cent, etwas oder zu hoch/tief); Erkennung
   mit YIN im Browser, das Mikrofon nur, solange der Schalter an ist.*
 
+### 0.15 Ohne Netz üben und vortragen
+
+*Geplant, noch nicht begonnen.* Aus der Planung „Offline-Betrieb ohne eigene
+Apps“ (Oktober 2026). Ziel: Stücke, die online bewusst „auf diesem Gerät
+gemerkt“ wurden, lassen sich ohne Netz ansehen, abspielen und üben, mit
+allen Werkzeugen aus 0.13 und 0.14. Keine native App, kein neuer Server: ein
+Service Worker innerhalb der Nextcloud-App.
+
+- **Vorab, nur Doku:** Den Übergabeordner (`choir_handover`, 0.12)
+  schreibgeschützt mit den Chormitgliedern teilen und in der Nextcloud-App
+  „Offline verfügbar“ setzen. Liefert Scans und Dateien, aber keine
+  Übe-Werkzeuge.
+- **Lesen offline** für „Für mich freigegeben“ und öffentliche Links:
+  - Service Worker über einen eigenen Controller (Scope der App, CSP mit
+    `worker-src 'self'`), App-Shell aus dem Build vorab gespeichert
+  - Liste der Freigaben als JSON (`GET /api/member/links`)
+  - je Stück „Auf diesem Gerät merken“: MusicXML, auf Wunsch der Scan
+  - Abgleich bei jedem Start mit Netz; Ablauf und Widerruf werden
+    durchgesetzt, Höchstdauer ohne Abgleich (Vorschlag 30 Tage, nie länger
+    als der Link gilt)
+  - Offline-Anzeige mit Stand, Speicheranzeige und Knopf „Offline-Daten
+    dieses Geräts löschen“; Scan in der Seite statt im neuen Tab
+  - offline nicht verfügbare Funktionen sichtbar abgeschaltet, mit Grund
+    (z. B. „Übe-Datei erstellen“, das eine Freigabe des Servers braucht)
+  - als Modul `offline`, standardmäßig aus; Abnahme auf iPad, Android und
+    Firefox
+- **Übe-Daten offline:** Übe-Einstellungen je Stück dauerhaft und
+  versioniert, mit einem stabilen Schlüssel statt Titel und Komponist.
+  Aufnahmen bleiben wie bisher nur im Speicher.
+
+Dafür gilt: Geschrieben wird offline nur im Browser (Übe-Stellen,
+Einstellungen), nie auf den Server (Leitlinie 3). Gespeichert wird nur auf
+ausdrücklichen Wunsch, getrennt je Konto. Offen ist, ob ein Stück offline
+gemerkt werden darf, wenn die Freigabe nur Ansehen und Abspielen erlaubt,
+oder nur mit „Speichern und Drucken“.
+
+Nach 1.0: die Konzertmappe der Chorleitung (Programm eines Konzerts offline
+in der Archiv-App) und Schreiben ohne Netz.
+
 ### 1.0 Stabil
+
+*Geplant.*
 
 - Abnahme auf der niedrigsten unterstützten Nextcloud-Version
 - Übersetzungen
@@ -506,8 +586,8 @@ Punkte:
   Sänger. Geübt wird nur in der Notenansicht (0.13, 0.14); Lernpfade,
   Punkte, Übe-Serien, Ranglisten und Übe-Statistiken über einzelne Sänger
   gibt es nicht.
-- **Eine eigene App fürs Üben ohne Netz.** Übe-Dateien lassen sich
-  herunterladen; mehr Offline geht in einer Nextcloud-App nicht.
+- **Eine eigene (native) App fürs Üben ohne Netz.** Ohne Netz üben im
+  Browser ist als Meilenstein 0.15 geplant.
 - **Notizen und Zeichnungen im Notenbild.** Hinweise der Chorleitung gibt es
   als Text je Stelle (Übergabe, 0.12).
 - **Ausgabe und Rücknahme am Probenabend** als eigener Ablauf (Anwesenheit,
