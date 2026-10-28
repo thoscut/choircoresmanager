@@ -4,7 +4,7 @@
  */
 
 import { describe, expect, it } from 'vitest'
-import { followDelta } from '../score/follow.ts'
+import { followDelta, systemDelta } from '../score/follow.ts'
 
 describe('followDelta', () => {
 	// a phone: the page scrolls, the bar covers the top 100 pixels of an 800 pixel window
@@ -38,5 +38,23 @@ describe('followDelta', () => {
 		// margin min(80, 400 / 5) = 80
 		expect(followDelta({ top: 290, bottom: 400 }, box)).toBe(0)
 		expect(followDelta({ top: 650, bottom: 750 }, box)).toBe(650 - 200 - 80)
+	})
+})
+
+describe('systemDelta (page-turn pedal)', () => {
+	// systems at these tops on the screen; the view starts at 100 below a bar
+	const tops = [-500, -100, 102, 400, 700]
+
+	it('brings the next system below the top of the view to the top', () => {
+		expect(systemDelta(tops, 100, 1)).toBe(300)
+	})
+
+	it('brings the system above the view back to the top', () => {
+		expect(systemDelta(tops, 100, -1)).toBe(-200)
+	})
+
+	it('does nothing at the end or the start', () => {
+		expect(systemDelta([0, 50], 100, 1)).toBe(0)
+		expect(systemDelta([100, 400], 100, -1)).toBe(0)
 	})
 })

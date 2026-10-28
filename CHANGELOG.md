@@ -28,6 +28,8 @@ All notable changes to this app are documented in this file. The format follows
     recording alone or with the accompaniment, save or delete it. The pages
     allow the microphone for themselves and media from the browser's memory;
     the recording never leaves the browser.
+  - **Page-turn pedals**: Page Down and Page Up turn the score by one
+    system.
   Everything happens in the browser; nothing about practising is stored.
 
 ### Changed

@@ -460,6 +460,8 @@ nur **Abspielen** und **Stopp**; **Takte, Stimme und Größe** zeigt die
 
 Tastatur: Die Leertaste spielt ab und hält an, außer ein Bedienelement hat
 den Fokus. `+` und `-` ändern die Größe, solange die Noten den Fokus haben;
+**Bild ab** und **Bild auf** blättern um ein System weiter oder zurück
+(Blätterpedale senden diese Tasten, auch bei geteilten Stücken);
 Escape schließt die Notenansicht. Beim Abspielen wird Screenreadern der
 aktuelle Takt angesagt, und die Noten haben eine Textbeschreibung (Takte,
 Stimmen, hervorgehobene Stimme, Tonart und Taktart).

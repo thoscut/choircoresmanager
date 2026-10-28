@@ -72,3 +72,44 @@ export function followMeasure(measure: Element, score: Element, bar: Element | n
 		scroller.scrollBy({ top: delta, behavior: reduceMotion ? 'auto' : 'smooth' })
 	}
 }
+
+/**
+ * How far to scroll for a page turn by system: to the first system that
+ * starts below the top of the view (forward), or the last one above it
+ * (back), so that system stands at the top. 0 when there is none.
+ *
+ * @param tops - tops of the systems on the screen, in order
+ * @param viewTop - top of the visible part of the scrolling element
+ * @param direction - 1 forward, -1 back
+ */
+export function systemDelta(tops: number[], viewTop: number, direction: 1 | -1): number {
+	const SLACK = 4
+	const target = direction > 0
+		? tops.find((top) => top > viewTop + SLACK)
+		: [...tops].reverse().find((top) => top < viewTop - SLACK)
+	return target === undefined ? 0 : Math.round(target - viewTop)
+}
+
+/**
+ * Turn the score by one system, for page-turn pedals (they send Page Down
+ * and Page Up) and the keyboard (milestone 0.13).
+ *
+ * @param score - the box of the score
+ * @param bar - a bar that covers the top of the view, if any
+ * @param direction - 1 forward, -1 back
+ * @return whether it scrolled
+ */
+export function turnSystem(score: Element, bar: Element | null, direction: 1 | -1): boolean {
+	const scroller = scrollingParent(score)
+	const page = scroller === document.scrollingElement || scroller === document.documentElement
+	const outer = page ? { top: 0, bottom: window.innerHeight } : scroller.getBoundingClientRect()
+	const covered = bar?.getBoundingClientRect().bottom ?? 0
+	const viewTop = Math.max(outer.top, 0, covered < outer.bottom ? covered : 0)
+	const tops = [...score.querySelectorAll('g.system')].map((system) => system.getBoundingClientRect().top)
+	const delta = systemDelta(tops, viewTop, direction)
+	if (delta === 0) {
+		return false
+	}
+	scroller.scrollBy({ top: delta, behavior: 'auto' })
+	return true
+}

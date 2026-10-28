@@ -475,7 +475,8 @@ Punkte:
   das Mikrofon nur für sich selbst (`microphone 'self'`) und Medien aus dem
   Browser-Speicher (`media-src blob:`).*
 - **Blättern mit Fußpedal:** Bild auf und Bild ab (wie sie Bluetooth-Pedale
-  senden) gehen zum vorigen oder nächsten System.
+  senden) gehen zum vorigen oder nächsten System. – *umgesetzt, auch nach
+  einem Klick auf Abspielen; Eingabefelder und Regler behalten die Tasten.*
 
 ### 0.14 Text und Tonhöhe beim Mitsingen
 

@@ -78,7 +78,7 @@ import { translateLabel } from '../format.ts'
 import { countInFor, metronomeClicks, slotAt, storeCountIn, storedCountIn } from '../score/countIn.ts'
 import { playbackTimeline, renderPages, selectMeasures, loadScore } from '../score/model.ts'
 import { markFocus } from '../score/emphasis.ts'
-import { followMeasure } from '../score/follow.ts'
+import { followMeasure, turnSystem } from '../score/follow.ts'
 import { scoreTarget } from '../score/hit.ts'
 import { ArchiveLimitError, readScoreText } from '../score/mxl.ts'
 import { ScorePlayer, voiceGains } from '../score/player.ts'
@@ -1287,21 +1287,31 @@ const description = computed(() => {
 // ---- keyboard ---------------------------------------------------------------
 
 const INTERACTIVE = 'input, textarea, select, button, a, summary, [role="button"], [role="combobox"], [role="option"], [role="radio"], [role="checkbox"], [role="switch"], [contenteditable="true"]'
+/** Controls that use Page Down and Page Up themselves */
+const TEXT_INPUT = 'input, textarea, select, [contenteditable="true"], [role="combobox"], [role="listbox"]'
 
 /**
  * Space plays and pauses unless a control has the focus. While the score
  * has the focus, + and − zoom and the arrow keys left and right go to the
- * previous or next measure.
+ * previous or next measure. Page Down and Page Up turn by one system.
  *
  * @param event - key event inside the viewer
  */
 function onKeydown(event: KeyboardEvent): void {
 	const target = event.target instanceof HTMLElement ? event.target : null
+	const plain = !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey
+	// Page-turn pedals send Page Down and Page Up: one system on or back
+	// (milestone 0.13), also after a click on Play; fields and sliders keep the keys
+	if (plain && (event.key === 'PageDown' || event.key === 'PageUp') && scoreElement.value && !target?.closest(TEXT_INPUT)) {
+		if (turnSystem(scoreElement.value, null, event.key === 'PageDown' ? 1 : -1)) {
+			event.preventDefault()
+		}
+		return
+	}
 	if (target?.closest(INTERACTIVE)) {
 		return
 	}
 	const inScore = target === scoreElement.value
-	const plain = !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey
 	if (event.key === ' ' && canPlay.value && status.value === 'ready') {
 		event.preventDefault()
 		togglePlay()

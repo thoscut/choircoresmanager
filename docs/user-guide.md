@@ -425,7 +425,9 @@ remembers it for the next piece. On a phone only **Play** and **Stop** are
 above the notes at first; **Measures, voice and size** shows the other bars.
 
 Keyboard: Space plays and pauses unless a control has the focus, `+` and `-`
-change the size while the score has the focus, Escape closes the viewer. The
+change the size while the score has the focus, **Page Down** and **Page Up**
+turn the score by one system (page-turn pedals send these keys, also in
+shared pieces), Escape closes the viewer. The
 current measure is announced to screen readers during playback, and the score
 has a text description (measures, voices, focus voice, key and time
 signature).
