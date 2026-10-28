@@ -419,6 +419,72 @@ und Englisch. Die geführte Einrichtung kam schon mit den Einstellungen.*
 - **Doku nach Aufgaben** („Wie mache ich …“) je Rolle, Schnellstart, häufige
   Probleme.
 
+### 0.10 Verlässlich bauen und sichern
+
+*Umgesetzt (Review Oktober 2026):* CI grün, Sicherungen außerhalb des
+Archivordners und ohne Link-Token, Löschfristen, Sicherung als Datenstrom mit
+Meldung bei alter Sicherung, Läufe gegeneinander gesperrt, Grenzen der
+delegierten Einstellungsseite, `SECURITY.md` als Tabelle „Zusage → Test“.
+
+### 0.11 Rechte und Datenschutz schärfen
+
+*Umgesetzt:* eine Regel für Erhaltungskopien auf allen Wegen, Link-Token
+gehasht und verschlüsselt, Ausschnitte ohne Kommentare und Zusatzfelder,
+neue Nutzungsarten für Lizenzen, Rechtekonflikte, Datenschutz-Paket,
+rechtlicher Hintergrund DE/EN.
+
+### 0.12 Klar bedienen und an das Chorsystem übergeben
+
+*Umgesetzt:* Begriffe bereinigt, Fehlermeldungen mit nächstem Schritt, Fokus
+und Handy-Ansichten, Ausdrucke mit Kopfzeile, Modul `choir_handover`
+(Übergabeordner) und Vergleich mit dem Export des Chorsystems, Leitfaden
+„Notenarchiv neben einem Chorsystem“, Erklärung zur Barrierefreiheit.
+
+### 0.13 Üben in der Notenansicht
+
+Aus dem Vergleich mit der Chor-App cori (Oktober 2026): was Sänger beim Üben
+eines geteilten Stücks erwarten und der Notenansicht noch fehlt. Dafür gilt:
+
+- Alles läuft im Browser. Über das Üben einzelner Personen wird nichts auf
+  dem Server gespeichert oder ausgewertet.
+- Keine fremden Server (Leitlinie 9); das Mikrofon nur nach einem Klick, und
+  Aufnahmen verlassen den Browser nicht.
+- Jedes Werkzeug ist per Tastatur und mit Bildschirmleser bedienbar und
+  sagt sein Ergebnis an (Leitlinie 11).
+- Die Werkzeuge gehören zum Abspielen: Wo nicht abgespielt werden darf, gibt
+  es sie nicht.
+
+Punkte:
+
+- **Anfangstöne:** der erste Ton jeder Stimme ab der Startstelle,
+  nacheinander von unten und dann zusammen; mit „Nur diese Stimme“ nur die
+  eigene. – *umgesetzt, mit Ansage der Tonnamen (deutsch mit H).*
+- **Metronom beim Abspielen**, in den Zählzeiten des Einzählers.
+  – *umgesetzt.*
+- **Tonhöhe ändern:** bis zu sechs Halbtöne höher oder tiefer, die Noten
+  bleiben, wie sie notiert sind; Übe-Dateien übernehmen die Tonhöhe (MIDI mit
+  passender Tonart). – *umgesetzt.*
+- **Mischpult:** Lautstärke je Stimme, 0 % stumm, zusätzlich zu „Stimmen
+  beim Abspielen“; die Übe-Datei eines geteilten Stücks klingt wie das
+  Mischpult. – *umgesetzt.*
+- **Übe-Stellen merken:** Taktbereiche mit eigenem Namen je Stück, im
+  Browser gemerkt, mit einem Klick als Schleife.
+- **Selbst aufnehmen:** zur Wiedergabe singen, die Aufnahme anhören und
+  zusammen mit der Begleitung abspielen; die Aufnahme bleibt im Browser und
+  kann nur heruntergeladen werden.
+- **Blättern mit Fußpedal:** Bild auf und Bild ab (wie sie Bluetooth-Pedale
+  senden) gehen zum vorigen oder nächsten System.
+
+### 0.14 Text und Tonhöhe beim Mitsingen
+
+- **Mitlaufender Text:** die Textzeile der gewählten Stimme groß unter den
+  Noten, die gesungene Silbe hervorgehoben; Strophe wählbar.
+- **Text-Lernmodus:** Buchstaben des Texts stufenweise ausblenden, bis er
+  sitzt.
+- **Mitsingen mit Tonhöhen-Anzeige:** Mikrofon an, die gesungene Tonhöhe als
+  Linie neben den Soll-Tönen der eigenen Stimme, Erkennung im Browser. Kein
+  Punktestand, keine Auswertung auf dem Server.
+
 ### 1.0 Stabil
 
 - Abnahme auf der niedrigsten unterstützten Nextcloud-Version
@@ -428,8 +494,14 @@ und Englisch. Die geführte Einrichtung kam schon mit den Einstellungen.*
 
 ## Bewusst nicht vorgesehen
 
-- **Funktionen eines Chorsystems:** Üben, Termine, Anwesenheit, Nachrichten an
-  Sänger
+- **Funktionen eines Chorsystems:** Termine, Anwesenheit, Nachrichten an
+  Sänger. Geübt wird nur in der Notenansicht (0.13, 0.14); Lernpfade,
+  Punkte, Übe-Serien, Ranglisten und Übe-Statistiken über einzelne Sänger
+  gibt es nicht.
+- **Eine eigene App fürs Üben ohne Netz.** Übe-Dateien lassen sich
+  herunterladen; mehr Offline geht in einer Nextcloud-App nicht.
+- **Notizen und Zeichnungen im Notenbild.** Hinweise der Chorleitung gibt es
+  als Text je Stelle (Übergabe, 0.12).
 - **Ausgabe und Rücknahme am Probenabend** als eigener Ablauf (Anwesenheit,
   Erfassen an der Tür). Das Mappenbuch hält nur fest, wer welche Mappe hat.
 - **Notensatz** über kleine Korrekturen hinaus
