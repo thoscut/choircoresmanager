@@ -103,9 +103,7 @@ class PageController extends Controller {
 				'version' => $this->apps->getAppVersion(Application::APP_ID),
 			],
 		]);
-		$response = self::withScorePolicy(new TemplateResponse(Application::APP_ID, 'member'), false);
-		// The service worker for practising without a network comes from the app's own route
-		$response->getContentSecurityPolicy()->addAllowedWorkerSrcDomain('\'self\'');
+		$response = self::withScorePolicy(new TemplateResponse(Application::APP_ID, 'member'), false, true);
 		// The service worker keeps only this page on the device, never the archive or another page
 		$response->addHeader('X-Notenarchiv-Page', 'member');
 		return $response;
@@ -121,10 +119,14 @@ class PageController extends Controller {
 	 * microphone of this page and plays the recording from the browser's
 	 * memory (blob:); it never leaves the browser.
 	 */
-	private static function withScorePolicy(TemplateResponse $response, bool $scanFrames): TemplateResponse {
+	private static function withScorePolicy(TemplateResponse $response, bool $scanFrames, bool $offlineWorker = false): TemplateResponse {
 		$policy = new ContentSecurityPolicy();
 		$policy->allowEvalWasm(true);
 		$policy->addAllowedMediaDomain('blob:');
+		if ($offlineWorker) {
+			// The service worker for practising without a network comes from the app's own route
+			$policy->addAllowedWorkerSrcDomain('\'self\'');
+		}
 		if ($scanFrames) {
 			$policy->addAllowedFrameDomain('\'self\'');
 		}
