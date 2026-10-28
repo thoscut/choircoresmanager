@@ -448,9 +448,9 @@ geladen.
    kräftigeren Notenköpfen und Hälsen, die übrigen Stimmen in hellerem Grau;
    der Liedtext ihres Systems bleibt dunkel.
 3. Wähle unter **Stimmen beim Abspielen** **Alle gleich**, **Stimme betont**
-   oder **Nur diese Stimme**. **Tempo und Lautstärke** öffnet die Regler für
-   Tempo und Lautstärke und die Schalter **Wiederholungen spielen** und
-   **Mitscrollen**.
+   oder **Nur diese Stimme**. **Tempo, Lautstärke und Üben** öffnet die Regler
+   für Tempo und Lautstärke, die Schalter **Wiederholungen spielen** und
+   **Mitscrollen** und die Werkzeuge zum Üben (siehe unten).
 4. **Abspielen**, **Pause** und **Stopp** steuern die Wiedergabe.
 
 **Kleiner** und **Größer** ändern die Größe der Noten; dein Browser merkt
@@ -474,11 +474,32 @@ Stimmen, hervorgehobene Stimme, Tonart und Taktart).
 
 #### So zählst du vor dem Abspielen ein
 
-Wähle unter **Tempo und Lautstärke** einen **Einzähler**: **Aus**, **1 Takt**
+Wähle unter **Tempo, Lautstärke und Üben** einen **Einzähler**: **Aus**, **1 Takt**
 oder **2 Takte**. Bevor die Musik beginnt, hörst du Klicks in Taktart und
 Tempo der Stelle, an der die Wiedergabe beginnt, die erste Zählzeit jedes
 Takts höher. Ein Auftakt setzt auf den letzten Zählzeiten des Einzählers ein.
 Die Wahl merkt sich dein Browser, auch für geteilte Ausschnitte.
+
+#### So übst du mit Anfangstönen, Metronom, Tonhöhe und Mischpult
+
+Diese Werkzeuge stehen unter **Tempo, Lautstärke und Üben**, in der
+Notenansicht und bei geteilten Stücken und Ausschnitten. Sie arbeiten nur in
+deinem Browser: Über dein Üben wird nichts auf dem Server gespeichert.
+
+- **Anfangstöne** spielt den ersten Ton jeder Stimme ab der Stelle, an der
+  die Wiedergabe beginnt, nacheinander von unten und dann zusammen. Bei
+  **Nur diese Stimme** hörst du nur den Ton der hervorgehobenen Stimme; eine
+  im Mischpult stumme Stimme fällt weg. Screenreader hören die Namen, zum
+  Beispiel „Anfangstöne: Bass F3, Tenor A3, Alt C4, Sopran F4“.
+- **Metronom** klickt während der Musik jede Zählzeit, die erste jedes Takts
+  höher, wie der Einzähler.
+- **Tonhöhe** verschiebt den Klang um bis zu sechs Halbtöne nach oben oder
+  unten, zum Beispiel um ein Stück tiefer zu singen. Die Noten bleiben, wie
+  sie notiert sind. Übe-Dateien übernehmen die Tonhöhe.
+- **Mischpult** öffnet einen Regler je Stimme. Er wirkt zusätzlich zu
+  **Stimmen beim Abspielen**: Bei 0 % ist eine Stimme stumm, bei 50 % halb so
+  laut. **Alle Stimmen auf 100 %** setzt es zurück. Eine Übe-Datei eines
+  geteilten Stücks klingt wie das Mischpult.
 
 #### So startest du an einer bestimmten Note
 
@@ -1732,7 +1753,9 @@ Stimme, der Notiz und wie lange jedes gilt, ob es sich abspielen lässt
    Takt.
 3. Um eine Stelle zu üben, gib **Von Takt** und **Bis Takt** an und wähle
    **Anzeigen**; **Schleife** spielt die gezeigten Takte immer wieder.
-   **Alle Takte** zeigt wieder alles.
+   **Alle Takte** zeigt wieder alles. **Anfangstöne**, **Metronom**,
+   **Tonhöhe** und **Mischpult** arbeiten wie in der Notenansicht (siehe
+   [So übst du mit Anfangstönen, Metronom, Tonhöhe und Mischpult](#so-übst-du-mit-anfangstönen-metronom-tonhöhe-und-mischpult)).
 4. **Scan (PDF) öffnen** (wo mitgegeben) öffnet den Scan im PDF-Betrachter
    deines Browsers, in einem neuen Tab.
 5. **Textverweis** und **Beschreibung des Stücks** (oder **des

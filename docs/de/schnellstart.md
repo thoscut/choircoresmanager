@@ -199,8 +199,9 @@ Startseite öffnet das Werkverzeichnis mit dem passenden Filter.
    Notenköpfen, die übrigen Stimmen heller.
 4. Wähle unter **Stimmen beim Abspielen** „Alle gleich“, „Stimme betont“ oder
    „Nur diese Stimme“ und dann **Abspielen**. Die Leertaste spielt und hält an.
-   **Tempo und Lautstärke** öffnet die Regler und die Schalter für
-   Wiederholungen und Mitscrollen.
+   **Tempo, Lautstärke und Üben** öffnet die Regler, die Schalter für
+   Wiederholungen und Mitscrollen und die Werkzeuge zum Üben (Anfangstöne,
+   Metronom, Tonhöhe, Mischpult).
 5. Unter **Diese Stelle** kopierst du einen Textverweis, erstellst einen
    internen Link oder legst eine Rückfrage zu den gezeigten Takten an.
 
@@ -212,7 +213,7 @@ Lizenz für Übe-Audio, nie für interne Erhaltungskopien.
 1. Trage die Stelle in **Von Takt** und **Bis Takt** ein.
 2. Schalte daneben **Schleife** ein. Die Stelle wird gezeigt und beim
    Abspielen immer wieder gespielt, bis du **Pause** oder **Stopp** wählst.
-3. Unter **Tempo und Lautstärke** wählst du einen **Einzähler** von 1 oder
+3. Unter **Tempo, Lautstärke und Üben** wählst du einen **Einzähler** von 1 oder
    2 Takten. Die Wahl merkt sich dein Browser.
 
 Ein Klick auf eine Note startet die Wiedergabe dort. Mit der Tastatur gehst
@@ -224,7 +225,7 @@ nächsten Takt und spielst mit der Leertaste ab.
 ![Der Dialog „Übe-Dateien“: Takte und Tempo aus der Notenansicht, die Wahl zwischen einer Datei und einem ZIP-Archiv mit jeder Stimme und einem Tutti, die Stimme und das Format WAV oder MIDI.](../screenshots/de/practice-audio.png)
 
 1. Stelle in der Notenansicht Takte, Tempo und Wiederholungen ein (Tempo und
-   Wiederholungen unter **Tempo und Lautstärke**).
+   Wiederholungen unter **Tempo, Lautstärke und Üben**).
 2. Wähle **Übe-Dateien …**.
 3. Wähle **Eine Datei** oder **Jede Stimme und ein Tutti (ZIP)** und das
    Format **WAV (Audio)** oder **MIDI (eine Spur je Stimme)**.

@@ -19,10 +19,11 @@
  * of measures (From measure, To measure) and starting at a clicked note, or
  * with the arrow keys.
  */
-import type { CountInBars } from '../score/countIn.ts'
+import type { Click, CountInBars } from '../score/countIn.ts'
 import type { MemberPracticeAudioInput } from '../types.ts'
 import type { PlayMode, ScorePlayer as ScorePlayerType } from '../score/player.ts'
 import type { PracticePart } from '../score/practice.ts'
+import type { Mix } from '../score/practising.ts'
 import type { MeasureRange } from '../score/range.ts'
 import type { ScoreModel } from '../score/model.ts'
 import type { Timeline } from '../score/timeline.ts'
@@ -42,13 +43,16 @@ import NcRadioGroup from '@nextcloud/vue/components/NcRadioGroup'
 import NcRadioGroupButton from '@nextcloud/vue/components/NcRadioGroupButton'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
-import { countInFor, slotAt, storeCountIn, storedCountIn } from '../score/countIn.ts'
+import PracticeTools from '../components/PracticeTools.vue'
+import { startingTonesText, transposeText } from '../practiceLabels.ts'
+import { countInFor, metronomeClicks, slotAt, storeCountIn, storedCountIn } from '../score/countIn.ts'
 import { markFocus } from '../score/emphasis.ts'
 import { followMeasure } from '../score/follow.ts'
 import { scoreTarget } from '../score/hit.ts'
 import { loadScore, playbackTimeline, renderPages, selectMeasures } from '../score/model.ts'
 import { ScorePlayer, voiceGains } from '../score/player.ts'
 import { partGains, practiceFileName, practiceMidi, SAMPLE_RATE } from '../score/practice.ts'
+import { mixChanged, mixedGains, startingTones, transposedFifths, transposeTimeline } from '../score/practising.ts'
 import { RenderCancelled, renderTimeline } from '../score/render.ts'
 import { sanitizeSvg } from '../score/sanitize.ts'
 import { measureStarts, nextPass, noteStarts } from '../score/timeline.ts'
@@ -324,6 +328,10 @@ const countInChoice = computed<'0' | '1' | '2'>({
 	},
 })
 const tempoPercent = ref(excerptTempo(props.tempo))
+/** Tools for practising (milestone 0.13): level per voice, semitones, metronome */
+const mix = ref<Mix>({})
+const transpose = ref(0)
+const metronome = ref(false)
 const position = ref(0)
 const timeline = shallowRef<Timeline>({ events: [], measures: [], duration: 0 })
 
@@ -335,12 +343,39 @@ function updateTimeline(): void {
 		return
 	}
 	stop()
-	timeline.value = playbackTimeline(loaded, range.value, repeats.value)
+	timeline.value = transposeTimeline(playbackTimeline(loaded, range.value, repeats.value), transpose.value)
 	player?.setTimeline(timeline.value)
+	player?.setMetronome(beats())
 }
 
 function gains(): (voice: string) => number {
-	return voiceGains(focusVoice.value?.members ?? [], mode.value)
+	return mixedGains(voiceGains(focusVoice.value?.members ?? [], mode.value), model.value?.voices ?? [], mix.value)
+}
+
+/** Clicks of the metronome, none while it is off. */
+function beats(): Click[] {
+	return metronome.value && model.value ? metronomeClicks(model.value, timeline.value) : []
+}
+
+/** Display names of the voices for the mixer */
+const mixerVoices = computed(() => (model.value?.voices ?? []).map((voice) => ({ key: voice.key, label: labelOf(voice) })))
+
+/**
+ * Give the starting tones from the current place: of the focus voice when
+ * it plays alone, otherwise of every voice the mixer does not mute.
+ */
+async function giveStartingTones(): Promise<void> {
+	const loaded = model.value
+	if (!loaded || playing.value) {
+		return
+	}
+	const voices = mode.value === 'solo' && focusVoice.value
+		? [focusVoice.value]
+		: loaded.voices.filter((voice) => (mix.value[voice.key] ?? 100) > 0)
+	const tones = startingTones(timeline.value, voices, player?.currentTime() ?? 0)
+	const fifths = loaded.signatures.fifths === null ? null : transposedFifths(loaded.signatures.fifths, transpose.value)
+	announce(startingTonesText(tones, labelOf, fifths))
+	await ensurePlayer().playTones(tones.map((tone) => tone.pitch))
 }
 
 function ensurePlayer(): ScorePlayerType {
@@ -357,6 +392,7 @@ function ensurePlayer(): ScorePlayerType {
 		player.setTimeline(timeline.value)
 		player.setRate(tempoPercent.value / 100)
 		player.setGains(gains())
+		player.setMetronome(beats())
 		player.setLoop(loop.value)
 	}
 	return player
@@ -482,6 +518,9 @@ watch([focusKey, mode], () => {
 	applyFocus()
 	player?.setGains(gains())
 })
+watch(mix, () => player?.setGains(gains()))
+watch(transpose, () => updateTimeline())
+watch(metronome, () => player?.setMetronome(beats()))
 watch(focusKey, (key) => {
 	if (key === '') {
 		mode.value = 'all'
@@ -723,11 +762,17 @@ const exportPart = computed<PracticePart>(() => {
 const exportChoice = computed(() => {
 	const part = exportPart.value
 	// the count-in of the playback is at the start of the file, too
-	const tempo = countInBars.value > 0
+	const timing = countInBars.value > 0
 		? t('notenarchiv', '{tempo}, count-in {bars}', { tempo: tempoText.value, bars: countInBars.value === 1 ? t('notenarchiv', '1 bar') : t('notenarchiv', '2 bars') })
 		: tempoText.value
+	// pitch and mixer of the playback, too (milestone 0.13)
+	const mixed = mixChanged(mix.value)
+	const tempo = [timing, transpose.value !== 0 ? transposeText(transpose.value) : '', mixed ? t('notenarchiv', 'mixer as set above') : '']
+		.filter((text) => text !== '').join(', ')
 	if (part.voice === null) {
-		return t('notenarchiv', 'All voices equal, {tempo}', { tempo })
+		return mixed
+			? t('notenarchiv', 'All voices, {tempo}', { tempo })
+			: t('notenarchiv', 'All voices equal, {tempo}', { tempo })
 	}
 	return part.mode === 'solo'
 		? t('notenarchiv', '{voice} alone, {tempo}', { voice: part.label, tempo })
@@ -794,13 +839,15 @@ async function makePracticeFile(): Promise<void> {
 		})
 		exportStatus.value = t('notenarchiv', 'Making the file …')
 		await nextFrame()
-		const events = playbackTimeline(loaded, shown, repeats.value)
+		const events = transposeTimeline(playbackTimeline(loaded, shown, repeats.value), transpose.value)
 		const countIn = countInFor(loaded, events, 0, countInBars.value)
+		// The file sounds like the playback above, with the mixer
+		const gainOf = mixedGains(partGains(part), loaded.voices, mix.value)
 		let data: Uint8Array
 		if (format.value === 'midi') {
-			data = practiceMidi(loaded, events, part, { rate, title: props.title, labelOf, countIn })
+			data = practiceMidi(loaded, events, part, { rate, title: props.title, labelOf, countIn, transpose: transpose.value, gainOf })
 		} else {
-			const samples = await renderTimeline(events, partGains(part), {
+			const samples = await renderTimeline(events, gainOf, {
 				rate,
 				sampleRate: SAMPLE_RATE,
 				signal,
@@ -1007,6 +1054,12 @@ onBeforeUnmount(() => {
 							{{ t('notenarchiv', 'Loop') }}
 						</NcCheckboxRadioSwitch>
 					</div>
+					<PracticeTools v-model:mix="mix"
+						v-model:transpose="transpose"
+						v-model:metronome="metronome"
+						:voices="mixerVoices"
+						:playing="playing"
+						@tones="giveStartingTones" />
 				</section>
 
 				<NcSelect v-model="focusOption"

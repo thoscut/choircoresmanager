@@ -49,6 +49,8 @@ import {
 	renderedSeconds,
 	SAMPLE_RATE,
 } from '../score/practice.ts'
+import { transposeText } from '../practiceLabels.ts'
+import { transposeTimeline } from '../score/practising.ts'
 import { RenderCancelled, renderTimeline } from '../score/render.ts'
 import { encodeWav } from '../score/wav.ts'
 import { zipStore } from '../score/zip.ts'
@@ -72,6 +74,8 @@ const props = defineProps<{
 	voiceName: (voice: Voice) => string
 	/** the version line of the score (module "version_states"), stored in the files; '' for none */
 	versionLine?: string
+	/** semitones the playback is transposed by (milestone 0.13) */
+	transpose?: number
 }>()
 
 const emit = defineEmits<{
@@ -92,7 +96,7 @@ const shelfmark = computed(() => String(props.detail.copy.shelfmark ?? ''))
 const title = computed(() => String(props.detail.work.title ?? ''))
 const rate = computed(() => props.tempoPercent / 100)
 /** The same events as the playback in the score view */
-const timeline = computed(() => playbackTimeline(props.model, props.range, props.repeats))
+const timeline = computed(() => transposeTimeline(playbackTimeline(props.model, props.range, props.repeats), props.transpose ?? 0))
 const from = computed(() => props.model.measures[props.range?.start ?? 0]?.number ?? '')
 const to = computed(() => props.model.measures[props.range?.end ?? props.model.measures.length - 1]?.number ?? '')
 /** Count-in at the start of every file: "0", "1" or "2" bars */
@@ -251,6 +255,7 @@ async function makeFile(part: PracticePart, onProgress: (done: number) => void, 
 			labelOf: props.voiceName,
 			countIn: countIn.value,
 			text: props.versionLine || undefined,
+			transpose: props.transpose ?? 0,
 		})
 		onProgress(1)
 		return data
@@ -402,6 +407,10 @@ onBeforeUnmount(() => {
 					<dt>{{ t('notenarchiv', 'Tempo') }}</dt>
 					<dd>{{ tempoText }}</dd>
 				</div>
+				<div v-if="transpose">
+					<dt>{{ t('notenarchiv', 'Pitch') }}</dt>
+					<dd>{{ transposeText(transpose) }}</dd>
+				</div>
 				<div>
 					<dt>{{ t('notenarchiv', 'Repeats') }}</dt>
 					<dd>{{ repeats ? t('notenarchiv', 'Yes') : t('notenarchiv', 'No') }}</dd>
@@ -412,7 +421,7 @@ onBeforeUnmount(() => {
 				</div>
 			</dl>
 			<p class="practice-dialog__hint">
-				{{ t('notenarchiv', 'Measures, tempo and repeats are taken from the score view; change them there.') }}
+				{{ t('notenarchiv', 'Measures, tempo, pitch and repeats are taken from the score view; change them there.') }}
 			</p>
 
 			<fieldset class="practice-dialog__choices" :disabled="busy">

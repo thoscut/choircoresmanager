@@ -941,7 +941,6 @@ export const singular = {
 	"Playback and practice files come from a simple built-in synthesizer; they are no substitute for a recording. The files are only for practising in the choir, as far as the rights or the license allow. Upload them to the practice system of the choir yourself: the music archive gives nothing to choir members. Every export is recorded in the audit log.": "Afspelen en oefenbestanden komen van een eenvoudige ingebouwde synthesizer; ze zijn geen vervanging voor een opname. De bestanden zijn alleen bedoeld om te oefenen in het koor, voor zover de rechten of de licentie dat toestaan. Upload ze zelf naar het oefensysteem van het koor: het bladmuziekarchief geeft niets aan koorleden. Elke export wordt vastgelegd in het auditlog.",
 	"Repeats": "Herhalingen",
 	"Length": "Lengte",
-	"Measures, tempo and repeats are taken from the score view; change them there.": "Maten, tempo en herhalingen komen uit de bladmuziekweergave; wijzig ze daar.",
 	"One file": "Eén bestand",
 	"Other voices": "Overige stemmen",
 	"In the file of each voice": "In het bestand van elke stem",
@@ -1183,7 +1182,6 @@ export const singular = {
 	"Stop": "Stoppen",
 	"Practice files …": "Oefenbestanden …",
 	"Voices during playback": "Stemmen tijdens het afspelen",
-	"Tempo and volume": "Tempo en volume",
 	"{percent} % of the tempo": "{percent} % van het tempo",
 	"Volume: {percent} %": "Volume: {percent} %",
 	"{percent} % volume": "{percent} % volume",
@@ -2315,6 +2313,25 @@ export const singular = {
 	"The choir system no longer has this piece (export %s).": "Het koorsysteem heeft dit stuk niet meer (export %s).",
 	"Removed from the singers' portal": "Uit het koorportaal verwijderd",
 	"The files of the versions released for the portal (in order, to add and not decided), with a list of the pieces and the conductor's notes, copied into a folder that the choir system reads.": "De bestanden van de voor het portaal vrijgegeven versies (in orde, toe te voegen en niet beslist), met een lijst van de stukken en de aanwijzingen van de koorleiding, gekopieerd naar een map die het koorsysteem leest.",
+	// practising (0.13)
+	"Tempo, volume and practising": "Tempo, volume en oefenen",
+	"as written": "zoals genoteerd",
+	"Pitch: {change}": "Toonhoogte: {change}",
+	"Pitch": "Toonhoogte",
+	"{voice}: muted": "{voice}: gedempt",
+	"{voice}: {percent} %": "{voice}: {percent} %",
+	"Starting tones": "Begintonen",
+	"Metronome": "Metronoom",
+	"Mixer": "Mengpaneel",
+	"Mixer (changed)": "Mengpaneel (gewijzigd)",
+	"Only the sound moves; the notes stay as written.": "Alleen de klank verschuift; de noten blijven zoals genoteerd.",
+	"The level of each voice, on top of \"Voices during playback\". 0 % mutes a voice.": "Het volume van elke stem, bovenop „Stemmen tijdens het afspelen”. Bij 0 % is een stem gedempt.",
+	"All voices at 100 %": "Alle stemmen op 100 %",
+	"No voice sings from here on.": "Vanaf hier zingt geen stem meer.",
+	"Starting tones: {tones}": "Begintonen: {tones}",
+	"mixer as set above": "mengpaneel zoals hierboven ingesteld",
+	"All voices, {tempo}": "Alle stemmen, {tempo}",
+	"Measures, tempo, pitch and repeats are taken from the score view; change them there.": "Maten, tempo, toonhoogte en herhalingen komen uit de bladmuziekweergave; wijzig ze daar.",
 }
 
 export const plural = {
@@ -2431,4 +2448,6 @@ export const plural = {
 	"%n difference is already waiting in the inbox.|%n differences are already waiting in the inbox.": ["%n verschil wacht al in de inbox.", "%n verschillen wachten al in de inbox."],
 	"%n piece is in the choir system but not released for the singers' portal. Remove it there; the archive stays as it is.|%n pieces are in the choir system but not released for the singers' portal. Remove them there; the archive stays as it is.": ["%n stuk staat in het koorsysteem, maar is niet vrijgegeven voor het koorportaal. Verwijder het daar; het archief blijft zoals het is.", "%n stukken staan in het koorsysteem, maar zijn niet vrijgegeven voor het koorportaal. Verwijder ze daar; het archief blijft zoals het is."],
 	"%n row without a shelf mark of the archive|%n rows without a shelf mark of the archive": ["%n regel zonder signatuur van het archief", "%n regels zonder signatuur van het archief"],
+	"%n semitone higher|%n semitones higher": ["%n halve toon hoger", "%n halve tonen hoger"],
+	"%n semitone lower|%n semitones lower": ["%n halve toon lager", "%n halve tonen lager"],
 }

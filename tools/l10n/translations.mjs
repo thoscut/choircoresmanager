@@ -544,9 +544,9 @@ export const singular = {
 	'{from} to {to}': '{from} bis {to}',
 	Repeats: 'Wiederholungen',
 	Length: 'Dauer',
-	'Measures, tempo and repeats are taken from the score view; change them there.': [
-		'Takte, Tempo und Wiederholungen kommen aus der Notenansicht; ändere sie dort.',
-		'Takte, Tempo und Wiederholungen kommen aus der Notenansicht; ändern Sie sie dort.',
+	'Measures, tempo, pitch and repeats are taken from the score view; change them there.': [
+		'Takte, Tempo, Tonhöhe und Wiederholungen kommen aus der Notenansicht; ändere sie dort.',
+		'Takte, Tempo, Tonhöhe und Wiederholungen kommen aus der Notenansicht; ändern Sie sie dort.',
 	],
 	'One file': 'Eine Datei',
 	'Every voice and a tutti (ZIP)': 'Jede Stimme und ein Tutti (ZIP)',
@@ -2352,7 +2352,7 @@ export const singular = {
 	'This file is not listed in the music archive.': 'Diese Datei ist im Notenarchiv nicht verzeichnet.',
 
 	// ---- design pass (0.1.29) ----
-	'Tempo and volume': 'Tempo und Lautstärke',
+	'Tempo, volume and practising': 'Tempo, Lautstärke und Üben',
 	'This passage': 'Diese Stelle',
 	Help: 'Hilfe',
 	'Help: access to the archive folder': 'Hilfe: Zugriff auf den Archivordner',
@@ -3066,6 +3066,23 @@ export const singular = {
 	'The choir system no longer has this piece (export %s).': 'Das Chorsystem hat dieses Stück nicht mehr (Export %s).',
 	'Removed from the singers\' portal': 'Aus dem Chorportal entfernt',
 	'The files of the versions released for the portal (in order, to add and not decided), with a list of the pieces and the conductor\'s notes, copied into a folder that the choir system reads.': 'Die Dateien der für das Portal freigegebenen Fassungen (in Ordnung, hinzuzufügen und nicht entschieden), mit einer Liste der Stücke und den Hinweisen der Chorleitung, kopiert in einen Ordner, den das Chorsystem liest.',
+	// practising (0.13)
+	'as written': 'wie notiert',
+	'Pitch: {change}': 'Tonhöhe: {change}',
+	Pitch: 'Tonhöhe',
+	'{voice}: muted': '{voice}: stumm',
+	'{voice}: {percent} %': '{voice}: {percent} %',
+	'Starting tones': 'Anfangstöne',
+	Metronome: 'Metronom',
+	Mixer: 'Mischpult',
+	'Mixer (changed)': 'Mischpult (geändert)',
+	'Only the sound moves; the notes stay as written.': 'Nur der Klang wird verschoben; die Noten bleiben, wie sie notiert sind.',
+	'The level of each voice, on top of "Voices during playback". 0 % mutes a voice.': 'Die Lautstärke jeder Stimme, zusätzlich zu „Stimmen beim Abspielen“. Bei 0 % ist die Stimme stumm.',
+	'All voices at 100 %': 'Alle Stimmen auf 100 %',
+	'No voice sings from here on.': 'Ab hier singt keine Stimme mehr.',
+	'Starting tones: {tones}': 'Anfangstöne: {tones}',
+	'mixer as set above': 'Mischpult wie oben eingestellt',
+	'All voices, {tempo}': 'Alle Stimmen, {tempo}',
 }
 
 export const plural = {
@@ -3255,4 +3272,6 @@ export const plural = {
 		'%n Unterschiede zwischen Stand {older} und Stand {newer}.',
 	],
 	'%n shared link|%n shared links': ['%n geteilter Link', '%n geteilte Links'],
+	'%n semitone higher|%n semitones higher': ['%n Halbton höher', '%n Halbtöne höher'],
+	'%n semitone lower|%n semitones lower': ['%n Halbton tiefer', '%n Halbtöne tiefer'],
 }

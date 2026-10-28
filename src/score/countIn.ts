@@ -9,7 +9,8 @@
  * the playback starts. A pickup comes in on the last beats of the count-in;
  * starting in the middle of a measure, the clicks run on to that point.
  *
- * The number of bars is remembered per person in the browser.
+ * The number of bars is remembered per person in the browser. The same
+ * beats drive the metronome during the playback (milestone 0.13).
  */
 import type { ScoreModel } from './model.ts'
 import type { MeasureSlot, Timeline } from './timeline.ts'
@@ -63,21 +64,27 @@ function written(time: string): [number, number] | null {
 	return match && beats >= 1 && unit >= 1 ? [beats, unit] : null
 }
 
+/** Beats of one measure: the grid the count-in and the metronome click on. */
+export interface BeatGrid {
+	/** seconds of a quarter note at 100 % tempo */
+	quarterSeconds: number
+	/** length of a full bar in quarter notes */
+	barQuarters: number
+	beatsPerBar: number
+	/** seconds of a beat at 100 % tempo */
+	beatSeconds: number
+	/** a measure shorter than the time signature (pickup): its beats are counted towards its end */
+	short: boolean
+}
+
 /**
- * Clicks before the playback starts at a time of the timeline.
+ * The beats of a measure slot in its time signature and tempo.
  *
  * @param model - the score (timing, time signature, tempo)
- * @param timeline - playback events
- * @param start - seconds at 100 % tempo where the music starts
- * @param bars - bars of count-in
- * @return the count-in, or null for none
+ * @param slot - the measure
+ * @return the grid, or null when the beats would be too fast to click
  */
-export function countInFor(model: Pick<ScoreModel, 'timing' | 'signatures' | 'quarterTempo'>, timeline: Timeline, start: number, bars: number): CountIn | null {
-	const index = slotAt(timeline.measures, start)
-	const slot = timeline.measures[index]
-	if (bars <= 0 || !slot) {
-		return null
-	}
+export function beatGrid(model: Pick<ScoreModel, 'timing' | 'signatures' | 'quarterTempo'>, slot: MeasureSlot): BeatGrid | null {
 	const seconds = slot.end - slot.start
 	const span = model.timing.quarters?.[slot.index]
 	const tempo = model.timing.tempo ?? model.quarterTempo ?? 120
@@ -90,7 +97,6 @@ export function countInFor(model: Pick<ScoreModel, 'timing' | 'signatures' | 'qu
 	// ends on a downbeat: the count-in is counted towards its end
 	const short = signatureQuarters !== null && quarters < signatureQuarters - EPSILON
 	const barQuarters = short || quarters <= EPSILON ? (signatureQuarters ?? 4) : quarters
-	const anchor = short ? slot.end : slot.start
 
 	// Beats: the beat unit of the signature, in compound time the dotted one
 	const [beats, unit] = signature ?? [4, 4]
@@ -100,16 +106,65 @@ export function countInFor(model: Pick<ScoreModel, 'timing' | 'signatures' | 'qu
 	if (!Number.isFinite(beatSeconds) || beatSeconds <= 0.05) {
 		return null
 	}
+	return { quarterSeconds, barQuarters, beatsPerBar, beatSeconds, short }
+}
 
-	const first = anchor - bars * beatsPerBar * beatSeconds
+/**
+ * Clicks before the playback starts at a time of the timeline.
+ *
+ * @param model - the score (timing, time signature, tempo)
+ * @param timeline - playback events
+ * @param start - seconds at 100 % tempo where the music starts
+ * @param bars - bars of count-in
+ * @return the count-in, or null for none
+ */
+export function countInFor(model: Pick<ScoreModel, 'timing' | 'signatures' | 'quarterTempo'>, timeline: Timeline, start: number, bars: number): CountIn | null {
+	const slot = timeline.measures[slotAt(timeline.measures, start)]
+	const grid = bars > 0 && slot ? beatGrid(model, slot) : null
+	if (!slot || !grid) {
+		return null
+	}
+	const anchor = grid.short ? slot.end : slot.start
+	const first = anchor - bars * grid.beatsPerBar * grid.beatSeconds
 	const clicks: Click[] = []
-	for (let k = 0; first + k * beatSeconds < start - EPSILON && k < 64; k++) {
-		clicks.push({ time: first + k * beatSeconds - start, accent: k % beatsPerBar === 0 })
+	for (let k = 0; first + k * grid.beatSeconds < start - EPSILON && k < 64; k++) {
+		clicks.push({ time: first + k * grid.beatSeconds - start, accent: k % grid.beatsPerBar === 0 })
 	}
 	if (clicks.length === 0) {
 		return null
 	}
-	return { clicks, lead: -clicks[0].time, quarterSeconds, barQuarters }
+	return { clicks, lead: -clicks[0].time, quarterSeconds: grid.quarterSeconds, barQuarters: grid.barQuarters }
+}
+
+/**
+ * The clicks of a metronome along the whole timeline, in playing order:
+ * every beat of every measure, the first beat of a bar higher. A short
+ * measure (pickup) gets the beats before its end, without an accent.
+ *
+ * @param model - the score (timing, time signature, tempo)
+ * @param timeline - playback events
+ * @return clicks in seconds of the timeline at 100 % tempo
+ */
+export function metronomeClicks(model: Pick<ScoreModel, 'timing' | 'signatures' | 'quarterTempo'>, timeline: Timeline): Click[] {
+	const clicks: Click[] = []
+	for (const slot of timeline.measures) {
+		const grid = beatGrid(model, slot)
+		if (!grid || slot.end - slot.start <= EPSILON) {
+			continue
+		}
+		if (grid.short) {
+			const beats: number[] = []
+			for (let time = slot.end - grid.beatSeconds; time >= slot.start - EPSILON && beats.length < 64; time -= grid.beatSeconds) {
+				beats.unshift(Math.max(slot.start, time))
+			}
+			clicks.push(...beats.map((time) => ({ time, accent: false })))
+			continue
+		}
+		for (let k = 0; slot.start + k * grid.beatSeconds < slot.end - EPSILON && k < 64; k++) {
+			clicks.push({ time: slot.start + k * grid.beatSeconds, accent: k % grid.beatsPerBar === 0 })
+		}
+	}
+	return clicks
 }
 
 /**

@@ -415,8 +415,9 @@ sounds are part of the app; nothing is loaded from other servers.
    in colour with bolder note heads and stems, the other voices in a lighter
    grey; the lyrics of its staff stay dark.
 3. Choose **Voices during playback**: **All equal**, **Focus voice louder**
-   or **Focus voice only**. **Tempo and volume** opens the sliders for tempo
-   and volume and the switches **Play repeats** and **Scroll along**.
+   or **Focus voice only**. **Tempo, volume and practising** opens the sliders
+   for tempo and volume, the switches **Play repeats** and **Scroll along**
+   and the tools for practising (see below).
 4. **Play**, **Pause** and **Stop** control the playback.
 
 **Smaller** and **Larger** change the size of the notes; your browser
@@ -439,11 +440,32 @@ signature).
 
 #### How to count in before the playback
 
-Under **Tempo and volume**, choose **Count-in**: **Off**, **1 bar** or
+Under **Tempo, volume and practising**, choose **Count-in**: **Off**, **1 bar** or
 **2 bars**. Before the music starts you hear clicks in the time signature and
 tempo of the place where the playback starts, the first beat of each bar
 higher. A pickup comes in on the last beats of the count-in. The choice is
 remembered in your browser, also for shared excerpts.
+
+#### How to practise with starting tones, metronome, pitch and mixer
+
+These tools are under **Tempo, volume and practising**, in the score view and
+for shared pieces and excerpts. They work only in your browser: nothing
+about your practising is stored on the server.
+
+- **Starting tones** plays the first tone of every voice from the place where
+  the playback starts, one after the other from the lowest, then together.
+  With **Focus voice only** you hear the tone of the focus voice alone; a
+  voice muted in the mixer is left out. Screen readers hear the names, for
+  example "Starting tones: Bass F3, Tenor A3, Alto C4, Soprano F4".
+- **Metronome** clicks every beat while the music plays, the first beat of
+  each bar higher, like the count-in.
+- **Pitch** moves the sound up to six semitones higher or lower, for example
+  to sing a piece in a lower key. The notes stay as written. Practice files
+  take the pitch, too.
+- **Mixer** opens a slider for every voice. It works on top of **Voices
+  during playback**: at 0 % a voice is muted, at 50 % it is half as loud.
+  **All voices at 100 %** resets it. A practice file of a shared piece
+  sounds like the mixer.
 
 #### How to start at a particular note
 
@@ -1616,7 +1638,9 @@ long each is valid, whether it can be played (**Playback: yes** or
    right in the score go to the previous or next measure.
 3. To practise a passage, enter **From measure** and **To measure** and
    choose **Show**; **Loop** plays the shown measures again and again.
-   **All measures** shows everything again.
+   **All measures** shows everything again. **Starting tones**,
+   **Metronome**, **Pitch** and **Mixer** work as in the score view (see
+   [How to practise with starting tones, metronome, pitch and mixer](#how-to-practise-with-starting-tones-metronome-pitch-and-mixer)).
 4. **Open the scan (PDF)** (where included) opens the scan in the PDF viewer
    of your browser, in a new tab.
 5. **Text reference** and **Description of the piece** (or **of the

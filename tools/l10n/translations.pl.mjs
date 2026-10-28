@@ -941,7 +941,6 @@ export const singular = {
 	"Playback and practice files come from a simple built-in synthesizer; they are no substitute for a recording. The files are only for practising in the choir, as far as the rights or the license allow. Upload them to the practice system of the choir yourself: the music archive gives nothing to choir members. Every export is recorded in the audit log.": "Odtwarzanie i pliki do ćwiczeń pochodzą z prostego wbudowanego syntezatora; nie zastępują nagrania. Pliki są przeznaczone wyłącznie do ćwiczeń w chórze, w zakresie, na jaki pozwalają prawa lub licencja. Prześlij je samodzielnie do systemu ćwiczeń chóru: archiwum nut niczego nie przekazuje osobom z chóru. Każdy eksport jest zapisywany w dzienniku zmian.",
 	"Repeats": "Powtórzenia",
 	"Length": "Długość",
-	"Measures, tempo and repeats are taken from the score view; change them there.": "Takty, tempo i powtórzenia są pobierane z widoku nut; zmień je tam.",
 	"One file": "Jeden plik",
 	"Other voices": "Pozostałe głosy",
 	"In the file of each voice": "W pliku każdego głosu",
@@ -1183,7 +1182,6 @@ export const singular = {
 	"Stop": "Zatrzymaj",
 	"Practice files …": "Pliki do ćwiczeń …",
 	"Voices during playback": "Głosy podczas odtwarzania",
-	"Tempo and volume": "Tempo i głośność",
 	"{percent} % of the tempo": "{percent} % tempa",
 	"Volume: {percent} %": "Głośność: {percent} %",
 	"{percent} % volume": "Głośność {percent} %",
@@ -2315,6 +2313,25 @@ export const singular = {
 	"The choir system no longer has this piece (export %s).": "System chóru nie ma już tego utworu (eksport %s).",
 	"Removed from the singers' portal": "Usunięto z portalu chóru",
 	"The files of the versions released for the portal (in order, to add and not decided), with a list of the pieces and the conductor's notes, copied into a folder that the choir system reads.": "Pliki wersji udostępnionych dla portalu (w porządku, do dodania i nierozstrzygnięte), wraz z listą utworów i uwagami kierownictwa chóru, skopiowane do folderu, który czyta system chóru.",
+	// practising (0.13)
+	"Tempo, volume and practising": "Tempo, głośność i ćwiczenie",
+	"as written": "jak w zapisie",
+	"Pitch: {change}": "Wysokość: {change}",
+	"Pitch": "Wysokość",
+	"{voice}: muted": "{voice}: wyciszony",
+	"{voice}: {percent} %": "{voice}: {percent} %",
+	"Starting tones": "Dźwięki początkowe",
+	"Metronome": "Metronom",
+	"Mixer": "Mikser",
+	"Mixer (changed)": "Mikser (zmieniony)",
+	"Only the sound moves; the notes stay as written.": "Przesuwa się tylko brzmienie; nuty pozostają jak w zapisie.",
+	"The level of each voice, on top of \"Voices during playback\". 0 % mutes a voice.": "Głośność każdego głosu, dodatkowo do „Głosy podczas odtwarzania”. Przy 0 % głos jest wyciszony.",
+	"All voices at 100 %": "Wszystkie głosy na 100 %",
+	"No voice sings from here on.": "Od tego miejsca nie śpiewa już żaden głos.",
+	"Starting tones: {tones}": "Dźwięki początkowe: {tones}",
+	"mixer as set above": "mikser jak ustawiono powyżej",
+	"All voices, {tempo}": "Wszystkie głosy, {tempo}",
+	"Measures, tempo, pitch and repeats are taken from the score view; change them there.": "Takty, tempo, wysokość i powtórzenia są pobierane z widoku nut; zmień je tam.",
 }
 
 export const plural = {
@@ -2431,4 +2448,6 @@ export const plural = {
 	"%n difference is already waiting in the inbox.|%n differences are already waiting in the inbox.": ["%n różnica czeka już w skrzynce.", "%n różnice czekają już w skrzynce.", "%n różnic czeka już w skrzynce."],
 	"%n piece is in the choir system but not released for the singers' portal. Remove it there; the archive stays as it is.|%n pieces are in the choir system but not released for the singers' portal. Remove them there; the archive stays as it is.": ["%n utwór jest w systemie chóru, ale nie jest udostępniony dla portalu chóru. Usuń go tam; archiwum pozostaje bez zmian.", "%n utwory są w systemie chóru, ale nie są udostępnione dla portalu chóru. Usuń je tam; archiwum pozostaje bez zmian.", "%n utworów jest w systemie chóru, ale nie jest udostępnionych dla portalu chóru. Usuń je tam; archiwum pozostaje bez zmian."],
 	"%n row without a shelf mark of the archive|%n rows without a shelf mark of the archive": ["%n wiersz bez sygnatury archiwum", "%n wiersze bez sygnatury archiwum", "%n wierszy bez sygnatury archiwum"],
+	"%n semitone higher|%n semitones higher": ["%n półton wyżej", "%n półtony wyżej", "%n półtonów wyżej"],
+	"%n semitone lower|%n semitones lower": ["%n półton niżej", "%n półtony niżej", "%n półtonów niżej"],
 }

@@ -34,6 +34,7 @@ import {
 	writeMidi,
 } from './midi.ts'
 import { voiceGain, voiceGains } from './player.ts'
+import { transposedFifths } from './practising.ts'
 import { RELEASE_TAIL } from './synth.ts'
 import { memberKey } from './voices.ts'
 import { WAV_HEADER_BYTES } from './wav.ts'
@@ -346,9 +347,11 @@ interface NoteSpan {
  * @param options.labelOf - display name of a voice
  * @param options.countIn - clicks before the music, on a drum track of their own
  * @param options.text - a text in the first track, e.g. the version line (milestone 0.8)
+ * @param options.transpose - semitones the timeline is transposed by, for the key signature (milestone 0.13)
+ * @param options.gainOf - gain per voice member key instead of the part's mode, e.g. with the mixer (milestone 0.13)
  */
 export function practiceMidi(model: ScoreModel, timeline: Timeline, part: PracticePart,
-	options: { rate: number, title: string, labelOf: (voice: Voice) => string, countIn?: CountIn | null, text?: string }): Uint8Array {
+	options: { rate: number, title: string, labelOf: (voice: Voice) => string, countIn?: CountIn | null, text?: string, transpose?: number, gainOf?: (voice: string) => number }): Uint8Array {
 	const countIn = options.countIn ?? null
 	const lead = countIn ? Math.round(countIn.lead / countIn.quarterSeconds * PPQ) : 0
 	const slots = slotsOf(model, timeline).map((slot) => ({ ...slot, tick: slot.tick + lead }))
@@ -361,7 +364,8 @@ export function practiceMidi(model: ScoreModel, timeline: Timeline, part: Practi
 		conductor.push({ tick: 0, bytes: textEvent(asciiText(options.text)) })
 	}
 	if (model.signatures.fifths !== null && Math.abs(model.signatures.fifths) <= 7) {
-		conductor.push({ tick: 0, bytes: keySignatureEvent(model.signatures.fifths, model.signatures.mode === 'minor') })
+		const fifths = options.transpose ? transposedFifths(model.signatures.fifths, options.transpose) : model.signatures.fifths
+		conductor.push({ tick: 0, bytes: keySignatureEvent(fifths, model.signatures.mode === 'minor') })
 	}
 	let tempo = -1
 	let signature = ''
@@ -394,7 +398,7 @@ export function practiceMidi(model: ScoreModel, timeline: Timeline, part: Practi
 	}
 
 	// One track per voice; notes of keys without a voice get a track of their own
-	const gainOf = partGains(part)
+	const gainOf = options.gainOf ?? partGains(part)
 	const trackOf = new Map<string, number>()
 	const names: string[] = []
 	const keys: string[] = []

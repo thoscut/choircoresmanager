@@ -941,7 +941,6 @@ export const singular = {
 	"Playback and practice files come from a simple built-in synthesizer; they are no substitute for a recording. The files are only for practising in the choir, as far as the rights or the license allow. Upload them to the practice system of the choir yourself: the music archive gives nothing to choir members. Every export is recorded in the audit log.": "La reproducción y los archivos de ensayo proceden de un sintetizador integrado sencillo; no sustituyen a una grabación. Los archivos son solo para ensayar en el coro, en la medida en que lo permitan los derechos o la licencia. Súbelos tú al sistema de ensayo del coro: el archivo de partituras no entrega nada a integrantes del coro. Cada exportación queda en el registro de actividad.",
 	"Repeats": "Repeticiones",
 	"Length": "Duración",
-	"Measures, tempo and repeats are taken from the score view; change them there.": "Los compases, el tempo y las repeticiones se toman de la vista de partitura; cámbialos allí.",
 	"One file": "Un archivo",
 	"Other voices": "Otras voces",
 	"In the file of each voice": "En el archivo de cada voz",
@@ -1183,7 +1182,6 @@ export const singular = {
 	"Stop": "Detener",
 	"Practice files …": "Archivos de ensayo …",
 	"Voices during playback": "Voces durante la reproducción",
-	"Tempo and volume": "Tempo y volumen",
 	"{percent} % of the tempo": "{percent} % del tempo",
 	"Volume: {percent} %": "Volumen: {percent} %",
 	"{percent} % volume": "{percent} % de volumen",
@@ -2315,6 +2313,25 @@ export const singular = {
 	"The choir system no longer has this piece (export %s).": "El sistema del coro ya no tiene esta pieza (exportación %s).",
 	"Removed from the singers' portal": "Retirado del portal del coro",
 	"The files of the versions released for the portal (in order, to add and not decided), with a list of the pieces and the conductor's notes, copied into a folder that the choir system reads.": "Los archivos de las versiones publicadas para el portal (en orden, por añadir y sin decidir), con una lista de las piezas y las indicaciones de la dirección del coro, copiados en una carpeta que lee el sistema del coro.",
+	// practising (0.13)
+	"Tempo, volume and practising": "Tempo, volumen y práctica",
+	"as written": "como está escrito",
+	"Pitch: {change}": "Altura: {change}",
+	"Pitch": "Altura",
+	"{voice}: muted": "{voice}: silenciada",
+	"{voice}: {percent} %": "{voice}: {percent} %",
+	"Starting tones": "Notas iniciales",
+	"Metronome": "Metrónomo",
+	"Mixer": "Mezclador",
+	"Mixer (changed)": "Mezclador (cambiado)",
+	"Only the sound moves; the notes stay as written.": "Solo se desplaza el sonido; las notas quedan como están escritas.",
+	"The level of each voice, on top of \"Voices during playback\". 0 % mutes a voice.": "El volumen de cada voz, además de «Voces durante la reproducción». Con 0 % una voz queda silenciada.",
+	"All voices at 100 %": "Todas las voces al 100 %",
+	"No voice sings from here on.": "A partir de aquí ya no canta ninguna voz.",
+	"Starting tones: {tones}": "Notas iniciales: {tones}",
+	"mixer as set above": "mezclador como arriba",
+	"All voices, {tempo}": "Todas las voces, {tempo}",
+	"Measures, tempo, pitch and repeats are taken from the score view; change them there.": "Los compases, el tempo, la altura y las repeticiones se toman de la vista de partitura; cámbialos allí.",
 }
 
 export const plural = {
@@ -2431,4 +2448,6 @@ export const plural = {
 	"%n difference is already waiting in the inbox.|%n differences are already waiting in the inbox.": ["%n diferencia ya espera en la bandeja de entrada.", "%n diferencias ya esperan en la bandeja de entrada."],
 	"%n piece is in the choir system but not released for the singers' portal. Remove it there; the archive stays as it is.|%n pieces are in the choir system but not released for the singers' portal. Remove them there; the archive stays as it is.": ["%n pieza está en el sistema del coro pero no está publicada para el portal del coro. Elimínala allí; el archivo se queda como está.", "%n piezas están en el sistema del coro pero no están publicadas para el portal del coro. Elimínalas allí; el archivo se queda como está."],
 	"%n row without a shelf mark of the archive|%n rows without a shelf mark of the archive": ["%n fila sin signatura del archivo", "%n filas sin signatura del archivo"],
+	"%n semitone higher|%n semitones higher": ["%n semitono más alto", "%n semitonos más alto"],
+	"%n semitone lower|%n semitones lower": ["%n semitono más bajo", "%n semitonos más bajo"],
 }

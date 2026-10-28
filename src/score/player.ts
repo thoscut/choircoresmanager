@@ -6,13 +6,15 @@
 /**
  * Plays a timeline with the synthesizer: look-ahead scheduling on the
  * AudioContext clock, pause/resume, tempo and voice balance changes while
- * playing, a count-in, a loop over the whole timeline and jumps to another
- * place. Browser only (Web Audio).
+ * playing, a count-in, a metronome, a loop over the whole timeline, jumps
+ * to another place and the starting tones of the voices. Browser only (Web
+ * Audio).
  */
-import type { CountIn } from './countIn.ts'
+import type { Click, CountIn } from './countIn.ts'
 import type { PlayEvent, Timeline } from './timeline.ts'
 import type { VoiceMember } from './voices.ts'
 
+import { toneTimes } from './practising.ts'
 import { Synth } from './synth.ts'
 import { memberKey } from './voices.ts'
 
@@ -148,6 +150,33 @@ export interface Clock {
 }
 
 /**
+ * Hand the clicks of the metronome that start up to a horizon to the
+ * synthesizer, like scheduleEvents for the notes.
+ *
+ * @param target - synthesizer
+ * @param clicks - clicks sorted by time, in seconds of the timeline
+ * @param next - index of the first click not yet scheduled
+ * @param clock - where the timeline lies on the context's clock
+ * @param horizon - schedule clicks up to this context time
+ * @param now - current context time; clicks before it are left out
+ * @return the index of the first click not yet scheduled
+ */
+export function scheduleBeats(target: ClickTarget, clicks: Click[], next: number, clock: Clock, horizon: number, now: number): number {
+	let index = next
+	while (index < clicks.length) {
+		const at = clock.startAudio + (clicks[index].time - clock.startScore) / clock.rate
+		if (at > horizon) {
+			break
+		}
+		if (at >= now - 0.005) {
+			target.click(Math.max(at, now), clicks[index].accent)
+		}
+		index++
+	}
+	return index
+}
+
+/**
  * Hand the events that start up to a horizon to the synthesizer, as the
  * playback and the practice audio files both do: tied continuations are
  * not struck again, voices with gain 0 stay silent, notes that are already
@@ -209,6 +238,17 @@ export function firstEventAt(events: PlayEvent[], time: number): number {
 	return low
 }
 
+/**
+ * Index of the first click at or after a time.
+ *
+ * @param clicks - clicks sorted by time
+ * @param time - seconds
+ */
+function firstClickAt(clicks: Click[], time: number): number {
+	const index = clicks.findIndex((click) => click.time >= time - 1e-6)
+	return index === -1 ? clicks.length : index
+}
+
 export class ScorePlayer {
 
 	private synth: Synth | null = null
@@ -224,6 +264,9 @@ export class ScorePlayer {
 	private previous: Clock | null = null
 	private position = 0
 	private next = 0
+	/** clicks of the metronome; empty: off */
+	private beats: Click[] = []
+	private nextBeat = 0
 	private timer: ReturnType<typeof setInterval> | null = null
 	private frame = 0
 	private readonly callbacks: PlayerCallbacks
@@ -280,6 +323,41 @@ export class ScorePlayer {
 		this.restartAfter(() => {
 			this.gainOf = gainOf
 		})
+	}
+
+	/**
+	 * The metronome: clicks on the beats while playing.
+	 *
+	 * @param clicks - clicks in seconds of the timeline (countIn.metronomeClicks); empty: off
+	 */
+	setMetronome(clicks: Click[]): void {
+		this.restartAfter(() => {
+			this.beats = clicks
+		})
+	}
+
+	/**
+	 * Play the starting tones of the voices, one after the other from the
+	 * lowest and then together. Stops nothing: call it while paused.
+	 *
+	 * @param pitches - MIDI pitches, lowest first
+	 * @return seconds until the chord ends
+	 */
+	async playTones(pitches: number[]): Promise<number> {
+		if (this.playing || pitches.length === 0) {
+			return 0
+		}
+		if (!this.synth) {
+			this.synth = new Synth(this.volume)
+		}
+		await this.synth.resume()
+		this.synth.silence()
+		const { starts, end } = toneTimes(pitches.length)
+		const now = this.synth.context.currentTime + START_DELAY
+		pitches.forEach((pitch, index) => {
+			this.synth?.note(pitch, now + starts[index], now + end, 0.6)
+		})
+		return end
 	}
 
 	/**
@@ -392,6 +470,7 @@ export class ScorePlayer {
 		this.startAudio = synth.context.currentTime + START_DELAY
 		this.previous = null
 		this.next = firstEventAt(this.timeline.events, time)
+		this.nextBeat = firstClickAt(this.beats, time)
 	}
 
 	private clock(): Clock {
@@ -424,6 +503,7 @@ export class ScorePlayer {
 		const horizon = now + LOOK_AHEAD
 		const events = this.timeline.events
 		this.next = scheduleEvents(synth, events, this.next, this.clock(), horizon, now, this.gainOf)
+		this.nextBeat = scheduleBeats(synth, this.beats, this.nextBeat, this.clock(), horizon, now)
 		if (this.next >= events.length && this.loop && this.timeline.duration >= MIN_LOOP) {
 			// Start again seamlessly where the timeline ends
 			const end = this.startAudio + (this.timeline.duration - this.startScore) / this.rate
@@ -432,6 +512,7 @@ export class ScorePlayer {
 				this.startAudio = end
 				this.startScore = 0
 				this.next = scheduleEvents(synth, events, 0, this.clock(), horizon, now, this.gainOf)
+				this.nextBeat = scheduleBeats(synth, this.beats, 0, this.clock(), horizon, now)
 			}
 			return
 		}

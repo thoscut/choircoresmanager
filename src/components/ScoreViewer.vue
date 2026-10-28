@@ -20,8 +20,9 @@
  * This component is loaded lazily (own chunk); Verovio is a further chunk
  * that is only fetched when a score is opened.
  */
-import type { CountInBars } from '../score/countIn.ts'
+import type { Click, CountInBars } from '../score/countIn.ts'
 import type { PlayMode, ScorePlayer as ScorePlayerType } from '../score/player.ts'
+import type { Mix } from '../score/practising.ts'
 import type { MeasureRange } from '../score/range.ts'
 import type { ScoreModel } from '../score/model.ts'
 import type { Timeline } from '../score/timeline.ts'
@@ -64,19 +65,21 @@ import NcRadioGroupButton from '@nextcloud/vue/components/NcRadioGroupButton'
 import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import GuideLink from './GuideLink.vue'
+import PracticeTools from './PracticeTools.vue'
 import LinkDialog from './LinkDialog.vue'
 import ReviewPanel from './ReviewPanel.vue'
 import RightsBadge from './RightsBadge.vue'
 import TaskDialog from './TaskDialog.vue'
 import { adminSettingsUrl, errorMessage, errorReason, fetchFileContent, fetchReview, isPermanentHttpError, REASON_NOT_SHARED, scanUrl } from '../api.ts'
 import { translateLabel } from '../format.ts'
-import { countInFor, slotAt, storeCountIn, storedCountIn } from '../score/countIn.ts'
+import { countInFor, metronomeClicks, slotAt, storeCountIn, storedCountIn } from '../score/countIn.ts'
 import { playbackTimeline, renderPages, selectMeasures, loadScore } from '../score/model.ts'
 import { markFocus } from '../score/emphasis.ts'
 import { followMeasure } from '../score/follow.ts'
 import { scoreTarget } from '../score/hit.ts'
 import { ArchiveLimitError, readScoreText } from '../score/mxl.ts'
 import { ScorePlayer, voiceGains } from '../score/player.ts'
+import { mixedGains, startingTones, transposedFifths, transposeTimeline } from '../score/practising.ts'
 import { resolveRange, sameNumber } from '../score/range.ts'
 import { sanitizeSvg } from '../score/sanitize.ts'
 import { measureStarts, nextPass, noteStarts } from '../score/timeline.ts'
@@ -86,6 +89,7 @@ import { nextZoom, storedZoom, storeZoom, ZOOM_DEFAULT, ZOOM_STEPS } from '../sc
 import { copyText } from '../clipboard.ts'
 import { focusAfterDialog } from '../focus.ts'
 import { referenceWords } from '../labels.ts'
+import { startingTonesText } from '../practiceLabels.ts'
 import { textReference } from '../references.ts'
 import { revisionLine, shownRevision } from '../revisionLabels.ts'
 import { canonicalVoice, matchVoice, pointPlace, pointRange } from '../review.ts'
@@ -734,7 +738,7 @@ function applyFocus(): void {
 // ---- playback ---------------------------------------------------------------
 
 const playing = ref(false)
-/** Tempo, volume and the switches: behind a button, so that the score gets the room */
+/** Tempo, volume, the switches and the tools for practising: behind a button, so that the score gets the room */
 const settingsShown = ref(false)
 /** The actions for the shown passage (text reference, link, task) */
 const placeShown = ref(false)
@@ -766,6 +770,10 @@ const countInChoice = computed<'0' | '1' | '2'>({
 })
 const tempoPercent = ref(100)
 const volumePercent = ref(70)
+/** Tools for practising (milestone 0.13): level per voice, semitones, metronome */
+const mix = ref<Mix>({})
+const transpose = ref(0)
+const metronome = ref(false)
 const position = ref(0)
 const timeline = shallowRef<Timeline>({ events: [], measures: [], duration: 0 })
 
@@ -815,12 +823,39 @@ function updateTimeline(): void {
 		return
 	}
 	stop()
-	timeline.value = playbackTimeline(loaded, range.value, repeats.value)
+	timeline.value = transposeTimeline(playbackTimeline(loaded, range.value, repeats.value), transpose.value)
 	player?.setTimeline(timeline.value)
+	player?.setMetronome(beats())
 }
 
 function gains(): (voice: string) => number {
-	return voiceGains(focusVoice.value?.members ?? [], mode.value)
+	return mixedGains(voiceGains(focusVoice.value?.members ?? [], mode.value), model.value?.voices ?? [], mix.value)
+}
+
+/** Clicks of the metronome, none while it is off. */
+function beats(): Click[] {
+	return metronome.value && model.value ? metronomeClicks(model.value, timeline.value) : []
+}
+
+/** Display names of the voices for the mixer */
+const mixerVoices = computed(() => (model.value?.voices ?? []).map((voice) => ({ key: voice.key, label: labelOf(voice) })))
+
+/**
+ * Give the starting tones from the current place: of the focus voice when
+ * it plays alone, otherwise of every voice the mixer does not mute.
+ */
+async function giveStartingTones(): Promise<void> {
+	const loaded = model.value
+	if (!loaded || playing.value) {
+		return
+	}
+	const voices = mode.value === 'solo' && focusVoice.value
+		? [focusVoice.value]
+		: loaded.voices.filter((voice) => (mix.value[voice.key] ?? 100) > 0)
+	const tones = startingTones(timeline.value, voices, player?.currentTime() ?? 0)
+	const fifths = loaded.signatures.fifths === null ? null : transposedFifths(loaded.signatures.fifths, transpose.value)
+	announce(startingTonesText(tones, labelOf, fifths))
+	await ensurePlayer().playTones(tones.map((tone) => tone.pitch))
 }
 
 function ensurePlayer(): ScorePlayerType {
@@ -838,6 +873,7 @@ function ensurePlayer(): ScorePlayerType {
 		player.setRate(tempoPercent.value / 100)
 		player.setVolume(volumePercent.value / 100)
 		player.setGains(gains())
+		player.setMetronome(beats())
 		player.setLoop(loop.value)
 	}
 	return player
@@ -972,6 +1008,9 @@ watch([focusKey, mode], () => {
 	applyFocus()
 	player?.setGains(gains())
 })
+watch(mix, () => player?.setGains(gains()))
+watch(transpose, () => updateTimeline())
+watch(metronome, () => player?.setMetronome(beats()))
 watch(tempoPercent, (value) => player?.setRate(value / 100))
 watch(volumePercent, (value) => player?.setVolume(value / 100))
 watch(repeats, () => updateTimeline())
@@ -1412,7 +1451,7 @@ onBeforeUnmount(() => {
 								<template #icon>
 									<NcIconSvgWrapper :path="settingsShown ? mdiChevronUp : mdiTuneVariant" />
 								</template>
-								{{ t('notenarchiv', 'Tempo and volume') }}
+								{{ t('notenarchiv', 'Tempo, volume and practising') }}
 							</NcButton>
 						</div>
 						<div v-show="settingsShown" :id="settingsId" class="score-viewer__settings">
@@ -1451,6 +1490,12 @@ onBeforeUnmount(() => {
 									{{ t('notenarchiv', 'Scroll along') }}
 								</NcCheckboxRadioSwitch>
 							</div>
+							<PracticeTools v-model:mix="mix"
+								v-model:transpose="transpose"
+								v-model:metronome="metronome"
+								:voices="mixerVoices"
+								:playing="playing"
+								@tones="giveStartingTones" />
 						</div>
 						<p v-if="!canExportAudio && exportReason" class="score-viewer__hint score-viewer__line">
 							{{ exportReason }}
@@ -1699,6 +1744,7 @@ onBeforeUnmount(() => {
 					:count-in-bars="countInBars"
 					:voice-name="labelOf"
 					:version-line="versionLineText"
+					:transpose="transpose"
 					@close="closePractice" />
 				<CorrectionDialog v-if="correction && model"
 					:detail="detail"

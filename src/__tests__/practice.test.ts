@@ -36,6 +36,7 @@ import {
 	practiceParts,
 	withoutOverlaps,
 } from '../score/practice.ts'
+import { mixedGains, transposeTimeline } from '../score/practising.ts'
 import { normalizePeak } from '../score/render.ts'
 import { linearTiming } from '../score/timeline.ts'
 import { createToolkit } from '../score/toolkit.ts'
@@ -506,6 +507,14 @@ describe('practice files from a score (Verovio)', () => {
 			expect(timeline.events.filter((event) => event.voice === '1.1')).toHaveLength(12)
 			expect(seconds[0]).toHaveLength(10)
 			expect(seconds[1]).toHaveLength(8)
+
+			// Transposed (milestone 0.13): pitches and key signature move, the mixer sets the channel volume
+			const up = transposeTimeline(timeline, 2)
+			const mixed = mixedGains(partGains(part), model.voices, { [model.voices[1].key]: 0 })
+			const transposed = readMidi(practiceMidi(model, up, part, { rate, title: '1-1', labelOf, transpose: 2, gainOf: mixed }))
+			expect(transposed.tracks[0].filter((event) => event.meta === 0x59).map((event) => event.data)).toEqual([[3, 0]])
+			expect(noteOnSeconds(transposed)[0].map((note) => note.pitch)).toEqual(seconds[0].map((note) => note.pitch + 2))
+			expect(transposed.tracks.slice(1).map((track) => track.find((event) => (event.status & 0xf0) === 0xb0)?.data)).toEqual([[7, 127], [7, 0]])
 
 			// The rendered WAV is scheduled with the playback's own function
 			const notes: { pitch: number, start: number, end: number, gain: number }[] = []

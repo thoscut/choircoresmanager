@@ -10,6 +10,20 @@ All notable changes to this app are documented in this file. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- **Practising in the score view and for shared pieces** (milestone 0.13,
+  from a comparison with practice apps). Under "Tempo, volume and
+  practising":
+  - **Starting tones** play the first tone of every voice from the start of
+    the playback, from the lowest up, and announce their names.
+  - **Metronome** clicks the beats while the music plays.
+  - **Pitch** moves the sound up to six semitones; the notes stay as
+    written. Practice files take the pitch, MIDI files with the matching key.
+  - **Mixer**: a level per voice on top of "Voices during playback"; the
+    practice file of a shared piece sounds like it.
+  Everything happens in the browser; nothing about practising is stored.
+
 ### Changed
 
 - **Backups outside the archive folder.** The weekly and manual backups
