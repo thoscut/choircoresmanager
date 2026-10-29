@@ -58,6 +58,8 @@ documentation for developers is in English.
 - [Screenshots](screenshots/README.md): the list of images, what each shows
   and which ones the App Store uses.
 - [Roadmap](../ROADMAP.md) (German): principles and milestones.
+- [Namensrecherche „Cantoria“](de/namensrecherche-cantoria.md) (German):
+  research on a possible international name for the app.
 - [Changelog](../CHANGELOG.md).
 
 ## Deutsch
