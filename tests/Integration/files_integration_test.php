@@ -28,7 +28,6 @@ declare(strict_types=1);
 require __DIR__ . '/harness.php';
 [$root, $uid] = IntegrationTest::start($argv, ['nextcloud-root', 'uid']);
 
-use OCA\Files\Event\LoadAdditionalScriptsEvent;
 use OCA\Cantoria\AppInfo\Application;
 use OCA\Cantoria\Controller\FilesIntegrationController;
 use OCA\Cantoria\Db\ArchiveFile;
@@ -41,6 +40,7 @@ use OCA\Cantoria\Service\AppSettings;
 use OCA\Cantoria\Service\FilesIntegrationService;
 use OCA\Cantoria\Service\Modules;
 use OCA\Cantoria\Service\Roles;
+use OCA\Files\Event\LoadAdditionalScriptsEvent;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\JSONResponse;

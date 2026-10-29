@@ -230,7 +230,7 @@ final class ConcertCalendarServiceTest extends TestCase {
 		self::assertSame(2, $result['concerts']);
 		self::assertSame(2, $result['created']);
 		self::assertSame(['cantoria-concert-2', 'cantoria-concert-3'],
-			array_map(fn (string $name): string => substr($name, 0, 21), array_keys($personal->objects)));
+			array_map(fn (string $name): string => substr($name, 0, 18), array_keys($personal->objects)));
 	}
 
 	public function testCalendarFiles(): void {

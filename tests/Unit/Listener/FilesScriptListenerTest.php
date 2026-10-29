@@ -9,12 +9,12 @@ declare(strict_types=1);
 
 namespace OCA\Cantoria\Tests\Unit\Listener;
 
-use OCA\Files\Event\LoadAdditionalScriptsEvent;
 use OCA\Cantoria\Listener\FilesScriptListener;
 use OCA\Cantoria\Service\FilesIntegrationService;
 use OCA\Cantoria\Service\Modules;
 use OCA\Cantoria\Service\Roles;
 use OCA\Cantoria\Tests\Unit\Support\ModuleSwitches;
+use OCA\Files\Event\LoadAdditionalScriptsEvent;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\EventDispatcher\Event;
 use OCP\IAppConfig;

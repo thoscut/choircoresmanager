@@ -9,11 +9,11 @@ declare(strict_types=1);
 
 namespace OCA\Cantoria\Listener;
 
-use OCA\Files\Event\LoadAdditionalScriptsEvent;
 use OCA\Cantoria\AppInfo\Application;
 use OCA\Cantoria\Service\FilesIntegrationService;
 use OCA\Cantoria\Service\Modules;
 use OCA\Cantoria\Service\Roles;
+use OCA\Files\Event\LoadAdditionalScriptsEvent;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;

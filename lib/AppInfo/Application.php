@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace OCA\Cantoria\AppInfo;
 
-use OCA\Files\Event\LoadAdditionalScriptsEvent;
 use OCA\Cantoria\Dashboard\DueWidget;
 use OCA\Cantoria\Listener\FilesScriptListener;
 use OCA\Cantoria\Listener\UserDeletedListener;
@@ -18,6 +17,7 @@ use OCA\Cantoria\Notification\Notifier;
 use OCA\Cantoria\Search\CatalogSearchProvider;
 use OCA\Cantoria\Service\Modules;
 use OCA\Cantoria\Service\Roles;
+use OCA\Files\Event\LoadAdditionalScriptsEvent;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;

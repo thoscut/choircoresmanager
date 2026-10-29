@@ -26,12 +26,12 @@ declare(strict_types=1);
 require __DIR__ . '/harness.php';
 [$root, $uid] = IntegrationTest::start($argv, ['nextcloud-root', 'uid']);
 
-use OCA\DAV\CalDAV\CalDavBackend;
 use OCA\Cantoria\Dashboard\DueWidget;
 use OCA\Cantoria\Service\ConcertCalendarService;
 use OCA\Cantoria\Service\DueService;
 use OCA\Cantoria\Service\EventService;
 use OCA\Cantoria\Service\RightsService;
+use OCA\DAV\CalDAV\CalDavBackend;
 use OCP\IDBConnection;
 use OCP\Server;
 use Sabre\VObject\Reader;
