@@ -125,7 +125,7 @@ const blockReason = computed(() => {
 		return ''
 	}
 	if (!chosen.available) {
-		return chosen.reason ?? t('cantoria', 'This kind of link is switched off. An administrator can switch it on in the settings of the music archive under "Modules".')
+		return chosen.reason ?? t('cantoria', 'This kind of link is switched off. An administrator can switch it on in the settings of Cantoria under "Modules".')
 	}
 	return chosen.allowed ? '' : (chosen.reason ?? t('cantoria', 'The rights of this version do not allow this link.'))
 })
@@ -139,7 +139,7 @@ const dialogName = computed(() => (canShareOutside.value
 const circleHint = computed(() => {
 	switch (circle.value) {
 	case 'members':
-		return t('cantoria', 'Choir members see it in the music archive under "Shared with me", without the catalog: the whole piece or the chosen measures with all voices, the voice highlighted. The server sends only that, never the score file, and checks the rights on every call.')
+		return t('cantoria', 'Choir members see it in Cantoria under "Shared with me", without the catalog: the whole piece or the chosen measures with all voices, the voice highlighted. The server sends only that, never the score file, and checks the rights on every call.')
 	case 'public':
 		return t('cantoria', 'Anyone who has the link can view and play it without signing in, until it expires or is revoked: the whole piece or the chosen measures, without the score file, without names and without a note. The server sends only that and checks the rights on every call.')
 	default:

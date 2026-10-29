@@ -8,7 +8,7 @@ declare(strict_types=1);
  */
 
 /**
- * Integration test of the settings under Administration → Music archive and
+ * Integration test of the settings under Administration → Cantoria and
  * of the access check of the archive folder, against a real Nextcloud
  * instance with an imported catalog and a file sync.
  *

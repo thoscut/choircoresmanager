@@ -118,7 +118,7 @@ final class DueWidgetTest extends TestCase {
 	public function testDescribesItself(): void {
 		$widget = $this->widget();
 		self::assertSame('cantoria-due', $widget->getId());
-		self::assertSame('[Music archive – due]', $widget->getTitle());
+		self::assertSame('[Cantoria – due]', $widget->getTitle());
 		self::assertSame(self::APP_URL, $widget->getUrl());
 		self::assertSame('https://cloud.example.org/apps/cantoria/img/app-dark.svg', $widget->getIconUrl());
 		$buttons = $widget->getWidgetButtons('carla');

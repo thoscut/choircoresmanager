@@ -2,11 +2,11 @@
   - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
-# Notenarchiv alongside a choir system
+# Cantoria alongside a choir system
 
 Many choirs already use a choir system: a member app or a website where the
 singers find their scores and practice recordings, the dates and the news.
-Notenarchiv does not replace it. It is the archive behind it: what the choir
+Cantoria does not replace it. It is the archive behind it: what the choir
 owns, which version it sings, what the rights allow, and what may go out to
 the singers. This page is for administrators and music librarians who run
 both. [Deutsch](de/neben-einem-chorsystem.md)
@@ -15,15 +15,15 @@ both. [Deutsch](de/neben-einem-chorsystem.md)
 
 | Data | Kept in | Reaches the choir system |
 |---|---|---|
-| Catalog: works, versions, copies, shelf marks | Notenarchiv | Shelf mark, title, composer and version line in `Liste.csv` of the hand-over folder |
+| Catalog: works, versions, copies, shelf marks | Cantoria | Shelf mark, title, composer and version line in `Liste.csv` of the hand-over folder |
 | Scans and MusicXML files | the archive folder in Nextcloud | Only those choir members may save and print, through the hand-over folder |
 | Practice recordings | the archive folder | Only where practice audio is allowed, through the hand-over folder |
-| Rights, licenses, evidence, preservation copies | Notenarchiv | The license notice per file in `Liste.csv`; never the evidence |
+| Rights, licenses, evidence, preservation copies | Cantoria | The license notice per file in `Liste.csv`; never the evidence |
 | Notes of the conductor per passage | the notes of the links for choir members | `… Hinweise.txt` per piece in the hand-over folder |
-| Concerts and their programme | Notenarchiv | As calendar files (`.ics`) if you choose so |
-| Members, voices, attendance, news | the choir system | Never in Notenarchiv |
-| Folder book (who has which folder) | Notenarchiv | Never |
-| Audit log, tasks, proposals, transcription reports | Notenarchiv | Never |
+| Concerts and their programme | Cantoria | As calendar files (`.ics`) if you choose so |
+| Members, voices, attendance, news | the choir system | Never in Cantoria |
+| Folder book (who has which folder) | Cantoria | Never |
+| Audit log, tasks, proposals, transcription reports | Cantoria | Never |
 
 ## What never goes into the choir system
 
@@ -51,7 +51,7 @@ on its provider; ask them before you rely on it.
 
 ## The way back: comparing an export
 
-What is really in the choir system is recorded in Notenarchiv as "In
+What is really in the choir system is recorded in Cantoria as "In
 singers' portal since". Instead of keeping it by hand, export the list of
 pieces from the choir system and compare it with the list **Singers'
 portal** ([user guide](user-guide.md#comparing-with-the-choir-system)). The
@@ -61,7 +61,7 @@ released for it are listed so that they can be removed there.
 
 ## Concerts
 
-Concerts stay in Notenarchiv, because the programme decides which versions
+Concerts stay in Cantoria, because the programme decides which versions
 and rights are needed. For the choir system or the singers' calendars,
 download a concert or all upcoming concerts as a calendar file (`.ics`)
 ([user guide](user-guide.md#concerts-in-your-calendar)). Every concert keeps

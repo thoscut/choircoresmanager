@@ -24,7 +24,7 @@ use Psr\Log\LoggerInterface;
 
 /**
  * Who may change the settings: admins, and the groups the administration
- * has given the page "Administration → Music archive" (Administration
+ * has given the page "Administration → Cantoria" (Administration
  * privileges). That gives no role and no access to the catalog.
  */
 #[CoversClass(Roles::class)]

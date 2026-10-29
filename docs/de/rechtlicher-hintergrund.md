@@ -6,7 +6,7 @@
 
 [English](../legal-background.md) | **Deutsch**
 
-Diese Seite erklärt, auf welchen Regeln die Rechteprüfung des Notenarchivs
+Diese Seite erklärt, auf welchen Regeln die Rechteprüfung von Cantoria
 beruht und wo ihre Grenzen liegen. Sie beschreibt deutsches Recht, Stand
 Oktober 2026 (App-Version 0.11).
 

@@ -4,7 +4,7 @@
  */
 
 /**
- * The action "Open in music archive" of the Files app (src/files.ts): for
+ * The action "Open in Cantoria" of the Files app (src/files.ts): for
  * which files it is shown, when it is the default action of a click, how the
  * answer of the server is read and where it leads. Pure functions without
  * Vue and without Nextcloud globals, easy to test.

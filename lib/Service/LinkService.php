@@ -65,7 +65,7 @@ class LinkService {
 		ExcerptLink::CIRCLE_PUBLIC => Modules::PUBLIC_LINKS,
 	];
 	/** Reasons for the dialog (English source strings, translated by the controller) */
-	public const SWITCHED_OFF = 'This kind of link is switched off. An administrator can switch it on in the settings of the music archive under "Modules".';
+	public const SWITCHED_OFF = 'This kind of link is switched off. An administrator can switch it on in the settings of Cantoria under "Modules".';
 	public const NO_SCORE = 'This copy has no MusicXML file. Links for choir members and public links show the notes of a MusicXML file; the catalog librarian links one on the tab "Files".';
 
 	public function __construct(

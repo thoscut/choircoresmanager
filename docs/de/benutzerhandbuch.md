@@ -125,7 +125,7 @@ Unten finden alle **Hilfe** (dieses Handbuch) und **Ansicht anpassen**, die
 Archivverwaltung außerdem **Archivverwaltung** (Importe, Dateiabgleich,
 Exporte, Sicherungen). **Einstellungen** (für die Administration und die
 Gruppen, denen sie die Einstellungen übertragen hat) führt zu
-**Verwaltungseinstellungen → Notenarchiv**, der Einstellungsseite der App in
+**Verwaltungseinstellungen → Cantoria**, der Einstellungsseite der App in
 der Nextcloud-Verwaltung.
 
 Jede Ansicht hat ihre eigene Adresse. Die Zurück-Schaltfläche des Browsers
@@ -210,7 +210,7 @@ Mit dem Modul **Nextcloud-Suche** findest du Exemplare, ohne die App zu
 1. Klicke auf die Lupe in der Kopfzeile von Nextcloud und tippe eine
    Signatur (`2-1`), ein Wort aus dem Titel oder den Namen einer Person ein,
    mindestens zwei Zeichen.
-2. Der Bereich **Notenarchiv** zeigt die Exemplare, aktive zuerst, mit
+2. Der Bereich **Cantoria** zeigt die Exemplare, aktive zuerst, mit
    Komposition, Bearbeitung und bei den übrigen Exemplaren ihrem Status.
 3. Klicke auf ein Ergebnis: Die App öffnet sich mit diesem Exemplar.
 
@@ -219,7 +219,7 @@ auch Personen aus dem Personenregister. Sie zeigt nur, was deine Rollen sehen
 dürfen: interne Erhaltungskopien nur der Rolle „Bestand“ und der
 Chorleitung, und Konten ohne Rolle im Notenarchiv gar nichts.
 
-![Die Suche von Nextcloud mit dem Begriff „Mond“: unter den Dateien der Bereich „Notenarchiv“ mit den Exemplaren 1-1 und 3-1 „Der Mond ist aufgegangen“, jedes mit Komposition und Bearbeitung.](../screenshots/unified-search.png)
+![Die Suche von Nextcloud mit dem Begriff „Mond“: unter den Dateien der Bereich „Cantoria“ mit den Exemplaren 1-1 und 3-1 „Der Mond ist aufgegangen“, jedes mit Komposition und Bearbeitung.](../screenshots/unified-search.png)
 
 ### Die Angaben zu einem Exemplar
 
@@ -287,7 +287,7 @@ Archivverwaltung (oder die Administration), den Archivordner mit dir oder,
 besser, mit der Gruppe deiner Rolle zu teilen; Leserechte genügen. Lade
 danach die Seite neu. Darfst du die Einstellungen selbst ändern, öffnet die
 Schaltfläche **Zugriff auf den Archivordner prüfen** die Zugriffsprüfung
-unter Verwaltungseinstellungen → Notenarchiv. Sie zeigt alle, die den Ordner
+unter Verwaltungseinstellungen → Cantoria. Sie zeigt alle, die den Ordner
 nicht öffnen können (siehe
 [Administrationshandbuch](administrationshandbuch.md#prüfen-wer-den-archivordner-öffnen-kann)).
 
@@ -309,7 +309,7 @@ Chrome und Edge; Firefox druckt ohne).
 
 ### Benachrichtigungen
 
-![Das Benachrichtigungsmenü von Nextcloud mit Benachrichtigungen des Notenarchivs, zum Beispiel einem Vorschlag, der im Eingang wartet.](../screenshots/notifications.png)
+![Das Benachrichtigungsmenü von Nextcloud mit Benachrichtigungen von Cantoria, zum Beispiel einem Vorschlag, der im Eingang wartet.](../screenshots/notifications.png)
 
 Die App benachrichtigt die Personen mit einer Rolle über die
 Benachrichtigungen von Nextcloud, zum Beispiel über eine Rückfrage an deine
@@ -324,9 +324,9 @@ nennt sie alle.
 
 ### Dashboard-Widget
 
-![Das Nextcloud-Dashboard mit dem Widget „Notenarchiv – fällig“: eine Konzertfrist, die Karten der Startseite mit ihren Zahlen und der Link „Startseite öffnen“.](../screenshots/dashboard-widget.png)
+![Das Nextcloud-Dashboard mit dem Widget „Cantoria – fällig“: eine Konzertfrist, die Karten der Startseite mit ihren Zahlen und der Link „Startseite öffnen“.](../screenshots/dashboard-widget.png)
 
-Das Nextcloud-Dashboard kann das Widget **Notenarchiv – fällig** zeigen:
+Das Nextcloud-Dashboard kann das Widget **Cantoria – fällig** zeigen:
 dasselbe wie die Startseite (Konzertfristen, die Karten mit ihren Zahlen,
 Aufgaben für deine Rollen), jeder Eintrag mit einem Link in die App, dazu
 **Startseite öffnen**. Jeder Eintrag hat einen kurzen Titel, die
@@ -337,18 +337,18 @@ den Text einer Rückfrage oder den Namen einer Person.
 
 ### Aus der Dateien-App öffnen
 
-![Die App „Dateien“ im Ordner Mappe_2 des Demo-Archivs mit dem geöffneten Aktionsmenü der MusicXML-Datei von Exemplar 2-1; unter den Aktionen „Im Notenarchiv öffnen“.](../screenshots/files-action.png)
+![Die App „Dateien“ im Ordner Mappe_2 des Demo-Archivs mit dem geöffneten Aktionsmenü der MusicXML-Datei von Exemplar 2-1; unter den Aktionen „In Cantoria öffnen“.](../screenshots/files-action.png)
 
 Der Archivordner ist ein gewöhnlicher Ordner in Nextcloud. Du findest eine
 Datei also auch in der App **Dateien**. Dateien des Archivordners haben im
-Aktionsmenü (⋯) die Aktion **Im Notenarchiv öffnen**:
+Aktionsmenü (⋯) die Aktion **In Cantoria öffnen**:
 
 - **MusicXML** (`.musicxml`, `.mxl`): Ein Klick auf die Datei öffnet direkt
   die Notenansicht ihres Exemplars. Öffnet schon eine andere App in deiner
   Nextcloud MusicXML, bleibt ein Klick bei dieser App, und die Aktion steht
   im Menü.
 - **Scans (PDF), MuseScore, Audio und die übrigen Dateien eines Exemplars:**
-  Die Aktion öffnet das Exemplar in der Seitenleiste des Notenarchivs. Ein
+  Die Aktion öffnet das Exemplar in der Seitenleiste von Cantoria. Ein
   Klick auf ein PDF öffnet weiterhin den Viewer von Nextcloud.
 
 Die Aktion gibt es für Konten mit einer Archivrolle und für die
@@ -1771,12 +1771,12 @@ Schrift; **Jahresbericht als CSV** lädt seine Tabellen herunter.
 Chormitglieder haben keine Rolle im Notenarchiv. Wo die Administration
 Links für Chormitglieder eingeschaltet hat, sehen sie nur die Seite **Für
 mich freigegeben** mit den Stücken und Ausschnitten, die mit dem Chor geteilt
-sind. Siehst du gar kein Notenarchiv, lies
+sind. Siehst du Cantoria gar nicht, lies
 [Kein Zugang zum Notenarchiv](#kein-zugang-zum-notenarchiv).
 
 ### Mit mir geteilt
 
-Chormitglieder melden sich bei Nextcloud an und öffnen **Notenarchiv**. Sie
+Chormitglieder melden sich bei Nextcloud an und öffnen **Cantoria**. Sie
 sehen **Mit mir geteilt**: die mit dem Chor geteilten Stücke und
 Ausschnitte mit Titel, Komposition, **Ganzes Stück** oder den Takten,
 Stimme, der Notiz und wie lange jedes gilt, ob es sich abspielen lässt
@@ -1897,7 +1897,7 @@ ist.“* Mit der Datei und deiner Rolle ist alles in Ordnung: Der Archivordner
 ist nicht für dich freigegeben. Siehe
 [Dateien, die sich nicht öffnen lassen](#dateien-die-sich-nicht-öffnen-lassen).
 
-### Der Bereich „Notenarchiv“ fehlt in der Nextcloud-Suche
+### Der Bereich „Cantoria“ fehlt in der Nextcloud-Suche
 
 Das Modul ist abgeschaltet, oder dein Konto hat keine Rolle im Notenarchiv.
 Frag die Administration.

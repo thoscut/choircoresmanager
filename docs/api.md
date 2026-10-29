@@ -284,7 +284,7 @@ schema are written; others are left out.
 
 ## Settings
 
-The settings are the page **Administration → Music archive** (settings
+The settings are the page **Administration → Cantoria** (settings
 section `cantoria`, `OCA\Cantoria\Settings\Admin`, an
 `IDelegatedSettings`). Admins may use them, and the members of the groups
 the administration has given the page under **Administration privileges**;
@@ -1953,7 +1953,7 @@ Switched off: the two routes answer 404, nothing is recorded, `revision` is
 `null`, outputs print no version line; revisions and `state_id` stay.
 ## Opening from the Files app (module `files_integration`)
 
-Files of the archive folder get the action **Open in music archive** in the
+Files of the archive folder get the action **Open in Cantoria** in the
 Files app. The script (`js/cantoria-files.mjs`, built from
 `src/files.ts`; no score viewer, no Vue, no store) is added by
 `Listener\FilesScriptListener` on `OCA\Files\Event\LoadAdditionalScriptsEvent`
@@ -2542,7 +2542,7 @@ field cannot be proposed through `POST /api/proposals`.
 
 `Search\CatalogSearchProvider` (`OCP\Search\IProvider`, id `cantoria`,
 registered in `Application::register`) lists copies in the search of
-Nextcloud, in a section named "Music archive":
+Nextcloud, in a section named "Cantoria":
 
 - **Who:** accounts with one of the roles `librarian`, `operations`,
   `conductor`, `contributor`, `reader` and admins. The roles are listed by

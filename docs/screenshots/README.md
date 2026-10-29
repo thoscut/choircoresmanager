@@ -31,9 +31,9 @@ The App Store shows the files marked with a number, in this order
 | `shared-with-me.png` | 8 | The page "Shared with me" of a choir member: the whole piece 1-1 with the note of the conductor, the link "Open the scan (PDF)", the playback controls with count-in and loop, and the score with the alto highlighted. |
 | `score-dark.png` | 9 | The score viewer in the dark theme. |
 | `de/catalog.png` | 10 | The catalog in the German interface. |
-| `dashboard-widget.png` | – | The Nextcloud dashboard with the widget "Music archive – due". |
+| `dashboard-widget.png` | – | The Nextcloud dashboard with the widget "Cantoria – due". |
 | `review-points.png` | – | The score viewer of copy 2-1 with the panel "Review of the transcription" of its demo report: the review point at measure 7, Tenor II, chosen (measure shown, voice highlighted), "Play this passage", "Correct in the app …" and the decisions. |
-| `files-action.png` | – | The Files app in the folder `Mappe_2` of the demo archive with the actions menu of the MusicXML file of copy 2-1 and the action "Open in music archive". |
+| `files-action.png` | – | The Files app in the folder `Mappe_2` of the demo archive with the actions menu of the MusicXML file of copy 2-1 and the action "Open in Cantoria". |
 | `share-dialog.png` | – | The dialog "Share 1-1" over the score viewer: "Who can open the link?" with "Choir members" chosen, "What is shared?" with "Whole piece", the voice Alt, validity, "Include the scan (PDF)" ticked, and the box "What the recipients see" (playback, practice files and scan yes). |
 | `public-link.png` | – | The page of a public link in Nextcloud's public layout, without signing in: title, composer, the link "Open the scan (PDF)", the playback controls and the whole piece 1-2. |
 | `public-repertoire.png` | – | The public repertoire page with three works confirmed as public domain, composer and lyricist with life dates, scoring and links to CPDL or IMSLP. |
@@ -54,14 +54,14 @@ The App Store shows the files marked with a number, in this order
 | `backup-restore.png` | Archive management: file sync, export, backup, complete backup and restore. |
 | `import-report.png` | The report of a repeated dry run of the catalog import. |
 | `file-sync-report.png` | The report of the file sync: 31 files with a shelf mark, 30 linked, one file not assignable, one copy without a file, transcription reports and rights notices. |
-| `settings-roles.png` | Administration → Music archive, section "Roles and groups": each role with its groups and description, including "Choir members". |
-| `admin-settings.png` | Administration → Music archive, section "Access to the archive folder" with the result of the check: per role and group, the accounts that cannot open the folder, what to do. |
-| `settings-print-mirror.png` | Administration → Music archive, section "Print station: mirror folder", after choosing a folder that fits. |
+| `settings-roles.png` | Administration → Cantoria, section "Roles and groups": each role with its groups and description, including "Choir members". |
+| `admin-settings.png` | Administration → Cantoria, section "Access to the archive folder" with the result of the check: per role and group, the accounts that cannot open the folder, what to do. |
+| `settings-print-mirror.png` | Administration → Cantoria, section "Print station: mirror folder", after choosing a folder that fits. |
 | `protection-terms.png` | The list "Protection terms" with copy 1-7. |
 | `merge-proposals.png` | The proposals to merge the three works listed twice. |
 | `annual-report.png` | The annual report 2026: the year in figures, concerts and new accessions. |
 | `calendar-dialog.png` | The dialog "Add to my calendar" of a concert. |
-| `unified-search.png` | The search of Nextcloud with the term "Mond" and the section "Music archive" with copies 1-1 and 3-1. |
+| `unified-search.png` | The search of Nextcloud with the term "Mond" and the section "Cantoria" with copies 1-1 and 3-1. |
 | `folder-book.png` | The folder book with three demo folders: one out with an invented name, two available, one of them worn, with a missing sheet and the hint that it contains a copy retired in the catalog. |
 | `folder-take-back.png` | The dialog "Take back folder 12" with the day, the condition "Worn" and the missing sheets filled in. |
 | `protection-special-case.png` | Sidebar of copy 1-6, tab "Rights": the suggestion "Public domain by the life dates" with the line for the scientific edition (§ 70 UrhG) that appeared in 1991. |

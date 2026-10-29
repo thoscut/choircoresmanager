@@ -6,7 +6,7 @@
 
 [English](../privacy-templates.md) | **Deutsch**
 
-Diese Vorlagen helfen dem Verein, das Notenarchiv in seine
+Diese Vorlagen helfen dem Verein, die App Cantoria in seine
 Datenschutzunterlagen aufzunehmen. Sie beschreiben, was die App speichert
 (Stand: Version 0.11). Sie sind **keine Rechtsberatung**: Passe sie an deinen
 Verein, deine Nextcloud und deine Module an, und lass sie im Zweifel von
@@ -104,7 +104,7 @@ Baustein für die Datenschutzhinweise des Vereins, zum Beispiel als Abschnitt
 „Notenarchiv“:
 
 > **Notenarchiv.** Der [Verein] verwaltet seinen Notenbestand in einer
-> Nextcloud mit der App „Notenarchiv“. Wenn du eine Chormappe bekommst,
+> Nextcloud mit der App „Cantoria“. Wenn du eine Chormappe bekommst,
 > halten wir fest, welche Mappe du seit wann hast (Name oder
 > Nextcloud-Konto, Tag der Ausgabe, Notizen zur Ausgabe). Das dient dazu,
 > dass die Noten des Vereins zurückkommen (Art. 6 Abs. 1 lit. b DSGVO).

@@ -50,9 +50,9 @@ export default process.env.VITEST
 	: createAppConfig(
 		{
 			main: resolve(join('src', 'main.ts')),
-			// Action "Open in music archive" in the Files app (small: no score viewer, no Vue)
+			// Action "Open in Cantoria" in the Files app (small: no score viewer, no Vue)
 			files: resolve(join('src', 'files.ts')),
-			// Administration → Music archive: only the settings, without the
+			// Administration → Cantoria: only the settings, without the
 			// catalog and the score viewer
 			'admin-settings': resolve(join('src', 'adminSettings.ts')),
 			// Page "Shared with me" for choir members (milestone 0.7: excerpts only, no catalog)

@@ -20,7 +20,7 @@ use OCP\Files\IRootFolder;
 /**
  * Opening archive files from the Files app (module "files_integration").
  *
- * The script in the Files app shows the action "Open in music archive" only
+ * The script in the Files app shows the action "Open in Cantoria" only
  * for files below the archive folder whose extension the file sync knows; it
  * learns the folder from the initial state built here. Which copy a file
  * belongs to is decided here, when the action runs. A Nextcloud file id is

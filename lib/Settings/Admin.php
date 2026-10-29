@@ -14,7 +14,7 @@ use OCP\AppFramework\Http\TemplateResponse;
 use OCP\Settings\IDelegatedSettings;
 
 /**
- * The settings of the app under Administration → Music archive: archive
+ * The settings of the app under Administration → Cantoria: archive
  * folder, roles and groups, modules, repertoire, access to the archive
  * folder, complete backup and restore. The page itself is a Vue app
  * (src/adminSettings.ts) that talks to the settings routes of the app.

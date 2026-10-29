@@ -4,7 +4,7 @@
 -->
 <script setup lang="ts">
 /**
- * The page Administration → Music archive: the setup in five steps, archive
+ * The page Administration → Cantoria: the setup in five steps, archive
  * folder, roles and groups, access to the archive folder, modules,
  * repertoire, and for admins the complete backup and restore. Each section
  * links its part of the administration guide.
@@ -103,8 +103,8 @@ onMounted(async () => {
 <template>
 	<div class="cantoria-settings">
 		<NcSettingsSection :id="sections.setup"
-			:name="t('cantoria', 'Music archive')"
-			:description="t('cantoria', 'Settings of the music archive for the whole instance. The daily work happens in the app.')"
+			:name="t('cantoria', 'Cantoria')"
+			:description="t('cantoria', 'Settings of Cantoria for the whole instance. The daily work happens in the app.')"
 			:doc-url="adminGuideUrl(ADMIN_GUIDE.setup)">
 			<div class="cantoria-settings__intro">
 				<SetupChecklist v-if="settings" :settings="settings" :report="accessReport" />
@@ -112,7 +112,7 @@ onMounted(async () => {
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiArrowRight" />
 					</template>
-					{{ t('cantoria', 'Open the music archive') }}
+					{{ t('cantoria', 'Open Cantoria') }}
 				</NcButton>
 				<p v-if="settings?.admin" class="cantoria-settings__muted">
 					{{ t('cantoria', 'Administrators can give this page to a group, e.g. the music librarians, under Administration privileges. That gives no role; complete backup and restore stay with administrators.') }}

@@ -3,7 +3,7 @@
     "info": {
         "title": "cantoria",
         "version": "0.0.1",
-        "description": "Sheet music archive for choirs: catalog, rights, scores, concerts",
+        "description": "The sheet music archive for choirs: catalog, rights, scores, concerts",
         "license": {
             "name": "AGPL-3.0-or-later"
         }

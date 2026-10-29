@@ -43,7 +43,7 @@ For all entries:
 ## 2. Information for choir members (Art. 13 GDPR)
 
 > **Music archive.** [The choir] keeps its sheet music in a Nextcloud with
-> the app "Notenarchiv". When you get a choir folder, we record which folder
+> the app "Cantoria". When you get a choir folder, we record which folder
 > you have since when (name or Nextcloud account, day of issue, notes), so
 > that the choir's music comes back (Art. 6 (1) b GDPR). [12] months after
 > the return we remove name and notes automatically; if a folder does not

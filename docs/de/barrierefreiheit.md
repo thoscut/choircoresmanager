@@ -4,7 +4,7 @@
 -->
 # Erklärung zur Barrierefreiheit
 
-Diese Erklärung gilt für die App Notenarchiv für Nextcloud: ihre Seiten in
+Diese Erklärung gilt für die App Cantoria für Nextcloud: ihre Seiten in
 Nextcloud, die Seiten „Mit mir geteilt“ für Chormitglieder und die
 öffentlichen Seiten (öffentliche Links und die Repertoireseite).
 [English](../accessibility.md)

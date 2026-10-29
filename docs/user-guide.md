@@ -208,7 +208,7 @@ the register as well. It shows only what your roles may see: internal
 preservation copies only to the catalog librarian and the conductor, and
 nothing to accounts without a role in the music archive.
 
-![The search of Nextcloud with the term "Mond": below the files the section "Music archive" with the copies 1-1 and 3-1 "Der Mond ist aufgegangen", each with composer and arrangement.](screenshots/unified-search.png)
+![The search of Nextcloud with the term "Mond": below the files the section "Cantoria" with the copies 1-1 and 3-1 "Der Mond ist aufgegangen", each with composer and arrangement.](screenshots/unified-search.png)
 
 ### The details of a copy
 
@@ -300,9 +300,9 @@ how often, for example as a weekly summary. The
 
 ### Dashboard widget
 
-![The Nextcloud dashboard with the widget "Music archive – due", listing a concert deadline and the start page cards with their numbers, and the link "Open the start page".](screenshots/dashboard-widget.png)
+![The Nextcloud dashboard with the widget "Cantoria – due", listing a concert deadline and the start page cards with their numbers, and the link "Open the start page".](screenshots/dashboard-widget.png)
 
-The Nextcloud dashboard can show the widget **Music archive – due**: the same
+The Nextcloud dashboard can show the widget **Cantoria – due**: the same
 as the start page (concert deadlines, the cards with their numbers, tasks for
 your roles), each entry with a link into the app, and **Open the start page**.
 Each entry has a short title, the details in a second line and a symbol for
@@ -312,11 +312,11 @@ question or a person's name.
 
 ### Opening from the Files app
 
-![The Files app in the folder Mappe_2 of the demo archive with the actions menu of the MusicXML file of copy 2-1 open; among the actions "Open in music archive".](screenshots/files-action.png)
+![The Files app in the folder Mappe_2 of the demo archive with the actions menu of the MusicXML file of copy 2-1 open; among the actions "Open in Cantoria".](screenshots/files-action.png)
 
 The archive folder is an ordinary folder in Nextcloud, so you can also find a
 file there in the **Files** app. Files of the archive folder have the action
-**Open in music archive** in their actions menu (⋯):
+**Open in Cantoria** in their actions menu (⋯):
 
 - **MusicXML** (`.musicxml`, `.mxl`): a click on the file opens the score
   viewer of its copy directly. If another app in your Nextcloud already opens
@@ -1771,7 +1771,7 @@ choir members are switched on.
 is wrong with the file or your role: the archive folder is not shared with
 you. See [Files you cannot open](#files-you-cannot-open).
 
-### The section "Music archive" is missing in the Nextcloud search
+### The section "Cantoria" is missing in the Nextcloud search
 
 The module is switched off, or your account has no role in the music
 archive. Ask the administration.

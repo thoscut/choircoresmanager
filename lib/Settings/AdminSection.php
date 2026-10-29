@@ -15,7 +15,7 @@ use OCP\IURLGenerator;
 use OCP\Settings\IIconSection;
 
 /**
- * The section "Music archive" under Administration (registered in
+ * The section "Cantoria" under Administration (registered in
  * appinfo/info.xml). Admins see it, and the members of the groups that the
  * administration has given the page under Administration privileges.
  */
@@ -35,7 +35,7 @@ class AdminSection implements IIconSection {
 
 	#[\Override]
 	public function getName(): string {
-		return $this->l->t('Music archive');
+		return $this->l->t('Cantoria');
 	}
 
 	/**

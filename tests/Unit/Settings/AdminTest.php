@@ -17,7 +17,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 /**
- * The page Administration → Music archive: a delegated setting in the app's
+ * The page Administration → Cantoria: a delegated setting in the app's
  * own section, registered in appinfo/info.xml, with its own small bundle.
  */
 #[CoversClass(Admin::class)]

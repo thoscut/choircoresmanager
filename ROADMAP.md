@@ -2,9 +2,9 @@
   - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
-# Roadmap Notenarchiv
+# Roadmap Cantoria
 
-Das Notenarchiv ist eine Nextcloud-App für Chöre. Sie führt das
+Cantoria ist eine Nextcloud-App für Chöre. Sie führt das
 Werkverzeichnis eines Notenarchivs in Nextcloud. Die Dateien selbst (Scans,
 MusicXML, MuseScore) bleiben, wo sie sind, in einem Ordner der Nextcloud.
 
@@ -443,7 +443,7 @@ Doku nach Aufgaben je Rolle mit „Häufige Probleme“, Durchgang ohne Vorwisse
 im Testaufbau und Abnahme im Browser auf Nextcloud 33; Handbücher auf Deutsch
 und Englisch. Die geführte Einrichtung kam schon mit den Einstellungen.*
 
-- **Geführte Einrichtung** unter Administration → Notenarchiv: Archivordner,
+- **Geführte Einrichtung** unter Administration → Cantoria: Archivordner,
   Rollen und Gruppen, Zugriffsprüfung, Import, Dateiabgleich, mit Status je
   Schritt.
 - **Hilfe am Ort:** kurze Erklärungen an Feldern und Ansichten, Verweise auf
@@ -473,7 +473,7 @@ rechtlicher Hintergrund DE/EN.
 *Fertig in 0.15.0 (PR #10). Umgesetzt:* Begriffe bereinigt, Fehlermeldungen mit nächstem Schritt, Fokus
 und Handy-Ansichten, Ausdrucke mit Kopfzeile, Modul `choir_handover`
 (Übergabeordner) und Vergleich mit dem Export des Chorsystems, Leitfaden
-„Notenarchiv neben einem Chorsystem“, Erklärung zur Barrierefreiheit.
+„Cantoria neben einem Chorsystem“, Erklärung zur Barrierefreiheit.
 
 ### 0.13 Üben in der Notenansicht
 

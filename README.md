@@ -1,11 +1,13 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="img/app.svg">
-    <img src="img/app-dark.svg" alt="Notenarchiv app icon: a folder with an eighth note" width="96" height="96">
+    <img src="img/app-dark.svg" alt="Cantoria app icon: a folder with an eighth note" width="96" height="96">
   </picture>
 </p>
 
-<h1 align="center">Notenarchiv</h1>
+<h1 align="center">Cantoria</h1>
+
+<p align="center"><em>Cantoria – the sheet music archive for choirs</em></p>
 
 <p align="center">
   <strong>The sheet music archive of your choir in Nextcloud: catalog, rights per version, scores with voice focus and concerts in one place.</strong>
@@ -17,7 +19,7 @@
   <a href="#requirements"><img src="https://img.shields.io/badge/Nextcloud-33%E2%80%9335-0082c9?logo=nextcloud&amp;logoColor=white" alt="Nextcloud 33 to 35"></a>
   <a href="#accessibility"><img src="https://img.shields.io/badge/accessibility-WCAG%202.2%20AA-2e7d32" alt="Accessibility target: WCAG 2.2 AA"></a>
   <!-- Once the app is listed in the Nextcloud App Store, add:
-  <a href="https://apps.nextcloud.com/apps/cantoria"><img src="https://img.shields.io/badge/Nextcloud%20App%20Store-Notenarchiv-0082c9?logo=nextcloud&amp;logoColor=white" alt="Notenarchiv in the Nextcloud App Store"></a>
+  <a href="https://apps.nextcloud.com/apps/cantoria"><img src="https://img.shields.io/badge/Nextcloud%20App%20Store-Cantoria-0082c9?logo=nextcloud&amp;logoColor=white" alt="Cantoria in the Nextcloud App Store"></a>
   -->
 </p>
 
@@ -26,7 +28,7 @@
   <img src="docs/screenshots/catalog.png" width="1600" height="1000" alt="The catalog of the invented demo choir: a list of copies with shelf mark, title, composer, rights status and repertoire; on the left the navigation with search, filters and the views of the app.">
 </picture>
 
-Notenarchiv keeps the catalog of a choir's sheet music archive: works,
+Cantoria keeps the catalog of a choir's sheet music archive: works,
 versions (settings, arrangements, editions), copies with their shelf marks,
 and the scans, MusicXML and MuseScore files that already live in your
 Nextcloud. It is made for the people who look after the music: the music
@@ -98,10 +100,10 @@ The screenshots show the invented demo archive from [tools/demo](tools/demo/READ
       <p>Figures for the board, the music librarians and the conductor: stock per binder, new copies per year, rights and releases, licenses, concerts and pieces per year, the most performed works and composers, repertoire classes, open tasks and protection terms that end. Every figure is a number in a table; the bars are only for comparison. The annual report summarises one year for the general meeting and prints on A4, also in large print; both download as CSV. They contain no personal data of choir members.</p>
     </td>
     <td width="33%" valign="top">
-      <a href="docs/screenshots/dashboard-widget.png"><img src="docs/screenshots/dashboard-widget.png" width="280" alt="The Nextcloud dashboard with the widget Music archive – due: a concert deadline and the numbers of things to do, each with a link into the app."></a>
+      <a href="docs/screenshots/dashboard-widget.png"><img src="docs/screenshots/dashboard-widget.png" width="280" alt="The Nextcloud dashboard with the widget Cantoria – due: a concert deadline and the numbers of things to do, each with a link into the app."></a>
       <a href="docs/screenshots/calendar-dialog.png"><img src="docs/screenshots/calendar-dialog.png" width="280" alt="The dialog Add to my calendar of a concert: the choice of the calendar, and the notes that the preparation deadlines become all-day entries and that an existing entry is updated, not added twice."></a>
       <h3>Dashboard widget and calendar</h3>
-      <p>The dashboard widget "Music archive – due" shows the concert deadlines, things to do and tasks of the start page, with links into the app, to accounts with an archive role. A concert can have a start and end time. "Add to my calendar" puts one concert or all upcoming concerts into one of your Nextcloud calendars and updates them when added again; a calendar file (.ics) works with any calendar program. The preparation deadlines can be added as all-day entries. There is no public subscription link.</p>
+      <p>The dashboard widget "Cantoria – due" shows the concert deadlines, things to do and tasks of the start page, with links into the app, to accounts with an archive role. A concert can have a start and end time. "Add to my calendar" puts one concert or all upcoming concerts into one of your Nextcloud calendars and updates them when added again; a calendar file (.ics) works with any calendar program. The preparation deadlines can be added as all-day entries. There is no public subscription link.</p>
     </td>
     <td width="33%" valign="top">
       <h3>Agents and tools</h3>
@@ -129,12 +131,12 @@ The screenshots show the invented demo archive from [tools/demo](tools/demo/READ
     <td width="33%" valign="top">
       <a href="docs/screenshots/admin-settings.png"><img src="docs/screenshots/admin-settings.png" width="280" alt="The access check under Administration, Music archive: per role and group how many accounts can open the archive folder, who cannot, and how to give access."></a>
       <h3>Easy to set up</h3>
-      <p>Administration → Music archive guides through five steps (archive folder, roles and groups, access, import, file sync) and shows what is done and what needs attention. It checks who of the role groups cannot open the archive folder and says what to do. Admins can give the page to a group, such as the music librarians. In the app, a "?" next to the terms explains them, empty views name the next step, and accounts without a role learn whom to ask.</p>
+      <p>Administration → Cantoria guides through five steps (archive folder, roles and groups, access, import, file sync) and shows what is done and what needs attention. It checks who of the role groups cannot open the archive folder and says what to do. Admins can give the page to a group, such as the music librarians. In the app, a "?" next to the terms explains them, empty views name the next step, and accounts without a role learn whom to ask.</p>
     </td>
     <td width="33%" valign="top">
-      <a href="docs/screenshots/files-action.png"><img src="docs/screenshots/files-action.png" width="280" alt="The Files app with the actions menu of a MusicXML file and the action Open in music archive."></a>
+      <a href="docs/screenshots/files-action.png"><img src="docs/screenshots/files-action.png" width="280" alt="The Files app with the actions menu of a MusicXML file and the action Open in Cantoria."></a>
       <h3>Part of your Nextcloud</h3>
-      <p>"Open in music archive" in the Files app opens a MusicXML file in the score viewer and any other file of a copy in the catalog. The search of Nextcloud finds copies by shelf mark, title and person. Concerts go into your calendar, the dashboard widget shows what is due, and notifications reach the people responsible. Rights are checked as in the app.</p>
+      <p>"Open in Cantoria" in the Files app opens a MusicXML file in the score viewer and any other file of a copy in the catalog. The search of Nextcloud finds copies by shelf mark, title and person. Concerts go into your calendar, the dashboard widget shows what is due, and notifications reach the people responsible. Rights are checked as in the app.</p>
     </td>
     <td width="33%" valign="top">
       <a href="docs/screenshots/annual-snapshots.png"><img src="docs/screenshots/annual-snapshots.png" width="280" alt="Annual snapshots: two frozen states of the catalog and their comparison, one confirmation added and one new license."></a>
@@ -181,7 +183,7 @@ figures to expect.
 ## Installation
 
 - **From the Nextcloud App Store** (once the app is published there): Apps →
-  search "Notenarchiv" → Download and enable. This is the way for managed
+  search "Cantoria" → Download and enable. This is the way for managed
   instances without shell access.
 - **Manually from a release archive:** download `cantoria-<version>.tar.gz`
   from the [releases](https://github.com/thoscut/choircoresmanager/releases)
@@ -217,7 +219,7 @@ figures to expect.
 
 1. Create Nextcloud groups for the offices, e.g. "Music librarians",
    "Conductor", "Board".
-2. As an admin, open **Administration → Music archive** and assign the
+2. As an admin, open **Administration → Cantoria** and assign the
    groups to the roles: Catalog (music librarian), Operations (music
    librarian), Conductor, Proposals (tools), Read only (board, auditors) and,
    if you share excerpts with them, Choir members. The list "Setting up" at
@@ -338,7 +340,7 @@ style and commit messages. Report security issues privately as described in
 
 ## License and acknowledgements
 
-Notenarchiv is free software under the
+Cantoria is free software under the
 [GNU Affero General Public License v3.0 or later](LICENSE).
 
 It is built on the work of others; bundled components keep their own

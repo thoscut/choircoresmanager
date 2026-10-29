@@ -5,7 +5,7 @@
 # Demo data
 
 A small, invented music archive of a fictitious choir, the "Demochor", for
-trying out the Notenarchiv app, for screenshots and for end-to-end tests.
+trying out the Cantoria app, for screenshots and for end-to-end tests.
 
 **No real data.** The choir, its concerts, places, publishers, invoices and
 the persons "A. Example" and "B. Beispiel" are invented. Nothing comes from
@@ -131,12 +131,12 @@ build.
 
 ## Trying it out
 
-You need a Nextcloud with the Notenarchiv app and an account in a group that
+You need a Nextcloud with the Cantoria app and an account in a group that
 holds the role "Catalog (music librarian)".
 
 1. **Upload** the folder `build/demo/Cantoria-Demo` to your Nextcloud files
    (e.g. by drag and drop in the Files app).
-2. **Administration → Music archive** (admin): assign groups to the roles
+2. **Administration → Cantoria** (admin): assign groups to the roles
    and choose `Cantoria-Demo` as archive folder. If other accounts are to
    open the files, share the folder with the groups of the roles; **Access to
    the archive folder** on the same page shows who cannot open it.

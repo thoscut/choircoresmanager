@@ -50,7 +50,8 @@ The other languages follow the same split with the terms below.
 
 | German | English source | fr | es | it | nl | pl |
 |---|---|---|---|---|---|---|
-| Notenarchiv (app) | Music archive | Archives de partitions | Archivo de partituras | Archivio di spartiti | Bladmuziekarchief | Archiwum nut |
+| Cantoria (the app, a name: never translated) | Cantoria | Cantoria | Cantoria | Cantoria | Cantoria | Cantoria |
+| Notenarchiv (the archive of a choir) | music archive | archives de partitions | archivo de partituras | archivio di spartiti | bladmuziekarchief | archiwum nut |
 | Werkverzeichnis | catalog | catalogue | catálogo | catalogo | catalogus | katalog |
 | Werk | work | œuvre | obra | opera | werk | utwór |
 | Fassung | version | version | versión | versione | versie | wersja |

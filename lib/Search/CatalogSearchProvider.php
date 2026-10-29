@@ -72,7 +72,7 @@ class CatalogSearchProvider implements IProvider {
 
 	#[\Override]
 	public function getName(): string {
-		return $this->l->t('Music archive');
+		return $this->l->t('Cantoria');
 	}
 
 	/**

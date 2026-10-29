@@ -5,7 +5,7 @@
 # Outreach material
 
 `build.mjs` makes a flyer, a business card and two banners about the
-Notenarchiv app, with the name, logo, contact and colours of the choir that
+Cantoria app, with the name, logo, contact and colours of the choir that
 hands them out. It is a tool for choirs and for the project, not a function of
 the app, and it is not part of the release archive.
 

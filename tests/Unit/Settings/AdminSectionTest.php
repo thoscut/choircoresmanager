@@ -17,7 +17,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 /**
- * The section "Music archive" under Administration.
+ * The section "Cantoria" under Administration.
  */
 #[CoversClass(AdminSection::class)]
 final class AdminSectionTest extends TestCase {
@@ -34,7 +34,7 @@ final class AdminSectionTest extends TestCase {
 		self::assertInstanceOf(IIconSection::class, $section);
 		self::assertSame('cantoria', $section->getID());
 		// The translated name of the app, as in the app menu
-		self::assertSame('[Music archive]', $section->getName());
+		self::assertSame('[Cantoria]', $section->getName());
 		self::assertGreaterThanOrEqual(0, $section->getPriority());
 		self::assertLessThanOrEqual(99, $section->getPriority());
 	}

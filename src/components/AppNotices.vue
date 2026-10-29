@@ -25,7 +25,7 @@ const hasNoRoleAsAdmin = computed(() => isAdmin.value && (meta.value?.roles.leng
 
 const shown = computed(() => hasNoRoleAsAdmin.value || !hasArchiveFolder.value || archiveNotShared.value || startNotice.value !== null)
 
-/** The settings are a page under Administration → Music archive. */
+/** The settings are a page under Administration → Cantoria. */
 const settingsUrl = adminSettingsUrl()
 /** The access check on that page, opened right away. */
 const accessCheckUrl = adminSettingsUrl(SETTINGS_SECTIONS.access)
@@ -49,7 +49,7 @@ const accessCheckUrl = adminSettingsUrl(SETTINGS_SECTIONS.access)
 			</NcButton>
 		</NcNoteCard>
 		<NcNoteCard v-else-if="!hasArchiveFolder" type="info">
-			{{ t('cantoria', 'No archive folder has been chosen yet. An administrator sets it in the settings of the music archive.') }}
+			{{ t('cantoria', 'No archive folder has been chosen yet. An administrator sets it in the settings of Cantoria.') }}
 		</NcNoteCard>
 		<NcNoteCard v-if="archiveNotShared" type="warning">
 			<p>{{ t('cantoria', 'The archive folder is not shared with your account, so its files (scores, scans, practice files) do not open for you. Please ask the music librarians to share the archive folder with you or your group.') }}</p>

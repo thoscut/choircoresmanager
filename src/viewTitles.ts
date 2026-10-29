@@ -68,5 +68,5 @@ export function viewTitle(view: ViewName, librarian: boolean): string {
 	case 'validVersions':
 		return t('cantoria', 'Choose valid versions')
 	}
-	return t('cantoria', 'Music archive')
+	return t('cantoria', 'Cantoria')
 }

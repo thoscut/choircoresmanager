@@ -22,7 +22,7 @@ use OCP\Util;
 use Psr\Log\LoggerInterface;
 
 /**
- * Adds the action "Open in music archive" to the Files app (module
+ * Adds the action "Open in Cantoria" to the Files app (module
  * "files_integration"): its script (src/files.ts, without the score viewer
  * and without the app itself) and the initial state `files` it needs.
  *

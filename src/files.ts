@@ -5,7 +5,7 @@
 
 /**
  * Script of the Files app (module "files_integration"): registers the action
- * "Open in music archive" for files of the archive folder. The server adds
+ * "Open in Cantoria" for files of the archive folder. The server adds
  * it only for accounts with access to the music archive
  * (Listener\FilesScriptListener), as an init script before the Files app
  * starts.
@@ -103,7 +103,7 @@ async function openInArchive({ nodes }: ActionContextSingle): Promise<boolean | 
 function action(id: string, kind: 'default' | 'menu', isDefault: boolean): IFileAction {
 	return {
 		id,
-		displayName: () => t('cantoria', 'Open in music archive'),
+		displayName: () => t('cantoria', 'Open in Cantoria'),
 		iconSvgInline: () => ICON,
 		enabled: ({ nodes }: ActionContext) => actionKind(nodes, state, root, viewerMimes()) === kind,
 		exec: openInArchive,

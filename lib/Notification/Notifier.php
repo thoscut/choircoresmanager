@@ -42,7 +42,7 @@ class Notifier implements INotifier {
 
 	#[\Override]
 	public function getName(): string {
-		return $this->l10nFactory->get(Application::APP_ID)->t('Music archive');
+		return $this->l10nFactory->get(Application::APP_ID)->t('Cantoria');
 	}
 
 	#[\Override]

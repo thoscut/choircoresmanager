@@ -25,7 +25,7 @@ use OCP\IRequest;
 use Psr\Log\LoggerInterface;
 
 /**
- * The action "Open in music archive" of the Files app (see docs/api.md):
+ * The action "Open in Cantoria" of the Files app (see docs/api.md):
  * which copy a file of Nextcloud belongs to.
  *
  * @psalm-suppress UnusedClass

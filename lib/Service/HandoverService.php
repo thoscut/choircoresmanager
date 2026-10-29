@@ -139,7 +139,7 @@ class HandoverService extends PrintMirrorService {
 		return match ($key) {
 			'archive_first' => 'Please choose the archive folder first: the hand-over copies the files from it.',
 			'inside_archive' => 'The hand-over folder must be neither the archive folder nor inside it. Please choose a folder outside the archive folder.',
-			'none' => 'No hand-over folder has been chosen yet. An administrator chooses it in the settings of the music archive.',
+			'none' => 'No hand-over folder has been chosen yet. An administrator chooses it in the settings of Cantoria.',
 			'gone' => 'The hand-over folder is not accessible (deleted, moved or no longer shared). An administrator chooses it again in the settings.',
 			'moved_inside' => 'The hand-over folder lies inside the archive folder, where the app never writes. An administrator chooses another folder in the settings.',
 			'not_writable' => 'The account %s may not write into the hand-over folder. Give it write permission, or let an administrator choose another folder in the settings.',
@@ -237,10 +237,10 @@ class HandoverService extends PrintMirrorService {
 			$l->t('Hand-over to the choir system: folder of the music archive'),
 			$l->t('As of %s', [$now->format('Y-m-d H:i')]),
 			'',
-			$l->n('The music archive keeps this folder up to date. It holds %n file released for choir members: scans (PDF), MusicXML and practice recordings.',
-				'The music archive keeps this folder up to date. It holds %n files released for choir members: scans (PDF), MusicXML and practice recordings.', $files),
+			$l->n('Cantoria keeps this folder up to date. It holds %n file released for choir members: scans (PDF), MusicXML and practice recordings.',
+				'Cantoria keeps this folder up to date. It holds %n files released for choir members: scans (PDF), MusicXML and practice recordings.', $files),
 			$l->t('Liste.csv names the version, the revision and the license notice of every file; show the notice with the file in the choir system.'),
-			$l->t('Upload the files to the choir system yourself and remove there what is no longer in this folder. The music archive uploads nothing.'),
+			$l->t('Upload the files to the choir system yourself and remove there what is no longer in this folder. Cantoria uploads nothing.'),
 			$l->t('The app copies, replaces and removes only the files it wrote itself. Files changed or added by others stay as they are.'),
 			$l->t('Questions: please ask the music librarians.'),
 		];

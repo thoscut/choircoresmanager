@@ -395,7 +395,7 @@ onBeforeUnmount(() => {
 		@update:open="onUpdateOpen">
 		<div class="practice-dialog">
 			<NcNoteCard type="info">
-				{{ t('cantoria', 'Playback and practice files come from a simple built-in synthesizer; they are no substitute for a recording. The files are only for practising in the choir, as far as the rights or the license allow. Upload them to the practice system of the choir yourself: the music archive gives nothing to choir members. Every export is recorded in the audit log.') }}
+				{{ t('cantoria', 'Playback and practice files come from a simple built-in synthesizer; they are no substitute for a recording. The files are only for practising in the choir, as far as the rights or the license allow. Upload them to the practice system of the choir yourself: Cantoria gives nothing to choir members. Every export is recorded in the audit log.') }}
 			</NcNoteCard>
 
 			<dl class="practice-dialog__summary">

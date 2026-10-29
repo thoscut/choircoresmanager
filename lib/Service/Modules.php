@@ -75,7 +75,7 @@ class Modules {
 	 */
 	public const OUTSIDE_PRESETS = [self::AGENT_API, self::MEMBER_LINKS, self::MEMBER_PRACTICE_AUDIO, self::PUBLIC_LINKS, self::PUBLIC_REPERTOIRE,
 		self::OFFLINE, self::CONCERT_FOLDER, self::PRINT_MIRROR, self::CHOIR_HANDOVER];
-	/** The action "Open in music archive" in the Files app */
+	/** The action "Open in Cantoria" in the Files app */
 	public const FILES_INTEGRATION = 'files_integration';
 	/** Copies in the search of Nextcloud (milestone 0.8) */
 	public const UNIFIED_SEARCH = 'unified_search';
@@ -188,7 +188,7 @@ class Modules {
 			'description' => 'Every correction and every new or changed MusicXML found by the file sync becomes a revision with a checksum and a note. The catalog librarian sets the current revision; two revisions can be compared measure by measure and voice by voice, with a short note for choir members. Concerts keep the revision sung.'],
 		'files_integration' => ['group' => 'scores', 'requires' => [], 'simple' => false, 'standard' => true, 'planned' => false,
 			'label' => 'Opening from the Files app',
-			'description' => 'The action "Open in music archive" for files of the archive folder in the Files app: a click on MusicXML opens the score view, other files of a copy open the copy. Rights are checked as in the app.'],
+			'description' => 'The action "Open in Cantoria" for files of the archive folder in the Files app: a click on MusicXML opens the score view, other files of a copy open the copy. Rights are checked as in the app.'],
 		'tasks' => ['group' => 'collaboration', 'requires' => [], 'simple' => false, 'standard' => true, 'planned' => false,
 			'label' => 'Questions and tasks',
 			'description' => 'Questions and checks with a location in the score (page, measures, voice), addressed to a role.'],
@@ -233,7 +233,7 @@ class Modules {
 			'description' => 'Figures on stock, rights, repertoire and maintenance and the annual report, also as CSV.'],
 		'dashboard_widget' => ['group' => 'overview', 'requires' => [], 'simple' => false, 'standard' => true, 'planned' => false,
 			'label' => 'Dashboard widget',
-			'description' => 'The widget "Music archive – due" on the Nextcloud dashboard.'],
+			'description' => 'The widget "Cantoria – due" on the Nextcloud dashboard.'],
 		self::UNIFIED_SEARCH => ['group' => 'overview', 'requires' => [], 'simple' => false, 'standard' => true, 'planned' => false,
 			'label' => 'Nextcloud search',
 			'description' => 'Finds copies by shelf mark, title and person in the search of Nextcloud, for accounts with access to the music archive. Internal preservation copies only for the roles that may view them.'],

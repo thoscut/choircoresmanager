@@ -4,7 +4,7 @@
  */
 
 /**
- * Entry point of the page Administration → Music archive
+ * Entry point of the page Administration → Cantoria
  * (templates/settings-admin.php). Only the settings: no catalog, no score
  * viewer, so the bundle stays small.
  */

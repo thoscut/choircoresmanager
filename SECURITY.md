@@ -104,7 +104,7 @@ below explain the reasons.
   thresholds, the access check of the archive folder, the target folder of
   the print station and the retention period of the folder book) are restricted by
   Nextcloud itself: to admins and to the groups the administration has given
-  the page "Administration → Music archive" under Administration privileges
+  the page "Administration → Cantoria" under Administration privileges
   (`#[AuthorizedAdminSetting]`, checked again by the app). That gives no
   role, and the settings give nothing to Nextcloud's generic app config API.
   Those groups cannot give a role to a group they belong to, cannot set or

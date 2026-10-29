@@ -7,7 +7,7 @@
  * Complete backup as a download (JSON with all tables of the app) and the
  * restore of such a backup – only into an empty catalog, e.g. after a
  * reinstallation. Used in the archive management and on the settings page
- * (Administration → Music archive, admins only). Needs no catalog: the page
+ * (Administration → Cantoria, admins only). Needs no catalog: the page
  * tells whether the catalog is filled and reloads what it shows after a
  * restore (`restored`).
  */

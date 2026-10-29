@@ -4,7 +4,7 @@
 -->
 # Accessibility statement
 
-This statement covers the Notenarchiv app for Nextcloud: its pages inside
+This statement covers the Cantoria app for Nextcloud: its pages inside
 Nextcloud, the pages "Shared with me" for choir members, and the public
 pages (public links and the repertoire page). [Deutsch](de/barrierefreiheit.md)
 

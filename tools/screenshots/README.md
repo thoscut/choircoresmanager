@@ -28,7 +28,7 @@ sharp) are not part of the app and are never installed by the app's
 - Node.js 22 or newer
 - Chrome, Chromium or Edge; the script looks in the usual places, or give the
   path with `--browser`
-- A **test instance** of Nextcloud 33–35 with the Notenarchiv app and the
+- A **test instance** of Nextcloud 33–35 with the Cantoria app and the
   apps notifications, dav and dashboard enabled. The catalog of the app is
   global: use an instance whose catalog may be replaced by the demo data.
 

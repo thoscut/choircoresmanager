@@ -3,13 +3,13 @@
 	  xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
 	<id>cantoria</id>
 	<name>Cantoria</name>
-	<summary lang="en">Sheet music archive for choirs: catalog, rights, scores, concerts</summary>
-	<summary lang="de">Notenarchiv für Chöre: Bestand, Rechte, Noten, Konzerte</summary>
+	<summary lang="en">The sheet music archive for choirs: catalog, rights, scores, concerts</summary>
+	<summary lang="de">Das Notenarchiv für Chöre: Bestand, Rechte, Noten, Konzerte</summary>
 	<description lang="en"><![CDATA[Keep the catalog of your choir's sheet music archive in Nextcloud, from the binder on the shelf to the concert programme. Made for the music librarians, the conductor, the board and the auditors. If you want, choir members get excerpts to view, play and practise.
 
 - **Catalog:** works, versions (settings, arrangements, editions) and copies with shelf marks as separate levels, linked to the scans, MusicXML and MuseScore files that already live in your Nextcloud. The app only reads the files. Nothing is deleted, every change is logged. The search of Nextcloud finds copies by shelf mark, title and person.
 - **Rights per version:** status with reasoning, confirmation and evidence; licenses with separate uses; separate releases for the singers' portal, the print station and publication. Internal preservation copies are never shared or played. Only the conductor chooses the version valid for the choir.
-- **Score viewer:** MusicXML in the browser, cut to printed bar numbers, with the chosen voice highlighted and emphasised in playback; count-in, a loop over the shown bars and playback from any note; keyboard operation, announced bars and a text description of the excerpt. "Open in music archive" in the Files app opens it, too.
+- **Score viewer:** MusicXML in the browser, cut to printed bar numbers, with the chosen voice highlighted and emphasised in playback; count-in, a loop over the shown bars and playback from any note; keyboard operation, announced bars and a text description of the excerpt. "Open in Cantoria" in the Files app opens it, too.
 - **Revisions of a version:** every correction in the app and every changed MusicXML becomes a revision with its checksum. Two revisions are compared bar by bar and voice by voice, with a short note for the choir; concerts keep the revision sung.
 - **Practice audio:** music librarians and the conductor make practice files per voice (WAV or MIDI, one file or a ZIP with every voice) for versions whose rights allow it. Every export is recorded.
 - **Working together:** questions and tasks with a place in the score, the review of transcriptions point by point, small corrections of pitches and syllables, text references, internal excerpt links that expire, a proposals inbox and a start page with what is due.
@@ -18,7 +18,7 @@
 - **Care of the archive:** accession with the next free shelf mark and label printing, gaps in the shelf marks, register of persons with a protection-term suggestion (also for scientific editions and posthumous works), merging with undo, inventory, checksums, and a folder book that shows which choir folder is out with whom.
 - **Sharing, only if you switch it on:** links for choir members to view and play an excerpt with their voice emphasised and to make a practice file, public links without login and a public repertoire page. The server cuts the score to the shared bars and checks the rights on every call; choir members and the public never receive a file of the archive.
 - **Print station (optional):** a mirror folder with the scans released for the print station, kept up to date every day, with a preview before the first sync.
-- **Easy to set up:** Administration → Music archive guides through the setup in five steps and checks who can open the archive folder; admins can give the page to a group such as the music librarians. A "?" next to the terms explains them in the app, and error messages say whom to ask.
+- **Easy to set up:** Administration → Cantoria guides through the setup in five steps and checks who can open the archive folder; admins can give the page to a group such as the music librarians. A "?" next to the terms explains them in the app, and error messages say whom to ask.
 - **Safety:** weekly backups (CSV, ODS and a complete JSON backup) into the archive folder, restore into an empty catalog, notifications to the people responsible (never to singers).
 - **Only what you need:** every function outside the catalog is a module the administration can switch off, with the presets Simple, Standard and Complete; everyone can hide areas they do not use. Sharing with choir members and the public, the public pages, the mirror folder of the print station and the interface for agents belong to no preset: they are off until an administrator switches them on.
 - **Agents and tools (optional):** a versioned API (OCS) with an OpenAPI description and an MCP server. With an account of their own, agents read, ask and propose; they never decide, and the server checks every request against their role.
@@ -29,7 +29,7 @@ No external requests and no telemetry: notation, fonts and sounds are part of th
 
 - **Werkverzeichnis:** Werk, Fassung (Satz, Bearbeitung, Ausgabe) und Exemplar (Signatur) als getrennte Ebenen, verknüpft mit den Scans, MusicXML- und MuseScore-Dateien, die schon in der Nextcloud liegen. Die App liest die Dateien nur. Nichts wird gelöscht, jede Änderung wird protokolliert. Die Suche der Nextcloud findet Exemplare nach Signatur, Titel und Person.
 - **Rechte je Fassung:** Rechtestatus mit Begründung, Bestätigung und Beleg; Lizenzen mit getrennten Nutzungen; getrennte Freigaben für Chorportal, Druckstation und Veröffentlichung. Interne Erhaltungskopien werden nie weitergegeben oder abgespielt. Welche Fassung für den Chor gilt, legt nur die Chorleitung fest.
-- **Notenansicht:** MusicXML im Browser, zugeschnitten nach gedruckten Taktnummern, mit hervorgehobener Stimme, die beim Abspielen betont wird; Einzähler, Wiederholen der gezeigten Takte und Abspielen ab jeder Note; Bedienung per Tastatur, Ansage des Takts und Textbeschreibung des Ausschnitts. „Im Notenarchiv öffnen“ in der Dateien-App öffnet sie ebenfalls.
+- **Notenansicht:** MusicXML im Browser, zugeschnitten nach gedruckten Taktnummern, mit hervorgehobener Stimme, die beim Abspielen betont wird; Einzähler, Wiederholen der gezeigten Takte und Abspielen ab jeder Note; Bedienung per Tastatur, Ansage des Takts und Textbeschreibung des Ausschnitts. „In Cantoria öffnen“ in der Dateien-App öffnet sie ebenfalls.
 - **Stände einer Fassung:** Jede Korrektur in der App und jede geänderte MusicXML wird ein Stand mit Prüfsumme. Zwei Stände lassen sich takt- und stimmweise vergleichen, mit einer kurzen Notiz für den Chor; Konzerte merken sich den gesungenen Stand.
 - **Übe-Audio:** Archivverwaltung und Chorleitung erstellen Übe-Dateien je Stimme (WAV oder MIDI, eine Datei oder ein ZIP mit allen Stimmen) für Fassungen, deren Rechte es erlauben. Jeder Export wird protokolliert.
 - **Zusammenarbeit:** Rückfragen und Aufgaben mit Stelle in den Noten, Prüfung von Übertragungen Punkt für Punkt, kleine Korrekturen von Tonhöhen und Silben, Textverweise, interne Ausschnitt-Links mit Ablaufdatum, Vorschlagseingang und eine Startseite mit allem, was fällig ist.
@@ -38,7 +38,7 @@ No external requests and no telemetry: notation, fonts and sounds are part of th
 - **Pflege des Archivs:** Neuzugang mit der nächsten freien Signatur und Etikettendruck, Signaturlücken, Personenregister mit Vorschlag zum Schutzfristende (auch für wissenschaftliche Ausgaben und nachgelassene Werke), Zusammenführen mit Rücknahme, Inventur, Prüfsummen und ein Mappenbuch, das zeigt, welche Chormappe bei wem ist.
 - **Teilen, nur wenn eingeschaltet:** Links für Chormitglieder, um einen Ausschnitt mit betonter eigener Stimme anzusehen, anzuhören und als Übe-Datei zu laden, öffentliche Links ohne Anmeldung und eine öffentliche Repertoireseite. Der Server schneidet die Noten auf die geteilten Takte zu und prüft bei jedem Aufruf die Rechte; Chormitglieder und Öffentlichkeit erhalten nie eine Datei des Archivs.
 - **Druckstation (optional):** ein Spiegelordner mit den für die Druckstation freigegebenen Scans, täglich aktuell, mit Vorschau vor dem ersten Abgleich.
-- **Einfach einzurichten:** Administration → Notenarchiv führt in fünf Schritten durch die Einrichtung und prüft, wer den Archivordner öffnen kann; die Administration kann die Seite einer Gruppe wie der Archivverwaltung übertragen. Ein „?“ neben den Fachbegriffen erklärt sie in der App, und Fehlermeldungen sagen, an wen man sich wendet.
+- **Einfach einzurichten:** Administration → Cantoria führt in fünf Schritten durch die Einrichtung und prüft, wer den Archivordner öffnen kann; die Administration kann die Seite einer Gruppe wie der Archivverwaltung übertragen. Ein „?“ neben den Fachbegriffen erklärt sie in der App, und Fehlermeldungen sagen, an wen man sich wendet.
 - **Sicherheit:** wöchentliche Sicherungen (CSV, ODS und vollständige JSON-Sicherung) in den Archivordner, Wiederherstellung in ein leeres Werkverzeichnis, Benachrichtigungen an die Zuständigen (nie an Chormitglieder).
 - **Nur, was gebraucht wird:** Jede Funktion außerhalb des Werkverzeichnisses ist ein Modul, das die Administration abschalten kann, mit den Voreinstellungen Einfach, Standard und Vollständig; jede Person kann Bereiche ausblenden, die sie nicht nutzt. Teilen mit Chormitgliedern und Öffentlichkeit, die öffentlichen Seiten, der Spiegelordner der Druckstation und die Schnittstelle für Agenten gehören zu keiner Voreinstellung: Sie sind aus, bis die Administration sie einschaltet.
 - **Agenten und Werkzeuge (optional):** eine versionierte Schnittstelle (OCS) mit OpenAPI-Beschreibung und ein MCP-Server. Mit einem eigenen Konto lesen, fragen und schlagen Agenten vor; sie entscheiden nie, und der Server prüft jede Anfrage gegen ihre Rolle.
@@ -103,7 +103,7 @@ Keine fremden Server und keine Telemetrie: Notensatz, Schriften und Klänge sind
 		<command>OCA\Cantoria\Command\PrivacyReport</command>
 		<command>OCA\Cantoria\Command\PrivacyErase</command>
 	</commands>
-	<!-- Administration → Music archive; the administration can give the page
+	<!-- Administration → Cantoria; the administration can give the page
 	     to a group under Administration privileges. -->
 	<settings>
 		<admin>OCA\Cantoria\Settings\Admin</admin>

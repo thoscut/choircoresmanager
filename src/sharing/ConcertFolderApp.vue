@@ -302,14 +302,14 @@ onBeforeUnmount(() => window.removeEventListener('online', onOnline))
 <template>
 	<NcContent app-name="cantoria">
 		<NcAppContent :page-heading="t('cantoria', 'Concert folder')"
-			:page-title="t('cantoria', 'Concert folder') + ' - ' + t('cantoria', 'Music archive')">
+			:page-title="t('cantoria', 'Concert folder') + ' - ' + t('cantoria', 'Cantoria')">
 			<div class="folder-app">
 				<h2 :id="pageHeadingId" class="folder-app__title">
 					{{ t('cantoria', 'Concert folder') }}
 				</h2>
 				<p class="folder-app__intro">
 					{{ t('cantoria', 'The programmes still to be sung, in their order: view, play and practise each piece, and keep a whole programme on this device for the rehearsal and the concert without a network.') }}
-					<a v-if="!withoutNetwork" :href="archiveUrl" class="folder-app__link">{{ t('cantoria', 'Back to the music archive') }}</a>
+					<a v-if="!withoutNetwork" :href="archiveUrl" class="folder-app__link">{{ t('cantoria', 'Back to Cantoria') }}</a>
 				</p>
 
 				<NcNoteCard v-if="withoutNetwork" type="info" role="status">

@@ -167,7 +167,7 @@ class Roles {
 	/**
 	 * Whether the account may change the settings of the app: admins, and
 	 * members of the groups that the administration has given the page
-	 * "Administration → Music archive" under Administration privileges. This
+	 * "Administration → Cantoria" under Administration privileges. This
 	 * gives no role and no access to the catalog.
 	 */
 	public function canChangeSettings(string $uid): bool {

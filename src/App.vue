@@ -111,7 +111,7 @@ const catalogEmpty = computed(() => entriesStatus.value === 'ready' && entries.v
  * Nextcloud adds the name of the instance.
  */
 const pageTitle = computed(() => {
-	const appName = t('cantoria', 'Music archive')
+	const appName = t('cantoria', 'Cantoria')
 	if (!hasAccess.value) {
 		return appName
 	}
@@ -253,7 +253,7 @@ function openArchive(): void {
 	archiveDialogOpen.value = true
 }
 
-/** The settings are a page under Administration → Music archive. */
+/** The settings are a page under Administration → Cantoria. */
 const settingsUrl = adminSettingsUrl()
 </script>
 
@@ -261,10 +261,10 @@ const settingsUrl = adminSettingsUrl()
 	<NcContent app-name="cantoria">
 		<CatalogNavigation v-if="hasAccess" />
 
-		<NcAppContent :page-heading="t('cantoria', 'Music archive')" :page-title="pageTitle">
+		<NcAppContent :page-heading="t('cantoria', 'Cantoria')" :page-title="pageTitle">
 			<!-- Meta could not be loaded -->
 			<NcEmptyContent v-if="meta === null && metaError !== ''"
-				:name="t('cantoria', 'The music archive could not be loaded')"
+				:name="t('cantoria', 'Cantoria could not be loaded')"
 				:description="metaError">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiAlertCircleOutline" />

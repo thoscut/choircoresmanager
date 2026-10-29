@@ -231,7 +231,7 @@ async function deleteDevice(): Promise<void> {
 	forgetPractising()
 	catalog.value = null
 	confirmingDelete.value = false
-	deviceStatus.value = t('cantoria', 'Everything the music archive kept on this device is deleted.')
+	deviceStatus.value = t('cantoria', 'Everything Cantoria kept on this device is deleted.')
 	await refreshStorage()
 }
 
@@ -359,7 +359,7 @@ onBeforeUnmount(() => window.removeEventListener('online', onOnline))
 <template>
 	<NcContent app-name="cantoria">
 		<NcAppContent :page-heading="t('cantoria', 'Shared with me')"
-			:page-title="t('cantoria', 'Shared with me') + ' - ' + t('cantoria', 'Music archive')">
+			:page-title="t('cantoria', 'Shared with me') + ' - ' + t('cantoria', 'Cantoria')">
 			<div class="member-app">
 				<h2 :id="pageHeadingId" class="member-app__title">
 					{{ t('cantoria', 'Shared with me') }}

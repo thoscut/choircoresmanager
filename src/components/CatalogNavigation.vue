@@ -7,7 +7,7 @@
  * Left navigation: the views of the app (start page, catalog, tasks, inbox,
  * release lists, programmes, links, maintaining the catalog), the search and
  * – in the catalog – the filters, and the entries for archive management and
- * settings (a link to Administration → Music archive).
+ * settings (a link to Administration → Cantoria).
  */
 import type { ViewName } from '../startParams.ts'
 
@@ -87,7 +87,7 @@ import {
 	visibleEntries,
 } from '../store.ts'
 
-/** The settings are a page under Administration → Music archive. */
+/** The settings are a page under Administration → Cantoria. */
 const settingsUrl = adminSettingsUrl()
 /** The concert folder is a page of its own, also without a network (milestone 0.15). */
 const concertFolderUrl = generateUrl('/apps/cantoria/concert-folder')
@@ -291,7 +291,7 @@ function onFooterClick(event: Event, open: 'archive' | 'view'): void {
 </script>
 
 <template>
-	<NcAppNavigation :aria-label="t('cantoria', 'Navigation of the music archive')">
+	<NcAppNavigation :aria-label="t('cantoria', 'Navigation of Cantoria')">
 		<template #search>
 			<NcAppNavigationSearch v-model="filters.search"
 				:label="t('cantoria', 'Shelf mark, title or composer')" />

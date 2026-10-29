@@ -4,7 +4,7 @@
 -->
 <script setup lang="ts">
 /**
- * Settings "Modules" (Administration → Music archive): the core that is
+ * Settings "Modules" (Administration → Cantoria): the core that is
  * always on, the presets and one switch per module, grouped. Labels and
  * descriptions come translated from the server. Switching a module on also
  * switches on what it requires (the server does it); switching off a module

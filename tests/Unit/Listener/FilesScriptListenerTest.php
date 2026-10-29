@@ -28,7 +28,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
 /**
- * Who gets the script of the action "Open in music archive" in the Files
+ * Who gets the script of the action "Open in Cantoria" in the Files
  * app: accounts with a role and admins (who may read), while the module is
  * on and the account sees the archive folder. Nobody else.
  */

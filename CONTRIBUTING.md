@@ -1,6 +1,6 @@
-# Contributing to Notenarchiv
+# Contributing to Cantoria
 
-Thank you for helping with Notenarchiv. Bug reports, ideas, translations,
+Thank you for helping with Cantoria. Bug reports, ideas, translations,
 documentation and code are all welcome.
 
 This project follows the

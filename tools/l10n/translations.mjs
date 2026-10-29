@@ -9,8 +9,8 @@
 
 export const singular = {
 	// ---- app / general ----
-	'Music archive': 'Notenarchiv',
-	'The music archive could not be loaded': 'Das Notenarchiv konnte nicht geladen werden',
+	'Cantoria': 'Cantoria',
+	'Cantoria could not be loaded': 'Cantoria konnte nicht geladen werden',
 	'Try again': 'Erneut versuchen',
 	'Loading …': 'Wird geladen …',
 	'No access to the music archive': 'Kein Zugang zum Notenarchiv',
@@ -26,7 +26,7 @@ export const singular = {
 	],
 	'No archive folder has been chosen yet. Without it files cannot be linked and exports cannot be stored.': 'Es ist noch kein Archivordner gewählt. Ohne ihn können keine Dateien verknüpft und keine Exporte abgelegt werden.',
 	'Open settings': 'Einstellungen öffnen',
-	'No archive folder has been chosen yet. An administrator sets it in the settings of the music archive.': 'Es ist noch kein Archivordner gewählt. Die Administration legt ihn in den Einstellungen des Notenarchivs fest.',
+	'No archive folder has been chosen yet. An administrator sets it in the settings of Cantoria.': 'Es ist noch kein Archivordner gewählt. Die Administration legt ihn in den Einstellungen von Cantoria fest.',
 	'You are an administrator without a role: you can read the music archive and change the settings. The proposals inbox and internal preservation copies are only open to the roles concerned. To edit the catalog, add yourself to a group with a role.': [
 		'Du hast Administrationsrechte, aber keine Rolle: Du kannst das Notenarchiv lesen und die Einstellungen ändern. Den Vorschlagseingang und interne Erhaltungskopien sehen nur die zuständigen Rollen. Um das Werkverzeichnis zu bearbeiten, nimm dich in eine Gruppe mit Rolle auf.',
 		'Sie haben Administrationsrechte, aber keine Rolle: Sie können das Notenarchiv lesen und die Einstellungen ändern. Den Vorschlagseingang und interne Erhaltungskopien sehen nur die zuständigen Rollen. Um das Werkverzeichnis zu bearbeiten, nehmen Sie sich in eine Gruppe mit Rolle auf.',
@@ -250,8 +250,8 @@ export const singular = {
 	'The groups could not be searched: {error}': 'Die Gruppen konnten nicht gesucht werden: {error}',
 
 	// ---- settings page under Administration, access to the archive folder ----
-	'Settings of the music archive for the whole instance. The daily work happens in the app.': 'Einstellungen des Notenarchivs für die ganze Nextcloud. Die tägliche Arbeit geschieht in der App.',
-	'Open the music archive': 'Notenarchiv öffnen',
+	'Settings of Cantoria for the whole instance. The daily work happens in the app.': 'Einstellungen von Cantoria für die ganze Nextcloud. Die tägliche Arbeit geschieht in der App.',
+	'Open Cantoria': 'Cantoria öffnen',
 	'Administrators can give this page to a group, e.g. the music librarians, under Administration privileges. That gives no role; complete backup and restore stay with administrators.': 'Die Administration kann diese Seite unter „Administrationsrechte“ einer Gruppe übertragen, z. B. der Archivverwaltung. Das gibt keine Rolle; vollständige Sicherung und Wiederherstellung bleiben bei der Administration.',
 	'Access to the archive folder': 'Zugriff auf den Archivordner',
 	'Choose the archive folder first.': ['Wähle zuerst den Archivordner.', 'Wählen Sie zuerst den Archivordner.'],
@@ -536,9 +536,9 @@ export const singular = {
 	'Practice files …': 'Übe-Dateien …',
 	'Practice files': 'Übe-Dateien',
 	'Practice files made': 'Übe-Dateien erstellt',
-	'Playback and practice files come from a simple built-in synthesizer; they are no substitute for a recording. The files are only for practising in the choir, as far as the rights or the license allow. Upload them to the practice system of the choir yourself: the music archive gives nothing to choir members. Every export is recorded in the audit log.': [
-		'Wiedergabe und Übe-Dateien kommen aus einem einfachen eingebauten Synthesizer; sie ersetzen keine Einspielung. Die Dateien sind nur zum Üben im Chor bestimmt, soweit die Rechte oder die Lizenz es erlauben. Lade sie selbst in das Übesystem des Chors hoch: Das Notenarchiv gibt nichts an Chormitglieder weiter. Jeder Export wird im Protokoll vermerkt.',
-		'Wiedergabe und Übe-Dateien kommen aus einem einfachen eingebauten Synthesizer; sie ersetzen keine Einspielung. Die Dateien sind nur zum Üben im Chor bestimmt, soweit die Rechte oder die Lizenz es erlauben. Laden Sie sie selbst in das Übesystem des Chors hoch: Das Notenarchiv gibt nichts an Chormitglieder weiter. Jeder Export wird im Protokoll vermerkt.',
+	'Playback and practice files come from a simple built-in synthesizer; they are no substitute for a recording. The files are only for practising in the choir, as far as the rights or the license allow. Upload them to the practice system of the choir yourself: Cantoria gives nothing to choir members. Every export is recorded in the audit log.': [
+		'Wiedergabe und Übe-Dateien kommen aus einem einfachen eingebauten Synthesizer; sie ersetzen keine Einspielung. Die Dateien sind nur zum Üben im Chor bestimmt, soweit die Rechte oder die Lizenz es erlauben. Lade sie selbst in das Übesystem des Chors hoch: Cantoria gibt nichts an Chormitglieder weiter. Jeder Export wird im Protokoll vermerkt.',
+		'Wiedergabe und Übe-Dateien kommen aus einem einfachen eingebauten Synthesizer; sie ersetzen keine Einspielung. Die Dateien sind nur zum Üben im Chor bestimmt, soweit die Rechte oder die Lizenz es erlauben. Laden Sie sie selbst in das Übesystem des Chors hoch: Cantoria gibt nichts an Chormitglieder weiter. Jeder Export wird im Protokoll vermerkt.',
 	],
 	Measures: 'Takte',
 	'{from} to {to}': '{from} bis {to}',
@@ -812,7 +812,7 @@ export const singular = {
 	Inbox: 'Eingang',
 	'Internal links': 'Interne Links',
 	Concerts: 'Konzerte',
-	'Navigation of the music archive': 'Navigation des Notenarchivs',
+	'Navigation of Cantoria': 'Navigation von Cantoria',
 	Archive: 'Archiv',
 	Releases: 'Freigaben',
 	Programmes: 'Programme',
@@ -1140,7 +1140,7 @@ export const singular = {
 		'Wähle oben einen Zielordner. Die App zeigt dann eine Vorschau, bevor sie etwas schreibt.',
 		'Wählen Sie oben einen Zielordner. Die App zeigt dann eine Vorschau, bevor sie etwas schreibt.',
 	],
-	'No target folder has been chosen yet. An administrator chooses it in the settings of the music archive.': 'Es ist noch kein Zielordner gewählt. Die Administration wählt ihn in den Einstellungen des Notenarchivs.',
+	'No target folder has been chosen yet. An administrator chooses it in the settings of Cantoria.': 'Es ist noch kein Zielordner gewählt. Die Administration wählt ihn in den Einstellungen von Cantoria.',
 	'The sync runs daily in the background. The app writes only into this folder and removes only files it wrote itself.': 'Der Abgleich läuft täglich im Hintergrund. Die App schreibt nur in diesen Ordner und entfernt nur Dateien, die sie selbst geschrieben hat.',
 	'The daily sync starts after the first sync by hand. Look at the preview first.': [
 		'Der tägliche Abgleich beginnt nach dem ersten Abgleich von Hand. Sieh dir zuerst die Vorschau an.',
@@ -1280,7 +1280,7 @@ export const singular = {
 		'Dein Konto darf in diesem Ordner keine Dateien anlegen. Bitte wähle einen Ordner, in dem es Dateien anlegen, ändern und löschen darf.',
 		'Ihr Konto darf in diesem Ordner keine Dateien anlegen. Bitte wählen Sie einen Ordner, in dem es Dateien anlegen, ändern und löschen darf.',
 	],
-	'No target folder has been chosen for the print station yet. An administrator chooses it in the settings of the music archive.': 'Für die Druckstation ist noch kein Zielordner gewählt. Die Administration wählt ihn in den Einstellungen des Notenarchivs.',
+	'No target folder has been chosen for the print station yet. An administrator chooses it in the settings of Cantoria.': 'Für die Druckstation ist noch kein Zielordner gewählt. Die Administration wählt ihn in den Einstellungen von Cantoria.',
 	'The target folder of the print station is not accessible (deleted, moved or no longer shared). An administrator chooses it again in the settings.': 'Der Zielordner der Druckstation ist nicht erreichbar (gelöscht, verschoben oder nicht mehr geteilt). Die Administration wählt ihn in den Einstellungen neu.',
 	'The target folder lies inside the archive folder, where the app never writes. An administrator chooses another target folder in the settings.': 'Der Zielordner liegt im Archivordner, in den die App nie schreibt. Die Administration wählt in den Einstellungen einen anderen Zielordner.',
 	'The account %s may not write into the target folder of the print station. Give it write permission, or let an administrator choose another folder in the settings.': [
@@ -1538,7 +1538,7 @@ export const singular = {
 	'Excerpt links': 'Ausschnitt-Links',
 	'Internal links to a range of measures and a voice for logged-in archive roles; they expire and can be revoked.': 'Interne Links auf einen Taktbereich und eine Stimme für angemeldete Archivrollen; sie laufen ab und lassen sich widerrufen.',
 	'Opening from the Files app': 'Öffnen aus der Dateien-App',
-	'The action "Open in music archive" for files of the archive folder in the Files app: a click on MusicXML opens the score view, other files of a copy open the copy. Rights are checked as in the app.': 'Die Aktion „Im Notenarchiv öffnen“ für Dateien des Archivordners in der Dateien-App: Ein Klick auf MusicXML öffnet die Notenansicht, andere Dateien eines Exemplars öffnen das Exemplar. Die Rechte werden wie in der App geprüft.',
+	'The action "Open in Cantoria" for files of the archive folder in the Files app: a click on MusicXML opens the score view, other files of a copy open the copy. Rights are checked as in the app.': 'Die Aktion „In Cantoria öffnen“ für Dateien des Archivordners in der Dateien-App: Ein Klick auf MusicXML öffnet die Notenansicht, andere Dateien eines Exemplars öffnen das Exemplar. Die Rechte werden wie in der App geprüft.',
 	'Questions and checks with a location in the score (page, measures, voice), addressed to a role.': 'Rückfragen und Prüfaufgaben mit Stelle in den Noten (Seite, Takte, Stimme), gerichtet an eine Rolle.',
 	'Proposals inbox': 'Vorschlagseingang',
 	'Changes proposed by tools and transcription rounds wait in an inbox until the catalog librarian accepts them.': 'Änderungsvorschläge von Werkzeugen und Übertragungsrunden warten im Eingang, bis die Rolle „Bestand“ sie übernimmt.',
@@ -1558,7 +1558,7 @@ export const singular = {
 	'Statistics and annual report': 'Auswertungen und Jahresbericht',
 	'Figures on stock, rights, repertoire and maintenance and the annual report, also as CSV.': 'Zahlen zu Bestand, Rechten, Repertoire und Pflege sowie der Jahresbericht, auch als CSV.',
 	'Dashboard widget': 'Dashboard-Widget',
-	'The widget "Music archive – due" on the Nextcloud dashboard.': 'Das Widget „Notenarchiv – fällig“ im Nextcloud-Dashboard.',
+	'The widget "Cantoria – due" on the Nextcloud dashboard.': 'Das Widget „Cantoria – fällig“ im Nextcloud-Dashboard.',
 	'Notifications to the roles concerned (never to singers), also as an e-mail summary through Nextcloud. Each occasion can be switched off below.': 'Benachrichtigungen an die zuständigen Rollen (nie an Chormitglieder), auf Wunsch auch als E-Mail-Zusammenfassung über Nextcloud. Jeder Anlass lässt sich unten einzeln abschalten.',
 	'Proposals are waiting': 'Vorschläge warten',
 	'To the catalog librarian: open proposals in the inbox.': 'An die Rolle „Bestand“: offene Vorschläge im Eingang.',
@@ -1596,7 +1596,7 @@ export const singular = {
 	'Confirm what was sung': 'Gesungenes bestätigen',
 	'Concerts of the music archive': 'Konzerte des Notenarchivs',
 	'This concert has been cancelled.': 'Dieses Konzert wurde abgesagt.',
-	'Open in the music archive: %s': 'Im Notenarchiv öffnen: %s',
+	'Open in Cantoria: %s': 'In Cantoria öffnen: %s',
 	'The selected calendar does not exist or you cannot add entries to it.': [
 		'Den gewählten Kalender gibt es nicht, oder du kannst darin keine Einträge anlegen.',
 		'Den gewählten Kalender gibt es nicht, oder Sie können darin keine Einträge anlegen.',
@@ -1616,7 +1616,7 @@ export const singular = {
 	'Please enter the start time, too.': ['Bitte gib auch den Beginn ein.', 'Bitte geben Sie auch den Beginn ein.'],
 	'The end time must be after the start time.': 'Das Ende muss nach dem Beginn liegen.',
 	'A time needs the date of the concert.': 'Eine Uhrzeit braucht das Datum des Konzerts.',
-	'Music archive – due': 'Notenarchiv – fällig',
+	'Cantoria – due': 'Cantoria – fällig',
 	'Open the start page': 'Startseite öffnen',
 	'You have no role in the music archive.': ['Du hast keine Rolle im Notenarchiv.', 'Sie haben keine Rolle im Notenarchiv.'],
 	'Answered, to apply': 'Beantwortet, zum Übernehmen',
@@ -2348,7 +2348,7 @@ export const singular = {
 	'Reports read before': 'Schon früher eingelesen',
 	'The review of transcriptions is switched off: the reports were registered, but not read.': 'Die Prüfung der Übertragungen ist abgeschaltet: Die Berichte sind erfasst, aber nicht eingelesen.',
 	// ---- opening from the Files app ----
-	'Open in music archive': 'Im Notenarchiv öffnen',
+	'Open in Cantoria': 'In Cantoria öffnen',
 	'This file is not listed in the music archive.': 'Diese Datei ist im Notenarchiv nicht verzeichnet.',
 
 	// ---- design pass (0.1.29) ----
@@ -2383,7 +2383,7 @@ export const singular = {
 	'Public (without signing in)': 'Öffentlich (ohne Anmeldung)',
 	'Checking whether this link is possible …': 'Es wird geprüft, ob dieser Link möglich ist …',
 	'It could not be checked whether this link is possible: {reason}': 'Es ließ sich nicht prüfen, ob dieser Link möglich ist: {reason}',
-	'This kind of link is switched off. An administrator can switch it on in the settings of the music archive under "Modules".': 'Diese Art von Link ist abgeschaltet. Die Administration kann sie in den Einstellungen des Notenarchivs unter „Module“ einschalten.',
+	'This kind of link is switched off. An administrator can switch it on in the settings of Cantoria under "Modules".': 'Diese Art von Link ist abgeschaltet. Die Administration kann sie in den Einstellungen von Cantoria unter „Module“ einschalten.',
 	'The rights of this version do not allow this link.': 'Die Rechte dieser Fassung erlauben diesen Link nicht.',
 	'The choir members see this note.': 'Die Chormitglieder sehen diese Notiz.',
 	'What the recipients see': 'Das ist beim Öffnen des Links zu sehen',
@@ -2877,7 +2877,7 @@ export const singular = {
 		'Mit dir ist noch nichts geteilt',
 		'Mit Ihnen ist noch nichts geteilt',
 	],
-	'Choir members see it in the music archive under "Shared with me", without the catalog: the whole piece or the chosen measures with all voices, the voice highlighted. The server sends only that, never the score file, and checks the rights on every call.': 'Chormitglieder sehen es im Notenarchiv unter „Mit mir geteilt“, ohne das Werkverzeichnis: das ganze Stück oder die gewählten Takte mit allen Stimmen, die Stimme hervorgehoben. Der Server sendet nur das, nie die Notendatei, und prüft bei jedem Aufruf die Rechte.',
+	'Choir members see it in Cantoria under "Shared with me", without the catalog: the whole piece or the chosen measures with all voices, the voice highlighted. The server sends only that, never the score file, and checks the rights on every call.': 'Chormitglieder sehen es in Cantoria unter „Mit mir geteilt“, ohne das Werkverzeichnis: das ganze Stück oder die gewählten Takte mit allen Stimmen, die Stimme hervorgehoben. Der Server sendet nur das, nie die Notendatei, und prüft bei jedem Aufruf die Rechte.',
 	'Choir members find it under "Shared with me" until {date}; you can also send them this link. It can be revoked at any time in the list of links.': [
 		'Chormitglieder finden es bis {date} unter „Mit mir geteilt“; du kannst ihnen auch diesen Link schicken. Er lässt sich jederzeit in der Liste der Links widerrufen.',
 		'Chormitglieder finden es bis {date} unter „Mit mir geteilt“; Sie können ihnen auch diesen Link schicken. Er lässt sich jederzeit in der Liste der Links widerrufen.',
@@ -3010,9 +3010,9 @@ export const singular = {
 		'Liste.csv nennt Fassung, Stand und Lizenzhinweis jeder Datei; zeige den Hinweis im Chorsystem bei der Datei.',
 		'Liste.csv nennt Fassung, Stand und Lizenzhinweis jeder Datei; zeigen Sie den Hinweis im Chorsystem bei der Datei.',
 	],
-	'Upload the files to the choir system yourself and remove there what is no longer in this folder. The music archive uploads nothing.': [
-		'Lade die Dateien selbst in das Chorsystem hoch und entferne dort, was nicht mehr in diesem Ordner ist. Das Notenarchiv lädt nichts hoch.',
-		'Laden Sie die Dateien selbst in das Chorsystem hoch und entfernen Sie dort, was nicht mehr in diesem Ordner ist. Das Notenarchiv lädt nichts hoch.',
+	'Upload the files to the choir system yourself and remove there what is no longer in this folder. Cantoria uploads nothing.': [
+		'Lade die Dateien selbst in das Chorsystem hoch und entferne dort, was nicht mehr in diesem Ordner ist. Cantoria lädt nichts hoch.',
+		'Laden Sie die Dateien selbst in das Chorsystem hoch und entfernen Sie dort, was nicht mehr in diesem Ordner ist. Cantoria lädt nichts hoch.',
 	],
 	'License notice': 'Lizenzhinweis',
 	'License: %s': 'Lizenz: %s',
@@ -3025,7 +3025,7 @@ export const singular = {
 		'Der Übergabeordner darf weder der Archivordner sein noch darin liegen. Bitte wähle einen Ordner außerhalb des Archivordners.',
 		'Der Übergabeordner darf weder der Archivordner sein noch darin liegen. Bitte wählen Sie einen Ordner außerhalb des Archivordners.',
 	],
-	'No hand-over folder has been chosen yet. An administrator chooses it in the settings of the music archive.': 'Es wurde noch kein Übergabeordner gewählt. Die Administration wählt ihn in den Einstellungen des Notenarchivs.',
+	'No hand-over folder has been chosen yet. An administrator chooses it in the settings of Cantoria.': 'Es wurde noch kein Übergabeordner gewählt. Die Administration wählt ihn in den Einstellungen von Cantoria.',
 	'The hand-over folder is not accessible (deleted, moved or no longer shared). An administrator chooses it again in the settings.': 'Der Übergabeordner ist nicht erreichbar (gelöscht, verschoben oder nicht mehr geteilt). Die Administration wählt ihn in den Einstellungen neu.',
 	'The hand-over folder lies inside the archive folder, where the app never writes. An administrator chooses another folder in the settings.': 'Der Übergabeordner liegt im Archivordner, in den die App nie schreibt. Die Administration wählt in den Einstellungen einen anderen Ordner.',
 	'The account %s may not write into the hand-over folder. Give it write permission, or let an administrator choose another folder in the settings.': [
@@ -3173,7 +3173,7 @@ export const singular = {
 		'Bitte prüfe das Netz und den freien Speicher auf dem Gerät.',
 		'Bitte prüfen Sie das Netz und den freien Speicher auf dem Gerät.',
 	],
-	'Everything the music archive kept on this device is deleted.': 'Alles, was das Notenarchiv auf diesem Gerät gespeichert hatte, ist gelöscht.',
+	'Everything Cantoria kept on this device is deleted.': 'Alles, was Cantoria auf diesem Gerät gespeichert hatte, ist gelöscht.',
 	'{used} used on this device.': '{used} auf diesem Gerät belegt.',
 	'{used} of {available} used on this device.': '{used} von {available} auf diesem Gerät belegt.',
 	'Last checked with the server: {time}.': 'Zuletzt mit dem Server abgeglichen: {time}.',
@@ -3235,7 +3235,7 @@ export const singular = {
 	'Everything the concert folder kept on this device is deleted.': 'Alles, was die Konzertmappe auf diesem Gerät gespeichert hatte, ist gelöscht.',
 	'The programmes still to be sung, in their order: view, play and practise each piece, and keep a whole programme on this device for the rehearsal and the concert without a network.':
 		'Die noch zu singenden Programme in ihrer Reihenfolge: jedes Stück ansehen, abspielen und üben und ein ganzes Programm für Probe und Konzert ohne Netz auf diesem Gerät speichern.',
-	'Back to the music archive': 'Zurück zum Notenarchiv',
+	'Back to Cantoria': 'Zurück zu Cantoria',
 	'No programme to be sung': 'Kein Programm zu singen',
 	'Concerts and song lists in draft or fixed appear here, the next one first.': 'Konzerte und Notenlisten im Entwurf oder festgelegt erscheinen hier, das nächste zuerst.',
 	'Programme fixed': 'Programm festgelegt',
@@ -3271,9 +3271,9 @@ export const plural = {
 		'%n Zeile ohne Signatur des Archivs',
 		'%n Zeilen ohne Signatur des Archivs',
 	],
-	'The music archive keeps this folder up to date. It holds %n file released for choir members: scans (PDF), MusicXML and practice recordings.|The music archive keeps this folder up to date. It holds %n files released for choir members: scans (PDF), MusicXML and practice recordings.': [
-		'Das Notenarchiv hält diesen Ordner aktuell. Er enthält %n für Chormitglieder freigegebene Datei: Scans (PDF), MusicXML und Übe-Aufnahmen.',
-		'Das Notenarchiv hält diesen Ordner aktuell. Er enthält %n für Chormitglieder freigegebene Dateien: Scans (PDF), MusicXML und Übe-Aufnahmen.',
+	'Cantoria keeps this folder up to date. It holds %n file released for choir members: scans (PDF), MusicXML and practice recordings.|Cantoria keeps this folder up to date. It holds %n files released for choir members: scans (PDF), MusicXML and practice recordings.': [
+		'Cantoria hält diesen Ordner aktuell. Er enthält %n für Chormitglieder freigegebene Datei: Scans (PDF), MusicXML und Übe-Aufnahmen.',
+		'Cantoria hält diesen Ordner aktuell. Er enthält %n für Chormitglieder freigegebene Dateien: Scans (PDF), MusicXML und Übe-Aufnahmen.',
 	],
 	'and %n more row|and %n more rows': ['und %n weitere Zeile', 'und %n weitere Zeilen'],
 	'A folder that does not come back loses its holder %n month after it was issued; it stays recorded as out.|A folder that does not come back loses its holder %n months after it was issued; it stays recorded as out.': [
@@ -3333,9 +3333,9 @@ export const plural = {
 		'Namen, Nextcloud-Konten und Notizen einer Ausgabe werden %n Monat nach der Rücknahme der Mappe automatisch entfernt. Die Ausgabe selbst bleibt als „ehemalige Ausgabe“ stehen.',
 		'Namen, Nextcloud-Konten und Notizen einer Ausgabe werden %n Monate nach der Rücknahme der Mappe automatisch entfernt. Die Ausgabe selbst bleibt als „ehemalige Ausgabe“ stehen.',
 	],
-	'The music archive keeps this folder up to date. It holds %n score (PDF) released for the print station.|The music archive keeps this folder up to date. It holds %n scores (PDF) released for the print station.': [
-		'Das Notenarchiv hält diesen Ordner aktuell. Er enthält %n für die Druckstation freigegebene Note (PDF).',
-		'Das Notenarchiv hält diesen Ordner aktuell. Er enthält %n für die Druckstation freigegebene Noten (PDF).',
+	'Cantoria keeps this folder up to date. It holds %n score (PDF) released for the print station.|Cantoria keeps this folder up to date. It holds %n scores (PDF) released for the print station.': [
+		'Cantoria hält diesen Ordner aktuell. Er enthält %n für die Druckstation freigegebene Note (PDF).',
+		'Cantoria hält diesen Ordner aktuell. Er enthält %n für die Druckstation freigegebene Noten (PDF).',
 	],
 	// ---- 0.5 ----
 	'%n label|%n labels': ['%n Etikett', '%n Etiketten'],

@@ -2,11 +2,11 @@
   - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
-# MCP server for the Notenarchiv
+# MCP server for Cantoria
 
 A [Model Context Protocol](https://modelcontextprotocol.io) server that
 gives an agent (Claude Desktop, Claude Code or any MCP client) the API for
-agents of the Nextcloud app Notenarchiv ([docs/api-v1.md](../../docs/api-v1.md)).
+agents of the Nextcloud app Cantoria ([docs/api-v1.md](../../docs/api-v1.md)).
 It runs **locally next to the agent** and talks to it over stdio; it opens
 no port. It signs in to Nextcloud with an **app password of an account of
 its own**.
@@ -28,21 +28,21 @@ not part of the app or its release archive.
 ## Requirements
 
 - Node.js 24 or newer
-- Nextcloud with the app Notenarchiv and the module **Interface for agents**
+- Nextcloud with the app Cantoria and the module **Interface for agents**
   (`agent_api`) switched on
 
 ## Setting up
 
 1. **An account for the agent.** Create a Nextcloud account that only the
    agent uses (e.g. `cantoria-agent`) and a group for it (e.g.
-   `Notenarchiv agents`):
+   `Cantoria agents`):
 
    ```sh
    occ group:add cantoria-agents
    occ user:add --group cantoria-agents cantoria-agent
    ```
 
-2. **Only the role it needs.** In *Administration settings → Notenarchiv*
+2. **Only the role it needs.** In *Administration settings → Cantoria*
    give the group the role **Proposals (tools)** (`contributor`: read,
    propose, ask) or **Read only** (`reader`). Never give an agent the roles
    of the catalog librarian, operations or the conductor: those decide.
@@ -53,7 +53,7 @@ not part of the app or its release archive.
 
    (`--role` replaces the groups of that role; list existing groups too.)
 
-3. **Switch on the interface** in *Administration settings → Notenarchiv →
+3. **Switch on the interface** in *Administration settings → Cantoria →
    Modules* ("Interface for agents") or with
 
    ```sh

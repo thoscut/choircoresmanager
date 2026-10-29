@@ -7,7 +7,7 @@
 [English](../admin-guide.md) | **Deutsch**
 
 Dieses Handbuch ist für die Nextcloud-Administration, die die App
-Notenarchiv installiert und einrichtet, und für die Archivverwaltung, die sie
+Cantoria installiert und einrichtet, und für die Archivverwaltung, die sie
 danach übernimmt. Die tägliche Arbeit mit der App beschreibt das
 [Benutzerhandbuch](benutzerhandbuch.md).
 
@@ -35,7 +35,7 @@ danach übernimmt. Die tägliche Arbeit mit der App beschreibt das
 ## Einrichten in fünf Schritten
 
 Öffne nach der [Installation](#1-installation) **Verwaltungseinstellungen →
-Notenarchiv**. Die Liste **Einrichtung** oben auf der Seite zeigt diese fünf
+Cantoria**. Die Liste **Einrichtung** oben auf der Seite zeigt diese fünf
 Schritte, jeden als *Erledigt*, *Noch zu tun* oder *Bitte prüfen*, mit einem
 Link an die Stelle, wo er erledigt wird.
 
@@ -84,7 +84,7 @@ auszuprobieren, nimm die [Demodaten](../../tools/demo/README.md) (englisch).
 > Die App ist noch nicht im Nextcloud App Store veröffentlicht. Sobald sie es
 > ist, ist das auf verwalteten Instanzen ohne Shell-Zugang der einzige Weg.
 
-Apps → nach „Notenarchiv“ suchen → **Herunterladen und aktivieren**.
+Apps → nach „Cantoria“ suchen → **Herunterladen und aktivieren**.
 
 ### Aus einem Release-Archiv
 
@@ -119,7 +119,7 @@ ist ein Wechsel der Gruppenmitgliedschaft.
 
 1. Lege die Gruppen unter Konten an, zum Beispiel „Archivverwaltung“,
    „Chorleitung“, „Vorstand“.
-2. Öffne **Verwaltungseinstellungen → Notenarchiv** (den Bereich der App in
+2. Öffne **Verwaltungseinstellungen → Cantoria** (den Bereich der App in
    den Verwaltungseinstellungen der Nextcloud). In der App führt
    **Einstellungen** unten in der Navigation dorthin.
 3. Wähle unter **Rollen und Gruppen** die Gruppen für jede Rolle. Vor dem
@@ -129,9 +129,9 @@ ist ein Wechsel der Gruppenmitgliedschaft.
 4. Prüfe den Zugriff auf den Archivordner: Auch Konten, die neu eine Rolle
    haben, brauchen ihn ([Abschnitt 3](#prüfen-wer-den-archivordner-öffnen-kann)).
 
-![Der Abschnitt „Rollen und Gruppen“ unter Verwaltungseinstellungen → Notenarchiv: jede Rolle mit den ihr zugeordneten Gruppen und einer kurzen Beschreibung, zum Beispiel die Gruppe „Music librarians“ für die Rolle „Bestand (Archivverwaltung)“ und „Choir members“ für die Rolle „Chormitglieder (nur geteilte Ausschnitte)“, und die Schaltfläche „Rollen speichern“.](../screenshots/settings-roles.png)
+![Der Abschnitt „Rollen und Gruppen“ unter Verwaltungseinstellungen → Cantoria: jede Rolle mit den ihr zugeordneten Gruppen und einer kurzen Beschreibung, zum Beispiel die Gruppe „Music librarians“ für die Rolle „Bestand (Archivverwaltung)“ und „Choir members“ für die Rolle „Chormitglieder (nur geteilte Ausschnitte)“, und die Schaltfläche „Rollen speichern“.](../screenshots/settings-roles.png)
 
-Die Seite **Verwaltungseinstellungen → Notenarchiv** enthält alle
+Die Seite **Verwaltungseinstellungen → Cantoria** enthält alle
 Einstellungen der App: Archivordner, Rollen und Gruppen, Zugriff auf den
 Archivordner (siehe [Abschnitt 3](#3-archivordner)), Module
 ([Abschnitt 12](#12-module-und-voreinstellungen)), Repertoire und, für die
@@ -175,10 +175,10 @@ Beispiel der Archivverwaltung, damit eine Einstellung ohne Administration
 geändert werden kann:
 
 1. **Verwaltungseinstellungen → Administrationsrechte**.
-2. Füge bei **Notenarchiv** die Gruppe hinzu.
+2. Füge bei **Cantoria** die Gruppe hinzu.
 
 Die Mitglieder dieser Gruppe sehen dann **Verwaltungseinstellungen →
-Notenarchiv** und dürfen die Rollen und Gruppen, die Module und die
+Cantoria** und dürfen die Rollen und Gruppen, die Module und die
 Repertoire-Grenzen ändern und die Zugriffsprüfung starten. Eine **Rolle**
 bekommen sie dadurch **nicht**: Die App sehen sie nur, wenn sie auch eine
 Rolle haben. Einiges bleibt bei der Administration:
@@ -213,7 +213,7 @@ setzen (Rollen: `librarian`, `operations`, `conductor`, `contributor`,
 Der Archivordner enthält die Notendateien, zum Beispiel einen Unterordner je
 Archivmappe.
 
-1. **Verwaltungseinstellungen → Notenarchiv** → **Archivordner** → **Ordner
+1. **Verwaltungseinstellungen → Cantoria** → **Archivordner** → **Ordner
    wählen …**.
 2. Wähle den Ordner. Vor dem Speichern sagt die Seite, was das Speichern
    bewirkt, und listet die Konten der Rollengruppen, die den gewählten Ordner
@@ -277,7 +277,7 @@ Ausnahme: Um Noten zu öffnen, braucht auch sie Zugriff auf den Ordner.
 
 ### Prüfen, wer den Archivordner öffnen kann
 
-**Verwaltungseinstellungen → Notenarchiv → Zugriff auf den Archivordner →
+**Verwaltungseinstellungen → Cantoria → Zugriff auf den Archivordner →
 Zugriff prüfen** sieht sich jedes Mitglied der Rollengruppen und die
 Administration ohne Rolle an:
 
@@ -435,7 +435,7 @@ Vorhandenes wird überschrieben.
 
 1. **Archivverwaltung** → **Vollständige Sicherung und Wiederherstellung** →
    **Aus einer Sicherung wiederherstellen …** (die Administration findet
-   dasselbe unter **Verwaltungseinstellungen → Notenarchiv**; wird die
+   dasselbe unter **Verwaltungseinstellungen → Cantoria**; wird die
    Einstellungsseite einer Gruppe übertragen, gehört das nicht dazu).
 2. Wähle eine Datei `…_backup_….json`.
 3. Bestätige, dass es die richtige und neueste Sicherung ist, und wähle
@@ -460,7 +460,7 @@ Die App benachrichtigt die Mitglieder der Gruppen einer Rolle über die
 Benachrichtigungen der Nextcloud. Eine Benachrichtigung wird zurückgezogen,
 wenn die Sache erledigt ist.
 
-![Das Benachrichtigungsmenü der Nextcloud mit Benachrichtigungen des Notenarchivs, zum Beispiel einem Vorschlag, der im Eingang wartet.](../screenshots/notifications.png)
+![Das Benachrichtigungsmenü der Nextcloud mit Benachrichtigungen von Cantoria, zum Beispiel einem Vorschlag, der im Eingang wartet.](../screenshots/notifications.png)
 
 | Benachrichtigung | An | Wann |
 |---|---|---|
@@ -489,7 +489,7 @@ Beispiel wöchentlich).
 
 ### Dashboard-Widget
 
-Das Dashboard-Widget **Notenarchiv – fällig** zeigt dasselbe wie die
+Das Dashboard-Widget **Cantoria – fällig** zeigt dasselbe wie die
 Startseite der App: Konzertfristen, die Karten der Startseite und die
 Aufgaben für die Rollen des Kontos, jeweils mit einem Link in die App.
 Nextcloud bietet es nur Konten mit einer Archivrolle an; die Administration
@@ -526,7 +526,7 @@ herunterladen.
 
 Mit dem Modul **Öffnen aus der Dateien-App** (eingeschaltet in den
 Voreinstellungen „Standard“ und „Vollständig“) bekommen Dateien des
-Archivordners in der Dateien-App die Aktion **Im Notenarchiv öffnen**: Ein
+Archivordners in der Dateien-App die Aktion **In Cantoria öffnen**: Ein
 Klick auf MusicXML (`.musicxml`, `.mxl`) öffnet die Notenansicht ihres
 Exemplars, andere Dateien eines Exemplars (Scans, MuseScore, Audio) öffnen
 das Exemplar über das Aktionsmenü. PDFs behalten den Viewer der Nextcloud,
@@ -546,7 +546,7 @@ Die Notenansicht prüft die Rechte wie immer.
 
 Mit dem Modul **Nextcloud-Suche** (eingeschaltet in „Standard“ und
 „Vollständig“) listet die Suche in der Kopfzeile der Nextcloud Exemplare
-nach Signatur, Titel und Person, in einem Bereich „Notenarchiv“; ein
+nach Signatur, Titel und Person, in einem Bereich „Cantoria“; ein
 Ergebnis öffnet das Exemplar in der App. Einzurichten ist nichts. Der
 Bereich erscheint nur für Konten mit einer Rolle des Werkverzeichnisses
 (Bestand, Betrieb, Chorleitung, Vorschläge, Lesen) und für die
@@ -584,7 +584,7 @@ eine Schwachstelle meldest.
 
 Auf Instanzen ohne Shell-Zugang geht alles über die Weboberfläche:
 Installation aus dem App Store, Einstellungen (Verwaltungseinstellungen →
-Notenarchiv), Importe und Wiederherstellung. Die `occ`-Befehle sind eine
+Cantoria), Importe und Wiederherstellung. Die `occ`-Befehle sind eine
 Erleichterung für selbst betriebene Instanzen:
 
 | Befehl | Macht |
@@ -694,7 +694,7 @@ nicht barrierefrei ist und wie man ein Problem meldet, steht in der
 
 Nicht jeder Chor braucht jede Funktion. Alles außerhalb des Kerns ist ein
 **Modul**, das die Administration unter **Verwaltungseinstellungen →
-Notenarchiv → Module** ein- und ausschaltet (auch die Gruppen, denen die
+Cantoria → Module** ein- und ausschaltet (auch die Gruppen, denen die
 Einstellungsseite übertragen wurde). Der Kern ist immer eingeschaltet: das
 Werkverzeichnis (Werke, Fassungen, Exemplare, Felder, Suche, Status), die
 Startseite, der Dateiabgleich mit dem Archivordner, Rollen, das Protokoll,
@@ -820,7 +820,7 @@ können (siehe Abschnitt 16).
 | Prüfung der Übertragungen | Notenansicht | ein | Der Dateiabgleich erkennt Berichte von Übertragungen weiterhin, liest sie aber nicht; keine Prüfpunkte, keine Korrekturaufträge, keine Prüfung in der Notenansicht, kein Filter „offene Prüfpunkte“. Berichte, Punkte und Entscheidungen bleiben erhalten. |
 | Kleine Korrekturen | Notenansicht | ein | Keine Korrekturen in der Notenansicht; vorher korrigierte Dateien bleiben, wie sie sind. |
 | Stände einer Fassung | Notenansicht | ein | Keine neuen Stände aus Korrekturen oder dem Dateiabgleich, keine Liste, kein Vergleich, kein aktueller Stand festzulegen; als gesungen bestätigte Konzerte behalten keinen Stand, und Ausgaben drucken keine Zeile zum Stand. Vorher erfasste Stände und die Stände vergangener Konzerte bleiben erhalten. |
-| Öffnen aus der Dateien-App | – | ein | Die Dateien-App hat keine Aktion „Im Notenarchiv öffnen“; ein Klick auf MusicXML im Archivordner tut, was er vorher tat. Ohne die Notenansicht öffnet MusicXML stattdessen sein Exemplar. |
+| Öffnen aus der Dateien-App | – | ein | Die Dateien-App hat keine Aktion „In Cantoria öffnen“; ein Klick auf MusicXML im Archivordner tut, was er vorher tat. Ohne die Notenansicht öffnet MusicXML stattdessen sein Exemplar. |
 | Rückfragen und Aufgaben | – | ein | Keine Rückfragen und Aufgaben, keine Karten und Benachrichtigungen zu Aufgaben. Vorhandene Aufgaben bleiben erhalten. |
 | Vorschlagseingang | – | aus | Kein Eingang; Werkzeuge können nichts vorschlagen. Offene Vorschläge bleiben erhalten. |
 | Konzerte und Notenlisten | – | ein | Keine Konzerte und Notenlisten, keine Fristen auf der Startseite, im Dashboard oder als Benachrichtigung. |
@@ -836,7 +836,7 @@ können (siehe Abschnitt 16).
 | Jahresstände | – | aus | Keine Jahresstände von Hand oder zum Jahreswechsel, kein Vergleich. Vorher angelegte Jahresstände bleiben im Archivordner. |
 | Auswertungen und Jahresbericht | – | aus | Keine Auswertungen, kein Jahresbericht. |
 | Dashboard-Widget | – | ein | Nextcloud bietet das Widget nicht an. |
-| Nextcloud-Suche | – | ein | Die Suche der Nextcloud hat keinen Bereich „Notenarchiv“. |
+| Nextcloud-Suche | – | ein | Die Suche der Nextcloud hat keinen Bereich „Cantoria“. |
 | Benachrichtigungen | – | ein | Die App sendet keine Benachrichtigungen; vorher gesendete Benachrichtigungen verschwinden, wenn sie angezeigt werden. |
 | Ein Schalter je Anlass | Benachrichtigungen und das Modul des Anlasses | ein | Diese Benachrichtigung wird nicht gesendet; die täglichen Prüfungen ziehen sie zurück. Anlässe: Vorschläge warten, Aus dem Chorportal entfernen, Lizenz endet bald, Lizenz ist abgelaufen, Wöchentliche Sicherung fehlgeschlagen, Neue Rückfrage oder Aufgabe, Rückfrage beantwortet, Konzertfristen, Gesungenes bestätigen, Schutzfrist abgelaufen, Gemeinfreiheit fraglich, Datei unbemerkt verändert, Neue Prüfpunkte, Korrektur eingetroffen, Abgleich der Druckstation fehlgeschlagen. |
 | Links für Chormitglieder | Ausschnitt-Links, Wiedergabe, Freigaben | aus (in keiner Voreinstellung) | Chormitglieder sehen weder die App noch „Mit mir geteilt“; ihre Routen antworten mit 404; es lassen sich keine Links für Chormitglieder erstellen. Vorhandene Links bleiben erhalten und laufen ab wie bisher. |
@@ -1126,7 +1126,7 @@ den Archivordner
 (Leitlinie 4 der [Roadmap](../../ROADMAP.md)). Es gehört zu keiner
 Voreinstellung; schalte es bewusst ein.
 
-![Der Abschnitt „Druckstation: Spiegelordner“ unter Verwaltungseinstellungen → Notenarchiv: was der Spiegelordner tut, die Warnung, dass alle, die ihn öffnen können, die Scans drucken können, der aktuelle Zielordner und, nach der Wahl eines Ordners, die Meldung, dass er passt, mit den Schaltflächen zum Abbrechen und Speichern.](../screenshots/settings-print-mirror.png)
+![Der Abschnitt „Druckstation: Spiegelordner“ unter Verwaltungseinstellungen → Cantoria: was der Spiegelordner tut, die Warnung, dass alle, die ihn öffnen können, die Scans drucken können, der aktuelle Zielordner und, nach der Wahl eines Ordners, die Meldung, dass er passt, mit den Schaltflächen zum Abbrechen und Speichern.](../screenshots/settings-print-mirror.png)
 
 So richtest du es ein:
 
@@ -1254,7 +1254,7 @@ Der Ordner enthält nur, was Chormitglieder ohnehin speichern und drucken
 dürfen.
 
 Wie sich Archiv und Chorsystem die Arbeit teilen und was das Archiv nie
-verlässt, steht in [Notenarchiv neben einem Chorsystem](neben-einem-chorsystem.md).
+verlässt, steht in [Cantoria neben einem Chorsystem](neben-einem-chorsystem.md).
 
 ## Häufige Probleme
 
@@ -1273,7 +1273,7 @@ der App und im Reiter „Dateien“.
   passiert auch der Administration ohne Rolle.
 - **Zu tun:** Teile den Archivordner mit der Gruppe der Rolle der Person
   oder lege ihn in einen Team-Ordner; Lesen genügt. Danach darf
-  **Verwaltungseinstellungen → Notenarchiv → Zugriff auf den Archivordner →
+  **Verwaltungseinstellungen → Cantoria → Zugriff auf den Archivordner →
   Zugriff prüfen** niemanden mehr aufführen
   ([Den Archivordner freigeben](#den-archivordner-freigeben)). Wer die
   Einstellungen ändern darf, bekommt direkt in der Meldung eine Schaltfläche
@@ -1340,7 +1340,7 @@ Zugriffsprüfung sagt *„Die Gruppe gibt es nicht mehr“*.
 - **Zu tun:** Wähle unter **Rollen und Gruppen** die richtige Gruppe für die
   Rolle und speichere.
 
-### Die Archivverwaltung sieht „Verwaltungseinstellungen → Notenarchiv“ nicht
+### Die Archivverwaltung sieht „Verwaltungseinstellungen → Cantoria“ nicht
 
 - **Ursache:** Die Einstellungsseite ist nur für die Administration, außer
   sie wurde einer Gruppe übertragen.

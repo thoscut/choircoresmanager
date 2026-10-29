@@ -171,7 +171,7 @@ export function errorReason(error: unknown): string | null {
 }
 
 /**
- * Page of the settings under Administration → Music archive.
+ * Page of the settings under Administration → Cantoria.
  *
  * @param section - id of a section to jump to (SETTINGS_SECTIONS of settings.ts)
  */

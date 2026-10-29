@@ -1,6 +1,6 @@
 # Documentation
 
-Notenarchiv is a Nextcloud app that keeps the catalog of a choir's sheet music
+Cantoria is a Nextcloud app that keeps the catalog of a choir's sheet music
 archive. This page tells you where to start. The project overview, installation
 and requirements are in the [README](../README.md) of the repository.
 

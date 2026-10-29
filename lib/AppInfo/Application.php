@@ -44,7 +44,7 @@ class Application extends App implements IBootstrap {
 		$context->registerDashboardWidget(DueWidget::class);
 		// Routes of switched-off modules answer 404 (attribute RequiresModule).
 		$context->registerMiddleware(ModuleMiddleware::class);
-		// The action "Open in music archive" in the Files app (module
+		// The action "Open in Cantoria" in the Files app (module
 		// "files_integration"), only for accounts with access.
 		$context->registerEventListener(LoadAdditionalScriptsEvent::class, FilesScriptListener::class);
 		// A deleted account no longer stays in the folder book and the audit log.
@@ -81,7 +81,7 @@ class Application extends App implements IBootstrap {
 				'order' => 70,
 				'href' => $url->linkToRoute(self::APP_ID . '.page.index'),
 				'icon' => $url->imagePath(self::APP_ID, 'app.svg'),
-				'name' => $l10nFactory->get(self::APP_ID)->t('Music archive'),
+				'name' => $l10nFactory->get(self::APP_ID)->t('Cantoria'),
 			];
 		});
 	}

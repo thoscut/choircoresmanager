@@ -26,7 +26,7 @@ use OCP\IURLGenerator;
 use OCP\IUserSession;
 
 /**
- * Dashboard widget "Music archive – due": what the start page of the app
+ * Dashboard widget "Cantoria – due": what the start page of the app
  * shows for the user's roles, in the same order (concerts with a deadline,
  * the cards with a number, the tasks), each with a link into the app.
  *
@@ -62,7 +62,7 @@ class DueWidget implements IAPIWidgetV2, IIconWidget, IButtonWidget, IConditiona
 
 	#[\Override]
 	public function getTitle(): string {
-		return $this->l->t('Music archive – due');
+		return $this->l->t('Cantoria – due');
 	}
 
 	#[\Override]

@@ -97,7 +97,7 @@ async function runSync(): Promise<void> {
 			<NcNoteCard v-else type="info">
 				{{ admin
 					? t('cantoria', 'Choose a target folder above. The app then shows a preview before it writes anything.')
-					: t('cantoria', 'No target folder has been chosen yet. An administrator chooses it in the settings of the music archive.') }}
+					: t('cantoria', 'No target folder has been chosen yet. An administrator chooses it in the settings of Cantoria.') }}
 			</NcNoteCard>
 			<p v-if="status.folder" class="mirror-sync__muted">
 				{{ status.started

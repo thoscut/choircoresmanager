@@ -64,7 +64,7 @@ What is covered:
 | `Controller/ControllerSecurityTest` | route attributes of every controller (no public page, CSRF skipped only for plain downloads, admin-only settings, brute-force and rate limits), headers of the score file response and of the scan beside the score (PDF viewer only, framed by the app only), the app page's content security policy; every route of the API for agents is an OCS route under `/api/v1/` with `agent_api` plus the module of the same function in the UI, `NoAdminRequired`, a rate limit, no `NoCSRFRequired` and no CORS, and answers 404 with OCS meta when switched off; the folder book (read by librarians, operations, conductor and readers, maintained by librarians and operations, never by contributors or unknown roles such as choir members; its audit entries hidden from contributors) and the print station (sync only by the catalog librarian and administrators, the target folder only by administrators) with real role checks |
 | `Controller/ApiV1ControllerTest` | the API for agents with the services as test doubles: search with filters and cursor pages in shelf order, the fixed fields, preservation copies only for the roles that may view them, no account names, errors as OCS exceptions (400, 403, 404, 500 without internal details), tasks and proposals answer 201, own proposals, concerts by date, module status and permissions |
 | `Service/ApiV1ViewsTest`, `Service/TextReferenceTest` | cursors (opaque, checked, stable when entries are added), snake_case statistics, values without JSON; the server's text reference follows the rules and examples of the UI (`src/__tests__/references.test.ts`) |
-| `Settings/AdminTest`, `Settings/AdminSectionTest` | the page Administration → Music archive: delegable setting without generic app config, its section, template and registration in `appinfo/info.xml` |
+| `Settings/AdminTest`, `Settings/AdminSectionTest` | the page Administration → Cantoria: delegable setting without generic app config, its section, template and registration in `appinfo/info.xml` |
 | `Service/RolesTest` | who may change the settings: admins and the groups given the settings page, without a role; fails closed |
 | `Service/ArchiveAccessTest` | the access check of the archive folder: per role and group, accounts named that cannot open it, disabled and never logged-in accounts left out, the limit, admins without a role, the person who asks |
 | `Service/ScoreServiceTest` | only real MusicXML reaches the browser (root element, document type declarations, `.mxl` contents, size limit) |
@@ -203,7 +203,7 @@ closes the points no longer named. The copy needs a MusicXML file the
 account may read, in a folder it may write to; the new file is deleted at
 the end and everything else rolled back. It runs on any catalog: no fixed
 titles or figures.
-`files_integration_test.php` checks the action "Open in music archive" of
+`files_integration_test.php` checks the action "Open in Cantoria" of
 the Files app: a listed MusicXML file names its copy and opens the score
 view, a PDF opens its copy, an unlisted file of the archive folder, an
 unknown file id and a file of another account all get the same 404 (the

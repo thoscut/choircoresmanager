@@ -29,7 +29,7 @@ export const metaError = ref('')
 export const isAdmin = computed(() => meta.value?.admin === true)
 
 /**
- * May open the settings under Administration → Music archive: admins and
+ * May open the settings under Administration → Cantoria: admins and
  * the groups the administration has given the page. The server checks again.
  */
 export const canChangeSettings = computed(() => meta.value?.canChangeSettings === true)

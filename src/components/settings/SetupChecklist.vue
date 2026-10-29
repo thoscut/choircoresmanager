@@ -128,7 +128,7 @@ function target(key: StepKey): { href: string, label: string } {
 	case 'access':
 		return { href: '#' + SETTINGS_SECTIONS.access, label: t('cantoria', 'To the access check') }
 	default:
-		return { href: appUrl, label: t('cantoria', 'Open the music archive') }
+		return { href: appUrl, label: t('cantoria', 'Open Cantoria') }
 	}
 }
 </script>

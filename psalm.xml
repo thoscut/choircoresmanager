@@ -39,7 +39,7 @@
 	<stubs>
 		<!-- Private server interface that OCP\Files\IRootFolder extends -->
 		<file name="tests/stubs/oc_hooks_emitter.php" preloadClasses="true"/>
-		<!-- Event of the Files app that loads the script of the action "Open in music archive" -->
+		<!-- Event of the Files app that loads the script of the action "Open in Cantoria" -->
 		<file name="tests/stubs/oca_files_events.php" preloadClasses="true"/>
 	</stubs>
 	<issueHandlers>

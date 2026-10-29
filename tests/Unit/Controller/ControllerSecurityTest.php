@@ -1331,7 +1331,7 @@ final class ControllerSecurityTest extends TestCase {
 		foreach (['librarian', 'admin'] as $uid) {
 			$response = $this->printMirrorController($uid)->sync();
 			self::assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus(), $uid . ' passes the role check');
-			self::assertSame(['error' => 'No target folder has been chosen for the print station yet. An administrator chooses it in the settings of the music archive.'],
+			self::assertSame(['error' => 'No target folder has been chosen for the print station yet. An administrator chooses it in the settings of Cantoria.'],
 				$response->getData());
 		}
 		self::assertSame(Http::STATUS_FORBIDDEN, $this->printMirrorController('librarian')->check(5)->getStatus(), 'only administrators choose the folder');
@@ -1368,7 +1368,7 @@ final class ControllerSecurityTest extends TestCase {
 		foreach (['librarian', 'admin'] as $uid) {
 			$response = $this->handoverController($uid)->sync();
 			self::assertSame(Http::STATUS_BAD_REQUEST, $response->getStatus(), $uid . ' passes the role check');
-			self::assertSame(['error' => 'No hand-over folder has been chosen yet. An administrator chooses it in the settings of the music archive.'],
+			self::assertSame(['error' => 'No hand-over folder has been chosen yet. An administrator chooses it in the settings of Cantoria.'],
 				$response->getData());
 		}
 		self::assertSame(Http::STATUS_FORBIDDEN, $this->handoverController('librarian')->check(5)->getStatus(), 'only administrators choose the folder');

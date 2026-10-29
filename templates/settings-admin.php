@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 use OCP\Util;
 
-// Administration → Music archive (OCA\Cantoria\Settings\Admin). The page
+// Administration → Cantoria (OCA\Cantoria\Settings\Admin). The page
 // has its own small bundle, without the catalog and the score viewer.
 Util::addScript(OCA\Cantoria\AppInfo\Application::APP_ID, OCA\Cantoria\AppInfo\Application::APP_ID . '-admin-settings');
 Util::addStyle(OCA\Cantoria\AppInfo\Application::APP_ID, OCA\Cantoria\AppInfo\Application::APP_ID . '-admin-settings');

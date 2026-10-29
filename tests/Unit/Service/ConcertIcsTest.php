@@ -122,7 +122,7 @@ final class ConcertIcsTest extends TestCase {
 		self::assertSame('St. Marien\\, Lübeck', $event['LOCATION']);
 		self::assertSame('CONFIRMED', $event['STATUS']);
 		self::assertSame(self::APP_URL . '?event=42', $event['URL']);
-		self::assertStringContainsString('Open in the music archive: ' . self::APP_URL . '?event=42', $event['DESCRIPTION']);
+		self::assertStringContainsString('Open in Cantoria: ' . self::APP_URL . '?event=42', $event['DESCRIPTION']);
 		self::assertStringContainsString('status: Fixed', $event['DESCRIPTION']);
 		self::assertStringNotContainsString('Beispiel', $ics, 'the notes (possibly personal data) are left out');
 		self::assertSame([], self::components($ics, 'VTIMEZONE'), 'an all-day entry needs no time zone');

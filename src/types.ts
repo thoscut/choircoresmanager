@@ -52,7 +52,7 @@ export interface Meta {
 	uid: string
 	admin: boolean
 	/**
-	 * May change the settings (Administration → Music archive): admins and
+	 * May change the settings (Administration → Cantoria): admins and
 	 * the groups the administration has given the page. No role.
 	 */
 	canChangeSettings: boolean

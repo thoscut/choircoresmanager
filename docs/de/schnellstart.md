@@ -3,12 +3,12 @@
 [English](../user-guide.md) | **Deutsch**
 
 Diese Kurzanleitung zeigt der Archivverwaltung und der Chorleitung die ersten
-Schritte im Notenarchiv. Ausführlich beschreiben es das
+Schritte in Cantoria. Ausführlich beschreiben es das
 [Benutzerhandbuch](benutzerhandbuch.md) und für die Einrichtung das
 [Administrationshandbuch](administrationshandbuch.md).
 
 > [!NOTE]
-> Du siehst das Notenarchiv nur, wenn dein Konto in einer Gruppe mit einer
+> Du siehst Cantoria nur, wenn dein Konto in einer Gruppe mit einer
 > Rolle ist. Die Rollen ordnet die Administration den Gruppen zu. Die
 > deutsche Oberfläche gibt es in der Du- und in der Sie-Form; du wählst sie
 > mit der Sprache in deinen persönlichen Nextcloud-Einstellungen.
@@ -79,7 +79,7 @@ oder exportiert; nur Archivverwaltung und Chorleitung sehen sie.
 
 ![Die Startseite „Fällig“ in der deutschen Oberfläche: Karten mit der Zahl der anstehenden Dinge, zum Beispiel eine offene Aufgabe, Programmpunkte mit unklarer Signatur und Vorschläge im Eingang, darunter die Konzertfristen mit dem Adventskonzert 2026.](../screenshots/de/start-page.png)
 
-Das Notenarchiv öffnet mit **Fällig**: Karten zeigen, was für deine Rollen
+Cantoria öffnet mit **Fällig**: Karten zeigen, was für deine Rollen
 ansteht, zum Beispiel offene Aufgaben, Vorschläge im Eingang oder Fassungen,
 deren Gemeinfreiheit zu bestätigen ist. Ein Klick auf eine Karte öffnet die
 passende Liste. Darunter stehen die Konzertfristen und die Aufgaben für deine
@@ -273,13 +273,13 @@ Die App erinnert dich 10, 8 und 6 Wochen vor dem Konzert an die Fristen.
   Nextcloud-Kalender ein, **Kalenderdatei (.ics)** lädt es für jedes
   Kalenderprogramm herunter. Mit **Mit den Vorbereitungsfristen (10, 8 und 6
   Wochen vorher)** kommen die Fristen als ganztägige Einträge dazu.
-- Das Widget **Notenarchiv – fällig** zeigt im Nextcloud-Dashboard dasselbe
-  wie die Startseite „Fällig“, mit Links ins Notenarchiv: jeder Eintrag mit
+- Das Widget **Cantoria – fällig** zeigt im Nextcloud-Dashboard dasselbe
+  wie die Startseite „Fällig“, mit Links in Cantoria: jeder Eintrag mit
   kurzem Titel, Einzelheiten in der zweiten Zeile und einem Symbol für
   Konzert, Karte oder Aufgabe.
 - In der **Dateien**-App öffnet ein Klick auf eine MusicXML-Datei im
   Archivordner die Notenansicht ihres Exemplars. Bei Scans und anderen
-  Dateien steht **Im Notenarchiv öffnen** im Aktionsmenü.
+  Dateien steht **In Cantoria öffnen** im Aktionsmenü.
 
 ## Häufige Probleme
 

@@ -4,7 +4,7 @@
  */
 
 /**
- * Pure logic of the settings page (Administration → Music archive): the
+ * Pure logic of the settings page (Administration → Cantoria): the
  * answers of the server in a predictable shape, the steps of the setup, the
  * rows of the access check, what a change of the roles does and the check of
  * the repertoire thresholds. No requests, no texts.

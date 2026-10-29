@@ -3,7 +3,7 @@
 **English** | [Deutsch](de/administrationshandbuch.md)
 
 This guide is for Nextcloud administrators who install and set up the
-Notenarchiv app, and for the music librarians who take it over afterwards.
+Cantoria app, and for the music librarians who take it over afterwards.
 Daily work with the app is described in the [user guide](user-guide.md).
 
 **Contents**
@@ -73,7 +73,7 @@ and 5 need the catalog role. To try the app first, use the
 > The app is not yet published in the Nextcloud App Store. Once it is, this
 > is the only way on managed instances without shell access.
 
-Apps → search "Notenarchiv" → **Download and enable**.
+Apps → search "Cantoria" → **Download and enable**.
 
 ### From a release archive
 
@@ -107,7 +107,7 @@ change of group membership.
 
 1. Create the groups under Users, for example "Music librarians",
    "Conductor", "Board".
-2. Open **Administration → Music archive** (the section of the app in
+2. Open **Administration → Cantoria** (the section of the app in
    Nextcloud's administration settings). In the app, **Settings** at the
    bottom of the navigation leads there.
 3. Under **Roles and groups**, choose the groups for each role. Before you
@@ -116,9 +116,9 @@ change of group membership.
 4. Check access to the archive folder: new role holders need it, too
    ([section 3](#checking-who-can-open-the-archive-folder)).
 
-![The section "Roles and groups" under Administration → Music archive: each role with the groups assigned to it and a short description, for example "Music librarians" for the catalog role and "Choir members" for the role that sees only shared excerpts, and the button "Save roles".](screenshots/settings-roles.png)
+![The section "Roles and groups" under Administration → Cantoria: each role with the groups assigned to it and a short description, for example "Music librarians" for the catalog role and "Choir members" for the role that sees only shared excerpts, and the button "Save roles".](screenshots/settings-roles.png)
 
-The page **Administration → Music archive** holds all settings of the app:
+The page **Administration → Cantoria** holds all settings of the app:
 archive folder, roles and groups, access to the archive folder (see
 [section 3](#3-archive-folder)), modules ([section 12](#12-modules-and-presets)),
 repertoire and, for admins, the complete backup and restore
@@ -159,7 +159,7 @@ management, so that changing a setting does not need an admin:
 1. **Administration → Administration privileges**.
 2. At **Music archive**, add the group.
 
-Members of that group then see **Administration → Music archive** and may
+Members of that group then see **Administration → Cantoria** and may
 change the roles and groups, the modules and the repertoire thresholds, and
 run the access check. This gives them **no role**: they see the app only if
 they hold a role as well. Some things stay with admins:
@@ -194,7 +194,7 @@ On self-hosted instances the roles can also be set with
 The archive folder holds the score files, for example one subfolder per
 binder.
 
-1. **Administration → Music archive** → **Archive folder** → **Choose folder …**.
+1. **Administration → Cantoria** → **Archive folder** → **Choose folder …**.
 2. Choose the folder. Before you save, the page says what saving does and
    lists the accounts of the role groups that cannot open the chosen folder;
    share it with their groups (see below).
@@ -253,7 +253,7 @@ folder, too.
 
 ### Checking who can open the archive folder
 
-**Administration → Music archive → Access to the archive folder → Check
+**Administration → Cantoria → Access to the archive folder → Check
 access** looks at every member of the role groups and at the admins without
 a role:
 
@@ -446,7 +446,7 @@ often (for example weekly).
 
 ### Dashboard widget
 
-The dashboard widget **Music archive – due** shows the same as the start page
+The dashboard widget **Cantoria – due** shows the same as the start page
 of the app: concert deadlines, the start page cards and the tasks for the
 user's roles, each with a link into the app. Nextcloud offers it only to
 accounts with an archive role; admins without a role do not get it. It
@@ -497,7 +497,7 @@ is in the archive. The score view checks the rights as always.
 
 With the module **Nextcloud search** (on in Standard and Complete) the search
 in the Nextcloud header lists copies by shelf mark, title and person, in a
-section "Music archive"; a result opens the copy in the app. Nothing needs
+section "Cantoria"; a result opens the copy in the app. Nothing needs
 to be set up. The section appears only for accounts with a role of the
 catalog (librarian, operations, conductor, contributor, reader) and for
 admins; other accounts, including a later role for choir members, get no
@@ -530,7 +530,7 @@ vulnerability.
 ## 9. Managed hosting
 
 On instances without shell access everything is done in the web interface:
-installation from the App Store, settings (Administration → Music archive),
+installation from the App Store, settings (Administration → Cantoria),
 imports and restore. The `occ`
 commands are a convenience for self-hosted instances:
 
@@ -745,7 +745,7 @@ writes files into a folder others can open (see section 16).
 | Reviewing transcriptions | Score view | on | The file sync still recognises transcription reports, but does not read them; no review points, no correction orders, no review in the score view, no filter "open review points". Reports, points and decisions are kept. |
 | Small corrections | Score view | on | No corrections in the score view; files corrected before stay as they are. |
 | Revisions of a version | Score view | on | No new revisions from corrections or the file sync, no list, no comparison, no current revision to set; concerts confirmed as sung keep no revision and outputs print no version line. Revisions recorded before and the revisions of past concerts are kept. |
-| Opening from the Files app | – | on | The Files app has no action "Open in music archive"; a click on MusicXML in the archive folder does what it did before. Without the score view, MusicXML opens its copy instead. |
+| Opening from the Files app | – | on | The Files app has no action "Open in Cantoria"; a click on MusicXML in the archive folder does what it did before. Without the score view, MusicXML opens its copy instead. |
 | Questions and tasks | – | on | No questions and tasks, no task cards and notifications. Existing tasks are kept. |
 | Proposals inbox | – | off | No inbox; tools cannot propose. Open proposals are kept. |
 | Concerts and song lists | – | on | No concerts and song lists, no deadlines on the start page, in the dashboard or as notifications. |
@@ -761,7 +761,7 @@ writes files into a folder others can open (see section 16).
 | Annual snapshots | – | off | No snapshots by hand or at the turn of the year, no comparison. Snapshots made before stay in the archive folder. |
 | Statistics and annual report | – | off | No statistics, no annual report. |
 | Dashboard widget | – | on | Nextcloud does not offer the widget. |
-| Nextcloud search | – | on | The search of Nextcloud has no section "Music archive". |
+| Nextcloud search | – | on | The search of Nextcloud has no section "Cantoria". |
 | Notifications | – | on | The app sends no notifications; notifications sent before disappear when they are shown. |
 | One switch per occasion | Notifications and the module of the occasion | on | That notification is not sent; the daily checks withdraw it. Occasions: proposals waiting, remove from the singers' portal, license ends soon, license has ended, weekly backup failed, new question or task, question answered, concert deadlines, confirm what was sung, protection term ended, public domain in doubt, file changed unnoticed, new review points, correction received, print station sync failed. |
 | Links for choir members | Excerpt links, Playback, Releases | off (in no preset) | Choir members see neither the app nor "Shared with me"; their routes answer 404; no links for choir members can be made. Existing links are kept and expire as before. |
@@ -1027,7 +1027,7 @@ functions that write files, each only into its own folder, never into the
 archive folder (guideline 4 of the
 [roadmap](../ROADMAP.md)). It is part of no preset; switch it on on purpose.
 
-![The section "Print station: mirror folder" under Administration → Music archive: what the mirror folder does, the warning that everyone who can open it can print the scans, the current target folder and, after choosing a folder, the message that it fits, with the buttons to cancel or save.](screenshots/settings-print-mirror.png)
+![The section "Print station: mirror folder" under Administration → Cantoria: what the mirror folder does, the warning that everyone who can open it can print the scans, the current target folder and, after choosing a folder, the message that it fits, with the buttons to cancel or save.](screenshots/settings-print-mirror.png)
 
 Setting up:
 
@@ -1145,7 +1145,7 @@ pieces with the module **Practising without a network** (see
 The folder holds only what choir members may save and print anyway.
 
 How the archive and a choir system share the work, and what never leaves
-the archive, is in [Notenarchiv alongside a choir system](alongside-a-choir-system.md).
+the archive, is in [Cantoria alongside a choir system](alongside-a-choir-system.md).
 
 ## Common problems
 
@@ -1164,7 +1164,7 @@ at the top of the app and on the tab "Files".
   happens to admins without a role.
 - **To do:** share the archive folder with the group of the person's role,
   or keep it in a team folder; reading is enough. Then
-  **Administration → Music archive → Access to the archive folder → Check
+  **Administration → Cantoria → Access to the archive folder → Check
   access** must list nobody
   ([Sharing the archive folder](#sharing-the-archive-folder)). People who may
   change the settings get a button to the check right in the message.
@@ -1222,7 +1222,7 @@ says *"The group no longer exists"*.
 - **To do:** choose the right group for the role under **Roles and groups**
   and save.
 
-### Music librarians do not see "Administration → Music archive"
+### Music librarians do not see "Administration → Cantoria"
 
 - **Cause:** the settings page is for admins only, unless it was given to a
   group.

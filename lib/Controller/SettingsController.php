@@ -33,7 +33,7 @@ use OCP\IRequest;
 use Psr\Log\LoggerInterface;
 
 /**
- * Settings of the app (page Administration → Music archive, see
+ * Settings of the app (page Administration → Cantoria, see
  * docs/api.md): archive folder, roles and groups (with a search for groups),
  * and the check who can open the archive folder.
  *

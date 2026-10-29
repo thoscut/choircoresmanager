@@ -138,7 +138,7 @@ class ConcertIcs {
 		$description[] = $cancelled
 			? $this->l->t('This concert has been cancelled.')
 			: $this->l->t('Concert in the music archive, status: %s', [$this->statusLabel($event->getStatus())]);
-		$description[] = $this->l->t('Open in the music archive: %s', [$link]);
+		$description[] = $this->l->t('Open in Cantoria: %s', [$link]);
 
 		$lines = $this->head($event, $this->uid($event));
 		$zone = null;
@@ -183,7 +183,7 @@ class ConcertIcs {
 			$lines[] = 'DESCRIPTION:' . IcsWriter::text(implode("\n", [
 				$this->l->n('Deadline %n week before the concert on %s.', 'Deadline %n weeks before the concert on %s.', $weeks, [$day]),
 				...($cancelled ? [$this->l->t('This concert has been cancelled.')] : []),
-				$this->l->t('Open in the music archive: %s', [$link]),
+				$this->l->t('Open in Cantoria: %s', [$link]),
 			]));
 			$lines[] = 'URL:' . $link;
 			if ($cancelled) {

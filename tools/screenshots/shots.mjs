@@ -128,7 +128,7 @@ export const SHOTS = [
 		name: 'dashboard-widget', file: 'dashboard-widget.png', account: 'librarian', ...en,
 		run: async (h) => {
 			await h.goto('/apps/dashboard/')
-			await h.page.waitForFunction(() => document.body.innerText.includes('Music archive'), { timeout: 30000 })
+			await h.page.waitForFunction(() => document.body.innerText.includes('Cantoria'), { timeout: 30000 })
 			await h.settle(1500)
 		},
 	},
@@ -245,7 +245,7 @@ export const SHOTS = [
 		after: escape,
 	},
 	{
-		// Administration → Music archive: the roles and their groups
+		// Administration → Cantoria: the roles and their groups
 		name: 'settings-roles', file: 'settings-roles.png', account: 'admin', ...en,
 		run: async (h) => {
 			await h.goto('/settings/admin/cantoria')
@@ -332,7 +332,7 @@ export const SHOTS = [
 			await h.page.waitForSelector(row, { visible: true, timeout: 30000 })
 			await h.settle(800)
 			await h.page.click(`${row} .files-list__row-actions button[aria-label="Actions"]`)
-			await h.page.waitForFunction(() => [...document.querySelectorAll('[role=menuitem]')].some((item) => item.innerText.includes('Open in music archive')), { timeout: 15000 })
+			await h.page.waitForFunction(() => [...document.querySelectorAll('[role=menuitem]')].some((item) => item.innerText.includes('Open in Cantoria')), { timeout: 15000 })
 			await h.sleep(600)
 			// Keep the menu open: no mouse move, no blur afterwards
 			h.keepOpen = true
@@ -442,7 +442,7 @@ export const SHOTS = [
 			await h.page.evaluate(() => [...document.querySelectorAll('header button')].find((b) => /search|such/i.test(b.getAttribute('aria-label') ?? ''))?.click())
 			await h.page.waitForSelector('[data-cy-unified-search-input]', { visible: true, timeout: 15000 })
 			await h.page.type('[data-cy-unified-search-input]', 'Mond')
-			await h.page.waitForFunction(() => document.querySelector('.unified-search-modal')?.innerText.includes('Music archive'), { timeout: 30000 })
+			await h.page.waitForFunction(() => document.querySelector('.unified-search-modal')?.innerText.includes('Cantoria'), { timeout: 30000 })
 			await h.settle(1500)
 			return dialogClip(h)
 		},

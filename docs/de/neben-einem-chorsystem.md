@@ -2,11 +2,11 @@
   - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
-# Notenarchiv neben einem Chorsystem
+# Cantoria neben einem Chorsystem
 
 Viele Chöre nutzen schon ein Chorsystem: eine Mitglieder-App oder eine
 Website, auf der die Sängerinnen und Sänger ihre Noten und Übe-Aufnahmen, die
-Termine und die Neuigkeiten finden. Notenarchiv ersetzt es nicht. Es ist das
+Termine und die Neuigkeiten finden. Cantoria ersetzt es nicht. Es ist das
 Archiv dahinter: was der Chor besitzt, welche Fassung er singt, was die Rechte
 erlauben und was zu den Singenden hinaus darf. Diese Seite ist für die
 Administration und die Archivverwaltung (Rolle „Bestand“), die beides
@@ -17,15 +17,15 @@ betreiben.
 
 | Daten | Geführt in | Kommt ins Chorsystem |
 |---|---|---|
-| Werkverzeichnis: Werke, Fassungen, Exemplare, Signaturen | Notenarchiv | Signatur, Titel, Komposition und Fassungszeile in `Liste.csv` des Übergabeordners |
+| Werkverzeichnis: Werke, Fassungen, Exemplare, Signaturen | Cantoria | Signatur, Titel, Komposition und Fassungszeile in `Liste.csv` des Übergabeordners |
 | Scans und MusicXML-Dateien | der Archivordner in Nextcloud | Nur die, die Chormitglieder speichern und drucken dürfen, über den Übergabeordner |
 | Übe-Aufnahmen | der Archivordner | Nur wo Übe-Audio erlaubt ist, über den Übergabeordner |
-| Rechte, Lizenzen, Nachweise, Erhaltungskopien | Notenarchiv | Der Lizenzhinweis je Datei in `Liste.csv`; nie die Nachweise |
+| Rechte, Lizenzen, Nachweise, Erhaltungskopien | Cantoria | Der Lizenzhinweis je Datei in `Liste.csv`; nie die Nachweise |
 | Hinweise der Chorleitung je Stelle | die Notizen der Links für Chormitglieder | `… Hinweise.txt` je Stück im Übergabeordner |
-| Konzerte und ihr Programm | Notenarchiv | Als Kalenderdateien (`.ics`), wenn du das willst |
-| Mitglieder, Stimmen, Anwesenheit, Neuigkeiten | das Chorsystem | Nie im Notenarchiv |
-| Mappenbuch (wer welche Mappe hat) | Notenarchiv | Nie |
-| Protokoll, Aufgaben, Vorschläge, Übertragungsberichte | Notenarchiv | Nie |
+| Konzerte und ihr Programm | Cantoria | Als Kalenderdateien (`.ics`), wenn du das willst |
+| Mitglieder, Stimmen, Anwesenheit, Neuigkeiten | das Chorsystem | Nie in Cantoria |
+| Mappenbuch (wer welche Mappe hat) | Cantoria | Nie |
+| Protokoll, Aufgaben, Vorschläge, Übertragungsberichte | Cantoria | Nie |
 
 ## Was nie ins Chorsystem geht
 
@@ -54,7 +54,7 @@ Anbieter ab; frag dort nach, bevor du dich darauf verlässt.
 
 ## Der Weg zurück: einen Export vergleichen
 
-Was wirklich im Chorsystem ist, steht im Notenarchiv als „Im Chorportal
+Was wirklich im Chorsystem ist, steht in Cantoria als „Im Chorportal
 seit“. Statt es von Hand zu pflegen, exportiere die Liste der Stücke aus dem
 Chorsystem und vergleiche sie mit der Liste **Chorportal**
 ([Benutzerhandbuch](benutzerhandbuch.md#mit-dem-chorsystem-vergleichen)). Die
@@ -64,7 +64,7 @@ freigegeben, werden aufgelistet, damit sie dort entfernt werden.
 
 ## Konzerte
 
-Konzerte bleiben im Notenarchiv, weil das Programm entscheidet, welche
+Konzerte bleiben in Cantoria, weil das Programm entscheidet, welche
 Fassungen und Rechte gebraucht werden. Für das Chorsystem oder die Kalender
 der Singenden lädst du ein Konzert oder alle kommenden Konzerte als
 Kalenderdatei (`.ics`) herunter
