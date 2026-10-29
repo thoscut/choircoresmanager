@@ -134,11 +134,20 @@ begonnen.
 | 0.14 Text und Tonhöhe beim Mitsingen | fertig (nicht in einem echten Nextcloud abgenommen) | Version 0.15.0 |
 | 0.15 Ohne Netz üben und vortragen | fertig bis auf die Abnahme auf echten Geräten | Version 0.15.0 |
 | Umbenennung in Cantoria (App-ID `cantoria`, Tabellen `cantoria_*`) | fertig | Version 0.16.0, 0.16.1 |
+| 0.17 Bereit zur ersten Veröffentlichung | geplant | – |
+| 0.18 Rechte auf allen neuen Wegen | geplant | – |
+| 0.19 Üben und Vortragen am Gerät | geplant | – |
+| 0.20 Einführen und umsteigen | geplant | – |
 | 1.0 Stabil | geplant | – |
 
 Die aktuelle Version ist 0.16.1: Die App heißt jetzt Cantoria, vorher
 „Notenarchiv“. Die Meilensteine 0.10 bis 0.15 kamen mit 0.15.0 (PR #10
-bis #12); danach ist 1.0 offen.
+bis #12). Das Experten-Review vom 29. Oktober 2026 (UX, Design und
+Barrierefreiheit, Architektur, Sicherheit, Recht, Tests und CI, Wettbewerb)
+hat auf Stand 0.16.1 keine kritischen Befunde ergeben. Seine Punkte stehen
+in den Meilensteinen 0.17 bis 0.20 und in 1.0; die Kürzel in Klammern
+verweisen auf die Befunde der Berichte (U = UX, D = Design, A = Architektur,
+S = Sicherheit, R = Recht, T = Tests und CI, W = Wettbewerb).
 
 ### 0.1 Fundament
 
@@ -601,14 +610,180 @@ später an den Server schickt) ist nicht vorgesehen: Es verträgt sich nicht
 mit Leitlinie 3, und „gesungen“ bestätigt die Chorleitung ohnehin nach dem
 Konzert mit Netz.
 
+### 0.17 Bereit zur ersten Veröffentlichung
+
+*Geplant (Review 29. Oktober 2026).* Was nach dem ersten Release im App
+Store nur noch schwer zu ändern ist, kommt zuerst.
+
+- **Migrationen zusammenfassen und einfrieren:** die 18 Migrationen zu
+  einer Grundmigration zusammenfassen und den Upgrade-Code für Vorversionen
+  entfernen, die es nie gab (`ModuleDefaults`, `moveOldBackups`,
+  `moveOldMarks`, Datenmigrationen). Ab dem ersten Release sind
+  Migrationen unveränderlich; eine CI-Prüfung schlägt an, wenn sich eine
+  veröffentlichte Migration ändert (A, T2).
+- **Pflicht-CI auf `main`:** Branch-Schutz mit den CI-Jobs als Pflicht,
+  kein `cancel-in-progress` auf `main`, Tags je Version (T1, A).
+- **Name absichern:** amtliche Markenprüfung für „Cantoria“ (DPMA,
+  EUIPO/TMview, USPTO; dort ist „CANTORIA“ in Klasse 9 eingetragen) und
+  Werktitel gleichnamiger Apps, bevor das Signaturzertifikat für
+  `cantoria` beantragt wird (R B13, W). Die Notiz zum App Store auf
+  `cantoria` umstellen (T3).
+- **Lizenztexte vollständig:** fehlende Texte in `LICENSES/` (u. a.
+  LGPL-3.0 und GPL-3.0 für Verovio, OFL-1.1 für die Notenschriften, MIT,
+  Apache-2.0), Hinweise zu Drittkomponenten im Release-Archiv, `reuse lint`
+  auch bei reinen Doku-Änderungen (R B12, T9).
+- **Release-Workflow:** `release.yml` baut ein reproduzierbares Archiv,
+  prüft Tag, sauberen Arbeitsbaum, CHANGELOG-Eintrag und Signatur
+  (T4, `docs/release.md`).
+- **Ehrliche Texte:** Aussagen wie „nie die Notendatei“, „keine Downloads“
+  und „nie eine Datei des Archivs“ in App, `info.xml` und README
+  berichtigen; Abschnitt „Backups“ auf den Stand seit 0.15 bringen
+  (R B5, R N7, W).
+  Die Leitlinien 4 und 7 an den Code anpassen: Seit 0.15 liegen die
+  Sicherungen in einem eigenen Ordner außerhalb des Archivordners (A).
+- **Abhängigkeiten:** `zod` im MCP-Server aktualisieren; `npm audit` und
+  `composer audit` als Pflichtschritt in der CI, Dependabot oder Renovate
+  (S N10, T).
+
+### 0.18 Rechte auf allen neuen Wegen
+
+*Geplant (Review 29. Oktober 2026).* Leitlinie 2 gilt auch für die Wege,
+die mit 0.12 bis 0.15 dazukamen.
+
+- **Konzertmappe an die Speicherregel binden:** Auf dem Gerät gespeichert
+  wird nur, was Chormitglieder speichern und drucken dürfen, wie bei
+  „Mit mir geteilt“; heute prüft `ConcertFolderService::keepDenial` nur
+  Ansehen und Erhaltungskopie (R B1). Ob die Mappe interne
+  Erhaltungskopien überhaupt zeigen darf, wird entschieden und
+  dokumentiert (R B3).
+- **Server sagt, was bleiben darf:** ein Header (z. B. `X-Cantoria-Keep`),
+  den der Service Worker beachtet, statt jede 200-Antwort zu speichern
+  (S N5).
+- **Exporte ohne Erhaltungskopien:** `/api/export` und die CSV-Dateien in
+  `_cantoria-app/` filtern Erhaltungskopien und Konten-IDs nach Rolle; der
+  Paritätstest deckt alle Rollen ab, auch `reader`, `member` und Admins
+  (S N1, T6).
+- **Scan in öffentlichen Links:** eigene Nutzungsart für den Download des
+  Scans; eine Lizenz zur Online-Veröffentlichung reicht nicht (R B2).
+  Veröffentlichung bei einem Rechtekonflikt aussetzen (R M4).
+- **Übergabeordner:** nur bereinigte MusicXML (ohne Kommentare und
+  Encoder-Angaben), wie bei Ausschnitten (S N4).
+- **Nutzungsarten schärfen:** MusicXML und fremde Aufnahmen brauchen eine
+  eigene Nutzungsart, „Download und Ausdruck“ deckt sie nicht (R B6, B7).
+- **Offline-Kopien an das Lizenzende koppeln:** Läuft eine Lizenz ab oder
+  endet eine Freigabe, wird die Kopie auf dem Gerät beim nächsten Abgleich
+  gelöscht, nicht nur gesperrt (R B8).
+- **„Traditionell“ nicht als gemeinfrei vorschlagen,** solange ein
+  Bearbeiter oder die Quelle fehlt; Doku zu § 66 UrhG berichtigen (R B4).
+- **Sicherungsordner absichern:** Eigentümer und Freigaben vor der
+  Wiederverwendung prüfen, den Ordner nicht an das Konto einer einzelnen
+  Person hängen (S N2, A).
+- **Kleinere Lücken:** Aufgaben zu Erhaltungskopien nur für Rollen, die sie
+  sehen dürfen (S N3); Delegation über Unteradmins absichern (S N7); beide
+  Prüfungen auf Erhaltungskopie über `RightsPolicy` (S N8); Download der
+  Vollsicherung protokollieren (S N9).
+- **Zweites Datenschutz-Paket:** Auskunft um `createdBy` und `decidedBy`
+  ergänzen, Löschkonzept für das Protokoll (Leitlinie 3 nennt die
+  gesetzliche Ausnahme), rechtlicher Hintergrund und Vorlagen um Üben ohne
+  Netz, Konzertmappe, Mikrofon und Speicher im Browser (§ 25 TDDDG)
+  ergänzen (R B9–B11).
+- **Abmelden und gemeinsames Gerät:** prüfen und dokumentieren, was nach
+  dem Abmelden auf dem Gerät bleibt; `SECURITY.md` danach berichtigen
+  (S N6).
+
+### 0.19 Üben und Vortragen am Gerät
+
+*Geplant (Review 29. Oktober 2026).*
+
+- **Sängeransicht neu ordnen:** zuerst die Stimme, dann was von ihr
+  abhängt; die Übe-Werkzeuge in benannte Abschnitte statt über 20
+  Bedienelemente in einem Bereich; die Anzeige „Aufnahme läuft“ immer
+  sichtbar (U 1, D4, D7).
+- **Die Noten bleiben sichtbar:** Faltung auch nach der Höhe (Handy im
+  Querformat), die oben haftende Leiste in der Höhe begrenzt; Mitscrollen
+  und Blättern kennen die Leiste (U 2, D2, D5).
+- **Vortragsmodus** für Konzertmappe und Notenansicht: Vollbild,
+  Bildschirm wach halten, „Weiter“ auch unten und per Fußschalter-Taste
+  (D1, U 7).
+- **Offline nach einem App-Update:** Der Service Worker lädt beim Start mit
+  Netz alle Skripte aus dem Vite-Manifest vor, nicht erst beim Speichern
+  eines Stücks (A, `worker.ts`, `device.ts`).
+- **Ein Muster für „ohne Netz speichern“** auf allen drei Seiten, mit
+  verständlichen Fehlern statt „Load failed“; der Hinweis auf den
+  Home-Bildschirm kommt vor dem Speichern, mit dem getrennten Speicher
+  unter iOS (U 4, U 6). Die Konzertmappe speichert nur, wenn das Modul
+  „Üben ohne Netz“ an ist (U 7).
+- **Scan am Handy:** PDF nicht im Rahmen unter den Noten, sondern als
+  eigene Ansicht; auf iOS und Android prüfen (U 3, D8).
+- **Programm mit dem Chor teilen:** ein Link für ein ganzes Programm,
+  Links verlängern statt neu anlegen (U 5).
+- **Eine Notenansicht:** Archiv- und Sängeransicht teilen
+  `usePlayback` und `useKeptPieces`, gleiche Faltgrenzen, gleiche
+  Knopfnamen (A, D6).
+- **Barrierefreiheit:** Windows-Kontrastmodus (`forced-colors`), Auswahl
+  in Listen nicht nur über Farbe, offene Befunde aus 0.9.1 (D3, D9, U, D).
+- **Abnahme auf echten Geräten:** iPhone, iPad, Android, Firefox, in einem
+  echten Nextcloud, mit Protokoll; das schließt die offene Abnahme von
+  0.13 bis 0.15 ein.
+
+### 0.20 Einführen und umsteigen
+
+*Geplant (Review 29. Oktober 2026).*
+
+- **Import-Assistent:** XLSX und ODS neben CSV, eine Vorlagedatei und
+  neutrale Spaltennamen (heute z. B. „Auf Singste seit“); die freie
+  Zuordnung der Spalten kann nach 1.0 kommen (W).
+- **Einrichtung nach Szenarien:** ein Einrichtungsschritt „Was macht Ihr
+  Chor?“ statt 58 Modul-Schaltern, mit Anzeige, welche Voreinstellung gilt
+  (U 8).
+- **Begriffe:** Chorportal und Chorsystem, „Tonhöhe“ für Transponieren und
+  für den eigenen Gesang, englische Rollennamen vereinheitlichen; Glossar
+  und Doku-Test erweitern (U 9). Die Meldung für ein abgeschaltetes Modul
+  sagt das, nicht „keine Rolle“ (U 11).
+- **Doku und Bilder auf Stand 0.16:** Screenshots neu, auch vom Handy, vom
+  Üben und von der Konzertmappe, mit axe-core beim Erzeugen; eine
+  einseitige Anleitung für Sänger; Doku für Hoster (Datenbank,
+  MuseScore-Dateien, Home-Bildschirm) (U 10, D12, W).
+- **Neues App-Icon** für Cantoria, unterscheidbar von Dateien und
+  Konzertmappe, Dashboard-Icons ohne feste Farbe (D10).
+- **Rückweg fertig:** Sicherung mit logischen Tabellennamen und Prüfung
+  beim Einspielen, `cantoria_mirror_files` in der Sicherung, ODS, Download
+  und Wiederherstellung als Datenstrom (A).
+- **Zeigen, was es kann:** Demo oder kurzes Video, Store-Text und
+  Doku-Seite „Cantoria neben anderen Lösungen“ (W).
+
 ### 1.0 Stabil
 
 *Geplant.*
 
 - Abnahme auf der niedrigsten unterstützten Nextcloud-Version
-- Übersetzungen
+- Übersetzungen, muttersprachlich geprüft
 - Dokumentation für Archivverwaltung und Admins
-- Mindestens zwei Maintainer
+- Mindestens zwei Maintainer, dazu `docs/architecture.md`, CODEOWNERS und
+  ein Runbook für Releases (A, T)
+- Testmatrix Nextcloud 33–35 × PHP 8.2–8.4 × MySQL/MariaDB, ein Upgrade-Job
+  von der letzten veröffentlichten Version, Auswertung des Nextcloud-Logs
+  und Hintergrundjobs über cron in den Integrationstests (T)
+- Browser-Tests mit Playwright und axe-core, auch für Service Worker und
+  Offline; eine Matrix Route × Rolle (T5, T, U)
+- Lasttest mit 10.000 Exemplaren und dokumentierter Obergrenze; lange Läufe
+  als `QueuedJob`, Sperre über eine eigene Tabelle statt der Dateisperre
+  (A)
+- API v1 stabil: Prüfung, dass `openapi.json` kompatibel bleibt (A)
+- Entscheidung zu PostgreSQL und SQLite (A, T, W)
+
+### Nach 1.0
+
+*Vorschläge aus dem Review 29. Oktober 2026, nicht vor 1.0 nötig.*
+
+- Übergabeordner je Konzertprogramm mit nummerierten PDFs für
+  Notenpult-Apps (W)
+- Freie Zuordnung der Spalten beim Import (W)
+- Vorbereitung auf Nextcloud 36, Rector, Coverage und JUnit-Ausgabe (A, T)
+- Kompakte Listen, Feinschliff am Designsystem, Druck-CSS für die
+  Notenansicht (D11, D13–D17)
+- Offene Lizenzen (CC, CPDL) und Hinweis auf das anwendbare Recht
+  (R B16, B17)
 
 ## Bewusst nicht vorgesehen
 
@@ -617,7 +792,7 @@ Konzert mit Netz.
   Punkte, Übe-Serien, Ranglisten und Übe-Statistiken über einzelne Sänger
   gibt es nicht.
 - **Eine eigene (native) App fürs Üben ohne Netz.** Ohne Netz üben im
-  Browser ist als Meilenstein 0.15 geplant.
+  Browser kam mit Meilenstein 0.15.
 - **Notizen und Zeichnungen im Notenbild.** Hinweise der Chorleitung gibt es
   als Text je Stelle (Übergabe, 0.12).
 - **Ausgabe und Rücknahme am Probenabend** als eigener Ablauf (Anwesenheit,
