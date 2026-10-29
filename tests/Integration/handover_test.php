@@ -27,7 +27,10 @@ declare(strict_types=1);
  * - the routes answer 404 while the module is off.
  *
  * Usage (as the web server user):
- *   php tests/Integration/handover_test.php <nextcloud-root> <uid> <shelfmark>
+ *   php tests/Integration/handover_test.php <nextcloud-root> <uid> <shelfmark> [<other-shelfmark>]
+ *
+ * <other-shelfmark> is a second shelf mark of the archive for the export
+ * without the piece (default 2-3, or 1-1 when <shelfmark> is 2-3).
  *
  * <uid> must hold the role "librarian" and see the archive folder (it is
  * made an administrator inside the transaction). <shelfmark> is an active
@@ -40,6 +43,7 @@ declare(strict_types=1);
 
 require __DIR__ . '/harness.php';
 [$root, $uid, $shelfmark] = IntegrationTest::start($argv, ['nextcloud-root', 'uid', 'shelfmark']);
+$otherShelfmark = $argv[4] ?? ($shelfmark === '2-3' ? '1-1' : '2-3');
 
 use OCA\Notenarchiv\AppInfo\Application;
 use OCA\Notenarchiv\Controller\HandoverController;
@@ -179,10 +183,11 @@ try {
 	$list = $target->nodeExists(HandoverService::LIST) ? $target->get(HandoverService::LIST) : null;
 	$listText = $list instanceof File ? $list->getContent() : '';
 	$check('Liste.csv names the file and its shelf mark', str_contains($listText, $pdf) && str_contains($listText, $shelfmark));
-	$check('Liste.csv gives the license notice', str_contains($listText, 'Public domain (confirmed)'), $listText);
+	// English in the CI, German on instances whose account speaks German
+	$check('Liste.csv gives the license notice', str_contains($listText, 'Public domain (confirmed)') || str_contains($listText, 'Gemeinfrei (bestätigt)'), $listText);
 	$notesFile = $target->nodeExists($notes) ? $target->get($notes) : null;
 	$notesText = $notesFile instanceof File ? $notesFile->getContent() : '';
-	$check('the notes give the passage, the voice and the note on one line', str_contains($notesText, 'm. 1–2, Alto: Breathe after the first phrase. Softly.'), $notesText);
+	$check('the notes give the passage, the voice and the note on one line', preg_match('/(m\.|T\.) 1–2, Alto: Breathe after the first phrase\. Softly\./u', $notesText) === 1, $notesText);
 	$check('the manifest is apart from the print station', isset($manifest->findAllByName(HandoverService::HANDOVER_MIRROR)[$pdf])
 		&& !isset($manifest->findAllByName('print')[$pdf]));
 	$copiedEntries = array_filter($auditEntries->findLatest(200), fn ($e): bool => $e->getObjectType() === HandoverService::HANDOVER_OBJECT_TYPE
@@ -214,7 +219,7 @@ try {
 		$proposals->accept($open[0]->getId(), $uid, null);
 	}
 	$check('accepted, the version is recorded as in the portal', $rights->isOnPortal(Server::get(WorkVersionMapper::class)->find($version->getId())));
-	$without = $compare->compare("Titel\n" . $shelfmark . "-none\n" . ($shelfmark === '2-3' ? '1-1' : '2-3') . " other\n", 'Singste.csv', $uid, true);
+	$without = $compare->compare("Titel\n" . $shelfmark . "-none\n" . $otherShelfmark . " other\n", 'Singste.csv', $uid, true);
 	$check('missing in the export, removal is proposed', in_array($shelfmark, array_column($without['removed'], 'shelfmark'), true),
 		json_encode($without) ?: '');
 

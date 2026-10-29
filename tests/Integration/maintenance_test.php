@@ -179,7 +179,9 @@ try {
 		&& $again['snapshot'] !== null, (string)$again['snapshot']);
 
 	// The import leaves the roles open; a "free" proposal needs composer and lyricist.
-	$importedRoles = ['Friedrich Silcher' => 'composer', 'Simon Dach' => 'lyricist', 'Johann Gottfried Herder' => 'translator'];
+	// Names of the demo data (CI) and of other test data.
+	$importedRoles = ['Friedrich Silcher' => 'composer', 'Simon Dach' => 'lyricist', 'Johann Gottfried Herder' => 'translator',
+		'Felix Mendelssohn-Bartholdy' => 'composer', 'Joseph von Eichendorff' => 'lyricist'];
 	foreach ($persons->forVersion($versionFree) as $row) {
 		$role = $importedRoles[$row['person']['name'] ?? ''] ?? null;
 		if ($role !== null) {
