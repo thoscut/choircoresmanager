@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -33,17 +33,17 @@ const level = computed<RightsLevel>(() => rightsLevel(props.rightsStatus, props.
 const display = computed(() => {
 	switch (level.value) {
 	case 'preservation':
-		return { text: t('notenarchiv', 'Internal preservation copy – do not share'), icon: mdiShieldLockOutline, tone: 'error' }
+		return { text: t('cantoria', 'Internal preservation copy – do not share'), icon: mdiShieldLockOutline, tone: 'error' }
 	case 'protected':
-		return { text: t('notenarchiv', 'protected'), icon: mdiLockOutline, tone: 'error' }
+		return { text: t('cantoria', 'protected'), icon: mdiLockOutline, tone: 'error' }
 	case 'open':
-		return { text: t('notenarchiv', 'open'), icon: mdiHelpCircleOutline, tone: 'neutral' }
+		return { text: t('cantoria', 'open'), icon: mdiHelpCircleOutline, tone: 'neutral' }
 	case 'unconfirmed':
-		return { text: t('notenarchiv', 'public domain (suggestion, unconfirmed)'), icon: mdiAlertOutline, tone: 'warning' }
+		return { text: t('cantoria', 'public domain (suggestion, unconfirmed)'), icon: mdiAlertOutline, tone: 'warning' }
 	case 'confirmed':
-		return { text: t('notenarchiv', 'public domain'), icon: mdiCheckCircleOutline, tone: 'success' }
+		return { text: t('cantoria', 'public domain'), icon: mdiCheckCircleOutline, tone: 'success' }
 	default:
-		return { text: t('notenarchiv', 'not assessed'), icon: mdiMinusCircleOutline, tone: 'neutral' }
+		return { text: t('cantoria', 'not assessed'), icon: mdiMinusCircleOutline, tone: 'neutral' }
 	}
 })
 </script>

@@ -3,27 +3,27 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Service;
+namespace OCA\Cantoria\Tests\Unit\Service;
 
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\Event;
-use OCA\Notenarchiv\Db\EventItemMapper;
-use OCA\Notenarchiv\Db\EventMapper;
-use OCA\Notenarchiv\Db\LicenseMapper;
-use OCA\Notenarchiv\Db\ProposalMapper;
-use OCA\Notenarchiv\Db\WorkMapper;
-use OCA\Notenarchiv\Db\WorkVersionMapper;
-use OCA\Notenarchiv\Service\DueService;
-use OCA\Notenarchiv\Service\ReleaseListService;
-use OCA\Notenarchiv\Service\RepertoireService;
-use OCA\Notenarchiv\Service\RightsService;
-use OCA\Notenarchiv\Service\Roles;
-use OCA\Notenarchiv\Service\TaskService;
-use OCA\Notenarchiv\Tests\Unit\Support\ModuleSwitches;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Db\Event;
+use OCA\Cantoria\Db\EventItemMapper;
+use OCA\Cantoria\Db\EventMapper;
+use OCA\Cantoria\Db\LicenseMapper;
+use OCA\Cantoria\Db\ProposalMapper;
+use OCA\Cantoria\Db\WorkMapper;
+use OCA\Cantoria\Db\WorkVersionMapper;
+use OCA\Cantoria\Service\DueService;
+use OCA\Cantoria\Service\ReleaseListService;
+use OCA\Cantoria\Service\RepertoireService;
+use OCA\Cantoria\Service\RightsService;
+use OCA\Cantoria\Service\Roles;
+use OCA\Cantoria\Service\TaskService;
+use OCA\Cantoria\Tests\Unit\Support\ModuleSwitches;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 

@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Command;
+namespace OCA\Cantoria\Command;
 
-use OCA\Notenarchiv\Service\FullBackupService;
+use OCA\Cantoria\Service\FullBackupService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -29,7 +29,7 @@ class Restore extends Command {
 
 	#[\Override]
 	protected function configure(): void {
-		$this->setName('notenarchiv:restore')
+		$this->setName('cantoria:restore')
 			->setDescription('Restore a complete backup (JSON) into an empty catalog')
 			->addArgument('file', InputArgument::REQUIRED, 'path of the backup file on the server')
 			->addArgument('user', InputArgument::OPTIONAL, 'account recorded in the audit log');

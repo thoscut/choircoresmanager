@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -117,7 +117,7 @@ interface VoiceOption {
 }
 
 const voiceOptions = computed<VoiceOption[]>(() => [
-	{ id: '', label: t('notenarchiv', 'All voices equal (tutti)') },
+	{ id: '', label: t('cantoria', 'All voices equal (tutti)') },
 	...props.model.voices.map((voice) => ({ id: voice.key, label: props.voiceName(voice) })),
 ])
 
@@ -130,7 +130,7 @@ const voiceOption = computed<VoiceOption>({
 
 const voice = computed(() => props.model.voices.find((candidate) => candidate.key === voiceKey.value) ?? null)
 
-const tutti = computed(() => t('notenarchiv', 'Tutti'))
+const tutti = computed(() => t('cantoria', 'Tutti'))
 
 const parts = computed<PracticePart[]>(() => practiceParts(props.model.voices, props.voiceName, {
 	allVoices: scope.value === 'all',
@@ -151,7 +151,7 @@ function fileNameOf(part: PracticePart): string {
 }
 
 const downloadName = computed(() => (parts.value.length > 1
-	? practiceFileName({ shelfmark: shelfmark.value, title: title.value, label: t('notenarchiv', 'All voices'), from: from.value, to: to.value, ext: 'zip' })
+	? practiceFileName({ shelfmark: shelfmark.value, title: title.value, label: t('cantoria', 'All voices'), from: from.value, to: to.value, ext: 'zip' })
 	: fileNameOf(parts.value[0])))
 
 const estimate = computed(() => estimateBytes(format.value, renderedSeconds(timeline.value, rate.value, countIn.value?.lead ?? 0), Number(channels.value),
@@ -160,8 +160,8 @@ const estimate = computed(() => estimateBytes(format.value, renderedSeconds(time
 const long = computed(() => playingSeconds.value > LONG_EXPORT_SECONDS)
 
 const sizeText = computed(() => (format.value === 'wav'
-	? t('notenarchiv', 'About {size}; making it needs about {memory} of memory in the browser.', { size: formatSize(estimate.value.files), memory: formatSize(estimate.value.memory) })
-	: t('notenarchiv', 'About {size}.', { size: formatSize(estimate.value.files) })))
+	? t('cantoria', 'About {size}; making it needs about {memory} of memory in the browser.', { size: formatSize(estimate.value.files), memory: formatSize(estimate.value.memory) })
+	: t('cantoria', 'About {size}.', { size: formatSize(estimate.value.files) })))
 
 /**
  * A printed measure number as the server accepts it (digits, letters, dots);
@@ -235,8 +235,8 @@ function report(index: number, count: number, done: number): void {
 	if (step !== lastAnnounced) {
 		lastAnnounced = step
 		statusText.value = count > 1
-			? t('notenarchiv', 'Making file {number} of {count} … {percent} %', { number: index + 1, count, percent: step * 10 })
-			: t('notenarchiv', 'Making the file … {percent} %', { percent: step * 10 })
+			? t('cantoria', 'Making file {number} of {count} … {percent} %', { number: index + 1, count, percent: step * 10 })
+			: t('cantoria', 'Making the file … {percent} %', { percent: step * 10 })
 	}
 }
 
@@ -308,7 +308,7 @@ async function create(): Promise<void> {
 	phase.value = 'checking'
 	progress.value = 0
 	lastAnnounced = -1
-	statusText.value = t('notenarchiv', 'Checking the rights …')
+	statusText.value = t('cantoria', 'Checking the rights …')
 	focusAfterUpdate(stopButton)
 	try {
 		await authorizePracticeAudio(props.detail.version.id, request.value)
@@ -343,8 +343,8 @@ async function create(): Promise<void> {
 		} else {
 			console.error('Practice audio: the file could not be made', caught)
 			finish(caught instanceof RangeError
-				? t('notenarchiv', 'The files are too large. Please choose fewer measures.')
-				: t('notenarchiv', 'The file could not be made in this browser.'))
+				? t('cantoria', 'The files are too large. Please choose fewer measures.')
+				: t('cantoria', 'The file could not be made in this browser.'))
 		}
 	} finally {
 		controller = null
@@ -361,7 +361,7 @@ function finish(message: string): void {
 	const cancelled = message === ''
 	phase.value = 'choose'
 	error.value = message
-	statusText.value = cancelled ? t('notenarchiv', 'Cancelled. No file was made.') : ''
+	statusText.value = cancelled ? t('cantoria', 'Cancelled. No file was made.') : ''
 	controller = null
 	focusAfterUpdate(createButton)
 }
@@ -388,86 +388,86 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-	<NcDialog :name="t('notenarchiv', 'Practice files')"
+	<NcDialog :name="t('cantoria', 'Practice files')"
 		:open="true"
 		size="normal"
 		:no-close="busy"
 		@update:open="onUpdateOpen">
 		<div class="practice-dialog">
 			<NcNoteCard type="info">
-				{{ t('notenarchiv', 'Playback and practice files come from a simple built-in synthesizer; they are no substitute for a recording. The files are only for practising in the choir, as far as the rights or the license allow. Upload them to the practice system of the choir yourself: the music archive gives nothing to choir members. Every export is recorded in the audit log.') }}
+				{{ t('cantoria', 'Playback and practice files come from a simple built-in synthesizer; they are no substitute for a recording. The files are only for practising in the choir, as far as the rights or the license allow. Upload them to the practice system of the choir yourself: the music archive gives nothing to choir members. Every export is recorded in the audit log.') }}
 			</NcNoteCard>
 
 			<dl class="practice-dialog__summary">
 				<div>
-					<dt>{{ t('notenarchiv', 'Measures') }}</dt>
-					<dd>{{ t('notenarchiv', '{from} to {to}', { from, to }) }}</dd>
+					<dt>{{ t('cantoria', 'Measures') }}</dt>
+					<dd>{{ t('cantoria', '{from} to {to}', { from, to }) }}</dd>
 				</div>
 				<div>
-					<dt>{{ t('notenarchiv', 'Tempo') }}</dt>
+					<dt>{{ t('cantoria', 'Tempo') }}</dt>
 					<dd>{{ tempoText }}</dd>
 				</div>
 				<div v-if="transpose">
-					<dt>{{ t('notenarchiv', 'Pitch') }}</dt>
+					<dt>{{ t('cantoria', 'Pitch') }}</dt>
 					<dd>{{ transposeText(transpose) }}</dd>
 				</div>
 				<div>
-					<dt>{{ t('notenarchiv', 'Repeats') }}</dt>
-					<dd>{{ repeats ? t('notenarchiv', 'Yes') : t('notenarchiv', 'No') }}</dd>
+					<dt>{{ t('cantoria', 'Repeats') }}</dt>
+					<dd>{{ repeats ? t('cantoria', 'Yes') : t('cantoria', 'No') }}</dd>
 				</div>
 				<div>
-					<dt>{{ t('notenarchiv', 'Length') }}</dt>
+					<dt>{{ t('cantoria', 'Length') }}</dt>
 					<dd>{{ formatDuration(playingSeconds) }}</dd>
 				</div>
 			</dl>
 			<p class="practice-dialog__hint">
-				{{ t('notenarchiv', 'Measures, tempo, pitch and repeats are taken from the score view; change them there.') }}
+				{{ t('cantoria', 'Measures, tempo, pitch and repeats are taken from the score view; change them there.') }}
 			</p>
 
 			<fieldset class="practice-dialog__choices" :disabled="busy">
-				<NcRadioGroup v-model="scope" :label="t('notenarchiv', 'Files')">
-					<NcRadioGroupButton value="one" :label="t('notenarchiv', 'One file')" />
-					<NcRadioGroupButton value="all" :label="t('notenarchiv', 'Every voice and a tutti (ZIP)')" />
+				<NcRadioGroup v-model="scope" :label="t('cantoria', 'Files')">
+					<NcRadioGroupButton value="one" :label="t('cantoria', 'One file')" />
+					<NcRadioGroupButton value="all" :label="t('cantoria', 'Every voice and a tutti (ZIP)')" />
 				</NcRadioGroup>
 
 				<template v-if="scope === 'one'">
 					<NcSelect v-model="voiceOption"
 						class="practice-dialog__voice"
-						:input-label="t('notenarchiv', 'Voice')"
+						:input-label="t('cantoria', 'Voice')"
 						:options="voiceOptions"
 						:clearable="false"
 						:searchable="false"
 						:disabled="busy" />
-					<NcRadioGroup v-if="voice" v-model="singleMode" :label="t('notenarchiv', 'Other voices')">
-						<NcRadioGroupButton value="focus" :label="t('notenarchiv', 'Focus voice louder')" />
-						<NcRadioGroupButton value="solo" :label="t('notenarchiv', 'Focus voice only')" />
+					<NcRadioGroup v-if="voice" v-model="singleMode" :label="t('cantoria', 'Other voices')">
+						<NcRadioGroupButton value="focus" :label="t('cantoria', 'Focus voice louder')" />
+						<NcRadioGroupButton value="solo" :label="t('cantoria', 'Focus voice only')" />
 					</NcRadioGroup>
 				</template>
-				<NcRadioGroup v-else v-model="allMode" :label="t('notenarchiv', 'In the file of each voice')">
-					<NcRadioGroupButton value="focus" :label="t('notenarchiv', 'Focus voice louder')" />
-					<NcRadioGroupButton value="solo" :label="t('notenarchiv', 'Focus voice only')" />
+				<NcRadioGroup v-else v-model="allMode" :label="t('cantoria', 'In the file of each voice')">
+					<NcRadioGroupButton value="focus" :label="t('cantoria', 'Focus voice louder')" />
+					<NcRadioGroupButton value="solo" :label="t('cantoria', 'Focus voice only')" />
 				</NcRadioGroup>
 
-				<NcRadioGroup v-model="format" :label="t('notenarchiv', 'Format')">
-					<NcRadioGroupButton value="wav" :label="t('notenarchiv', 'WAV (audio)')" />
-					<NcRadioGroupButton value="midi" :label="t('notenarchiv', 'MIDI (one track per voice)')" />
+				<NcRadioGroup v-model="format" :label="t('cantoria', 'Format')">
+					<NcRadioGroupButton value="wav" :label="t('cantoria', 'WAV (audio)')" />
+					<NcRadioGroupButton value="midi" :label="t('cantoria', 'MIDI (one track per voice)')" />
 				</NcRadioGroup>
-				<NcRadioGroup v-if="format === 'wav'" v-model="channels" :label="t('notenarchiv', 'Channels')">
-					<NcRadioGroupButton value="1" :label="t('notenarchiv', 'Mono')" />
-					<NcRadioGroupButton value="2" :label="t('notenarchiv', 'Stereo')" />
+				<NcRadioGroup v-if="format === 'wav'" v-model="channels" :label="t('cantoria', 'Channels')">
+					<NcRadioGroupButton value="1" :label="t('cantoria', 'Mono')" />
+					<NcRadioGroupButton value="2" :label="t('cantoria', 'Stereo')" />
 				</NcRadioGroup>
-				<NcRadioGroup v-model="countInChoice" :label="t('notenarchiv', 'Count-in')">
-					<NcRadioGroupButton value="0" :label="t('notenarchiv', 'Off')" />
-					<NcRadioGroupButton value="1" :label="t('notenarchiv', '1 bar')" />
-					<NcRadioGroupButton value="2" :label="t('notenarchiv', '2 bars')" />
+				<NcRadioGroup v-model="countInChoice" :label="t('cantoria', 'Count-in')">
+					<NcRadioGroupButton value="0" :label="t('cantoria', 'Off')" />
+					<NcRadioGroupButton value="1" :label="t('cantoria', '1 bar')" />
+					<NcRadioGroupButton value="2" :label="t('cantoria', '2 bars')" />
 				</NcRadioGroup>
 			</fieldset>
 
 			<div class="practice-dialog__outcome">
 				<p class="practice-dialog__file">
 					{{ parts.length > 1
-						? n('notenarchiv', 'ZIP archive with %n file: {name}', 'ZIP archive with %n files: {name}', parts.length, { name: downloadName })
-						: t('notenarchiv', 'File: {name}', { name: downloadName }) }}
+						? n('cantoria', 'ZIP archive with %n file: {name}', 'ZIP archive with %n files: {name}', parts.length, { name: downloadName })
+						: t('cantoria', 'File: {name}', { name: downloadName }) }}
 				</p>
 				<p class="practice-dialog__hint">
 					{{ sizeText }}
@@ -475,7 +475,7 @@ onBeforeUnmount(() => {
 			</div>
 
 			<NcNoteCard v-if="long" type="warning">
-				{{ t('notenarchiv', 'At this tempo the excerpt lasts {length}, more than 10 minutes. Making the files takes a while and needs about {memory} of memory; a shorter range may be easier to practise anyway.', { length: formatDuration(playingSeconds), memory: formatSize(estimate.memory) }) }}
+				{{ t('cantoria', 'At this tempo the excerpt lasts {length}, more than 10 minutes. Making the files takes a while and needs about {memory} of memory; a shorter range may be easier to practise anyway.', { length: formatDuration(playingSeconds), memory: formatSize(estimate.memory) }) }}
 			</NcNoteCard>
 
 			<div v-if="busy" class="practice-dialog__progress">
@@ -493,31 +493,31 @@ onBeforeUnmount(() => {
 
 			<div v-if="result" class="practice-dialog__result">
 				<p ref="resultElement" class="practice-dialog__result-text">
-					{{ t('notenarchiv', 'Made: {name} ({size}). The browser saves the file in your downloads.', { name: result.name, size: formatSize(result.size) }) }}
+					{{ t('cantoria', 'Made: {name} ({size}). The browser saves the file in your downloads.', { name: result.name, size: formatSize(result.size) }) }}
 				</p>
 				<NcButton variant="tertiary" :href="result.url" :download="result.name">
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiDownload" />
 					</template>
-					{{ t('notenarchiv', 'Save again') }}
+					{{ t('cantoria', 'Save again') }}
 				</NcButton>
 			</div>
 		</div>
 		<template #actions>
 			<template v-if="busy">
 				<NcButton ref="stopButton" @click="stop">
-					{{ t('notenarchiv', 'Cancel') }}
+					{{ t('cantoria', 'Cancel') }}
 				</NcButton>
 			</template>
 			<template v-else>
 				<NcButton @click="emit('close')">
-					{{ t('notenarchiv', 'Close') }}
+					{{ t('cantoria', 'Close') }}
 				</NcButton>
 				<NcButton ref="createButton" variant="primary" @click="create">
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiDownload" />
 					</template>
-					{{ parts.length > 1 ? t('notenarchiv', 'Make ZIP archive') : t('notenarchiv', 'Make file') }}
+					{{ parts.length > 1 ? t('cantoria', 'Make ZIP archive') : t('cantoria', 'Make file') }}
 				</NcButton>
 			</template>
 		</template>

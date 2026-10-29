@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Controller;
+namespace OCA\Cantoria\Tests\Unit\Controller;
 
-use OCA\Notenarchiv\Controller\PageController;
+use OCA\Cantoria\Controller\PageController;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 

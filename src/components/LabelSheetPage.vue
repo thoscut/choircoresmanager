@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -24,7 +24,7 @@ defineProps<{
  */
 function arrangerText(label: ShelfLabel): string {
 	if (label.arrangers.length > 0) {
-		return t('notenarchiv', 'Arr. {names}', { names: label.arrangers.join(', ') })
+		return t('cantoria', 'Arr. {names}', { names: label.arrangers.join(', ') })
 	}
 	return label.arranger_text ?? ''
 }

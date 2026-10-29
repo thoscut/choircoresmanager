@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -33,7 +33,7 @@ import { entries, loadEntries, openEntry } from '../store.ts'
 
 const onlyCurrent = ref(false)
 /** The filter in words, for the header of the printout */
-const printFilter = computed(() => onlyCurrent.value ? t('notenarchiv', 'Only the current repertoire') : '')
+const printFilter = computed(() => onlyCurrent.value ? t('cantoria', 'Only the current repertoire') : '')
 
 const choices = computed(() => openChoices(entries.value)
 	.filter((work) => !onlyCurrent.value || work.repertoireClass === 'current'))
@@ -71,7 +71,7 @@ async function confirm(): Promise<void> {
 	try {
 		const text = reason.value.trim()
 		await setValidVersion(current.versionId, text === '' ? null : text)
-		showSuccess(t('notenarchiv', 'Valid for the choir now: {shelfmarks}.', { shelfmarks: current.shelfmarks }))
+		showSuccess(t('cantoria', 'Valid for the choir now: {shelfmarks}.', { shelfmarks: current.shelfmarks }))
 		choosing.value = null
 		await loadEntries()
 		// The work has left the list: the focus goes to the list, or to the
@@ -87,8 +87,8 @@ async function confirm(): Promise<void> {
 
 <template>
 	<div class="valid-versions">
-		<ViewHeader :title="t('notenarchiv', 'Choose valid versions')"
-			:description="t('notenarchiv', 'Works with several versions of which none is valid for the choir yet. Choose the version the choir sings; you can change it later in the tab Rights of a copy.')"
+		<ViewHeader :title="t('cantoria', 'Choose valid versions')"
+			:description="t('cantoria', 'Works with several versions of which none is valid for the choir yet. Choose the version the choir sings; you can change it later in the tab Rights of a copy.')"
 			printable
 			:print-filter="printFilter">
 			<template #actions>
@@ -98,34 +98,34 @@ async function confirm(): Promise<void> {
 
 		<div class="valid-versions__filters no-print">
 			<NcCheckboxRadioSwitch v-model="onlyCurrent" type="switch">
-				{{ t('notenarchiv', 'Only the current repertoire') }}
+				{{ t('cantoria', 'Only the current repertoire') }}
 			</NcCheckboxRadioSwitch>
 		</div>
 
 		<div class="valid-versions__content">
 			<NcEmptyContent v-if="choices.length === 0"
-				:name="t('notenarchiv', 'Nothing to choose')"
+				:name="t('cantoria', 'Nothing to choose')"
 				:description="onlyCurrent
-					? t('notenarchiv', 'Every work of the current repertoire with several versions has a valid version.')
-					: t('notenarchiv', 'Every work with several versions has a valid version.')">
+					? t('cantoria', 'Every work of the current repertoire with several versions has a valid version.')
+					: t('cantoria', 'Every work with several versions has a valid version.')">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiCheckCircleOutline" />
 				</template>
 				<template v-if="onlyCurrent" #action>
 					<NcButton @click="onlyCurrent = false">
-						{{ t('notenarchiv', 'Show all works') }}
+						{{ t('cantoria', 'Show all works') }}
 					</NcButton>
 				</template>
 			</NcEmptyContent>
 
 			<template v-else>
 				<p class="valid-versions__count" aria-live="polite">
-					{{ n('notenarchiv', '%n work to decide', '%n works to decide', choices.length) }}
+					{{ n('cantoria', '%n work to decide', '%n works to decide', choices.length) }}
 				</p>
 				<ul ref="list" class="valid-versions__works" tabindex="-1">
 					<li v-for="work in choices" :key="work.workId" class="valid-versions__work">
 						<h3 :id="`valid-versions-work-${work.workId}`">
-							{{ work.title || t('notenarchiv', '(no title)') }}
+							{{ work.title || t('cantoria', '(no title)') }}
 							<span v-if="work.composer" class="valid-versions__muted">{{ work.composer }}</span>
 						</h3>
 						<p class="valid-versions__muted">
@@ -137,7 +137,7 @@ async function confirm(): Promise<void> {
 									<NcButton v-for="copy in version.copies"
 										:key="copy.id"
 										variant="tertiary"
-										:aria-label="t('notenarchiv', 'Open {shelfmark}', { shelfmark: copy.shelfmark })"
+										:aria-label="t('cantoria', 'Open {shelfmark}', { shelfmark: copy.shelfmark })"
 										@click="openEntry(copy.id, 'rights')">
 										<span class="valid-versions__shelfmark">{{ copy.shelfmark }}</span>
 									</NcButton>
@@ -148,12 +148,12 @@ async function confirm(): Promise<void> {
 									:preservation-copy="version.copies[0]?.preservation_copy" />
 								<span v-if="version.copies.some((copy) => copy.has_musicxml)" class="valid-versions__tag">MusicXML</span>
 								<NcButton class="valid-versions__set no-print"
-									:aria-label="t('notenarchiv', 'Set as valid for the choir: {shelfmarks}', { shelfmarks: version.copies.map((copy) => copy.shelfmark).join(', ') })"
+									:aria-label="t('cantoria', 'Set as valid for the choir: {shelfmarks}', { shelfmarks: version.copies.map((copy) => copy.shelfmark).join(', ') })"
 									@click="choose(work, version.versionId)">
 									<template #icon>
 										<NcIconSvgWrapper :path="mdiCheckDecagramOutline" />
 									</template>
-									{{ t('notenarchiv', 'Set as valid') }}
+									{{ t('cantoria', 'Set as valid') }}
 								</NcButton>
 							</li>
 						</ul>
@@ -163,17 +163,17 @@ async function confirm(): Promise<void> {
 		</div>
 
 		<ActionDialog v-if="choosing"
-			:name="t('notenarchiv', 'Set as valid for the choir')"
-			:submit-label="t('notenarchiv', 'Set as valid')"
+			:name="t('cantoria', 'Set as valid for the choir')"
+			:submit-label="t('cantoria', 'Set as valid')"
 			:busy="busy"
 			:error="error"
 			@submit="confirm"
 			@close="choosing = null">
 			<p>
-				{{ t('notenarchiv', '{shelfmarks} becomes the version of “{title}” valid for the choir. It says nothing about the rights.', { shelfmarks: choosing.shelfmarks, title: choosing.work.title || t('notenarchiv', '(no title)') }) }}
+				{{ t('cantoria', '{shelfmarks} becomes the version of “{title}” valid for the choir. It says nothing about the rights.', { shelfmarks: choosing.shelfmarks, title: choosing.work.title || t('cantoria', '(no title)') }) }}
 			</p>
 			<NcTextArea v-model="reason"
-				:label="t('notenarchiv', 'Reason (optional)')"
+				:label="t('cantoria', 'Reason (optional)')"
 				resize="vertical"
 				rows="3" />
 		</ActionDialog>

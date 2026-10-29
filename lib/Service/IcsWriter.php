@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Service;
+namespace OCA\Cantoria\Service;
 
 /**
  * Writes iCalendar data (RFC 5545): content lines ending with CRLF, folded

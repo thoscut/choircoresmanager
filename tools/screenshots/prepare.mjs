@@ -268,7 +268,7 @@ async function extras({ session, librarian, copy, versionOf, check, log, demoFol
 	let states = check('revisions 2-2', await librarian.api('GET', `/api/versions/${versionId}/states`)).states
 	if (states.length < 2) {
 		const fileId = (await entry('2-2')).score.fileId
-		const original = await librarian.request('GET', `/index.php/apps/notenarchiv/api/files/${fileId}/content`)
+		const original = await librarian.request('GET', `/index.php/apps/cantoria/api/files/${fileId}/content`)
 		// The first note of measure 3 in the second part, one step higher
 		const parts = original.text.split('<part id=')
 		const measure = parts[2].match(/<measure number="3"[\s\S]*?<\/measure>/)[0]

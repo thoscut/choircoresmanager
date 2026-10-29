@@ -1,7 +1,7 @@
 {
     "openapi": "3.0.3",
     "info": {
-        "title": "notenarchiv",
+        "title": "cantoria",
         "version": "0.0.1",
         "description": "Sheet music archive for choirs: catalog, rights, scores, concerts",
         "license": {
@@ -2179,7 +2179,7 @@
         }
     },
     "paths": {
-        "/ocs/v2.php/apps/notenarchiv/api/v1/catalog": {
+        "/ocs/v2.php/apps/cantoria/api/v1/catalog": {
             "get": {
                 "operationId": "api_v1_catalog-search",
                 "summary": "Search the catalog",
@@ -2474,7 +2474,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/notenarchiv/api/v1/copies/{id}": {
+        "/ocs/v2.php/apps/cantoria/api/v1/copies/{id}": {
             "get": {
                 "operationId": "api_v1_catalog-copy",
                 "summary": "Read one copy",
@@ -2630,7 +2630,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/notenarchiv/api/v1/copies/{id}/reference": {
+        "/ocs/v2.php/apps/cantoria/api/v1/copies/{id}/reference": {
             "get": {
                 "operationId": "api_v1_catalog-reference",
                 "summary": "Text reference to a place in a copy",
@@ -2876,7 +2876,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/notenarchiv/api/v1/concerts": {
+        "/ocs/v2.php/apps/cantoria/api/v1/concerts": {
             "get": {
                 "operationId": "api_v1_concert-concerts",
                 "summary": "List concerts and song lists",
@@ -3122,7 +3122,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/notenarchiv/api/v1/concerts/{id}": {
+        "/ocs/v2.php/apps/cantoria/api/v1/concerts/{id}": {
             "get": {
                 "operationId": "api_v1_concert-concert",
                 "summary": "Read a concert or song list with its programme",
@@ -3278,7 +3278,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/notenarchiv/api/v1/proposals": {
+        "/ocs/v2.php/apps/cantoria/api/v1/proposals": {
             "get": {
                 "operationId": "api_v1_proposal-proposals",
                 "summary": "List the own proposals",
@@ -3723,7 +3723,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/notenarchiv/api/v1/copies/{id}/review": {
+        "/ocs/v2.php/apps/cantoria/api/v1/copies/{id}/review": {
             "get": {
                 "operationId": "api_v1_review-review",
                 "summary": "Review of the transcription of a copy",
@@ -3961,7 +3961,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/notenarchiv/api/v1/correction_orders": {
+        "/ocs/v2.php/apps/cantoria/api/v1/correction_orders": {
             "get": {
                 "operationId": "api_v1_review-orders",
                 "summary": "List correction orders",
@@ -4168,7 +4168,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/notenarchiv/api/v1/copies/{id}/transcription_reports": {
+        "/ocs/v2.php/apps/cantoria/api/v1/copies/{id}/transcription_reports": {
             "post": {
                 "operationId": "api_v1_review-submit-report",
                 "summary": "Hand in the report of a transcription",
@@ -4409,7 +4409,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/notenarchiv/api/v1/copies/{id}/states": {
+        "/ocs/v2.php/apps/cantoria/api/v1/copies/{id}/states": {
             "get": {
                 "operationId": "api_v1_state-states",
                 "summary": "Revisions of the version of a copy",
@@ -4565,7 +4565,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/notenarchiv/api/v1/statistics": {
+        "/ocs/v2.php/apps/cantoria/api/v1/statistics": {
             "get": {
                 "operationId": "api_v1_statistics-statistics",
                 "summary": "Statistics of the archive",
@@ -4761,7 +4761,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/notenarchiv/api/v1/modules": {
+        "/ocs/v2.php/apps/cantoria/api/v1/modules": {
             "get": {
                 "operationId": "api_v1_status-modules",
                 "summary": "Status of the interface and the modules for this account",
@@ -4907,7 +4907,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/notenarchiv/api/v1/due": {
+        "/ocs/v2.php/apps/cantoria/api/v1/due": {
             "get": {
                 "operationId": "api_v1_task-due",
                 "summary": "What is due for the roles of the account",
@@ -5053,7 +5053,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/notenarchiv/api/v1/tasks": {
+        "/ocs/v2.php/apps/cantoria/api/v1/tasks": {
             "get": {
                 "operationId": "api_v1_task-tasks",
                 "summary": "List questions and tasks",
@@ -5274,7 +5274,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/notenarchiv/api/v1/copies/{id}/tasks": {
+        "/ocs/v2.php/apps/cantoria/api/v1/copies/{id}/tasks": {
             "post": {
                 "operationId": "api_v1_task-create-task",
                 "summary": "Ask a question or create a task about a copy",
@@ -5548,7 +5548,7 @@
                 }
             }
         },
-        "/ocs/v2.php/apps/notenarchiv/api/v1/tasks/{id}/answer": {
+        "/ocs/v2.php/apps/cantoria/api/v1/tasks/{id}/answer": {
             "post": {
                 "operationId": "api_v1_task-answer",
                 "summary": "Answer a question or task",

@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 # Demo data
@@ -34,11 +34,11 @@ composers, lyricists and arrangers of the works, all of whom died more than
 
 ## Contents
 
-`node tools/demo/build.mjs` writes everything to `build/demo/Notenarchiv-Demo/`
+`node tools/demo/build.mjs` writes everything to `build/demo/Cantoria-Demo/`
 (`build/` is not part of the repository):
 
 ```
-Notenarchiv-Demo/
+Cantoria-Demo/
   Mappe_1/ … Mappe_4/      placeholder PDFs and MusicXML, file names start with the shelf mark;
                            two transcription reports "… - Bericht.json" (1-1, 2-1)
   LIESMICH.txt             short note in German; ignored by the file sync
@@ -92,7 +92,7 @@ version with two copies.
 Node 22 or newer, no further dependencies:
 
 ```sh
-node tools/demo/build.mjs            # writes build/demo/Notenarchiv-Demo/
+node tools/demo/build.mjs            # writes build/demo/Cantoria-Demo/
 node tools/demo/build.mjs --check    # only checks scores, reports and catalog
 ```
 
@@ -106,10 +106,10 @@ Checks of the result:
 
 ```sh
 # the app's score logic with Verovio: loading, measures, voices, playing order
-node tools/score-check/check.mjs build/demo/Notenarchiv-Demo/Mappe_*/*.mxl build/demo/Notenarchiv-Demo/Mappe_*/*.musicxml
+node tools/score-check/check.mjs build/demo/Cantoria-Demo/Mappe_*/*.mxl build/demo/Cantoria-Demo/Mappe_*/*.musicxml
 
 # the import files and the transcription reports with the app's own PHP classes (after `composer install`)
-php tools/demo/check-csv.php . build/demo/Notenarchiv-Demo/_Import
+php tools/demo/check-csv.php . build/demo/Cantoria-Demo/_Import
 ```
 
 `check-csv.php` parses every CSV with `CatalogCsv`, checks each catalog cell
@@ -134,10 +134,10 @@ build.
 You need a Nextcloud with the Notenarchiv app and an account in a group that
 holds the role "Catalog (music librarian)".
 
-1. **Upload** the folder `build/demo/Notenarchiv-Demo` to your Nextcloud files
+1. **Upload** the folder `build/demo/Cantoria-Demo` to your Nextcloud files
    (e.g. by drag and drop in the Files app).
 2. **Administration → Music archive** (admin): assign groups to the roles
-   and choose `Notenarchiv-Demo` as archive folder. If other accounts are to
+   and choose `Cantoria-Demo` as archive folder. If other accounts are to
    open the files, share the folder with the groups of the roles; **Access to
    the archive folder** on the same page shows who cannot open it.
 3. **Import the catalog**: Archive management → Import → `_Import/catalog.csv`.

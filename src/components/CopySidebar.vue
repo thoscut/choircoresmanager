@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -89,7 +89,7 @@ watch([scoreRequest, detail], ([request, current]) => {
 		scoreStart.value = request
 		scoreOpen.value = true
 	} else {
-		showError(current.score?.reason || t('notenarchiv', 'There is no score to show for this copy.'))
+		showError(current.score?.reason || t('cantoria', 'There is no score to show for this copy.'))
 	}
 }, { immediate: true })
 
@@ -121,7 +121,7 @@ const title = computed(() => String(detail.value?.work.title ?? listEntry.value?
 const composer = computed(() => String(detail.value?.work.composer ?? listEntry.value?.composer ?? ''))
 
 const sidebarName = computed(() => [shelfmark.value, title.value].filter((part) => part !== '').join(' – ')
-	|| t('notenarchiv', 'Copy'))
+	|| t('cantoria', 'Copy'))
 
 /**
  * NcAppSidebar (@nextcloud/vue 9) names its landmark with aria-labelledby,
@@ -188,15 +188,15 @@ const repertoire = computed(() => {
 function sectionHeading(section: SectionDef): string {
 	switch (section.id) {
 	case 'work':
-		return t('notenarchiv', 'Work')
+		return t('cantoria', 'Work')
 	case 'version':
-		return t('notenarchiv', 'Version')
+		return t('cantoria', 'Version')
 	case 'copy':
-		return t('notenarchiv', 'Copy')
+		return t('cantoria', 'Copy')
 	case 'rights':
-		return t('notenarchiv', 'Rights')
+		return t('cantoria', 'Rights')
 	case 'musicxml':
-		return t('notenarchiv', 'MusicXML')
+		return t('cantoria', 'MusicXML')
 	}
 	return ''
 }
@@ -216,7 +216,7 @@ const tasksTabShown = computed(() => isModuleActive('tasks') || isModuleActive('
 
 // Short names, so that the five tabs are not cut off in a narrow sidebar;
 // the tab itself lists the open questions and tasks
-const tasksTabName = computed(() => (isModuleActive('tasks') ? t('notenarchiv', 'Queries') : t('notenarchiv', 'Links')))
+const tasksTabName = computed(() => (isModuleActive('tasks') ? t('cantoria', 'Queries') : t('cantoria', 'Links')))
 
 /**
  * Siblings of the same version first, then by shelf mark.
@@ -235,8 +235,8 @@ const siblings = computed<Sibling[]>(() => {
  */
 function siblingHint(sibling: Sibling): string {
 	const hints = [sibling.version_id === detail.value?.version.id
-		? t('notenarchiv', 'same version')
-		: t('notenarchiv', 'other version')]
+		? t('cantoria', 'same version')
+		: t('cantoria', 'other version')]
 	if (sibling.status !== 'active') {
 		hints.push(choiceLabel('copy', 'status', sibling.status))
 	}
@@ -264,16 +264,16 @@ async function onSaved(): Promise<void> {
 					:rights-confirmed="rightsConfirmed"
 					:preservation-copy="detail.version.preservation_copy" />
 				<span v-if="status !== 'active'" class="copy-sidebar__status">
-					{{ t('notenarchiv', 'Status: {status}', { status: choiceLabel('copy', 'status', status) }) }}
+					{{ t('cantoria', 'Status: {status}', { status: choiceLabel('copy', 'status', status) }) }}
 				</span>
 				<NcButton v-if="detail.score?.canView && isModuleActive('score_viewer')"
 					variant="secondary"
-					:aria-label="t('notenarchiv', 'Show score of {shelfmark}', { shelfmark })"
+					:aria-label="t('cantoria', 'Show score of {shelfmark}', { shelfmark })"
 					@click="openScore()">
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiMusic" />
 					</template>
-					{{ t('notenarchiv', 'Score') }}
+					{{ t('cantoria', 'Score') }}
 				</NcButton>
 				<NcButton v-if="detail.score?.canView && isModuleActive('score_viewer') && openReviewPoints > 0"
 					variant="tertiary"
@@ -281,7 +281,7 @@ async function onSaved(): Promise<void> {
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiTextBoxCheckOutline" />
 					</template>
-					{{ n('notenarchiv', '%n open review point', '%n open review points', openReviewPoints) }}
+					{{ n('cantoria', '%n open review point', '%n open review points', openReviewPoints) }}
 				</NcButton>
 				<ScoreViewer v-if="scoreOpen && detail.score"
 					:detail="detail"
@@ -292,20 +292,20 @@ async function onSaved(): Promise<void> {
 		</template>
 
 		<NcEmptyContent v-if="!detail && detailError !== ''"
-			:name="t('notenarchiv', 'Could not load the entry')"
+			:name="t('cantoria', 'Could not load the entry')"
 			:description="detailError">
 			<template #icon>
 				<NcIconSvgWrapper :path="mdiAlertCircleOutline" />
 			</template>
 			<template #action>
 				<NcButton @click="loadDetail(true)">
-					{{ t('notenarchiv', 'Try again') }}
+					{{ t('cantoria', 'Try again') }}
 				</NcButton>
 			</template>
 		</NcEmptyContent>
 
 		<template v-if="detail">
-			<NcAppSidebarTab id="overview" :name="t('notenarchiv', 'Details')" :order="1">
+			<NcAppSidebarTab id="overview" :name="t('cantoria', 'Details')" :order="1">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiInformationOutline" />
 				</template>
@@ -327,26 +327,26 @@ async function onSaved(): Promise<void> {
 
 					<section v-if="repertoire" class="copy-sidebar__siblings" aria-labelledby="copy-sidebar-repertoire">
 						<h3 id="copy-sidebar-repertoire">
-							{{ t('notenarchiv', 'Repertoire') }}
+							{{ t('cantoria', 'Repertoire') }}
 						</h3>
 						<dl class="copy-sidebar__facts">
-							<dt>{{ t('notenarchiv', 'Class') }}</dt>
+							<dt>{{ t('cantoria', 'Class') }}</dt>
 							<dd>
 								{{ repertoire.label }}
 								<span v-if="repertoire.source" class="copy-sidebar__muted">({{ repertoire.source }})</span>
 							</dd>
 							<template v-if="repertoire.performances !== null">
-								<dt>{{ t('notenarchiv', 'Documented performances') }}</dt>
+								<dt>{{ t('cantoria', 'Documented performances') }}</dt>
 								<dd>{{ repertoire.performances }}</dd>
 							</template>
 							<template v-if="repertoire.lastPerformed">
-								<dt>{{ t('notenarchiv', 'Last performed') }}</dt>
+								<dt>{{ t('cantoria', 'Last performed') }}</dt>
 								<dd>{{ formatDate(repertoire.lastPerformed) }}</dd>
 							</template>
 							<template v-if="repertoire.songListCount > 0">
-								<dt>{{ t('notenarchiv', 'Song lists') }}</dt>
+								<dt>{{ t('cantoria', 'Song lists') }}</dt>
 								<dd>
-									{{ n('notenarchiv', 'on %n song list', 'on %n song lists', repertoire.songListCount) }}<template v-if="repertoire.songLists.length > 0">
+									{{ n('cantoria', 'on %n song list', 'on %n song lists', repertoire.songListCount) }}<template v-if="repertoire.songLists.length > 0">
 										({{ repertoire.songLists.join(', ') }})
 									</template>
 								</dd>
@@ -356,22 +356,22 @@ async function onSaved(): Promise<void> {
 
 					<section v-if="detail.merges.length > 0" class="copy-sidebar__siblings" aria-labelledby="copy-sidebar-merges">
 						<h3 id="copy-sidebar-merges">
-							{{ t('notenarchiv', 'Merges') }}
+							{{ t('cantoria', 'Merges') }}
 						</h3>
 						<MergeList :merges="detail.merges" compact @changed="onSaved" />
 					</section>
 
 					<section class="copy-sidebar__siblings" aria-labelledby="copy-sidebar-siblings">
 						<h3 id="copy-sidebar-siblings">
-							{{ t('notenarchiv', 'Other copies of this work') }}
+							{{ t('cantoria', 'Other copies of this work') }}
 						</h3>
 						<p v-if="siblings.length === 0" class="copy-sidebar__muted">
-							{{ t('notenarchiv', 'None.') }}
+							{{ t('cantoria', 'None.') }}
 						</p>
 						<ul v-else class="copy-sidebar__sibling-list">
 							<li v-for="sibling in siblings" :key="sibling.id">
 								<NcButton variant="secondary"
-									:aria-label="t('notenarchiv', 'Open {shelfmark}', { shelfmark: sibling.shelfmark })"
+									:aria-label="t('cantoria', 'Open {shelfmark}', { shelfmark: sibling.shelfmark })"
 									@click="openEntry(sibling.id)">
 									<span class="copy-sidebar__sibling-shelfmark">{{ sibling.shelfmark }}</span>
 									<span class="copy-sidebar__sibling-hint">{{ siblingHint(sibling) }}</span>
@@ -382,7 +382,7 @@ async function onSaved(): Promise<void> {
 				</div>
 			</NcAppSidebarTab>
 
-			<NcAppSidebarTab id="rights" :name="t('notenarchiv', 'Rights')" :order="2">
+			<NcAppSidebarTab id="rights" :name="t('cantoria', 'Rights')" :order="2">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiScaleBalance" />
 				</template>
@@ -404,7 +404,7 @@ async function onSaved(): Promise<void> {
 							:preservation-copy="detail.version.preservation_copy" />
 					</FieldSection>
 					<p class="copy-sidebar__muted">
-						{{ t('notenarchiv', 'Rights belong to the version, not to the work. The rights indicator is derived from the data; it is not legal advice.') }}
+						{{ t('cantoria', 'Rights belong to the version, not to the work. The rights indicator is derived from the data; it is not legal advice.') }}
 					</p>
 				</div>
 			</NcAppSidebarTab>
@@ -419,7 +419,7 @@ async function onSaved(): Promise<void> {
 				<CopyTasksTab :key="detail.copy.id" :detail="detail" @changed="onSaved" />
 			</NcAppSidebarTab>
 
-			<NcAppSidebarTab id="files" :name="t('notenarchiv', 'Files')" :order="4">
+			<NcAppSidebarTab id="files" :name="t('cantoria', 'Files')" :order="4">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiFileMultipleOutline" />
 				</template>
@@ -432,7 +432,7 @@ async function onSaved(): Promise<void> {
 				</div>
 			</NcAppSidebarTab>
 
-			<NcAppSidebarTab id="audit" :name="t('notenarchiv', 'History')" :order="5">
+			<NcAppSidebarTab id="audit" :name="t('cantoria', 'History')" :order="5">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiHistory" />
 				</template>

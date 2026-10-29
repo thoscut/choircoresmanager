@@ -3,14 +3,14 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Service;
+namespace OCA\Cantoria\Service;
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Exception\InvalidInputException;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Exception\InvalidInputException;
 use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
@@ -32,7 +32,7 @@ use Psr\Log\LoggerInterface;
  * see it. The app reads and writes it only as that account.
  */
 class AppSettings {
-	public const EXPORT_FOLDER = '_notenarchiv-app';
+	public const EXPORT_FOLDER = '_cantoria-app';
 	/** App config: Nextcloud file id of the backup folder (0: not created yet) */
 	public const BACKUP_FOLDER_KEY = 'backup_folder_id';
 	/** Backups in the export folder of versions before 0.10, moved to the backup folder */
@@ -213,7 +213,7 @@ class AppSettings {
 			}
 		} catch (\Throwable $e) {
 			// The settings page shows what is left (hasOldBackups()).
-			$this->logger->warning('Notenarchiv: old backups could not be moved out of the archive folder: ' . $e->getMessage());
+			$this->logger->warning('Cantoria: old backups could not be moved out of the archive folder: ' . $e->getMessage());
 		}
 	}
 

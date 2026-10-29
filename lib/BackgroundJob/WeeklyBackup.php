@@ -3,17 +3,17 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\BackgroundJob;
+namespace OCA\Cantoria\BackgroundJob;
 
-use OCA\Notenarchiv\Exception\UserFacingException;
-use OCA\Notenarchiv\Service\AppSettings;
-use OCA\Notenarchiv\Service\ExportService;
-use OCA\Notenarchiv\Service\NotificationService;
-use OCA\Notenarchiv\Service\Roles;
+use OCA\Cantoria\Exception\UserFacingException;
+use OCA\Cantoria\Service\AppSettings;
+use OCA\Cantoria\Service\ExportService;
+use OCA\Cantoria\Service\NotificationService;
+use OCA\Cantoria\Service\Roles;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJob;
 use OCP\BackgroundJob\TimedJob;
@@ -47,9 +47,9 @@ class WeeklyBackup extends TimedJob {
 		try {
 			$paths = $this->export->storeBackup('weekly', $uid);
 			$this->notifications->withdraw(NotificationService::EXPORT_FAILED, 'export', 'weekly');
-			$this->logger->info('Notenarchiv: weekly backup stored: ' . implode(', ', $paths['paths']));
+			$this->logger->info('Cantoria: weekly backup stored: ' . implode(', ', $paths['paths']));
 		} catch (\Throwable $e) {
-			$this->logger->error('Notenarchiv: weekly backup failed: ' . $e->getMessage(), ['exception' => $e]);
+			$this->logger->error('Cantoria: weekly backup failed: ' . $e->getMessage(), ['exception' => $e]);
 			// Only messages meant for users go into the notification (translated
 			// when shown); internal details stay in the log.
 			$parameters = $e instanceof UserFacingException

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -40,24 +40,24 @@ declare(strict_types=1);
 require __DIR__ . '/harness.php';
 [$root, $uid, $shelfmark, $preservationMark] = IntegrationTest::start($argv, ['nextcloud-root', 'uid', 'shelfmark', 'shelfmark-preservation-copy']);
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Controller\ApiV1CatalogController;
-use OCA\Notenarchiv\Controller\ApiV1ConcertController;
-use OCA\Notenarchiv\Controller\ApiV1ProposalController;
-use OCA\Notenarchiv\Controller\ApiV1ReviewController;
-use OCA\Notenarchiv\Controller\ApiV1StatisticsController;
-use OCA\Notenarchiv\Controller\ApiV1StatusController;
-use OCA\Notenarchiv\Controller\ApiV1TaskController;
-use OCA\Notenarchiv\Controller\ReviewController;
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\ReviewPoint;
-use OCA\Notenarchiv\Db\WorkVersionMapper;
-use OCA\Notenarchiv\Exception\ModuleDisabledException;
-use OCA\Notenarchiv\Middleware\ModuleMiddleware;
-use OCA\Notenarchiv\Service\CatalogService;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\ReviewService;
-use OCA\Notenarchiv\Service\Roles;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Controller\ApiV1CatalogController;
+use OCA\Cantoria\Controller\ApiV1ConcertController;
+use OCA\Cantoria\Controller\ApiV1ProposalController;
+use OCA\Cantoria\Controller\ApiV1ReviewController;
+use OCA\Cantoria\Controller\ApiV1StatisticsController;
+use OCA\Cantoria\Controller\ApiV1StatusController;
+use OCA\Cantoria\Controller\ApiV1TaskController;
+use OCA\Cantoria\Controller\ReviewController;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Db\ReviewPoint;
+use OCA\Cantoria\Db\WorkVersionMapper;
+use OCA\Cantoria\Exception\ModuleDisabledException;
+use OCA\Cantoria\Middleware\ModuleMiddleware;
+use OCA\Cantoria\Service\CatalogService;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\ReviewService;
+use OCA\Cantoria\Service\Roles;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
@@ -434,7 +434,7 @@ try {
 	$modules->change(['tasks' => false]);
 	$off = $gate($tasks, 'tasks');
 	// The message is translated into the account's language
-	$l10n = Server::get(\OCP\L10N\IFactory::class)->get('notenarchiv');
+	$l10n = Server::get(\OCP\L10N\IFactory::class)->get('cantoria');
 	$check('without tasks the task routes answer 404', $off instanceof OCSNotFoundException && $off->getCode() === 404
 		&& in_array($off->getMessage(), ['This function is switched off.', $l10n->t('This function is switched off.')], true), $describe($off));
 	$check('the catalog still answers', $gate($catalog, 'search') === null && $gate($tasks, 'due') === null);

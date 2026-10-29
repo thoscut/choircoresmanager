@@ -3,16 +3,16 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Controller;
+namespace OCA\Cantoria\Controller;
 
-use OCA\Notenarchiv\Exception\AccessDeniedException;
-use OCA\Notenarchiv\Exception\ModuleDisabledException;
-use OCA\Notenarchiv\Exception\NotFoundException;
-use OCA\Notenarchiv\Exception\UserFacingException;
+use OCA\Cantoria\Exception\AccessDeniedException;
+use OCA\Cantoria\Exception\ModuleDisabledException;
+use OCA\Cantoria\Exception\NotFoundException;
+use OCA\Cantoria\Exception\UserFacingException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\OCS\OCSBadRequestException;
 use OCP\AppFramework\OCS\OCSException;
@@ -63,7 +63,7 @@ trait RunsOcsActions {
 			// A part of the action belongs to a module that is switched off.
 			throw new OCSNotFoundException($this->l->t('This function is switched off.'));
 		} catch (\Throwable $e) {
-			$this->logger->error('Notenarchiv API v1: ' . $e->getMessage(), ['exception' => $e]);
+			$this->logger->error('Cantoria API v1: ' . $e->getMessage(), ['exception' => $e]);
 			throw new OCSException($this->l->t('Internal error. Details are in the Nextcloud log.'), Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
 	}

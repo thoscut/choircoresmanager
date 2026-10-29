@@ -3,21 +3,21 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Controller;
+namespace OCA\Cantoria\Controller;
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Attribute\RequiresModule;
-use OCA\Notenarchiv\Db\Proposal;
-use OCA\Notenarchiv\ResponseDefinitions;
-use OCA\Notenarchiv\Service\ApiV1\Page;
-use OCA\Notenarchiv\Service\ApiV1\TaskView;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\ProposalService;
-use OCA\Notenarchiv\Service\Roles;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Attribute\RequiresModule;
+use OCA\Cantoria\Db\Proposal;
+use OCA\Cantoria\ResponseDefinitions;
+use OCA\Cantoria\Service\ApiV1\Page;
+use OCA\Cantoria\Service\ApiV1\TaskView;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\ProposalService;
+use OCA\Cantoria\Service\Roles;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -36,8 +36,8 @@ use Psr\Log\LoggerInterface;
  * docs/api-v1.md). A proposal changes nothing; the catalog librarian accepts
  * or rejects it in the app (guideline 6).
  *
- * @psalm-import-type NotenarchivProposal from ResponseDefinitions
- * @psalm-import-type NotenarchivProposalPage from ResponseDefinitions
+ * @psalm-import-type CantoriaProposal from ResponseDefinitions
+ * @psalm-import-type CantoriaProposalPage from ResponseDefinitions
  * @psalm-suppress UnusedClass
  */
 #[RequiresModule(Modules::AGENT_API)]
@@ -65,7 +65,7 @@ class ApiV1ProposalController extends OCSController {
 	 * @param 'open'|'accepted'|'rejected'|null $status Only proposals in this state
 	 * @param int<1, 100> $limit Proposals per page
 	 * @param string|null $cursor The "next_cursor" of the page before; omit it for the first page
-	 * @return DataResponse<Http::STATUS_OK, NotenarchivProposalPage, array{}>
+	 * @return DataResponse<Http::STATUS_OK, CantoriaProposalPage, array{}>
 	 * @throws OCSBadRequestException The state, the limit or the cursor is not valid
 	 * @throws OCSForbiddenException The account has no role in the music archive
 	 * @throws OCSNotFoundException The proposals inbox or the interface for agents is switched off
@@ -97,7 +97,7 @@ class ApiV1ProposalController extends OCSController {
 	 * @param array<string, string|int|float|bool|null> $fields Field => proposed value; null proposes to empty the field
 	 * @param string|null $reason Why the change is proposed
 	 * @param string|null $source Where it comes from, e.g. the name of a tool or a transcription round (at most 255 characters)
-	 * @return DataResponse<Http::STATUS_CREATED, list<NotenarchivProposal>, array{}>
+	 * @return DataResponse<Http::STATUS_CREATED, list<CantoriaProposal>, array{}>
 	 * @throws OCSBadRequestException The level is unknown, there are no fields, or a field cannot be proposed
 	 * @throws OCSForbiddenException The roles of the account may not propose changes
 	 * @throws OCSNotFoundException The work, version or copy does not exist, or the proposals inbox or the interface for agents is switched off

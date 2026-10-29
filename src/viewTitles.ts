@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -21,52 +21,52 @@ import { t } from './l10n.ts'
 export function viewTitle(view: ViewName, librarian: boolean): string {
 	switch (view) {
 	case 'due':
-		return t('notenarchiv', 'Due')
+		return t('cantoria', 'Due')
 	case 'catalog':
-		return t('notenarchiv', 'Catalog')
+		return t('cantoria', 'Catalog')
 	case 'tasks':
-		return t('notenarchiv', 'Tasks')
+		return t('cantoria', 'Tasks')
 	case 'proposals':
-		return t('notenarchiv', 'Inbox')
+		return t('cantoria', 'Inbox')
 	case 'portal':
-		return t('notenarchiv', 'Singers\' portal')
+		return t('cantoria', 'Singers\' portal')
 	case 'printStation':
-		return t('notenarchiv', 'Print station')
+		return t('cantoria', 'Print station')
 	case 'licenses':
-		return t('notenarchiv', 'Ending licenses')
+		return t('cantoria', 'Ending licenses')
 	case 'links':
 		// internal links and, with milestone 0.7, links for choir members and the public
-		return t('notenarchiv', 'Links')
+		return t('cantoria', 'Links')
 	case 'concerts':
-		return t('notenarchiv', 'Concerts')
+		return t('cantoria', 'Concerts')
 	case 'event':
-		return t('notenarchiv', 'Programmes')
+		return t('cantoria', 'Programmes')
 	case 'songLists':
-		return t('notenarchiv', 'Song lists')
+		return t('cantoria', 'Song lists')
 	case 'ambiguous':
-		return t('notenarchiv', 'Unclear programme lines')
+		return t('cantoria', 'Unclear programme lines')
 	case 'persons':
-		return t('notenarchiv', 'Persons')
+		return t('cantoria', 'Persons')
 	case 'protection':
-		return t('notenarchiv', 'Protection terms')
+		return t('cantoria', 'Protection terms')
 	case 'statistics':
-		return t('notenarchiv', 'Statistics')
+		return t('cantoria', 'Statistics')
 	case 'accession':
-		return librarian ? t('notenarchiv', 'New accession') : t('notenarchiv', 'Shelf labels')
+		return librarian ? t('cantoria', 'New accession') : t('cantoria', 'Shelf labels')
 	case 'merges':
-		return t('notenarchiv', 'Merge')
+		return t('cantoria', 'Merge')
 	case 'inventory':
-		return t('notenarchiv', 'Inventory')
+		return t('cantoria', 'Inventory')
 	case 'checksums':
-		return t('notenarchiv', 'Checksums')
+		return t('cantoria', 'Checksums')
 	case 'folderBook':
-		return t('notenarchiv', 'Folder book')
+		return t('cantoria', 'Folder book')
 	case 'gaps':
-		return t('notenarchiv', 'Gaps in shelf marks')
+		return t('cantoria', 'Gaps in shelf marks')
 	case 'snapshots':
-		return t('notenarchiv', 'Annual snapshots')
+		return t('cantoria', 'Annual snapshots')
 	case 'validVersions':
-		return t('notenarchiv', 'Choose valid versions')
+		return t('cantoria', 'Choose valid versions')
 	}
-	return t('notenarchiv', 'Music archive')
+	return t('cantoria', 'Music archive')
 }

@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -26,7 +26,7 @@ import { CACHE_PREFIX, COLLECTIONS, pageCollection, parseCatalog, requestKind, S
 declare const self: ServiceWorkerGlobalScope
 
 /** Replaced by the server with the version of the app */
-const VERSION = '__NOTENARCHIV_VERSION__'
+const VERSION = '__CANTORIA_VERSION__'
 const SHELL_CACHE = SHELL_PREFIX + VERSION
 /** How long to wait for the network before answering from the device */
 const TIMEOUT_MS = 4000
@@ -108,7 +108,7 @@ async function answer(event: FetchEvent, kind: 'page' | 'score' | 'scan' | 'asse
 	if (kind === 'page' && name !== 'public') {
 		// The page of the list ("Shared with me", the concert folder): it shows itself what is locked
 		return networkFirst(event, await data.match(cacheKey), async (response) => {
-			if (response.ok && response.headers.get('X-Notenarchiv-Page') === collection.header) {
+			if (response.ok && response.headers.get('X-Cantoria-Page') === collection.header) {
 				await data.put(cacheKey, response)
 			} else if (!response.redirected && (response.ok || response.status === 403 || response.status === 404)) {
 				// The archive, another account or no access any more: nothing of this page stays on the device
@@ -124,7 +124,7 @@ async function answer(event: FetchEvent, kind: 'page' | 'score' | 'scan' | 'asse
 	const stored = await data.match(cacheKey)
 	const shown = stored && usable(catalog, key, new Date()) === 'ok' ? stored : undefined
 	return networkFirst(event, shown, async (response) => {
-		if (response.ok && !response.redirected && (kind !== 'page' || response.headers.get('X-Notenarchiv-Page') === collection.header)) {
+		if (response.ok && !response.redirected && (kind !== 'page' || response.headers.get('X-Cantoria-Page') === collection.header)) {
 			await data.put(cacheKey, response)
 		} else if (response.status === 403 || response.status === 404) {
 			// revoked, expired or no longer allowed: removed from the device

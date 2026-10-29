@@ -3,16 +3,16 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Service;
+namespace OCA\Cantoria\Tests\Unit\Service;
 
-use OCA\Notenarchiv\Db\Copy;
-use OCA\Notenarchiv\Db\License;
-use OCA\Notenarchiv\Db\WorkVersion;
-use OCA\Notenarchiv\Service\LicenseCoverage;
+use OCA\Cantoria\Db\Copy;
+use OCA\Cantoria\Db\License;
+use OCA\Cantoria\Db\WorkVersion;
+use OCA\Cantoria\Service\LicenseCoverage;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;

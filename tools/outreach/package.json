@@ -1,8 +1,8 @@
 {
-  "name": "notenarchiv-outreach",
+  "name": "cantoria-outreach",
   "version": "1.0.0",
   "private": true,
-  "description": "Builds a flyer, a business card and two banners for the Notenarchiv app with the sender of your choir",
+  "description": "Builds a flyer, a business card and two banners for the Cantoria app with the sender of your choir",
   "license": "AGPL-3.0-or-later",
   "type": "module",
   "scripts": {

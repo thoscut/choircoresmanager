@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -275,17 +275,17 @@ export function allowedDecisions(point: Pick<ReviewPoint, 'role' | 'status'>, ma
 export function reviewStatusLabel(status: string): string {
 	switch (status) {
 	case 'open':
-		return t('notenarchiv', 'Open')
+		return t('cantoria', 'Open')
 	case 'confirmed':
-		return t('notenarchiv', 'Reading is right')
+		return t('cantoria', 'Reading is right')
 	case 'correct':
-		return t('notenarchiv', 'Correction order')
+		return t('cantoria', 'Correction order')
 	case 'corrected':
-		return t('notenarchiv', 'Corrected')
+		return t('cantoria', 'Corrected')
 	case 'question':
-		return t('notenarchiv', 'Question asked')
+		return t('cantoria', 'Question asked')
 	case 'dismissed':
-		return t('notenarchiv', 'Dismissed')
+		return t('cantoria', 'Dismissed')
 	}
 	return status
 }
@@ -298,15 +298,15 @@ export function reviewStatusLabel(status: string): string {
 export function decisionLabel(decision: ReviewDecision): string {
 	switch (decision) {
 	case 'confirmed':
-		return t('notenarchiv', 'Reading is right')
+		return t('cantoria', 'Reading is right')
 	case 'correct':
-		return t('notenarchiv', 'Correction order for the tool chain')
+		return t('cantoria', 'Correction order for the tool chain')
 	case 'question':
-		return t('notenarchiv', 'Ask a question')
+		return t('cantoria', 'Ask a question')
 	case 'dismissed':
-		return t('notenarchiv', 'Dismiss')
+		return t('cantoria', 'Dismiss')
 	case 'open':
-		return t('notenarchiv', 'Reopen')
+		return t('cantoria', 'Reopen')
 	}
 	return decision
 }
@@ -319,13 +319,13 @@ export function decisionLabel(decision: ReviewDecision): string {
 export function reviewCategoryLabel(category: string): string {
 	switch (category) {
 	case 'uncertain':
-		return t('notenarchiv', 'Uncertain reading')
+		return t('cantoria', 'Uncertain reading')
 	case 'omitted':
-		return t('notenarchiv', 'Not transcribed')
+		return t('cantoria', 'Not transcribed')
 	case 'material':
-		return t('notenarchiv', 'Material')
+		return t('cantoria', 'Material')
 	case 'question':
-		return t('notenarchiv', 'Question')
+		return t('cantoria', 'Question')
 	}
 	return category
 }
@@ -338,13 +338,13 @@ export function reviewCategoryLabel(category: string): string {
  */
 export function pointPlace(point: Pick<ReviewPoint, 'measure_from' | 'measure_to' | 'measures' | 'voice'>): string {
 	const printed = pointMeasures(point)
-	const voice = canonicalVoice(point.voice) === null ? t('notenarchiv', 'all voices') : (point.voice ?? '').trim()
+	const voice = canonicalVoice(point.voice) === null ? t('cantoria', 'all voices') : (point.voice ?? '').trim()
 	if (printed === null) {
-		return point.voice && canonicalVoice(point.voice) !== null ? voice : t('notenarchiv', 'No place in the score')
+		return point.voice && canonicalVoice(point.voice) !== null ? voice : t('cantoria', 'No place in the score')
 	}
 	const measures = printed.from === printed.to
-		? t('notenarchiv', 'Measure {number}', { number: printed.from })
-		: t('notenarchiv', 'Measures {from} to {to}', { from: printed.from, to: printed.to })
+		? t('cantoria', 'Measure {number}', { number: printed.from })
+		: t('cantoria', 'Measures {from} to {to}', { from: printed.from, to: printed.to })
 	return `${measures}, ${voice}`
 }
 

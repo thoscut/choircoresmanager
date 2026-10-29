@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -38,11 +38,11 @@ const places = Array.from({ length: LABELS_PER_SHEET }, (_, index) => index + 1)
 function placeName(place: number): string {
 	const row = Math.ceil(place / 2)
 	return place % 2 === 1
-		? t('notenarchiv', 'Place {place}: row {row}, left', { place, row })
-		: t('notenarchiv', 'Place {place}: row {row}, right', { place, row })
+		? t('cantoria', 'Place {place}: row {row}, left', { place, row })
+		: t('cantoria', 'Place {place}: row {row}, right', { place, row })
 }
 
-const BODY_CLASS = 'notenarchiv-print-labels'
+const BODY_CLASS = 'cantoria-print-labels'
 let pageStyle: HTMLStyleElement | null = null
 
 function cleanUp(): void {
@@ -72,9 +72,9 @@ onBeforeUnmount(() => {
 <template>
 	<div class="label-sheet">
 		<fieldset class="label-sheet__start">
-			<legend>{{ t('notenarchiv', 'First free place on the sheet') }}</legend>
+			<legend>{{ t('cantoria', 'First free place on the sheet') }}</legend>
 			<p class="label-sheet__hint">
-				{{ t('notenarchiv', 'For a sheet that has already been used in part.') }}
+				{{ t('cantoria', 'For a sheet that has already been used in part.') }}
 			</p>
 			<div class="label-sheet__places">
 				<label v-for="place in places"
@@ -95,32 +95,32 @@ onBeforeUnmount(() => {
 
 		<div class="label-sheet__summary">
 			<p>
-				{{ n('notenarchiv', '%n label', '%n labels', labels.length) }} ·
-				{{ n('notenarchiv', '%n sheet', '%n sheets', sheets.length) }}
+				{{ n('cantoria', '%n label', '%n labels', labels.length) }} ·
+				{{ n('cantoria', '%n sheet', '%n sheets', sheets.length) }}
 			</p>
 			<NcButton variant="primary" :disabled="labels.length === 0" @click="print">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiPrinterOutline" />
 				</template>
-				{{ t('notenarchiv', 'Print labels') }}
+				{{ t('cantoria', 'Print labels') }}
 			</NcButton>
 		</div>
 		<p class="label-sheet__hint">
-			{{ t('notenarchiv', 'For Avery 3653 and compatible sheets (2 × 7 labels of 105 × 42.3 mm on A4). Print at actual size (100 %), without fitting to the page and without headers and footers.') }}
+			{{ t('cantoria', 'For Avery 3653 and compatible sheets (2 × 7 labels of 105 × 42.3 mm on A4). Print at actual size (100 %), without fitting to the page and without headers and footers.') }}
 		</p>
 
 		<div v-if="sheets.length > 0"
 			class="label-sheet__preview"
 			role="img"
-			:aria-label="t('notenarchiv', 'Preview of the first sheet')">
+			:aria-label="t('cantoria', 'Preview of the first sheet')">
 			<LabelSheetPage :places="sheets[0]" />
 		</div>
 
 		<Teleport to="body">
-			<div class="notenarchiv-label-print">
+			<div class="cantoria-label-print">
 				<LabelSheetPage v-for="(sheet, index) in sheets"
 					:key="index"
-					class="notenarchiv-label-print__page"
+					class="cantoria-label-print__page"
 					:places="sheet" />
 			</div>
 		</Teleport>
@@ -217,33 +217,33 @@ onBeforeUnmount(() => {
 
 <style>
 /* The printed sheets live outside the app and appear only when printing labels */
-.notenarchiv-label-print {
+.cantoria-label-print {
 	display: none;
 }
 
 @media print {
-	body.notenarchiv-print-labels {
+	body.cantoria-print-labels {
 		margin: 0 !important;
 		padding: 0 !important;
 		background: #fff !important;
 	}
 
-	body.notenarchiv-print-labels > :not(.notenarchiv-label-print) {
+	body.cantoria-print-labels > :not(.cantoria-label-print) {
 		display: none !important;
 	}
 
-	body.notenarchiv-print-labels > .notenarchiv-label-print {
+	body.cantoria-print-labels > .cantoria-label-print {
 		display: block !important;
 	}
 
-	.notenarchiv-label-print__page {
+	.cantoria-label-print__page {
 		/* a hair below 297 mm, so that rounding never adds an empty page */
 		height: 296.6mm !important;
 		break-after: page;
 		break-inside: avoid;
 	}
 
-	.notenarchiv-label-print__page:last-child {
+	.cantoria-label-print__page:last-child {
 		break-after: auto;
 	}
 }

@@ -3,14 +3,14 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Command;
+namespace OCA\Cantoria\Command;
 
-use OCA\Notenarchiv\Service\ExportService;
-use OCA\Notenarchiv\Service\FullBackupService;
+use OCA\Cantoria\Service\ExportService;
+use OCA\Cantoria\Service\FullBackupService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -26,10 +26,10 @@ class Export extends Command {
 
 	#[\Override]
 	protected function configure(): void {
-		$this->setName('notenarchiv:export')
+		$this->setName('cantoria:export')
 			->setDescription('Write the catalog as CSV (or the complete backup as JSON) to standard output')
 			->addOption('extended', null, InputOption::VALUE_NONE, 'all fields instead of only the legacy catalog columns')
-			->addOption('full', null, InputOption::VALUE_NONE, 'complete backup of all tables as JSON (for notenarchiv:restore)');
+			->addOption('full', null, InputOption::VALUE_NONE, 'complete backup of all tables as JSON (for cantoria:restore)');
 	}
 
 	#[\Override]

@@ -3,14 +3,14 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Service;
+namespace OCA\Cantoria\Tests\Unit\Service;
 
-use OCA\Notenarchiv\Exception\InvalidInputException;
-use OCA\Notenarchiv\Service\PersonalView;
+use OCA\Cantoria\Exception\InvalidInputException;
+use OCA\Cantoria\Service\PersonalView;
 use OCP\Config\IUserConfig;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -29,7 +29,7 @@ final class PersonalViewTest extends TestCase {
 		$config = $this->createStub(IUserConfig::class);
 		$config->method('getValueArray')->willReturnCallback(fn (string $uid): array => $this->stored[$uid] ?? []);
 		$config->method('setValueArray')->willReturnCallback(function (string $uid, string $app, string $key, array $value): bool {
-			self::assertSame(['notenarchiv', 'personal_view'], [$app, $key]);
+			self::assertSame(['cantoria', 'personal_view'], [$app, $key]);
 			$this->stored[$uid] = $value;
 			return true;
 		});

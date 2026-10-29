@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 # Administrationshandbuch
@@ -88,25 +88,25 @@ Apps → nach „Notenarchiv“ suchen → **Herunterladen und aktivieren**.
 
 ### Aus einem Release-Archiv
 
-1. Lade `notenarchiv-<version>.tar.gz` aus den
+1. Lade `cantoria-<version>.tar.gz` aus den
    [Releases des Repositorys](https://github.com/thoscut/choircoresmanager/releases)
    herunter.
 2. Entpacke es in den Ordner `apps` deiner Nextcloud, sodass die App in
-   `apps/notenarchiv` liegt.
-3. Aktiviere sie unter Apps oder führe `occ app:enable notenarchiv` aus.
+   `apps/cantoria` liegt.
+3. Aktiviere sie unter Apps oder führe `occ app:enable cantoria` aus.
 
 ### Aus dem Quellcode
 
-Der Ordner muss nach der App-ID heißen, `notenarchiv`. Zum Bauen brauchst du
+Der Ordner muss nach der App-ID heißen, `cantoria`. Zum Bauen brauchst du
 Node.js 24 und npm 11:
 
 ```sh
 cd /path/to/nextcloud/apps
-git clone https://github.com/thoscut/choircoresmanager.git notenarchiv
-cd notenarchiv
+git clone https://github.com/thoscut/choircoresmanager.git cantoria
+cd cantoria
 npm ci
 npm run build
-occ app:enable notenarchiv
+occ app:enable cantoria
 ```
 
 Zur Laufzeit braucht die App keine Composer-Pakete; `composer install`
@@ -204,7 +204,7 @@ mit altem und neuem Wert.
 > auch die Rolle „Bestand“ anvertrauen würdest.
 
 Auf selbst betriebenen Instanzen lassen sich die Rollen auch mit
-`occ notenarchiv:setup <account> --role librarian=<group>,<group> --role conductor=<group> …`
+`occ cantoria:setup <account> --role librarian=<group>,<group> --role conductor=<group> …`
 setzen (Rollen: `librarian`, `operations`, `conductor`, `contributor`,
 `reader`, `member` für die Chormitglieder).
 
@@ -226,7 +226,7 @@ Konto der Person, die sie benutzt; so sieht jede Person nur Dateien, die sie
 ohnehin sehen darf. Hintergrundjobs (wöchentliche Sicherung, Prüfsummen)
 lesen über das Konto, das den Ordner gewählt hat. Die App ändert, verschiebt
 oder löscht nie Dateien; sie schreibt nur in ihren eigenen Unterordner
-`_notenarchiv-app`, für Exporte des Werkverzeichnisses, und in den
+`_cantoria-app`, für Exporte des Werkverzeichnisses, und in den
 Sicherungsordner außerhalb des Archivordners (Abschnitt 5). Nur die
 Administration legt den Archivordner fest oder ändert ihn: Hintergrundjobs
 und Sicherungen laufen mit dem Konto, das ihn festgelegt hat. Die einzige
@@ -248,7 +248,7 @@ endet (zum Beispiel `5-01_Title - Bericht.json`), ist der Bericht einer
 Übertragung: Der Dateiabgleich zählt sie als Bericht, nicht als Notendatei,
 und liest sie in Prüfpunkte ein (Modul „Prüfung der Übertragungen“).
 
-Mit Shell-Zugang: `occ notenarchiv:setup <account> <folder>` (der Ordner
+Mit Shell-Zugang: `occ cantoria:setup <account> <folder>` (der Ordner
 relativ zu den Dateien des Kontos). Ist ein Archivordner gesetzt, endet der
 Befehl mit der Zugriffsprüfung unten in Kurzform und nennt die Konten der
 Rollengruppen, die den Ordner nicht öffnen können.
@@ -268,7 +268,7 @@ Ausnahme: Um Noten zu öffnen, braucht auch sie Zugriff auf den Ordner.
   Wechsel im Amt von selbst.
 - **Leserechte genügen.** Bearbeitungsrechte brauchen nur, wer korrigierte
   Dateien in den Ordner legt, und wer Exporte in seinem Unterordner
-  `_notenarchiv-app` ablegt: die Rolle „Bestand“ (Archivverwaltung) und das
+  `_cantoria-app` ablegt: die Rolle „Bestand“ (Archivverwaltung) und das
   Konto, das den Ordner gewählt hat.
 - Sicherungen und Jahresstände liegen nicht im Archivordner (siehe
   [Abschnitt 5](#5-sicherung-und-wiederherstellung)). Wer ihn mit den
@@ -322,7 +322,7 @@ höchstens 20 MB groß sein.
    Repertoire und Veröffentlichung sowie Warnungen.
 3. **Jetzt importieren**. Vor einem Import in ein Werkverzeichnis, das schon
    Daten enthält, legt die App einen Stand des bisherigen Zustands in
-   `_notenarchiv-app` ab.
+   `_cantoria-app` ab.
 4. **Dateiabgleich** → **Dateiabgleich starten** verknüpft die Dateien des
    Archivordners mit den Exemplaren.
 
@@ -415,7 +415,7 @@ berechnet. Jahresstände von vor 0.10 enthalten noch Namen; lösche sie, wenn
 du sie nicht mehr brauchst.
 
 **Update von einer Version vor 0.10.** Frühere Versionen schrieben
-Sicherungen und Jahresstände nach `_notenarchiv-app` im Archivordner. Die
+Sicherungen und Jahresstände nach `_cantoria-app` im Archivordner. Die
 erste Sicherung nach dem Update verschiebt sie in den Sicherungsordner. Was
 sich nicht verschieben lässt (zum Beispiel ohne Löschrecht im Archivordner),
 nennt die Einstellungsseite; verschiebe es von Hand oder lösche es.
@@ -442,9 +442,9 @@ Vorhandenes wird überschrieben.
    **Jetzt wiederherstellen**.
 
 In der Weboberfläche darf eine Sicherungsdatei höchstens 64 MB groß sein.
-Auf selbst betriebenen Instanzen liest `occ notenarchiv:restore <file>
+Auf selbst betriebenen Instanzen liest `occ cantoria:restore <file>
 [<account>]` die Datei ohne diese Grenze aus dem Dateisystem des Servers,
-und `occ notenarchiv:export --full` schreibt eine vollständige Sicherung auf
+und `occ cantoria:export --full` schreibt eine vollständige Sicherung auf
 die Standardausgabe. Jeder Wert der Sicherung wird gegen das
 Datenbankschema geprüft, bevor etwas geschrieben wird; eine abgelehnte
 Wiederherstellung ändert nichts.
@@ -589,14 +589,14 @@ Erleichterung für selbst betriebene Instanzen:
 
 | Befehl | Macht |
 |---|---|
-| `occ notenarchiv:setup <account> [<folder>] [--role role=groups]` | setzt den Archivordner und die Rollengruppen; mit Archivordner nennt er die Konten der Rollengruppen, die ihn nicht öffnen können |
-| `occ notenarchiv:import <account> <file> [--execute]` | importiert die CSV-Datei des Werkverzeichnisses; ein Probelauf, solange `--execute` fehlt |
-| `occ notenarchiv:export [--extended] [--full]` | schreibt die CSV-Datei des Werkverzeichnisses, alle Felder oder die vollständige Sicherung (JSON) auf die Standardausgabe |
-| `occ notenarchiv:file-sync <account>` | startet den Dateiabgleich; abgelehnt (Exit-Code 1), solange ein anderer läuft |
-| `occ notenarchiv:restore <file> [<account>]` | stellt eine vollständige Sicherung in ein leeres Werkverzeichnis wieder her |
-| `occ notenarchiv:modules list\|enable\|disable\|preset` | zeigt und schaltet die Module (Abschnitt 12) |
-| `occ notenarchiv:privacy-report <Konto oder Name>` | schreibt, was die App über eine Person speichert, als JSON (Auskunft, Art. 15 DSGVO; Abschnitt 10) |
-| `occ notenarchiv:privacy-erase <Konto oder Name> [--execute]` | entfernt eine Person aus Mappenbuch und Protokoll (Löschung, Art. 17 DSGVO); ein Probelauf, solange `--execute` fehlt |
+| `occ cantoria:setup <account> [<folder>] [--role role=groups]` | setzt den Archivordner und die Rollengruppen; mit Archivordner nennt er die Konten der Rollengruppen, die ihn nicht öffnen können |
+| `occ cantoria:import <account> <file> [--execute]` | importiert die CSV-Datei des Werkverzeichnisses; ein Probelauf, solange `--execute` fehlt |
+| `occ cantoria:export [--extended] [--full]` | schreibt die CSV-Datei des Werkverzeichnisses, alle Felder oder die vollständige Sicherung (JSON) auf die Standardausgabe |
+| `occ cantoria:file-sync <account>` | startet den Dateiabgleich; abgelehnt (Exit-Code 1), solange ein anderer läuft |
+| `occ cantoria:restore <file> [<account>]` | stellt eine vollständige Sicherung in ein leeres Werkverzeichnis wieder her |
+| `occ cantoria:modules list\|enable\|disable\|preset` | zeigt und schaltet die Module (Abschnitt 12) |
+| `occ cantoria:privacy-report <Konto oder Name>` | schreibt, was die App über eine Person speichert, als JSON (Auskunft, Art. 15 DSGVO; Abschnitt 10) |
+| `occ cantoria:privacy-erase <Konto oder Name> [--execute]` | entfernt eine Person aus Mappenbuch und Protokoll (Löschung, Art. 17 DSGVO); ein Probelauf, solange `--execute` fehlt |
 
 ## 10. Datenschutz
 
@@ -640,9 +640,9 @@ verlieren das Konto und behalten den Anzeigenamen dessen, der etwas geändert
 hat.
 
 **Auskunft und Löschung.** Auf selbst betriebenen Instanzen listet `occ
-notenarchiv:privacy-report <Konto oder Name>` die Ausgaben, die
+cantoria:privacy-report <Konto oder Name>` die Ausgaben, die
 Protokolleinträge der Person und Personen gleichen Namens im
-Personenregister (JSON). `occ notenarchiv:privacy-erase <Konto oder Name>
+Personenregister (JSON). `occ cantoria:privacy-erase <Konto oder Name>
 --execute` entfernt die personenbezogenen Daten der Ausgaben (auch aus ihren
 Protokolleinträgen; eine offene Ausgabe bleibt als ausgegeben vermerkt, ohne
 Person) und Konto und Namen aus den Protokolleinträgen der Person; die
@@ -842,9 +842,9 @@ können (siehe Abschnitt 16).
 | Links für Chormitglieder | Ausschnitt-Links, Wiedergabe, Freigaben | aus (in keiner Voreinstellung) | Chormitglieder sehen weder die App noch „Mit mir geteilt“; ihre Routen antworten mit 404; es lassen sich keine Links für Chormitglieder erstellen. Vorhandene Links bleiben erhalten und laufen ab wie bisher. |
 | Übe-Audio für Chormitglieder | Links für Chormitglieder, Übe-Audio-Dateien | aus (in keiner Voreinstellung) | Chormitglieder erstellen keine Übe-Dateien; der Server lehnt jede Anfrage ab. |
 | Öffentliche Links | Ausschnitt-Links, Wiedergabe, Veröffentlichung | aus (in keiner Voreinstellung) | Jeder öffentliche Link antwortet mit derselben 404-Seite; keine neuen öffentlichen Links. Vorhandene Links bleiben erhalten und laufen ab wie bisher. |
-| Öffentliche Repertoireseite | Rechtebestätigung und Lizenzen | aus (in keiner Voreinstellung) | `/apps/notenarchiv/repertoire` antwortet mit 404; die Werkfelder für die Seite sind ausgeblendet. |
+| Öffentliche Repertoireseite | Rechtebestätigung und Lizenzen | aus (in keiner Voreinstellung) | `/apps/cantoria/repertoire` antwortet mit 404; die Werkfelder für die Seite sind ausgeblendet. |
 | Üben ohne Netz | – | aus (in keiner Voreinstellung) | Aus „Mit mir geteilt“ und von öffentlichen Links lässt sich nichts auf einem Gerät speichern; der nächste Besuch mit Netz entfernt, was dort gespeichert war. |
-| Schnittstelle für Agenten | – | aus (in keiner Voreinstellung) | Die API für Agenten (`/ocs/v2.php/apps/notenarchiv/api/v1/…`) antwortet mit 404; der MCP-Server meldet die Schnittstelle als abgeschaltet. Sonst ändert sich nichts. |
+| Schnittstelle für Agenten | – | aus (in keiner Voreinstellung) | Die API für Agenten (`/ocs/v2.php/apps/cantoria/api/v1/…`) antwortet mit 404; der MCP-Server meldet die Schnittstelle als abgeschaltet. Sonst ändert sich nichts. |
 
 ### Kommandozeile
 
@@ -852,10 +852,10 @@ Auf Instanzen mit Shell-Zugang geht dasselbe mit `occ`; der Befehl löst die
 Abhängigkeiten auf und meldet sie:
 
 ```sh
-occ notenarchiv:modules list            # table: switch, active, needs (--json for scripts)
-occ notenarchiv:modules enable calendar # also switches on "concerts" if needed
-occ notenarchiv:modules disable statistics practice_audio
-occ notenarchiv:modules preset standard # simple | standard | complete
+occ cantoria:modules list            # table: switch, active, needs (--json for scripts)
+occ cantoria:modules enable calendar # also switches on "concerts" if needed
+occ cantoria:modules disable statistics practice_audio
+occ cantoria:modules preset standard # simple | standard | complete
 ```
 
 Die Schlüssel der Module stehen in `docs/api.md` („Modules and the personal
@@ -899,7 +899,7 @@ Schnittstelle.
 So richtest du es ein:
 
 1. Schalte das Modul **Schnittstelle für Agenten** ein (Einstellungen →
-   Module, oder `occ notenarchiv:modules enable agent_api`). Für Vorschläge
+   Module, oder `occ cantoria:modules enable agent_api`). Für Vorschläge
    muss auch der **Vorschlagseingang** eingeschaltet sein; für Rückfragen
    **Rückfragen und Aufgaben**; für Prüfpunkte und Berichte **Prüfung der
    Übertragungen**.
@@ -949,8 +949,8 @@ zu „Vollständig“: Schalte sie einzeln ein, nachdem der Chor entschieden hat
 |---|---|
 | **Links für Chormitglieder** | Die Rolle **Chormitglieder** sieht die Seite „Mit mir geteilt“: die ganzen Stücke oder Ausschnitte, die die Archivverwaltung oder die Chorleitung mit dem Chor teilt, zum Ansehen und Abspielen mit einer betonten Stimme, auf Wunsch mit dem Scan (PDF). Nur für Fassungen, die für das Chorportal freigegeben sind. |
 | **Übe-Audio für Chormitglieder** | Chormitglieder erstellen eine WAV- oder MIDI-Datei einer Stimme eines solchen Stücks oder Ausschnitts, wo die Rechte Übe-Audio-Dateien erlauben. Jede Datei steht im Protokoll. |
-| **Öffentliche Links** | Ein Link, der ein ganzes Stück oder einen Ausschnitt ohne Anmeldung zeigt und abspielt (`/apps/notenarchiv/p/<token>`), auf Wunsch mit dem Scan (PDF). Nur für Fassungen, die zur Veröffentlichung freigegeben sind und bestätigt gemeinfrei sind oder eine Lizenz zur Online-Veröffentlichung haben. |
-| **Öffentliche Repertoireseite** | `/apps/notenarchiv/repertoire`: die Werke, die die Archivverwaltung unter denen mit einer bestätigt gemeinfreien Fassung auswählt, mit Lebensdaten, Besetzung und Links zu CPDL und IMSLP. |
+| **Öffentliche Links** | Ein Link, der ein ganzes Stück oder einen Ausschnitt ohne Anmeldung zeigt und abspielt (`/apps/cantoria/p/<token>`), auf Wunsch mit dem Scan (PDF). Nur für Fassungen, die zur Veröffentlichung freigegeben sind und bestätigt gemeinfrei sind oder eine Lizenz zur Online-Veröffentlichung haben. |
+| **Öffentliche Repertoireseite** | `/apps/cantoria/repertoire`: die Werke, die die Archivverwaltung unter denen mit einer bestätigt gemeinfreien Fassung auswählt, mit Lebensdaten, Besetzung und Links zu CPDL und IMSLP. |
 | **Üben ohne Netz** | Chormitglieder speichern Stücke aus „Mit mir geteilt“ auf ihrem Gerät und können sie dort ohne Netz ansehen, abspielen und üben: im Browser, ohne App zum Installieren. Nur für Links, deren Fassung Chormitglieder speichern und drucken dürfen. Mit **Öffentliche Links** können Besucher einen öffentlichen Link ebenso speichern, nur wo die Gemeinfreiheit der Fassung bestätigt ist. |
 
 Was die Schalter auch sagen: Chormitglieder und die Öffentlichkeit bekommen
@@ -969,9 +969,9 @@ Monaten ab und lassen sich widerrufen. [SECURITY.md](../../SECURITY.md)
    freigegeben“.
 2. Einstellungen → **Rollen und Gruppen** → **Chormitglieder (nur geteilte
    Ausschnitte)**: Wähle die Gruppe und **Rollen speichern** (oder
-   `occ notenarchiv:setup <account> --role member=Choir`).
+   `occ cantoria:setup <account> --role member=Choir`).
 3. Schalte **Links für Chormitglieder** ein (Einstellungen → Module, oder
-   `occ notenarchiv:modules enable member_links`). Das schaltet auch ein,
+   `occ cantoria:modules enable member_links`). Das schaltet auch ein,
    was es braucht: Ausschnitt-Links, Wiedergabe und die Freigaben.
 
 **Empfohlene Reihenfolge:**
@@ -1000,7 +1000,7 @@ weitergeben, bis sie ablaufen oder widerrufen werden. Die Notiz eines Links
 für Chormitglieder lesen alle Chormitglieder. Aufrufe werden gezählt, aber
 ohne Namen.
 
-**Üben ohne Netz** (Modul `offline`, `occ notenarchiv:modules enable
+**Üben ohne Netz** (Modul `offline`, `occ cantoria:modules enable
 offline`):
 
 - **Was gespeichert wird, und wo.** Nichts wird gespeichert, bevor ein
@@ -1008,7 +1008,7 @@ offline`):
   Wunsch **Mit dem Scan (PDF)**. Dann liegen die Noten des Links, der Scan,
   falls gewählt, die Seite „Mit mir geteilt“ und ihre Skripte im Browser
   dieses Geräts (ein Service Worker der App unter
-  `/apps/notenarchiv/offline-worker`, der nur dann vom Gerät antwortet, wenn
+  `/apps/cantoria/offline-worker`, der nur dann vom Gerät antwortet, wenn
   das Netz nicht antwortet). Übe-Stellen und Übe-Einstellungen merkt sich
   der Browser wie bisher. Ohne Netz wird nichts auf den Server geschrieben:
   Übe-Dateien brauchen es, weil der Server die Rechte prüft und jede Datei
@@ -1039,10 +1039,10 @@ offline`):
   und alles, was er gespeichert hat. Nach einem Update der App erneuert
   sich der Worker und verwirft die alten Skripte.
 
-**Konzertmappe** (Modul `concert_folder`, `occ notenarchiv:modules enable
+**Konzertmappe** (Modul `concert_folder`, `occ cantoria:modules enable
 concert_folder`, Gruppe **Konzerte und Repertoire**, in keiner
 Voreinstellung): Die Rollen „Chorleitung“ und „Bestand“ bekommen eine eigene Seite,
-`/apps/notenarchiv/concert-folder` (auch in der Navigation), mit den
+`/apps/cantoria/concert-folder` (auch in der Navigation), mit den
 Programmen, die noch zu singen sind, und Noten und Scan jedes Stücks; ein
 ganzes Programm lässt sich für Probe und Konzert ohne Netz auf dem Gerät
 speichern. Es gelten die Rechte der Notenansicht; eine interne
@@ -1132,7 +1132,7 @@ So richtest du es ein:
 
 1. Schalte **Druckstation** und **Spiegelordner für die Druckstation** ein
    (Einstellungen → Module, oder
-   `occ notenarchiv:modules enable print_mirror`).
+   `occ cantoria:modules enable print_mirror`).
 2. Lege einen Ordner für die Druckstation **außerhalb des Archivordners** an
    oder wähle einen, zum Beispiel einen Ordner, der mit dem Konto der
    Druckstation geteilt ist. Dein Konto muss den Archivordner lesen und im
@@ -1192,7 +1192,7 @@ So richtest du es ein:
 
 1. Schalte **Chorportal** und **Übergabe an das Chorsystem** ein
    (Einstellungen → Module, oder
-   `occ notenarchiv:modules enable choir_handover`).
+   `occ cantoria:modules enable choir_handover`).
 2. Lege einen Ordner **außerhalb des Archivordners** an oder wähle einen,
    nicht den Ordner der Druckstation, zum Beispiel einen Ordner, der mit dem
    Konto des Chorsystems geteilt ist. Dein Konto muss den Archivordner lesen
@@ -1293,7 +1293,7 @@ exports in the archive folder.*)
   dieses Konto den Zugriff verliert (die Rolle „Bestand“ und die
   Administration werden benachrichtigt).
 - **Zu tun:** Gib der Rolle „Bestand“ das Recht, den Ordner zu bearbeiten
-  (mindestens seinen Unterordner `_notenarchiv-app`), und stelle sicher,
+  (mindestens seinen Unterordner `_cantoria-app`), und stelle sicher,
   dass das Konto, das unter **Archivordner** als „gewählt von“ angezeigt
   wird, noch Zugriff hat, oder lass die Administration den Ordner mit einem
   Konto, das ihn hat, neu wählen. Sicherungen gehen in den Sicherungsordner

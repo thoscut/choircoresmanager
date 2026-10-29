@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <info xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	  xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
-	<id>notenarchiv</id>
-	<name>Notenarchiv</name>
+	<id>cantoria</id>
+	<name>Cantoria</name>
 	<summary lang="en">Sheet music archive for choirs: catalog, rights, scores, concerts</summary>
 	<summary lang="de">Notenarchiv für Chöre: Bestand, Rechte, Noten, Konzerte</summary>
 	<description lang="en"><![CDATA[Keep the catalog of your choir's sheet music archive in Nextcloud, from the binder on the shelf to the concert programme. Made for the music librarians, the conductor, the board and the auditors. If you want, choir members get excerpts to view, play and practise.
@@ -48,7 +48,7 @@ Keine fremden Server und keine Telemetrie: Notensatz, Schriften und Klänge sind
 	<version>0.15.0</version>
 	<licence>AGPL-3.0-or-later</licence>
 	<author homepage="https://github.com/thoscut">Thomas Scheel</author>
-	<namespace>Notenarchiv</namespace>
+	<namespace>Cantoria</namespace>
 	<documentation>
 		<user>https://github.com/thoscut/choircoresmanager/blob/main/docs/user-guide.md</user>
 		<admin>https://github.com/thoscut/choircoresmanager/blob/main/docs/admin-guide.md</admin>
@@ -78,35 +78,35 @@ Keine fremden Server und keine Telemetrie: Notensatz, Schriften und Klänge sind
 		<nextcloud min-version="33" max-version="35"/>
 	</dependencies>
 	<background-jobs>
-		<job>OCA\Notenarchiv\BackgroundJob\WeeklyBackup</job>
-		<job>OCA\Notenarchiv\BackgroundJob\DailyChecks</job>
-		<job>OCA\Notenarchiv\BackgroundJob\ChecksumJob</job>
-		<job>OCA\Notenarchiv\BackgroundJob\AnnualSnapshotJob</job>
+		<job>OCA\Cantoria\BackgroundJob\WeeklyBackup</job>
+		<job>OCA\Cantoria\BackgroundJob\DailyChecks</job>
+		<job>OCA\Cantoria\BackgroundJob\ChecksumJob</job>
+		<job>OCA\Cantoria\BackgroundJob\AnnualSnapshotJob</job>
 	</background-jobs>
 	<repair-steps>
 		<!-- Stores the module switches: all on for installations from before
 		     0.1.27, the preset "standard" for new ones; never changes a stored switch. -->
 		<post-migration>
-			<step>OCA\Notenarchiv\Migration\ModuleDefaults</step>
+			<step>OCA\Cantoria\Migration\ModuleDefaults</step>
 		</post-migration>
 		<install>
-			<step>OCA\Notenarchiv\Migration\ModuleDefaults</step>
+			<step>OCA\Cantoria\Migration\ModuleDefaults</step>
 		</install>
 	</repair-steps>
 	<commands>
-		<command>OCA\Notenarchiv\Command\Setup</command>
-		<command>OCA\Notenarchiv\Command\Import</command>
-		<command>OCA\Notenarchiv\Command\Export</command>
-		<command>OCA\Notenarchiv\Command\FileSync</command>
-		<command>OCA\Notenarchiv\Command\Restore</command>
-		<command>OCA\Notenarchiv\Command\ModulesCommand</command>
-		<command>OCA\Notenarchiv\Command\PrivacyReport</command>
-		<command>OCA\Notenarchiv\Command\PrivacyErase</command>
+		<command>OCA\Cantoria\Command\Setup</command>
+		<command>OCA\Cantoria\Command\Import</command>
+		<command>OCA\Cantoria\Command\Export</command>
+		<command>OCA\Cantoria\Command\FileSync</command>
+		<command>OCA\Cantoria\Command\Restore</command>
+		<command>OCA\Cantoria\Command\ModulesCommand</command>
+		<command>OCA\Cantoria\Command\PrivacyReport</command>
+		<command>OCA\Cantoria\Command\PrivacyErase</command>
 	</commands>
 	<!-- Administration → Music archive; the administration can give the page
 	     to a group under Administration privileges. -->
 	<settings>
-		<admin>OCA\Notenarchiv\Settings\Admin</admin>
-		<admin-section>OCA\Notenarchiv\Settings\AdminSection</admin-section>
+		<admin>OCA\Cantoria\Settings\Admin</admin>
+		<admin-section>OCA\Cantoria\Settings\AdminSection</admin-section>
 	</settings>
 </info>

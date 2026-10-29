@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -12,7 +12,7 @@
  * steps are switched off here and Vue's escaping protects the page.
  *
  * Use these functions instead of the ones from @nextcloud/l10n; the string
- * extraction (tools/l10n) finds `t('notenarchiv', …)` and `n(…)` the same.
+ * extraction (tools/l10n) finds `t('cantoria', …)` and `n(…)` the same.
  */
 import { n as translatePlural, t as translate } from '@nextcloud/l10n'
 
@@ -28,7 +28,7 @@ type PluralPlaceholders<T extends string, K extends string> = NonNullable<Parame
 /**
  * Translate a text.
  *
- * @param app - app id ('notenarchiv')
+ * @param app - app id ('cantoria')
  * @param text - English source text with {placeholders}
  * @param placeholders - values of the placeholders
  */
@@ -39,7 +39,7 @@ export function t<T extends string>(app: string, text: T, placeholders?: Placeho
 /**
  * Translate a text with singular and plural ("%n" is the count).
  *
- * @param app - app id ('notenarchiv')
+ * @param app - app id ('cantoria')
  * @param singular - English singular
  * @param plural - English plural
  * @param count - the number that chooses the form

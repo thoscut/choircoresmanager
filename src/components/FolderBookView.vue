@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -57,16 +57,16 @@ interface FilterOption {
 }
 
 const filterOptions = computed<FilterOption[]>(() => [
-	{ id: 'all', label: t('notenarchiv', 'All folders in service ({count})', { count: summary.value.active }) },
-	{ id: 'out', label: t('notenarchiv', 'Out ({count})', { count: summary.value.out }) },
-	{ id: 'available', label: t('notenarchiv', 'Available ({count})', { count: summary.value.available }) },
-	{ id: 'hints', label: t('notenarchiv', 'With missing sheets or a hint ({count})', { count: summary.value.hints }) },
-	{ id: 'retired', label: t('notenarchiv', 'Out of service') },
+	{ id: 'all', label: t('cantoria', 'All folders in service ({count})', { count: summary.value.active }) },
+	{ id: 'out', label: t('cantoria', 'Out ({count})', { count: summary.value.out }) },
+	{ id: 'available', label: t('cantoria', 'Available ({count})', { count: summary.value.available }) },
+	{ id: 'hints', label: t('cantoria', 'With missing sheets or a hint ({count})', { count: summary.value.hints }) },
+	{ id: 'retired', label: t('cantoria', 'Out of service') },
 ])
 
 /** The filters in words, for the header of the printout */
 const printFilter = computed(() => [filterOption.value?.label ?? '',
-	search.value.trim() === '' ? '' : t('notenarchiv', 'Search: {text}', { text: search.value.trim() })].filter((part) => part !== '').join(', '))
+	search.value.trim() === '' ? '' : t('cantoria', 'Search: {text}', { text: search.value.trim() })].filter((part) => part !== '').join(', '))
 
 const filterOption = computed({
 	get: () => filterOptions.value.find((option) => option.id === filter.value) ?? filterOptions.value[0],
@@ -122,8 +122,8 @@ function hints(folder: Folder): string[] {
 
 <template>
 	<div class="folder-book">
-		<ViewHeader :title="t('notenarchiv', 'Folder book')"
-			:description="t('notenarchiv', 'Which choir folder is out with whom since when, what it holds and what is missing.')"
+		<ViewHeader :title="t('cantoria', 'Folder book')"
+			:description="t('cantoria', 'Which choir folder is out with whom since when, what it holds and what is missing.')"
 			printable
 			:print-filter="printFilter"
 			reloadable
@@ -134,26 +134,26 @@ function hints(folder: Folder): string[] {
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiFolderPlusOutline" />
 					</template>
-					{{ t('notenarchiv', 'New folder') }}
+					{{ t('cantoria', 'New folder') }}
 				</NcButton>
 			</template>
 		</ViewHeader>
 
 		<div class="folder-book__content">
-			<NcEmptyContent v-if="book === null && loading" :name="t('notenarchiv', 'Loading …')">
+			<NcEmptyContent v-if="book === null && loading" :name="t('cantoria', 'Loading …')">
 				<template #icon>
 					<NcLoadingIcon :size="64" />
 				</template>
 			</NcEmptyContent>
 			<NcEmptyContent v-else-if="book === null && error"
-				:name="t('notenarchiv', 'The folder book could not be loaded')"
+				:name="t('cantoria', 'The folder book could not be loaded')"
 				:description="error">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiAlertCircleOutline" />
 				</template>
 				<template #action>
 					<NcButton @click="load">
-						{{ t('notenarchiv', 'Try again') }}
+						{{ t('cantoria', 'Try again') }}
 					</NcButton>
 				</template>
 			</NcEmptyContent>
@@ -168,69 +168,69 @@ function hints(folder: Folder): string[] {
 				</NcNoteCard>
 
 				<NcEmptyContent v-if="book.folders.length === 0"
-					:name="t('notenarchiv', 'No folders yet')"
+					:name="t('cantoria', 'No folders yet')"
 					:description="canEdit
-						? t('notenarchiv', 'Create a folder for each choir folder you hand out: its number or name, the voice and the copies it holds. Then issue it to a person.')
-						: t('notenarchiv', 'The music librarians have not entered any folders yet.')">
+						? t('cantoria', 'Create a folder for each choir folder you hand out: its number or name, the voice and the copies it holds. Then issue it to a person.')
+						: t('cantoria', 'The music librarians have not entered any folders yet.')">
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiFolderAccountOutline" />
 					</template>
 					<template v-if="canEdit" #action>
 						<NcButton variant="primary" @click="creating = true">
-							{{ t('notenarchiv', 'New folder') }}
+							{{ t('cantoria', 'New folder') }}
 						</NcButton>
 					</template>
 				</NcEmptyContent>
 
 				<template v-else>
 					<p class="folder-book__summary">
-						{{ n('notenarchiv', '%n folder in service: {out} out, {available} available.', '%n folders in service: {out} out, {available} available.',
+						{{ n('cantoria', '%n folder in service: {out} out, {available} available.', '%n folders in service: {out} out, {available} available.',
 							summary.active, { out: summary.out, available: summary.available }) }}
 					</p>
 					<div class="folder-book__filters no-print">
 						<NcSelect v-model="filterOption"
 							class="folder-book__filter"
-							:input-label="t('notenarchiv', 'Show')"
+							:input-label="t('cantoria', 'Show')"
 							:options="filterOptions"
 							:clearable="false"
 							:searchable="false" />
 						<NcTextField v-model="search"
 							class="folder-book__search"
-							:label="t('notenarchiv', 'Find a folder, voice or person')"
+							:label="t('cantoria', 'Find a folder, voice or person')"
 							trailing-button-icon="close"
 							:show-trailing-button="search !== ''"
 							@trailing-button-click="search = ''" />
 					</div>
 
 					<p v-if="shown.length === 0" class="folder-book__empty" role="status">
-						{{ t('notenarchiv', 'No folder matches.') }}
+						{{ t('cantoria', 'No folder matches.') }}
 					</p>
 					<table v-else class="folder-book__table">
 						<caption class="hidden-visually">
-							{{ n('notenarchiv', '%n folder', '%n folders', shown.length) }}
+							{{ n('cantoria', '%n folder', '%n folders', shown.length) }}
 						</caption>
 						<thead>
 							<tr>
 								<th scope="col">
-									{{ t('notenarchiv', 'Folder') }}
+									{{ t('cantoria', 'Folder') }}
 								</th>
 								<th scope="col">
-									{{ t('notenarchiv', 'Voice') }}
+									{{ t('cantoria', 'Voice') }}
 								</th>
 								<th scope="col">
-									{{ t('notenarchiv', 'Out with') }}
+									{{ t('cantoria', 'Out with') }}
 								</th>
 								<th scope="col">
-									{{ t('notenarchiv', 'Since') }}
+									{{ t('cantoria', 'Since') }}
 								</th>
 								<th scope="col">
-									{{ t('notenarchiv', 'Contents') }}
+									{{ t('cantoria', 'Contents') }}
 								</th>
 								<th scope="col">
-									{{ t('notenarchiv', 'Condition and missing sheets') }}
+									{{ t('cantoria', 'Condition and missing sheets') }}
 								</th>
 								<th scope="col" class="no-print">
-									<span class="hidden-visually">{{ t('notenarchiv', 'Actions') }}</span>
+									<span class="hidden-visually">{{ t('cantoria', 'Actions') }}</span>
 								</th>
 							</tr>
 						</thead>
@@ -240,7 +240,7 @@ function hints(folder: Folder): string[] {
 									<th scope="row" class="folder-book__label">
 										{{ folder.label }}
 										<span v-if="folder.status === 'retired'" class="folder-book__muted">
-											{{ t('notenarchiv', 'Out of service since {date}: {reason}', { date: formatDate(folder.statusSince ?? ''), reason: folder.statusReason ?? '' }) }}
+											{{ t('cantoria', 'Out of service since {date}: {reason}', { date: formatDate(folder.statusSince ?? ''), reason: folder.statusReason ?? '' }) }}
 										</span>
 									</th>
 									<td>{{ folder.voice ?? '–' }}</td>
@@ -248,13 +248,13 @@ function hints(folder: Folder): string[] {
 										<template v-if="folder.loan">
 											{{ holderText(folder.loan) }}
 										</template>
-										<span v-else class="folder-book__muted">{{ t('notenarchiv', 'available') }}</span>
+										<span v-else class="folder-book__muted">{{ t('cantoria', 'available') }}</span>
 									</td>
 									<td>
 										{{ folder.loan ? formatDate(folder.loan.issuedOn) : '–' }}
 										<span v-if="folder.loan && !folder.loan.anonymized && openLoanEnd(folder.loan.issuedOn, book.openLoanMonths, todayIso())"
 											class="folder-book__muted">
-											{{ t('notenarchiv', 'Holder removed on {date}', { date: formatDate(openLoanEnd(folder.loan.issuedOn, book.openLoanMonths, todayIso()) ?? '') }) }}
+											{{ t('cantoria', 'Holder removed on {date}', { date: formatDate(openLoanEnd(folder.loan.issuedOn, book.openLoanMonths, todayIso()) ?? '') }) }}
 										</span>
 									</td>
 									<td>
@@ -262,20 +262,20 @@ function hints(folder: Folder): string[] {
 											<li v-for="item in folder.contents" :key="item.copyId">
 												{{ item.shelfmark }} {{ item.title ?? '' }}
 												<template v-if="item.count > 1">
-													({{ n('notenarchiv', '%n copy', '%n copies', item.count) }})
+													({{ n('cantoria', '%n copy', '%n copies', item.count) }})
 												</template>
 											</li>
 										</ul>
-										<span v-else class="folder-book__muted">{{ t('notenarchiv', 'No contents entered') }}</span>
+										<span v-else class="folder-book__muted">{{ t('cantoria', 'No contents entered') }}</span>
 										<div v-if="folder.outdated" class="folder-book__hint">
-											<strong>{{ t('notenarchiv', 'Hint: the folder contains a version that no longer applies.') }}</strong>
+											<strong>{{ t('cantoria', 'Hint: the folder contains a version that no longer applies.') }}</strong>
 											<span v-for="hint in hints(folder)" :key="hint" class="folder-book__hint-line">{{ hint }}</span>
 										</div>
 									</td>
 									<td>
 										{{ wearLabel(folder.wear) }}
 										<span v-if="folder.missing" class="folder-book__missing">
-											{{ t('notenarchiv', 'Missing: {sheets}', { sheets: folder.missing }) }}
+											{{ t('cantoria', 'Missing: {sheets}', { sheets: folder.missing }) }}
 										</span>
 									</td>
 									<td class="no-print">
@@ -284,31 +284,31 @@ function hints(folder: Folder): string[] {
 											<template v-if="canEdit && folder.status === 'active'">
 												<NcButton v-if="folder.loan"
 													variant="primary"
-													:aria-label="t('notenarchiv', 'Take back folder {label}', { label: folder.label })"
+													:aria-label="t('cantoria', 'Take back folder {label}', { label: folder.label })"
 													@click="loanDialog = { folder, mode: 'return' }">
-													{{ t('notenarchiv', 'Take back') }}
+													{{ t('cantoria', 'Take back') }}
 												</NcButton>
 												<NcButton v-else
 													variant="primary"
-													:aria-label="t('notenarchiv', 'Issue folder {label}', { label: folder.label })"
+													:aria-label="t('cantoria', 'Issue folder {label}', { label: folder.label })"
 													@click="loanDialog = { folder, mode: 'issue' }">
-													{{ t('notenarchiv', 'Issue') }}
+													{{ t('cantoria', 'Issue') }}
 												</NcButton>
 											</template>
 											<NcButton v-if="canEdit"
-												:aria-label="t('notenarchiv', 'Edit folder {label}', { label: folder.label })"
+												:aria-label="t('cantoria', 'Edit folder {label}', { label: folder.label })"
 												@click="editing = folder">
-												{{ t('notenarchiv', 'Edit') }}
+												{{ t('cantoria', 'Edit') }}
 											</NcButton>
 											<NcButton v-if="folder.history.length > 0"
 												variant="tertiary"
 												:aria-expanded="openHistory.has(folder.id) ? 'true' : 'false'"
-												:aria-label="n('notenarchiv', '%n loan of folder {label}', '%n loans of folder {label}', folder.history.length, { label: folder.label })"
+												:aria-label="n('cantoria', '%n loan of folder {label}', '%n loans of folder {label}', folder.history.length, { label: folder.label })"
 												@click="toggleHistory(folder)">
 												<template #icon>
 													<NcIconSvgWrapper :path="mdiHistory" />
 												</template>
-												{{ n('notenarchiv', '%n loan', '%n loans', folder.history.length) }}
+												{{ n('cantoria', '%n loan', '%n loans', folder.history.length) }}
 											</NcButton>
 										</div>
 									</td>
@@ -319,13 +319,13 @@ function hints(folder: Folder): string[] {
 											<li v-for="loan in folder.history" :key="loan.id">
 												<strong>{{ holderText(loan) }}</strong>:
 												{{ loan.returnedOn
-													? t('notenarchiv', 'from {from} to {to}', { from: formatDate(loan.issuedOn), to: formatDate(loan.returnedOn) })
-													: t('notenarchiv', 'since {from}', { from: formatDate(loan.issuedOn) }) }}
+													? t('cantoria', 'from {from} to {to}', { from: formatDate(loan.issuedOn), to: formatDate(loan.returnedOn) })
+													: t('cantoria', 'since {from}', { from: formatDate(loan.issuedOn) }) }}
 												<template v-if="loan.returnWear">
-													– {{ t('notenarchiv', 'came back: {condition}', { condition: wearLabel(loan.returnWear) }) }}
+													– {{ t('cantoria', 'came back: {condition}', { condition: wearLabel(loan.returnWear) }) }}
 												</template>
 												<template v-if="loan.returnMissing">
-													– {{ t('notenarchiv', 'Missing: {sheets}', { sheets: loan.returnMissing }) }}
+													– {{ t('cantoria', 'Missing: {sheets}', { sheets: loan.returnMissing }) }}
 												</template>
 												<span v-if="loan.issueNote || loan.returnNote" class="folder-book__muted">
 													{{ [loan.issueNote, loan.returnNote].filter(Boolean).join(' · ') }}

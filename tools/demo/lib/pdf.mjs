@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -84,7 +84,7 @@ export function placeholderPdf(info) {
 	}
 	objects[catalog - 1] = `<< /Type /Catalog /Pages ${pagesId} 0 R >>`
 	objects[pagesId - 1] = `<< /Type /Pages /Kids [${pageIds.map((id) => `${id} 0 R`).join(' ')}] /Count ${pageIds.length} >>`
-	const info2 = add(`<< /Title ${pdfString(`Demo scan – ${info.title}`)} /Producer (notenarchiv tools/demo) >>`)
+	const info2 = add(`<< /Title ${pdfString(`Demo scan – ${info.title}`)} /Producer (cantoria tools/demo) >>`)
 
 	let body = '%PDF-1.4\n%\xE2\xE3\xCF\xD3\n'
 	const offsets = []

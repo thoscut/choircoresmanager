@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -19,10 +19,10 @@ const singular = new Map()
 const plural = new Map()
 const add = (s, origin) => { if (s.trim() !== '' && !singular.has(s)) singular.set(s, origin) }
 
-// UI: t('notenarchiv', '…') and n('notenarchiv', '…', '…', …)
+// UI: t('cantoria', '…') and n('cantoria', '…', '…', …)
 for (const f of files(join(root, 'src'), ['.ts', '.vue'])) {
 	const src = readFileSync(f, 'utf8')
-	const re = new RegExp("\\b([tn])\\(\\s*'notenarchiv'\\s*,\\s*(" + STR + ")(?:\\s*,\\s*(" + STR + "))?", 'g')
+	const re = new RegExp("\\b([tn])\\(\\s*'cantoria'\\s*,\\s*(" + STR + ")(?:\\s*,\\s*(" + STR + "))?", 'g')
 	for (const m of src.matchAll(re)) {
 		if (m[1] === 'n') {
 			plural.set(unq(m[2]) + '\u0000' + unq(m[3]), 'ui')

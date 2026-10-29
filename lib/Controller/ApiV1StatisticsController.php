@@ -3,19 +3,19 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Controller;
+namespace OCA\Cantoria\Controller;
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Attribute\RequiresModule;
-use OCA\Notenarchiv\ResponseDefinitions;
-use OCA\Notenarchiv\Service\ApiV1\StatisticsView;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\Roles;
-use OCA\Notenarchiv\Service\StatisticsService;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Attribute\RequiresModule;
+use OCA\Cantoria\ResponseDefinitions;
+use OCA\Cantoria\Service\ApiV1\StatisticsView;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\Roles;
+use OCA\Cantoria\Service\StatisticsService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -33,7 +33,7 @@ use Psr\Log\LoggerInterface;
  * Statistics, read only (API v1, see docs/api-v1.md): figures without
  * personal data of choir members and without account names.
  *
- * @psalm-import-type NotenarchivStatistics from ResponseDefinitions
+ * @psalm-import-type CantoriaStatistics from ResponseDefinitions
  * @psalm-suppress UnusedClass
  */
 #[RequiresModule(Modules::AGENT_API)]
@@ -62,7 +62,7 @@ class ApiV1StatisticsController extends OCSController {
 	 *
 	 * @param int|null $from First year of the period
 	 * @param int|null $to Last year of the period
-	 * @return DataResponse<Http::STATUS_OK, NotenarchivStatistics, array{}>
+	 * @return DataResponse<Http::STATUS_OK, CantoriaStatistics, array{}>
 	 * @throws OCSBadRequestException The period is not valid
 	 * @throws OCSForbiddenException The account has no role in the music archive
 	 * @throws OCSNotFoundException Statistics or the interface for agents are switched off

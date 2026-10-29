@@ -3,28 +3,28 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Service\ApiV1;
+namespace OCA\Cantoria\Service\ApiV1;
 
-use OCA\Notenarchiv\Db\Event;
-use OCA\Notenarchiv\Exception\InvalidInputException;
-use OCA\Notenarchiv\Service\FieldValue;
+use OCA\Cantoria\Db\Event;
+use OCA\Cantoria\Exception\InvalidInputException;
+use OCA\Cantoria\Service\FieldValue;
 
 /**
  * Concerts and song lists with their programmes in the API for agents (v1),
  * from EventService::list() and EventService::detail().
  *
- * @psalm-import-type NotenarchivConcertRow from \OCA\Notenarchiv\ResponseDefinitions
- * @psalm-import-type NotenarchivConcert from \OCA\Notenarchiv\ResponseDefinitions
- * @psalm-import-type NotenarchivProgrammeItem from \OCA\Notenarchiv\ResponseDefinitions
+ * @psalm-import-type CantoriaConcertRow from \OCA\Cantoria\ResponseDefinitions
+ * @psalm-import-type CantoriaConcert from \OCA\Cantoria\ResponseDefinitions
+ * @psalm-import-type CantoriaProgrammeItem from \OCA\Cantoria\ResponseDefinitions
  */
 final class ConcertView {
 	/**
 	 * @param list<array<string, mixed>> $events rows of EventService::list()
-	 * @return list<NotenarchivConcertRow>
+	 * @return list<CantoriaConcertRow>
 	 */
 	public static function rows(array $events): array {
 		return array_map(fn (array $event): array => [
@@ -45,7 +45,7 @@ final class ConcertView {
 	/**
 	 * Sort key: by date, events without a date last.
 	 *
-	 * @param NotenarchivConcertRow $row
+	 * @param CantoriaConcertRow $row
 	 * @return list<int|string>
 	 */
 	public static function key(array $row): array {
@@ -53,8 +53,8 @@ final class ConcertView {
 	}
 
 	/**
-	 * @param list<NotenarchivConcertRow> $rows
-	 * @return list<NotenarchivConcertRow>
+	 * @param list<CantoriaConcertRow> $rows
+	 * @return list<CantoriaConcertRow>
 	 * @throws InvalidInputException for an unknown kind or status or an invalid date
 	 */
 	public static function filter(array $rows, ?string $kind, ?string $status, ?string $from, ?string $to): array {
@@ -78,7 +78,7 @@ final class ConcertView {
 	/**
 	 * @param array{event: Event, items: list<array<string, string|int|bool|null|list<string>>>, totalDuration: int, missingDurations: int} $detail
 	 * @param callable(string): string $translate translates the warnings (English source strings)
-	 * @return NotenarchivConcert
+	 * @return CantoriaConcert
 	 */
 	public static function concert(array $detail, callable $translate): array {
 		$event = $detail['event'];
@@ -104,7 +104,7 @@ final class ConcertView {
 	/**
 	 * @param array<string, string|int|bool|null|list<string>> $item
 	 * @param callable(string): string $translate
-	 * @return NotenarchivProgrammeItem
+	 * @return CantoriaProgrammeItem
 	 */
 	private static function item(array $item, callable $translate): array {
 		return [

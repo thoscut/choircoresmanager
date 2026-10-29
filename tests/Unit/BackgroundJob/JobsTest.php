@@ -3,36 +3,36 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\BackgroundJob;
+namespace OCA\Cantoria\Tests\Unit\BackgroundJob;
 
-use OCA\Notenarchiv\BackgroundJob\AnnualSnapshotJob;
-use OCA\Notenarchiv\BackgroundJob\ChecksumJob;
-use OCA\Notenarchiv\BackgroundJob\DailyChecks;
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\Event;
-use OCA\Notenarchiv\Db\EventMapper;
-use OCA\Notenarchiv\Db\LicenseMapper;
-use OCA\Notenarchiv\Db\Work;
-use OCA\Notenarchiv\Db\WorkMapper;
-use OCA\Notenarchiv\Db\WorkVersion;
-use OCA\Notenarchiv\Db\WorkVersionMapper;
-use OCA\Notenarchiv\Exception\RunInProgressException;
-use OCA\Notenarchiv\Service\AnnualSnapshotService;
-use OCA\Notenarchiv\Service\AppSettings;
-use OCA\Notenarchiv\Service\ChecksumService;
-use OCA\Notenarchiv\Service\ExportService;
-use OCA\Notenarchiv\Service\FolderBookService;
-use OCA\Notenarchiv\Service\HandoverService;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\NotificationService;
-use OCA\Notenarchiv\Service\PersonService;
-use OCA\Notenarchiv\Service\PrintMirrorService;
-use OCA\Notenarchiv\Service\RightsService;
-use OCA\Notenarchiv\Tests\Unit\Support\ModuleSwitches;
+use OCA\Cantoria\BackgroundJob\AnnualSnapshotJob;
+use OCA\Cantoria\BackgroundJob\ChecksumJob;
+use OCA\Cantoria\BackgroundJob\DailyChecks;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Db\Event;
+use OCA\Cantoria\Db\EventMapper;
+use OCA\Cantoria\Db\LicenseMapper;
+use OCA\Cantoria\Db\Work;
+use OCA\Cantoria\Db\WorkMapper;
+use OCA\Cantoria\Db\WorkVersion;
+use OCA\Cantoria\Db\WorkVersionMapper;
+use OCA\Cantoria\Exception\RunInProgressException;
+use OCA\Cantoria\Service\AnnualSnapshotService;
+use OCA\Cantoria\Service\AppSettings;
+use OCA\Cantoria\Service\ChecksumService;
+use OCA\Cantoria\Service\ExportService;
+use OCA\Cantoria\Service\FolderBookService;
+use OCA\Cantoria\Service\HandoverService;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\NotificationService;
+use OCA\Cantoria\Service\PersonService;
+use OCA\Cantoria\Service\PrintMirrorService;
+use OCA\Cantoria\Service\RightsService;
+use OCA\Cantoria\Tests\Unit\Support\ModuleSwitches;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IAppConfig;
 use PHPUnit\Framework\Attributes\CoversClass;

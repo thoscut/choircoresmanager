@@ -3,31 +3,31 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Service;
+namespace OCA\Cantoria\Service;
 
-use OCA\Notenarchiv\Db\ArchiveFile;
-use OCA\Notenarchiv\Db\ArchiveFileMapper;
-use OCA\Notenarchiv\Db\AuditEntry;
-use OCA\Notenarchiv\Db\AuditEntryMapper;
-use OCA\Notenarchiv\Db\Copy;
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\License;
-use OCA\Notenarchiv\Db\LicenseMapper;
-use OCA\Notenarchiv\Db\Proposal;
-use OCA\Notenarchiv\Db\ProposalMapper;
-use OCA\Notenarchiv\Db\ReviewPointMapper;
-use OCA\Notenarchiv\Db\Task;
-use OCA\Notenarchiv\Db\Work;
-use OCA\Notenarchiv\Db\WorkMapper;
-use OCA\Notenarchiv\Db\WorkVersion;
-use OCA\Notenarchiv\Db\WorkVersionMapper;
-use OCA\Notenarchiv\Exception\AccessDeniedException;
-use OCA\Notenarchiv\Exception\InvalidInputException;
-use OCA\Notenarchiv\Exception\NotFoundException;
+use OCA\Cantoria\Db\ArchiveFile;
+use OCA\Cantoria\Db\ArchiveFileMapper;
+use OCA\Cantoria\Db\AuditEntry;
+use OCA\Cantoria\Db\AuditEntryMapper;
+use OCA\Cantoria\Db\Copy;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Db\License;
+use OCA\Cantoria\Db\LicenseMapper;
+use OCA\Cantoria\Db\Proposal;
+use OCA\Cantoria\Db\ProposalMapper;
+use OCA\Cantoria\Db\ReviewPointMapper;
+use OCA\Cantoria\Db\Task;
+use OCA\Cantoria\Db\Work;
+use OCA\Cantoria\Db\WorkMapper;
+use OCA\Cantoria\Db\WorkVersion;
+use OCA\Cantoria\Db\WorkVersionMapper;
+use OCA\Cantoria\Exception\AccessDeniedException;
+use OCA\Cantoria\Exception\InvalidInputException;
+use OCA\Cantoria\Exception\NotFoundException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IDateTimeZone;

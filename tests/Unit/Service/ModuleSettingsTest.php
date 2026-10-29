@@ -3,19 +3,19 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Service;
+namespace OCA\Cantoria\Tests\Unit\Service;
 
-use OCA\Notenarchiv\Exception\AccessDeniedException;
-use OCA\Notenarchiv\Exception\InvalidInputException;
-use OCA\Notenarchiv\Migration\ModuleDefaults;
-use OCA\Notenarchiv\Service\AuditLog;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\ModuleSettings;
-use OCA\Notenarchiv\Tests\Unit\Support\ModuleSwitches;
+use OCA\Cantoria\Exception\AccessDeniedException;
+use OCA\Cantoria\Exception\InvalidInputException;
+use OCA\Cantoria\Migration\ModuleDefaults;
+use OCA\Cantoria\Service\AuditLog;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\ModuleSettings;
+use OCA\Cantoria\Tests\Unit\Support\ModuleSwitches;
 use OCP\IAppConfig;
 use OCP\IL10N;
 use OCP\Migration\IOutput;
@@ -132,7 +132,7 @@ final class ModuleSettingsTest extends TestCase {
 	}
 
 	public function testAnUpdateFromBeforeTheModulesKeepsEveryFunction(): void {
-		$this->runRepairStep(['notenarchiv' => '0.1.26', 'files' => '2.0']);
+		$this->runRepairStep(['cantoria' => '0.1.26', 'files' => '2.0']);
 		self::assertTrue($this->moduleConfig['module_statistics']);
 		self::assertTrue($this->moduleConfig['module_practice_audio']);
 		self::assertFalse($this->moduleConfig['module_agent_api']);
@@ -146,7 +146,7 @@ final class ModuleSettingsTest extends TestCase {
 
 	public function testALaterUpdateKeepsTheSwitchesAndAddsNewOnes(): void {
 		$this->moduleConfig = ['module_concerts' => false];
-		$this->runRepairStep(['notenarchiv' => '0.1.27']);
+		$this->runRepairStep(['cantoria' => '0.1.27']);
 		self::assertFalse($this->moduleConfig['module_concerts'], 'a stored switch is never changed');
 		self::assertFalse($this->moduleConfig['module_statistics'], 'a module new to the installation gets its default');
 	}

@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -43,7 +43,7 @@ function checkPlaceholders(lang, source, text) {
 function write(lang, translations, pluralForm) {
 	writeFileSync(join(root, 'l10n', `${lang}.json`), JSON.stringify({ translations, pluralForm }, null, 4) + '\n')
 	const body = JSON.stringify(translations, null, 4)
-	writeFileSync(join(root, 'l10n', `${lang}.js`), `OC.L10N.register(\n    "notenarchiv",\n    ${body.replace(/\n/g, '\n    ')},\n    "${pluralForm}");\n`)
+	writeFileSync(join(root, 'l10n', `${lang}.js`), `OC.L10N.register(\n    "cantoria",\n    ${body.replace(/\n/g, '\n    ')},\n    "${pluralForm}");\n`)
 	console.log(`${lang}: ${Object.keys(translations).length} entries`)
 }
 

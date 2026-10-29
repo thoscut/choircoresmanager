@@ -1,5 +1,5 @@
 #!/bin/sh
-# SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+# SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # Installs the PHP extensions that composer.json requires and the official

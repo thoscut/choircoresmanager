@@ -3,21 +3,21 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\AppInfo;
+namespace OCA\Cantoria\AppInfo;
 
 use OCA\Files\Event\LoadAdditionalScriptsEvent;
-use OCA\Notenarchiv\Dashboard\DueWidget;
-use OCA\Notenarchiv\Listener\FilesScriptListener;
-use OCA\Notenarchiv\Listener\UserDeletedListener;
-use OCA\Notenarchiv\Middleware\ModuleMiddleware;
-use OCA\Notenarchiv\Notification\Notifier;
-use OCA\Notenarchiv\Search\CatalogSearchProvider;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\Roles;
+use OCA\Cantoria\Dashboard\DueWidget;
+use OCA\Cantoria\Listener\FilesScriptListener;
+use OCA\Cantoria\Listener\UserDeletedListener;
+use OCA\Cantoria\Middleware\ModuleMiddleware;
+use OCA\Cantoria\Notification\Notifier;
+use OCA\Cantoria\Search\CatalogSearchProvider;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\Roles;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
@@ -29,7 +29,7 @@ use OCP\L10N\IFactory;
 use OCP\User\Events\UserDeletedEvent;
 
 class Application extends App implements IBootstrap {
-	public const APP_ID = 'notenarchiv';
+	public const APP_ID = 'cantoria';
 
 	/** @psalm-suppress PossiblyUnusedMethod */
 	public function __construct() {

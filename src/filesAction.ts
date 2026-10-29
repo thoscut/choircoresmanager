@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -141,7 +141,7 @@ export function parseCopyOfFile(body: unknown): CopyOfFile | null {
  * Link into the app: the copy in the sidebar, for MusicXML with its score
  * view (`?copy={id}&score=1`).
  *
- * @param appUrl - URL of the app page, e.g. "/index.php/apps/notenarchiv/"
+ * @param appUrl - URL of the app page, e.g. "/index.php/apps/cantoria/"
  * @param copy - answer of the server
  */
 export function appLink(appUrl: string, copy: CopyOfFile): string {
@@ -162,10 +162,10 @@ export function errorText(status: number | null, body: unknown): string {
 		return error
 	}
 	if (status === 429) {
-		return t('notenarchiv', 'Too many requests. Please wait a moment and try again.')
+		return t('cantoria', 'Too many requests. Please wait a moment and try again.')
 	}
 	if (status !== null) {
 		return statusMessage(status)
 	}
-	return t('notenarchiv', 'The server cannot be reached. Please check your connection.')
+	return t('cantoria', 'The server cannot be reached. Please check your connection.')
 }

@@ -1,5 +1,5 @@
 OC.L10N.register(
-    "notenarchiv",
+    "cantoria",
     {
         "This function is switched off.": "Ta funkcja jest wyłączona.",
         "Music archive": "Archiwum nut",
@@ -1523,10 +1523,10 @@ OC.L10N.register(
         "Sharing the archive folder (administration guide)": "Udostępnianie folderu archiwum (podręcznik administracji, po angielsku)",
         "Choose the archive folder": "Wybierz folder archiwum",
         "The archive folder has been saved.": "Zapisano folder archiwum.",
-        "The folder in Nextcloud that holds the score files (for example one subfolder per binder). The app only reads files. Exports of the catalog are stored in its subfolder \"_notenarchiv-app\".": "Folder w Nextcloud z plikami nut (np. jeden podfolder na teczkę). Aplikacja tylko odczytuje pliki. Eksporty katalogu są zapisywane w jego podfolderze „_notenarchiv-app”.",
+        "The folder in Nextcloud that holds the score files (for example one subfolder per binder). The app only reads files. Exports of the catalog are stored in its subfolder \"_cantoria-app\".": "Folder w Nextcloud z plikami nut (np. jeden podfolder na teczkę). Aplikacja tylko odczytuje pliki. Eksporty katalogu są zapisywane w jego podfolderze „_cantoria-app”.",
         "Backups and annual snapshots name choir members and accounts. They lie outside the archive folder, in a folder of the account that set it, which the role groups do not see unless it is shared with them.": "Kopie zapasowe i migawki roczne zawierają nazwiska chórzystów i konta. Leżą poza folderem archiwum, w folderze konta, które go ustawiło, i grupy ról ich nie widzą, chyba że zostanie im udostępniony.",
         "Backup folder:": "Folder kopii zapasowych:",
-        "The subfolder \"_notenarchiv-app\" of the archive folder still holds backups or annual snapshots of an earlier version, which everyone with access to the archive folder can read. Move them into the backup folder or delete them.": "Podfolder „_notenarchiv-app” folderu archiwum nadal zawiera kopie zapasowe lub migawki roczne z wcześniejszej wersji, które może odczytać każdy z dostępem do folderu archiwum. Przenieś je do folderu kopii zapasowych lub usuń.",
+        "The subfolder \"_cantoria-app\" of the archive folder still holds backups or annual snapshots of an earlier version, which everyone with access to the archive folder can read. Move them into the backup folder or delete them.": "Podfolder „_cantoria-app” folderu archiwum nadal zawiera kopie zapasowe lub migawki roczne z wcześniejszej wersji, które może odczytać każdy z dostępem do folderu archiwum. Przenieś je do folderu kopii zapasowych lub usuń.",
         "Current archive folder:": "Bieżący folder archiwum:",
         "No archive folder has been chosen yet.": "Nie wybrano jeszcze folderu archiwum.",
         "Everyone with a role needs access to this folder in their own Nextcloud, e.g. through a share or a group folder. \"Access to the archive folder\" below shows who cannot open it.": "Każda osoba z rolą potrzebuje dostępu do tego folderu we własnym Nextcloud, np. przez udostępnienie lub folder grupowy. Sekcja „Dostęp do folderu archiwum” poniżej pokazuje, kto nie może go otworzyć.",

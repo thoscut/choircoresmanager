@@ -3,14 +3,14 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Service;
+namespace OCA\Cantoria\Service;
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Db\Event;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Db\Event;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
 use OCP\IDateTimeZone;
@@ -87,14 +87,14 @@ class ConcertIcs {
 	 */
 	public function uid(Event $event, ?int $weeks = null): string {
 		$instance = substr(hash('sha256', $this->config->getSystemValueString('instanceid', '')), 0, 12);
-		return 'notenarchiv-concert-' . $event->getId() . ($weeks === null ? '' : '-deadline-' . $weeks) . '-' . $instance;
+		return 'cantoria-concert-' . $event->getId() . ($weeks === null ? '' : '-deadline-' . $weeks) . '-' . $instance;
 	}
 
 	/**
 	 * @param list<Component> $components
 	 */
 	private function calendar(array $components, ?string $name): string {
-		$lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Notenarchiv//Nextcloud app ' . Application::APP_ID . '//EN', 'CALSCALE:GREGORIAN'];
+		$lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Cantoria//Nextcloud app ' . Application::APP_ID . '//EN', 'CALSCALE:GREGORIAN'];
 		if ($name !== null) {
 			$lines[] = 'X-WR-CALNAME:' . IcsWriter::text($name);
 		}

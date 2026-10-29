@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -40,11 +40,11 @@ export function roleLabel(role: string): string {
 export function taskKindLabel(kind: TaskKind | string): string {
 	switch (kind) {
 	case 'question':
-		return t('notenarchiv', 'Question')
+		return t('cantoria', 'Question')
 	case 'check':
-		return t('notenarchiv', 'Check')
+		return t('cantoria', 'Check')
 	case 'report':
-		return t('notenarchiv', 'Report')
+		return t('cantoria', 'Report')
 	default:
 		return kind
 	}
@@ -56,13 +56,13 @@ export function taskKindLabel(kind: TaskKind | string): string {
 export function taskStatusLabel(status: TaskStatus | string): string {
 	switch (status) {
 	case 'open':
-		return t('notenarchiv', 'Open')
+		return t('cantoria', 'Open')
 	case 'answered':
-		return t('notenarchiv', 'Answered')
+		return t('cantoria', 'Answered')
 	case 'applied':
-		return t('notenarchiv', 'Applied')
+		return t('cantoria', 'Applied')
 	case 'discarded':
-		return t('notenarchiv', 'Discarded')
+		return t('cantoria', 'Discarded')
 	default:
 		return status
 	}
@@ -74,17 +74,17 @@ export function taskStatusLabel(status: TaskStatus | string): string {
 export function taskCategoryLabel(category: TaskCategory | string | null): string {
 	switch (category) {
 	case 'reading':
-		return t('notenarchiv', 'Reading of the notes')
+		return t('cantoria', 'Reading of the notes')
 	case 'structure':
-		return t('notenarchiv', 'Form and repeats')
+		return t('cantoria', 'Form and repeats')
 	case 'origin':
-		return t('notenarchiv', 'Origin and source')
+		return t('cantoria', 'Origin and source')
 	case 'shelf':
-		return t('notenarchiv', 'Shelf and copies')
+		return t('cantoria', 'Shelf and copies')
 	case 'rights':
-		return t('notenarchiv', 'Rights')
+		return t('cantoria', 'Rights')
 	case 'other':
-		return t('notenarchiv', 'Other')
+		return t('cantoria', 'Other')
 	default:
 		return category ?? ''
 	}
@@ -96,13 +96,13 @@ export function taskCategoryLabel(category: TaskCategory | string | null): strin
 export function eventStatusLabel(status: EventStatus | string): string {
 	switch (status) {
 	case 'draft':
-		return t('notenarchiv', 'Draft')
+		return t('cantoria', 'Draft')
 	case 'fixed':
-		return t('notenarchiv', 'Fixed')
+		return t('cantoria', 'Fixed')
 	case 'sung':
-		return t('notenarchiv', 'Sung')
+		return t('cantoria', 'Sung')
 	case 'cancelled':
-		return t('notenarchiv', 'Cancelled')
+		return t('cantoria', 'Cancelled')
 	default:
 		return status
 	}
@@ -114,17 +114,17 @@ export function eventStatusLabel(status: EventStatus | string): string {
 export function releaseStatusLabel(status: ReleaseStatus | string): string {
 	switch (status) {
 	case 'remove':
-		return t('notenarchiv', 'Remove')
+		return t('cantoria', 'Remove')
 	case 'add':
-		return t('notenarchiv', 'Add')
+		return t('cantoria', 'Add')
 	case 'not_decided':
-		return t('notenarchiv', 'No valid version chosen')
+		return t('cantoria', 'No valid version chosen')
 	case 'ok':
-		return t('notenarchiv', 'In order')
+		return t('cantoria', 'In order')
 	case 'other_version_valid':
-		return t('notenarchiv', 'Another version is valid')
+		return t('cantoria', 'Another version is valid')
 	case 'blocked':
-		return t('notenarchiv', 'Not released')
+		return t('cantoria', 'Not released')
 	default:
 		return status
 	}
@@ -136,15 +136,15 @@ export function releaseStatusLabel(status: ReleaseStatus | string): string {
 export function repertoireClassLabel(value: string | null | undefined): string {
 	switch (value) {
 	case 'current':
-		return t('notenarchiv', 'Current repertoire')
+		return t('cantoria', 'Current repertoire')
 	case 'dormant':
-		return t('notenarchiv', 'Dormant')
+		return t('cantoria', 'Dormant')
 	case 'earlier':
-		return t('notenarchiv', 'Earlier')
+		return t('cantoria', 'Earlier')
 	case 'none':
 	case null:
 	case undefined:
-		return t('notenarchiv', 'Not documented')
+		return t('cantoria', 'Not documented')
 	default:
 		return value
 	}
@@ -156,9 +156,9 @@ export function repertoireClassLabel(value: string | null | undefined): string {
 export function repertoireSourceLabel(source: string | null | undefined): string {
 	switch (source) {
 	case 'performances':
-		return t('notenarchiv', 'from documented performances')
+		return t('cantoria', 'from documented performances')
 	case 'import':
-		return t('notenarchiv', 'from the imported catalog')
+		return t('cantoria', 'from the imported catalog')
 	default:
 		return ''
 	}
@@ -181,17 +181,17 @@ export function licenseUseLabel(use: string): string {
  */
 export function licenseUseHint(use: string): string {
 	return use === 'successor'
-		? t('notenarchiv', 'The license may pass to a legal successor together with the archive, e.g. when choirs merge or another body takes over the archive.')
+		? t('cantoria', 'The license may pass to a legal successor together with the archive, e.g. when choirs merge or another body takes over the archive.')
 		: ''
 }
 
 /** Words of text references in the UI language. */
 export function referenceWords(): ReferenceWords {
 	return {
-		page: (page) => t('notenarchiv', 'p. {page}', { page }),
-		measure: (measure) => t('notenarchiv', 'm. {measure}', { measure }),
-		measures: (from, to) => t('notenarchiv', 'm. {from}–{to}', { from, to }),
-		verse: (verse) => t('notenarchiv', 'verse {verse}', { verse }),
+		page: (page) => t('cantoria', 'p. {page}', { page }),
+		measure: (measure) => t('cantoria', 'm. {measure}', { measure }),
+		measures: (from, to) => t('cantoria', 'm. {from}–{to}', { from, to }),
+		verse: (verse) => t('cantoria', 'verse {verse}', { verse }),
 	}
 }
 
@@ -229,13 +229,13 @@ export function personOptionLabel(field: string, value: string | null | undefine
 export function blockingReasonLabel(reason: string | null | undefined): string {
 	switch (reason) {
 	case 'living':
-		return t('notenarchiv', 'living')
+		return t('cantoria', 'living')
 	case 'death_unknown':
-		return t('notenarchiv', 'year of death unknown')
+		return t('cantoria', 'year of death unknown')
 	case 'death_circa':
-		return t('notenarchiv', 'year of death only approximate')
+		return t('cantoria', 'year of death only approximate')
 	case 'identification_uncertain':
-		return t('notenarchiv', 'identification uncertain')
+		return t('cantoria', 'identification uncertain')
 	default:
 		return reason ?? ''
 	}
@@ -249,11 +249,11 @@ export function blockingReasonLabel(reason: string | null | undefined): string {
 export function protectionStatusLabel(status: string): string {
 	switch (status) {
 	case 'free':
-		return t('notenarchiv', 'Public domain by the life dates')
+		return t('cantoria', 'Public domain by the life dates')
 	case 'protected':
-		return t('notenarchiv', 'Protected by the life dates')
+		return t('cantoria', 'Protected by the life dates')
 	default:
-		return t('notenarchiv', 'Protection end unknown – counts as protected')
+		return t('cantoria', 'Protection end unknown – counts as protected')
 	}
 }
 
@@ -277,14 +277,14 @@ export function lifeDates(person: { born: string | null, born_precision: string 
 		}
 		const match = value.match(/^(-?\d{1,4})/)
 		const text = match ? match[1] : value
-		return precision === 'circa' ? t('notenarchiv', 'c. {year}', { year: text }) : text
+		return precision === 'circa' ? t('cantoria', 'c. {year}', { year: text }) : text
 	}
 	if (!person.born && !person.died && person.life_dates_text) {
 		return person.life_dates_text
 	}
 	const born = year(person.born, person.born_precision)
 	if (person.died_precision === 'living') {
-		return t('notenarchiv', 'born {year}', { year: born })
+		return t('cantoria', 'born {year}', { year: born })
 	}
 	return `${born}–${year(person.died, person.died_precision)}`
 }

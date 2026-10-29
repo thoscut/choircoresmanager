@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Support;
+namespace OCA\Cantoria\Tests\Unit\Support;
 
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
@@ -80,7 +80,7 @@ trait MigratedSchema {
 		sort($files, SORT_STRING);
 		$classes = [];
 		foreach ($files as $file) {
-			$class = 'OCA\\Notenarchiv\\Migration\\' . basename($file, '.php');
+			$class = 'OCA\\Cantoria\\Migration\\' . basename($file, '.php');
 			if (!is_subclass_of($class, SimpleMigrationStep::class)) {
 				throw new \LogicException($class . ' is not a migration step');
 			}

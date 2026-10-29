@@ -3,16 +3,16 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Service;
+namespace OCA\Cantoria\Tests\Unit\Service;
 
-use OCA\Notenarchiv\Exception\InvalidInputException;
-use OCA\Notenarchiv\Service\AppSettings;
-use OCA\Notenarchiv\Service\ArchiveAccess;
-use OCA\Notenarchiv\Service\Roles;
+use OCA\Cantoria\Exception\InvalidInputException;
+use OCA\Cantoria\Service\AppSettings;
+use OCA\Cantoria\Service\ArchiveAccess;
+use OCA\Cantoria\Service\Roles;
 use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;

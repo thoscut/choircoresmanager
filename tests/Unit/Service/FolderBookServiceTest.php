@@ -3,27 +3,27 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Service;
+namespace OCA\Cantoria\Tests\Unit\Service;
 
-use OCA\Notenarchiv\Db\AuditEntryMapper;
-use OCA\Notenarchiv\Db\Copy;
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\Folder;
-use OCA\Notenarchiv\Db\FolderLoan;
-use OCA\Notenarchiv\Db\FolderLoanMapper;
-use OCA\Notenarchiv\Db\FolderMapper;
-use OCA\Notenarchiv\Db\WorkMapper;
-use OCA\Notenarchiv\Db\WorkVersion;
-use OCA\Notenarchiv\Db\WorkVersionMapper;
-use OCA\Notenarchiv\Exception\InvalidInputException;
-use OCA\Notenarchiv\Service\AuditLog;
-use OCA\Notenarchiv\Service\FolderBookService;
-use OCA\Notenarchiv\Service\RightsService;
-use OCA\Notenarchiv\Service\Roles;
+use OCA\Cantoria\Db\AuditEntryMapper;
+use OCA\Cantoria\Db\Copy;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Db\Folder;
+use OCA\Cantoria\Db\FolderLoan;
+use OCA\Cantoria\Db\FolderLoanMapper;
+use OCA\Cantoria\Db\FolderMapper;
+use OCA\Cantoria\Db\WorkMapper;
+use OCA\Cantoria\Db\WorkVersion;
+use OCA\Cantoria\Db\WorkVersionMapper;
+use OCA\Cantoria\Exception\InvalidInputException;
+use OCA\Cantoria\Service\AuditLog;
+use OCA\Cantoria\Service\FolderBookService;
+use OCA\Cantoria\Service\RightsService;
+use OCA\Cantoria\Service\Roles;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IAppConfig;
 use OCP\IDBConnection;
@@ -70,7 +70,7 @@ final class FolderBookServiceTest extends TestCase {
 		$roles = $this->createStub(Roles::class);
 		$roles->method('requireRole')->willReturnCallback(function (string $uid, array $allowed): void {
 			if (!in_array($uid, $allowed, true)) {
-				throw new \OCA\Notenarchiv\Exception\AccessDeniedException('This requires one of these roles: %s', [implode(', ', $allowed)]);
+				throw new \OCA\Cantoria\Exception\AccessDeniedException('This requires one of these roles: %s', [implode(', ', $allowed)]);
 			}
 		});
 		$rights = $this->createStub(RightsService::class);

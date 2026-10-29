@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -16,4 +16,4 @@ import '@nextcloud/dialogs/style.css'
 
 installEscapeClose()
 
-createApp(AdminSettings).mount('#notenarchiv-admin-settings')
+createApp(AdminSettings).mount('#cantoria-admin-settings')

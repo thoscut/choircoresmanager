@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -27,30 +27,30 @@ declare(strict_types=1);
 require __DIR__ . '/harness.php';
 [$root, $uid, $personsCsv, $shelfA, $shelfB, $shelfFree] = IntegrationTest::start($argv, ['nextcloud-root', 'uid', 'persons-csv', 'shelfmark-a', 'shelfmark-b', 'shelfmark-free']);
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\BackgroundJob\DailyChecks;
-use OCA\Notenarchiv\Db\ArchiveFileMapper;
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\Person;
-use OCA\Notenarchiv\Db\WorkMapper;
-use OCA\Notenarchiv\Db\WorkVersionMapper;
-use OCA\Notenarchiv\Notification\Notifier;
-use OCA\Notenarchiv\Service\AppSettings;
-use OCA\Notenarchiv\Service\CatalogService;
-use OCA\Notenarchiv\Service\ChecksumService;
-use OCA\Notenarchiv\Service\CopyAssistantService;
-use OCA\Notenarchiv\Service\ExportService;
-use OCA\Notenarchiv\Service\FileSyncService;
-use OCA\Notenarchiv\Service\InventoryService;
-use OCA\Notenarchiv\Service\LifeDates;
-use OCA\Notenarchiv\Service\MergeService;
-use OCA\Notenarchiv\Service\NotificationService;
-use OCA\Notenarchiv\Service\PersonImportService;
-use OCA\Notenarchiv\Service\PersonService;
-use OCA\Notenarchiv\Service\ProtectionTerm;
-use OCA\Notenarchiv\Service\ProtectionText;
-use OCA\Notenarchiv\Service\RightsService;
-use OCA\Notenarchiv\Service\RunLock;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\BackgroundJob\DailyChecks;
+use OCA\Cantoria\Db\ArchiveFileMapper;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Db\Person;
+use OCA\Cantoria\Db\WorkMapper;
+use OCA\Cantoria\Db\WorkVersionMapper;
+use OCA\Cantoria\Notification\Notifier;
+use OCA\Cantoria\Service\AppSettings;
+use OCA\Cantoria\Service\CatalogService;
+use OCA\Cantoria\Service\ChecksumService;
+use OCA\Cantoria\Service\CopyAssistantService;
+use OCA\Cantoria\Service\ExportService;
+use OCA\Cantoria\Service\FileSyncService;
+use OCA\Cantoria\Service\InventoryService;
+use OCA\Cantoria\Service\LifeDates;
+use OCA\Cantoria\Service\MergeService;
+use OCA\Cantoria\Service\NotificationService;
+use OCA\Cantoria\Service\PersonImportService;
+use OCA\Cantoria\Service\PersonService;
+use OCA\Cantoria\Service\ProtectionTerm;
+use OCA\Cantoria\Service\ProtectionText;
+use OCA\Cantoria\Service\RightsService;
+use OCA\Cantoria\Service\RunLock;
 use OCP\IAppConfig;
 use OCP\IDBConnection;
 use OCP\L10N\IFactory;
@@ -70,7 +70,7 @@ $notificationCount = function (string $user, string $subject): int {
 		->andWhere($qb->expr()->eq('subject', $qb->createNamedParameter($subject)));
 	return count($qb->executeQuery()->fetchAllAssociative());
 };
-$nobody = 'notenarchiv-test-nobody';
+$nobody = 'cantoria-test-nobody';
 
 // Pure functions first: life dates, protection term, name cleaning
 $lifeCases = [

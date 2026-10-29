@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -36,21 +36,21 @@ declare(strict_types=1);
 require __DIR__ . '/harness.php';
 [$root, $uid] = IntegrationTest::start($argv, ['nextcloud-root', 'uid']);
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Controller\SettingsController;
-use OCA\Notenarchiv\Db\ArchiveFileMapper;
-use OCA\Notenarchiv\Exception\NotSharedException;
-use OCA\Notenarchiv\Exception\UserFacingException;
-use OCA\Notenarchiv\Service\AppSettings;
-use OCA\Notenarchiv\Service\ArchiveAccess;
-use OCA\Notenarchiv\Service\AuditLog;
-use OCA\Notenarchiv\Service\FullBackupService;
-use OCA\Notenarchiv\Service\MetaService;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\RepertoireService;
-use OCA\Notenarchiv\Service\Roles;
-use OCA\Notenarchiv\Service\ScoreService;
-use OCA\Notenarchiv\Settings\Admin;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Controller\SettingsController;
+use OCA\Cantoria\Db\ArchiveFileMapper;
+use OCA\Cantoria\Exception\NotSharedException;
+use OCA\Cantoria\Exception\UserFacingException;
+use OCA\Cantoria\Service\AppSettings;
+use OCA\Cantoria\Service\ArchiveAccess;
+use OCA\Cantoria\Service\AuditLog;
+use OCA\Cantoria\Service\FullBackupService;
+use OCA\Cantoria\Service\MetaService;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\RepertoireService;
+use OCA\Cantoria\Service\Roles;
+use OCA\Cantoria\Service\ScoreService;
+use OCA\Cantoria\Settings\Admin;
 use OCA\Settings\Service\AuthorizedGroupService;
 use OCP\AppFramework\Http;
 use OCP\Constants;

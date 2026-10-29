@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Command;
+namespace OCA\Cantoria\Command;
 
-use OCA\Notenarchiv\Service\PrivacyService;
+use OCA\Cantoria\Service\PrivacyService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -28,7 +28,7 @@ class PrivacyErase extends Command {
 
 	#[\Override]
 	protected function configure(): void {
-		$this->setName('notenarchiv:privacy-erase')
+		$this->setName('cantoria:privacy-erase')
 			->setDescription('Remove an account or a name from the folder book and the audit log (erasure, Art. 17 GDPR)')
 			->addArgument('who', InputArgument::REQUIRED, 'Nextcloud account or name as written in the folder book')
 			->addOption('execute', null, InputOption::VALUE_NONE, 'erase; without it only shows what would be erased');

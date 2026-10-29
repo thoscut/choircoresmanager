@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -61,11 +61,11 @@ let frame = 0
 let lastRead = 0
 
 const PROBLEMS: Record<string, () => string> = {
-	insecure: () => t('notenarchiv', 'The pitch display needs a secure connection (https).'),
-	unsupported: () => t('notenarchiv', 'This browser cannot listen to the microphone.'),
-	denied: () => t('notenarchiv', 'The microphone is not allowed. Please allow it for this page in the browser and try again.'),
-	'no-microphone': () => t('notenarchiv', 'No microphone was found.'),
-	failed: () => t('notenarchiv', 'The microphone could not be started.'),
+	insecure: () => t('cantoria', 'The pitch display needs a secure connection (https).'),
+	unsupported: () => t('cantoria', 'This browser cannot listen to the microphone.'),
+	denied: () => t('cantoria', 'The microphone is not allowed. Please allow it for this page in the browser and try again.'),
+	'no-microphone': () => t('cantoria', 'No microphone was found.'),
+	failed: () => t('cantoria', 'The microphone could not be started.'),
 }
 
 /**
@@ -120,7 +120,7 @@ async function listen(): Promise<void> {
 	listening.value = true
 	history.value = []
 	frame = requestAnimationFrame(tick)
-	emit('announce', t('notenarchiv', 'The microphone is on. Sing along; your pitch is shown as a line next to the tones of {voice}.', { voice: props.voiceLabel ?? '' }))
+	emit('announce', t('cantoria', 'The microphone is on. Sing along; your pitch is shown as a line next to the tones of {voice}.', { voice: props.voiceLabel ?? '' }))
 }
 
 /**
@@ -135,7 +135,7 @@ function silence(quiet = false): void {
 		listener.stop()
 		listening.value = false
 		if (!quiet) {
-			emit('announce', t('notenarchiv', 'The microphone is off.'))
+			emit('announce', t('cantoria', 'The microphone is off.'))
 		}
 	}
 }
@@ -196,23 +196,23 @@ const german = getLanguage().toLowerCase().startsWith('de')
 const nameOf = (pitch: number) => midiPitchName(Math.round(pitch), props.fifths, german)
 
 const TUNINGS: Record<Tuning, () => string> = {
-	'in-tune': () => t('notenarchiv', 'in tune'),
-	'bit-high': () => t('notenarchiv', 'a little high'),
-	'bit-low': () => t('notenarchiv', 'a little low'),
-	high: () => t('notenarchiv', 'too high'),
-	low: () => t('notenarchiv', 'too low'),
+	'in-tune': () => t('cantoria', 'in tune'),
+	'bit-high': () => t('cantoria', 'a little high'),
+	'bit-low': () => t('cantoria', 'a little low'),
+	high: () => t('cantoria', 'too high'),
+	low: () => t('cantoria', 'too low'),
 }
 
 /** In words: the tone to sing, the sung one and how far off it is */
 const words = computed(() => {
 	const voice = props.voiceLabel ?? ''
 	const goal = target.value === null
-		? t('notenarchiv', '{voice}: rest', { voice })
-		: t('notenarchiv', '{voice}: {tone}', { voice, tone: nameOf(target.value) })
+		? t('cantoria', '{voice}: rest', { voice })
+		: t('cantoria', '{voice}: {tone}', { voice, tone: nameOf(target.value) })
 	if (sung.value === null) {
-		return `${goal} · ${t('notenarchiv', 'You: –')}`
+		return `${goal} · ${t('cantoria', 'You: –')}`
 	}
-	const you = t('notenarchiv', 'You: {tone}', { tone: nameOf(sung.value) })
+	const you = t('cantoria', 'You: {tone}', { tone: nameOf(sung.value) })
 	if (target.value === null) {
 		return `${goal} · ${you}`
 	}
@@ -225,13 +225,13 @@ const words = computed(() => {
 	<div v-if="part === 'choices'" class="practice-pitch__choices">
 		<NcCheckboxRadioSwitch v-model="shown" type="switch" :disabled="!voiceLabel">
 			{{ voiceLabel
-				? t('notenarchiv', 'Show my pitch ({voice})', { voice: voiceLabel })
-				: t('notenarchiv', 'Show my pitch') }}
+				? t('cantoria', 'Show my pitch ({voice})', { voice: voiceLabel })
+				: t('cantoria', 'Show my pitch') }}
 		</NcCheckboxRadioSwitch>
 		<p class="practice-pitch__hint">
 			{{ voiceLabel
-				? t('notenarchiv', 'Uses the microphone while it is on. The pitch is found in this browser; nothing is recorded or kept. Use headphones.')
-				: t('notenarchiv', 'Choose a focus voice to compare your pitch with it.') }}
+				? t('cantoria', 'Uses the microphone while it is on. The pitch is found in this browser; nothing is recorded or kept. Use headphones.')
+				: t('cantoria', 'Choose a focus voice to compare your pitch with it.') }}
 		</p>
 		<p v-if="problem" class="practice-pitch__hint">
 			{{ problem }}
@@ -242,7 +242,7 @@ const words = computed(() => {
 			:viewBox="`0 0 ${WIDTH} ${HEIGHT}`"
 			preserveAspectRatio="none"
 			role="img"
-			:aria-label="t('notenarchiv', 'Pitch display: the tones of {voice} as bars, your singing as a line', { voice: voiceLabel ?? '' })">
+			:aria-label="t('cantoria', 'Pitch display: the tones of {voice} as bars, your singing as a line', { voice: voiceLabel ?? '' })">
 			<rect v-for="(bar, index) in bars"
 				:key="index"
 				class="practice-pitch__tone"

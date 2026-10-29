@@ -3,23 +3,23 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Service;
+namespace OCA\Cantoria\Tests\Unit\Service;
 
-use OCA\Notenarchiv\Db\Copy;
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\Work;
-use OCA\Notenarchiv\Db\WorkMapper;
-use OCA\Notenarchiv\Db\WorkVersion;
-use OCA\Notenarchiv\Db\WorkVersionMapper;
-use OCA\Notenarchiv\Exception\InvalidInputException;
-use OCA\Notenarchiv\Service\AuditLog;
-use OCA\Notenarchiv\Service\CatalogCsv;
-use OCA\Notenarchiv\Service\ExportService;
-use OCA\Notenarchiv\Service\ImportService;
+use OCA\Cantoria\Db\Copy;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Db\Work;
+use OCA\Cantoria\Db\WorkMapper;
+use OCA\Cantoria\Db\WorkVersion;
+use OCA\Cantoria\Db\WorkVersionMapper;
+use OCA\Cantoria\Exception\InvalidInputException;
+use OCA\Cantoria\Service\AuditLog;
+use OCA\Cantoria\Service\CatalogCsv;
+use OCA\Cantoria\Service\ExportService;
+use OCA\Cantoria\Service\ImportService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IDBConnection;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -36,7 +36,7 @@ use PHPUnit\Framework\TestCase;
 final class ImportServiceTest extends TestCase {
 	private const NOW = 1761134400;
 	private const UID = 'anna';
-	private const SNAPSHOT = '_notenarchiv-app/20261022-120000_catalog_before-import.csv';
+	private const SNAPSHOT = '_cantoria-app/20261022-120000_catalog_before-import.csv';
 
 	private ImportService $service;
 

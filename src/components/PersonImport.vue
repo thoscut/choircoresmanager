@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -40,7 +40,7 @@ const reportNote = useTemplateRef('reportNote')
 async function choose(): Promise<void> {
 	let nodes
 	try {
-		nodes = await getFilePickerBuilder(t('notenarchiv', 'Choose the list of persons (CSV)'))
+		nodes = await getFilePickerBuilder(t('cantoria', 'Choose the list of persons (CSV)'))
 			.setMultiSelect(false)
 			.setMimeTypeFilter(['text/csv'])
 			.setType(FilePickerType.Choose)
@@ -55,7 +55,7 @@ async function choose(): Promise<void> {
 	}
 	const node = nodes[0]
 	if (!node?.fileid) {
-		showError(t('notenarchiv', 'The chosen file cannot be used.'))
+		showError(t('cantoria', 'The chosen file cannot be used.'))
 		await focusAfterDialog(chooseButton)
 		return
 	}
@@ -77,7 +77,7 @@ async function run(dryRun: boolean): Promise<void> {
 	try {
 		report.value = await importPersons(file.value.id, dryRun)
 		if (!dryRun) {
-			showSuccess(t('notenarchiv', 'The persons have been imported.'))
+			showSuccess(t('cantoria', 'The persons have been imported.'))
 			await loadDetail()
 		}
 	} catch (caught) {
@@ -117,7 +117,7 @@ function distribution(field: string, counts: Record<string, number>): string {
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiFileTableOutline" />
 				</template>
-				{{ file ? t('notenarchiv', 'Choose another file …') : t('notenarchiv', 'Choose CSV file …') }}
+				{{ file ? t('cantoria', 'Choose another file …') : t('cantoria', 'Choose CSV file …') }}
 			</NcButton>
 			<NcButton v-if="file && report?.dryRun"
 				variant="primary"
@@ -127,55 +127,55 @@ function distribution(field: string, counts: Record<string, number>): string {
 					<NcLoadingIcon v-if="busy === 'import'" />
 					<NcIconSvgWrapper v-else :path="mdiImport" />
 				</template>
-				{{ t('notenarchiv', 'Import now') }}
+				{{ t('cantoria', 'Import now') }}
 			</NcButton>
 			<NcButton v-if="file && report && !report.dryRun" variant="tertiary" @click="reset">
-				{{ t('notenarchiv', 'Done') }}
+				{{ t('cantoria', 'Done') }}
 			</NcButton>
 		</div>
 		<p v-if="file" class="person-import__muted">
-			{{ t('notenarchiv', 'File: {name}', { name: file.name }) }}
+			{{ t('cantoria', 'File: {name}', { name: file.name }) }}
 		</p>
 		<p v-if="busy !== ''" class="person-import__busy">
 			<NcLoadingIcon :size="20" />
-			{{ busy === 'dry' ? t('notenarchiv', 'Checking the file (dry run) …') : t('notenarchiv', 'Importing …') }}
+			{{ busy === 'dry' ? t('cantoria', 'Checking the file (dry run) …') : t('cantoria', 'Importing …') }}
 		</p>
 		<NcNoteCard v-if="error" type="error" role="alert">
 			{{ error }}
 		</NcNoteCard>
 
-		<section v-if="report && busy === ''" class="person-import__report" :aria-label="t('notenarchiv', 'Import report')">
+		<section v-if="report && busy === ''" class="person-import__report" :aria-label="t('cantoria', 'Import report')">
 			<NcNoteCard ref="reportNote" :type="report.dryRun ? 'info' : 'success'">
 				{{ report.dryRun
-					? t('notenarchiv', 'Dry run – nothing has been changed yet')
-					: t('notenarchiv', 'Import completed') }}
+					? t('cantoria', 'Dry run – nothing has been changed yet')
+					: t('cantoria', 'Import completed') }}
 			</NcNoteCard>
 			<dl class="person-import__figures">
-				<dt>{{ t('notenarchiv', 'Rows') }}</dt>
+				<dt>{{ t('cantoria', 'Rows') }}</dt>
 				<dd>{{ report.rows }}</dd>
-				<dt>{{ t('notenarchiv', 'New persons') }}</dt>
+				<dt>{{ t('cantoria', 'New persons') }}</dt>
 				<dd>{{ report.created }}</dd>
-				<dt>{{ t('notenarchiv', 'Already in the register') }}</dt>
+				<dt>{{ t('cantoria', 'Already in the register') }}</dt>
 				<dd>{{ report.existing }}</dd>
-				<dt>{{ t('notenarchiv', 'Supplemented') }}</dt>
+				<dt>{{ t('cantoria', 'Supplemented') }}</dt>
 				<dd>{{ report.updated }}</dd>
-				<dt>{{ t('notenarchiv', 'Skipped') }}</dt>
+				<dt>{{ t('cantoria', 'Skipped') }}</dt>
 				<dd>{{ report.skipped }}</dd>
-				<dt>{{ t('notenarchiv', 'New contributions') }}</dt>
+				<dt>{{ t('cantoria', 'New contributions') }}</dt>
 				<dd>{{ report.contributions }}</dd>
-				<dt>{{ t('notenarchiv', 'Contributions already recorded') }}</dt>
+				<dt>{{ t('cantoria', 'Contributions already recorded') }}</dt>
 				<dd>{{ report.contributionsExisting }}</dd>
-				<dt>{{ t('notenarchiv', 'Date of death') }}</dt>
+				<dt>{{ t('cantoria', 'Date of death') }}</dt>
 				<dd>{{ distribution('died_precision', report.precision) }}</dd>
-				<dt>{{ t('notenarchiv', 'Identification') }}</dt>
+				<dt>{{ t('cantoria', 'Identification') }}</dt>
 				<dd>{{ distribution('identification', report.identification) }}</dd>
 			</dl>
 			<p class="person-import__muted">
-				{{ t('notenarchiv', 'Imported persons are at most "probable"; please check them in the person register. Every shelf mark becomes a contribution with the role "unspecified".') }}
+				{{ t('cantoria', 'Imported persons are at most "probable"; please check them in the person register. Every shelf mark becomes a contribution with the role "unspecified".') }}
 			</p>
 
 			<template v-if="report.renamed.length > 0">
-				<h4>{{ n('notenarchiv', '%n name has been cleaned up', '%n names have been cleaned up', report.renamed.length) }}</h4>
+				<h4>{{ n('cantoria', '%n name has been cleaned up', '%n names have been cleaned up', report.renamed.length) }}</h4>
 				<ul class="person-import__list">
 					<li v-for="item in report.renamed" :key="item.from">
 						{{ item.from }} → {{ item.to }}
@@ -183,24 +183,24 @@ function distribution(field: string, counts: Record<string, number>): string {
 				</ul>
 			</template>
 			<template v-if="report.unknownShelfmarks.length > 0">
-				<h4>{{ n('notenarchiv', '%n shelf mark is not in the catalog', '%n shelf marks are not in the catalog', report.unknownShelfmarks.length) }}</h4>
+				<h4>{{ n('cantoria', '%n shelf mark is not in the catalog', '%n shelf marks are not in the catalog', report.unknownShelfmarks.length) }}</h4>
 				<p class="person-import__marks">
 					{{ report.unknownShelfmarks.join(', ') }}
 				</p>
 			</template>
 			<template v-if="report.protectionDiffers.length > 0">
-				<h4>{{ n('notenarchiv', 'Protection end differs for %n person', 'Protection end differs for %n persons', report.protectionDiffers.length) }}</h4>
+				<h4>{{ n('cantoria', 'Protection end differs for %n person', 'Protection end differs for %n persons', report.protectionDiffers.length) }}</h4>
 				<table class="person-import__table">
 					<thead>
 						<tr>
 							<th scope="col">
-								{{ t('notenarchiv', 'Name') }}
+								{{ t('cantoria', 'Name') }}
 							</th>
 							<th scope="col">
-								{{ t('notenarchiv', 'In the list') }}
+								{{ t('cantoria', 'In the list') }}
 							</th>
 							<th scope="col">
-								{{ t('notenarchiv', 'By the life dates') }}
+								{{ t('cantoria', 'By the life dates') }}
 							</th>
 						</tr>
 					</thead>
@@ -214,7 +214,7 @@ function distribution(field: string, counts: Record<string, number>): string {
 				</table>
 			</template>
 			<template v-if="report.warnings.length > 0">
-				<h4>{{ t('notenarchiv', 'Notes') }}</h4>
+				<h4>{{ t('cantoria', 'Notes') }}</h4>
 				<ul class="person-import__list">
 					<li v-for="(warning, index) in report.warnings" :key="index">
 						{{ warning }}
@@ -222,10 +222,10 @@ function distribution(field: string, counts: Record<string, number>): string {
 				</ul>
 			</template>
 			<p v-if="report.snapshot" class="person-import__muted">
-				{{ t('notenarchiv', 'The previous state was saved as a snapshot: {path}', { path: report.snapshot }) }}
+				{{ t('cantoria', 'The previous state was saved as a snapshot: {path}', { path: report.snapshot }) }}
 			</p>
 			<p class="person-import__muted">
-				{{ t('notenarchiv', 'Checksum (SHA-256): {sha256}', { sha256: report.sha256 }) }}
+				{{ t('cantoria', 'Checksum (SHA-256): {sha256}', { sha256: report.sha256 }) }}
 			</p>
 		</section>
 	</div>

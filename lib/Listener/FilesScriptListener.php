@@ -3,17 +3,17 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Listener;
+namespace OCA\Cantoria\Listener;
 
 use OCA\Files\Event\LoadAdditionalScriptsEvent;
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Service\FilesIntegrationService;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\Roles;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Service\FilesIntegrationService;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\Roles;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
@@ -36,7 +36,7 @@ use Psr\Log\LoggerInterface;
 class FilesScriptListener implements IEventListener {
 	/** Script of the Files app, built from src/files.ts */
 	public const SCRIPT = Application::APP_ID . '-files';
-	/** Key of the initial state (`loadState('notenarchiv', 'files')`) */
+	/** Key of the initial state (`loadState('cantoria', 'files')`) */
 	public const STATE = 'files';
 
 	public function __construct(
@@ -62,7 +62,7 @@ class FilesScriptListener implements IEventListener {
 			$state = $this->filesIntegration->clientState($uid);
 		} catch (\Throwable $e) {
 			// The Files app must work whatever happens here.
-			$this->logger->warning('Notenarchiv: the action for the Files app is not available: ' . $e->getMessage(), ['exception' => $e]);
+			$this->logger->warning('Cantoria: the action for the Files app is not available: ' . $e->getMessage(), ['exception' => $e]);
 			return;
 		}
 		if ($state === null) {

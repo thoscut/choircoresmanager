@@ -3,21 +3,21 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Service;
+namespace OCA\Cantoria\Tests\Unit\Service;
 
-use OCA\Notenarchiv\Db\ArchiveFile;
-use OCA\Notenarchiv\Db\ArchiveFileMapper;
-use OCA\Notenarchiv\Db\Copy;
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Exception\NotFoundException;
-use OCA\Notenarchiv\Service\AppSettings;
-use OCA\Notenarchiv\Service\FilesIntegrationService;
-use OCA\Notenarchiv\Service\FileSyncService;
-use OCA\Notenarchiv\Tests\Unit\Support\ModuleSwitches;
+use OCA\Cantoria\Db\ArchiveFile;
+use OCA\Cantoria\Db\ArchiveFileMapper;
+use OCA\Cantoria\Db\Copy;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Exception\NotFoundException;
+use OCA\Cantoria\Service\AppSettings;
+use OCA\Cantoria\Service\FilesIntegrationService;
+use OCA\Cantoria\Service\FileSyncService;
+use OCA\Cantoria\Tests\Unit\Support\ModuleSwitches;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\Files\File;
 use OCP\Files\Folder;

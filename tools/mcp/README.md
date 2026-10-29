@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 # MCP server for the Notenarchiv
@@ -34,12 +34,12 @@ not part of the app or its release archive.
 ## Setting up
 
 1. **An account for the agent.** Create a Nextcloud account that only the
-   agent uses (e.g. `notenarchiv-agent`) and a group for it (e.g.
+   agent uses (e.g. `cantoria-agent`) and a group for it (e.g.
    `Notenarchiv agents`):
 
    ```sh
-   occ group:add notenarchiv-agents
-   occ user:add --group notenarchiv-agents notenarchiv-agent
+   occ group:add cantoria-agents
+   occ user:add --group cantoria-agents cantoria-agent
    ```
 
 2. **Only the role it needs.** In *Administration settings → Notenarchiv*
@@ -48,7 +48,7 @@ not part of the app or its release archive.
    of the catalog librarian, operations or the conductor: those decide.
 
    ```sh
-   occ notenarchiv:setup admin --role contributor=notenarchiv-agents
+   occ cantoria:setup admin --role contributor=cantoria-agents
    ```
 
    (`--role` replaces the groups of that role; list existing groups too.)
@@ -57,7 +57,7 @@ not part of the app or its release archive.
    Modules* ("Interface for agents") or with
 
    ```sh
-   occ notenarchiv:modules enable agent_api
+   occ cantoria:modules enable agent_api
    ```
 
    It is part of no preset; the presets never switch it on or off. The
@@ -70,7 +70,7 @@ not part of the app or its release archive.
    login password once:
 
    ```sh
-   curl -u notenarchiv-agent -H 'OCS-APIRequest: true' -H 'Accept: application/json' \
+   curl -u cantoria-agent -H 'OCS-APIRequest: true' -H 'Accept: application/json' \
      https://cloud.example.org/ocs/v2.php/core/getapppassword
    ```
 
@@ -92,10 +92,10 @@ not part of the app or its release archive.
 
 | Variable | Required | Meaning |
 |---|---|---|
-| `NOTENARCHIV_URL` | yes | Address of Nextcloud, e.g. `https://cloud.example.org` or `https://example.org/nextcloud`; https (plain http only for localhost) |
-| `NOTENARCHIV_USER` | yes | The agent's account |
-| `NOTENARCHIV_APP_PASSWORD` | yes | Its app password |
-| `NOTENARCHIV_READ_ONLY` | no | `1`: only the reading tools; nothing is written |
+| `CANTORIA_URL` | yes | Address of Nextcloud, e.g. `https://cloud.example.org` or `https://example.org/nextcloud`; https (plain http only for localhost) |
+| `CANTORIA_USER` | yes | The agent's account |
+| `CANTORIA_APP_PASSWORD` | yes | Its app password |
+| `CANTORIA_READ_ONLY` | no | `1`: only the reading tools; nothing is written |
 
 ### Claude Desktop
 
@@ -104,30 +104,30 @@ In `claude_desktop_config.json` (*Settings → Developer → Edit Config*):
 ```json
 {
   "mcpServers": {
-    "notenarchiv": {
+    "cantoria": {
       "command": "node",
-      "args": ["/path/to/notenarchiv/tools/mcp/dist/src/index.js"],
+      "args": ["/path/to/cantoria/tools/mcp/dist/src/index.js"],
       "env": {
-        "NOTENARCHIV_URL": "https://cloud.example.org",
-        "NOTENARCHIV_USER": "notenarchiv-agent",
-        "NOTENARCHIV_APP_PASSWORD": "xxxxx-xxxxx-xxxxx-xxxxx-xxxxx",
-        "NOTENARCHIV_READ_ONLY": "1"
+        "CANTORIA_URL": "https://cloud.example.org",
+        "CANTORIA_USER": "cantoria-agent",
+        "CANTORIA_APP_PASSWORD": "xxxxx-xxxxx-xxxxx-xxxxx-xxxxx",
+        "CANTORIA_READ_ONLY": "1"
       }
     }
   }
 }
 ```
 
-Leave out `NOTENARCHIV_READ_ONLY` when the agent should propose and ask.
+Leave out `CANTORIA_READ_ONLY` when the agent should propose and ask.
 
 ### Claude Code
 
 ```sh
-claude mcp add notenarchiv --scope user \
-  -e NOTENARCHIV_URL=https://cloud.example.org \
-  -e NOTENARCHIV_USER=notenarchiv-agent \
-  -e NOTENARCHIV_APP_PASSWORD="$NOTENARCHIV_APP_PASSWORD" \
-  -- node /path/to/notenarchiv/tools/mcp/dist/src/index.js
+claude mcp add cantoria --scope user \
+  -e CANTORIA_URL=https://cloud.example.org \
+  -e CANTORIA_USER=cantoria-agent \
+  -e CANTORIA_APP_PASSWORD="$CANTORIA_APP_PASSWORD" \
+  -- node /path/to/cantoria/tools/mcp/dist/src/index.js
 ```
 
 Use the scope `user` or `local`, not `project`: a project scope writes the
@@ -159,7 +159,7 @@ writing ones `readOnlyHint: false, destructiveHint: false, idempotentHint:
 false` (they add a proposal or task and change nothing that exists;
 repeating them adds another one). `submit_transcription_report` is
 `idempotentHint: true`: the same report again is recognised by its checksum
-and creates nothing. With `NOTENARCHIV_READ_ONLY=1` the writing
+and creates nothing. With `CANTORIA_READ_ONLY=1` the writing
 tools are not offered at all, and the client refuses every writing request
 before it is sent. Results are compact JSON (fields without a value are
 left out); errors come back as tool errors with the reason.
@@ -189,7 +189,7 @@ left out); errors come back as tool errors with the reason.
 - **Audit.** Proposals, tasks and reports are recorded with the agent's
   account in the audit log of the app, like any other change; a report is
   kept unchanged as evidence.
-- **Switching off.** `occ notenarchiv:modules disable agent_api` closes the
+- **Switching off.** `occ cantoria:modules disable agent_api` closes the
   interface at once (404); deleting the app password or the account ends
   the agent's access.
 

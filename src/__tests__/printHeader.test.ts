@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -25,7 +25,7 @@ describe('header of printouts', () => {
 	it('adds the page numbers once', () => {
 		addPageNumbers()
 		addPageNumbers()
-		const styles = document.querySelectorAll('#notenarchiv-page-numbers')
+		const styles = document.querySelectorAll('#cantoria-page-numbers')
 		expect(styles).toHaveLength(1)
 		expect(styles[0].textContent).toContain('counter(page)')
 	})

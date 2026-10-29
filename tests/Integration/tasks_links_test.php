@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -21,13 +21,13 @@ declare(strict_types=1);
 require __DIR__ . '/harness.php';
 [$root, $uid, $shelfmark] = IntegrationTest::start($argv, ['nextcloud-root', 'uid', 'shelfmark']);
 
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\WorkVersionMapper;
-use OCA\Notenarchiv\Service\CatalogService;
-use OCA\Notenarchiv\Service\DueService;
-use OCA\Notenarchiv\Service\LinkService;
-use OCA\Notenarchiv\Service\Roles;
-use OCA\Notenarchiv\Service\TaskService;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Db\WorkVersionMapper;
+use OCA\Cantoria\Service\CatalogService;
+use OCA\Cantoria\Service\DueService;
+use OCA\Cantoria\Service\LinkService;
+use OCA\Cantoria\Service\Roles;
+use OCA\Cantoria\Service\TaskService;
 use OCP\IDBConnection;
 use OCP\IGroupManager;
 use OCP\IUserManager;

@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -62,20 +62,20 @@ function onCreated(): void {
 		<section v-if="isModuleActive('tasks')" aria-labelledby="copy-tasks-heading">
 			<div class="copy-tasks__head">
 				<h3 id="copy-tasks-heading">
-					{{ t('notenarchiv', 'Questions and tasks') }}
+					{{ t('cantoria', 'Questions and tasks') }}
 				</h3>
 				<NcButton v-if="canCreateTasks" @click="taskDialogOpen = true">
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiPlus" />
 					</template>
-					{{ t('notenarchiv', 'New task') }}
+					{{ t('cantoria', 'New task') }}
 				</NcButton>
 			</div>
 			<NcCheckboxRadioSwitch v-if="closedCount > 0" v-model="showClosed" type="switch">
-				{{ t('notenarchiv', 'Show closed tasks ({count})', { count: closedCount }) }}
+				{{ t('cantoria', 'Show closed tasks ({count})', { count: closedCount }) }}
 			</NcCheckboxRadioSwitch>
 			<p v-if="tasks.length === 0" class="copy-tasks__empty">
-				{{ t('notenarchiv', 'No open tasks for this copy.') }}
+				{{ t('cantoria', 'No open tasks for this copy.') }}
 			</p>
 			<div v-else class="copy-tasks__list">
 				<TaskItem v-for="task in tasks"
@@ -90,13 +90,13 @@ function onCreated(): void {
 		<section v-if="isModuleActive('excerpt_links')" aria-labelledby="copy-links-heading">
 			<div class="copy-tasks__head">
 				<h3 id="copy-links-heading">
-					{{ t('notenarchiv', 'Internal links') }}
+					{{ t('cantoria', 'Internal links') }}
 				</h3>
 				<NcButton v-if="canCreateLinks && detail.score?.canView" @click="linkDialogOpen = true">
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiLinkVariantPlus" />
 					</template>
-					{{ t('notenarchiv', 'New link') }}
+					{{ t('cantoria', 'New link') }}
 				</NcButton>
 			</div>
 			<LinkList :links="detail.links" @changed="emit('changed')" />

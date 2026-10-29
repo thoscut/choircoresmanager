@@ -3,21 +3,21 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Service;
+namespace OCA\Cantoria\Tests\Unit\Service;
 
-use OCA\Notenarchiv\Db\AuditEntryMapper;
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\WorkMapper;
-use OCA\Notenarchiv\Db\WorkVersionMapper;
-use OCA\Notenarchiv\Service\AppSettings;
-use OCA\Notenarchiv\Service\ExportService;
-use OCA\Notenarchiv\Service\FullBackupService;
-use OCA\Notenarchiv\Service\OdsWriter;
-use OCA\Notenarchiv\Service\PersonService;
+use OCA\Cantoria\Db\AuditEntryMapper;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Db\WorkMapper;
+use OCA\Cantoria\Db\WorkVersionMapper;
+use OCA\Cantoria\Service\AppSettings;
+use OCA\Cantoria\Service\ExportService;
+use OCA\Cantoria\Service\FullBackupService;
+use OCA\Cantoria\Service\OdsWriter;
+use OCA\Cantoria\Service\PersonService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Files\File;
 use OCP\Files\Folder;

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -31,26 +31,26 @@ declare(strict_types=1);
 require __DIR__ . '/harness.php';
 [$root, $uid] = IntegrationTest::start($argv, ['nextcloud-root', 'uid']);
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Db\ArchiveFileMapper;
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\WorkMapper;
-use OCA\Notenarchiv\Db\WorkVersionMapper;
-use OCA\Notenarchiv\Search\CatalogSearchProvider;
-use OCA\Notenarchiv\Service\AnnualSnapshotService;
-use OCA\Notenarchiv\Service\AppSettings;
-use OCA\Notenarchiv\Service\CatalogSearch;
-use OCA\Notenarchiv\Service\CatalogService;
-use OCA\Notenarchiv\Service\CopyAssistantService;
-use OCA\Notenarchiv\Service\FullBackupService;
-use OCA\Notenarchiv\Service\InventoryService;
-use OCA\Notenarchiv\Service\LicenseService;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\PersonService;
-use OCA\Notenarchiv\Service\ProtectionTerm;
-use OCA\Notenarchiv\Service\RightsNoticeService;
-use OCA\Notenarchiv\Service\RightsService;
-use OCA\Notenarchiv\Service\Roles;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Db\ArchiveFileMapper;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Db\WorkMapper;
+use OCA\Cantoria\Db\WorkVersionMapper;
+use OCA\Cantoria\Search\CatalogSearchProvider;
+use OCA\Cantoria\Service\AnnualSnapshotService;
+use OCA\Cantoria\Service\AppSettings;
+use OCA\Cantoria\Service\CatalogSearch;
+use OCA\Cantoria\Service\CatalogService;
+use OCA\Cantoria\Service\CopyAssistantService;
+use OCA\Cantoria\Service\FullBackupService;
+use OCA\Cantoria\Service\InventoryService;
+use OCA\Cantoria\Service\LicenseService;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\PersonService;
+use OCA\Cantoria\Service\ProtectionTerm;
+use OCA\Cantoria\Service\RightsNoticeService;
+use OCA\Cantoria\Service\RightsService;
+use OCA\Cantoria\Service\Roles;
 use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\IAppConfig;
@@ -227,7 +227,7 @@ try {
 		$check('a preservation copy is found by those who may view it', $search->find($preservation->getShelfmark(), true) !== []);
 		$check('and by nobody else', $search->find($preservation->getShelfmark(), false) === []);
 	}
-	$check('an account without a role finds nothing', !$provider->maySearch('notenarchiv-no-such-account'));
+	$check('an account without a role finds nothing', !$provider->maySearch('cantoria-no-such-account'));
 	$check('the provider is listed for the account', $provider->getOrder('files.view.index', []) !== null);
 	$modules->change([Modules::UNIFIED_SEARCH => false]);
 	$check('switched off, the provider is hidden', $provider->getOrder('files.view.index', []) === null);
@@ -330,7 +330,7 @@ try {
 	$check('the same snapshot cannot be compared with itself', $throws(fn () => $snapshots->compare($uid, $first['name'], $first['name'])) !== null);
 	$check('an unknown snapshot is refused', $throws(fn () => $snapshots->compare($uid, '1999_19990101-000000', $second['name'])) !== null);
 	$check('a reader without the librarian role cannot make one',
-		$throws(fn () => $snapshots->createManually('notenarchiv-no-such-account')) !== null);
+		$throws(fn () => $snapshots->createManually('cantoria-no-such-account')) !== null);
 } catch (Throwable $e) {
 	IntegrationTest::unexpected($e);
 } finally {

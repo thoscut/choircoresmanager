@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Service\ApiV1;
+namespace OCA\Cantoria\Service\ApiV1;
 
 /**
  * The statistics in the API for agents (v1): the figures of
@@ -16,13 +16,13 @@ namespace OCA\Notenarchiv\Service\ApiV1;
  * copies (works not sung for a long time, protection terms) stay in the
  * app.
  *
- * @psalm-import-type Overview from \OCA\Notenarchiv\Service\StatisticsService
- * @psalm-import-type NotenarchivStatistics from \OCA\Notenarchiv\ResponseDefinitions
+ * @psalm-import-type Overview from \OCA\Cantoria\Service\StatisticsService
+ * @psalm-import-type CantoriaStatistics from \OCA\Cantoria\ResponseDefinitions
  */
 final class StatisticsView {
 	/**
 	 * @param Overview $overview
-	 * @return NotenarchivStatistics
+	 * @return CantoriaStatistics
 	 */
 	public static function of(array $overview): array {
 		$stock = $overview['stock'];

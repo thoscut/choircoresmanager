@@ -2,9 +2,9 @@
 
 This is the API of the app's own user interface; it changes with the app.
 Tools and agents use the stable **API for agents** instead
-([api-v1.md](api-v1.md), OCS, `/ocs/v2.php/apps/notenarchiv/api/v1/…`).
+([api-v1.md](api-v1.md), OCS, `/ocs/v2.php/apps/cantoria/api/v1/…`).
 
-All paths are relative to `/apps/notenarchiv`. Responses are JSON. Errors are
+All paths are relative to `/apps/cantoria`. Responses are JSON. Errors are
 returned as `{ "error": "message for the user" }` with status 400 (invalid),
 403 (not permitted) or 404 (not found). Write requests need the Nextcloud CSRF
 token (`requesttoken`), which `@nextcloud/axios` sends automatically.
@@ -44,7 +44,7 @@ Request bodies are checked strictly: unknown fields are refused with 400
 | `POST /api/annual-snapshots` | 5 in 60 minutes |
 | `GET /api/annual-snapshots/compare` | 30 in 10 minutes |
 | `PUT /api/states/{id}/current` | 60 in 10 minutes |
-| Search of Nextcloud (provider `notenarchiv`) | 300 in 10 minutes; at most 50 results per page |
+| Search of Nextcloud (provider `cantoria`) | 300 in 10 minutes; at most 50 results per page |
 
 Files chosen by `fileId` for an import may be at most 20 MB, a backup for a
 restore at most 64 MB; larger files are refused with 400
@@ -71,7 +71,7 @@ Roles: `librarian` (Notenwart Bestand), `operations` (Notenwart Betrieb),
 `conductor` (Chorleitung), `contributor` (Vorschläge/Werkzeuge), `reader`
 (Vorstand, Revision). `member` (Chormitglieder, milestone 0.7) is no archive
 role: it is given to groups like the others (`GET/PUT /api/settings`,
-`occ notenarchiv:setup --role member=…`), but `meta.roles` never contains it
+`occ cantoria:setup --role member=…`), but `meta.roles` never contains it
 and every route of the archive answers a choir member as an account without a
 role (403). Choir members only reach the routes of "Sharing beyond the
 archive roles" below. Admins may read and change settings; they may only write
@@ -122,7 +122,7 @@ Field types: `text`, `longtext`, `number`, `date` (YYYY-MM-DD), `choice`
 (with `options`: `{ "key": "English label" }`), `boolean`. A field may be
 edited if `write` contains one of the user's `roles`; an empty `write` means
 read-only. Labels are English source strings; translate them in the UI with
-`t('notenarchiv', label)`.
+`t('cantoria', label)`.
 
 Choice keys:
 
@@ -232,7 +232,7 @@ than `active` requires `status_reason` in the same request.
 
 ```json
 { "files": 128, "assigned": 128, "new": 128, "changed": 0, "missing": 0, "ignored": 1,
-  "unassignable": [], "byType": { "pdf": 40 }, "copiesWithoutFile": [], "skippedFolders": ["_notenarchiv-app"] }
+  "unassignable": [], "byType": { "pdf": 40 }, "copiesWithoutFile": [], "skippedFolders": ["_cantoria-app"] }
 ```
 
 `changed` counts the rows that were written because a file changed; a sync
@@ -257,7 +257,7 @@ the catalog. Paths are relative to the archive folder without a leading slash.
 
 `GET /api/export?extended=0|1` downloads the CSV (`0` = legacy catalog format,
 `1` = all fields). `POST /api/export/store` returns
-`{ "path": "_notenarchiv-app/20261022-…csv" }`. The catalog CSV keeps cells
+`{ "path": "_cantoria-app/20261022-…csv" }`. The catalog CSV keeps cells
 exactly as stored (also cells starting with `=`, `+`, `-` or `@`), because it
 must survive an import followed by an export byte for byte; see SECURITY.md.
 
@@ -269,7 +269,7 @@ document type declaration.
 
 **Complete backup.** `GET /api/backup/full` (any role, plain download without
 CSRF token) returns all app tables as JSON
-(`{ "format": "notenarchiv-backup", "formatVersion": 1, "appVersion", "created", "tables": { "notarch_works": [ … ] } }`).
+(`{ "format": "cantoria-backup", "formatVersion": 1, "appVersion", "created", "tables": { "notarch_works": [ … ] } }`).
 `POST /api/backup/restore` `{ "fileId": 4711 }` (librarian or admin) restores
 such a file into an empty catalog and returns
 `{ "restored": { "notarch_works": 120, … } }`. Errors (400):
@@ -285,7 +285,7 @@ schema are written; others are left out.
 ## Settings
 
 The settings are the page **Administration → Music archive** (settings
-section `notenarchiv`, `OCA\Notenarchiv\Settings\Admin`, an
+section `cantoria`, `OCA\Cantoria\Settings\Admin`, an
 `IDelegatedSettings`). Admins may use them, and the members of the groups
 the administration has given the page under **Administration privileges**;
 that gives no role and no access to the catalog. The routes below, the module
@@ -367,7 +367,7 @@ accessible.`
 (disabled, never logged in, beyond the limit). `self` is the caller,
 `adminsWithoutRole` the admins who hold no role (they read the catalog and
 need access to the folder to open scores). `complete` is false when
-accounts were left out because of the limit. `occ notenarchiv:setup` prints
+accounts were left out because of the limit. `occ cantoria:setup` prints
 the same check in short when an archive folder is set.
 
 ## Rights, releases and valid version (milestone 0.2)
@@ -525,7 +525,7 @@ members and public links that offer the scan.
 Opening a link (`GET /api/links/{token}`) additionally returns `shelfmark`,
 `createdByName` and `changed` (`true` when the MusicXML changed since the link
 was created: show "the score has changed since"). The link URL in the UI is
-`/apps/notenarchiv/?link={token}`. Expired, revoked or no longer permitted
+`/apps/cantoria/?link={token}`. Expired, revoked or no longer permitted
 links return 400/403 with a message. An unknown token (400
 `This link does not exist.`) counts as a failed attempt for Nextcloud's
 brute-force protection: repeated unknown tokens from one address are answered
@@ -566,8 +566,8 @@ its filters, as clicking the card does (used by the dashboard widget). Unknown
 keys open the catalog; a card of a view the roles do not include opens the
 start page.
 
-**Dashboard widget** `notenarchiv-due` (Nextcloud dashboard, API widget
-version 2, `OCA\Notenarchiv\Dashboard\DueWidget`): registered only for
+**Dashboard widget** `cantoria-due` (Nextcloud dashboard, API widget
+version 2, `OCA\Cantoria\Dashboard\DueWidget`): registered only for
 accounts with an archive role (not for admins without one). Items in the order
 of the start page: concerts (`title`, subtitle `date: label`, link
 `?event={id}`), cards (`label`, subtitle number of entries, link
@@ -733,9 +733,9 @@ in the app (not imported), from today on (in the account's time zone),
 cancelled ones included.
 
 Each concert is one entry with a stable UID
-`notenarchiv-concert-{id}-{hash of the instance id}`: `SUMMARY` (title),
+`cantoria-concert-{id}-{hash of the instance id}`: `SUMMARY` (title),
 `LOCATION`, `DESCRIPTION` (status and a link to the app), `URL`
-(`/apps/notenarchiv/?event={id}`), `STATUS` (`TENTATIVE` for drafts,
+(`/apps/cantoria/?event={id}`), `STATUS` (`TENTATIVE` for drafts,
 `CONFIRMED`, `CANCELLED`), `SEQUENCE` (grows with every change), `CREATED`,
 `LAST-MODIFIED`, `DTSTAMP`. With `start_time` the times have `TZID` = the
 recorded time zone (or the account's Nextcloud time zone) and a `VTIMEZONE`
@@ -744,7 +744,7 @@ definition, `TRANSP:OPAQUE`; without a time the entry is all-day
 alarms, no `METHOD`.
 
 With `deadlines` the three preparation deadlines come as separate all-day
-entries (UID `notenarchiv-concert-{id}-deadline-{10|8|6}-{hash}`, summary
+entries (UID `cantoria-concert-{id}-deadline-{10|8|6}-{hash}`, summary
 "{title}: {task}", `TRANSP:TRANSPARENT`, cancelled with the concert), not as
 alarms: they stay visible in the calendar weeks ahead, work in every program
 and do not repeat the app's notifications. Imported concerts get no deadlines.
@@ -762,7 +762,7 @@ limited. Adding answers
 
 ```json
 { "calendar": "Personal", "concerts": 1, "created": 3, "skipped": 0, "failed": 0,
-  "updates": [{ "calendar": "Choir", "path": "calendars/anna/choir/notenarchiv-concert-3-1a2b3c4d5e6f.ics", "ics": "BEGIN:VCALENDAR…" }] }
+  "updates": [{ "calendar": "Choir", "path": "calendars/anna/choir/cantoria-concert-3-1a2b3c4d5e6f.ics", "ics": "BEGIN:VCALENDAR…" }] }
 ```
 
 An entry whose UID is not in any writable calendar of the account is created
@@ -994,7 +994,7 @@ becomes a contribution with role `unspecified`. A repeated import finds
 persons by name, never changes checked persons, only fills empty values and
 adds missing contributions. A dry run rolls back; a real import into a
 non-empty register first stores
-`_notenarchiv-app/…_persons_before-person-import.csv` (for people; cells that
+`_cantoria-app/…_persons_before-person-import.csv` (for people; cells that
 start like a formula get a leading `'`). Report:
 
 ```json
@@ -1412,7 +1412,7 @@ other check of the app. The routes and their modules:
 | `choir_handover` | `/api/choir-handover…`, `/api/settings/choir-handover…` (and `portal`) |
 | `annual_snapshot` | `/api/annual-snapshots…` |
 | `statistics` | `/api/statistics…` |
-| `agent_api` | every route of the API for agents, `/ocs/v2.php/apps/notenarchiv/api/v1/…` (404 with the message in the OCS meta); each also needs the module of its function |
+| `agent_api` | every route of the API for agents, `/ocs/v2.php/apps/cantoria/api/v1/…` (404 with the message in the OCS meta); each also needs the module of its function |
 
 `releases` and `publication` have no routes of their own: `releases` is the
 switch of the three releases (it gates `portal`, `print_station` and
@@ -1512,7 +1512,7 @@ recorded in the audit log (object type `settings`, field `module_{key}`,
 `on`/`off`, reason `preset {name}` for a preset). No password confirmation,
 like the other settings.
 
-On the command line: `occ notenarchiv:modules list|enable|disable|preset`
+On the command line: `occ cantoria:modules list|enable|disable|preset`
 (see the admin guide).
 
 ### Personal view
@@ -1954,7 +1954,7 @@ Switched off: the two routes answer 404, nothing is recorded, `revision` is
 ## Opening from the Files app (module `files_integration`)
 
 Files of the archive folder get the action **Open in music archive** in the
-Files app. The script (`js/notenarchiv-files.mjs`, built from
+Files app. The script (`js/cantoria-files.mjs`, built from
 `src/files.ts`; no score viewer, no Vue, no store) is added by
 `Listener\FilesScriptListener` on `OCA\Files\Event\LoadAdditionalScriptsEvent`
 as an init script, only for accounts with access (a role, or an admin, who
@@ -1965,8 +1965,8 @@ Files app in Nextcloud 33 to 35, `window._nc_files_scope.v4_0`):
 
 | Action id | Default action | Shown for |
 |---|---|---|
-| `notenarchiv-open-score` | yes (a click opens it) | `.musicxml` and `.mxl` while `score_viewer` is active, unless the Nextcloud viewer opens the file's MIME type (`OCA.Viewer.mimetypes`) |
-| `notenarchiv-open` | no (actions menu only) | the other extensions the file sync knows (`FileSyncService::ROLE_BY_TYPE`: PDF, MuseScore, audio, images, …) and MusicXML when the first action does not apply |
+| `cantoria-open-score` | yes (a click opens it) | `.musicxml` and `.mxl` while `score_viewer` is active, unless the Nextcloud viewer opens the file's MIME type (`OCA.Viewer.mimetypes`) |
+| `cantoria-open` | no (actions menu only) | the other extensions the file sync knows (`FileSyncService::ROLE_BY_TYPE`: PDF, MuseScore, audio, images, …) and MusicXML when the first action does not apply |
 
 Both have order 20: after the Nextcloud viewer (0), whose click wins, and
 before the download (30), the Files app's own default action. A PDF never
@@ -2080,8 +2080,8 @@ shared. Whoever sees a scan can save it; no header prevents that.
 
 Expiry (at most 183 days), revocation and the call count are the same as for
 internal links. The UI's URL of a link for choir members is
-`/apps/notenarchiv/?link={token}` (as for internal links), of a public link
-`/apps/notenarchiv/p/{token}`.
+`/apps/cantoria/?link={token}` (as for internal links), of a public link
+`/apps/cantoria/p/{token}`.
 
 `GET /api/copies/{id}/link-options` (module `excerpt_links`; roles
 librarian, conductor, operations; the account must be allowed to view the
@@ -2115,7 +2115,7 @@ public link plays a protected version only with a license with the use
 
 `GET /` for an account in a group of the role `member` without an archive
 role (module `member_links`) returns the page "Shared with me" (template
-`member`, script `js/notenarchiv-member.mjs`) with the initial state
+`member`, script `js/cantoria-member.mjs`) with the initial state
 `member`:
 
 ```json
@@ -2134,7 +2134,7 @@ under which the browser remembers the passages and settings for practising
 of the version, the same for every link to it, a hash without catalog ids;
 the public page has it, too. `offline` of the page: the module is on, and
 the version of the app names the cache of the scripts. The page answers with
-the header `X-Notenarchiv-Page: member` (a page the service worker may keep)
+the header `X-Cantoria-Page: member` (a page the service worker may keep)
 and allows `worker-src 'self'` and frames from `blob:` only: a scan is shown
 inside the page from the browser's memory (`frame-src blob:`).
 
@@ -2206,15 +2206,15 @@ listed or no longer `offline`, and a scan the link no longer offers.
 `GET /offline-worker` serves the service worker of the pages that keep
 pieces: "Shared with me", the concert folder and the page of a public link
 (`text/javascript`, `nosniff`, not cached, a policy with `connect-src
-'self'`), built into `js/notenarchiv-offline-worker.js` and registered with
+'self'`), built into `js/cantoria-offline-worker.js` and registered with
 the app's path as scope. The browser fetches it itself, also on a public
 page, so the route skips login and the CSRF check (`#[PublicPage]`, core:
 always on); it contains no data. With the modules `offline` and
 `concert_folder` both off it is a worker that deletes the caches of the app
-(`notenarchiv-…`) and unregisters itself. Each page keeps its pieces in a
-cache of its own (`notenarchiv-offline`, `notenarchiv-folder`,
-`notenarchiv-public`, with a list `…-catalog.json`) and the scripts in
-`notenarchiv-shell-<version>`; a page whose module is off removes its cache,
+(`cantoria-…`) and unregisters itself. Each page keeps its pieces in a
+cache of its own (`cantoria-offline`, `cantoria-folder`,
+`cantoria-public`, with a list `…-catalog.json`) and the scripts in
+`cantoria-shell-<version>`; a page whose module is off removes its cache,
 and the worker when nothing else is kept. What the worker does: only while
 a page has kept a piece, it answers that page, its scripts (only those
 fetched by such a page, never the archive's) and the score and scan of a kept
@@ -2231,9 +2231,9 @@ device.
 
 `GET /concert-folder` (module `concert_folder`, milestone 0.15) is a page
 of its own for the roles `conductor` and `librarian` (template
-`concert-folder`, script `js/notenarchiv-concert-folder.mjs`); other
+`concert-folder`, script `js/cantoria-concert-folder.mjs`); other
 accounts get the page "Access forbidden" with 403. It answers with the
-header `X-Notenarchiv-Page: concert-folder` and the policy of the member
+header `X-Cantoria-Page: concert-folder` and the policy of the member
 page (`worker-src 'self'`, `frame-src blob:`). Initial state `folder`:
 
 ```json
@@ -2279,7 +2279,7 @@ protected by the brute-force protection:
 
 | Path | Module | Shows |
 |---|---|---|
-| `GET /p/{token}` | `public_links` | one piece or excerpt to view and play, in Nextcloud's public layout (template `public`, script `js/notenarchiv-public.mjs`) |
+| `GET /p/{token}` | `public_links` | one piece or excerpt to view and play, in Nextcloud's public layout (template `public`, script `js/cantoria-public.mjs`) |
 | `GET /p/{token}/scan` | `public_links` | the scan the link offers, for the browser's own PDF viewer |
 | `GET /repertoire` | `public_repertoire` | the public repertoire page, rendered on the server without script |
 | `GET /offline-worker` | – (core) | the service worker of the pages that keep pieces on a device (see "The page of the choir members") |
@@ -2301,7 +2301,7 @@ module `offline` and only for a version whose public domain is confirmed
 page (UTC); the page compares it with the last check stored on the device
 to tell whether it came from the device. A second initial state `version`
 names the cache of the scripts. The page answers with the header
-`X-Notenarchiv-Page: public`.
+`X-Cantoria-Page: public`.
 
 `measureFrom` and `measureTo` are `null` for the whole piece (the header
 then says "Whole piece" instead of the measures). No note, no shelf mark, no
@@ -2540,7 +2540,7 @@ field cannot be proposed through `POST /api/proposals`.
 ```
 ## Search of Nextcloud (module `unified_search`)
 
-`Search\CatalogSearchProvider` (`OCP\Search\IProvider`, id `notenarchiv`,
+`Search\CatalogSearchProvider` (`OCP\Search\IProvider`, id `cantoria`,
 registered in `Application::register`) lists copies in the search of
 Nextcloud, in a section named "Music archive":
 
@@ -2564,4 +2564,4 @@ Nextcloud, in a section named "Music archive":
   (`ILimiter`); beyond that the section stays empty.
 - **Entry:** title `"<shelf mark> · <title>"`, subline composer · arranger ·
   status (when not active) · "Internal preservation copy", link
-  `/apps/notenarchiv/?copy={id}` (attribute `copyId`).
+  `/apps/cantoria/?copy={id}` (attribute `copyId`).

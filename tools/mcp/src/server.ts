@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -8,14 +8,14 @@
  * mode) and turns their results and errors into compact tool results.
  */
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js'
-import type { NotenarchivClient } from './client.js'
+import type { CantoriaClient } from './client.js'
 import type { ToolDefinition } from './tools.js'
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { ApiError } from './client.js'
 import { INSTRUCTIONS, TOOLS } from './tools.js'
 
-export const SERVER_NAME = 'notenarchiv'
+export const SERVER_NAME = 'cantoria'
 export const SERVER_VERSION = '1.0.0'
 
 /**
@@ -53,10 +53,10 @@ export function compact(value: unknown): unknown {
  * @param client - the API client
  * @param args - validated arguments
  */
-export async function runTool(tool: ToolDefinition, client: NotenarchivClient, args: Record<string, unknown>): Promise<CallToolResult> {
+export async function runTool(tool: ToolDefinition, client: CantoriaClient, args: Record<string, unknown>): Promise<CallToolResult> {
 	try {
 		if (tool.writes && client.readOnly) {
-			throw new ApiError('read_only', 0, 'The server runs read-only (NOTENARCHIV_READ_ONLY=1): nothing is written.')
+			throw new ApiError('read_only', 0, 'The server runs read-only (CANTORIA_READ_ONLY=1): nothing is written.')
 		}
 		// Redacted as JSON text, so that text and structured content are the same.
 		const json = client.redact(JSON.stringify(compact(await tool.run(client, args)) ?? null))
@@ -80,7 +80,7 @@ export async function runTool(tool: ToolDefinition, client: NotenarchivClient, a
  *
  * @param client - the API client (configured, with the read-only flag)
  */
-export function createServer(client: NotenarchivClient): McpServer {
+export function createServer(client: CantoriaClient): McpServer {
 	const server = new McpServer({ name: SERVER_NAME, version: SERVER_VERSION }, { instructions: INSTRUCTIONS })
 	for (const tool of availableTools(client.readOnly)) {
 		server.registerTool(tool.name, {

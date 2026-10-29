@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -81,7 +81,7 @@ function fromDraft(info: FieldInfo, value: DraftValue): FieldValue {
 
 async function save(): Promise<void> {
 	if (typeof draft.name !== 'string' || draft.name.trim() === '') {
-		error.value = t('notenarchiv', 'Please enter a name.')
+		error.value = t('cantoria', 'Please enter a name.')
 		return
 	}
 	const values: Record<string, FieldValue> = {}
@@ -108,15 +108,15 @@ async function save(): Promise<void> {
 </script>
 
 <template>
-	<ActionDialog :name="person ? t('notenarchiv', 'Edit person') : t('notenarchiv', 'New person')"
-		:submit-label="t('notenarchiv', 'Save')"
+	<ActionDialog :name="person ? t('cantoria', 'Edit person') : t('cantoria', 'New person')"
+		:submit-label="t('cantoria', 'Save')"
 		:busy="busy"
 		:error="error"
 		size="large"
 		@submit="save"
 		@close="emit('close')">
 		<p class="action-dialog__hint">
-			{{ t('notenarchiv', 'Dates as YYYY-MM-DD or YYYY (negative before Christ). Changing name, GND, Wikidata, life dates or identification removes the mark "checked".') }}
+			{{ t('cantoria', 'Dates as YYYY-MM-DD or YYYY (negative before Christ). Changing name, GND, Wikidata, life dates or identification removes the mark "checked".') }}
 		</p>
 		<div class="person-dialog__fields">
 			<FieldInput v-for="field in fields"
@@ -129,7 +129,7 @@ async function save(): Promise<void> {
 		</div>
 		<NcTextField v-if="person"
 			v-model="reason"
-			:label="t('notenarchiv', 'Reason for the change (optional)')" />
+			:label="t('cantoria', 'Reason for the change (optional)')" />
 	</ActionDialog>
 </template>
 

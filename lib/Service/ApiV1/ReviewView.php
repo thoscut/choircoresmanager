@@ -3,16 +3,16 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Service\ApiV1;
+namespace OCA\Cantoria\Service\ApiV1;
 
-use OCA\Notenarchiv\Db\ReviewPoint;
-use OCA\Notenarchiv\Db\TranscriptionReport;
-use OCA\Notenarchiv\Exception\InvalidInputException;
-use OCA\Notenarchiv\Service\Roles;
+use OCA\Cantoria\Db\ReviewPoint;
+use OCA\Cantoria\Db\TranscriptionReport;
+use OCA\Cantoria\Exception\InvalidInputException;
+use OCA\Cantoria\Service\Roles;
 
 /**
  * Reports of transcriptions, review points and correction orders in the
@@ -22,12 +22,12 @@ use OCA\Notenarchiv\Service\Roles;
  * text of a report (`raw`) and the internal key of a point never leave the
  * server.
  *
- * @psalm-import-type Warning from \OCA\Notenarchiv\Service\ImportService
- * @psalm-import-type NotenarchivTranscriptionReport from \OCA\Notenarchiv\ResponseDefinitions
- * @psalm-import-type NotenarchivReviewPoint from \OCA\Notenarchiv\ResponseDefinitions
- * @psalm-import-type NotenarchivReviewCounts from \OCA\Notenarchiv\ResponseDefinitions
- * @psalm-import-type NotenarchivCorrectionOrder from \OCA\Notenarchiv\ResponseDefinitions
- * @psalm-import-type NotenarchivReportResult from \OCA\Notenarchiv\ResponseDefinitions
+ * @psalm-import-type Warning from \OCA\Cantoria\Service\ImportService
+ * @psalm-import-type CantoriaTranscriptionReport from \OCA\Cantoria\ResponseDefinitions
+ * @psalm-import-type CantoriaReviewPoint from \OCA\Cantoria\ResponseDefinitions
+ * @psalm-import-type CantoriaReviewCounts from \OCA\Cantoria\ResponseDefinitions
+ * @psalm-import-type CantoriaCorrectionOrder from \OCA\Cantoria\ResponseDefinitions
+ * @psalm-import-type CantoriaReportResult from \OCA\Cantoria\ResponseDefinitions
  * @psalm-type Translate = callable(string, list<string|int>): string
  */
 final class ReviewView {
@@ -56,7 +56,7 @@ final class ReviewView {
 
 	/**
 	 * @param Translate $translate translates a message with its parameters
-	 * @return NotenarchivTranscriptionReport
+	 * @return CantoriaTranscriptionReport
 	 */
 	public static function report(TranscriptionReport $report, string $uid, callable $translate): array {
 		$summary = $report->summaryData();
@@ -86,7 +86,7 @@ final class ReviewView {
 	}
 
 	/**
-	 * @return NotenarchivReviewPoint
+	 * @return CantoriaReviewPoint
 	 */
 	public static function point(ReviewPoint $point, string $uid): array {
 		return [
@@ -120,7 +120,7 @@ final class ReviewView {
 	 * Number of points per status, every status named.
 	 *
 	 * @param list<ReviewPoint> $points
-	 * @return NotenarchivReviewCounts
+	 * @return CantoriaReviewCounts
 	 */
 	public static function counts(array $points): array {
 		$counts = ['open' => 0, 'confirmed' => 0, 'correct' => 0, 'corrected' => 0, 'question' => 0, 'dismissed' => 0];
@@ -135,7 +135,7 @@ final class ReviewView {
 
 	/**
 	 * @param array<string, mixed> $row an order as ReviewService::orders() lists it (point columns plus context)
-	 * @return NotenarchivCorrectionOrder
+	 * @return CantoriaCorrectionOrder
 	 */
 	public static function order(array $row, string $uid): array {
 		return [
@@ -171,7 +171,7 @@ final class ReviewView {
 	 * @param array{report: TranscriptionReport, unchanged: bool, points: array{created: int, kept: int, closed: int, open: int},
 	 *     proposals: int, proposalsSkipped: bool, warnings: list<Warning>} $result as ReviewService::ingestForCopy() returns it
 	 * @param Translate $translate
-	 * @return NotenarchivReportResult
+	 * @return CantoriaReportResult
 	 */
 	public static function result(array $result, string $uid, callable $translate): array {
 		return [

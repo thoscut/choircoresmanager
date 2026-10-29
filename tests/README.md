@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 # Tests
@@ -292,9 +292,9 @@ of the demo (1-1, 2-1) are counted apart (`reports`: 2 files, 2 assigned, 2
 imported; 32 new file rows); the rights notices of the 7 MusicXML files are
 read (`rightsNotices`: 7 read, 7 with a notice, 1 proposal for 3-1, which is
 marked protected while its file names CC0). It switches every module on
-(`occ notenarchiv:modules preset complete`; a new installation starts with
+(`occ cantoria:modules preset complete`; a new installation starts with
 the preset "standard") and, after the import, the interface for agents
-(`occ notenarchiv:modules enable agent_api`, which no preset touches). Then
+(`occ cantoria:modules enable agent_api`, which no preset touches). Then
 it runs the tests with these shelf marks of the demo catalog:
 
 | Script | Arguments | Why |
@@ -335,7 +335,7 @@ report again changes nothing; a report naming 3-1 is refused). It checks
 that confirming rights, deciding a review point and saving a correction
 with the app password are refused with 403 (internal API) and have no
 route in api/v1, that
-`occ notenarchiv:modules disable agent_api` makes the API answer 404 with
+`occ cantoria:modules disable agent_api` makes the API answer 404 with
 OCS meta, that the server log holds no secret, and that read-only mode
 offers no writing tools; then it deletes the app password and checks that
 it no longer signs in. `tools/ci/agent-demo-cleanup.php` rejects the
@@ -358,9 +358,9 @@ of these lists must never come before them.
 Environment variables `CI_USER`, `CI_GROUP`, `DEMO_DIR`, `PHP`,
 `AGENT_USER`, `AGENT_GROUP`, `NC_URL` and `NC_PORT` change the defaults. The script ends with exit code 0 only when every check and every
 test passed and prints the lines of a failed test. On an instance that
-already holds a catalog, back it up first (`occ notenarchiv:export --full`),
+already holds a catalog, back it up first (`occ cantoria:export --full`),
 empty it, run the script with an account of its own, then empty the catalog
-again, restore the backup (`occ notenarchiv:restore`), delete the account and
+again, restore the backup (`occ cantoria:restore`), delete the account and
 set the archive folder and the roles back.
 
 ## Static analysis and coding standard
@@ -388,7 +388,7 @@ of its neighbours, for example in PHP after `declare(strict_types=1);`:
 
 ```php
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 ```

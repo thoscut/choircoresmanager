@@ -3,14 +3,14 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\BackgroundJob;
+namespace OCA\Cantoria\BackgroundJob;
 
-use OCA\Notenarchiv\Service\ChecksumService;
-use OCA\Notenarchiv\Service\Modules;
+use OCA\Cantoria\Service\ChecksumService;
+use OCA\Cantoria\Service\Modules;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJob;
 use OCP\BackgroundJob\TimedJob;
@@ -40,9 +40,9 @@ class ChecksumJob extends TimedJob {
 		}
 		$result = $this->checksums->run();
 		if ($result['mismatches'] > 0) {
-			$this->logger->warning('Notenarchiv: checksum differences found: ' . json_encode($result, JSON_THROW_ON_ERROR));
+			$this->logger->warning('Cantoria: checksum differences found: ' . json_encode($result, JSON_THROW_ON_ERROR));
 		} elseif ($result['checked'] > 0) {
-			$this->logger->debug('Notenarchiv: checksums checked: ' . json_encode($result, JSON_THROW_ON_ERROR));
+			$this->logger->debug('Cantoria: checksums checked: ' . json_encode($result, JSON_THROW_ON_ERROR));
 		}
 	}
 }

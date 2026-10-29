@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -28,37 +28,37 @@ export class ConfigError extends Error {
 const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]'])
 
 /**
- * Reads NOTENARCHIV_URL, NOTENARCHIV_USER, NOTENARCHIV_APP_PASSWORD and
- * NOTENARCHIV_READ_ONLY.
+ * Reads CANTORIA_URL, CANTORIA_USER, CANTORIA_APP_PASSWORD and
+ * CANTORIA_READ_ONLY.
  *
  * @param env - the process environment
  */
 export function readConfig(env: NodeJS.ProcessEnv): Config {
-	const rawUrl = required(env, 'NOTENARCHIV_URL')
+	const rawUrl = required(env, 'CANTORIA_URL')
 	let url: URL
 	try {
 		url = new URL(rawUrl)
 	} catch {
-		throw new ConfigError('NOTENARCHIV_URL is not a URL, e.g. https://cloud.example.org')
+		throw new ConfigError('CANTORIA_URL is not a URL, e.g. https://cloud.example.org')
 	}
 	if (url.username !== '' || url.password !== '') {
-		throw new ConfigError('NOTENARCHIV_URL must not contain a login; use NOTENARCHIV_USER and NOTENARCHIV_APP_PASSWORD.')
+		throw new ConfigError('CANTORIA_URL must not contain a login; use CANTORIA_USER and CANTORIA_APP_PASSWORD.')
 	}
 	if (url.protocol !== 'https:' && !(url.protocol === 'http:' && LOCAL_HOSTS.has(url.hostname))) {
-		throw new ConfigError('NOTENARCHIV_URL must use https (plain http only for localhost).')
+		throw new ConfigError('CANTORIA_URL must use https (plain http only for localhost).')
 	}
 	if (url.search !== '' || url.hash !== '') {
-		throw new ConfigError('NOTENARCHIV_URL must not contain a query or a fragment.')
+		throw new ConfigError('CANTORIA_URL must not contain a query or a fragment.')
 	}
-	const user = required(env, 'NOTENARCHIV_USER')
+	const user = required(env, 'CANTORIA_USER')
 	if (/[:\s]/.test(user)) {
-		throw new ConfigError('NOTENARCHIV_USER must not contain a colon or white space.')
+		throw new ConfigError('CANTORIA_USER must not contain a colon or white space.')
 	}
 	return {
 		baseUrl: (url.origin + url.pathname).replace(/\/+$/, ''),
 		user,
-		appPassword: required(env, 'NOTENARCHIV_APP_PASSWORD'),
-		readOnly: flag(env, 'NOTENARCHIV_READ_ONLY'),
+		appPassword: required(env, 'CANTORIA_APP_PASSWORD'),
+		readOnly: flag(env, 'CANTORIA_READ_ONLY'),
 	}
 }
 

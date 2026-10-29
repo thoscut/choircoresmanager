@@ -1,5 +1,5 @@
 {
-  "name": "notenarchiv",
+  "name": "cantoria",
   "version": "0.15.0",
   "license": "AGPL-3.0-or-later",
   "homepage": "https://github.com/thoscut/choircoresmanager",
@@ -57,5 +57,5 @@
     "node": "^24.0.0",
     "npm": "^11.3.0"
   },
-  "description": "Notenarchiv für Chöre — Nextcloud-App"
+  "description": "Cantoria – Notenarchiv für Chöre (Nextcloud-App)"
 }

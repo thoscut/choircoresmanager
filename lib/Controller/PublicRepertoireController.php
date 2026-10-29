@@ -3,17 +3,17 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Controller;
+namespace OCA\Cantoria\Controller;
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Attribute\RequiresModule;
-use OCA\Notenarchiv\Middleware\ModuleMiddleware;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\PublicRepertoireService;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Attribute\RequiresModule;
+use OCA\Cantoria\Middleware\ModuleMiddleware;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\PublicRepertoireService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\AnonRateLimit;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
@@ -57,13 +57,13 @@ class PublicRepertoireController extends Controller {
 	#[NoCSRFRequired]
 	#[AnonRateLimit(limit: 60, period: 600)]
 	#[UserRateLimit(limit: 120, period: 600)]
-	#[BruteForceProtection(action: 'notenarchiv_repertoire')]
+	#[BruteForceProtection(action: 'cantoria_repertoire')]
 	#[FrontpageRoute(verb: 'GET', url: '/repertoire')]
 	public function index(): Response {
 		try {
 			$entries = $this->repertoire->entries();
 		} catch (\Throwable $e) {
-			$this->logger->error('Notenarchiv: public repertoire page: ' . $e->getMessage(), ['exception' => $e]);
+			$this->logger->error('Cantoria: public repertoire page: ' . $e->getMessage(), ['exception' => $e]);
 			return ModuleMiddleware::notFoundPage();
 		}
 		$response = new PublicTemplateResponse(Application::APP_ID, 'repertoire', [

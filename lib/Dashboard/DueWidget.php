@@ -3,17 +3,17 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Dashboard;
+namespace OCA\Cantoria\Dashboard;
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Service\DueService;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\PersonalView;
-use OCA\Notenarchiv\Service\Roles;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Service\DueService;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\PersonalView;
+use OCA\Cantoria\Service\Roles;
 use OCP\Dashboard\IAPIWidgetV2;
 use OCP\Dashboard\IButtonWidget;
 use OCP\Dashboard\IConditionalWidget;
@@ -42,7 +42,7 @@ use OCP\IUserSession;
  * loads no script into the dashboard.
  */
 class DueWidget implements IAPIWidgetV2, IIconWidget, IButtonWidget, IConditionalWidget {
-	public const ID = 'notenarchiv-due';
+	public const ID = 'cantoria-due';
 
 	public function __construct(
 		private IL10N $l,

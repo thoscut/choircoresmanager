@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -81,28 +81,28 @@ export function davUrl(root: string, path: string): string {
  */
 export function calendarMessage(result: CalendarAddResult, updated: number, failedUpdates: number): CalendarMessage {
 	if (result.concerts === 0) {
-		return { text: t('notenarchiv', 'There are no upcoming concerts.'), type: 'warning' }
+		return { text: t('cantoria', 'There are no upcoming concerts.'), type: 'warning' }
 	}
 	const parts: string[] = []
 	if (result.created > 0) {
-		parts.push(n('notenarchiv', '%n entry has been added to the calendar "{calendar}".', '%n entries have been added to the calendar "{calendar}".',
+		parts.push(n('cantoria', '%n entry has been added to the calendar "{calendar}".', '%n entries have been added to the calendar "{calendar}".',
 			result.created, { calendar: result.calendar }))
 	}
 	if (updated > 0) {
 		const calendars = [...new Set(result.updates.map((update) => update.calendar))].join(', ')
-		parts.push(n('notenarchiv', '%n entry was already in your calendar "{calendars}" and has been updated there.',
+		parts.push(n('cantoria', '%n entry was already in your calendar "{calendars}" and has been updated there.',
 			'%n entries were already in your calendars ({calendars}) and have been updated there.', updated, { calendars }))
 	}
 	if (result.skipped > 0) {
-		parts.push(t('notenarchiv', 'Cancelled concerts are not added; entries that are already in a calendar are updated.'))
+		parts.push(t('cantoria', 'Cancelled concerts are not added; entries that are already in a calendar are updated.'))
 	}
 	const failed = result.failed + failedUpdates
 	if (failed > 0) {
-		parts.push(n('notenarchiv', '%n entry could not be saved. Please try again later or use the calendar file.',
+		parts.push(n('cantoria', '%n entry could not be saved. Please try again later or use the calendar file.',
 			'%n entries could not be saved. Please try again later or use the calendar file.', failed))
 	}
 	if (parts.length === 0) {
-		parts.push(t('notenarchiv', 'Nothing has changed.'))
+		parts.push(t('cantoria', 'Nothing has changed.'))
 	}
 	const saved = result.created + updated
 	let type: CalendarMessage['type'] = 'success'

@@ -3,18 +3,18 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Service;
+namespace OCA\Cantoria\Service;
 
-use OCA\Notenarchiv\Db\ArchiveFile;
-use OCA\Notenarchiv\Db\ArchiveFileMapper;
-use OCA\Notenarchiv\Db\ProposalMapper;
-use OCA\Notenarchiv\Db\WorkVersion;
-use OCA\Notenarchiv\Exception\InvalidInputException;
-use OCA\Notenarchiv\Exception\UserFacingException;
+use OCA\Cantoria\Db\ArchiveFile;
+use OCA\Cantoria\Db\ArchiveFileMapper;
+use OCA\Cantoria\Db\ProposalMapper;
+use OCA\Cantoria\Db\WorkVersion;
+use OCA\Cantoria\Exception\InvalidInputException;
+use OCA\Cantoria\Exception\UserFacingException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Files\File;
 use OCP\IL10N;
@@ -71,7 +71,7 @@ class RightsNoticeService {
 			try {
 				$notice = $this->read($node);
 			} catch (\Throwable $e) {
-				$this->logger->info('Notenarchiv: rights notice of ' . $file->getPath() . ' not read: ' . $e->getMessage());
+				$this->logger->info('Cantoria: rights notice of ' . $file->getPath() . ' not read: ' . $e->getMessage());
 				$notice = null;
 				$counts['failed']++;
 			}
@@ -186,7 +186,7 @@ class RightsNoticeService {
 			return 1;
 		} catch (UserFacingException $e) {
 			// e.g. an account without a role that may propose (file sync by occ)
-			$this->logger->info('Notenarchiv: no proposal from the rights notice of ' . $file->getPath() . ': ' . $e->getMessage());
+			$this->logger->info('Cantoria: no proposal from the rights notice of ' . $file->getPath() . ': ' . $e->getMessage());
 			return 0;
 		}
 	}

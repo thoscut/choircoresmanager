@@ -3,16 +3,16 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Service;
+namespace OCA\Cantoria\Service;
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Exception\AccessDeniedException;
-use OCA\Notenarchiv\Settings\Admin;
-use OCA\Notenarchiv\Settings\AdminSection;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Exception\AccessDeniedException;
+use OCA\Cantoria\Settings\Admin;
+use OCA\Cantoria\Settings\AdminSection;
 use OCP\IAppConfig;
 use OCP\IGroupManager;
 use OCP\IUserManager;
@@ -210,7 +210,7 @@ class Roles {
 				}
 			}
 		} catch (\Exception $e) {
-			$this->logger->warning('Notenarchiv: the delegated settings could not be read: ' . $e->getMessage(), ['exception' => $e]);
+			$this->logger->warning('Cantoria: the delegated settings could not be read: ' . $e->getMessage(), ['exception' => $e]);
 		}
 		return false;
 	}

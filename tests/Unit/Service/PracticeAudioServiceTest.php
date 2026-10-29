@@ -3,25 +3,25 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Service;
+namespace OCA\Cantoria\Tests\Unit\Service;
 
-use OCA\Notenarchiv\Db\Copy;
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\WorkVersion;
-use OCA\Notenarchiv\Db\WorkVersionMapper;
-use OCA\Notenarchiv\Exception\AccessDeniedException;
-use OCA\Notenarchiv\Exception\InvalidInputException;
-use OCA\Notenarchiv\Service\AuditLog;
-use OCA\Notenarchiv\Service\Input;
-use OCA\Notenarchiv\Service\PracticeAudioService;
-use OCA\Notenarchiv\Service\RightsPolicy;
-use OCA\Notenarchiv\Service\RightsService;
-use OCA\Notenarchiv\Service\Roles;
-use OCA\Notenarchiv\Service\SharedLinkService;
+use OCA\Cantoria\Db\Copy;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Db\WorkVersion;
+use OCA\Cantoria\Db\WorkVersionMapper;
+use OCA\Cantoria\Exception\AccessDeniedException;
+use OCA\Cantoria\Exception\InvalidInputException;
+use OCA\Cantoria\Service\AuditLog;
+use OCA\Cantoria\Service\Input;
+use OCA\Cantoria\Service\PracticeAudioService;
+use OCA\Cantoria\Service\RightsPolicy;
+use OCA\Cantoria\Service\RightsService;
+use OCA\Cantoria\Service\Roles;
+use OCA\Cantoria\Service\SharedLinkService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;

@@ -3,43 +3,43 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Controller;
+namespace OCA\Cantoria\Tests\Unit\Controller;
 
-use OCA\Notenarchiv\Controller\ApiV1CatalogController;
-use OCA\Notenarchiv\Controller\ApiV1ConcertController;
-use OCA\Notenarchiv\Controller\ApiV1ProposalController;
-use OCA\Notenarchiv\Controller\ApiV1ReviewController;
-use OCA\Notenarchiv\Controller\ApiV1StatusController;
-use OCA\Notenarchiv\Controller\ApiV1TaskController;
-use OCA\Notenarchiv\Db\ArchiveFile;
-use OCA\Notenarchiv\Db\Copy;
-use OCA\Notenarchiv\Db\Event;
-use OCA\Notenarchiv\Db\Proposal;
-use OCA\Notenarchiv\Db\ReviewPoint;
-use OCA\Notenarchiv\Db\Task;
-use OCA\Notenarchiv\Db\TranscriptionReport;
-use OCA\Notenarchiv\Db\Work;
-use OCA\Notenarchiv\Db\WorkVersion;
-use OCA\Notenarchiv\Exception\AccessDeniedException;
-use OCA\Notenarchiv\Exception\InvalidInputException;
-use OCA\Notenarchiv\Exception\ModuleDisabledException;
-use OCA\Notenarchiv\Exception\NotFoundException;
-use OCA\Notenarchiv\Service\ApiV1\Page;
-use OCA\Notenarchiv\Service\ApiV1\ReviewView;
-use OCA\Notenarchiv\Service\CatalogService;
-use OCA\Notenarchiv\Service\DueService;
-use OCA\Notenarchiv\Service\EventService;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\ProposalService;
-use OCA\Notenarchiv\Service\ReviewService;
-use OCA\Notenarchiv\Service\RightsPolicy;
-use OCA\Notenarchiv\Service\Roles;
-use OCA\Notenarchiv\Service\TaskService;
-use OCA\Notenarchiv\Tests\Unit\Support\ModuleSwitches;
+use OCA\Cantoria\Controller\ApiV1CatalogController;
+use OCA\Cantoria\Controller\ApiV1ConcertController;
+use OCA\Cantoria\Controller\ApiV1ProposalController;
+use OCA\Cantoria\Controller\ApiV1ReviewController;
+use OCA\Cantoria\Controller\ApiV1StatusController;
+use OCA\Cantoria\Controller\ApiV1TaskController;
+use OCA\Cantoria\Db\ArchiveFile;
+use OCA\Cantoria\Db\Copy;
+use OCA\Cantoria\Db\Event;
+use OCA\Cantoria\Db\Proposal;
+use OCA\Cantoria\Db\ReviewPoint;
+use OCA\Cantoria\Db\Task;
+use OCA\Cantoria\Db\TranscriptionReport;
+use OCA\Cantoria\Db\Work;
+use OCA\Cantoria\Db\WorkVersion;
+use OCA\Cantoria\Exception\AccessDeniedException;
+use OCA\Cantoria\Exception\InvalidInputException;
+use OCA\Cantoria\Exception\ModuleDisabledException;
+use OCA\Cantoria\Exception\NotFoundException;
+use OCA\Cantoria\Service\ApiV1\Page;
+use OCA\Cantoria\Service\ApiV1\ReviewView;
+use OCA\Cantoria\Service\CatalogService;
+use OCA\Cantoria\Service\DueService;
+use OCA\Cantoria\Service\EventService;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\ProposalService;
+use OCA\Cantoria\Service\ReviewService;
+use OCA\Cantoria\Service\RightsPolicy;
+use OCA\Cantoria\Service\Roles;
+use OCA\Cantoria\Service\TaskService;
+use OCA\Cantoria\Tests\Unit\Support\ModuleSwitches;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\OCS\OCSBadRequestException;
 use OCP\AppFramework\OCS\OCSException;

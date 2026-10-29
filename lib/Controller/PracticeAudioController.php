@@ -3,15 +3,15 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Controller;
+namespace OCA\Cantoria\Controller;
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Attribute\RequiresModule;
-use OCA\Notenarchiv\Service\PracticeAudioService;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Attribute\RequiresModule;
+use OCA\Cantoria\Service\PracticeAudioService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\FrontpageRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;

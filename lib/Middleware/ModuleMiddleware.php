@@ -3,15 +3,15 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Middleware;
+namespace OCA\Cantoria\Middleware;
 
-use OCA\Notenarchiv\Attribute\RequiresModule;
-use OCA\Notenarchiv\Exception\ModuleDisabledException;
-use OCA\Notenarchiv\Service\Modules;
+use OCA\Cantoria\Attribute\RequiresModule;
+use OCA\Cantoria\Exception\ModuleDisabledException;
+use OCA\Cantoria\Service\Modules;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\PublicPage;

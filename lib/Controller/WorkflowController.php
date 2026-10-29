@@ -3,26 +3,26 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Controller;
+namespace OCA\Cantoria\Controller;
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Attribute\RequiresModule;
-use OCA\Notenarchiv\Db\Proposal;
-use OCA\Notenarchiv\Exception\InvalidInputException;
-use OCA\Notenarchiv\Service\ExportService;
-use OCA\Notenarchiv\Service\FolderBookService;
-use OCA\Notenarchiv\Service\FullBackupService;
-use OCA\Notenarchiv\Service\LicenseService;
-use OCA\Notenarchiv\Service\ProposalService;
-use OCA\Notenarchiv\Service\ReleaseListService;
-use OCA\Notenarchiv\Service\RightsService;
-use OCA\Notenarchiv\Service\Roles;
-use OCA\Notenarchiv\Service\UserFiles;
-use OCA\Notenarchiv\Service\ValidVersionService;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Attribute\RequiresModule;
+use OCA\Cantoria\Db\Proposal;
+use OCA\Cantoria\Exception\InvalidInputException;
+use OCA\Cantoria\Service\ExportService;
+use OCA\Cantoria\Service\FolderBookService;
+use OCA\Cantoria\Service\FullBackupService;
+use OCA\Cantoria\Service\LicenseService;
+use OCA\Cantoria\Service\ProposalService;
+use OCA\Cantoria\Service\ReleaseListService;
+use OCA\Cantoria\Service\RightsService;
+use OCA\Cantoria\Service\Roles;
+use OCA\Cantoria\Service\UserFiles;
+use OCA\Cantoria\Service\ValidVersionService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\FrontpageRoute;
@@ -260,7 +260,7 @@ class WorkflowController extends Controller {
 			return new JSONResponse(['error' => $this->l->t('The complete backup contains the names of choir members. It is open to the music librarians, the conductor, readers and administrators.')],
 				Http::STATUS_FORBIDDEN);
 		}
-		$name = 'notenarchiv-backup-' . gmdate('Ymd-His') . '.json';
+		$name = 'cantoria-backup-' . gmdate('Ymd-His') . '.json';
 		$response = new DataDownloadResponse($this->fullBackupService->export(), $name, 'application/json');
 		$response->addHeader('X-Content-Type-Options', 'nosniff');
 		return $response;

@@ -3,28 +3,28 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Service;
+namespace OCA\Cantoria\Tests\Unit\Service;
 
-use OCA\Notenarchiv\Db\ArchiveFile;
-use OCA\Notenarchiv\Db\ArchiveFileMapper;
-use OCA\Notenarchiv\Db\Copy;
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\WorkVersion;
-use OCA\Notenarchiv\Db\WorkVersionMapper;
-use OCA\Notenarchiv\Exception\AccessDeniedException;
-use OCA\Notenarchiv\Exception\InvalidInputException;
-use OCA\Notenarchiv\Exception\NotSharedException;
-use OCA\Notenarchiv\Service\ArchiveAccess;
-use OCA\Notenarchiv\Service\BoundedZip;
-use OCA\Notenarchiv\Service\RightsPolicy;
-use OCA\Notenarchiv\Service\ScoreService;
-use OCA\Notenarchiv\Service\UserFiles;
-use OCA\Notenarchiv\Tests\Unit\Support\ModuleSwitches;
-use OCA\Notenarchiv\Tests\Unit\Support\TempFiles;
+use OCA\Cantoria\Db\ArchiveFile;
+use OCA\Cantoria\Db\ArchiveFileMapper;
+use OCA\Cantoria\Db\Copy;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Db\WorkVersion;
+use OCA\Cantoria\Db\WorkVersionMapper;
+use OCA\Cantoria\Exception\AccessDeniedException;
+use OCA\Cantoria\Exception\InvalidInputException;
+use OCA\Cantoria\Exception\NotSharedException;
+use OCA\Cantoria\Service\ArchiveAccess;
+use OCA\Cantoria\Service\BoundedZip;
+use OCA\Cantoria\Service\RightsPolicy;
+use OCA\Cantoria\Service\ScoreService;
+use OCA\Cantoria\Service\UserFiles;
+use OCA\Cantoria\Tests\Unit\Support\ModuleSwitches;
+use OCA\Cantoria\Tests\Unit\Support\TempFiles;
 use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;

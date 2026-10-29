@@ -3,21 +3,21 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Controller;
+namespace OCA\Cantoria\Controller;
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Attribute\RequiresModule;
-use OCA\Notenarchiv\Exception\AccessDeniedException;
-use OCA\Notenarchiv\Exception\NotFoundException;
-use OCA\Notenarchiv\Exception\UnknownLinkException;
-use OCA\Notenarchiv\Exception\UserFacingException;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\PracticeAudioService;
-use OCA\Notenarchiv\Service\SharedLinkService;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Attribute\RequiresModule;
+use OCA\Cantoria\Exception\AccessDeniedException;
+use OCA\Cantoria\Exception\NotFoundException;
+use OCA\Cantoria\Exception\UnknownLinkException;
+use OCA\Cantoria\Exception\UserFacingException;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\PracticeAudioService;
+use OCA\Cantoria\Service\SharedLinkService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
@@ -70,7 +70,7 @@ class MemberController extends Controller {
 	 */
 	#[NoAdminRequired]
 	#[UserRateLimit(limit: 120, period: 600)]
-	#[BruteForceProtection(action: 'notenarchiv_link')]
+	#[BruteForceProtection(action: 'cantoria_link')]
 	#[FrontpageRoute(verb: 'GET', url: '/api/member/links/{token}/score', requirements: ['token' => '[A-Za-z0-9]{32}'])]
 	public function score(string $token): Response {
 		if ($this->userId === null) {
@@ -99,7 +99,7 @@ class MemberController extends Controller {
 	#[NoAdminRequired]
 	#[NoCSRFRequired]
 	#[UserRateLimit(limit: 60, period: 600)]
-	#[BruteForceProtection(action: 'notenarchiv_link')]
+	#[BruteForceProtection(action: 'cantoria_link')]
 	#[FrontpageRoute(verb: 'GET', url: '/api/member/links/{token}/scan', requirements: ['token' => '[A-Za-z0-9]{32}'])]
 	public function scan(string $token): Response {
 		if ($this->userId === null) {
@@ -140,7 +140,7 @@ class MemberController extends Controller {
 	#[NoAdminRequired]
 	#[RequiresModule(Modules::MEMBER_PRACTICE_AUDIO)]
 	#[UserRateLimit(limit: 30, period: 600)]
-	#[BruteForceProtection(action: 'notenarchiv_link')]
+	#[BruteForceProtection(action: 'cantoria_link')]
 	#[FrontpageRoute(verb: 'POST', url: '/api/member/links/{token}/practice-audio', requirements: ['token' => '[A-Za-z0-9]{32}'])]
 	public function practiceAudio(string $token, array $export = []): JSONResponse {
 		return $this->run(fn (string $uid) => $this->practiceAudio->authorizeForMember($token, $export, $uid));
@@ -154,7 +154,7 @@ class MemberController extends Controller {
 	#[NoAdminRequired]
 	#[RequiresModule(Modules::OFFLINE)]
 	#[UserRateLimit(limit: 120, period: 600)]
-	#[BruteForceProtection(action: 'notenarchiv_link')]
+	#[BruteForceProtection(action: 'cantoria_link')]
 	#[FrontpageRoute(verb: 'GET', url: '/api/member/links')]
 	public function links(): JSONResponse {
 		return $this->run(fn (string $uid): array => ['links' => $this->translatedLinks($uid)]);

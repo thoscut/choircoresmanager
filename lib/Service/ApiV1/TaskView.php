@@ -3,21 +3,21 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Service\ApiV1;
+namespace OCA\Cantoria\Service\ApiV1;
 
-use OCA\Notenarchiv\Db\Proposal;
-use OCA\Notenarchiv\Exception\InvalidInputException;
+use OCA\Cantoria\Db\Proposal;
+use OCA\Cantoria\Exception\InvalidInputException;
 
 /**
  * Tasks and proposals in the API for agents (v1). Account names are left
  * out; `own` tells whether the calling account created the entry.
  *
- * @psalm-import-type NotenarchivTask from \OCA\Notenarchiv\ResponseDefinitions
- * @psalm-import-type NotenarchivProposal from \OCA\Notenarchiv\ResponseDefinitions
+ * @psalm-import-type CantoriaTask from \OCA\Cantoria\ResponseDefinitions
+ * @psalm-import-type CantoriaProposal from \OCA\Cantoria\ResponseDefinitions
  */
 final class TaskView {
 	/** Which tasks a list shows: for the own roles, open and answered, or all */
@@ -35,7 +35,7 @@ final class TaskView {
 
 	/**
 	 * @param array<string, mixed> $row a task as TaskService lists it (columns plus shelf mark and title)
-	 * @return NotenarchivTask
+	 * @return CantoriaTask
 	 */
 	public static function task(array $row, string $uid): array {
 		return [
@@ -75,7 +75,7 @@ final class TaskView {
 	}
 
 	/**
-	 * @return NotenarchivProposal
+	 * @return CantoriaProposal
 	 */
 	public static function proposal(Proposal $proposal, string $uid): array {
 		try {

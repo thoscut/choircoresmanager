@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -78,24 +78,24 @@ const busy = ref(false)
 const error = ref('')
 
 const title = computed(() => props.mode === 'issue'
-	? t('notenarchiv', 'Issue folder {label}', { label: props.folder.label })
-	: t('notenarchiv', 'Take back folder {label}', { label: props.folder.label }))
+	? t('cantoria', 'Issue folder {label}', { label: props.folder.label })
+	: t('cantoria', 'Take back folder {label}', { label: props.folder.label }))
 
 async function save(): Promise<void> {
 	error.value = ''
 	if (draft.day === '' || draft.day > today) {
-		error.value = t('notenarchiv', 'Please enter a day up to today.')
+		error.value = t('cantoria', 'Please enter a day up to today.')
 		return
 	}
 	busy.value = true
 	try {
 		if (props.mode === 'issue') {
 			if (draft.kind === 'account' && draft.account === null) {
-				error.value = t('notenarchiv', 'Please choose the Nextcloud account, or enter the name instead.')
+				error.value = t('cantoria', 'Please choose the Nextcloud account, or enter the name instead.')
 				return
 			}
 			if (draft.kind === 'name' && draft.name.trim() === '') {
-				error.value = t('notenarchiv', 'Please enter the name of the person.')
+				error.value = t('cantoria', 'Please enter the name of the person.')
 				return
 			}
 			await issueFolder(props.folder.id, {
@@ -105,7 +105,7 @@ async function save(): Promise<void> {
 			})
 		} else if (props.folder.loan) {
 			if (draft.day < props.folder.loan.issuedOn) {
-				error.value = t('notenarchiv', 'The folder cannot come back before it was handed out ({date}). Please check the date.', { date: formatDate(props.folder.loan.issuedOn) })
+				error.value = t('cantoria', 'The folder cannot come back before it was handed out ({date}). Please check the date.', { date: formatDate(props.folder.loan.issuedOn) })
 				return
 			}
 			await returnFolder(props.folder.loan.id, {
@@ -126,53 +126,53 @@ async function save(): Promise<void> {
 
 <template>
 	<ActionDialog :name="title"
-		:submit-label="mode === 'issue' ? t('notenarchiv', 'Issue') : t('notenarchiv', 'Take back')"
+		:submit-label="mode === 'issue' ? t('cantoria', 'Issue') : t('cantoria', 'Take back')"
 		:busy="busy"
 		:error="error"
 		@submit="save"
 		@close="emit('close')">
 		<template v-if="mode === 'issue'">
 			<fieldset class="loan-dialog__group">
-				<legend>{{ t('notenarchiv', 'To whom?') }}</legend>
+				<legend>{{ t('cantoria', 'To whom?') }}</legend>
 				<NcCheckboxRadioSwitch v-model="draft.kind"
 					type="radio"
 					value="name"
 					name="loan-holder">
-					{{ t('notenarchiv', 'Name of the person') }}
+					{{ t('cantoria', 'Name of the person') }}
 				</NcCheckboxRadioSwitch>
 				<NcCheckboxRadioSwitch v-model="draft.kind"
 					type="radio"
 					value="account"
 					name="loan-holder">
-					{{ t('notenarchiv', 'Nextcloud account') }}
+					{{ t('cantoria', 'Nextcloud account') }}
 				</NcCheckboxRadioSwitch>
 			</fieldset>
 			<NcTextField v-if="draft.kind === 'name'"
 				v-model="draft.name"
-				:label="t('notenarchiv', 'Name (required)')"
+				:label="t('cantoria', 'Name (required)')"
 				maxlength="255"
 				required />
 			<NcSelect v-else
 				v-model="draft.account"
-				:input-label="t('notenarchiv', 'Nextcloud account (required)')"
-				:placeholder="t('notenarchiv', 'Type at least two letters of the name')"
+				:input-label="t('cantoria', 'Nextcloud account (required)')"
+				:placeholder="t('cantoria', 'Type at least two letters of the name')"
 				:options="accountOptions"
 				:loading="searching"
 				:filterable="false"
 				@search="onSearch" />
-			<DateField v-model="draft.day" :label="t('notenarchiv', 'Handed out on')" :max="today" />
+			<DateField v-model="draft.day" :label="t('cantoria', 'Handed out on')" :max="today" />
 		</template>
 
 		<template v-else>
 			<p v-if="folder.loan">
-				{{ t('notenarchiv', 'Out with {holder} since {date}.', { holder: holderText(folder.loan), date: formatDate(folder.loan.issuedOn) }) }}
+				{{ t('cantoria', 'Out with {holder} since {date}.', { holder: holderText(folder.loan), date: formatDate(folder.loan.issuedOn) }) }}
 			</p>
 			<DateField v-model="draft.day"
-				:label="t('notenarchiv', 'Taken back on')"
+				:label="t('cantoria', 'Taken back on')"
 				:min="folder.loan?.issuedOn"
 				:max="today" />
 			<fieldset class="loan-dialog__group">
-				<legend>{{ t('notenarchiv', 'Condition') }}</legend>
+				<legend>{{ t('cantoria', 'Condition') }}</legend>
 				<NcCheckboxRadioSwitch v-for="wear in WEARS"
 					:key="wear"
 					v-model="draft.wear"
@@ -183,15 +183,15 @@ async function save(): Promise<void> {
 				</NcCheckboxRadioSwitch>
 			</fieldset>
 			<NcTextArea v-model="draft.missing"
-				:label="t('notenarchiv', 'Missing sheets')"
-				:helper-text="t('notenarchiv', 'What was missing so far is filled in. Empty when nothing is missing.')"
+				:label="t('cantoria', 'Missing sheets')"
+				:helper-text="t('cantoria', 'What was missing so far is filled in. Empty when nothing is missing.')"
 				resize="vertical"
 				rows="2" />
 		</template>
 
 		<NcTextArea v-model="draft.note"
-			:label="t('notenarchiv', 'Note')"
-			:helper-text="t('notenarchiv', 'Removed together with the name after the retention period.')"
+			:label="t('cantoria', 'Note')"
+			:helper-text="t('cantoria', 'Removed together with the name after the retention period.')"
 			resize="vertical"
 			rows="2" />
 	</ActionDialog>

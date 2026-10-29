@@ -3,15 +3,15 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Notification;
+namespace OCA\Cantoria\Tests\Unit\Notification;
 
-use OCA\Notenarchiv\Notification\Notifier;
-use OCA\Notenarchiv\Service\NotificationService;
-use OCA\Notenarchiv\Tests\Unit\Support\ModuleSwitches;
+use OCA\Cantoria\Notification\Notifier;
+use OCA\Cantoria\Service\NotificationService;
+use OCA\Cantoria\Tests\Unit\Support\ModuleSwitches;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\L10N\IFactory;
@@ -45,9 +45,9 @@ final class NotifierTest extends TestCase {
 		$factory = $this->createStub(IFactory::class);
 		$factory->method('get')->willReturn($l);
 		$url = $this->createStub(IURLGenerator::class);
-		$url->method('linkToRouteAbsolute')->willReturn('https://cloud.example.org/apps/notenarchiv/');
+		$url->method('linkToRouteAbsolute')->willReturn('https://cloud.example.org/apps/cantoria/');
 		$notification = $this->createStub(INotification::class);
-		$notification->method('getApp')->willReturn('notenarchiv');
+		$notification->method('getApp')->willReturn('cantoria');
 		$notification->method('getSubject')->willReturn($subject);
 		$notification->method('getSubjectParameters')->willReturn($parameters);
 		$notification->method('setParsedSubject')->willReturnCallback(function (string $text) use ($notification): INotification {
@@ -71,8 +71,8 @@ final class NotifierTest extends TestCase {
 		yield 'raw message of an older notification' => [['message' => 'SQLSTATE[42S02]: Base table not found: oc_notarch_works'], $generic];
 		yield 'message for users' => [['error' => 'No write permission for exports in the archive folder.', 'errorParameters' => '[]'],
 			'[The automatic export of the music archive failed: [No write permission for exports in the archive folder.]]'];
-		yield 'message with parameter' => [['error' => 'The archive folder contains a file named %s.', 'errorParameters' => '["_notenarchiv-app"]'],
-			'[The automatic export of the music archive failed: [The archive folder contains a file named _notenarchiv-app.]]'];
+		yield 'message with parameter' => [['error' => 'The archive folder contains a file named %s.', 'errorParameters' => '["_cantoria-app"]'],
+			'[The automatic export of the music archive failed: [The archive folder contains a file named _cantoria-app.]]'];
 		yield 'parameters missing' => [['error' => 'The archive folder contains a file named %s.'], $generic];
 		yield 'parameters damaged' => [['error' => 'The archive folder contains a file named %s.', 'errorParameters' => '{'], $generic];
 	}
@@ -109,13 +109,13 @@ final class NotifierTest extends TestCase {
 	public function testNewReviewPointsOpenTheReview(): void {
 		$this->prepare(NotificationService::REVIEW_POINTS, ['count' => 3, 'shelfmark' => '5-1', 'title' => 'Ave', 'copyId' => 35]);
 		self::assertSame('[5-1 Ave: 3 new review points of the transcription for your role]', $this->parsedSubject);
-		self::assertSame('https://cloud.example.org/apps/notenarchiv/?copy=35&review=1', $this->link);
+		self::assertSame('https://cloud.example.org/apps/cantoria/?copy=35&review=1', $this->link);
 	}
 
 	public function testACorrectionArrived(): void {
 		$this->prepare(NotificationService::CORRECTION_RECEIVED, ['kind' => 'app', 'shelfmark' => '5-1', 'title' => 'Ave', 'copyId' => '35"><x']);
 		self::assertSame('[5-1 Ave: a corrected MusicXML file was saved in the app.]', $this->parsedSubject);
-		self::assertSame('https://cloud.example.org/apps/notenarchiv/?copy=35&review=1', $this->link);
+		self::assertSame('https://cloud.example.org/apps/cantoria/?copy=35&review=1', $this->link);
 		$this->prepare(NotificationService::CORRECTION_RECEIVED, ['kind' => 'report', 'shelfmark' => '5-1', 'title' => 'Ave', 'copyId' => 35]);
 		self::assertSame('[5-1 Ave: a new transcription has done review points.]', $this->parsedSubject);
 	}
@@ -128,6 +128,6 @@ final class NotifierTest extends TestCase {
 
 	public function testLinksStayInsideTheApp(): void {
 		$this->prepare(NotificationService::TASK_NEW, ['copyId' => '35 onclick=x', 'taskId' => 'javascript:alert(1)', 'shelfmark' => '5-1', 'title' => 'Ave']);
-		self::assertSame('https://cloud.example.org/apps/notenarchiv/?copy=35&task=0', $this->link);
+		self::assertSame('https://cloud.example.org/apps/cantoria/?copy=35&task=0', $this->link);
 	}
 }

@@ -3,22 +3,22 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Service;
+namespace OCA\Cantoria\Service;
 
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\Event;
-use OCA\Notenarchiv\Db\EventItem;
-use OCA\Notenarchiv\Db\EventItemMapper;
-use OCA\Notenarchiv\Db\EventMapper;
-use OCA\Notenarchiv\Db\LicenseMapper;
-use OCA\Notenarchiv\Db\ProposalMapper;
-use OCA\Notenarchiv\Db\WorkMapper;
-use OCA\Notenarchiv\Db\WorkVersion;
-use OCA\Notenarchiv\Db\WorkVersionMapper;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Db\Event;
+use OCA\Cantoria\Db\EventItem;
+use OCA\Cantoria\Db\EventItemMapper;
+use OCA\Cantoria\Db\EventMapper;
+use OCA\Cantoria\Db\LicenseMapper;
+use OCA\Cantoria\Db\ProposalMapper;
+use OCA\Cantoria\Db\WorkMapper;
+use OCA\Cantoria\Db\WorkVersion;
+use OCA\Cantoria\Db\WorkVersionMapper;
 
 /**
  * The start page "due": what each role should do next, so that a successor
@@ -165,7 +165,7 @@ class DueService {
 	 * Versions of works marked as current repertoire (imported value until
 	 * performances are recorded in the app).
 	 *
-	 * @return list<\OCA\Notenarchiv\Db\WorkVersion>
+	 * @return list<\OCA\Cantoria\Db\WorkVersion>
 	 */
 	private function currentRepertoireVersions(): array {
 		$works = $this->works->findAllById();

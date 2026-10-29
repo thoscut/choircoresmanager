@@ -3,17 +3,17 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Controller;
+namespace OCA\Cantoria\Controller;
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Service\MetaService;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\Roles;
-use OCA\Notenarchiv\Service\SharedLinkService;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Service\MetaService;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\Roles;
+use OCA\Cantoria\Service\SharedLinkService;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
@@ -108,7 +108,7 @@ class PageController extends Controller {
 		]);
 		$response = self::withScorePolicy(new TemplateResponse(Application::APP_ID, 'member'), false, true);
 		// The service worker keeps only this page on the device, never the archive or another page
-		$response->addHeader('X-Notenarchiv-Page', 'member');
+		$response->addHeader('X-Cantoria-Page', 'member');
 		return $response;
 	}
 

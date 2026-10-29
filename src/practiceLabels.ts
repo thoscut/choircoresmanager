@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -21,11 +21,11 @@ import { midiPitchName } from './score/practising.ts'
  */
 export function transposeText(semitones: number): string {
 	if (semitones === 0) {
-		return t('notenarchiv', 'as written')
+		return t('cantoria', 'as written')
 	}
 	return semitones > 0
-		? n('notenarchiv', '%n semitone higher', '%n semitones higher', semitones)
-		: n('notenarchiv', '%n semitone lower', '%n semitones lower', -semitones)
+		? n('cantoria', '%n semitone higher', '%n semitones higher', semitones)
+		: n('cantoria', '%n semitone lower', '%n semitones lower', -semitones)
 }
 
 /**
@@ -38,9 +38,9 @@ export function transposeText(semitones: number): string {
  */
 export function startingTonesText(tones: StartingTone[], labelOf: (voice: StartingTone['voice']) => string, fifths: number | null): string {
 	if (tones.length === 0) {
-		return t('notenarchiv', 'No voice sings from here on.')
+		return t('cantoria', 'No voice sings from here on.')
 	}
 	const german = getLanguage().toLowerCase().startsWith('de')
 	const list = tones.map((tone) => `${labelOf(tone.voice)} ${midiPitchName(tone.pitch, fifths, german)}`).join(', ')
-	return t('notenarchiv', 'Starting tones: {tones}', { tones: list })
+	return t('cantoria', 'Starting tones: {tones}', { tones: list })
 }

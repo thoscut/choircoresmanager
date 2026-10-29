@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -118,32 +118,32 @@ const blockReason = computed(() => {
 		return ''
 	}
 	if (optionsError.value !== '') {
-		return t('notenarchiv', 'It could not be checked whether this link is possible: {reason}', { reason: optionsError.value })
+		return t('cantoria', 'It could not be checked whether this link is possible: {reason}', { reason: optionsError.value })
 	}
 	const chosen = option.value
 	if (chosen === null) {
 		return ''
 	}
 	if (!chosen.available) {
-		return chosen.reason ?? t('notenarchiv', 'This kind of link is switched off. An administrator can switch it on in the settings of the music archive under "Modules".')
+		return chosen.reason ?? t('cantoria', 'This kind of link is switched off. An administrator can switch it on in the settings of the music archive under "Modules".')
 	}
-	return chosen.allowed ? '' : (chosen.reason ?? t('notenarchiv', 'The rights of this version do not allow this link.'))
+	return chosen.allowed ? '' : (chosen.reason ?? t('cantoria', 'The rights of this version do not allow this link.'))
 })
 
 const blocked = computed(() => circle.value !== 'internal' && (optionsLoading.value || option.value === null || blockReason.value !== ''))
 
 const dialogName = computed(() => (canShareOutside.value
-	? t('notenarchiv', 'Share {shelfmark}', { shelfmark: props.shelfmark })
-	: t('notenarchiv', 'Internal link to {shelfmark}', { shelfmark: props.shelfmark })))
+	? t('cantoria', 'Share {shelfmark}', { shelfmark: props.shelfmark })
+	: t('cantoria', 'Internal link to {shelfmark}', { shelfmark: props.shelfmark })))
 
 const circleHint = computed(() => {
 	switch (circle.value) {
 	case 'members':
-		return t('notenarchiv', 'Choir members see it in the music archive under "Shared with me", without the catalog: the whole piece or the chosen measures with all voices, the voice highlighted. The server sends only that, never the score file, and checks the rights on every call.')
+		return t('cantoria', 'Choir members see it in the music archive under "Shared with me", without the catalog: the whole piece or the chosen measures with all voices, the voice highlighted. The server sends only that, never the score file, and checks the rights on every call.')
 	case 'public':
-		return t('notenarchiv', 'Anyone who has the link can view and play it without signing in, until it expires or is revoked: the whole piece or the chosen measures, without the score file, without names and without a note. The server sends only that and checks the rights on every call.')
+		return t('cantoria', 'Anyone who has the link can view and play it without signing in, until it expires or is revoked: the whole piece or the chosen measures, without the score file, without names and without a note. The server sends only that and checks the rights on every call.')
 	default:
-		return t('notenarchiv', 'Only people with a role in the music archive can open the link. It shows the whole piece or the measures with all voices; the voice is highlighted. The server checks the rights on every call.')
+		return t('cantoria', 'Only people with a role in the music archive can open the link. It shows the whole piece or the measures with all voices; the voice is highlighted. The server checks the rights on every call.')
 	}
 })
 
@@ -163,8 +163,8 @@ const scanChoice = computed<string>({
 
 // ---- preview ----------------------------------------------------------------------
 
-const yes = t('notenarchiv', 'Yes')
-const no = t('notenarchiv', 'No')
+const yes = t('cantoria', 'Yes')
+const no = t('cantoria', 'No')
 
 /** What the recipients of a link for choir members or the public will see. */
 const preview = computed(() => {
@@ -184,19 +184,19 @@ const preview = computed(() => {
 		option: chosen,
 		scan: scanOffered.value ? withScan.value : null,
 	}, {
-		scope: t('notenarchiv', 'Shared'),
-		whole: t('notenarchiv', 'Whole piece'),
-		measures: (from, to) => t('notenarchiv', 'Measures {from} to {to}', { from, to }),
-		missing: t('notenarchiv', 'measures still missing'),
-		voice: t('notenarchiv', 'Focus voice'),
-		none: t('notenarchiv', 'No focus voice'),
-		verse: t('notenarchiv', 'Verse'),
-		tempo: t('notenarchiv', 'Tempo'),
-		asInScore: t('notenarchiv', 'as in the score'),
-		validUntil: t('notenarchiv', 'Valid until'),
-		playback: t('notenarchiv', 'Playback'),
-		practiceFiles: t('notenarchiv', 'Practice files'),
-		scan: t('notenarchiv', 'Scan (PDF)'),
+		scope: t('cantoria', 'Shared'),
+		whole: t('cantoria', 'Whole piece'),
+		measures: (from, to) => t('cantoria', 'Measures {from} to {to}', { from, to }),
+		missing: t('cantoria', 'measures still missing'),
+		voice: t('cantoria', 'Focus voice'),
+		none: t('cantoria', 'No focus voice'),
+		verse: t('cantoria', 'Verse'),
+		tempo: t('cantoria', 'Tempo'),
+		asInScore: t('cantoria', 'as in the score'),
+		validUntil: t('cantoria', 'Valid until'),
+		playback: t('cantoria', 'Playback'),
+		practiceFiles: t('cantoria', 'Practice files'),
+		scan: t('cantoria', 'Scan (PDF)'),
 		yes,
 		no,
 	})
@@ -210,25 +210,25 @@ async function save(): Promise<void> {
 	}
 	const problem = measureProblem(scope.value, circle.value, draft.measureFrom, draft.measureTo)
 	if (problem === 'format') {
-		error.value = t('notenarchiv', 'Measure numbers may only contain digits, letters and dots.')
+		error.value = t('cantoria', 'Measure numbers may only contain digits, letters and dots.')
 		return
 	}
 	if (problem === 'missing') {
-		error.value = t('notenarchiv', 'Please give the first and the last measure of the excerpt, or choose "Whole piece".')
+		error.value = t('cantoria', 'Please give the first and the last measure of the excerpt, or choose "Whole piece".')
 		return
 	}
 	const verse = draft.verse.trim() === '' ? null : Number(draft.verse)
 	const tempo = draft.tempo.trim() === '' ? null : Number(draft.tempo)
 	if (verse !== null && (!Number.isInteger(verse) || verse < 1 || verse > 99)) {
-		error.value = t('notenarchiv', 'The verse must be a number from 1 to 99.')
+		error.value = t('cantoria', 'The verse must be a number from 1 to 99.')
 		return
 	}
 	if (tempo !== null && (!Number.isInteger(tempo) || tempo < 20 || tempo > 300)) {
-		error.value = t('notenarchiv', 'The tempo must be between 20 and 300 %.')
+		error.value = t('cantoria', 'The tempo must be between 20 and 300 %.')
 		return
 	}
 	if (draft.expires === '' || draft.expires < today || draft.expires > latest) {
-		error.value = t('notenarchiv', 'The expiry date must lie between today and six months from now.')
+		error.value = t('cantoria', 'The expiry date must lie between today and six months from now.')
 		return
 	}
 	const link: LinkInput = {
@@ -263,19 +263,19 @@ const createdText = computed(() => {
 	const date = formatDate(link.expires ?? '')
 	switch (link.circle) {
 	case 'members':
-		return t('notenarchiv', 'Choir members find it under "Shared with me" until {date}; you can also send them this link. It can be revoked at any time in the list of links.', { date })
+		return t('cantoria', 'Choir members find it under "Shared with me" until {date}; you can also send them this link. It can be revoked at any time in the list of links.', { date })
 	case 'public':
-		return t('notenarchiv', 'Anyone with this link can view and play it until {date}, without signing in. It can be revoked at any time in the list of links.', { date })
+		return t('cantoria', 'Anyone with this link can view and play it until {date}, without signing in. It can be revoked at any time in the list of links.', { date })
 	default:
-		return t('notenarchiv', 'The link is valid until {date}. It can be revoked at any time.', { date })
+		return t('cantoria', 'The link is valid until {date}. It can be revoked at any time.', { date })
 	}
 })
 
 async function copyLink(): Promise<void> {
 	if (await copyText(url.value)) {
-		showSuccess(t('notenarchiv', 'The link has been copied.'))
+		showSuccess(t('cantoria', 'The link has been copied.'))
 	} else {
-		showError(t('notenarchiv', 'The link could not be copied. Please select and copy it by hand.'))
+		showError(t('cantoria', 'The link could not be copied. Please select and copy it by hand.'))
 	}
 }
 </script>
@@ -283,7 +283,7 @@ async function copyLink(): Promise<void> {
 <template>
 	<ActionDialog v-if="created === null"
 		:name="dialogName"
-		:submit-label="t('notenarchiv', 'Create link')"
+		:submit-label="t('cantoria', 'Create link')"
 		:busy="busy"
 		:error="error"
 		:submit-disabled="blocked"
@@ -291,78 +291,78 @@ async function copyLink(): Promise<void> {
 		@submit="save"
 		@close="emit('close')">
 		<fieldset v-if="canShareOutside" class="link-dialog__choice">
-			<legend>{{ t('notenarchiv', 'Who can open the link?') }}</legend>
+			<legend>{{ t('cantoria', 'Who can open the link?') }}</legend>
 			<NcCheckboxRadioSwitch v-model="circle"
 				value="internal"
 				type="radio"
 				name="link-dialog-circle">
-				{{ t('notenarchiv', 'Archive roles (internal)') }}
+				{{ t('cantoria', 'Archive roles (internal)') }}
 			</NcCheckboxRadioSwitch>
 			<NcCheckboxRadioSwitch v-model="circle"
 				value="members"
 				type="radio"
 				name="link-dialog-circle">
-				{{ t('notenarchiv', 'Choir members') }}
+				{{ t('cantoria', 'Choir members') }}
 			</NcCheckboxRadioSwitch>
 			<NcCheckboxRadioSwitch v-model="circle"
 				value="public"
 				type="radio"
 				name="link-dialog-circle">
-				{{ t('notenarchiv', 'Public (without signing in)') }}
+				{{ t('cantoria', 'Public (without signing in)') }}
 			</NcCheckboxRadioSwitch>
 		</fieldset>
 		<p class="action-dialog__hint">
 			{{ circleHint }}
 		</p>
 		<NcNoteCard v-if="circle !== 'internal' && optionsLoading" type="info">
-			{{ t('notenarchiv', 'Checking whether this link is possible …') }}
+			{{ t('cantoria', 'Checking whether this link is possible …') }}
 		</NcNoteCard>
 		<NcNoteCard v-else-if="blockReason !== ''" type="warning" role="status">
 			{{ blockReason }}
 		</NcNoteCard>
 		<fieldset class="link-dialog__choice">
-			<legend>{{ t('notenarchiv', 'What is shared?') }}</legend>
+			<legend>{{ t('cantoria', 'What is shared?') }}</legend>
 			<NcCheckboxRadioSwitch v-model="scope"
 				value="whole"
 				type="radio"
 				name="link-dialog-scope">
-				{{ t('notenarchiv', 'Whole piece') }}
+				{{ t('cantoria', 'Whole piece') }}
 			</NcCheckboxRadioSwitch>
 			<NcCheckboxRadioSwitch v-model="scope"
 				value="excerpt"
 				type="radio"
 				name="link-dialog-scope">
-				{{ t('notenarchiv', 'Excerpt (measures)') }}
+				{{ t('cantoria', 'Excerpt (measures)') }}
 			</NcCheckboxRadioSwitch>
 		</fieldset>
 		<div v-if="scope === 'excerpt'" class="link-dialog__row">
 			<NcTextField v-model="draft.measureFrom"
-				:label="t('notenarchiv', 'From measure')"
+				:label="t('cantoria', 'From measure')"
 				:required="circle !== 'internal'" />
 			<NcTextField v-model="draft.measureTo"
-				:label="t('notenarchiv', 'To measure')"
+				:label="t('cantoria', 'To measure')"
 				:required="circle !== 'internal'" />
 		</div>
 		<p v-else class="action-dialog__hint">
-			{{ t('notenarchiv', 'All pages of the piece, with repeats and jumps as in the score.') }}
+			{{ t('cantoria', 'All pages of the piece, with repeats and jumps as in the score.') }}
 		</p>
 		<div class="link-dialog__row">
-			<NcTextField v-model="draft.voice" :label="t('notenarchiv', 'Voice')" />
+			<NcTextField v-model="draft.voice" :label="t('cantoria', 'Voice')" />
 			<NcTextField v-model="draft.verse"
 				type="number"
 				min="1"
 				max="99"
-				:label="t('notenarchiv', 'Verse')" />
+				:label="t('cantoria', 'Verse')" />
 			<NcTextField v-model="draft.tempo"
 				type="number"
 				min="20"
 				max="300"
-				:label="t('notenarchiv', 'Tempo in % (optional)')" />
+				:label="t('cantoria', 'Tempo in % (optional)')" />
 		</div>
 		<template v-if="circle !== 'public'">
 			<NcTextArea v-model="draft.note"
-				:label="t('notenarchiv', 'Note (optional)')"
-				:helper-text="circle === 'members' ? t('notenarchiv', 'The choir members see this note.') : ''"
+				:label="t('cantoria', 'Note (optional)')"
+				:helper-text="circle === 'members' ? t('cantoria', 'The choir members see this note.') : ''"
 				resize="vertical"
 				rows="3" />
 		</template>
@@ -370,13 +370,13 @@ async function copyLink(): Promise<void> {
 			:min="today"
 			:max="latest"
 			required
-			:label="t('notenarchiv', 'Valid until (at most six months)')" />
+			:label="t('cantoria', 'Valid until (at most six months)')" />
 		<div v-if="scanOffered" class="link-dialog__scan">
 			<NcCheckboxRadioSwitch v-model="withScan" type="checkbox">
-				{{ t('notenarchiv', 'Include the scan (PDF)') }}
+				{{ t('cantoria', 'Include the scan (PDF)') }}
 			</NcCheckboxRadioSwitch>
 			<fieldset v-if="withScan && scans.length > 1" class="link-dialog__choice">
-				<legend>{{ t('notenarchiv', 'Which scan?') }}</legend>
+				<legend>{{ t('cantoria', 'Which scan?') }}</legend>
 				<NcCheckboxRadioSwitch v-for="scan in scans"
 					:key="scan.id"
 					v-model="scanChoice"
@@ -387,16 +387,16 @@ async function copyLink(): Promise<void> {
 				</NcCheckboxRadioSwitch>
 			</fieldset>
 			<p class="action-dialog__hint">
-				{{ t('notenarchiv', 'The recipients open the scan in the PDF viewer of their browser. Whoever sees the scan can also save it.') }}
-				{{ t('notenarchiv', 'The whole PDF is shared, also with a link to some measures.') }}
+				{{ t('cantoria', 'The recipients open the scan in the PDF viewer of their browser. Whoever sees the scan can also save it.') }}
+				{{ t('cantoria', 'The whole PDF is shared, also with a link to some measures.') }}
 			</p>
 		</div>
 		<p v-else-if="option?.allowed && option.scanReason && scans.length > 0" class="action-dialog__hint">
 			{{ option.scanReason }}
 		</p>
-		<section v-if="preview.length > 0" class="link-dialog__preview" :aria-label="t('notenarchiv', 'What the recipients see')">
+		<section v-if="preview.length > 0" class="link-dialog__preview" :aria-label="t('cantoria', 'What the recipients see')">
 			<h3 class="link-dialog__preview-title">
-				{{ t('notenarchiv', 'What the recipients see') }}
+				{{ t('cantoria', 'What the recipients see') }}
 			</h3>
 			<dl class="link-dialog__preview-list">
 				<div v-for="row in preview" :key="row.label">
@@ -408,7 +408,7 @@ async function copyLink(): Promise<void> {
 	</ActionDialog>
 
 	<NcDialog v-else
-		:name="t('notenarchiv', 'Link created')"
+		:name="t('cantoria', 'Link created')"
 		:open="true"
 		@update:open="emit('close')">
 		<NcNoteCard type="success">
@@ -416,16 +416,16 @@ async function copyLink(): Promise<void> {
 		</NcNoteCard>
 		<NcTextField :model-value="url"
 			readonly
-			:label="t('notenarchiv', 'Link')" />
+			:label="t('cantoria', 'Link')" />
 		<template #actions>
 			<NcButton @click="emit('close')">
-				{{ t('notenarchiv', 'Close') }}
+				{{ t('cantoria', 'Close') }}
 			</NcButton>
 			<NcButton variant="primary" @click="copyLink">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiContentCopy" />
 				</template>
-				{{ t('notenarchiv', 'Copy link') }}
+				{{ t('cantoria', 'Copy link') }}
 			</NcButton>
 		</template>
 	</NcDialog>

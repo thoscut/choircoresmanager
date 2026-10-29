@@ -3,18 +3,18 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Search;
+namespace OCA\Cantoria\Search;
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Service\CatalogSearch;
-use OCA\Notenarchiv\Service\Fields;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\RightsPolicy;
-use OCA\Notenarchiv\Service\Roles;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Service\CatalogSearch;
+use OCA\Cantoria\Service\Fields;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\RightsPolicy;
+use OCA\Cantoria\Service\Roles;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -97,7 +97,7 @@ class CatalogSearchProvider implements IProvider {
 			return SearchResult::complete($name, []);
 		}
 		try {
-			$this->limiter->registerUserRequest('notenarchiv-search', self::RATE_LIMIT, self::RATE_PERIOD, $user);
+			$this->limiter->registerUserRequest('cantoria-search', self::RATE_LIMIT, self::RATE_PERIOD, $user);
 		} catch (IRateLimitExceededException) {
 			return SearchResult::complete($name, []);
 		}

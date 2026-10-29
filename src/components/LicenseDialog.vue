@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -61,12 +61,12 @@ function orNull(value: string): string | null {
 
 async function save(): Promise<void> {
 	if (usesMissing.value) {
-		error.value = t('notenarchiv', 'Please choose at least one use.')
+		error.value = t('cantoria', 'Please choose at least one use.')
 		return
 	}
 	const quantity = draft.quantity.trim() === '' ? null : Number(draft.quantity)
 	if (quantity !== null && (!Number.isInteger(quantity) || quantity < 0)) {
-		error.value = t('notenarchiv', 'Please enter a whole number.')
+		error.value = t('cantoria', 'Please enter a whole number.')
 		return
 	}
 	const input: LicenseInput = {
@@ -97,15 +97,15 @@ async function save(): Promise<void> {
 </script>
 
 <template>
-	<ActionDialog :name="license ? t('notenarchiv', 'Edit license') : t('notenarchiv', 'New license')"
-		:submit-label="t('notenarchiv', 'Save')"
+	<ActionDialog :name="license ? t('cantoria', 'Edit license') : t('cantoria', 'New license')"
+		:submit-label="t('cantoria', 'Save')"
 		:busy="busy"
 		:error="error"
 		@submit="save"
 		@close="emit('close')">
-		<NcTextField v-model="draft.holder" :label="t('notenarchiv', 'License holder or publisher')" />
+		<NcTextField v-model="draft.holder" :label="t('cantoria', 'License holder or publisher')" />
 		<fieldset class="license-dialog__uses">
-			<legend>{{ t('notenarchiv', 'Uses (at least one)') }}</legend>
+			<legend>{{ t('cantoria', 'Uses (at least one)') }}</legend>
 			<NcCheckboxRadioSwitch v-for="use in uses"
 				:key="use"
 				v-model="draft.uses"
@@ -122,27 +122,27 @@ async function save(): Promise<void> {
 			inputmode="numeric"
 			min="0"
 			step="1"
-			:label="t('notenarchiv', 'Number of copies')" />
+			:label="t('cantoria', 'Number of copies')" />
 		<div class="license-dialog__dates">
-			<DateField v-model="draft.validFrom" :label="t('notenarchiv', 'Valid from')" />
-			<DateField v-model="draft.validUntil" :label="t('notenarchiv', 'Valid until')" />
+			<DateField v-model="draft.validFrom" :label="t('cantoria', 'Valid from')" />
+			<DateField v-model="draft.validUntil" :label="t('cantoria', 'Valid until')" />
 		</div>
 		<NcTextArea v-model="draft.evidence"
-			:label="t('notenarchiv', 'Evidence (invoice, contract, letter)')"
+			:label="t('cantoria', 'Evidence (invoice, contract, letter)')"
 			resize="vertical"
 			rows="2" />
 		<NcTextArea v-model="draft.notes"
-			:label="t('notenarchiv', 'Notes')"
+			:label="t('cantoria', 'Notes')"
 			resize="vertical"
 			rows="2" />
 		<NcTextArea v-model="draft.shareNotice"
-			:label="t('notenarchiv', 'Notice on shared pages')"
-			:helper-text="t('notenarchiv', 'Shown with excerpts for choir members and the public, for example: By kind permission of …')"
+			:label="t('cantoria', 'Notice on shared pages')"
+			:helper-text="t('cantoria', 'Shown with excerpts for choir members and the public, for example: By kind permission of …')"
 			:maxlength="1000"
 			resize="vertical"
 			rows="2" />
 		<p class="action-dialog__hint">
-			{{ t('notenarchiv', 'Licenses are not deleted. An ended license stays as a record.') }}
+			{{ t('cantoria', 'Licenses are not deleted. An ended license stays as a record.') }}
 		</p>
 	</ActionDialog>
 </template>

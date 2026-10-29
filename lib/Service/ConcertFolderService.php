@@ -3,26 +3,26 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Service;
+namespace OCA\Cantoria\Service;
 
-use OCA\Notenarchiv\Db\ArchiveFile;
-use OCA\Notenarchiv\Db\ArchiveFileMapper;
-use OCA\Notenarchiv\Db\Copy;
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\Event;
-use OCA\Notenarchiv\Db\EventItem;
-use OCA\Notenarchiv\Db\EventItemMapper;
-use OCA\Notenarchiv\Db\EventMapper;
-use OCA\Notenarchiv\Db\WorkMapper;
-use OCA\Notenarchiv\Db\WorkVersion;
-use OCA\Notenarchiv\Db\WorkVersionMapper;
-use OCA\Notenarchiv\Exception\AccessDeniedException;
-use OCA\Notenarchiv\Exception\NotFoundException;
-use OCA\Notenarchiv\Exception\UserFacingException;
+use OCA\Cantoria\Db\ArchiveFile;
+use OCA\Cantoria\Db\ArchiveFileMapper;
+use OCA\Cantoria\Db\Copy;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Db\Event;
+use OCA\Cantoria\Db\EventItem;
+use OCA\Cantoria\Db\EventItemMapper;
+use OCA\Cantoria\Db\EventMapper;
+use OCA\Cantoria\Db\WorkMapper;
+use OCA\Cantoria\Db\WorkVersion;
+use OCA\Cantoria\Db\WorkVersionMapper;
+use OCA\Cantoria\Exception\AccessDeniedException;
+use OCA\Cantoria\Exception\NotFoundException;
+use OCA\Cantoria\Exception\UserFacingException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\Files\File;
 

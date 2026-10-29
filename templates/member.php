@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 use OCP\Util;
 
-Util::addScript(OCA\Notenarchiv\AppInfo\Application::APP_ID, OCA\Notenarchiv\AppInfo\Application::APP_ID . '-member');
-Util::addStyle(OCA\Notenarchiv\AppInfo\Application::APP_ID, OCA\Notenarchiv\AppInfo\Application::APP_ID . '-member');
+Util::addScript(OCA\Cantoria\AppInfo\Application::APP_ID, OCA\Cantoria\AppInfo\Application::APP_ID . '-member');
+Util::addStyle(OCA\Cantoria\AppInfo\Application::APP_ID, OCA\Cantoria\AppInfo\Application::APP_ID . '-member');
 
 ?>
 
-<div id="notenarchiv-member"></div>
+<div id="cantoria-member"></div>

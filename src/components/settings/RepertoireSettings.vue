@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -40,14 +40,14 @@ watch(() => props.thresholds, (value) => {
 async function save(): Promise<void> {
 	const thresholds = parseThresholds(form.current, form.dormant)
 	if (thresholds === null) {
-		error.value = t('notenarchiv', 'Please enter whole numbers of years; "dormant" must be at least as long as "current".')
+		error.value = t('cantoria', 'Please enter whole numbers of years; "dormant" must be at least as long as "current".')
 		return
 	}
 	saving.value = true
 	error.value = ''
 	try {
 		emit('saved', await saveRepertoireThresholds(thresholds))
-		showSuccess(t('notenarchiv', 'The repertoire thresholds have been saved.'))
+		showSuccess(t('cantoria', 'The repertoire thresholds have been saved.'))
 	} catch (caught) {
 		error.value = errorMessage(caught)
 	} finally {
@@ -59,24 +59,24 @@ async function save(): Promise<void> {
 <template>
 	<div class="settings-block">
 		<p class="settings-block__text">
-			{{ t('notenarchiv', 'A work belongs to the current repertoire if it was sung within the last years given here, and is dormant up to the second limit. Earlier performances make it "earlier". Documented performances come from concerts confirmed as sung and from the imported history.') }}
+			{{ t('cantoria', 'A work belongs to the current repertoire if it was sung within the last years given here, and is dormant up to the second limit. Earlier performances make it "earlier". Documented performances come from concerts confirmed as sung and from the imported history.') }}
 		</p>
 		<form class="settings-repertoire" @submit.prevent="save">
 			<NcTextField v-model="form.current"
 				type="number"
 				min="1"
 				max="50"
-				:label="t('notenarchiv', 'Current: sung within (years)')" />
+				:label="t('cantoria', 'Current: sung within (years)')" />
 			<NcTextField v-model="form.dormant"
 				type="number"
 				min="1"
 				max="100"
-				:label="t('notenarchiv', 'Dormant: sung within (years)')" />
+				:label="t('cantoria', 'Dormant: sung within (years)')" />
 			<NcButton type="submit" :disabled="saving">
 				<template v-if="saving" #icon>
 					<NcLoadingIcon />
 				</template>
-				{{ t('notenarchiv', 'Save thresholds') }}
+				{{ t('cantoria', 'Save thresholds') }}
 			</NcButton>
 		</form>
 		<NcNoteCard v-if="error" type="error" role="alert">

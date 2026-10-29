@@ -3,16 +3,16 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Service;
+namespace OCA\Cantoria\Service;
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Db\ArchiveFileMapper;
-use OCA\Notenarchiv\Exception\InvalidInputException;
-use OCA\Notenarchiv\Exception\NotFoundException;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Db\ArchiveFileMapper;
+use OCA\Cantoria\Exception\InvalidInputException;
+use OCA\Cantoria\Exception\NotFoundException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Files\File;
 use OCP\Files\Folder;

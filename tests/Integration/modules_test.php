@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -26,30 +26,30 @@ declare(strict_types=1);
 require __DIR__ . '/harness.php';
 [$root, $uid, $protectedMark] = IntegrationTest::start($argv, ['nextcloud-root', 'uid', 'shelfmark-protected']);
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\BackgroundJob\DailyChecks;
-use OCA\Notenarchiv\Controller\EventController;
-use OCA\Notenarchiv\Dashboard\DueWidget;
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\EventItemMapper;
-use OCA\Notenarchiv\Db\EventMapper;
-use OCA\Notenarchiv\Db\WorkVersionMapper;
-use OCA\Notenarchiv\Exception\AccessDeniedException;
-use OCA\Notenarchiv\Exception\ModuleDisabledException;
-use OCA\Notenarchiv\Middleware\ModuleMiddleware;
-use OCA\Notenarchiv\Notification\Notifier;
-use OCA\Notenarchiv\Service\CatalogService;
-use OCA\Notenarchiv\Service\DueService;
-use OCA\Notenarchiv\Service\EventService;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\NotificationService;
-use OCA\Notenarchiv\Service\PerformanceImportService;
-use OCA\Notenarchiv\Service\PracticeAudioService;
-use OCA\Notenarchiv\Service\RepertoireService;
-use OCA\Notenarchiv\Service\RightsPolicy;
-use OCA\Notenarchiv\Service\RightsService;
-use OCA\Notenarchiv\Service\Roles;
-use OCA\Notenarchiv\Service\UserFiles;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\BackgroundJob\DailyChecks;
+use OCA\Cantoria\Controller\EventController;
+use OCA\Cantoria\Dashboard\DueWidget;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Db\EventItemMapper;
+use OCA\Cantoria\Db\EventMapper;
+use OCA\Cantoria\Db\WorkVersionMapper;
+use OCA\Cantoria\Exception\AccessDeniedException;
+use OCA\Cantoria\Exception\ModuleDisabledException;
+use OCA\Cantoria\Middleware\ModuleMiddleware;
+use OCA\Cantoria\Notification\Notifier;
+use OCA\Cantoria\Service\CatalogService;
+use OCA\Cantoria\Service\DueService;
+use OCA\Cantoria\Service\EventService;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\NotificationService;
+use OCA\Cantoria\Service\PerformanceImportService;
+use OCA\Cantoria\Service\PracticeAudioService;
+use OCA\Cantoria\Service\RepertoireService;
+use OCA\Cantoria\Service\RightsPolicy;
+use OCA\Cantoria\Service\RightsService;
+use OCA\Cantoria\Service\Roles;
+use OCA\Cantoria\Service\UserFiles;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IAppConfig;

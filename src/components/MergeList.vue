@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -45,7 +45,7 @@ function workName(work?: { title?: string | null, composer?: string | null, work
 	if (!work) {
 		return '–'
 	}
-	const title = work.title || t('notenarchiv', 'Untitled')
+	const title = work.title || t('cantoria', 'Untitled')
 	const parts = [work.composer, work.work_no].filter((part) => part)
 	return parts.length > 0 ? `${title} (${parts.join(', ')})` : title
 }
@@ -58,18 +58,18 @@ function workName(work?: { title?: string | null, composer?: string | null, work
 function mergeText(merge: Merge): string {
 	if (merge.kind === 'work') {
 		if (merge.source || merge.target) {
-			return t('notenarchiv', '"{source}" merged into "{target}"', { source: workName(merge.source), target: workName(merge.target) })
+			return t('cantoria', '"{source}" merged into "{target}"', { source: workName(merge.source), target: workName(merge.target) })
 		}
-		return t('notenarchiv', 'Another work has been merged into this work.')
+		return t('cantoria', 'Another work has been merged into this work.')
 	}
 	if (merge.source?.shelfmark) {
-		return t('notenarchiv', 'Copy {shelfmark} moved from "{source}" to a version of "{target}"', {
+		return t('cantoria', 'Copy {shelfmark} moved from "{source}" to a version of "{target}"', {
 			shelfmark: merge.source.shelfmark,
 			source: workName(merge.source),
 			target: workName(merge.target),
 		})
 	}
-	return t('notenarchiv', 'This copy has been moved to another version.')
+	return t('cantoria', 'This copy has been moved to another version.')
 }
 
 /**
@@ -80,13 +80,13 @@ function mergeText(merge: Merge): string {
 function movedText(merge: Merge): string {
 	const parts: string[] = []
 	if (merge.kind === 'work' && merge.moved.versions?.length) {
-		parts.push(n('notenarchiv', '%n version moved', '%n versions moved', merge.moved.versions.length))
+		parts.push(n('cantoria', '%n version moved', '%n versions moved', merge.moved.versions.length))
 	}
 	if (merge.moved.eventItems?.length) {
-		parts.push(n('notenarchiv', '%n programme line moved', '%n programme lines moved', merge.moved.eventItems.length))
+		parts.push(n('cantoria', '%n programme line moved', '%n programme lines moved', merge.moved.eventItems.length))
 	}
 	if (merge.moved.workNo) {
-		parts.push(t('notenarchiv', 'work number {number} given', { number: merge.moved.workNo }))
+		parts.push(t('cantoria', 'work number {number} given', { number: merge.moved.workNo }))
 	}
 	return parts.join(' · ')
 }
@@ -138,7 +138,7 @@ async function confirmUndo(): Promise<void> {
 	error.value = ''
 	try {
 		await undoMerge(undoing.value.id, reason.value.trim() === '' ? null : reason.value.trim())
-		showSuccess(t('notenarchiv', 'The merge has been undone.'))
+		showSuccess(t('cantoria', 'The merge has been undone.'))
 		undoing.value = null
 		emit('changed')
 		focusAfterDialog(() => (heading?.isConnected ? heading : document.querySelector('.app-sidebar-header__mainname, #app-content-vue h2')))
@@ -160,23 +160,23 @@ async function confirmUndo(): Promise<void> {
 				<div class="merge-list__text">
 					<span class="merge-list__what">{{ mergeText(merge) }}</span>
 					<span v-if="movedText(merge) && !compact" class="merge-list__muted">{{ movedText(merge) }}</span>
-					<span v-if="merge.reason" class="merge-list__muted">{{ t('notenarchiv', 'Reason: {reason}', { reason: merge.reason }) }}</span>
+					<span v-if="merge.reason" class="merge-list__muted">{{ t('cantoria', 'Reason: {reason}', { reason: merge.reason }) }}</span>
 					<span class="merge-list__muted">
 						{{ createdBy(merge)
-							? t('notenarchiv', '{date} by {user}', { date: formatDateTime(merge.created), user: createdBy(merge) })
+							? t('cantoria', '{date} by {user}', { date: formatDateTime(merge.created), user: createdBy(merge) })
 							: formatDateTime(merge.created) }}
 					</span>
 					<span v-if="merge.undone !== null" class="merge-list__undone">
 						{{ undoneBy(merge)
-							? t('notenarchiv', 'Undone on {date} by {user}', { date: formatDateTime(merge.undone), user: undoneBy(merge) })
-							: t('notenarchiv', 'Undone on {date}', { date: formatDateTime(merge.undone) }) }}
+							? t('cantoria', 'Undone on {date} by {user}', { date: formatDateTime(merge.undone), user: undoneBy(merge) })
+							: t('cantoria', 'Undone on {date}', { date: formatDateTime(merge.undone) }) }}
 					</span>
 				</div>
 				<div class="merge-list__actions">
 					<NcButton v-if="merge.kind === 'copy' && merge.source?.copyId && !compact"
 						variant="tertiary"
 						@click="openEntry(merge.source.copyId)">
-						{{ t('notenarchiv', 'Open {shelfmark}', { shelfmark: merge.source.shelfmark ?? '' }) }}
+						{{ t('cantoria', 'Open {shelfmark}', { shelfmark: merge.source.shelfmark ?? '' }) }}
 					</NcButton>
 					<NcButton v-if="isLibrarian && merge.undone === null"
 						variant="secondary"
@@ -184,24 +184,24 @@ async function confirmUndo(): Promise<void> {
 						<template #icon>
 							<NcIconSvgWrapper :path="mdiUndoVariant" />
 						</template>
-						{{ t('notenarchiv', 'Undo') }}
+						{{ t('cantoria', 'Undo') }}
 					</NcButton>
 				</div>
 			</li>
 		</ul>
 
 		<ActionDialog v-if="undoing"
-			:name="t('notenarchiv', 'Undo merge')"
-			:submit-label="t('notenarchiv', 'Undo merge')"
+			:name="t('cantoria', 'Undo merge')"
+			:submit-label="t('cantoria', 'Undo merge')"
 			:busy="busy"
 			:error="error"
 			@submit="confirmUndo"
 			@close="undoing = null">
 			<p>{{ mergeText(undoing) }}</p>
 			<p class="action-dialog__hint">
-				{{ t('notenarchiv', 'Everything moves back as it was. This is only possible as long as the moved data has not been changed; later merges have to be undone first. A work number given by the merge stays.') }}
+				{{ t('cantoria', 'Everything moves back as it was. This is only possible as long as the moved data has not been changed; later merges have to be undone first. A work number given by the merge stays.') }}
 			</p>
-			<NcTextField v-model="reason" :label="t('notenarchiv', 'Reason (optional)')" />
+			<NcTextField v-model="reason" :label="t('cantoria', 'Reason (optional)')" />
 		</ActionDialog>
 	</div>
 </template>

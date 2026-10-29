@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -154,7 +154,7 @@ const revision = computed(() => shownRevision(props.detail.revision))
 const versionLineText = computed(() => (revision.value
 	? revisionLine(shelfmark.value, props.detail.version, revision.value.number, revision.value.validSince)
 	: ''))
-const reviewLabel = computed(() => fieldInfo('version', 'musicxml_review') ? fieldLabel('version', 'musicxml_review') : t('notenarchiv', 'MusicXML review'))
+const reviewLabel = computed(() => fieldInfo('version', 'musicxml_review') ? fieldLabel('version', 'musicxml_review') : t('cantoria', 'MusicXML review'))
 
 // ---- loading ----------------------------------------------------------------
 
@@ -200,7 +200,7 @@ async function load(keep = false): Promise<void> {
 	errorText.value = ''
 	notShared.value = false
 	retryable.value = true
-	loadingText.value = t('notenarchiv', 'Loading the score …')
+	loadingText.value = t('cantoria', 'Loading the score …')
 	// Fetch the file and load Verovio at the same time. A toolkit created after
 	// the viewer was closed is destroyed right away.
 	const toolkitPromise = toolkit ? Promise.resolve(toolkit) : createToolkit()
@@ -218,7 +218,7 @@ async function load(keep = false): Promise<void> {
 	} catch (error) {
 		status.value = 'error'
 		notShared.value = errorReason(error) === REASON_NOT_SHARED
-		errorText.value = error instanceof Error && error.message !== '' ? error.message : t('notenarchiv', 'The score could not be loaded.')
+		errorText.value = error instanceof Error && error.message !== '' ? error.message : t('cantoria', 'The score could not be loaded.')
 		retryable.value = !isPermanentHttpError(error)
 		return
 	}
@@ -227,7 +227,7 @@ async function load(keep = false): Promise<void> {
 		return
 	}
 	try {
-		loadingText.value = t('notenarchiv', 'Engraving the score …')
+		loadingText.value = t('cantoria', 'Engraving the score …')
 		const text = await readScoreText(content)
 		await nextFrame()
 		if (disposed) {
@@ -262,8 +262,8 @@ async function load(keep = false): Promise<void> {
 		console.error('Score view: the file could not be read', error)
 		status.value = 'error'
 		errorText.value = error instanceof ArchiveLimitError
-			? t('notenarchiv', 'The score file is too large to show.')
-			: t('notenarchiv', 'The file could not be read as MusicXML.')
+			? t('cantoria', 'The score file is too large to show.')
+			: t('cantoria', 'The file could not be read as MusicXML.')
 	}
 }
 
@@ -318,7 +318,7 @@ const focusLabel = computed(() => (focusVoice.value ? labelOf(focusVoice.value) 
 const reference = computed(() => textReference({
 	shelfmark: shelfmark.value,
 	title: title.value,
-	revision: revision.value ? t('notenarchiv', 'Revision {number}', { number: revision.value.number }) : null,
+	revision: revision.value ? t('cantoria', 'Revision {number}', { number: revision.value.number }) : null,
 	measureFrom: rangeNumbers.value?.from ?? null,
 	measureTo: rangeNumbers.value?.to ?? null,
 	voice: focusLabel.value,
@@ -326,9 +326,9 @@ const reference = computed(() => textReference({
 
 async function copyReference(): Promise<void> {
 	if (await copyText(reference.value)) {
-		showSuccess(t('notenarchiv', 'Copied: {reference}', { reference: reference.value }))
+		showSuccess(t('cantoria', 'Copied: {reference}', { reference: reference.value }))
 	} else {
-		showError(t('notenarchiv', 'The text could not be copied. Please select and copy it by hand.'))
+		showError(t('cantoria', 'The text could not be copied. Please select and copy it by hand.'))
 	}
 }
 
@@ -357,8 +357,8 @@ const selectedPointId = ref<number | null>(null)
 const openPoints = computed(() => (review.value?.counts.open ?? 0) + (review.value?.counts.question ?? 0))
 
 const reviewToggleLabel = computed(() => openPoints.value > 0
-	? n('notenarchiv', 'Review: %n open point', 'Review: %n open points', openPoints.value)
-	: t('notenarchiv', 'Review'))
+	? n('cantoria', 'Review: %n open point', 'Review: %n open points', openPoints.value)
+	: t('cantoria', 'Review'))
 
 async function loadReview(): Promise<void> {
 	if (!reviewOn.value) {
@@ -400,14 +400,14 @@ function selectPoint(point: ReviewPoint): void {
 		rangeTo.value = loaded.measures[found.end].number
 		applyRange()
 	} else if (point.measure_from || point.measure_to || point.measures) {
-		parts.push(t('notenarchiv', 'These measures are not in the score.'))
+		parts.push(t('cantoria', 'These measures are not in the score.'))
 	}
 	const voice = matchVoice(loaded.voices, point.voice, labelOf)
 	focusKey.value = voice?.key ?? ''
 	if (voice) {
-		parts.push(t('notenarchiv', 'Focus voice: {voice}', { voice: labelOf(voice) }))
+		parts.push(t('cantoria', 'Focus voice: {voice}', { voice: labelOf(voice) }))
 	} else if (canonicalVoice(point.voice) !== null) {
-		parts.push(t('notenarchiv', 'The voice "{voice}" is not in the score; no focus voice.', { voice: point.voice ?? '' }))
+		parts.push(t('cantoria', 'The voice "{voice}" is not in the score; no focus voice.', { voice: point.voice ?? '' }))
 	}
 	announce(parts.join('. '))
 }
@@ -465,11 +465,11 @@ function openCorrection(point: ReviewPoint | null = null): void {
 	const shown = range.value ?? { start: 0, end: loaded.measures.length - 1 }
 	const voice = focusVoice.value
 	if (!voice) {
-		correctionHint.value = t('notenarchiv', 'Please choose a focus voice first: the form shows the notes of one voice.')
+		correctionHint.value = t('cantoria', 'Please choose a focus voice first: the form shows the notes of one voice.')
 		return
 	}
 	if (shown.end - shown.start + 1 > MAX_CORRECTION_MEASURES) {
-		correctionHint.value = t('notenarchiv', 'Please show at most {count} measures first (fields "From measure" and "To measure").', { count: MAX_CORRECTION_MEASURES })
+		correctionHint.value = t('cantoria', 'Please show at most {count} measures first (fields "From measure" and "To measure").', { count: MAX_CORRECTION_MEASURES })
 		return
 	}
 	correctionHint.value = ''
@@ -494,7 +494,7 @@ function closeCorrection(): void {
 async function onCorrected(result: CorrectionResult): Promise<void> {
 	correction.value = null
 	focusAfterDialog(correctButton)
-	announce(t('notenarchiv', 'Saved as a new file: {name}', { name: result.file.name }))
+	announce(t('cantoria', 'Saved as a new file: {name}', { name: result.file.name }))
 	await loadReview()
 	emit('changed')
 }
@@ -651,12 +651,12 @@ const rangeHint = computed(() => {
 	if (!model.value) {
 		return ''
 	}
-	const parts = [t('notenarchiv', 'Printed measure numbers {first} to {last}.', numberSpan.value)]
+	const parts = [t('cantoria', 'Printed measure numbers {first} to {last}.', numberSpan.value)]
 	if (model.value.pickup) {
-		parts.push(t('notenarchiv', 'The pickup is measure 0.'))
+		parts.push(t('cantoria', 'The pickup is measure 0.'))
 	}
 	if (canPlay.value) {
-		parts.push(t('notenarchiv', 'Click a note to play from there.'))
+		parts.push(t('cantoria', 'Click a note to play from there.'))
 	}
 	return parts.join(' ')
 })
@@ -671,8 +671,8 @@ function applyRange(): void {
 	const result = resolveRange(loaded.measures, from, to)
 	if ('error' in result) {
 		rangeError.value = result.error === 'order'
-			? t('notenarchiv', 'Measure {to} does not come after measure {from}.', { from, to })
-			: t('notenarchiv', 'There is no measure {number} in this score.', { number: result.error === 'from' ? from : to })
+			? t('cantoria', 'Measure {to} does not come after measure {from}.', { from, to })
+			: t('cantoria', 'There is no measure {number} in this score.', { number: result.error === 'from' ? from : to })
 		return
 	}
 	rangeError.value = ''
@@ -698,7 +698,7 @@ const rangeText = computed(() => {
 	}
 	const first = loaded.measures[range.value?.start ?? 0]?.number ?? ''
 	const last = loaded.measures[range.value?.end ?? loaded.measures.length - 1]?.number ?? ''
-	return t('notenarchiv', 'Measures {from} to {to}', { from: first, to: last })
+	return t('cantoria', 'Measures {from} to {to}', { from: first, to: last })
 })
 
 // ---- voices -----------------------------------------------------------------
@@ -712,8 +712,8 @@ const focusKey = ref('')
  */
 function labelOf(voice: Voice): string {
 	return voiceLabel(voice, (part, number, staff) => part !== ''
-		? t('notenarchiv', '{part}, voice {number}', { part, number })
-		: t('notenarchiv', 'Staff {staff}, voice {number}', { staff, number }))
+		? t('cantoria', '{part}, voice {number}', { part, number })
+		: t('cantoria', 'Staff {staff}, voice {number}', { staff, number }))
 }
 
 interface VoiceOption {
@@ -722,7 +722,7 @@ interface VoiceOption {
 }
 
 const voiceOptions = computed<VoiceOption[]>(() => [
-	{ id: '', label: t('notenarchiv', 'No focus voice') },
+	{ id: '', label: t('cantoria', 'No focus voice') },
 	...(model.value?.voices ?? []).map((voice) => ({ id: voice.key, label: labelOf(voice) })),
 ])
 
@@ -787,7 +787,7 @@ const timeline = shallowRef<Timeline>({ events: [], measures: [], duration: 0 })
 // The server sends the reason translated; translateLabel also covers an English one
 const playReason = computed(() => score.value?.reason
 	? translateLabel(score.value.reason)
-	: t('notenarchiv', 'Playback is not available for this version.'))
+	: t('cantoria', 'Playback is not available for this version.'))
 
 const BEAT_SYMBOLS: Record<string, string> = {
 	whole: '𝅝',
@@ -811,17 +811,17 @@ function tempoMark(factor: number): string {
 	return `♩ = ${Math.round((model.value?.quarterTempo ?? 120) * factor)}`
 }
 
-const tempoLabel = computed(() => t('notenarchiv', 'Tempo: {percent} % ({mark})', { percent: tempoPercent.value, mark: tempoMark(tempoPercent.value / 100) }))
+const tempoLabel = computed(() => t('cantoria', 'Tempo: {percent} % ({mark})', { percent: tempoPercent.value, mark: tempoMark(tempoPercent.value / 100) }))
 
 const tempoHint = computed(() => {
 	const loaded = model.value
 	if (loaded?.tempo?.printed) {
-		return t('notenarchiv', 'Tempo in the score: {mark}', { mark: tempoMark(1) })
+		return t('cantoria', 'Tempo in the score: {mark}', { mark: tempoMark(1) })
 	}
 	if (loaded?.tempoInFile) {
-		return t('notenarchiv', 'Editorial tempo (not printed): {mark}', { mark: tempoMark(1) })
+		return t('cantoria', 'Editorial tempo (not printed): {mark}', { mark: tempoMark(1) })
 	}
-	return t('notenarchiv', 'The file gives no tempo; {mark} is assumed.', { mark: tempoMark(1) })
+	return t('cantoria', 'The file gives no tempo; {mark} is assumed.', { mark: tempoMark(1) })
 })
 
 function updateTimeline(): void {
@@ -942,7 +942,7 @@ function ensurePlayer(): ScorePlayerType {
 				playing.value = false
 				position.value = 0
 				resetHighlights()
-				announce(t('notenarchiv', 'End of playback.'))
+				announce(t('cantoria', 'End of playback.'))
 			},
 		})
 		player.setTimeline(timeline.value)
@@ -963,7 +963,7 @@ async function togglePlay(): Promise<void> {
 	if (current.isPlaying) {
 		current.pause()
 		playing.value = false
-		announce(t('notenarchiv', 'Paused at measure {number}.', { number: currentMeasureNumber.value }))
+		announce(t('cantoria', 'Paused at measure {number}.', { number: currentMeasureNumber.value }))
 		return
 	}
 	await startPlaying(current)
@@ -986,8 +986,8 @@ async function startPlaying(current: ScorePlayerType): Promise<void> {
 		updatePosition(current.currentTime())
 		const number = currentMeasureNumber.value
 		announce(bars > 0
-			? t('notenarchiv', 'Count-in, then playing from measure {number}.', { number })
-			: t('notenarchiv', 'Playing from measure {number}.', { number }))
+			? t('cantoria', 'Count-in, then playing from measure {number}.', { number })
+			: t('cantoria', 'Playing from measure {number}.', { number }))
 	}
 }
 
@@ -1005,8 +1005,8 @@ function moveTo(time: number): void {
 	lastMeasureAnnouncement = Date.now()
 	const number = currentMeasureNumber.value
 	announce(current.isPlaying
-		? t('notenarchiv', 'Playing from measure {number}.', { number })
-		: t('notenarchiv', 'Start at measure {number}.', { number }))
+		? t('cantoria', 'Playing from measure {number}.', { number })
+		: t('cantoria', 'Start at measure {number}.', { number }))
 }
 
 /**
@@ -1076,7 +1076,7 @@ function stop(): void {
 	position.value = 0
 	resetHighlights()
 	if (wasActive) {
-		announce(t('notenarchiv', 'Stopped.'))
+		announce(t('cantoria', 'Stopped.'))
 	}
 }
 
@@ -1100,8 +1100,8 @@ watch(loop, (on) => {
 	player?.setLoop(on)
 	const shown = rangeNumbers.value ?? { from: numberSpan.value.first, to: numberSpan.value.last }
 	announce(on
-		? t('notenarchiv', 'Loop on: measures {from} to {to} play again and again.', shown)
-		: t('notenarchiv', 'Loop off.'))
+		? t('cantoria', 'Loop on: measures {from} to {to} play again and again.', shown)
+		: t('cantoria', 'Loop off.'))
 })
 
 // ---- practice audio files ------------------------------------------------------
@@ -1114,7 +1114,7 @@ const canExportAudio = computed(() => practiceAudioOn.value && score.value?.canE
 // Why the button is missing although playback is allowed (translated by the server);
 // nothing when the function is switched off
 const exportReason = computed(() => (practiceAudioOn.value && score.value?.exportReason ? translateLabel(score.value.exportReason) : ''))
-const tempoValue = computed(() => t('notenarchiv', '{percent} % ({mark})', { percent: tempoPercent.value, mark: tempoMark(tempoPercent.value / 100) }))
+const tempoValue = computed(() => t('cantoria', '{percent} % ({mark})', { percent: tempoPercent.value, mark: tempoMark(tempoPercent.value / 100) }))
 
 function openPractice(): void {
 	if (player?.isPlaying) {
@@ -1271,7 +1271,7 @@ function announceMeasure(number: string): void {
 		return
 	}
 	lastMeasureAnnouncement = now
-	announce(t('notenarchiv', 'Measure {number}', { number }))
+	announce(t('cantoria', 'Measure {number}', { number }))
 }
 
 // ---- text alternative -------------------------------------------------------
@@ -1283,14 +1283,14 @@ const keyText = computed(() => {
 	}
 	const fifths = signatures.fifths
 	let text = fifths === 0
-		? t('notenarchiv', 'no sharps or flats')
-		: (fifths > 0 ? n('notenarchiv', '%n sharp', '%n sharps', fifths) : n('notenarchiv', '%n flat', '%n flats', -fifths))
+		? t('cantoria', 'no sharps or flats')
+		: (fifths > 0 ? n('cantoria', '%n sharp', '%n sharps', fifths) : n('cantoria', '%n flat', '%n flats', -fifths))
 	if (signatures.mode === 'major') {
-		text += ', ' + t('notenarchiv', 'major')
+		text += ', ' + t('cantoria', 'major')
 	} else if (signatures.mode === 'minor') {
-		text += ', ' + t('notenarchiv', 'minor')
+		text += ', ' + t('cantoria', 'minor')
 	}
-	return t('notenarchiv', 'Key signature: {key}', { key: text })
+	return t('cantoria', 'Key signature: {key}', { key: text })
 })
 
 const voiceList = computed(() => (model.value?.voices ?? []).map(labelOf).join(', '))
@@ -1300,8 +1300,8 @@ const summary = computed(() => {
 	if (!loaded) {
 		return ''
 	}
-	const parts = [rangeText.value, n('notenarchiv', '%n voice', '%n voices', loaded.voices.length)]
-	parts.push(focusVoice.value ? t('notenarchiv', 'Focus voice: {voice}', { voice: labelOf(focusVoice.value) }) : t('notenarchiv', 'No focus voice'))
+	const parts = [rangeText.value, n('cantoria', '%n voice', '%n voices', loaded.voices.length)]
+	parts.push(focusVoice.value ? t('cantoria', 'Focus voice: {voice}', { voice: labelOf(focusVoice.value) }) : t('cantoria', 'No focus voice'))
 	return parts.join(' · ')
 })
 
@@ -1311,18 +1311,18 @@ const description = computed(() => {
 		return ''
 	}
 	const sentences = [
-		t('notenarchiv', 'Score of {shelfmark} {title}', { shelfmark: shelfmark.value, title: title.value }),
+		t('cantoria', 'Score of {shelfmark} {title}', { shelfmark: shelfmark.value, title: title.value }),
 		rangeText.value,
-		n('notenarchiv', '%n voice: {voices}', '%n voices: {voices}', loaded.voices.length, { voices: voiceList.value }),
+		n('cantoria', '%n voice: {voices}', '%n voices: {voices}', loaded.voices.length, { voices: voiceList.value }),
 		focusVoice.value
-			? t('notenarchiv', 'The focus voice {voice} is shown in color with bold note heads and stems, the other voices in a lighter gray.', { voice: labelOf(focusVoice.value) })
-			: t('notenarchiv', 'No focus voice'),
+			? t('cantoria', 'The focus voice {voice} is shown in color with bold note heads and stems, the other voices in a lighter gray.', { voice: labelOf(focusVoice.value) })
+			: t('cantoria', 'No focus voice'),
 	]
 	if (keyText.value !== '') {
 		sentences.push(keyText.value)
 	}
 	if (loaded.signatures.time !== '') {
-		sentences.push(t('notenarchiv', 'Time signature: {time}', { time: loaded.signatures.time }))
+		sentences.push(t('cantoria', 'Time signature: {time}', { time: loaded.signatures.time }))
 	}
 	return sentences.join('. ') + '.'
 })
@@ -1409,11 +1409,11 @@ onBeforeUnmount(() => {
 			<!-- not a <header>: outside <main> that would be a second banner landmark -->
 			<div class="score-viewer__header">
 				<h2 :id="headingId" class="score-viewer__title">
-					{{ heading || t('notenarchiv', 'Score') }}
+					{{ heading || t('cantoria', 'Score') }}
 				</h2>
 				<p v-if="composer || score" class="score-viewer__subtitle">
 					<span v-if="composer">{{ composer }}</span>
-					<span v-if="score" class="score-viewer__file score-viewer__file-name">{{ t('notenarchiv', 'File: {name}', { name: score.fileName }) }}</span>
+					<span v-if="score" class="score-viewer__file score-viewer__file-name">{{ t('cantoria', 'File: {name}', { name: score.fileName }) }}</span>
 					<span v-if="versionLineText" class="score-viewer__file">{{ versionLineText }}</span>
 				</p>
 				<div class="score-viewer__state">
@@ -1441,7 +1441,7 @@ onBeforeUnmount(() => {
 			</NcEmptyContent>
 
 			<NcEmptyContent v-else-if="status === 'error'"
-				:name="t('notenarchiv', 'The score cannot be shown')"
+				:name="t('cantoria', 'The score cannot be shown')"
 				:description="errorText">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiAlertCircleOutline" />
@@ -1450,10 +1450,10 @@ onBeforeUnmount(() => {
 					<div class="score-viewer__error-actions">
 						<!-- The archive folder is not shared with the account: the way to the access check -->
 						<NcButton v-if="notShared && canChangeSettings" variant="primary" :href="accessCheckUrl">
-							{{ t('notenarchiv', 'Check access to the archive folder') }}
+							{{ t('cantoria', 'Check access to the archive folder') }}
 						</NcButton>
 						<NcButton v-if="retryable" @click="load()">
-							{{ t('notenarchiv', 'Try again') }}
+							{{ t('cantoria', 'Try again') }}
 						</NcButton>
 						<!-- Trying again cannot help: say where access to the files is explained -->
 						<NcButton v-else-if="!notShared"
@@ -1463,11 +1463,11 @@ onBeforeUnmount(() => {
 							<template #icon>
 								<NcIconSvgWrapper :path="mdiHelpCircleOutline" />
 							</template>
-							{{ t('notenarchiv', 'Help: access to the archive folder') }}
+							{{ t('cantoria', 'Help: access to the archive folder') }}
 						</NcButton>
 					</div>
 					<p v-if="notShared" class="score-viewer__error-help">
-						<GuideLink :href="userGuideUrl(USER_GUIDE.filesNotShared)" :label="t('notenarchiv', 'Files you cannot open (user guide)')" />
+						<GuideLink :href="userGuideUrl(USER_GUIDE.filesNotShared)" :label="t('cantoria', 'Files you cannot open (user guide)')" />
 					</p>
 				</template>
 			</NcEmptyContent>
@@ -1478,18 +1478,18 @@ onBeforeUnmount(() => {
 				<div v-if="canPlay"
 					class="score-viewer__buttons score-viewer__playbar"
 					role="group"
-					:aria-label="t('notenarchiv', 'Playback')">
+					:aria-label="t('cantoria', 'Playback')">
 					<NcButton variant="primary" @click="togglePlay">
 						<template #icon>
 							<NcIconSvgWrapper :path="playing ? mdiPause : mdiPlay" />
 						</template>
-						{{ playing ? t('notenarchiv', 'Pause') : t('notenarchiv', 'Play') }}
+						{{ playing ? t('cantoria', 'Pause') : t('cantoria', 'Play') }}
 					</NcButton>
 					<NcButton :disabled="!playing && position === 0" @click="stop">
 						<template #icon>
 							<NcIconSvgWrapper :path="mdiStop" />
 						</template>
-						{{ t('notenarchiv', 'Stop') }}
+						{{ t('cantoria', 'Stop') }}
 					</NcButton>
 				</div>
 				<NcButton v-if="narrow"
@@ -1501,14 +1501,14 @@ onBeforeUnmount(() => {
 					<template #icon>
 						<NcIconSvgWrapper :path="controlsShown ? mdiChevronUp : mdiTuneVariant" />
 					</template>
-					{{ t('notenarchiv', 'Measures, voice and size') }}
+					{{ t('cantoria', 'Measures, voice and size') }}
 				</NcButton>
 				<!-- Three compact bars, so that the score itself starts high up:
 				     playback, then measures and voice, then review and scan -->
 				<div v-show="!narrow || controlsShown" :id="controlsId" class="score-viewer__controls">
 					<section v-if="canPlay"
 						class="score-viewer__bar"
-						:aria-label="t('notenarchiv', 'Playback')">
+						:aria-label="t('cantoria', 'Playback')">
 						<div v-if="canExportAudio" class="score-viewer__buttons">
 							<NcButton ref="practiceButton"
 								aria-haspopup="dialog"
@@ -1516,17 +1516,17 @@ onBeforeUnmount(() => {
 								<template #icon>
 									<NcIconSvgWrapper :path="mdiFileMusicOutline" />
 								</template>
-								{{ t('notenarchiv', 'Practice files …') }}
+								{{ t('cantoria', 'Practice files …') }}
 							</NcButton>
 						</div>
 						<!-- How the focus voice (chosen in the bar below) sounds -->
-						<NcRadioGroup v-model="mode" :label="t('notenarchiv', 'Voices during playback')">
-							<NcRadioGroupButton value="all" :label="t('notenarchiv', 'All equal')" />
+						<NcRadioGroup v-model="mode" :label="t('cantoria', 'Voices during playback')">
+							<NcRadioGroupButton value="all" :label="t('cantoria', 'All equal')" />
 							<NcRadioGroupButton value="focus"
-								:label="t('notenarchiv', 'Focus voice louder')"
+								:label="t('cantoria', 'Focus voice louder')"
 								:disabled="!focusVoice" />
 							<NcRadioGroupButton value="solo"
-								:label="t('notenarchiv', 'Focus voice only')"
+								:label="t('cantoria', 'Focus voice only')"
 								:disabled="!focusVoice" />
 						</NcRadioGroup>
 						<div class="score-viewer__buttons">
@@ -1537,7 +1537,7 @@ onBeforeUnmount(() => {
 								<template #icon>
 									<NcIconSvgWrapper :path="settingsShown ? mdiChevronUp : mdiTuneVariant" />
 								</template>
-								{{ t('notenarchiv', 'Tempo, volume and practising') }}
+								{{ t('cantoria', 'Tempo, volume and practising') }}
 							</NcButton>
 						</div>
 						<div v-show="settingsShown" :id="settingsId" class="score-viewer__settings">
@@ -1550,30 +1550,30 @@ onBeforeUnmount(() => {
 									max="200"
 									step="5"
 									:aria-describedby="tempoHintId"
-									:aria-valuetext="t('notenarchiv', '{percent} % of the tempo', { percent: tempoPercent })">
+									:aria-valuetext="t('cantoria', '{percent} % of the tempo', { percent: tempoPercent })">
 								<span :id="tempoHintId" class="score-viewer__hint">{{ tempoHint }}</span>
 							</label>
 							<label class="score-viewer__slider" :for="volumeId">
-								<span>{{ t('notenarchiv', 'Volume: {percent} %', { percent: volumePercent }) }}</span>
+								<span>{{ t('cantoria', 'Volume: {percent} %', { percent: volumePercent }) }}</span>
 								<input :id="volumeId"
 									v-model.number="volumePercent"
 									type="range"
 									min="0"
 									max="100"
 									step="5"
-									:aria-valuetext="t('notenarchiv', '{percent} % volume', { percent: volumePercent })">
+									:aria-valuetext="t('cantoria', '{percent} % volume', { percent: volumePercent })">
 							</label>
-							<NcRadioGroup v-model="countInChoice" :label="t('notenarchiv', 'Count-in')">
-								<NcRadioGroupButton value="0" :label="t('notenarchiv', 'Off')" />
-								<NcRadioGroupButton value="1" :label="t('notenarchiv', '1 bar')" />
-								<NcRadioGroupButton value="2" :label="t('notenarchiv', '2 bars')" />
+							<NcRadioGroup v-model="countInChoice" :label="t('cantoria', 'Count-in')">
+								<NcRadioGroupButton value="0" :label="t('cantoria', 'Off')" />
+								<NcRadioGroupButton value="1" :label="t('cantoria', '1 bar')" />
+								<NcRadioGroupButton value="2" :label="t('cantoria', '2 bars')" />
 							</NcRadioGroup>
 							<div class="score-viewer__switches">
 								<NcCheckboxRadioSwitch v-model="repeats" type="switch">
-									{{ t('notenarchiv', 'Play repeats') }}
+									{{ t('cantoria', 'Play repeats') }}
 								</NcCheckboxRadioSwitch>
 								<NcCheckboxRadioSwitch v-model="follow" type="switch">
-									{{ t('notenarchiv', 'Scroll along') }}
+									{{ t('cantoria', 'Scroll along') }}
 								</NcCheckboxRadioSwitch>
 							</div>
 							<PracticeTools v-model:mix="mix"
@@ -1618,42 +1618,42 @@ onBeforeUnmount(() => {
 						{{ playReason }}
 					</NcNoteCard>
 
-					<section class="score-viewer__bar" :aria-label="t('notenarchiv', 'Measures and voice')">
+					<section class="score-viewer__bar" :aria-label="t('cantoria', 'Measures and voice')">
 						<form class="score-viewer__range" @submit.prevent="applyRange">
 							<!-- NcTextField puts a class on its input, not on its box: the width is set here -->
 							<div class="score-viewer__measure-field">
 								<NcTextField v-model="rangeFrom"
-									:label="t('notenarchiv', 'From measure')"
+									:label="t('cantoria', 'From measure')"
 									:error="rangeError !== ''" />
 							</div>
 							<div class="score-viewer__measure-field">
 								<NcTextField v-model="rangeTo"
-									:label="t('notenarchiv', 'To measure')"
+									:label="t('cantoria', 'To measure')"
 									:error="rangeError !== ''" />
 							</div>
 							<NcButton type="submit">
-								{{ t('notenarchiv', 'Show') }}
+								{{ t('cantoria', 'Show') }}
 							</NcButton>
 							<NcButton v-if="range" variant="tertiary" @click="showAllMeasures">
-								{{ t('notenarchiv', 'All measures') }}
+								{{ t('cantoria', 'All measures') }}
 							</NcButton>
 							<!-- A–B loop: the measures of the two fields again and again -->
 							<NcCheckboxRadioSwitch v-if="canPlay"
 								v-model="loop"
 								class="score-viewer__loop"
 								type="switch">
-								{{ t('notenarchiv', 'Loop') }}
+								{{ t('cantoria', 'Loop') }}
 							</NcCheckboxRadioSwitch>
 						</form>
 						<NcSelect v-model="focusOption"
 							class="score-viewer__voice"
-							:input-label="t('notenarchiv', 'Focus voice')"
+							:input-label="t('cantoria', 'Focus voice')"
 							:options="voiceOptions"
 							:clearable="false"
 							:searchable="false" />
-						<div class="score-viewer__zoom" role="group" :aria-label="t('notenarchiv', 'Size of the score')">
+						<div class="score-viewer__zoom" role="group" :aria-label="t('cantoria', 'Size of the score')">
 							<NcButton variant="tertiary"
-								:aria-label="t('notenarchiv', 'Smaller')"
+								:aria-label="t('cantoria', 'Smaller')"
 								:disabled="zoomIndex === 0"
 								@click="zoomBy(-1)">
 								<template #icon>
@@ -1662,7 +1662,7 @@ onBeforeUnmount(() => {
 							</NcButton>
 							<span class="score-viewer__zoom-value">{{ zoomPercent }} %</span>
 							<NcButton variant="tertiary"
-								:aria-label="t('notenarchiv', 'Larger')"
+								:aria-label="t('cantoria', 'Larger')"
 								:disabled="zoomIndex === ZOOM_STEPS.length - 1"
 								@click="zoomBy(1)">
 								<template #icon>
@@ -1679,31 +1679,31 @@ onBeforeUnmount(() => {
 							<template #icon>
 								<NcIconSvgWrapper :path="placeShown ? mdiChevronUp : mdiDotsHorizontal" />
 							</template>
-							{{ t('notenarchiv', 'This passage') }}
+							{{ t('cantoria', 'This passage') }}
 						</NcButton>
 						<div v-show="placeShown"
 							:id="placeId"
 							class="score-viewer__place score-viewer__line"
 							role="group"
-							:aria-label="t('notenarchiv', 'This passage')">
+							:aria-label="t('cantoria', 'This passage')">
 							<span class="score-viewer__hint score-viewer__reference">{{ reference }}</span>
 							<NcButton variant="tertiary" @click="copyReference">
 								<template #icon>
 									<NcIconSvgWrapper :path="mdiContentCopy" />
 								</template>
-								{{ t('notenarchiv', 'Copy text reference') }}
+								{{ t('cantoria', 'Copy text reference') }}
 							</NcButton>
 							<NcButton v-if="canCreateLinks" variant="tertiary" @click="linkDialogOpen = true">
 								<template #icon>
 									<NcIconSvgWrapper :path="mdiLinkVariantPlus" />
 								</template>
-								{{ canShareOutside ? t('notenarchiv', 'Share …') : t('notenarchiv', 'Create internal link') }}
+								{{ canShareOutside ? t('cantoria', 'Share …') : t('cantoria', 'Create internal link') }}
 							</NcButton>
 							<NcButton v-if="canCreateTasks" variant="tertiary" @click="taskDialogOpen = true">
 								<template #icon>
 									<NcIconSvgWrapper :path="mdiClipboardTextOutline" />
 								</template>
-								{{ t('notenarchiv', 'New task for this place') }}
+								{{ t('cantoria', 'New task for this place') }}
 							</NcButton>
 						</div>
 						<p v-if="rangeError" class="score-viewer__error score-viewer__line" role="alert">
@@ -1716,7 +1716,7 @@ onBeforeUnmount(() => {
 
 					<section v-if="reviewOn || canCorrect || scans.length > 0"
 						class="score-viewer__bar"
-						:aria-label="t('notenarchiv', 'Review and scan')">
+						:aria-label="t('cantoria', 'Review and scan')">
 						<NcButton v-if="reviewOn"
 							variant="secondary"
 							:aria-pressed="reviewShown ? 'true' : 'false'"
@@ -1734,18 +1734,18 @@ onBeforeUnmount(() => {
 							<template #icon>
 								<NcIconSvgWrapper :path="mdiPencilOutline" />
 							</template>
-							{{ t('notenarchiv', 'Correct notes …') }}
+							{{ t('cantoria', 'Correct notes …') }}
 						</NcButton>
 						<div v-if="scans.length > 0"
 							class="score-viewer__scan-controls"
 							role="group"
-							:aria-label="t('notenarchiv', 'Scan')">
+							:aria-label="t('cantoria', 'Scan')">
 							<NcCheckboxRadioSwitch v-model="scanShown" type="switch">
-								{{ t('notenarchiv', 'Show scan beside the score') }}
+								{{ t('cantoria', 'Show scan beside the score') }}
 							</NcCheckboxRadioSwitch>
 							<!-- file and page only while the scan is shown (a review point sets the page, too) -->
 							<label v-if="scanShown && scans.length > 1" class="score-viewer__scan-choice" :for="scanSelectId">
-								<span>{{ t('notenarchiv', 'Scan file') }}</span>
+								<span>{{ t('cantoria', 'Scan file') }}</span>
 								<select :id="scanSelectId" v-model.number="scanFileId">
 									<option v-for="file in scans" :key="file.id" :value="file.id">
 										{{ file.name }}
@@ -1756,7 +1756,7 @@ onBeforeUnmount(() => {
 								<NcTextField v-model="scanPageInput"
 									type="number"
 									min="1"
-									:label="t('notenarchiv', 'Page of the scan')" />
+									:label="t('cantoria', 'Page of the scan')" />
 							</div>
 							<NcButton variant="tertiary"
 								:href="scanSrc"
@@ -1764,7 +1764,7 @@ onBeforeUnmount(() => {
 								<template #icon>
 									<NcIconSvgWrapper :path="mdiOpenInNew" />
 								</template>
-								{{ t('notenarchiv', 'Open scan in a new window') }}
+								{{ t('cantoria', 'Open scan in a new window') }}
 							</NcButton>
 						</div>
 						<p v-if="correctionHint" class="score-viewer__hint score-viewer__line" role="status">
@@ -1777,7 +1777,7 @@ onBeforeUnmount(() => {
 					{{ summary }}
 				</p>
 				<p v-if="canPlay" :id="scoreHintId" class="hidden-visually">
-					{{ t('notenarchiv', 'Space plays and pauses. The arrow keys left and right go to the previous or next measure.') }}
+					{{ t('cantoria', 'Space plays and pauses. The arrow keys left and right go to the previous or next measure.') }}
 				</p>
 				<PracticeLyrics v-if="canPlay && lyricsVoice"
 					v-model:shown="lyricsShown"
@@ -1805,7 +1805,7 @@ onBeforeUnmount(() => {
 						class="score-viewer__score"
 						tabindex="0"
 						role="region"
-						:aria-label="t('notenarchiv', 'Score')"
+						:aria-label="t('cantoria', 'Score')"
 						:aria-describedby="canPlay ? `${summaryId} ${scoreHintId}` : summaryId"
 						@wheel="onWheel"
 						@click="onScoreClick">
@@ -1830,7 +1830,7 @@ onBeforeUnmount(() => {
 						<iframe :key="scanSrc"
 							:src="scanSrc"
 							class="score-viewer__scan-frame"
-							:title="t('notenarchiv', 'Scan {name}, page {page}', { name: scanName, page: scanPage })" />
+							:title="t('cantoria', 'Scan {name}, page {page}', { name: scanName, page: scanPage })" />
 					</div>
 					<ReviewPanel v-if="reviewOn && reviewShown"
 						class="score-viewer__review-panel"

@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -38,7 +38,7 @@ const ORDER = 20
  */
 const ICON = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M2 2h4l2 2h6a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zM7 9.33V5H10L13 8V11H12V9L9 7.5V10.65A3.1 2.15 -20 1 1 7 9.33z"/></svg>'
 
-const state = loadState<FilesState | null>('notenarchiv', 'files', null)
+const state = loadState<FilesState | null>('cantoria', 'files', null)
 const root = '/files/' + (getCurrentUser()?.uid ?? '')
 
 /** MIME types the Nextcloud viewer opens (apps such as Text register theirs there). */
@@ -74,7 +74,7 @@ async function report(message: string): Promise<null | false> {
  * @param context.nodes - the one file
  */
 async function openInArchive({ nodes }: ActionContextSingle): Promise<boolean | null> {
-	const url = generateUrl('/apps/notenarchiv/api/nextcloud-files/{fileId}/copy', { fileId: nodes[0].id ?? '' })
+	const url = generateUrl('/apps/cantoria/api/nextcloud-files/{fileId}/copy', { fileId: nodes[0].id ?? '' })
 	let response: Response
 	try {
 		response = await fetch(url, {
@@ -89,7 +89,7 @@ async function openInArchive({ nodes }: ActionContextSingle): Promise<boolean | 
 	if (copy === null) {
 		return report(errorText(response.status, body))
 	}
-	window.location.assign(appLink(generateUrl('/apps/notenarchiv/'), copy))
+	window.location.assign(appLink(generateUrl('/apps/cantoria/'), copy))
 	return null
 }
 
@@ -103,7 +103,7 @@ async function openInArchive({ nodes }: ActionContextSingle): Promise<boolean | 
 function action(id: string, kind: 'default' | 'menu', isDefault: boolean): IFileAction {
 	return {
 		id,
-		displayName: () => t('notenarchiv', 'Open in music archive'),
+		displayName: () => t('cantoria', 'Open in music archive'),
 		iconSvgInline: () => ICON,
 		enabled: ({ nodes }: ActionContext) => actionKind(nodes, state, root, viewerMimes()) === kind,
 		exec: openInArchive,
@@ -113,6 +113,6 @@ function action(id: string, kind: 'default' | 'menu', isDefault: boolean): IFile
 }
 
 if (state !== null) {
-	registerFileAction(action('notenarchiv-open-score', 'default', true))
-	registerFileAction(action('notenarchiv-open', 'menu', false))
+	registerFileAction(action('cantoria-open-score', 'default', true))
+	registerFileAction(action('cantoria-open', 'menu', false))
 }

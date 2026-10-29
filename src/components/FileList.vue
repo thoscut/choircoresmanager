@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -71,22 +71,22 @@ const sortedFiles = computed(() => [...props.files].sort((a, b) => {
 function roleLabel(role: string | null): string {
 	switch (role) {
 	case 'score_pdf':
-		return t('notenarchiv', 'Score (PDF)')
+		return t('cantoria', 'Score (PDF)')
 	case 'musicxml':
-		return t('notenarchiv', 'MusicXML')
+		return t('cantoria', 'MusicXML')
 	case 'musescore':
-		return t('notenarchiv', 'MuseScore')
+		return t('cantoria', 'MuseScore')
 	case 'analysis':
-		return t('notenarchiv', 'Analysis')
+		return t('cantoria', 'Analysis')
 	case 'source':
-		return t('notenarchiv', 'Source file')
+		return t('cantoria', 'Source file')
 	case 'audio':
-		return t('notenarchiv', 'Audio')
+		return t('cantoria', 'Audio')
 	case 'image':
-		return t('notenarchiv', 'Image')
+		return t('cantoria', 'Image')
 	case 'other':
 	case null:
-		return t('notenarchiv', 'Other')
+		return t('cantoria', 'Other')
 	default:
 		return role
 	}
@@ -153,7 +153,7 @@ const linkButton = useTemplateRef('linkButton')
 async function chooseFile(): Promise<void> {
 	let nodes
 	try {
-		nodes = await getFilePickerBuilder(t('notenarchiv', 'Choose a file in the archive folder'))
+		nodes = await getFilePickerBuilder(t('cantoria', 'Choose a file in the archive folder'))
 			.setMultiSelect(false)
 			.setType(FilePickerType.Choose)
 			.build()
@@ -167,14 +167,14 @@ async function chooseFile(): Promise<void> {
 	}
 	const node = nodes[0]
 	if (!node?.fileid) {
-		showError(t('notenarchiv', 'The chosen file cannot be used.'))
+		showError(t('cantoria', 'The chosen file cannot be used.'))
 		await focusAfterDialog(linkButton)
 		return
 	}
 	linking.value = true
 	try {
 		await linkFile(props.copyId, node.fileid)
-		showSuccess(t('notenarchiv', 'The file has been linked.'))
+		showSuccess(t('cantoria', 'The file has been linked.'))
 		emit('changed')
 	} catch (caught) {
 		showError(errorMessage(caught))
@@ -205,7 +205,7 @@ async function confirmUnlink(): Promise<void> {
 	unlinkError.value = ''
 	try {
 		await unlinkFile(unlinking.value.id)
-		showSuccess(t('notenarchiv', 'The manual link has been removed.'))
+		showSuccess(t('cantoria', 'The manual link has been removed.'))
 		unlinking.value = null
 		emit('changed')
 		// The button that removed the link is gone with the link
@@ -232,21 +232,21 @@ function details(file: FileRef): string {
 <template>
 	<div class="file-list">
 		<NcNoteCard v-if="preservationCopy" type="error">
-			{{ t('notenarchiv', 'Internal preservation copy – do not share. Do not pass these files on.') }}
+			{{ t('cantoria', 'Internal preservation copy – do not share. Do not pass these files on.') }}
 			<HelpTerm term="preservationCopy" />
 		</NcNoteCard>
 
 		<NcNoteCard v-if="archiveNotShared && files.length > 0" type="warning">
-			<p>{{ t('notenarchiv', 'The files lie in the archive folder, which is not shared with your account, so they do not open for you. Please ask the music librarians to share the archive folder with you or your group.') }}</p>
+			<p>{{ t('cantoria', 'The files lie in the archive folder, which is not shared with your account, so they do not open for you. Please ask the music librarians to share the archive folder with you or your group.') }}</p>
 			<NcButton v-if="canChangeSettings" variant="secondary" :href="adminSettingsUrl(SETTINGS_SECTIONS.access)">
-				{{ t('notenarchiv', 'Check access to the archive folder') }}
+				{{ t('cantoria', 'Check access to the archive folder') }}
 			</NcButton>
 		</NcNoteCard>
 
 		<NcNoteCard v-if="files.some((file) => file.sha256_mismatch)" type="warning">
-			<p>{{ t('notenarchiv', 'A file has changed without a visible modification and may be damaged.') }}</p>
+			<p>{{ t('cantoria', 'A file has changed without a visible modification and may be damaged.') }}</p>
 			<NcButton v-if="isModuleActive('checksums')" variant="secondary" @click="navigate('checksums')">
-				{{ t('notenarchiv', 'Show checksums') }}
+				{{ t('cantoria', 'Show checksums') }}
 			</NcButton>
 		</NcNoteCard>
 
@@ -256,13 +256,13 @@ function details(file: FileRef): string {
 					<NcLoadingIcon v-if="linking" />
 					<NcIconSvgWrapper v-else :path="mdiFileLinkOutline" />
 				</template>
-				{{ t('notenarchiv', 'Link a file …') }}
+				{{ t('cantoria', 'Link a file …') }}
 			</NcButton>
 		</div>
 
 		<NcEmptyContent v-if="files.length === 0"
-			:name="t('notenarchiv', 'No files linked')"
-			:description="t('notenarchiv', 'Files are linked by the file sync in the archive management. The file name has to start with the shelf mark, e.g. 5-01_Title.pdf. Other files of the archive folder can be linked by hand.')">
+			:name="t('cantoria', 'No files linked')"
+			:description="t('cantoria', 'Files are linked by the file sync in the archive management. The file name has to start with the shelf mark, e.g. 5-01_Title.pdf. Other files of the archive folder can be linked by hand.')">
 			<template #icon>
 				<NcIconSvgWrapper :path="mdiFileQuestionOutline" />
 			</template>
@@ -285,40 +285,40 @@ function details(file: FileRef): string {
 							:path="mdiOpenInNew"
 							:size="16"
 							inline
-							:name="t('notenarchiv', 'opens in a new tab')" />
+							:name="t('cantoria', 'opens in a new tab')" />
 					</a>
 					<span v-else class="file-list__name">{{ file.name }}</span>
 					<span class="file-list__details">{{ details(file) }}</span>
 					<span class="file-list__flags">
 						<span v-if="file.musicxml_valid" class="file-flag file-flag--success">
-							{{ t('notenarchiv', 'Valid MusicXML') }}
+							{{ t('cantoria', 'Valid MusicXML') }}
 						</span>
 						<span v-if="file.listed" class="file-flag">
-							{{ t('notenarchiv', 'Listed in the catalog') }}
+							{{ t('cantoria', 'Listed in the catalog') }}
 						</span>
 						<span v-if="file.found === false" class="file-flag file-flag--error">
-							{{ t('notenarchiv', 'Not found') }}
+							{{ t('cantoria', 'Not found') }}
 						</span>
 						<span v-if="file.linked_manually" class="file-flag">
-							{{ t('notenarchiv', 'Linked by hand') }}
+							{{ t('cantoria', 'Linked by hand') }}
 						</span>
 						<span v-if="file.sha256_mismatch" class="file-flag file-flag--error">
-							{{ t('notenarchiv', 'Changed without modification') }}
+							{{ t('cantoria', 'Changed without modification') }}
 						</span>
 					</span>
 					<span v-if="folderOf(file) !== ''" class="file-list__path">
 						<NcIconSvgWrapper :path="mdiFolderOutline"
 							:size="16"
 							inline
-							:name="t('notenarchiv', 'In the folder')" />
+							:name="t('cantoria', 'In the folder')" />
 						{{ folderOf(file) }}
 					</span>
 					<!-- Rights notice of a MusicXML file (milestone 0.8): information, never a rights status -->
 					<span v-if="file.rights_notice && isModuleActive('rights')" class="file-list__notice">
-						<span class="file-flag">{{ t('notenarchiv', 'Not checked') }}</span>
-						{{ t('notenarchiv', 'Rights notice in the file: “{notice}”', { notice: file.rights_notice }) }}
+						<span class="file-flag">{{ t('cantoria', 'Not checked') }}</span>
+						{{ t('cantoria', 'Rights notice in the file: “{notice}”', { notice: file.rights_notice }) }}
 						<span class="file-list__path">
-							{{ t('notenarchiv', 'Taken from the MusicXML file as it is. It changes no rights status; the catalog librarian checks it and confirms the rights in the tab Rights.') }}
+							{{ t('cantoria', 'Taken from the MusicXML file as it is. It changes no rights status; the catalog librarian checks it and confirms the rights in the tab Rights.') }}
 						</span>
 					</span>
 					<NcButton v-if="isLibrarian && file.linked_manually"
@@ -328,22 +328,22 @@ function details(file: FileRef): string {
 						<template #icon>
 							<NcIconSvgWrapper :path="mdiLinkOff" />
 						</template>
-						{{ t('notenarchiv', 'Remove manual link') }}
+						{{ t('cantoria', 'Remove manual link') }}
 					</NcButton>
 				</div>
 			</li>
 		</ul>
 
 		<ActionDialog v-if="unlinking"
-			:name="t('notenarchiv', 'Remove manual link')"
-			:submit-label="t('notenarchiv', 'Remove link')"
+			:name="t('cantoria', 'Remove manual link')"
+			:submit-label="t('cantoria', 'Remove link')"
 			:busy="unlinkBusy"
 			:error="unlinkError"
 			@submit="confirmUnlink"
 			@close="unlinking = null">
-			<p>{{ t('notenarchiv', 'File: {name}', { name: unlinking.name }) }}</p>
+			<p>{{ t('cantoria', 'File: {name}', { name: unlinking.name }) }}</p>
 			<p class="action-dialog__hint">
-				{{ t('notenarchiv', 'Afterwards the file name decides again: the next file sync links the file to the copy whose shelf mark it starts with, or to none. The file itself is not changed.') }}
+				{{ t('cantoria', 'Afterwards the file name decides again: the next file sync links the file to the copy whose shelf mark it starts with, or to none. The file itself is not changed.') }}
 			</p>
 		</ActionDialog>
 	</div>

@@ -6,7 +6,7 @@ rounds, assistants with a language model. It is an
 of Nextcloud under
 
 ```
-/ocs/v2.php/apps/notenarchiv/api/v1/…
+/ocs/v2.php/apps/cantoria/api/v1/…
 ```
 
 The machine-readable description is [`openapi.json`](../openapi.json)
@@ -15,7 +15,7 @@ The machine-readable description is [`openapi.json`](../openapi.json)
 it is part of the release archive). The MCP server in
 [`tools/mcp`](../tools/mcp/README.md) offers these routes as tools for agents.
 
-The internal API of the user interface (`/apps/notenarchiv/api/…`,
+The internal API of the user interface (`/apps/cantoria/api/…`,
 [docs/api.md](api.md)) may change with every release; use this one.
 
 ## Principles
@@ -66,8 +66,8 @@ Every request needs
 Write requests send JSON (`Content-Type: application/json`).
 
 ```sh
-curl -u "notenarchiv-agent:$APP_PASSWORD" -H 'OCS-APIRequest: true' -H 'Accept: application/json' \
-  'https://cloud.example.org/ocs/v2.php/apps/notenarchiv/api/v1/modules'
+curl -u "cantoria-agent:$APP_PASSWORD" -H 'OCS-APIRequest: true' -H 'Accept: application/json' \
+  'https://cloud.example.org/ocs/v2.php/apps/cantoria/api/v1/modules'
 ```
 
 ## Answers
@@ -174,8 +174,8 @@ arranger, work number; case-insensitive, parts of words), `shelfmark`
 ```
 
 ```sh
-curl -u "notenarchiv-agent:$APP_PASSWORD" -H 'OCS-APIRequest: true' -H 'Accept: application/json' \
-  'https://cloud.example.org/ocs/v2.php/apps/notenarchiv/api/v1/catalog?q=Mond&has_musicxml=true&limit=10'
+curl -u "cantoria-agent:$APP_PASSWORD" -H 'OCS-APIRequest: true' -H 'Accept: application/json' \
+  'https://cloud.example.org/ocs/v2.php/apps/cantoria/api/v1/catalog?q=Mond&has_musicxml=true&limit=10'
 ```
 
 ### One copy: `GET /api/v1/copies/{id}`
@@ -221,10 +221,10 @@ account and, for the catalog librarian, answered tasks to apply.
 operations) answers **201** with the task:
 
 ```sh
-curl -u "notenarchiv-agent:$APP_PASSWORD" -H 'OCS-APIRequest: true' -H 'Accept: application/json' \
+curl -u "cantoria-agent:$APP_PASSWORD" -H 'OCS-APIRequest: true' -H 'Accept: application/json' \
   -H 'Content-Type: application/json' -X POST \
   -d '{"addressee":"conductor","kind":"question","category":"reading","measure_from":"12","measure_to":"12","voice":"Tenor II","question":"F or F sharp in bar 12?"}' \
-  'https://cloud.example.org/ocs/v2.php/apps/notenarchiv/api/v1/copies/1/tasks'
+  'https://cloud.example.org/ocs/v2.php/apps/cantoria/api/v1/copies/1/tasks'
 ```
 
 `addressee` (required): `conductor`, `librarian`, `operations`, `reader`;
@@ -243,10 +243,10 @@ Closing a task stays with the catalog librarian in the app.
 one proposal per field:
 
 ```sh
-curl -u "notenarchiv-agent:$APP_PASSWORD" -H 'OCS-APIRequest: true' -H 'Accept: application/json' \
+curl -u "cantoria-agent:$APP_PASSWORD" -H 'OCS-APIRequest: true' -H 'Accept: application/json' \
   -H 'Content-Type: application/json' -X POST \
   -d '{"level":"version","object_id":1,"fields":{"key_signature":"D major","scoring":"SATB"},"reason":"from the score, p. 1","source":"agent round 1"}' \
-  'https://cloud.example.org/ocs/v2.php/apps/notenarchiv/api/v1/proposals'
+  'https://cloud.example.org/ocs/v2.php/apps/cantoria/api/v1/proposals'
 ```
 
 `level` is `work`, `version` or `copy`; `object_id` the `work_id`,
@@ -285,10 +285,10 @@ librarian; module `transcription_review`) with the report as text
 (`report`), not both:
 
 ```sh
-curl -u "notenarchiv-agent:$APP_PASSWORD" -H 'OCS-APIRequest: true' -H 'Accept: application/json' \
+curl -u "cantoria-agent:$APP_PASSWORD" -H 'OCS-APIRequest: true' -H 'Accept: application/json' \
   -H 'Content-Type: application/json' -X POST \
   --data "$(jq -n --rawfile report bericht.json '{content: $report}')" \
-  'https://cloud.example.org/ocs/v2.php/apps/notenarchiv/api/v1/copies/1/transcription_reports'
+  'https://cloud.example.org/ocs/v2.php/apps/cantoria/api/v1/copies/1/transcription_reports'
 ```
 
 ```json

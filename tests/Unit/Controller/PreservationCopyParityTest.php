@@ -3,35 +3,35 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Controller;
+namespace OCA\Cantoria\Tests\Unit\Controller;
 
-use OCA\Notenarchiv\Controller\ApiController;
-use OCA\Notenarchiv\Controller\ApiV1CatalogController;
-use OCA\Notenarchiv\Db\ArchiveFileMapper;
-use OCA\Notenarchiv\Db\Copy;
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\LicenseMapper;
-use OCA\Notenarchiv\Db\Work;
-use OCA\Notenarchiv\Db\WorkMapper;
-use OCA\Notenarchiv\Db\WorkVersion;
-use OCA\Notenarchiv\Db\WorkVersionMapper;
-use OCA\Notenarchiv\Service\CatalogService;
-use OCA\Notenarchiv\Service\ExportService;
-use OCA\Notenarchiv\Service\FileSyncService;
-use OCA\Notenarchiv\Service\ImportService;
-use OCA\Notenarchiv\Service\MetaService;
-use OCA\Notenarchiv\Service\RepertoireService;
-use OCA\Notenarchiv\Service\RightsPolicy;
-use OCA\Notenarchiv\Service\RightsService;
-use OCA\Notenarchiv\Service\Roles;
-use OCA\Notenarchiv\Service\ScoreService;
-use OCA\Notenarchiv\Service\TaskService;
-use OCA\Notenarchiv\Service\UserFiles;
-use OCA\Notenarchiv\Tests\Unit\Support\ModuleSwitches;
+use OCA\Cantoria\Controller\ApiController;
+use OCA\Cantoria\Controller\ApiV1CatalogController;
+use OCA\Cantoria\Db\ArchiveFileMapper;
+use OCA\Cantoria\Db\Copy;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Db\LicenseMapper;
+use OCA\Cantoria\Db\Work;
+use OCA\Cantoria\Db\WorkMapper;
+use OCA\Cantoria\Db\WorkVersion;
+use OCA\Cantoria\Db\WorkVersionMapper;
+use OCA\Cantoria\Service\CatalogService;
+use OCA\Cantoria\Service\ExportService;
+use OCA\Cantoria\Service\FileSyncService;
+use OCA\Cantoria\Service\ImportService;
+use OCA\Cantoria\Service\MetaService;
+use OCA\Cantoria\Service\RepertoireService;
+use OCA\Cantoria\Service\RightsPolicy;
+use OCA\Cantoria\Service\RightsService;
+use OCA\Cantoria\Service\Roles;
+use OCA\Cantoria\Service\ScoreService;
+use OCA\Cantoria\Service\TaskService;
+use OCA\Cantoria\Service\UserFiles;
+use OCA\Cantoria\Tests\Unit\Support\ModuleSwitches;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\OCS\OCSForbiddenException;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -130,14 +130,14 @@ final class PreservationCopyParityTest extends TestCase {
 		$rights->method('today')->willReturn('2026-10-27');
 
 		$roles = $this->roleStub($role);
-		$modules = $this->modules(array_fill_keys(\OCA\Notenarchiv\Service\Modules::switchable(), false));
+		$modules = $this->modules(array_fill_keys(\OCA\Cantoria\Service\Modules::switchable(), false));
 		$catalog = new CatalogService($this->createStub(IDBConnection::class), $workMapper, $versionMapper, $copyMapper, $fileMapper,
-			$this->createStub(\OCA\Notenarchiv\Db\AuditEntryMapper::class), $this->createStub(\OCA\Notenarchiv\Service\AuditLog::class), $roles,
+			$this->createStub(\OCA\Cantoria\Db\AuditEntryMapper::class), $this->createStub(\OCA\Cantoria\Service\AuditLog::class), $roles,
 			$this->createStub(ITimeFactory::class), $this->createStub(IDateTimeZone::class), $this->createStub(ScoreService::class), $rights,
-			$this->createStub(LicenseMapper::class), $this->createStub(\OCA\Notenarchiv\Db\ProposalMapper::class),
-			$this->createStub(IUserManager::class), $this->createStub(TaskService::class), $this->createStub(\OCA\Notenarchiv\Service\LinkService::class),
-			$repertoire, $this->createStub(\OCA\Notenarchiv\Service\PersonService::class), $this->createStub(\OCA\Notenarchiv\Service\MergeService::class),
-			$modules, $this->createStub(\OCA\Notenarchiv\Db\ReviewPointMapper::class), $this->createStub(\OCA\Notenarchiv\Service\StateService::class));
+			$this->createStub(LicenseMapper::class), $this->createStub(\OCA\Cantoria\Db\ProposalMapper::class),
+			$this->createStub(IUserManager::class), $this->createStub(TaskService::class), $this->createStub(\OCA\Cantoria\Service\LinkService::class),
+			$repertoire, $this->createStub(\OCA\Cantoria\Service\PersonService::class), $this->createStub(\OCA\Cantoria\Service\MergeService::class),
+			$modules, $this->createStub(\OCA\Cantoria\Db\ReviewPointMapper::class), $this->createStub(\OCA\Cantoria\Service\StateService::class));
 		return [$catalog, new RightsPolicy($roles, $rights, $this->createStub(LicenseMapper::class)), $roles];
 	}
 
@@ -150,7 +150,7 @@ final class PreservationCopyParityTest extends TestCase {
 	private function internal(CatalogService $catalog, Roles $roles): ApiController {
 		return new ApiController($this->createStub(IRequest::class), 'account', $roles, $this->createStub(MetaService::class), $catalog,
 			$this->createStub(ImportService::class), $this->createStub(ExportService::class), $this->createStub(FileSyncService::class),
-			$this->createStub(\OCA\Notenarchiv\Db\AuditEntryMapper::class), $this->createStub(UserFiles::class), $this->createStub(ITimeFactory::class),
+			$this->createStub(\OCA\Cantoria\Db\AuditEntryMapper::class), $this->createStub(UserFiles::class), $this->createStub(ITimeFactory::class),
 			$this->createStub(IDateTimeZone::class), $this->createStub(ScoreService::class), $this->l10n(), $this->createStub(LoggerInterface::class));
 	}
 

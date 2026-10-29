@@ -3,17 +3,17 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Dashboard;
+namespace OCA\Cantoria\Tests\Unit\Dashboard;
 
-use OCA\Notenarchiv\Dashboard\DueWidget;
-use OCA\Notenarchiv\Service\DueService;
-use OCA\Notenarchiv\Service\PersonalView;
-use OCA\Notenarchiv\Service\Roles;
-use OCA\Notenarchiv\Tests\Unit\Support\ModuleSwitches;
+use OCA\Cantoria\Dashboard\DueWidget;
+use OCA\Cantoria\Service\DueService;
+use OCA\Cantoria\Service\PersonalView;
+use OCA\Cantoria\Service\Roles;
+use OCA\Cantoria\Tests\Unit\Support\ModuleSwitches;
 use OCP\Dashboard\Model\WidgetButton;
 use OCP\Dashboard\Model\WidgetItem;
 use OCP\IL10N;
@@ -31,7 +31,7 @@ use PHPUnit\Framework\TestCase;
 final class DueWidgetTest extends TestCase {
 	use ModuleSwitches;
 
-	private const APP_URL = 'https://cloud.example.org/apps/notenarchiv/';
+	private const APP_URL = 'https://cloud.example.org/apps/cantoria/';
 
 	/** @var array<string, list<string>> */
 	private array $roles = ['carla' => ['conductor'], 'admin' => []];
@@ -67,7 +67,7 @@ final class DueWidgetTest extends TestCase {
 			=> '[' . str_replace('%n', (string)$count, $count === 1 ? $singular : $plural) . ']');
 		$l->method('l')->willReturn(false);
 		$url = $this->createStub(IURLGenerator::class);
-		$url->method('linkToRouteAbsolute')->willReturnCallback(fn (string $route): string => $route === 'notenarchiv.page.index' ? self::APP_URL : 'wrong');
+		$url->method('linkToRouteAbsolute')->willReturnCallback(fn (string $route): string => $route === 'cantoria.page.index' ? self::APP_URL : 'wrong');
 		$url->method('imagePath')->willReturnCallback(fn (string $app, string $file): string => '/apps/' . $app . '/img/' . $file);
 		$url->method('getAbsoluteURL')->willReturnCallback(fn (string $path): string => 'https://cloud.example.org' . $path);
 		$session = $this->createStub(IUserSession::class);
@@ -117,10 +117,10 @@ final class DueWidgetTest extends TestCase {
 
 	public function testDescribesItself(): void {
 		$widget = $this->widget();
-		self::assertSame('notenarchiv-due', $widget->getId());
+		self::assertSame('cantoria-due', $widget->getId());
 		self::assertSame('[Music archive – due]', $widget->getTitle());
 		self::assertSame(self::APP_URL, $widget->getUrl());
-		self::assertSame('https://cloud.example.org/apps/notenarchiv/img/app-dark.svg', $widget->getIconUrl());
+		self::assertSame('https://cloud.example.org/apps/cantoria/img/app-dark.svg', $widget->getIconUrl());
 		$buttons = $widget->getWidgetButtons('carla');
 		self::assertCount(1, $buttons);
 		self::assertInstanceOf(WidgetButton::class, $buttons[0]);
@@ -144,7 +144,7 @@ final class DueWidgetTest extends TestCase {
 		$icons = array_map(fn (WidgetItem $item): string => basename($item->getIconUrl()), $items->getItems());
 		self::assertSame(['dashboard-concert.svg', 'dashboard-concert.svg', 'dashboard-item.svg', 'dashboard-item.svg', 'dashboard-task.svg', 'dashboard-task.svg'], $icons);
 		foreach ($items->getItems() as $item) {
-			self::assertStringStartsWith('https://cloud.example.org/apps/notenarchiv/img/', $item->getIconUrl());
+			self::assertStringStartsWith('https://cloud.example.org/apps/cantoria/img/', $item->getIconUrl());
 			self::assertNotSame('', $item->getSinceId());
 		}
 	}

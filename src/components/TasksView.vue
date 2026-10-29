@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -56,9 +56,9 @@ const scope = computed({
 
 /** The filters in words, for the header of the printout */
 const printFilter = computed(() => [
-	taskFilters.scope === 'all' ? t('notenarchiv', 'All') : t('notenarchiv', 'For my roles'),
-	status.value === 'open' ? t('notenarchiv', 'Only open') : status.value === 'answered' ? t('notenarchiv', 'Only answered') : t('notenarchiv', 'Open and answered'),
-	taskFilters.closed ? t('notenarchiv', 'Also closed tasks') : '',
+	taskFilters.scope === 'all' ? t('cantoria', 'All') : t('cantoria', 'For my roles'),
+	status.value === 'open' ? t('cantoria', 'Only open') : status.value === 'answered' ? t('cantoria', 'Only answered') : t('cantoria', 'Open and answered'),
+	taskFilters.closed ? t('cantoria', 'Also closed tasks') : '',
 ].filter((part) => part !== '').join(', '))
 
 const status = computed({
@@ -100,8 +100,8 @@ function showAll(): void {
 
 <template>
 	<div class="tasks-view">
-		<ViewHeader :title="t('notenarchiv', 'Tasks')"
-			:description="n('notenarchiv', '%n task shown', '%n tasks shown', shown.length)"
+		<ViewHeader :title="t('cantoria', 'Tasks')"
+			:description="n('cantoria', '%n task shown', '%n tasks shown', shown.length)"
 			printable
 			:print-filter="printFilter"
 			reloadable
@@ -109,55 +109,55 @@ function showAll(): void {
 			@reload="load" />
 
 		<div class="tasks-view__filters no-print">
-			<NcRadioGroup v-model="scope" :label="t('notenarchiv', 'Whose tasks')">
-				<NcRadioGroupButton value="mine" :label="t('notenarchiv', 'For my roles')" />
-				<NcRadioGroupButton value="all" :label="t('notenarchiv', 'All')" />
+			<NcRadioGroup v-model="scope" :label="t('cantoria', 'Whose tasks')">
+				<NcRadioGroupButton value="mine" :label="t('cantoria', 'For my roles')" />
+				<NcRadioGroupButton value="all" :label="t('cantoria', 'All')" />
 			</NcRadioGroup>
-			<NcRadioGroup v-model="status" :label="t('notenarchiv', 'Status')">
-				<NcRadioGroupButton value="all" :label="t('notenarchiv', 'Open and answered')" />
-				<NcRadioGroupButton value="open" :label="t('notenarchiv', 'Only open')" />
-				<NcRadioGroupButton value="answered" :label="t('notenarchiv', 'Only answered')" />
+			<NcRadioGroup v-model="status" :label="t('cantoria', 'Status')">
+				<NcRadioGroupButton value="all" :label="t('cantoria', 'Open and answered')" />
+				<NcRadioGroupButton value="open" :label="t('cantoria', 'Only open')" />
+				<NcRadioGroupButton value="answered" :label="t('cantoria', 'Only answered')" />
 			</NcRadioGroup>
 			<NcCheckboxRadioSwitch v-model="taskFilters.closed" type="switch">
-				{{ t('notenarchiv', 'Also closed tasks') }}
+				{{ t('cantoria', 'Also closed tasks') }}
 			</NcCheckboxRadioSwitch>
 		</div>
 
 		<div class="tasks-view__content">
-			<NcEmptyContent v-if="!loaded && loading" :name="t('notenarchiv', 'Loading …')">
+			<NcEmptyContent v-if="!loaded && loading" :name="t('cantoria', 'Loading …')">
 				<template #icon>
 					<NcLoadingIcon :size="64" />
 				</template>
 			</NcEmptyContent>
 			<NcEmptyContent v-else-if="!loaded && error"
-				:name="t('notenarchiv', 'The tasks could not be loaded')"
+				:name="t('cantoria', 'The tasks could not be loaded')"
 				:description="error">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiAlertCircleOutline" />
 				</template>
 				<template #action>
 					<NcButton @click="load">
-						{{ t('notenarchiv', 'Try again') }}
+						{{ t('cantoria', 'Try again') }}
 					</NcButton>
 				</template>
 			</NcEmptyContent>
 			<NcEmptyContent v-else-if="shown.length === 0"
-				:name="t('notenarchiv', 'No tasks')"
+				:name="t('cantoria', 'No tasks')"
 				:description="hiddenByFilters
-					? t('notenarchiv', 'No task matches the filters.')
-					: t('notenarchiv', 'New questions and tasks are created in the sidebar of a copy (tab Queries) or in the score view.')">
+					? t('cantoria', 'No task matches the filters.')
+					: t('cantoria', 'New questions and tasks are created in the sidebar of a copy (tab Queries) or in the score view.')">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiClipboardCheckOutline" />
 				</template>
 				<template #action>
 					<NcButton v-if="hiddenByFilters" @click="showAll">
-						{{ t('notenarchiv', 'Show all tasks') }}
+						{{ t('cantoria', 'Show all tasks') }}
 					</NcButton>
 					<NcButton v-else @click="navigate('catalog')">
 						<template #icon>
 							<NcIconSvgWrapper :path="mdiBookOpenPageVariantOutline" />
 						</template>
-						{{ t('notenarchiv', 'Open the catalog') }}
+						{{ t('cantoria', 'Open the catalog') }}
 					</NcButton>
 				</template>
 			</NcEmptyContent>

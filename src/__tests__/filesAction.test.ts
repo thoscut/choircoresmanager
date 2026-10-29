@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -12,7 +12,7 @@ import { parseStartParams } from '../startParams.ts'
 const ROOT = '/files/demo-librarian'
 
 const STATE: FilesState = {
-	archivePath: '/Notenarchiv-Demo',
+	archivePath: '/Cantoria-Demo',
 	extensions: ['pdf', 'mxl', 'musicxml', 'xml', 'mscz', 'md', 'capx', 'cap', 'sib', 'mp3', 'wav', 'm4a', 'jpg', 'jpeg', 'png', 'bmp', 'tif'],
 	scoreExtensions: ['musicxml', 'mxl'],
 	scoreView: true,
@@ -50,10 +50,10 @@ describe('fileExtension', () => {
 
 describe('isBelow', () => {
 	it('needs the folder and a slash, not just the same beginning', () => {
-		expect(isBelow('/Notenarchiv-Demo/Mappe_2/2-01.pdf', '/Notenarchiv-Demo')).toBe(true)
-		expect(isBelow('/Notenarchiv-Demo-alt/2-01.pdf', '/Notenarchiv-Demo')).toBe(false)
-		expect(isBelow('/Notenarchiv-Demo', '/Notenarchiv-Demo')).toBe(false)
-		expect(isBelow('/Other/2-01.pdf', '/Notenarchiv-Demo')).toBe(false)
+		expect(isBelow('/Cantoria-Demo/Mappe_2/2-01.pdf', '/Cantoria-Demo')).toBe(true)
+		expect(isBelow('/Cantoria-Demo-alt/2-01.pdf', '/Cantoria-Demo')).toBe(false)
+		expect(isBelow('/Cantoria-Demo', '/Cantoria-Demo')).toBe(false)
+		expect(isBelow('/Other/2-01.pdf', '/Cantoria-Demo')).toBe(false)
 	})
 
 	it('takes every file when the archive folder is the root of the files', () => {
@@ -62,53 +62,53 @@ describe('isBelow', () => {
 	})
 
 	it('ignores a trailing slash of the folder', () => {
-		expect(isBelow('/Notenarchiv-Demo/2-01.pdf', '/Notenarchiv-Demo/')).toBe(true)
+		expect(isBelow('/Cantoria-Demo/2-01.pdf', '/Cantoria-Demo/')).toBe(true)
 	})
 })
 
 describe('actionKind', () => {
 	it('is the default action for MusicXML in the archive folder', () => {
-		expect(kind([node('/Notenarchiv-Demo/Mappe_2/2-01_Demo.mxl')])).toBe('default')
-		expect(kind([node('/Notenarchiv-Demo/Mappe_2/2-01_Demo.musicxml')])).toBe('default')
-		expect(kind([node('/Notenarchiv-Demo/Mappe_2/2-01_Demo.MusicXML')])).toBe('default')
+		expect(kind([node('/Cantoria-Demo/Mappe_2/2-01_Demo.mxl')])).toBe('default')
+		expect(kind([node('/Cantoria-Demo/Mappe_2/2-01_Demo.musicxml')])).toBe('default')
+		expect(kind([node('/Cantoria-Demo/Mappe_2/2-01_Demo.MusicXML')])).toBe('default')
 	})
 
 	it('is only in the menu for scans, MuseScore, audio and MusicXML named .xml', () => {
 		for (const name of ['2-01_Demo.pdf', '2-01_Demo.mscz', '2-01_Demo.mp3', '2-01_Demo.xml', '2-01_Demo.jpg']) {
-			expect(kind([node('/Notenarchiv-Demo/Mappe_2/' + name)]), name).toBe('menu')
+			expect(kind([node('/Cantoria-Demo/Mappe_2/' + name)]), name).toBe('menu')
 		}
 	})
 
 	it('leaves the click to the Nextcloud viewer when it opens the type', () => {
-		const mxl = node('/Notenarchiv-Demo/2-01_Demo.mxl', { mime: 'application/vnd.recordare.musicxml' })
+		const mxl = node('/Cantoria-Demo/2-01_Demo.mxl', { mime: 'application/vnd.recordare.musicxml' })
 		expect(kind([mxl], STATE, ['application/vnd.recordare.musicxml'])).toBe('menu')
 		expect(kind([mxl], STATE, ['application/pdf'])).toBe('default')
 	})
 
 	it('is only in the menu for MusicXML while the score view is off', () => {
-		expect(kind([node('/Notenarchiv-Demo/2-01_Demo.mxl')], { ...STATE, scoreView: false })).toBe('menu')
+		expect(kind([node('/Cantoria-Demo/2-01_Demo.mxl')], { ...STATE, scoreView: false })).toBe('menu')
 	})
 
 	it('is not shown outside the archive folder or for other extensions', () => {
 		expect(kind([node('/Documents/2-01_Demo.mxl')])).toBeNull()
-		expect(kind([node('/Notenarchiv-Demo/LIESMICH.txt')])).toBeNull()
-		expect(kind([node('/Notenarchiv-Demo/_Import/catalog.csv')])).toBeNull()
-		expect(kind([node('/Notenarchiv-Demo/Mappe_2/README')])).toBeNull()
+		expect(kind([node('/Cantoria-Demo/LIESMICH.txt')])).toBeNull()
+		expect(kind([node('/Cantoria-Demo/_Import/catalog.csv')])).toBeNull()
+		expect(kind([node('/Cantoria-Demo/Mappe_2/README')])).toBeNull()
 	})
 
 	it('is not shown for folders, several files, other roots, unreadable files or without file id', () => {
-		expect(kind([node('/Notenarchiv-Demo/Mappe_2.pdf', { type: 'folder' })])).toBeNull()
-		expect(kind([node('/Notenarchiv-Demo/2-01.pdf'), node('/Notenarchiv-Demo/2-02.pdf', { id: '4712' })])).toBeNull()
+		expect(kind([node('/Cantoria-Demo/Mappe_2.pdf', { type: 'folder' })])).toBeNull()
+		expect(kind([node('/Cantoria-Demo/2-01.pdf'), node('/Cantoria-Demo/2-02.pdf', { id: '4712' })])).toBeNull()
 		expect(kind([])).toBeNull()
-		expect(kind([node('/Notenarchiv-Demo/2-01.pdf', { root: '/files/other-account' })])).toBeNull()
-		expect(kind([node('/Notenarchiv-Demo/2-01.pdf', { root: '/trashbin/demo-librarian' })])).toBeNull()
-		expect(kind([node('/Notenarchiv-Demo/2-01.pdf', { permissions: 0 })])).toBeNull()
-		expect(kind([node('/Notenarchiv-Demo/2-01.pdf', { id: undefined })])).toBeNull()
-		expect(kind([node('/Notenarchiv-Demo/2-01.pdf', { id: 'abc' })])).toBeNull()
+		expect(kind([node('/Cantoria-Demo/2-01.pdf', { root: '/files/other-account' })])).toBeNull()
+		expect(kind([node('/Cantoria-Demo/2-01.pdf', { root: '/trashbin/demo-librarian' })])).toBeNull()
+		expect(kind([node('/Cantoria-Demo/2-01.pdf', { permissions: 0 })])).toBeNull()
+		expect(kind([node('/Cantoria-Demo/2-01.pdf', { id: undefined })])).toBeNull()
+		expect(kind([node('/Cantoria-Demo/2-01.pdf', { id: 'abc' })])).toBeNull()
 	})
 
 	it('is not shown without the initial state', () => {
-		expect(kind([node('/Notenarchiv-Demo/2-01_Demo.mxl')], null)).toBeNull()
+		expect(kind([node('/Cantoria-Demo/2-01_Demo.mxl')], null)).toBeNull()
 	})
 })
 
@@ -130,14 +130,14 @@ describe('parseCopyOfFile', () => {
 
 describe('appLink', () => {
 	it('opens the score view for MusicXML and the copy otherwise', () => {
-		expect(appLink('/index.php/apps/notenarchiv/', { copyId: 35, shelfmark: '2-1', role: 'musicxml', score: true }))
-			.toBe('/index.php/apps/notenarchiv/?copy=35&score=1')
-		expect(appLink('/index.php/apps/notenarchiv/', { copyId: 35, shelfmark: '2-1', role: 'score_pdf', score: false }))
-			.toBe('/index.php/apps/notenarchiv/?copy=35')
+		expect(appLink('/index.php/apps/cantoria/', { copyId: 35, shelfmark: '2-1', role: 'musicxml', score: true }))
+			.toBe('/index.php/apps/cantoria/?copy=35&score=1')
+		expect(appLink('/index.php/apps/cantoria/', { copyId: 35, shelfmark: '2-1', role: 'score_pdf', score: false }))
+			.toBe('/index.php/apps/cantoria/?copy=35')
 	})
 
 	it('gives a link the app reads back', () => {
-		const link = appLink('/apps/notenarchiv/', { copyId: 35, shelfmark: '2-1', role: 'musicxml', score: true })
+		const link = appLink('/apps/cantoria/', { copyId: 35, shelfmark: '2-1', role: 'musicxml', score: true })
 		expect(parseStartParams(link.slice(link.indexOf('?')))).toMatchObject({ copyId: 35, score: true, view: null })
 	})
 })

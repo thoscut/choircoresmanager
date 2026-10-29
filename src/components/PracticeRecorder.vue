@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -50,11 +50,11 @@ const recorder = new SelfRecorder()
 let startedAt = 0
 
 const PROBLEMS: Record<RecordingProblem, () => string> = {
-	insecure: () => t('notenarchiv', 'Recording needs a secure connection (https).'),
-	unsupported: () => t('notenarchiv', 'This browser cannot record.'),
-	denied: () => t('notenarchiv', 'The microphone is not allowed. Please allow it for this page in the browser and try again.'),
-	'no-microphone': () => t('notenarchiv', 'No microphone was found.'),
-	failed: () => t('notenarchiv', 'The recording could not be started.'),
+	insecure: () => t('cantoria', 'Recording needs a secure connection (https).'),
+	unsupported: () => t('cantoria', 'This browser cannot record.'),
+	denied: () => t('cantoria', 'The microphone is not allowed. Please allow it for this page in the browser and try again.'),
+	'no-microphone': () => t('cantoria', 'No microphone was found.'),
+	failed: () => t('cantoria', 'The recording could not be started.'),
 }
 
 function forget(): void {
@@ -83,7 +83,7 @@ async function record(): Promise<void> {
 	state.value = 'recording'
 	await props.startPlayback(startedAt)
 	// after the message of the playback, so that the screen reader says this one
-	emit('announce', t('notenarchiv', 'Recording. Sing along; "Stop recording" or Stop ends it.'))
+	emit('announce', t('cantoria', 'Recording. Sing along; "Stop recording" or Stop ends it.'))
 }
 
 async function finish(): Promise<void> {
@@ -95,10 +95,10 @@ async function finish(): Promise<void> {
 	if (blob) {
 		recording.value = { url: URL.createObjectURL(blob), type: blob.type, from: startedAt }
 		state.value = 'ready'
-		emit('announce', t('notenarchiv', 'Recording finished. You can listen to it now.'))
+		emit('announce', t('cantoria', 'Recording finished. You can listen to it now.'))
 	} else {
 		state.value = 'idle'
-		emit('announce', t('notenarchiv', 'Nothing was recorded.'))
+		emit('announce', t('cantoria', 'Nothing was recorded.'))
 	}
 }
 
@@ -123,12 +123,12 @@ function remove(): void {
 	audio.value?.pause()
 	forget()
 	state.value = 'idle'
-	emit('announce', t('notenarchiv', 'Recording deleted.'))
+	emit('announce', t('cantoria', 'Recording deleted.'))
 }
 
 function fileName(): string {
 	const ext = recordingExtension(recording.value?.type ?? '')
-	return `${fileNamePart(props.title, 40) || 'recording'}_${fileNamePart(t('notenarchiv', 'recording'), 20) || 'recording'}.${ext}`
+	return `${fileNamePart(props.title, 40) || 'recording'}_${fileNamePart(t('cantoria', 'recording'), 20) || 'recording'}.${ext}`
 }
 
 watch(() => props.playing, (playing) => {
@@ -151,7 +151,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-	<div class="practice-recorder" role="group" :aria-label="t('notenarchiv', 'Record myself')">
+	<div class="practice-recorder" role="group" :aria-label="t('cantoria', 'Record myself')">
 		<div class="practice-recorder__row">
 			<NcButton v-if="state !== 'recording'"
 				:disabled="playing || state === 'starting'"
@@ -159,16 +159,16 @@ onBeforeUnmount(() => {
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiMicrophone" />
 				</template>
-				{{ recording ? t('notenarchiv', 'Record again') : t('notenarchiv', 'Record myself') }}
+				{{ recording ? t('cantoria', 'Record again') : t('cantoria', 'Record myself') }}
 			</NcButton>
 			<NcButton v-else variant="error" @click="finish">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiStop" />
 				</template>
-				{{ t('notenarchiv', 'Stop recording') }}
+				{{ t('cantoria', 'Stop recording') }}
 			</NcButton>
 			<span v-if="state === 'recording'" class="practice-recorder__live">
-				● {{ t('notenarchiv', 'Recording …') }}
+				● {{ t('cantoria', 'Recording …') }}
 			</span>
 		</div>
 		<p v-if="problem" class="practice-recorder__error" role="alert">
@@ -180,30 +180,30 @@ onBeforeUnmount(() => {
 				class="practice-recorder__audio"
 				controls
 				:src="recording.url"
-				:aria-label="t('notenarchiv', 'Your recording')" />
+				:aria-label="t('cantoria', 'Your recording')" />
 			<div class="practice-recorder__row">
 				<NcButton :disabled="playing" @click="listenTogether">
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiPlay" />
 					</template>
-					{{ t('notenarchiv', 'Listen with the accompaniment') }}
+					{{ t('cantoria', 'Listen with the accompaniment') }}
 				</NcButton>
 				<NcButton variant="tertiary" :href="recording.url" :download="fileName()">
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiContentSaveOutline" />
 					</template>
-					{{ t('notenarchiv', 'Save recording') }}
+					{{ t('cantoria', 'Save recording') }}
 				</NcButton>
 				<NcButton variant="tertiary" @click="remove">
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiDeleteOutline" />
 					</template>
-					{{ t('notenarchiv', 'Delete recording') }}
+					{{ t('cantoria', 'Delete recording') }}
 				</NcButton>
 			</div>
 		</template>
 		<p class="practice-recorder__hint">
-			{{ t('notenarchiv', 'The playback starts with the recording. The recording stays in this browser and is gone when you leave the page, unless you save it. Use headphones so that the accompaniment is not recorded, too.') }}
+			{{ t('cantoria', 'The playback starts with the recording. The recording stays in this browser and is gone when you leave the page, unless you save it. Use headphones so that the accompaniment is not recorded, too.') }}
 		</p>
 	</div>
 </template>

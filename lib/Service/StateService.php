@@ -3,26 +3,26 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Service;
+namespace OCA\Cantoria\Service;
 
-use OCA\Notenarchiv\Db\ArchiveFile;
-use OCA\Notenarchiv\Db\ArchiveFileMapper;
-use OCA\Notenarchiv\Db\Copy;
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\EventItem;
-use OCA\Notenarchiv\Db\ReviewPointMapper;
-use OCA\Notenarchiv\Db\TranscriptionReportMapper;
-use OCA\Notenarchiv\Db\VersionState;
-use OCA\Notenarchiv\Db\VersionStateMapper;
-use OCA\Notenarchiv\Db\WorkVersion;
-use OCA\Notenarchiv\Db\WorkVersionMapper;
-use OCA\Notenarchiv\Exception\AccessDeniedException;
-use OCA\Notenarchiv\Exception\InvalidInputException;
-use OCA\Notenarchiv\Exception\NotFoundException;
+use OCA\Cantoria\Db\ArchiveFile;
+use OCA\Cantoria\Db\ArchiveFileMapper;
+use OCA\Cantoria\Db\Copy;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Db\EventItem;
+use OCA\Cantoria\Db\ReviewPointMapper;
+use OCA\Cantoria\Db\TranscriptionReportMapper;
+use OCA\Cantoria\Db\VersionState;
+use OCA\Cantoria\Db\VersionStateMapper;
+use OCA\Cantoria\Db\WorkVersion;
+use OCA\Cantoria\Db\WorkVersionMapper;
+use OCA\Cantoria\Exception\AccessDeniedException;
+use OCA\Cantoria\Exception\InvalidInputException;
+use OCA\Cantoria\Exception\NotFoundException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Files\File;
@@ -327,7 +327,7 @@ class StateService {
 				}
 				$sha256 = ChecksumService::hash($node);
 			} catch (\Throwable $e) {
-				$this->logger->info('Notenarchiv: revision of file ' . $file->getId() . ' not recorded: ' . $e->getMessage());
+				$this->logger->info('Cantoria: revision of file ' . $file->getId() . ' not recorded: ' . $e->getMessage());
 				$result['failed']++;
 				continue;
 			}
@@ -349,7 +349,7 @@ class StateService {
 				$state = $this->insert($versionId, $copy->getId(), $file, $sha256, ($newest?->getNumber() ?? 0) + 1,
 					$existing === [] ? VersionState::FIRST : VersionState::SYNC, null, null, $note, null, $uid, $operation);
 			} catch (\Throwable $e) {
-				$this->logger->warning('Notenarchiv: revision of file ' . $file->getId() . ' not recorded: ' . $e->getMessage(), ['exception' => $e]);
+				$this->logger->warning('Cantoria: revision of file ' . $file->getId() . ' not recorded: ' . $e->getMessage(), ['exception' => $e]);
 				$result['failed']++;
 				continue;
 			}

@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Command;
+namespace OCA\Cantoria\Command;
 
-use OCA\Notenarchiv\Service\PrivacyService;
+use OCA\Cantoria\Service\PrivacyService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -27,7 +27,7 @@ class PrivacyReport extends Command {
 
 	#[\Override]
 	protected function configure(): void {
-		$this->setName('notenarchiv:privacy-report')
+		$this->setName('cantoria:privacy-report')
 			->setDescription('Write what the music archive stores about an account or a name as JSON (access, Art. 15 GDPR)')
 			->addArgument('who', InputArgument::REQUIRED, 'Nextcloud account or name as written in the folder book');
 	}

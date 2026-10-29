@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Settings;
+namespace OCA\Cantoria\Tests\Unit\Settings;
 
-use OCA\Notenarchiv\Settings\AdminSection;
+use OCA\Cantoria\Settings\AdminSection;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\Settings\IIconSection;
@@ -32,7 +32,7 @@ final class AdminSectionTest extends TestCase {
 	public function testIdNameAndOrder(): void {
 		$section = $this->section();
 		self::assertInstanceOf(IIconSection::class, $section);
-		self::assertSame('notenarchiv', $section->getID());
+		self::assertSame('cantoria', $section->getID());
 		// The translated name of the app, as in the app menu
 		self::assertSame('[Music archive]', $section->getName());
 		self::assertGreaterThanOrEqual(0, $section->getPriority());
@@ -40,7 +40,7 @@ final class AdminSectionTest extends TestCase {
 	}
 
 	public function testTheIconIsTheDarkAppIcon(): void {
-		self::assertSame('/apps/notenarchiv/img/app-dark.svg', $this->section()->getIcon());
+		self::assertSame('/apps/cantoria/img/app-dark.svg', $this->section()->getIcon());
 		self::assertFileExists(__DIR__ . '/../../../img/app-dark.svg');
 	}
 }

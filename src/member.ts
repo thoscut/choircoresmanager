@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -10,4 +10,4 @@
 import { createApp } from 'vue'
 import MemberApp from './sharing/MemberApp.vue'
 
-createApp(MemberApp).mount('#notenarchiv-member')
+createApp(MemberApp).mount('#cantoria-member')

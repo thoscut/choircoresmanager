@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -78,29 +78,29 @@ const somethingHidden = computed(() => personalView.value.cards.length > 0)
 
 <template>
 	<div class="due-view">
-		<ViewHeader :title="t('notenarchiv', 'Due')"
-			:description="t('notenarchiv', 'What needs your roles now. The tasks are sorted by archive binder, so a printed list follows the shelf.')"
+		<ViewHeader :title="t('cantoria', 'Due')"
+			:description="t('cantoria', 'What needs your roles now. The tasks are sorted by archive binder, so a printed list follows the shelf.')"
 			printable
 			reloadable
 			:loading="loading"
 			@reload="load" />
 
 		<div class="due-view__content">
-			<NcEmptyContent v-if="!due && loading" :name="t('notenarchiv', 'Loading …')">
+			<NcEmptyContent v-if="!due && loading" :name="t('cantoria', 'Loading …')">
 				<template #icon>
 					<NcLoadingIcon :size="64" />
 				</template>
 			</NcEmptyContent>
 
 			<NcEmptyContent v-else-if="!due && error"
-				:name="t('notenarchiv', 'The start page could not be loaded')"
+				:name="t('cantoria', 'The start page could not be loaded')"
 				:description="error">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiAlertCircleOutline" />
 				</template>
 				<template #action>
 					<NcButton @click="load">
-						{{ t('notenarchiv', 'Try again') }}
+						{{ t('cantoria', 'Try again') }}
 					</NcButton>
 				</template>
 			</NcEmptyContent>
@@ -108,7 +108,7 @@ const somethingHidden = computed(() => personalView.value.cards.length > 0)
 			<template v-else-if="due">
 				<section v-if="cards.length > 0" aria-labelledby="due-cards-heading">
 					<h3 id="due-cards-heading" class="hidden-visually">
-						{{ t('notenarchiv', 'Overview') }}
+						{{ t('cantoria', 'Overview') }}
 					</h3>
 					<ul class="due-view__cards">
 						<li v-for="card in cards" :key="card.key">
@@ -125,7 +125,7 @@ const somethingHidden = computed(() => personalView.value.cards.length > 0)
 
 				<section v-if="concerts.length > 0" class="due-view__concerts" aria-labelledby="due-concerts-heading">
 					<h3 id="due-concerts-heading">
-						{{ t('notenarchiv', 'Concert deadlines') }}
+						{{ t('cantoria', 'Concert deadlines') }}
 					</h3>
 					<ul class="due-view__concert-list">
 						<li v-for="concert in concerts" :key="concert.id">
@@ -133,7 +133,7 @@ const somethingHidden = computed(() => personalView.value.cards.length > 0)
 							<button type="button"
 								class="due-concert"
 								@click="navigate('event', { eventId: concert.id })">
-								<span class="due-concert__title">{{ concert.title || t('notenarchiv', '(no title)') }}</span>
+								<span class="due-concert__title">{{ concert.title || t('cantoria', '(no title)') }}</span>
 								<span class="due-concert__meta">{{ formatDate(concert.date) }} · {{ concert.label }}</span>
 							</button>
 						</li>
@@ -141,8 +141,8 @@ const somethingHidden = computed(() => personalView.value.cards.length > 0)
 				</section>
 
 				<NcEmptyContent v-if="nothingDue"
-					:name="t('notenarchiv', 'Nothing is due')"
-					:description="t('notenarchiv', 'There are no open tasks or other things to do for your roles.')">
+					:name="t('cantoria', 'Nothing is due')"
+					:description="t('cantoria', 'There are no open tasks or other things to do for your roles.')">
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiCheckCircleOutline" />
 					</template>
@@ -151,22 +151,22 @@ const somethingHidden = computed(() => personalView.value.cards.length > 0)
 							<template #icon>
 								<NcIconSvgWrapper :path="mdiBookOpenPageVariantOutline" />
 							</template>
-							{{ t('notenarchiv', 'Open the catalog') }}
+							{{ t('cantoria', 'Open the catalog') }}
 						</NcButton>
 					</template>
 				</NcEmptyContent>
 
 				<section v-if="tasks.length > 0" class="due-view__tasks" aria-labelledby="due-tasks-heading">
 					<h3 id="due-tasks-heading">
-						{{ t('notenarchiv', 'Tasks for your roles') }}
+						{{ t('cantoria', 'Tasks for your roles') }}
 					</h3>
 					<TaskList :tasks="tasks" @changed="load" />
 				</section>
 
 				<p v-if="somethingHidden" class="due-view__hidden no-print">
-					{{ t('notenarchiv', 'Some parts of the start page are hidden in your view.') }}
+					{{ t('cantoria', 'Some parts of the start page are hidden in your view.') }}
 					<NcButton variant="tertiary" @click="personalViewDialogOpen = true">
-						{{ t('notenarchiv', 'Customize view') }}
+						{{ t('cantoria', 'Customize view') }}
 					</NcButton>
 				</p>
 			</template>

@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -49,26 +49,26 @@ const totalMissing = computed(() => (binders.value ?? []).reduce((sum, binder) =
 
 <template>
 	<div class="gaps-view">
-		<ViewHeader :title="t('notenarchiv', 'Gaps in shelf marks')"
-			:description="t('notenarchiv', 'Numbers between 1 and the highest number of each binder that no copy has. For information only: numbers are never reused, a new accession always gets the next number after the highest. Printed on {date}.', { date: printedOn })"
+		<ViewHeader :title="t('cantoria', 'Gaps in shelf marks')"
+			:description="t('cantoria', 'Numbers between 1 and the highest number of each binder that no copy has. For information only: numbers are never reused, a new accession always gets the next number after the highest. Printed on {date}.', { date: printedOn })"
 			printable
 			reloadable
 			:loading="loading"
 			@reload="load" />
 
 		<div class="gaps-view__content">
-			<NcEmptyContent v-if="!binders && loading" :name="t('notenarchiv', 'Loading …')">
+			<NcEmptyContent v-if="!binders && loading" :name="t('cantoria', 'Loading …')">
 				<template #icon>
 					<NcLoadingIcon :size="64" />
 				</template>
 			</NcEmptyContent>
-			<NcEmptyContent v-else-if="!binders && error" :name="t('notenarchiv', 'The list could not be loaded')" :description="error">
+			<NcEmptyContent v-else-if="!binders && error" :name="t('cantoria', 'The list could not be loaded')" :description="error">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiAlertCircleOutline" />
 				</template>
 				<template #action>
 					<NcButton @click="load">
-						{{ t('notenarchiv', 'Try again') }}
+						{{ t('cantoria', 'Try again') }}
 					</NcButton>
 				</template>
 			</NcEmptyContent>
@@ -81,35 +81,35 @@ const totalMissing = computed(() => (binders.value ?? []).reduce((sum, binder) =
 					{{ error }}
 				</NcNoteCard>
 				<p v-if="binders.length === 0" class="gaps-view__muted">
-					{{ t('notenarchiv', 'The catalog has no copies yet.') }}
+					{{ t('cantoria', 'The catalog has no copies yet.') }}
 				</p>
 				<template v-else>
 					<p class="gaps-view__summary">
 						<NcIconSvgWrapper v-if="totalMissing === 0" :path="mdiCheckCircleOutline" inline />
 						{{ totalMissing === 0
-							? t('notenarchiv', 'No gaps: every number up to the highest has a copy.')
-							: n('notenarchiv', '%n number without a copy in all binders.', '%n numbers without a copy in all binders.', totalMissing) }}
+							? t('cantoria', 'No gaps: every number up to the highest has a copy.')
+							: n('cantoria', '%n number without a copy in all binders.', '%n numbers without a copy in all binders.', totalMissing) }}
 					</p>
 					<table class="gaps-view__table">
 						<caption class="hidden-visually">
-							{{ t('notenarchiv', 'Gaps in shelf marks') }}
+							{{ t('cantoria', 'Gaps in shelf marks') }}
 						</caption>
 						<thead>
 							<tr>
 								<th scope="col">
-									{{ t('notenarchiv', 'Binder') }}
+									{{ t('cantoria', 'Binder') }}
 								</th>
 								<th scope="col" class="gaps-view__number">
-									{{ t('notenarchiv', 'Highest number') }}
+									{{ t('cantoria', 'Highest number') }}
 								</th>
 								<th scope="col" class="gaps-view__number">
-									{{ t('notenarchiv', 'Copies') }}
+									{{ t('cantoria', 'Copies') }}
 								</th>
 								<th scope="col" class="gaps-view__number">
-									{{ t('notenarchiv', 'Without a copy') }}
+									{{ t('cantoria', 'Without a copy') }}
 								</th>
 								<th scope="col">
-									{{ t('notenarchiv', 'Missing shelf marks') }}
+									{{ t('cantoria', 'Missing shelf marks') }}
 								</th>
 							</tr>
 						</thead>
@@ -135,7 +135,7 @@ const totalMissing = computed(() => (binders.value ?? []).reduce((sum, binder) =
 										{{ rangesText(binder.binder, binder.ranges) }}
 									</template>
 									<span v-if="binder.withFile.length > 0" class="gaps-view__file">
-										{{ n('notenarchiv', 'A file uses %n of these numbers: {list}. Probably a copy that is not in the catalog yet.',
+										{{ n('cantoria', 'A file uses %n of these numbers: {list}. Probably a copy that is not in the catalog yet.',
 											'Files use %n of these numbers: {list}. Probably copies that are not in the catalog yet.',
 											binder.withFile.length,
 											{ list: binder.withFile.map((number) => `${binder.binder}-${number}`).join(', ') }) }}

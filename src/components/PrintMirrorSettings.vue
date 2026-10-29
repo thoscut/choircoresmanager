@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -58,8 +58,8 @@ async function choose(): Promise<void> {
 	let nodes
 	try {
 		nodes = await getFilePickerBuilder(handover.value
-			? t('notenarchiv', 'Choose the hand-over folder for the choir system')
-			: t('notenarchiv', 'Choose the target folder of the print station'))
+			? t('cantoria', 'Choose the hand-over folder for the choir system')
+			: t('cantoria', 'Choose the target folder of the print station'))
 			.setMultiSelect(false)
 			.allowDirectories(true)
 			.setMimeTypeFilter(['httpd/unix-directory'])
@@ -77,7 +77,7 @@ async function choose(): Promise<void> {
 	pending.value = null
 	problem.value = ''
 	if (!node?.fileid || node.mime !== 'httpd/unix-directory') {
-		problem.value = t('notenarchiv', 'Please choose a folder.')
+		problem.value = t('cantoria', 'Please choose a folder.')
 		await focusAfterDialog(chooseButton)
 		return
 	}
@@ -101,7 +101,7 @@ async function save(): Promise<void> {
 	try {
 		current.value = await saveMirrorFolder(pending.value.id, props.kind)
 		pending.value = null
-		showSuccess(t('notenarchiv', 'The target folder has been saved. Look at the preview before the first sync.'))
+		showSuccess(t('cantoria', 'The target folder has been saved. Look at the preview before the first sync.'))
 	} catch (caught) {
 		problem.value = errorMessage(caught)
 	} finally {
@@ -115,8 +115,8 @@ async function remove(): Promise<void> {
 	try {
 		current.value = await saveMirrorFolder(0, props.kind)
 		showSuccess(handover.value
-			? t('notenarchiv', 'The hand-over has no target folder any more. The files in the old folder stay there.')
-			: t('notenarchiv', 'The print station has no target folder any more. The files in the old folder stay there.'))
+			? t('cantoria', 'The hand-over has no target folder any more. The files in the old folder stay there.')
+			: t('cantoria', 'The print station has no target folder any more. The files in the old folder stay there.'))
 	} catch (caught) {
 		problem.value = errorMessage(caught)
 	} finally {
@@ -129,27 +129,27 @@ async function remove(): Promise<void> {
 	<div class="mirror-settings">
 		<template v-if="handover">
 			<p>
-				{{ t('notenarchiv', 'The app copies what the singers\' portal releases into this folder and keeps it up to date: the PDF scans, the MusicXML files and the practice recordings the rights allow, with a list of the pieces (Liste.csv) and the conductor\'s notes per piece. A choir system such as a member app can read the folder; the app never writes into the choir system itself. The folder must not be the archive folder, lie inside it or be the folder of the print station.') }}
+				{{ t('cantoria', 'The app copies what the singers\' portal releases into this folder and keeps it up to date: the PDF scans, the MusicXML files and the practice recordings the rights allow, with a list of the pieces (Liste.csv) and the conductor\'s notes per piece. A choir system such as a member app can read the folder; the app never writes into the choir system itself. The folder must not be the archive folder, lie inside it or be the folder of the print station.') }}
 			</p>
 			<NcNoteCard type="warning">
-				{{ t('notenarchiv', 'Everyone who can open the hand-over folder can download the files in it. Share it only with the account of the choir system.') }}
+				{{ t('cantoria', 'Everyone who can open the hand-over folder can download the files in it. Share it only with the account of the choir system.') }}
 			</NcNoteCard>
 		</template>
 		<template v-else>
 			<p>
-				{{ t('notenarchiv', 'The app copies the PDF scans of the versions released for the print station into this folder and keeps it up to date. The folder must not be the archive folder or lie inside it.') }}
+				{{ t('cantoria', 'The app copies the PDF scans of the versions released for the print station into this folder and keeps it up to date. The folder must not be the archive folder or lie inside it.') }}
 			</p>
 			<NcNoteCard type="warning">
-				{{ t('notenarchiv', 'Everyone who can open the target folder can print the scans in it. Share it only with the print station or the people who may print.') }}
+				{{ t('cantoria', 'Everyone who can open the target folder can print the scans in it. Share it only with the print station or the people who may print.') }}
 			</NcNoteCard>
 		</template>
 		<NcNoteCard v-if="loadError" type="error">
 			{{ loadError }}
 		</NcNoteCard>
 		<p v-if="current">
-			<strong>{{ t('notenarchiv', 'Current target folder:') }}</strong>
+			<strong>{{ t('cantoria', 'Current target folder:') }}</strong>
 			{{ current.path }}
-			<span class="mirror-settings__muted">{{ t('notenarchiv', '(chosen by {user})', { user: current.user }) }}</span>
+			<span class="mirror-settings__muted">{{ t('cantoria', '(chosen by {user})', { user: current.user }) }}</span>
 		</p>
 		<div class="mirror-settings__actions">
 			<NcButton ref="chooseButton" :disabled="busy" @click="choose">
@@ -157,13 +157,13 @@ async function remove(): Promise<void> {
 					<NcLoadingIcon v-if="busy" />
 					<NcIconSvgWrapper v-else :path="mdiFolderOutline" />
 				</template>
-				{{ t('notenarchiv', 'Choose folder …') }}
+				{{ t('cantoria', 'Choose folder …') }}
 			</NcButton>
 			<NcButton v-if="current && !pending"
 				variant="tertiary"
 				:disabled="busy"
 				@click="remove">
-				{{ t('notenarchiv', 'Remove target folder') }}
+				{{ t('cantoria', 'Remove target folder') }}
 			</NcButton>
 		</div>
 		<NcNoteCard v-if="problem" type="error" role="alert">
@@ -171,17 +171,17 @@ async function remove(): Promise<void> {
 		</NcNoteCard>
 		<template v-if="pending">
 			<NcNoteCard type="success" role="status">
-				{{ t('notenarchiv', 'The folder {path} fits: outside the archive folder, with write permission.', { path: pending.path }) }}
+				{{ t('cantoria', 'The folder {path} fits: outside the archive folder, with write permission.', { path: pending.path }) }}
 			</NcNoteCard>
 			<div class="mirror-settings__actions">
 				<NcButton :disabled="busy" @click="pending = null">
-					{{ t('notenarchiv', 'Cancel') }}
+					{{ t('cantoria', 'Cancel') }}
 				</NcButton>
 				<NcButton ref="saveButton"
 					variant="primary"
 					:disabled="busy"
 					@click="save">
-					{{ t('notenarchiv', 'Save target folder') }}
+					{{ t('cantoria', 'Save target folder') }}
 				</NcButton>
 			</div>
 		</template>

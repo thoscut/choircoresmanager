@@ -3,22 +3,22 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Controller;
+namespace OCA\Cantoria\Controller;
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Attribute\RequiresModule;
-use OCA\Notenarchiv\Db\Task;
-use OCA\Notenarchiv\ResponseDefinitions;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\ProposalService;
-use OCA\Notenarchiv\Service\ReviewService;
-use OCA\Notenarchiv\Service\RightsPolicy;
-use OCA\Notenarchiv\Service\Roles;
-use OCA\Notenarchiv\Service\TaskService;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Attribute\RequiresModule;
+use OCA\Cantoria\Db\Task;
+use OCA\Cantoria\ResponseDefinitions;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\ProposalService;
+use OCA\Cantoria\Service\ReviewService;
+use OCA\Cantoria\Service\RightsPolicy;
+use OCA\Cantoria\Service\Roles;
+use OCA\Cantoria\Service\TaskService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -35,7 +35,7 @@ use Psr\Log\LoggerInterface;
  * What the interface for agents offers the calling account: version, roles,
  * active modules and permissions (API v1, see docs/api-v1.md).
  *
- * @psalm-import-type NotenarchivApiStatus from ResponseDefinitions
+ * @psalm-import-type CantoriaApiStatus from ResponseDefinitions
  * @psalm-suppress UnusedClass
  */
 #[RequiresModule(Modules::AGENT_API)]
@@ -65,7 +65,7 @@ class ApiV1StatusController extends OCSController {
 	 * transcriptions), the fields that can be proposed and the choices of a
 	 * new task. Call it first: a route of a switched-off module answers 404.
 	 *
-	 * @return DataResponse<Http::STATUS_OK, NotenarchivApiStatus, array{}>
+	 * @return DataResponse<Http::STATUS_OK, CantoriaApiStatus, array{}>
 	 * @throws OCSForbiddenException The account has no role in the music archive
 	 * @throws OCSNotFoundException The interface for agents is switched off
 	 *

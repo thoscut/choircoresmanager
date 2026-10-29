@@ -3,15 +3,15 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Notification;
+namespace OCA\Cantoria\Notification;
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\NotificationService;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\NotificationService;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\L10N\IFactory;

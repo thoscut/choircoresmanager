@@ -3,20 +3,20 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Controller;
+namespace OCA\Cantoria\Controller;
 
-use OCA\Notenarchiv\Exception\AccessDeniedException;
-use OCA\Notenarchiv\Exception\InvalidRowsException;
-use OCA\Notenarchiv\Exception\ModuleDisabledException;
-use OCA\Notenarchiv\Exception\NotFoundException;
-use OCA\Notenarchiv\Exception\NotSharedException;
-use OCA\Notenarchiv\Exception\RunInProgressException;
-use OCA\Notenarchiv\Exception\UnknownLinkException;
-use OCA\Notenarchiv\Exception\UserFacingException;
+use OCA\Cantoria\Exception\AccessDeniedException;
+use OCA\Cantoria\Exception\InvalidRowsException;
+use OCA\Cantoria\Exception\ModuleDisabledException;
+use OCA\Cantoria\Exception\NotFoundException;
+use OCA\Cantoria\Exception\NotSharedException;
+use OCA\Cantoria\Exception\RunInProgressException;
+use OCA\Cantoria\Exception\UnknownLinkException;
+use OCA\Cantoria\Exception\UserFacingException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\JSONResponse;
 
@@ -25,7 +25,7 @@ use OCP\AppFramework\Http\JSONResponse;
  * logged-in user and maps domain exceptions to HTTP responses with a
  * translated message. Expects `$userId`, `$l` (IL10N) and `$logger`.
  *
- * @psalm-import-type Warning from \OCA\Notenarchiv\Service\ImportService
+ * @psalm-import-type Warning from \OCA\Cantoria\Service\ImportService
  */
 trait RunsActions {
 	use TranslatesMessages;
@@ -54,7 +54,7 @@ trait RunsActions {
 			// A part of the action belongs to a module that is switched off.
 			return new JSONResponse(['error' => $this->l->t('This function is switched off.')], Http::STATUS_NOT_FOUND);
 		} catch (\Throwable $e) {
-			$this->logger->error('Notenarchiv: ' . $e->getMessage(), ['exception' => $e]);
+			$this->logger->error('Cantoria: ' . $e->getMessage(), ['exception' => $e]);
 			// Says what to do; the request ID finds the entry in the log.
 			return new JSONResponse(['error' => $this->l->t('The server could not finish this. Please try again in a moment. If it happens again, tell the administration this request ID for the Nextcloud log: %s',
 				[$this->request->getId()])], Http::STATUS_INTERNAL_SERVER_ERROR);

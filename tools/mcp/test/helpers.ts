@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -12,7 +12,7 @@ import type { Config } from '../src/config.js'
 
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js'
-import { NotenarchivClient } from '../src/client.js'
+import { CantoriaClient } from '../src/client.js'
 import { createServer } from '../src/server.js'
 
 export const SECRET = 'Secr3t-AppPass-wOrd-12345'
@@ -71,7 +71,7 @@ export function fakeFetch(...answers: (Response | Error)[]): { fetch: Fetch, req
  * @param readOnly - read-only mode
  */
 export async function connect(fetch: Fetch, readOnly = false): Promise<Client> {
-	const server = createServer(new NotenarchivClient(config(readOnly), fetch))
+	const server = createServer(new CantoriaClient(config(readOnly), fetch))
 	const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair()
 	const client = new Client({ name: 'test', version: '1.0.0' })
 	await Promise.all([server.connect(serverTransport), client.connect(clientTransport)])

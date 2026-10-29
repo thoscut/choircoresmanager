@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -51,7 +51,7 @@ function place(link: ExcerptLink): string {
 		measureTo: link.measure_to,
 		voice: link.voice,
 		verse: link.verse,
-	}, referenceWords(), t('notenarchiv', 'Whole piece'))
+	}, referenceWords(), t('cantoria', 'Whole piece'))
 }
 
 /**
@@ -62,11 +62,11 @@ function place(link: ExcerptLink): string {
 function circleLabel(link: ExcerptLink): string {
 	switch (link.circle) {
 	case 'members':
-		return t('notenarchiv', 'For choir members')
+		return t('cantoria', 'For choir members')
 	case 'public':
-		return t('notenarchiv', 'Public')
+		return t('cantoria', 'Public')
 	default:
-		return t('notenarchiv', 'Internal')
+		return t('cantoria', 'Internal')
 	}
 }
 
@@ -82,9 +82,9 @@ function canRevoke(link: ExcerptLink): boolean {
  */
 async function copy(link: ExcerptLink): Promise<void> {
 	if (link.token !== null && await copyText(linkUrl(link.token, link.circle))) {
-		showSuccess(t('notenarchiv', 'The link has been copied.'))
+		showSuccess(t('cantoria', 'The link has been copied.'))
 	} else {
-		showError(t('notenarchiv', 'The link could not be copied. Please select and copy it by hand.'))
+		showError(t('cantoria', 'The link could not be copied. Please select and copy it by hand.'))
 	}
 }
 
@@ -100,7 +100,7 @@ async function revoke(): Promise<void> {
 	error.value = ''
 	try {
 		await revokeLink(revoking.value.id)
-		showSuccess(t('notenarchiv', 'The link has been revoked.'))
+		showSuccess(t('cantoria', 'The link has been revoked.'))
 		revoking.value = null
 		emit('changed')
 	} catch (caught) {
@@ -114,7 +114,7 @@ async function revoke(): Promise<void> {
 <template>
 	<div class="link-list">
 		<p v-if="links.length === 0" class="link-list__empty">
-			{{ t('notenarchiv', 'No active links.') }}
+			{{ t('cantoria', 'No active links.') }}
 		</p>
 		<ul v-else class="link-list__items">
 			<li v-for="link in links" :key="link.id" class="link-list__item">
@@ -133,21 +133,21 @@ async function revoke(): Promise<void> {
 					</p>
 					<p class="link-list__meta">
 						<span class="link-list__circle">{{ circleLabel(link) }}</span>
-						· {{ t('notenarchiv', 'Valid until {date}', { date: formatDate(link.expires ?? '') }) }}
-						· {{ t('notenarchiv', 'created {date}', { date: formatDateTime(link.created) }) }}
-						· {{ n('notenarchiv', 'opened %n time', 'opened %n times', link.hits) }}
+						· {{ t('cantoria', 'Valid until {date}', { date: formatDate(link.expires ?? '') }) }}
+						· {{ t('cantoria', 'created {date}', { date: formatDateTime(link.created) }) }}
+						· {{ n('cantoria', 'opened %n time', 'opened %n times', link.hits) }}
 						<template v-if="link.tempo">
-							· {{ t('notenarchiv', 'tempo {percent} %', { percent: link.tempo }) }}
+							· {{ t('cantoria', 'tempo {percent} %', { percent: link.tempo }) }}
 						</template>
 						<template v-if="link.scan_file_id">
-							· {{ t('notenarchiv', 'with scan (PDF)') }}
+							· {{ t('cantoria', 'with scan (PDF)') }}
 						</template>
 					</p>
 				</div>
 				<div class="link-list__actions no-print">
 					<NcButton v-if="link.token !== null"
 						variant="tertiary"
-						:aria-label="t('notenarchiv', 'Copy link')"
+						:aria-label="t('cantoria', 'Copy link')"
 						@click="copy(link)">
 						<template #icon>
 							<NcIconSvgWrapper :path="mdiContentCopy" />
@@ -155,7 +155,7 @@ async function revoke(): Promise<void> {
 					</NcButton>
 					<NcButton v-if="canRevoke(link)"
 						variant="tertiary"
-						:aria-label="t('notenarchiv', 'Revoke link')"
+						:aria-label="t('cantoria', 'Revoke link')"
 						@click="revoking = link; error = ''">
 						<template #icon>
 							<NcIconSvgWrapper :path="mdiLinkOff" />
@@ -166,14 +166,14 @@ async function revoke(): Promise<void> {
 		</ul>
 
 		<ActionDialog v-if="revoking !== null"
-			:name="t('notenarchiv', 'Revoke link')"
-			:submit-label="t('notenarchiv', 'Revoke')"
+			:name="t('cantoria', 'Revoke link')"
+			:submit-label="t('cantoria', 'Revoke')"
 			variant="error"
 			:busy="busy"
 			:error="error"
 			@submit="revoke"
 			@close="revoking = null">
-			<p>{{ t('notenarchiv', 'The link stops working immediately for everyone. This cannot be undone.') }}</p>
+			<p>{{ t('cantoria', 'The link stops working immediately for everyone. This cannot be undone.') }}</p>
 			<p class="link-list__title">
 				{{ place(revoking) }}
 			</p>

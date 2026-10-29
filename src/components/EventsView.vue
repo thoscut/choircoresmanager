@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -120,10 +120,10 @@ function onCreated(event: ChoirEvent): void {
 
 <template>
 	<div class="events-view">
-		<ViewHeader :title="isConcert ? t('notenarchiv', 'Concerts') : t('notenarchiv', 'Song lists')"
+		<ViewHeader :title="isConcert ? t('cantoria', 'Concerts') : t('cantoria', 'Song lists')"
 			:description="isConcert
-				? t('notenarchiv', 'Programmes with the version per item, warnings about rights and deadlines. A concert confirmed as sung counts as documented performance.')
-				: t('notenarchiv', 'Song lists of a period. They are no proof of performance.')"
+				? t('cantoria', 'Programmes with the version per item, warnings about rights and deadlines. A concert confirmed as sung counts as documented performance.')
+				: t('cantoria', 'Song lists of a period. They are no proof of performance.')"
 			printable
 			reloadable
 			:loading="loading"
@@ -133,14 +133,14 @@ function onCreated(event: ChoirEvent): void {
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiPlus" />
 					</template>
-					{{ isConcert ? t('notenarchiv', 'New concert') : t('notenarchiv', 'New song list') }}
+					{{ isConcert ? t('cantoria', 'New concert') : t('cantoria', 'New song list') }}
 				</NcButton>
 			</template>
 		</ViewHeader>
 
 		<div class="events-view__filters no-print">
 			<NcCheckboxRadioSwitch v-model="showImported" type="switch">
-				{{ t('notenarchiv', 'Show imported history') }}
+				{{ t('cantoria', 'Show imported history') }}
 			</NcCheckboxRadioSwitch>
 		</div>
 
@@ -148,23 +148,23 @@ function onCreated(event: ChoirEvent): void {
 			class="events-view__calendar no-print"
 			aria-labelledby="events-calendar-heading">
 			<h3 id="events-calendar-heading">
-				{{ n('notenarchiv', 'Calendar: %n upcoming concert', 'Calendar: %n upcoming concerts', upcoming.length) }}
+				{{ n('cantoria', 'Calendar: %n upcoming concert', 'Calendar: %n upcoming concerts', upcoming.length) }}
 			</h3>
 			<NcCheckboxRadioSwitch v-model="withDeadlines" type="switch">
-				{{ t('notenarchiv', 'With the preparation deadlines (10, 8 and 6 weeks before)') }}
+				{{ t('cantoria', 'With the preparation deadlines (10, 8 and 6 weeks before)') }}
 			</NcCheckboxRadioSwitch>
 			<div class="events-view__calendar-actions">
 				<NcButton v-if="canAddToCalendar" id="events-add-to-calendar" @click="calendarDialogOpen = true">
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiCalendarPlusOutline" />
 					</template>
-					{{ t('notenarchiv', 'Add upcoming concerts to my calendar') }}
+					{{ t('cantoria', 'Add upcoming concerts to my calendar') }}
 				</NcButton>
 				<NcButton :href="calendarFileUrl(null, withDeadlines)" download>
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiCalendarExportOutline" />
 					</template>
-					{{ t('notenarchiv', 'Calendar file of the upcoming concerts (.ics)') }}
+					{{ t('cantoria', 'Calendar file of the upcoming concerts (.ics)') }}
 				</NcButton>
 			</div>
 			<!-- Always present, so that screen readers announce the result -->
@@ -176,28 +176,28 @@ function onCreated(event: ChoirEvent): void {
 		</section>
 
 		<div class="events-view__content">
-			<NcEmptyContent v-if="!loaded && loading" :name="t('notenarchiv', 'Loading …')">
+			<NcEmptyContent v-if="!loaded && loading" :name="t('cantoria', 'Loading …')">
 				<template #icon>
 					<NcLoadingIcon :size="64" />
 				</template>
 			</NcEmptyContent>
 			<NcEmptyContent v-else-if="!loaded && error"
-				:name="t('notenarchiv', 'The list could not be loaded')"
+				:name="t('cantoria', 'The list could not be loaded')"
 				:description="error">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiAlertCircleOutline" />
 				</template>
 				<template #action>
 					<NcButton @click="load">
-						{{ t('notenarchiv', 'Try again') }}
+						{{ t('cantoria', 'Try again') }}
 					</NcButton>
 				</template>
 			</NcEmptyContent>
 			<NcEmptyContent v-else-if="shown.length === 0"
-				:name="isConcert ? t('notenarchiv', 'No concerts yet') : t('notenarchiv', 'No song lists yet')"
+				:name="isConcert ? t('cantoria', 'No concerts yet') : t('cantoria', 'No song lists yet')"
 				:description="isConcert
-					? t('notenarchiv', 'Plan a new concert, or import earlier concerts in the archive management.')
-					: t('notenarchiv', 'Create a new song list, or import earlier song lists in the archive management.')">
+					? t('cantoria', 'Plan a new concert, or import earlier concerts in the archive management.')
+					: t('cantoria', 'Create a new song list, or import earlier song lists in the archive management.')">
 				<template #icon>
 					<!-- the icons of the navigation -->
 					<NcIconSvgWrapper :path="isConcert ? mdiCalendarStarOutline : mdiFormatListNumbered" />
@@ -205,24 +205,24 @@ function onCreated(event: ChoirEvent): void {
 			</NcEmptyContent>
 			<table v-else class="events-view__table">
 				<caption class="hidden-visually">
-					{{ n('notenarchiv', '%n entry', '%n entries', shown.length) }}
+					{{ n('cantoria', '%n entry', '%n entries', shown.length) }}
 				</caption>
 				<thead>
 					<tr>
 						<th scope="col">
-							{{ isConcert ? t('notenarchiv', 'Date') : t('notenarchiv', 'Period') }}
+							{{ isConcert ? t('cantoria', 'Date') : t('cantoria', 'Period') }}
 						</th>
 						<th scope="col">
-							{{ t('notenarchiv', 'Title') }}
+							{{ t('cantoria', 'Title') }}
 						</th>
 						<th v-if="isConcert" scope="col">
-							{{ t('notenarchiv', 'Location') }}
+							{{ t('cantoria', 'Location') }}
 						</th>
 						<th scope="col">
-							{{ t('notenarchiv', 'Status') }}
+							{{ t('cantoria', 'Status') }}
 						</th>
 						<th scope="col" class="events-view__number">
-							{{ t('notenarchiv', 'Pieces') }}
+							{{ t('cantoria', 'Pieces') }}
 						</th>
 					</tr>
 				</thead>
@@ -233,9 +233,9 @@ function onCreated(event: ChoirEvent): void {
 						</td>
 						<td>
 							<button type="button" class="events-view__open" @click="navigate('event', { eventId: event.id })">
-								{{ event.title || t('notenarchiv', '(no title)') }}
+								{{ event.title || t('cantoria', '(no title)') }}
 							</button>
-							<span v-if="event.imported" class="events-view__tag">{{ t('notenarchiv', 'imported') }}</span>
+							<span v-if="event.imported" class="events-view__tag">{{ t('cantoria', 'imported') }}</span>
 						</td>
 						<td v-if="isConcert">
 							{{ event.location }}

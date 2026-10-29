@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Db;
+namespace OCA\Cantoria\Db;
 
 use JsonSerializable;
 use OCP\AppFramework\Db\Entity;
@@ -60,7 +60,7 @@ use OCP\AppFramework\Db\Entity;
  * @method int getCreated()
  * @method void setCreated(int $created)
  *
- * @psalm-import-type Warning from \OCA\Notenarchiv\Service\ImportService
+ * @psalm-import-type Warning from \OCA\Cantoria\Service\ImportService
  */
 class TranscriptionReport extends Entity implements JsonSerializable {
 	use FieldAccess {

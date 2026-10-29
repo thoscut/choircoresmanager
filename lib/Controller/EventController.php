@@ -3,25 +3,25 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Controller;
+namespace OCA\Cantoria\Controller;
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Attribute\RequiresModule;
-use OCA\Notenarchiv\Db\EventItem;
-use OCA\Notenarchiv\Db\EventItemMapper;
-use OCA\Notenarchiv\Exception\AccessDeniedException;
-use OCA\Notenarchiv\Exception\InvalidInputException;
-use OCA\Notenarchiv\Exception\UserFacingException;
-use OCA\Notenarchiv\Service\EventService;
-use OCA\Notenarchiv\Service\PerformanceImportService;
-use OCA\Notenarchiv\Service\RepertoireService;
-use OCA\Notenarchiv\Service\Roles;
-use OCA\Notenarchiv\Service\UserFiles;
-use OCA\Notenarchiv\Settings\Admin;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Attribute\RequiresModule;
+use OCA\Cantoria\Db\EventItem;
+use OCA\Cantoria\Db\EventItemMapper;
+use OCA\Cantoria\Exception\AccessDeniedException;
+use OCA\Cantoria\Exception\InvalidInputException;
+use OCA\Cantoria\Exception\UserFacingException;
+use OCA\Cantoria\Service\EventService;
+use OCA\Cantoria\Service\PerformanceImportService;
+use OCA\Cantoria\Service\RepertoireService;
+use OCA\Cantoria\Service\Roles;
+use OCA\Cantoria\Service\UserFiles;
+use OCA\Cantoria\Settings\Admin;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;

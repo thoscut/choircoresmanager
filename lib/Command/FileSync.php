@@ -3,14 +3,14 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Command;
+namespace OCA\Cantoria\Command;
 
-use OCA\Notenarchiv\Exception\RunInProgressException;
-use OCA\Notenarchiv\Service\FileSyncService;
+use OCA\Cantoria\Exception\RunInProgressException;
+use OCA\Cantoria\Service\FileSyncService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -25,7 +25,7 @@ class FileSync extends Command {
 
 	#[\Override]
 	protected function configure(): void {
-		$this->setName('notenarchiv:file-sync')
+		$this->setName('cantoria:file-sync')
 			->setDescription('Match the files in the archive folder against the catalog')
 			->addArgument('user', InputArgument::REQUIRED, 'account whose view of the archive folder is used');
 	}

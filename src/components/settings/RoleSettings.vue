@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -49,17 +49,17 @@ const roles = computed(() => Object.entries(props.settings.roleLabels)
 function roleDescription(role: string): string {
 	switch (role) {
 	case 'librarian':
-		return t('notenarchiv', 'Maintains works, versions and rights; imports the catalog and runs the file sync.')
+		return t('cantoria', 'Maintains works, versions and rights; imports the catalog and runs the file sync.')
 	case 'operations':
-		return t('notenarchiv', 'Maintains the status and counts of copies.')
+		return t('cantoria', 'Maintains the status and counts of copies.')
 	case 'conductor':
-		return t('notenarchiv', 'Decides which version is valid for the choir.')
+		return t('cantoria', 'Decides which version is valid for the choir.')
 	case 'contributor':
-		return t('notenarchiv', 'Tools and transcription rounds: proposals only.')
+		return t('cantoria', 'Tools and transcription rounds: proposals only.')
 	case 'reader':
-		return t('notenarchiv', 'Reads everything, including the audit log.')
+		return t('cantoria', 'Reads everything, including the audit log.')
 	case 'member':
-		return t('notenarchiv', 'Sees only the excerpts shared with choir members, while the module "Links for choir members" is on; no access to the catalog.')
+		return t('cantoria', 'Sees only the excerpts shared with choir members, while the module "Links for choir members" is on; no access to the catalog.')
 	default:
 		return ''
 	}
@@ -96,7 +96,7 @@ async function save(): Promise<void> {
 	saving.value = true
 	try {
 		emit('saved', await saveSettings({ roles: { ...draft } }))
-		showSuccess(t('notenarchiv', 'The roles have been saved.'))
+		showSuccess(t('cantoria', 'The roles have been saved.'))
 	} catch (error) {
 		showError(errorMessage(error))
 	} finally {
@@ -108,11 +108,11 @@ async function save(): Promise<void> {
 <template>
 	<form class="settings-block" @submit.prevent="save">
 		<NcNoteCard type="info">
-			<p>{{ t('notenarchiv', 'Roles are linked to groups. Whoever has no role cannot see the app.') }}</p>
-			<GuideLink :href="adminGuideUrl(ADMIN_GUIDE.roles)" :label="t('notenarchiv', 'Roles and groups (administration guide)')" />
+			<p>{{ t('cantoria', 'Roles are linked to groups. Whoever has no role cannot see the app.') }}</p>
+			<GuideLink :href="adminGuideUrl(ADMIN_GUIDE.roles)" :label="t('cantoria', 'Roles and groups (administration guide)')" />
 		</NcNoteCard>
 		<NcNoteCard v-if="settings.groupsMissing.length > 0" type="warning">
-			{{ t('notenarchiv', 'These groups no longer exist: {groups}. Remove them from their role and choose the right group instead.', { groups: settings.groupsMissing.join(', ') }) }}
+			{{ t('cantoria', 'These groups no longer exist: {groups}. Remove them from their role and choose the right group instead.', { groups: settings.groupsMissing.join(', ') }) }}
 		</NcNoteCard>
 		<GroupSelect v-for="role in roles"
 			:key="role.key"
@@ -127,26 +127,26 @@ async function save(): Promise<void> {
 
 		<!-- What saving does, before saving -->
 		<div v-if="changes.length > 0" class="settings-block settings-roles__changes">
-			<p><strong>{{ t('notenarchiv', 'Not saved yet. Saving changes:') }}</strong></p>
+			<p><strong>{{ t('cantoria', 'Not saved yet. Saving changes:') }}</strong></p>
 			<ul>
 				<li v-for="change in changes" :key="change.role">
 					{{ change.role }}:
 					<template v-if="change.added">
-						{{ t('notenarchiv', 'gets {groups}', { groups: change.added }) }}<template v-if="change.removed">
+						{{ t('cantoria', 'gets {groups}', { groups: change.added }) }}<template v-if="change.removed">
 							;
 						</template>
 					</template>
 					<template v-if="change.removed">
-						{{ t('notenarchiv', 'loses {groups}', { groups: change.removed }) }}
+						{{ t('cantoria', 'loses {groups}', { groups: change.removed }) }}
 					</template>
 				</li>
 			</ul>
 			<p class="settings-block__muted">
-				{{ t('notenarchiv', 'Members of a group get or lose the role at once. Afterwards check access to the archive folder: new role holders need it, too.') }}
+				{{ t('cantoria', 'Members of a group get or lose the role at once. Afterwards check access to the archive folder: new role holders need it, too.') }}
 			</p>
 		</div>
 		<NcNoteCard v-if="noCatalogRole" type="warning">
-			{{ t('notenarchiv', 'The catalog role (music librarians) has no group: nobody can import or keep the catalog.') }}
+			{{ t('cantoria', 'The catalog role (music librarians) has no group: nobody can import or keep the catalog.') }}
 		</NcNoteCard>
 
 		<div class="settings-block__actions">
@@ -154,7 +154,7 @@ async function save(): Promise<void> {
 				<template v-if="saving" #icon>
 					<NcLoadingIcon />
 				</template>
-				{{ t('notenarchiv', 'Save roles') }}
+				{{ t('cantoria', 'Save roles') }}
 			</NcButton>
 		</div>
 	</form>

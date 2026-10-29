@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -45,26 +45,26 @@ require __DIR__ . '/harness.php';
 [$root, $uid, $shelfmark] = IntegrationTest::start($argv, ['nextcloud-root', 'uid', 'shelfmark']);
 $otherShelfmark = $argv[4] ?? ($shelfmark === '2-3' ? '1-1' : '2-3');
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Controller\HandoverController;
-use OCA\Notenarchiv\Db\ArchiveFileMapper;
-use OCA\Notenarchiv\Db\AuditEntryMapper;
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\MirrorFileMapper;
-use OCA\Notenarchiv\Db\WorkMapper;
-use OCA\Notenarchiv\Db\WorkVersionMapper;
-use OCA\Notenarchiv\Exception\ModuleDisabledException;
-use OCA\Notenarchiv\Middleware\ModuleMiddleware;
-use OCA\Notenarchiv\Service\AppSettings;
-use OCA\Notenarchiv\Service\ChoirSystemCompareService;
-use OCA\Notenarchiv\Service\HandoverService;
-use OCA\Notenarchiv\Service\LinkService;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\PrintMirrorService;
-use OCA\Notenarchiv\Service\ProposalService;
-use OCA\Notenarchiv\Service\ReleaseListService;
-use OCA\Notenarchiv\Service\RightsService;
-use OCA\Notenarchiv\Service\Roles;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Controller\HandoverController;
+use OCA\Cantoria\Db\ArchiveFileMapper;
+use OCA\Cantoria\Db\AuditEntryMapper;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Db\MirrorFileMapper;
+use OCA\Cantoria\Db\WorkMapper;
+use OCA\Cantoria\Db\WorkVersionMapper;
+use OCA\Cantoria\Exception\ModuleDisabledException;
+use OCA\Cantoria\Middleware\ModuleMiddleware;
+use OCA\Cantoria\Service\AppSettings;
+use OCA\Cantoria\Service\ChoirSystemCompareService;
+use OCA\Cantoria\Service\HandoverService;
+use OCA\Cantoria\Service\LinkService;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\PrintMirrorService;
+use OCA\Cantoria\Service\ProposalService;
+use OCA\Cantoria\Service\ReleaseListService;
+use OCA\Cantoria\Service\RightsService;
+use OCA\Cantoria\Service\Roles;
 use OCP\Files\File;
 use OCP\Files\IRootFolder;
 use OCP\IAppConfig;
@@ -112,8 +112,8 @@ $originalSettings = $settings();
 $archiveListing = fn (): array => array_map(fn ($node): string => $node->getName(), $archive->getDirectoryListing());
 $archiveBefore = $archiveListing();
 $suffix = bin2hex(random_bytes(3));
-$targetName = 'Notenarchiv hand-over test ' . $suffix;
-$printName = 'Notenarchiv print station test ' . $suffix;
+$targetName = 'Cantoria hand-over test ' . $suffix;
+$printName = 'Cantoria print station test ' . $suffix;
 $names = fn (array $entries): array => array_map(fn (array $entry): string => $entry['name'], $entries);
 
 $db->beginTransaction();

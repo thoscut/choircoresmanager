@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -18,12 +18,12 @@ const props = defineProps<{
 }>()
 
 const counts = computed(() => [
-	{ label: t('notenarchiv', 'Files with a shelf mark in the name'), value: props.report.files },
-	{ label: t('notenarchiv', 'Linked to a copy'), value: props.report.assigned },
-	{ label: t('notenarchiv', 'Newly linked'), value: props.report.new },
-	{ label: t('notenarchiv', 'Changed since the last sync'), value: props.report.changed },
-	{ label: t('notenarchiv', 'No longer found'), value: props.report.missing },
-	{ label: t('notenarchiv', 'Other files (ignored)'), value: props.report.ignored ?? 0 },
+	{ label: t('cantoria', 'Files with a shelf mark in the name'), value: props.report.files },
+	{ label: t('cantoria', 'Linked to a copy'), value: props.report.assigned },
+	{ label: t('cantoria', 'Newly linked'), value: props.report.new },
+	{ label: t('cantoria', 'Changed since the last sync'), value: props.report.changed },
+	{ label: t('cantoria', 'No longer found'), value: props.report.missing },
+	{ label: t('cantoria', 'Other files (ignored)'), value: props.report.ignored ?? 0 },
 ])
 
 const byType = computed(() => Object.entries(props.report.byType && !Array.isArray(props.report.byType) ? props.report.byType : {})
@@ -35,9 +35,9 @@ const reports = computed(() => (props.report.reports && props.report.reports.fil
 const reportCounts = computed(() => (reports.value === null
 	? []
 	: [
-		{ label: t('notenarchiv', 'Transcription reports'), value: reports.value.files },
-		{ label: t('notenarchiv', 'Read into review points'), value: reports.value.imported },
-		{ label: t('notenarchiv', 'Reports read before'), value: reports.value.unchanged },
+		{ label: t('cantoria', 'Transcription reports'), value: reports.value.files },
+		{ label: t('cantoria', 'Read into review points'), value: reports.value.imported },
+		{ label: t('cantoria', 'Reports read before'), value: reports.value.unchanged },
 	]))
 
 const failedReports = computed(() => (reports.value?.failed ?? []).map((failure) => `${failure.path}: ${failure.error}`))
@@ -45,8 +45,8 @@ const failedReports = computed(() => (reports.value?.failed ?? []).map((failure)
 
 <template>
 	<div class="file-sync-report">
-		<NcNoteCard type="success" :heading="t('notenarchiv', 'File sync completed')">
-			{{ t('notenarchiv', 'Files were only read; nothing was changed, moved or deleted.') }}
+		<NcNoteCard type="success" :heading="t('cantoria', 'File sync completed')">
+			{{ t('cantoria', 'Files were only read; nothing was changed, moved or deleted.') }}
 		</NcNoteCard>
 
 		<dl class="file-sync-report__counts">
@@ -57,7 +57,7 @@ const failedReports = computed(() => (reports.value?.failed ?? []).map((failure)
 		</dl>
 
 		<table v-if="byType.length > 0" class="file-sync-report__table">
-			<caption>{{ t('notenarchiv', 'Files by type') }}</caption>
+			<caption>{{ t('cantoria', 'Files by type') }}</caption>
 			<tbody>
 				<tr v-for="[type, count] in byType" :key="type">
 					<th scope="row">
@@ -69,22 +69,22 @@ const failedReports = computed(() => (reports.value?.failed ?? []).map((failure)
 		</table>
 
 		<NcNoteCard v-if="report.missing > 0" type="warning">
-			{{ n('notenarchiv',
+			{{ n('cantoria',
 				'%n file is no longer in the archive folder. It stays listed as "not found".',
 				'%n files are no longer in the archive folder. They stay listed as "not found".',
 				report.missing) }}
 		</NcNoteCard>
 
 		<div v-if="report.unassignable.length > 0">
-			<ReportList :summary="n('notenarchiv', '%n file could not be assigned', '%n files could not be assigned', report.unassignable.length)"
+			<ReportList :summary="n('cantoria', '%n file could not be assigned', '%n files could not be assigned', report.unassignable.length)"
 				:items="report.unassignable" />
 			<p class="file-sync-report__muted">
-				{{ t('notenarchiv', 'The shelf mark at the start of these file names is not in the catalog. Check the file name or the catalog.') }}
+				{{ t('cantoria', 'The shelf mark at the start of these file names is not in the catalog. Check the file name or the catalog.') }}
 			</p>
 		</div>
 
 		<div v-if="report.copiesWithoutFile.length > 0">
-			<ReportList :summary="n('notenarchiv', '%n copy has no file', '%n copies have no file', report.copiesWithoutFile.length)"
+			<ReportList :summary="n('cantoria', '%n copy has no file', '%n copies have no file', report.copiesWithoutFile.length)"
 				:items="report.copiesWithoutFile"
 				inline
 				:open-up-to="40" />
@@ -98,37 +98,37 @@ const failedReports = computed(() => (reports.value?.failed ?? []).map((failure)
 				</div>
 			</dl>
 			<NcNoteCard v-if="reports.switchedOff" type="info">
-				{{ t('notenarchiv', 'The review of transcriptions is switched off: the reports were registered, but not read.') }}
+				{{ t('cantoria', 'The review of transcriptions is switched off: the reports were registered, but not read.') }}
 			</NcNoteCard>
 			<ReportList v-if="failedReports.length > 0"
-				:summary="n('notenarchiv', '%n report could not be read', '%n reports could not be read', failedReports.length)"
+				:summary="n('cantoria', '%n report could not be read', '%n reports could not be read', failedReports.length)"
 				:items="failedReports" />
 		</template>
 
 		<!-- Rights notices of MusicXML files (milestone 0.8) -->
 		<p v-if="report.rightsNotices && !report.rightsNotices.switchedOff && report.rightsNotices.read > 0" class="file-sync-report__muted">
-			{{ t('notenarchiv', 'Rights notices: {read} MusicXML files read, {found} with a notice (not checked), {proposals} proposals in the inbox.', {
+			{{ t('cantoria', 'Rights notices: {read} MusicXML files read, {found} with a notice (not checked), {proposals} proposals in the inbox.', {
 				read: report.rightsNotices.read, found: report.rightsNotices.found, proposals: report.rightsNotices.proposals }) }}
 			<template v-if="report.rightsNotices.pending > 0">
-				{{ n('notenarchiv', '%n file follows with the next file sync.', '%n files follow with the next file sync.', report.rightsNotices.pending) }}
+				{{ n('cantoria', '%n file follows with the next file sync.', '%n files follow with the next file sync.', report.rightsNotices.pending) }}
 			</template>
 		</p>
 
 		<!-- Revisions of the versions (milestone 0.8) -->
 		<p v-if="report.states && !report.states.switchedOff && (report.states.recorded + report.states.first + report.states.failed) > 0" class="file-sync-report__muted">
-			{{ t('notenarchiv', 'Revisions: {first} versions got their first revision, {recorded} new revisions were recorded.', {
+			{{ t('cantoria', 'Revisions: {first} versions got their first revision, {recorded} new revisions were recorded.', {
 				first: report.states.first, recorded: report.states.recorded }) }}
 			<template v-if="report.states.failed > 0">
-				{{ n('notenarchiv', '%n score file could not be read; it follows with the next file sync.', '%n score files could not be read; they follow with the next file sync.', report.states.failed) }}
+				{{ n('cantoria', '%n score file could not be read; it follows with the next file sync.', '%n score files could not be read; they follow with the next file sync.', report.states.failed) }}
 			</template>
 		</p>
 
 		<div v-if="report.skippedFolders.length > 0">
-			<ReportList :summary="n('notenarchiv', '%n folder was skipped', '%n folders were skipped', report.skippedFolders.length)"
+			<ReportList :summary="n('cantoria', '%n folder was skipped', '%n folders were skipped', report.skippedFolders.length)"
 				:items="report.skippedFolders"
 				:open-up-to="0" />
 			<p class="file-sync-report__muted">
-				{{ t('notenarchiv', 'Folders whose name starts with "_" (tools, exports, duplicates) are not searched.') }}
+				{{ t('cantoria', 'Folders whose name starts with "_" (tools, exports, duplicates) are not searched.') }}
 			</p>
 		</div>
 	</div>

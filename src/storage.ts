@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -7,12 +7,12 @@
  * What the app remembers in this browser (localStorage): the size of the
  * notes, the count-in, the page of a scan, folded filters, passages and
  * settings for practising (milestones 0.12 to 0.15). Every key starts with
- * "notenarchiv.", so that "Delete everything on this device" finds them all.
+ * "cantoria.", so that "Delete everything on this device" finds them all.
  * In a private window or with blocked storage nothing is remembered, and
  * everything still works.
  */
 
-const PREFIX = 'notenarchiv.'
+const PREFIX = 'cantoria.'
 
 /**
  * A remembered value, or null.

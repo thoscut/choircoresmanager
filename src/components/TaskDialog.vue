@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -97,18 +97,18 @@ function positive(value: string): number | null | undefined {
 
 async function save(): Promise<void> {
 	if (draft.question.trim() === '') {
-		error.value = t('notenarchiv', 'Please describe the question or task.')
+		error.value = t('cantoria', 'Please describe the question or task.')
 		return
 	}
 	const page = positive(draft.page)
 	const verse = positive(draft.verse)
 	if (page === undefined || verse === undefined) {
-		error.value = t('notenarchiv', 'Page and verse must be whole numbers.')
+		error.value = t('cantoria', 'Page and verse must be whole numbers.')
 		return
 	}
 	for (const measure of [draft.measureFrom, draft.measureTo]) {
 		if (measure.trim() !== '' && !MEASURE.test(measure.trim())) {
-			error.value = t('notenarchiv', 'Measure numbers may only contain digits, letters and dots.')
+			error.value = t('cantoria', 'Measure numbers may only contain digits, letters and dots.')
 			return
 		}
 	}
@@ -129,7 +129,7 @@ async function save(): Promise<void> {
 	error.value = ''
 	try {
 		await createTask(props.copyId, task)
-		showSuccess(t('notenarchiv', 'The task has been created.'))
+		showSuccess(t('cantoria', 'The task has been created.'))
 		emit('created')
 	} catch (caught) {
 		error.value = errorMessage(caught)
@@ -140,15 +140,15 @@ async function save(): Promise<void> {
 </script>
 
 <template>
-	<ActionDialog :name="t('notenarchiv', 'New task for {shelfmark}', { shelfmark })"
-		:submit-label="t('notenarchiv', 'Create task')"
+	<ActionDialog :name="t('cantoria', 'New task for {shelfmark}', { shelfmark })"
+		:submit-label="t('cantoria', 'Create task')"
 		:busy="busy"
 		:error="error"
 		size="large"
 		@submit="save"
 		@close="emit('close')">
 		<fieldset class="task-dialog__kinds">
-			<legend>{{ t('notenarchiv', 'Kind') }}</legend>
+			<legend>{{ t('cantoria', 'Kind') }}</legend>
 			<NcCheckboxRadioSwitch v-for="kind in TASK_KINDS"
 				:key="kind"
 				v-model="draft.kind"
@@ -159,44 +159,44 @@ async function save(): Promise<void> {
 			</NcCheckboxRadioSwitch>
 		</fieldset>
 		<NcSelect v-model="addressee"
-			:input-label="t('notenarchiv', 'For the role')"
+			:input-label="t('cantoria', 'For the role')"
 			:options="addresseeOptions"
 			:clearable="false"
 			:searchable="false" />
 		<NcTextArea v-model="draft.question"
-			:label="t('notenarchiv', 'Question or task (required)')"
+			:label="t('cantoria', 'Question or task (required)')"
 			required
 			resize="vertical"
 			rows="4" />
 		<fieldset class="task-dialog__place">
-			<legend>{{ t('notenarchiv', 'Place in the score') }}</legend>
+			<legend>{{ t('cantoria', 'Place in the score') }}</legend>
 			<div class="task-dialog__row">
 				<NcTextField v-model="draft.page"
 					type="number"
 					min="1"
-					:label="t('notenarchiv', 'Page')" />
-				<NcTextField v-model="draft.measureFrom" :label="t('notenarchiv', 'From measure')" />
-				<NcTextField v-model="draft.measureTo" :label="t('notenarchiv', 'To measure')" />
+					:label="t('cantoria', 'Page')" />
+				<NcTextField v-model="draft.measureFrom" :label="t('cantoria', 'From measure')" />
+				<NcTextField v-model="draft.measureTo" :label="t('cantoria', 'To measure')" />
 			</div>
 			<div class="task-dialog__row">
-				<NcTextField v-model="draft.voice" :label="t('notenarchiv', 'Voice')" />
+				<NcTextField v-model="draft.voice" :label="t('cantoria', 'Voice')" />
 				<NcTextField v-model="draft.verse"
 					type="number"
 					min="1"
-					:label="t('notenarchiv', 'Verse')" />
+					:label="t('cantoria', 'Verse')" />
 			</div>
 			<p class="action-dialog__hint">
-				{{ t('notenarchiv', 'Measures as printed; the pickup is measure 0.') }}
+				{{ t('cantoria', 'Measures as printed; the pickup is measure 0.') }}
 			</p>
 		</fieldset>
 		<div class="task-dialog__row">
 			<NcSelect v-model="category"
-				:input-label="t('notenarchiv', 'Category (optional)')"
+				:input-label="t('cantoria', 'Category (optional)')"
 				:options="categoryOptions"
 				:searchable="false" />
-			<DateField v-model="draft.due" :label="t('notenarchiv', 'Due date (optional)')" />
+			<DateField v-model="draft.due" :label="t('cantoria', 'Due date (optional)')" />
 		</div>
-		<NcTextField v-model="draft.origin" :label="t('notenarchiv', 'Origin (optional), e.g. transcription round 37')" />
+		<NcTextField v-model="draft.origin" :label="t('cantoria', 'Origin (optional), e.g. transcription round 37')" />
 	</ActionDialog>
 </template>
 

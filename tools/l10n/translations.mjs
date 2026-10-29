@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -2722,12 +2722,12 @@ export const singular = {
 	'The scan of this link is not available at the moment.': 'Der Scan dieses Links ist gerade nicht verfügbar.',
 	// ---- 0.10: backups outside the archive folder, delegated settings ----
 	'Music archive backups': 'Notenarchiv-Sicherungen',
-	'The folder in Nextcloud that holds the score files (for example one subfolder per binder). The app only reads files. Exports of the catalog are stored in its subfolder "_notenarchiv-app".': 'Der Ordner in der Nextcloud mit den Notendateien (zum Beispiel ein Unterordner je Archivmappe). Die App liest Dateien nur. Exporte des Werkverzeichnisses legt sie im Unterordner „_notenarchiv-app“ ab.',
+	'The folder in Nextcloud that holds the score files (for example one subfolder per binder). The app only reads files. Exports of the catalog are stored in its subfolder "_cantoria-app".': 'Der Ordner in der Nextcloud mit den Notendateien (zum Beispiel ein Unterordner je Archivmappe). Die App liest Dateien nur. Exporte des Werkverzeichnisses legt sie im Unterordner „_cantoria-app“ ab.',
 	'Backups and annual snapshots name choir members and accounts. They lie outside the archive folder, in a folder of the account that set it, which the role groups do not see unless it is shared with them.': 'Sicherungen und Jahresstände nennen Chormitglieder und Konten. Sie liegen außerhalb des Archivordners in einem Ordner des Kontos, das ihn festgelegt hat. Die Rollengruppen sehen ihn nicht, solange er nicht mit ihnen geteilt wird.',
 	'Backup folder:': 'Sicherungsordner:',
-	'The subfolder "_notenarchiv-app" of the archive folder still holds backups or annual snapshots of an earlier version, which everyone with access to the archive folder can read. Move them into the backup folder or delete them.': [
-		'Im Unterordner „_notenarchiv-app“ des Archivordners liegen noch Sicherungen oder Jahresstände einer früheren Version, die alle mit Zugriff auf den Archivordner lesen können. Verschiebe sie in den Sicherungsordner oder lösche sie.',
-		'Im Unterordner „_notenarchiv-app“ des Archivordners liegen noch Sicherungen oder Jahresstände einer früheren Version, die alle mit Zugriff auf den Archivordner lesen können. Verschieben Sie sie in den Sicherungsordner oder löschen Sie sie.',
+	'The subfolder "_cantoria-app" of the archive folder still holds backups or annual snapshots of an earlier version, which everyone with access to the archive folder can read. Move them into the backup folder or delete them.': [
+		'Im Unterordner „_cantoria-app“ des Archivordners liegen noch Sicherungen oder Jahresstände einer früheren Version, die alle mit Zugriff auf den Archivordner lesen können. Verschiebe sie in den Sicherungsordner oder lösche sie.',
+		'Im Unterordner „_cantoria-app“ des Archivordners liegen noch Sicherungen oder Jahresstände einer früheren Version, die alle mit Zugriff auf den Archivordner lesen können. Verschieben Sie sie in den Sicherungsordner oder löschen Sie sie.',
 	],
 	'Only an administrator can change the archive folder: background jobs and backups run as the account that sets it.': 'Nur die Administration kann den Archivordner ändern: Hintergrundjobs und Sicherungen laufen mit dem Konto, das ihn festlegt.',
 	'Saving makes this folder the archive folder: the app reads the score files from it as your account sees it, and writes the weekly backups into a folder of your own files outside it ("Music archive backups").': [

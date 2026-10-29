@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -36,8 +36,8 @@ const headingId = useId()
 			<NcButton variant="tertiary-no-background"
 				size="small"
 				class="help-term__button"
-				:aria-label="t('notenarchiv', 'Explain: {term}', { term: help.name })"
-				:title="t('notenarchiv', 'Explain: {term}', { term: help.name })">
+				:aria-label="t('cantoria', 'Explain: {term}', { term: help.name })"
+				:title="t('cantoria', 'Explain: {term}', { term: help.name })">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiHelpCircleOutline" :size="20" />
 				</template>
@@ -49,7 +49,7 @@ const headingId = useId()
 			</p>
 			<p>{{ help.text }}</p>
 			<p>
-				<GuideLink :href="userGuideUrl(help.section)" :label="t('notenarchiv', 'More in the guide')" />
+				<GuideLink :href="userGuideUrl(help.section)" :label="t('cantoria', 'More in the guide')" />
 			</p>
 		</div>
 	</NcPopover>

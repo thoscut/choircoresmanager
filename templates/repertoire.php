@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -19,7 +19,7 @@ $texts = $_['texts'];
 <style>
 	/* Nextcloud's public layout holds #content to the height of the window
 	   and clips it: the page scrolls in its own element */
-	.notenarchiv-repertoire-page {
+	.cantoria-repertoire-page {
 		flex: 1 1 auto;
 		min-width: 0;
 		overflow-y: auto;
@@ -27,7 +27,7 @@ $texts = $_['texts'];
 
 	/* A page of its own on the background picture of the public layout, as the
 	   page of a public link: the text needs the main background for contrast */
-	.notenarchiv-repertoire {
+	.cantoria-repertoire {
 		max-width: 50em;
 		margin: calc(4 * var(--default-grid-baseline, 4px)) auto;
 		padding: calc(4 * var(--default-grid-baseline, 4px));
@@ -36,57 +36,57 @@ $texts = $_['texts'];
 		color: var(--color-main-text, #222);
 	}
 
-	.notenarchiv-repertoire h2 {
+	.cantoria-repertoire h2 {
 		margin-top: 0;
 	}
 
-	.notenarchiv-repertoire__list {
+	.cantoria-repertoire__list {
 		padding: 0;
 		list-style: none;
 	}
 
-	.notenarchiv-repertoire__item {
+	.cantoria-repertoire__item {
 		padding-block: calc(3 * var(--default-grid-baseline, 4px));
 		border-bottom: 1px solid var(--color-border, #ccc);
 	}
 
-	.notenarchiv-repertoire__item h3 {
+	.cantoria-repertoire__item h3 {
 		margin: 0 0 var(--default-grid-baseline, 4px);
 		font-size: 1.15em;
 	}
 
-	.notenarchiv-repertoire__item p {
+	.cantoria-repertoire__item p {
 		margin: 0;
 	}
 
-	.notenarchiv-repertoire__links {
+	.cantoria-repertoire__links {
 		display: flex;
 		flex-wrap: wrap;
 		gap: calc(3 * var(--default-grid-baseline, 4px));
 		margin-top: var(--default-grid-baseline, 4px);
 	}
 
-	.notenarchiv-repertoire__links a {
+	.cantoria-repertoire__links a {
 		color: var(--color-main-text, #000);
 		text-decoration: underline;
 	}
 
-	.notenarchiv-repertoire__links a:focus-visible {
+	.cantoria-repertoire__links a:focus-visible {
 		outline: 2px solid var(--color-main-text, #000);
 		outline-offset: 2px;
 	}
 </style>
 
-<main class="notenarchiv-repertoire-page">
-<div class="notenarchiv-repertoire">
+<main class="cantoria-repertoire-page">
+<div class="cantoria-repertoire">
 	<h2><?php p($texts['heading']); ?></h2>
 	<p><?php p($texts['intro']); ?></p>
 	<?php if ($_['entries'] === []): ?>
 		<p><?php p($texts['empty']); ?></p>
 	<?php else: ?>
-		<ul class="notenarchiv-repertoire__list">
+		<ul class="cantoria-repertoire__list">
 			<?php foreach ($_['entries'] as $entry): ?>
-				<li class="notenarchiv-repertoire__item">
+				<li class="cantoria-repertoire__item">
 					<h3><?php p($entry['title']); ?></h3>
 					<?php /* The composer as written, unless the register names one (e.g. "Volksweise") */ ?>
 					<?php if ($entry['composer'] !== '' && !in_array('composer', array_column($entry['persons'], 'role'), true)): ?>
@@ -102,7 +102,7 @@ $texts = $_['texts'];
 						<p><?php p($texts['scoring']); ?>: <?php p(implode(', ', $entry['scoring'])); ?></p>
 					<?php endif; ?>
 					<?php if ($entry['cpdl'] !== null || $entry['imslp'] !== null): ?>
-						<p class="notenarchiv-repertoire__links">
+						<p class="cantoria-repertoire__links">
 							<?php if ($entry['cpdl'] !== null): ?>
 								<a href="<?php p($entry['cpdl']); ?>" rel="external noopener noreferrer"><?php p($texts['cpdl']); ?></a>
 							<?php endif; ?>

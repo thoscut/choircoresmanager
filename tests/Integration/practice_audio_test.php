@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -27,16 +27,16 @@ require __DIR__ . '/harness.php';
 [$root, $uid, $protectedMark, $preservationMark, $publicMark] = IntegrationTest::start($argv,
 	['nextcloud-root', 'uid', 'shelfmark-protected', 'shelfmark-preservation-copy', 'shelfmark-public-domain']);
 
-use OCA\Notenarchiv\Db\AuditEntry;
-use OCA\Notenarchiv\Db\AuditEntryMapper;
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\WorkVersionMapper;
-use OCA\Notenarchiv\Exception\AccessDeniedException;
-use OCA\Notenarchiv\Service\CatalogService;
-use OCA\Notenarchiv\Service\LicenseService;
-use OCA\Notenarchiv\Service\PracticeAudioService;
-use OCA\Notenarchiv\Service\RightsService;
-use OCA\Notenarchiv\Service\Roles;
+use OCA\Cantoria\Db\AuditEntry;
+use OCA\Cantoria\Db\AuditEntryMapper;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Db\WorkVersionMapper;
+use OCA\Cantoria\Exception\AccessDeniedException;
+use OCA\Cantoria\Service\CatalogService;
+use OCA\Cantoria\Service\LicenseService;
+use OCA\Cantoria\Service\PracticeAudioService;
+use OCA\Cantoria\Service\RightsService;
+use OCA\Cantoria\Service\Roles;
 use OCP\IDBConnection;
 use OCP\Server;
 

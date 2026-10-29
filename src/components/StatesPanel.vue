@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -90,8 +90,8 @@ const line = computed(() => revisionLine(shelfmark.value, props.detail.version, 
  */
 function changedText(state: VersionState): string {
 	return [
-		state.measures ? t('notenarchiv', 'Measures: {measures}', { measures: state.measures }) : '',
-		state.voices ? t('notenarchiv', 'Voices: {voices}', { voices: state.voices }) : '',
+		state.measures ? t('cantoria', 'Measures: {measures}', { measures: state.measures }) : '',
+		state.voices ? t('cantoria', 'Voices: {voices}', { voices: state.voices }) : '',
 	].filter((part) => part !== '').join(' · ')
 }
 
@@ -128,7 +128,7 @@ async function submitSetCurrent(): Promise<void> {
 	dialogError.value = ''
 	try {
 		await setCurrentState(setting.value.id, reason.value.trim() === '' ? null : reason.value.trim())
-		showSuccess(t('notenarchiv', 'Revision {number} is now the current revision.', { number: setting.value.number }))
+		showSuccess(t('cantoria', 'Revision {number} is now the current revision.', { number: setting.value.number }))
 		setting.value = null
 		await load()
 		emit('changed')
@@ -152,8 +152,8 @@ interface Option {
  * @param state - the revision
  */
 function optionLabel(state: VersionState): string {
-	const label = t('notenarchiv', 'Revision {number}', { number: state.number })
-	return state.valid_since ? t('notenarchiv', '{revision} (current)', { revision: label }) : label
+	const label = t('cantoria', 'Revision {number}', { number: state.number })
+	return state.valid_since ? t('cantoria', '{revision} (current)', { revision: label }) : label
 }
 
 const options = computed<Option[]>(() => newestFirst.value.map((state) => ({ id: state.id, label: optionLabel(state) })))
@@ -184,7 +184,7 @@ async function revisionText(state: VersionState): Promise<string> {
 	const content = await fetchFileContent(state.file_id)
 	const sha256 = await sha256Hex(content)
 	if (state.sha256 !== null && sha256 !== null && sha256 !== state.sha256) {
-		throw new RevisionChangedError(t('notenarchiv', 'The file of revision {number} has been changed since it was recorded, so its content is no longer there. Compare newer revisions, or look for the earlier content under "Versions" of the file in the Files app.', { number: state.number }))
+		throw new RevisionChangedError(t('cantoria', 'The file of revision {number} has been changed since it was recorded, so its content is no longer there. Compare newer revisions, or look for the earlier content under "Versions" of the file in the Files app.', { number: state.number }))
 	}
 	return readScoreText(content)
 }
@@ -196,7 +196,7 @@ async function compare(): Promise<void> {
 	compareError.value = ''
 	result.value = null
 	if (!older || !newer || older.id === newer.id) {
-		compareError.value = t('notenarchiv', 'Please choose two different revisions.')
+		compareError.value = t('cantoria', 'Please choose two different revisions.')
 		return
 	}
 	if (older.number > newer.number) {
@@ -210,9 +210,9 @@ async function compare(): Promise<void> {
 		if (error instanceof RevisionChangedError || error instanceof ApiError) {
 			compareError.value = error.message
 		} else if (error instanceof ArchiveLimitError) {
-			compareError.value = t('notenarchiv', 'The score file is too large to show.')
+			compareError.value = t('cantoria', 'The score file is too large to show.')
 		} else if (error instanceof Error) {
-			compareError.value = t('notenarchiv', 'One of the files could not be read as MusicXML.')
+			compareError.value = t('cantoria', 'One of the files could not be read as MusicXML.')
 		} else {
 			compareError.value = errorMessage(error)
 		}
@@ -230,8 +230,8 @@ const statusText = computed(() => {
 	}
 	const count = result.value.comparison.changes.length
 	return count === 0
-		? t('notenarchiv', 'No differences in notes and lyrics between revision {older} and revision {newer}.', { older: result.value.older.number, newer: result.value.newer.number })
-		: n('notenarchiv', '%n difference between revision {older} and revision {newer}.', '%n differences between revision {older} and revision {newer}.', count,
+		? t('cantoria', 'No differences in notes and lyrics between revision {older} and revision {newer}.', { older: result.value.older.number, newer: result.value.newer.number })
+		: n('cantoria', '%n difference between revision {older} and revision {newer}.', '%n differences between revision {older} and revision {newer}.', count,
 			{ older: result.value.older.number, newer: result.value.newer.number })
 })
 
@@ -240,18 +240,18 @@ const note = computed(() => {
 	if (!result.value || result.value.comparison.changes.length === 0) {
 		return ''
 	}
-	const heading = t('notenarchiv', '{title} ({shelfmark}): changes from revision {older} to revision {newer}', {
+	const heading = t('cantoria', '{title} ({shelfmark}): changes from revision {older} to revision {newer}', {
 		title: title.value, shelfmark: shelfmark.value, older: result.value.older.number, newer: result.value.newer.number,
 	})
 	return memberNote(heading, result.value.comparison.changes, words,
-		result.value.comparison.truncated ? t('notenarchiv', '… and further changes; please look at the score.') : null)
+		result.value.comparison.truncated ? t('cantoria', '… and further changes; please look at the score.') : null)
 })
 
 async function copyNote(): Promise<void> {
 	if (await copyText(note.value)) {
-		showSuccess(t('notenarchiv', 'The note has been copied.'))
+		showSuccess(t('cantoria', 'The note has been copied.'))
 	} else {
-		showError(t('notenarchiv', 'The text could not be copied. Please select and copy it by hand.'))
+		showError(t('cantoria', 'The text could not be copied. Please select and copy it by hand.'))
 	}
 }
 </script>
@@ -260,7 +260,7 @@ async function copyNote(): Promise<void> {
 	<section class="states" aria-labelledby="states-heading">
 		<div class="states__title">
 			<h3 id="states-heading">
-				{{ t('notenarchiv', 'Revisions of this version') }}
+				{{ t('cantoria', 'Revisions of this version') }}
 			</h3>
 			<HelpTerm term="revision" />
 		</div>
@@ -269,38 +269,38 @@ async function copyNote(): Promise<void> {
 		</p>
 
 		<p v-if="loading && !list" class="states__muted">
-			<NcLoadingIcon :size="20" :name="t('notenarchiv', 'Loading …')" />
+			<NcLoadingIcon :size="20" :name="t('cantoria', 'Loading …')" />
 		</p>
 		<NcNoteCard v-else-if="loadError" type="error">
 			<p>{{ loadError }}</p>
 			<NcButton @click="load">
-				{{ t('notenarchiv', 'Try again') }}
+				{{ t('cantoria', 'Try again') }}
 			</NcButton>
 		</NcNoteCard>
 
 		<template v-else-if="list">
 			<p v-if="states.length === 0" class="states__muted">
-				{{ t('notenarchiv', 'No revision has been recorded yet. The next file sync records the MusicXML of this version as revision 1; a correction in the app does the same.') }}
+				{{ t('cantoria', 'No revision has been recorded yet. The next file sync records the MusicXML of this version as revision 1; a correction in the app does the same.') }}
 			</p>
 			<template v-else>
 				<NcNoteCard v-if="!current" type="info">
 					{{ maySetCurrent
-						? t('notenarchiv', 'No current revision is set yet. Check the revision that is valid for the choir and choose "Set as current". Outputs name it from then on.')
-						: t('notenarchiv', 'The catalog librarian has not set a current revision yet.') }}
+						? t('cantoria', 'No current revision is set yet. Check the revision that is valid for the choir and choose "Set as current". Outputs name it from then on.')
+						: t('cantoria', 'The catalog librarian has not set a current revision yet.') }}
 				</NcNoteCard>
 				<NcNoteCard v-else-if="newest && newest.number > current.number" type="info">
 					{{ maySetCurrent
-						? t('notenarchiv', 'Revision {newer} is newer than the current revision {current}. Compare them below and set the newer one as current when it is valid.', { newer: newest.number, current: current.number })
-						: t('notenarchiv', 'Revision {newer} is newer than the current revision {current}.', { newer: newest.number, current: current.number }) }}
+						? t('cantoria', 'Revision {newer} is newer than the current revision {current}. Compare them below and set the newer one as current when it is valid.', { newer: newest.number, current: current.number })
+						: t('cantoria', 'Revision {newer} is newer than the current revision {current}.', { newer: newest.number, current: current.number }) }}
 				</NcNoteCard>
 
 				<ol class="states__list" reversed>
 					<li v-for="state in newestFirst" :key="state.id" class="states__item">
 						<p class="states__title">
-							<strong>{{ t('notenarchiv', 'Revision {number}', { number: state.number }) }}</strong>
+							<strong>{{ t('cantoria', 'Revision {number}', { number: state.number }) }}</strong>
 							<span v-if="state.valid_since" class="states__current">
 								<NcIconSvgWrapper :path="mdiCheckDecagramOutline" :size="18" inline />
-								{{ t('notenarchiv', 'current since {date}', { date: formatDate(state.valid_since) }) }}
+								{{ t('cantoria', 'current since {date}', { date: formatDate(state.valid_since) }) }}
 							</span>
 						</p>
 						<p class="states__muted">
@@ -313,31 +313,31 @@ async function copyNote(): Promise<void> {
 							{{ state.note }}
 						</p>
 						<p class="states__muted states__file">
-							{{ t('notenarchiv', 'File: {name}', { name: state.file_name }) }}<template v-if="state.sha256">
-								· <abbr :title="state.sha256">{{ t('notenarchiv', 'Checksum {checksum}', { checksum: state.sha256.slice(0, 12) }) }}</abbr>
+							{{ t('cantoria', 'File: {name}', { name: state.file_name }) }}<template v-if="state.sha256">
+								· <abbr :title="state.sha256">{{ t('cantoria', 'Checksum {checksum}', { checksum: state.sha256.slice(0, 12) }) }}</abbr>
 							</template>
 						</p>
 						<NcButton v-if="maySetCurrent && !state.valid_since"
 							variant="secondary"
-							:aria-label="t('notenarchiv', 'Set revision {number} as current', { number: state.number })"
+							:aria-label="t('cantoria', 'Set revision {number} as current', { number: state.number })"
 							@click="startSetCurrent(state)">
-							{{ t('notenarchiv', 'Set as current') }}
+							{{ t('cantoria', 'Set as current') }}
 						</NcButton>
 					</li>
 				</ol>
 
 				<section v-if="states.length >= 2" class="states__compare" aria-labelledby="states-compare-heading">
 					<h4 id="states-compare-heading">
-						{{ t('notenarchiv', 'Compare two revisions') }}
+						{{ t('cantoria', 'Compare two revisions') }}
 					</h4>
 					<form class="states__compare-form" @submit.prevent="compare">
 						<NcSelect v-model="olderOption"
-							:input-label="t('notenarchiv', 'Older revision')"
+							:input-label="t('cantoria', 'Older revision')"
 							:options="options"
 							:clearable="false"
 							:searchable="false" />
 						<NcSelect v-model="newerOption"
-							:input-label="t('notenarchiv', 'Newer revision')"
+							:input-label="t('cantoria', 'Newer revision')"
 							:options="options"
 							:clearable="false"
 							:searchable="false" />
@@ -346,11 +346,11 @@ async function copyNote(): Promise<void> {
 								<NcLoadingIcon v-if="comparing" :size="20" />
 								<NcIconSvgWrapper v-else :path="mdiFileCompare" />
 							</template>
-							{{ t('notenarchiv', 'Compare') }}
+							{{ t('cantoria', 'Compare') }}
 						</NcButton>
 					</form>
 					<p class="states__muted">
-						{{ t('notenarchiv', 'Compares notes, rests, note values, accidentals and lyrics measure by measure and voice by voice. Layout, dynamics and slurs are not compared.') }}
+						{{ t('cantoria', 'Compares notes, rests, note values, accidentals and lyrics measure by measure and voice by voice. Layout, dynamics and slurs are not compared.') }}
 					</p>
 
 					<NcNoteCard v-if="compareError" type="error">
@@ -366,11 +366,11 @@ async function copyNote(): Promise<void> {
 							</li>
 						</ul>
 						<p v-if="result.comparison.truncated" class="states__muted">
-							{{ t('notenarchiv', 'Only the first {count} differences are listed.', { count: lines.length }) }}
+							{{ t('cantoria', 'Only the first {count} differences are listed.', { count: lines.length }) }}
 						</p>
 						<NcTextArea :model-value="note"
-							:label="t('notenarchiv', 'Note for choir members')"
-							:helper-text="t('notenarchiv', 'Plain text to copy into an e-mail or a message. It contains no notation.')"
+							:label="t('cantoria', 'Note for choir members')"
+							:helper-text="t('cantoria', 'Plain text to copy into an e-mail or a message. It contains no notation.')"
 							readonly
 							resize="vertical"
 							rows="6" />
@@ -378,7 +378,7 @@ async function copyNote(): Promise<void> {
 							<template #icon>
 								<NcIconSvgWrapper :path="mdiContentCopy" />
 							</template>
-							{{ t('notenarchiv', 'Copy the note') }}
+							{{ t('cantoria', 'Copy the note') }}
 						</NcButton>
 					</template>
 				</section>
@@ -386,23 +386,23 @@ async function copyNote(): Promise<void> {
 		</template>
 
 		<p class="states__muted">
-			<GuideLink :href="userGuideUrl(USER_GUIDE.revisions)" :label="t('notenarchiv', 'Revisions of a version (user guide)')" />
+			<GuideLink :href="userGuideUrl(USER_GUIDE.revisions)" :label="t('cantoria', 'Revisions of a version (user guide)')" />
 		</p>
 
 		<ActionDialog v-if="setting"
-			:name="t('notenarchiv', 'Set revision {number} as current', { number: setting.number })"
-			:submit-label="t('notenarchiv', 'Set as current')"
+			:name="t('cantoria', 'Set revision {number} as current', { number: setting.number })"
+			:submit-label="t('cantoria', 'Set as current')"
 			:busy="busy"
 			:error="dialogError"
 			@submit="submitSetCurrent"
 			@close="setting = null">
 			<p>
 				{{ current
-					? t('notenarchiv', 'From today, outputs name revision {number} instead of revision {current}. The change is recorded in the audit log.', { number: setting.number, current: current.number })
-					: t('notenarchiv', 'From today, outputs name revision {number}. The change is recorded in the audit log.', { number: setting.number }) }}
+					? t('cantoria', 'From today, outputs name revision {number} instead of revision {current}. The change is recorded in the audit log.', { number: setting.number, current: current.number })
+					: t('cantoria', 'From today, outputs name revision {number}. The change is recorded in the audit log.', { number: setting.number }) }}
 			</p>
 			<NcTextArea v-model="reason"
-				:label="t('notenarchiv', 'Reason (optional)')"
+				:label="t('cantoria', 'Reason (optional)')"
 				resize="vertical"
 				rows="3" />
 		</ActionDialog>

@@ -3,16 +3,16 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Service;
+namespace OCA\Cantoria\Tests\Unit\Service;
 
-use OCA\Notenarchiv\Exception\InvalidInputException;
-use OCA\Notenarchiv\Service\AnnualSnapshotService;
-use OCA\Notenarchiv\Service\CatalogCsv;
-use OCA\Notenarchiv\Service\Sort;
+use OCA\Cantoria\Exception\InvalidInputException;
+use OCA\Cantoria\Service\AnnualSnapshotService;
+use OCA\Cantoria\Service\CatalogCsv;
+use OCA\Cantoria\Service\Sort;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;

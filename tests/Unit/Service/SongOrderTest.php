@@ -3,31 +3,31 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Service;
+namespace OCA\Cantoria\Tests\Unit\Service;
 
-use OCA\Notenarchiv\Db\Contribution;
-use OCA\Notenarchiv\Db\ContributionMapper;
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\Event;
-use OCA\Notenarchiv\Db\EventItem;
-use OCA\Notenarchiv\Db\EventItemMapper;
-use OCA\Notenarchiv\Db\EventMapper;
-use OCA\Notenarchiv\Db\LicenseMapper;
-use OCA\Notenarchiv\Db\Person;
-use OCA\Notenarchiv\Db\PersonMapper;
-use OCA\Notenarchiv\Db\Work;
-use OCA\Notenarchiv\Db\WorkMapper;
-use OCA\Notenarchiv\Db\WorkVersion;
-use OCA\Notenarchiv\Db\WorkVersionMapper;
-use OCA\Notenarchiv\Service\AuditLog;
-use OCA\Notenarchiv\Service\EventService;
-use OCA\Notenarchiv\Service\RightsService;
-use OCA\Notenarchiv\Service\Roles;
-use OCA\Notenarchiv\Service\StateService;
+use OCA\Cantoria\Db\Contribution;
+use OCA\Cantoria\Db\ContributionMapper;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Db\Event;
+use OCA\Cantoria\Db\EventItem;
+use OCA\Cantoria\Db\EventItemMapper;
+use OCA\Cantoria\Db\EventMapper;
+use OCA\Cantoria\Db\LicenseMapper;
+use OCA\Cantoria\Db\Person;
+use OCA\Cantoria\Db\PersonMapper;
+use OCA\Cantoria\Db\Work;
+use OCA\Cantoria\Db\WorkMapper;
+use OCA\Cantoria\Db\WorkVersion;
+use OCA\Cantoria\Db\WorkVersionMapper;
+use OCA\Cantoria\Service\AuditLog;
+use OCA\Cantoria\Service\EventService;
+use OCA\Cantoria\Service\RightsService;
+use OCA\Cantoria\Service\Roles;
+use OCA\Cantoria\Service\StateService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IDateTimeZone;
 use OCP\IDBConnection;

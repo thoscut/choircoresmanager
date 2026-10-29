@@ -3,19 +3,19 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Service;
+namespace OCA\Cantoria\Service;
 
-use OCA\Notenarchiv\Db\ContributionMapper;
-use OCA\Notenarchiv\Db\Person;
-use OCA\Notenarchiv\Db\PersonMapper;
-use OCA\Notenarchiv\Db\Work;
-use OCA\Notenarchiv\Db\WorkMapper;
-use OCA\Notenarchiv\Db\WorkVersion;
-use OCA\Notenarchiv\Db\WorkVersionMapper;
+use OCA\Cantoria\Db\ContributionMapper;
+use OCA\Cantoria\Db\Person;
+use OCA\Cantoria\Db\PersonMapper;
+use OCA\Cantoria\Db\Work;
+use OCA\Cantoria\Db\WorkMapper;
+use OCA\Cantoria\Db\WorkVersion;
+use OCA\Cantoria\Db\WorkVersionMapper;
 
 /**
  * The public repertoire page (module public_repertoire, milestone 0.7): the
@@ -123,7 +123,7 @@ class PublicRepertoireService {
 	 * Composer and lyricist of the versions, each person once.
 	 *
 	 * @param non-empty-list<WorkVersion> $versions
-	 * @param array<int, list<\OCA\Notenarchiv\Db\Contribution>> $contributions by version id
+	 * @param array<int, list<\OCA\Cantoria\Db\Contribution>> $contributions by version id
 	 * @param array<int, Person> $persons by id
 	 * @return list<RepertoirePerson>
 	 */

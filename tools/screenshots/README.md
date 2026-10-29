@@ -70,32 +70,32 @@ tests.
      php occ user:setting "$uid" core timezone Europe/Berlin
      php occ user:setting "$uid" firstrunwizard show 99.0.0
    done
-   php occ user:setting demo-librarian dashboard layout notenarchiv-due
+   php occ user:setting demo-librarian dashboard layout cantoria-due
    ```
 
-4. Copy `build/demo/Notenarchiv-Demo` into the files of `demo-librarian`
-   (for example `data/demo-librarian/files/Notenarchiv-Demo`) and run
-   `php occ files:scan --path=/demo-librarian/files/Notenarchiv-Demo`, or
+4. Copy `build/demo/Cantoria-Demo` into the files of `demo-librarian`
+   (for example `data/demo-librarian/files/Cantoria-Demo`) and run
+   `php occ files:scan --path=/demo-librarian/files/Cantoria-Demo`, or
    upload the folder in the Files app.
 5. Roles, archive folder and the modules of the newer pictures (sharing,
    folder book, mirror folder of the print station, annual snapshots; they
    are part of no preset or not of Standard):
 
    ```sh
-   php occ notenarchiv:setup demo-librarian Notenarchiv-Demo \
+   php occ cantoria:setup demo-librarian Cantoria-Demo \
      -r librarian=demo-librarians -r operations=demo-librarians \
      -r conductor=demo-conductors -r contributor=demo-tools -r reader=demo-board \
      -r member=demo-members
-   php occ notenarchiv:modules enable member_links member_practice_audio public_links \
+   php occ cantoria:modules enable member_links member_practice_audio public_links \
      public_repertoire folder_book print_mirror annual_snapshot
    ```
 
 6. Import the catalog and link the files:
 
    ```sh
-   php occ notenarchiv:import --execute demo-librarian Notenarchiv-Demo/_Import/catalog.csv
-   php occ notenarchiv:import --execute demo-librarian Notenarchiv-Demo/_Import/catalog-supplement.csv
-   php occ notenarchiv:file-sync demo-librarian
+   php occ cantoria:import --execute demo-librarian Cantoria-Demo/_Import/catalog.csv
+   php occ cantoria:import --execute demo-librarian Cantoria-Demo/_Import/catalog-supplement.csv
+   php occ cantoria:file-sync demo-librarian
    ```
 
 7. A calendar for the calendar dialog: `php occ dav:create-calendar demo-conductor Choir`.
@@ -131,7 +131,7 @@ NC_PASSWORD='…' node shoot.mjs --url http://localhost:8080 --prepare
 | `--only a,b` | only these pictures, by name or file, e.g. `--only catalog,de/catalog.png` |
 | `--out dir` | target folder (default: `docs/screenshots`) |
 | `--browser path` | browser executable (or `BROWSER_PATH`) |
-| `--demo-folder name` | folder of the demo data in the librarian's files (default: `Notenarchiv-Demo`) |
+| `--demo-folder name` | folder of the demo data in the librarian's files (default: `Cantoria-Demo`) |
 | `--no-optimize` | keep the screenshots as the browser made them |
 | `--list` | list the pictures with account, language and theme |
 

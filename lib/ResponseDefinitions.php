@@ -3,14 +3,14 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv;
+namespace OCA\Cantoria;
 
 /**
- * Types of the API for agents, version 1 (OCS, `/ocs/v2.php/apps/notenarchiv/api/v1/…`,
+ * Types of the API for agents, version 1 (OCS, `/ocs/v2.php/apps/cantoria/api/v1/…`,
  * see docs/api-v1.md). The OpenAPI description (openapi.json) is generated
  * from them and from the controllers ApiV1*Controller. The class itself is
  * never used; the controllers import its types.
@@ -20,9 +20,9 @@ namespace OCA\Notenarchiv;
  * left out. Fields are only ever added; nothing is renamed, removed or given
  * another type within v1.
  *
- * @psalm-type NotenarchivFieldValues = array<string, string|int|bool|null>
+ * @psalm-type CantoriaFieldValues = array<string, string|int|bool|null>
  *
- * @psalm-type NotenarchivApiStatus = array{
+ * @psalm-type CantoriaApiStatus = array{
  *     api_version: int,
  *     roles: list<string>,
  *     modules: array<string, bool>,
@@ -41,7 +41,7 @@ namespace OCA\Notenarchiv;
  *     },
  * }
  *
- * @psalm-type NotenarchivCatalogRow = array{
+ * @psalm-type CantoriaCatalogRow = array{
  *     id: int,
  *     shelfmark: string,
  *     binder: int,
@@ -64,13 +64,13 @@ namespace OCA\Notenarchiv;
  *     files: int,
  * }
  *
- * @psalm-type NotenarchivCatalogPage = array{
- *     items: list<NotenarchivCatalogRow>,
+ * @psalm-type CantoriaCatalogPage = array{
+ *     items: list<CantoriaCatalogRow>,
  *     total: int,
  *     next_cursor: ?string,
  * }
  *
- * @psalm-type NotenarchivRights = array{
+ * @psalm-type CantoriaRights = array{
  *     status: ?string,
  *     confirmed: bool,
  *     confirmed_on: ?string,
@@ -82,7 +82,7 @@ namespace OCA\Notenarchiv;
  *     print_station: array{allowed: bool, reason: ?string},
  * }
  *
- * @psalm-type NotenarchivScore = array{
+ * @psalm-type CantoriaScore = array{
  *     file_id: int,
  *     file_name: string,
  *     can_view: bool,
@@ -90,7 +90,7 @@ namespace OCA\Notenarchiv;
  *     reason: ?string,
  * }
  *
- * @psalm-type NotenarchivFile = array{
+ * @psalm-type CantoriaFile = array{
  *     id: int,
  *     name: string,
  *     path: string,
@@ -99,14 +99,14 @@ namespace OCA\Notenarchiv;
  *     found: bool,
  * }
  *
- * @psalm-type NotenarchivCopyRef = array{
+ * @psalm-type CantoriaCopyRef = array{
  *     id: int,
  *     shelfmark: string,
  *     version_id: int,
  *     status: string,
  * }
  *
- * @psalm-type NotenarchivTask = array{
+ * @psalm-type CantoriaTask = array{
  *     id: int,
  *     kind: string,
  *     status: string,
@@ -131,13 +131,13 @@ namespace OCA\Notenarchiv;
  *     own: bool,
  * }
  *
- * @psalm-type NotenarchivTaskPage = array{
- *     items: list<NotenarchivTask>,
+ * @psalm-type CantoriaTaskPage = array{
+ *     items: list<CantoriaTask>,
  *     total: int,
  *     next_cursor: ?string,
  * }
  *
- * @psalm-type NotenarchivProposal = array{
+ * @psalm-type CantoriaProposal = array{
  *     id: int,
  *     level: string,
  *     object_id: int,
@@ -152,13 +152,13 @@ namespace OCA\Notenarchiv;
  *     own: bool,
  * }
  *
- * @psalm-type NotenarchivProposalPage = array{
- *     items: list<NotenarchivProposal>,
+ * @psalm-type CantoriaProposalPage = array{
+ *     items: list<CantoriaProposal>,
  *     total: int,
  *     next_cursor: ?string,
  * }
  *
- * @psalm-type NotenarchivCopy = array{
+ * @psalm-type CantoriaCopy = array{
  *     id: int,
  *     shelfmark: string,
  *     binder: int,
@@ -169,30 +169,30 @@ namespace OCA\Notenarchiv;
  *     title: ?string,
  *     composer: ?string,
  *     fields: array{
- *         work: NotenarchivFieldValues,
- *         version: NotenarchivFieldValues,
- *         copy: NotenarchivFieldValues,
+ *         work: CantoriaFieldValues,
+ *         version: CantoriaFieldValues,
+ *         copy: CantoriaFieldValues,
  *     },
- *     rights: NotenarchivRights,
- *     score: ?NotenarchivScore,
- *     files: list<NotenarchivFile>,
- *     other_copies: list<NotenarchivCopyRef>,
- *     tasks: list<NotenarchivTask>,
- *     open_proposals: list<NotenarchivProposal>,
+ *     rights: CantoriaRights,
+ *     score: ?CantoriaScore,
+ *     files: list<CantoriaFile>,
+ *     other_copies: list<CantoriaCopyRef>,
+ *     tasks: list<CantoriaTask>,
+ *     open_proposals: list<CantoriaProposal>,
  * }
  *
- * @psalm-type NotenarchivTextReference = array{
+ * @psalm-type CantoriaTextReference = array{
  *     text: string,
  *     shelfmark: string,
  *     title: ?string,
  * }
  *
- * @psalm-type NotenarchivDue = array{
+ * @psalm-type CantoriaDue = array{
  *     cards: list<array{key: string, count: int, label: string}>,
  *     concerts: list<array{id: int, title: string, date: string, stage: string, label: string}>,
  * }
  *
- * @psalm-type NotenarchivConcertRow = array{
+ * @psalm-type CantoriaConcertRow = array{
  *     id: int,
  *     kind: string,
  *     title: ?string,
@@ -206,13 +206,13 @@ namespace OCA\Notenarchiv;
  *     pieces: int,
  * }
  *
- * @psalm-type NotenarchivConcertPage = array{
- *     items: list<NotenarchivConcertRow>,
+ * @psalm-type CantoriaConcertPage = array{
+ *     items: list<CantoriaConcertRow>,
  *     total: int,
  *     next_cursor: ?string,
  * }
  *
- * @psalm-type NotenarchivProgrammeItem = array{
+ * @psalm-type CantoriaProgrammeItem = array{
  *     id: int,
  *     position: int,
  *     copy_id: ?int,
@@ -230,7 +230,7 @@ namespace OCA\Notenarchiv;
  *     warnings: list<string>,
  * }
  *
- * @psalm-type NotenarchivConcert = array{
+ * @psalm-type CantoriaConcert = array{
  *     id: int,
  *     kind: string,
  *     title: ?string,
@@ -243,12 +243,12 @@ namespace OCA\Notenarchiv;
  *     imported: bool,
  *     is_public: bool,
  *     notes: ?string,
- *     items: list<NotenarchivProgrammeItem>,
+ *     items: list<CantoriaProgrammeItem>,
  *     total_duration: int,
  *     missing_durations: int,
  * }
  *
- * @psalm-type NotenarchivStatistics = array{
+ * @psalm-type CantoriaStatistics = array{
  *     period: array{from: int, to: int},
  *     today: string,
  *     stock: array{
@@ -282,7 +282,7 @@ namespace OCA\Notenarchiv;
  *     },
  * }
  *
- * @psalm-type NotenarchivTranscriptionReport = array{
+ * @psalm-type CantoriaTranscriptionReport = array{
  *     id: int,
  *     copy_id: int,
  *     version_id: int,
@@ -306,7 +306,7 @@ namespace OCA\Notenarchiv;
  *     own: bool,
  * }
  *
- * @psalm-type NotenarchivReviewPoint = array{
+ * @psalm-type CantoriaReviewPoint = array{
  *     id: int,
  *     copy_id: int,
  *     version_id: int,
@@ -332,7 +332,7 @@ namespace OCA\Notenarchiv;
  *     own: bool,
  * }
  *
- * @psalm-type NotenarchivReviewCounts = array{
+ * @psalm-type CantoriaReviewCounts = array{
  *     open: int,
  *     confirmed: int,
  *     correct: int,
@@ -341,18 +341,18 @@ namespace OCA\Notenarchiv;
  *     dismissed: int,
  * }
  *
- * @psalm-type NotenarchivReview = array{
+ * @psalm-type CantoriaReview = array{
  *     copy_id: int,
  *     shelfmark: string,
  *     version_id: int,
- *     counts: NotenarchivReviewCounts,
- *     reports: list<NotenarchivTranscriptionReport>,
- *     items: list<NotenarchivReviewPoint>,
+ *     counts: CantoriaReviewCounts,
+ *     reports: list<CantoriaTranscriptionReport>,
+ *     items: list<CantoriaReviewPoint>,
  *     total: int,
  *     next_cursor: ?string,
  * }
  *
- * @psalm-type NotenarchivCorrectionOrder = array{
+ * @psalm-type CantoriaCorrectionOrder = array{
  *     id: int,
  *     copy_id: int,
  *     version_id: int,
@@ -378,14 +378,14 @@ namespace OCA\Notenarchiv;
  *     own: bool,
  * }
  *
- * @psalm-type NotenarchivCorrectionOrderPage = array{
- *     items: list<NotenarchivCorrectionOrder>,
+ * @psalm-type CantoriaCorrectionOrderPage = array{
+ *     items: list<CantoriaCorrectionOrder>,
  *     total: int,
  *     next_cursor: ?string,
  * }
  *
- * @psalm-type NotenarchivReportResult = array{
- *     report: NotenarchivTranscriptionReport,
+ * @psalm-type CantoriaReportResult = array{
+ *     report: CantoriaTranscriptionReport,
  *     unchanged: bool,
  *     points: array{created: int, kept: int, closed: int, open: int},
  *     proposals: int,
@@ -393,7 +393,7 @@ namespace OCA\Notenarchiv;
  *     warnings: list<string>,
  * }
  *
- * @psalm-type NotenarchivRevisionChange = array{
+ * @psalm-type CantoriaRevisionChange = array{
  *     measure: string,
  *     part: string,
  *     kind: string,
@@ -402,7 +402,7 @@ namespace OCA\Notenarchiv;
  *     new: string,
  * }
  *
- * @psalm-type NotenarchivRevision = array{
+ * @psalm-type CantoriaRevision = array{
  *     id: int,
  *     number: int,
  *     source: string,
@@ -413,19 +413,19 @@ namespace OCA\Notenarchiv;
  *     measures: ?string,
  *     voices: ?string,
  *     note: ?string,
- *     changes: list<NotenarchivRevisionChange>,
+ *     changes: list<CantoriaRevisionChange>,
  *     current: bool,
  *     valid_since: ?string,
  *     created_at: string,
  *     own: bool,
  * }
  *
- * @psalm-type NotenarchivRevisions = array{
+ * @psalm-type CantoriaRevisions = array{
  *     copy_id: int,
  *     shelfmark: string,
  *     version_id: int,
  *     current_number: ?int,
- *     items: list<NotenarchivRevision>,
+ *     items: list<CantoriaRevision>,
  * }
  *
  * @psalm-suppress UnusedClass

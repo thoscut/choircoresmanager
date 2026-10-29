@@ -3,20 +3,20 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Controller;
+namespace OCA\Cantoria\Controller;
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Attribute\RequiresModule;
-use OCA\Notenarchiv\ResponseDefinitions;
-use OCA\Notenarchiv\Service\ApiV1\ConcertView;
-use OCA\Notenarchiv\Service\ApiV1\Page;
-use OCA\Notenarchiv\Service\EventService;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\Roles;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Attribute\RequiresModule;
+use OCA\Cantoria\ResponseDefinitions;
+use OCA\Cantoria\Service\ApiV1\ConcertView;
+use OCA\Cantoria\Service\ApiV1\Page;
+use OCA\Cantoria\Service\EventService;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\Roles;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -35,8 +35,8 @@ use Psr\Log\LoggerInterface;
  * docs/api-v1.md). Planning stays with the conductor and the catalog
  * librarian in the app.
  *
- * @psalm-import-type NotenarchivConcertPage from ResponseDefinitions
- * @psalm-import-type NotenarchivConcert from ResponseDefinitions
+ * @psalm-import-type CantoriaConcertPage from ResponseDefinitions
+ * @psalm-import-type CantoriaConcert from ResponseDefinitions
  * @psalm-suppress UnusedClass
  */
 #[RequiresModule(Modules::AGENT_API)]
@@ -67,7 +67,7 @@ class ApiV1ConcertController extends OCSController {
 	 * @param string|null $to Only events on or before this day (YYYY-MM-DD)
 	 * @param int<1, 100> $limit Events per page
 	 * @param string|null $cursor The "next_cursor" of the page before; omit it for the first page
-	 * @return DataResponse<Http::STATUS_OK, NotenarchivConcertPage, array{}>
+	 * @return DataResponse<Http::STATUS_OK, CantoriaConcertPage, array{}>
 	 * @throws OCSBadRequestException A filter value, the limit or the cursor is not valid
 	 * @throws OCSForbiddenException The account has no role in the music archive
 	 * @throws OCSNotFoundException Concerts or the interface for agents are switched off
@@ -94,7 +94,7 @@ class ApiV1ConcertController extends OCSController {
 	 * are not struck.
 	 *
 	 * @param int $id ID of the concert or song list
-	 * @return DataResponse<Http::STATUS_OK, NotenarchivConcert, array{}>
+	 * @return DataResponse<Http::STATUS_OK, CantoriaConcert, array{}>
 	 * @throws OCSForbiddenException The account has no role in the music archive
 	 * @throws OCSNotFoundException The event does not exist, or concerts or the interface for agents are switched off
 	 *

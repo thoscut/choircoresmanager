@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -57,35 +57,35 @@ const sorted = computed(() => [...links.value].sort((a, b) => collator.compare(
 
 <template>
 	<div class="links-view">
-		<ViewHeader :title="t('notenarchiv', 'Links')"
+		<ViewHeader :title="t('cantoria', 'Links')"
 			:description="sharingOn
-				? t('notenarchiv', 'All active excerpt links: internal links for the archive roles, links for choir members and public links. Each entry says who can open it. The server checks the rights on every call. Calls are counted without names.')
-				: t('notenarchiv', 'All active excerpt links. They are only opened by people with a role in the music archive; the server checks the rights on every call. Calls are counted without names.')"
+				? t('cantoria', 'All active excerpt links: internal links for the archive roles, links for choir members and public links. Each entry says who can open it. The server checks the rights on every call. Calls are counted without names.')
+				: t('cantoria', 'All active excerpt links. They are only opened by people with a role in the music archive; the server checks the rights on every call. Calls are counted without names.')"
 			printable
 			reloadable
 			:loading="loading"
 			@reload="load" />
 		<div class="links-view__content">
-			<NcEmptyContent v-if="!loaded && loading" :name="t('notenarchiv', 'Loading …')">
+			<NcEmptyContent v-if="!loaded && loading" :name="t('cantoria', 'Loading …')">
 				<template #icon>
 					<NcLoadingIcon :size="64" />
 				</template>
 			</NcEmptyContent>
 			<NcEmptyContent v-else-if="!loaded && error"
-				:name="t('notenarchiv', 'The links could not be loaded')"
+				:name="t('cantoria', 'The links could not be loaded')"
 				:description="error">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiAlertCircleOutline" />
 				</template>
 				<template #action>
 					<NcButton @click="load">
-						{{ t('notenarchiv', 'Try again') }}
+						{{ t('cantoria', 'Try again') }}
 					</NcButton>
 				</template>
 			</NcEmptyContent>
 			<NcEmptyContent v-else-if="links.length === 0"
-				:name="t('notenarchiv', 'No active links')"
-				:description="t('notenarchiv', 'Links are created in the score view: open a copy in the catalog, then “Score”.')">
+				:name="t('cantoria', 'No active links')"
+				:description="t('cantoria', 'Links are created in the score view: open a copy in the catalog, then “Score”.')">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiLinkVariantOff" />
 				</template>
@@ -94,13 +94,13 @@ const sorted = computed(() => [...links.value].sort((a, b) => collator.compare(
 						<template #icon>
 							<NcIconSvgWrapper :path="mdiBookOpenPageVariantOutline" />
 						</template>
-						{{ t('notenarchiv', 'Open the catalog') }}
+						{{ t('cantoria', 'Open the catalog') }}
 					</NcButton>
 				</template>
 			</NcEmptyContent>
 			<template v-else>
 				<p class="links-view__count">
-					{{ n('notenarchiv', '%n active link', '%n active links', links.length) }}
+					{{ n('cantoria', '%n active link', '%n active links', links.length) }}
 				</p>
 				<LinkList :links="sorted" show-copy @changed="load" />
 			</template>

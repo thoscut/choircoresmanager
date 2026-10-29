@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -58,11 +58,11 @@ const groups = computed(() => KINDS
 function kindTitle(kind: string): string {
 	switch (kind) {
 	case 'ended':
-		return t('notenarchiv', 'Marked protected, but public domain by the life dates')
+		return t('cantoria', 'Marked protected, but public domain by the life dates')
 	case 'conflict':
-		return t('notenarchiv', 'Marked public domain, but the persons do not allow it')
+		return t('cantoria', 'Marked public domain, but the persons do not allow it')
 	default:
-		return t('notenarchiv', 'Protected with a known end')
+		return t('cantoria', 'Protected with a known end')
 	}
 }
 
@@ -73,10 +73,10 @@ function kindTitle(kind: string): string {
  */
 function dateText(row: ProtectionReviewRow): string {
 	if (row.protection.freeSince) {
-		return t('notenarchiv', 'public domain since {date}', { date: formatDate(row.protection.freeSince) })
+		return t('cantoria', 'public domain since {date}', { date: formatDate(row.protection.freeSince) })
 	}
 	if (row.protection.until) {
-		return t('notenarchiv', 'protected until {date}', { date: formatDate(row.protection.until) })
+		return t('cantoria', 'protected until {date}', { date: formatDate(row.protection.until) })
 	}
 	return '–'
 }
@@ -84,31 +84,31 @@ function dateText(row: ProtectionReviewRow): string {
 
 <template>
 	<div class="protection-view">
-		<ViewHeader :title="t('notenarchiv', 'Protection terms')"
-			:description="t('notenarchiv', 'Resubmission by the life dates of the persons involved: protection ends at the end of the 70th year after the death of the last of them. A proposal only; it never changes the rights status and is no legal advice.')"
+		<ViewHeader :title="t('cantoria', 'Protection terms')"
+			:description="t('cantoria', 'Resubmission by the life dates of the persons involved: protection ends at the end of the 70th year after the death of the last of them. A proposal only; it never changes the rights status and is no legal advice.')"
 			printable
 			reloadable
 			:loading="loading"
 			@reload="load" />
 		<div class="protection-view__content">
-			<NcEmptyContent v-if="!loaded && loading" :name="t('notenarchiv', 'Loading …')">
+			<NcEmptyContent v-if="!loaded && loading" :name="t('cantoria', 'Loading …')">
 				<template #icon>
 					<NcLoadingIcon :size="64" />
 				</template>
 			</NcEmptyContent>
-			<NcEmptyContent v-else-if="!loaded && error" :name="t('notenarchiv', 'The list could not be loaded')" :description="error">
+			<NcEmptyContent v-else-if="!loaded && error" :name="t('cantoria', 'The list could not be loaded')" :description="error">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiAlertCircleOutline" />
 				</template>
 				<template #action>
 					<NcButton @click="load">
-						{{ t('notenarchiv', 'Try again') }}
+						{{ t('cantoria', 'Try again') }}
 					</NcButton>
 				</template>
 			</NcEmptyContent>
 			<NcEmptyContent v-else-if="groups.length === 0"
-				:name="t('notenarchiv', 'Nothing to resubmit')"
-				:description="t('notenarchiv', 'No version needs a check by the life dates.')">
+				:name="t('cantoria', 'Nothing to resubmit')"
+				:description="t('cantoria', 'No version needs a check by the life dates.')">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiCheckCircleOutline" />
 				</template>
@@ -122,24 +122,24 @@ function dateText(row: ProtectionReviewRow): string {
 				</h3>
 				<table class="protection-view__table">
 					<caption class="hidden-visually">
-						{{ n('notenarchiv', '%n version', '%n versions', group.rows.length) }}
+						{{ n('cantoria', '%n version', '%n versions', group.rows.length) }}
 					</caption>
 					<thead>
 						<tr>
 							<th scope="col">
-								{{ t('notenarchiv', 'Shelf mark') }}
+								{{ t('cantoria', 'Shelf mark') }}
 							</th>
 							<th scope="col">
-								{{ t('notenarchiv', 'Title') }}
+								{{ t('cantoria', 'Title') }}
 							</th>
 							<th scope="col">
-								{{ t('notenarchiv', 'Rights status') }}
+								{{ t('cantoria', 'Rights status') }}
 							</th>
 							<th scope="col">
-								{{ t('notenarchiv', 'Proposal') }}
+								{{ t('cantoria', 'Proposal') }}
 							</th>
 							<th scope="col">
-								{{ t('notenarchiv', 'Reason') }}
+								{{ t('cantoria', 'Reason') }}
 							</th>
 						</tr>
 					</thead>
@@ -150,7 +150,7 @@ function dateText(row: ProtectionReviewRow): string {
 									:key="copy.id"
 									type="button"
 									class="protection-view__shelfmark"
-									:aria-label="t('notenarchiv', 'Open {shelfmark}', { shelfmark: copy.shelfmark })"
+									:aria-label="t('cantoria', 'Open {shelfmark}', { shelfmark: copy.shelfmark })"
 									@click="openEntry(copy.id, 'rights')">
 									{{ copy.shelfmark }}
 								</button>
@@ -161,7 +161,7 @@ function dateText(row: ProtectionReviewRow): string {
 							</td>
 							<td>
 								{{ row.rightsStatus ? choiceLabel('version', 'rights_status', row.rightsStatus) : '–' }}
-								<span v-if="row.confirmed" class="protection-view__muted">{{ t('notenarchiv', 'confirmed') }}</span>
+								<span v-if="row.confirmed" class="protection-view__muted">{{ t('cantoria', 'confirmed') }}</span>
 							</td>
 							<td>{{ dateText(row) }}</td>
 							<td>{{ row.protection.reasonText }}</td>

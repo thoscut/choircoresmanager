@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -40,7 +40,7 @@ const mixerId = useId()
 const transposeId = useId()
 const transposeHintId = useId()
 
-const transposeLabel = computed(() => t('notenarchiv', 'Pitch: {change}', { change: transposeText(transpose.value) }))
+const transposeLabel = computed(() => t('cantoria', 'Pitch: {change}', { change: transposeText(transpose.value) }))
 
 /**
  * Level of a voice in percent.
@@ -70,8 +70,8 @@ function setLevel(key: string, event: Event): void {
  */
 function levelText(label: string, level: number): string {
 	return level === 0
-		? t('notenarchiv', '{voice}: muted', { voice: label })
-		: t('notenarchiv', '{voice}: {percent} %', { voice: label, percent: level })
+		? t('cantoria', '{voice}: muted', { voice: label })
+		: t('cantoria', '{voice}: {percent} %', { voice: label, percent: level })
 }
 
 const changed = computed(() => mixChanged(mix.value))
@@ -90,12 +90,12 @@ const idOf = (key: string) => `${mixerId}-${props.voices.findIndex((voice) => vo
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiMusicNote" />
 				</template>
-				{{ t('notenarchiv', 'Starting tones') }}
+				{{ t('cantoria', 'Starting tones') }}
 			</NcButton>
 			<NcCheckboxRadioSwitch v-model="metronome" type="switch">
 				<span class="practice-tools__with-icon">
 					<NcIconSvgWrapper :path="mdiMetronome" :size="18" />
-					{{ t('notenarchiv', 'Metronome') }}
+					{{ t('cantoria', 'Metronome') }}
 				</span>
 			</NcCheckboxRadioSwitch>
 			<NcButton variant="tertiary"
@@ -105,7 +105,7 @@ const idOf = (key: string) => `${mixerId}-${props.voices.findIndex((voice) => vo
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiTuneVertical" />
 				</template>
-				{{ changed ? t('notenarchiv', 'Mixer (changed)') : t('notenarchiv', 'Mixer') }}
+				{{ changed ? t('cantoria', 'Mixer (changed)') : t('cantoria', 'Mixer') }}
 			</NcButton>
 		</div>
 		<label class="practice-tools__slider" :for="transposeId">
@@ -119,16 +119,16 @@ const idOf = (key: string) => `${mixerId}-${props.voices.findIndex((voice) => vo
 				:aria-describedby="transposeHintId"
 				:aria-valuetext="transposeText(transpose)">
 			<span :id="transposeHintId" class="practice-tools__hint">
-				{{ t('notenarchiv', 'Only the sound moves; the notes stay as written.') }}
+				{{ t('cantoria', 'Only the sound moves; the notes stay as written.') }}
 			</span>
 		</label>
 		<div v-show="mixerShown"
 			:id="mixerId"
 			class="practice-tools__mixer"
 			role="group"
-			:aria-label="t('notenarchiv', 'Mixer')">
+			:aria-label="t('cantoria', 'Mixer')">
 			<p class="practice-tools__hint">
-				{{ t('notenarchiv', 'The level of each voice, on top of "Voices during playback". 0 % mutes a voice.') }}
+				{{ t('cantoria', 'The level of each voice, on top of "Voices during playback". 0 % mutes a voice.') }}
 			</p>
 			<label v-for="voice in voices"
 				:key="voice.key"
@@ -145,7 +145,7 @@ const idOf = (key: string) => `${mixerId}-${props.voices.findIndex((voice) => vo
 					@input="setLevel(voice.key, $event)">
 			</label>
 			<NcButton variant="tertiary" :disabled="!changed" @click="resetMix">
-				{{ t('notenarchiv', 'All voices at 100 %') }}
+				{{ t('cantoria', 'All voices at 100 %') }}
 			</NcButton>
 		</div>
 	</div>

@@ -1,11 +1,11 @@
-# SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+# SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
 # SPDX-License-Identifier: CC0-1.0
 #
 # Licensing of the files that carry no header of their own (REUSE 3.3,
 # https://reuse.software). Every other file names its copyright and license in
 # an SPDX comment at the top; see "Licensing (REUSE)" in tests/README.md.
 version = 1
-SPDX-PackageName = "notenarchiv"
+SPDX-PackageName = "cantoria"
 SPDX-PackageSupplier = "Thomas Scheel"
 SPDX-PackageDownloadLocation = "https://github.com/thoscut/choircoresmanager"
 
@@ -24,7 +24,7 @@ path = [
 	".github/pull_request_template.md",
 ]
 precedence = "aggregate"
-SPDX-FileCopyrightText = "2026 Thomas Scheel and Notenarchiv contributors"
+SPDX-FileCopyrightText = "2026 Thomas Scheel and Cantoria contributors"
 SPDX-License-Identifier = "AGPL-3.0-or-later"
 
 # Package manifests, lock files and trivial configuration (as in nextcloud/deck)
@@ -45,7 +45,7 @@ path = [
 	"tools/outreach/package-lock.json",
 ]
 precedence = "aggregate"
-SPDX-FileCopyrightText = "2026 Thomas Scheel and Notenarchiv contributors"
+SPDX-FileCopyrightText = "2026 Thomas Scheel and Cantoria contributors"
 SPDX-License-Identifier = "CC0-1.0"
 
 # The OpenAPI description of the API for agents, generated from the code
@@ -53,7 +53,7 @@ SPDX-License-Identifier = "CC0-1.0"
 [[annotations]]
 path = ["openapi*.json"]
 precedence = "aggregate"
-SPDX-FileCopyrightText = "2026 Thomas Scheel and Notenarchiv contributors"
+SPDX-FileCopyrightText = "2026 Thomas Scheel and Cantoria contributors"
 SPDX-License-Identifier = "AGPL-3.0-or-later"
 
 # Texts and the invented example sender of the outreach material (JSON has
@@ -61,14 +61,14 @@ SPDX-License-Identifier = "AGPL-3.0-or-later"
 [[annotations]]
 path = ["tools/outreach/content.json", "tools/outreach/example/sender.json"]
 precedence = "aggregate"
-SPDX-FileCopyrightText = "2026 Thomas Scheel and Notenarchiv contributors"
+SPDX-FileCopyrightText = "2026 Thomas Scheel and Cantoria contributors"
 SPDX-License-Identifier = "AGPL-3.0-or-later"
 
 # Demo data, dedicated to the public domain (see tools/demo/README.md)
 [[annotations]]
 path = ["tools/demo/catalog.json", "tools/demo/scores/**", "tools/demo/reports/**"]
 precedence = "aggregate"
-SPDX-FileCopyrightText = "2026 Thomas Scheel and Notenarchiv contributors"
+SPDX-FileCopyrightText = "2026 Thomas Scheel and Cantoria contributors"
 SPDX-License-Identifier = "CC0-1.0"
 
 # Demo scores built from tools/demo (node tools/demo/build.mjs) as fixtures of
@@ -76,5 +76,5 @@ SPDX-License-Identifier = "CC0-1.0"
 [[annotations]]
 path = ["tests/fixtures/demo/**"]
 precedence = "aggregate"
-SPDX-FileCopyrightText = "2026 Thomas Scheel and Notenarchiv contributors"
+SPDX-FileCopyrightText = "2026 Thomas Scheel and Cantoria contributors"
 SPDX-License-Identifier = "CC0-1.0"

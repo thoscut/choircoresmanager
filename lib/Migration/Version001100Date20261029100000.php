@@ -3,15 +3,15 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Migration;
+namespace OCA\Cantoria\Migration;
 
 use Closure;
-use OCA\Notenarchiv\Db\ExcerptLink;
-use OCA\Notenarchiv\Db\Row;
+use OCA\Cantoria\Db\ExcerptLink;
+use OCA\Cantoria\Db\Row;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\DB\Types;

@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -114,7 +114,7 @@ describe('the server', () => {
 		assert.equal(text(result), '{"items":[{"id":1,"shelfmark":"1-1","title":"Der Mond ist aufgegangen"}],"total":1}')
 		assert.deepEqual(result.structuredContent, { items: [{ id: 1, shelfmark: '1-1', title: 'Der Mond ist aufgegangen' }], total: 1 })
 		const url = new URL(requests[0]!.url)
-		assert.equal(url.pathname, '/nextcloud/ocs/v2.php/apps/notenarchiv/api/v1/catalog')
+		assert.equal(url.pathname, '/nextcloud/ocs/v2.php/apps/cantoria/api/v1/catalog')
 		assert.equal(url.searchParams.get('shelfmark'), '1-1')
 		assert.equal(url.searchParams.get('confirmed'), 'false')
 		assert.equal(url.searchParams.get('limit'), '5')
@@ -147,13 +147,13 @@ describe('the server', () => {
 		assert.notEqual(review.isError, true)
 		assert.deepEqual((review.structuredContent as { items: unknown[] }).items, [{ id: 12, status: 'open' }])
 		const url = new URL(requests[0]!.url)
-		assert.equal(url.pathname, '/nextcloud/ocs/v2.php/apps/notenarchiv/api/v1/copies/7/review')
+		assert.equal(url.pathname, '/nextcloud/ocs/v2.php/apps/cantoria/api/v1/copies/7/review')
 		assert.equal(url.searchParams.get('status'), 'open')
 		assert.equal(url.searchParams.get('limit'), '50')
 		assert.equal(url.searchParams.has('copy_id'), false, 'the id is part of the path')
 		await client.callTool({ name: 'list_correction_orders', arguments: { copy_id: 7 } })
 		const orders = new URL(requests[1]!.url)
-		assert.equal(orders.pathname, '/nextcloud/ocs/v2.php/apps/notenarchiv/api/v1/correction_orders')
+		assert.equal(orders.pathname, '/nextcloud/ocs/v2.php/apps/cantoria/api/v1/correction_orders')
 		assert.equal(orders.searchParams.get('copy_id'), '7')
 		assert.equal(requests.every((request) => request.init.method === 'GET'), true)
 		await client.close()

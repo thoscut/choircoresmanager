@@ -3,29 +3,29 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Service;
+namespace OCA\Cantoria\Tests\Unit\Service;
 
-use OCA\Notenarchiv\Db\ArchiveFileMapper;
-use OCA\Notenarchiv\Db\Copy;
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\ExcerptLink;
-use OCA\Notenarchiv\Db\ExcerptLinkMapper;
-use OCA\Notenarchiv\Db\WorkVersion;
-use OCA\Notenarchiv\Db\WorkVersionMapper;
-use OCA\Notenarchiv\Service\AuditLog;
-use OCA\Notenarchiv\Service\LinkService;
-use OCA\Notenarchiv\Service\LinkTokens;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\RightsPolicy;
-use OCA\Notenarchiv\Service\RightsService;
-use OCA\Notenarchiv\Service\Roles;
-use OCA\Notenarchiv\Service\ScanService;
-use OCA\Notenarchiv\Service\ScoreService;
-use OCA\Notenarchiv\Tests\Unit\Support\FakeCrypto;
+use OCA\Cantoria\Db\ArchiveFileMapper;
+use OCA\Cantoria\Db\Copy;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Db\ExcerptLink;
+use OCA\Cantoria\Db\ExcerptLinkMapper;
+use OCA\Cantoria\Db\WorkVersion;
+use OCA\Cantoria\Db\WorkVersionMapper;
+use OCA\Cantoria\Service\AuditLog;
+use OCA\Cantoria\Service\LinkService;
+use OCA\Cantoria\Service\LinkTokens;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\RightsPolicy;
+use OCA\Cantoria\Service\RightsService;
+use OCA\Cantoria\Service\Roles;
+use OCA\Cantoria\Service\ScanService;
+use OCA\Cantoria\Service\ScoreService;
+use OCA\Cantoria\Tests\Unit\Support\FakeCrypto;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
@@ -129,7 +129,7 @@ final class LinkTokensTest extends TestCase {
 		$users = $this->createStub(IUserManager::class);
 		$users->method('getDisplayName')->willReturnCallback(fn (string $uid): string => ucfirst($uid));
 		return new LinkService($links, $copyMapper, $versionMapper, $this->createStub(ArchiveFileMapper::class), $this->createStub(ScoreService::class),
-			new RightsPolicy($roleStub, $rights, $this->createStub(\OCA\Notenarchiv\Db\LicenseMapper::class)), $rights,
+			new RightsPolicy($roleStub, $rights, $this->createStub(\OCA\Cantoria\Db\LicenseMapper::class)), $rights,
 			$this->createStub(AuditLog::class), $roleStub, $users, $this->tokens(), $this->createStub(ITimeFactory::class),
 			$this->createStub(Modules::class), $this->createStub(ScanService::class));
 	}

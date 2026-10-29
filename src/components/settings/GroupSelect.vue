@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -113,7 +113,7 @@ onBeforeUnmount(() => clearTimeout(timer))
 			:input-label="label"
 			:helper-text="description"
 			label="displayName"
-			:placeholder="t('notenarchiv', 'Choose groups')"
+			:placeholder="t('cantoria', 'Choose groups')"
 			:filter-by="filterBy"
 			:loading="loading"
 			:disabled="disabled"
@@ -122,7 +122,7 @@ onBeforeUnmount(() => clearTimeout(timer))
 			@search="onSearch"
 			@update:model-value="onUpdate" />
 		<p v-if="searchError" class="group-select__error" role="alert">
-			{{ t('notenarchiv', 'The groups could not be searched: {error}', { error: searchError }) }}
+			{{ t('cantoria', 'The groups could not be searched: {error}', { error: searchError }) }}
 		</p>
 	</div>
 </template>

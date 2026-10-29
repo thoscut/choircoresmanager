@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -78,7 +78,7 @@ async function confirmAccept(): Promise<void> {
 	acceptError.value = ''
 	try {
 		await acceptChecksum(accepting.value.id, reason.value.trim() === '' ? null : reason.value.trim())
-		showSuccess(t('notenarchiv', 'The new content has been accepted.'))
+		showSuccess(t('cantoria', 'The new content has been accepted.'))
 		accepting.value = null
 		await Promise.all([load(), loadDetail()])
 	} catch (caught) {
@@ -91,25 +91,25 @@ async function confirmAccept(): Promise<void> {
 
 <template>
 	<div class="checksums-view">
-		<ViewHeader :title="t('notenarchiv', 'Checksums')"
-			:description="t('notenarchiv', 'A background job reads the archive files round by round and keeps their checksum (SHA-256). A file whose content changed without a visible modification may be damaged.')"
+		<ViewHeader :title="t('cantoria', 'Checksums')"
+			:description="t('cantoria', 'A background job reads the archive files round by round and keeps their checksum (SHA-256). A file whose content changed without a visible modification may be damaged.')"
 			reloadable
 			:loading="loading"
 			@reload="load" />
 
 		<div class="checksums-view__content">
-			<NcEmptyContent v-if="!status && loading" :name="t('notenarchiv', 'Loading …')">
+			<NcEmptyContent v-if="!status && loading" :name="t('cantoria', 'Loading …')">
 				<template #icon>
 					<NcLoadingIcon :size="64" />
 				</template>
 			</NcEmptyContent>
-			<NcEmptyContent v-else-if="!status && error" :name="t('notenarchiv', 'The list could not be loaded')" :description="error">
+			<NcEmptyContent v-else-if="!status && error" :name="t('cantoria', 'The list could not be loaded')" :description="error">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiAlertCircleOutline" />
 				</template>
 				<template #action>
 					<NcButton @click="load">
-						{{ t('notenarchiv', 'Try again') }}
+						{{ t('cantoria', 'Try again') }}
 					</NcButton>
 				</template>
 			</NcEmptyContent>
@@ -119,33 +119,33 @@ async function confirmAccept(): Promise<void> {
 					{{ error }}
 				</NcNoteCard>
 				<dl class="checksums-view__facts">
-					<dt>{{ t('notenarchiv', 'Files') }}</dt>
+					<dt>{{ t('cantoria', 'Files') }}</dt>
 					<dd>{{ status.files }}</dd>
-					<dt>{{ t('notenarchiv', 'With checksum') }}</dt>
+					<dt>{{ t('cantoria', 'With checksum') }}</dt>
 					<dd>{{ status.hashed }}</dd>
-					<dt>{{ t('notenarchiv', 'Not yet read') }}</dt>
+					<dt>{{ t('cantoria', 'Not yet read') }}</dt>
 					<dd>{{ status.pending }}</dd>
-					<dt>{{ t('notenarchiv', 'Oldest check') }}</dt>
+					<dt>{{ t('cantoria', 'Oldest check') }}</dt>
 					<dd>{{ status.oldestCheck ? formatDateTime(status.oldestCheck) : '–' }}</dd>
 				</dl>
 				<p class="checksums-view__muted">
-					{{ n('notenarchiv', 'Each hourly run reads up to %n file.', 'Each hourly run reads up to %n files.', status.perRun) }}
+					{{ n('cantoria', 'Each hourly run reads up to %n file.', 'Each hourly run reads up to %n files.', status.perRun) }}
 				</p>
 
 				<section class="checksums-view__section" aria-labelledby="checksums-mismatches">
 					<h3 id="checksums-mismatches">
-						{{ t('notenarchiv', 'Deviations') }}
+						{{ t('cantoria', 'Deviations') }}
 						<template v-if="status.mismatches.length > 0">
 							({{ status.mismatches.length }})
 						</template>
 					</h3>
 					<p v-if="status.mismatches.length === 0" class="checksums-view__ok">
 						<NcIconSvgWrapper :path="mdiCheckCircleOutline" inline />
-						{{ t('notenarchiv', 'No deviations: every file read so far is unchanged.') }}
+						{{ t('cantoria', 'No deviations: every file read so far is unchanged.') }}
 					</p>
 					<template v-else>
 						<NcNoteCard type="warning">
-							{{ t('notenarchiv', 'These files changed although their size and modification time stayed the same. Restore the file from a backup or from the version history; the mark then disappears by itself. Accept the new content only if the change was intended.') }}
+							{{ t('cantoria', 'These files changed although their size and modification time stayed the same. Restore the file from a backup or from the version history; the mark then disappears by itself. Accept the new content only if the change was intended.') }}
 						</NcNoteCard>
 						<ul class="checksums-view__list">
 							<li v-for="mismatch in status.mismatches" :key="mismatch.id" class="checksums-view__item">
@@ -154,7 +154,7 @@ async function confirmAccept(): Promise<void> {
 									<span class="checksums-view__name">{{ mismatch.shelfmark }} – {{ mismatch.title }}</span>
 									<span class="checksums-view__path">{{ mismatch.path }}</span>
 									<span v-if="mismatch.sha256_at" class="checksums-view__muted">
-										{{ t('notenarchiv', 'Deviation found on {date}', { date: formatDateTime(mismatch.sha256_at) }) }}
+										{{ t('cantoria', 'Deviation found on {date}', { date: formatDateTime(mismatch.sha256_at) }) }}
 									</span>
 								</div>
 								<div class="checksums-view__actions">
@@ -165,13 +165,13 @@ async function confirmAccept(): Promise<void> {
 										<template #icon>
 											<NcIconSvgWrapper :path="mdiOpenInNew" />
 										</template>
-										{{ t('notenarchiv', 'Open file') }}
+										{{ t('cantoria', 'Open file') }}
 									</NcButton>
 									<NcButton variant="tertiary" @click="openEntry(mismatch.copyId, 'files')">
-										{{ t('notenarchiv', 'Open {shelfmark}', { shelfmark: mismatch.shelfmark }) }}
+										{{ t('cantoria', 'Open {shelfmark}', { shelfmark: mismatch.shelfmark }) }}
 									</NcButton>
 									<NcButton v-if="isLibrarian" variant="secondary" @click="startAccept(mismatch)">
-										{{ t('notenarchiv', 'Accept new content') }}
+										{{ t('cantoria', 'Accept new content') }}
 									</NcButton>
 								</div>
 							</li>
@@ -182,18 +182,18 @@ async function confirmAccept(): Promise<void> {
 		</div>
 
 		<ActionDialog v-if="accepting"
-			:name="t('notenarchiv', 'Accept new content')"
-			:submit-label="t('notenarchiv', 'Accept')"
+			:name="t('cantoria', 'Accept new content')"
+			:submit-label="t('cantoria', 'Accept')"
 			:busy="busy"
 			:error="acceptError"
 			variant="error"
 			@submit="confirmAccept"
 			@close="accepting = null">
-			<p>{{ t('notenarchiv', 'File: {path}', { path: accepting.path }) }}</p>
+			<p>{{ t('cantoria', 'File: {path}', { path: accepting.path }) }}</p>
 			<p class="action-dialog__hint">
-				{{ t('notenarchiv', 'Only if you know that the file was changed on purpose. The next check stores the checksum of the current content; the old content can then no longer be recognised as the original.') }}
+				{{ t('cantoria', 'Only if you know that the file was changed on purpose. The next check stores the checksum of the current content; the old content can then no longer be recognised as the original.') }}
 			</p>
-			<NcTextField v-model="reason" :label="t('notenarchiv', 'Reason (optional)')" />
+			<NcTextField v-model="reason" :label="t('cantoria', 'Reason (optional)')" />
 		</ActionDialog>
 	</div>
 </template>

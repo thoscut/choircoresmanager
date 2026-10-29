@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -16,16 +16,16 @@ import type { AccessAccount, AccessGroup, AccessMembers, AccessReport, ArchiveIn
  * `adminSettingsUrl(SETTINGS_SECTIONS.access)` opens the access check.
  */
 export const SETTINGS_SECTIONS = {
-	setup: 'notenarchiv-setup',
-	archive: 'notenarchiv-archive-folder',
-	roles: 'notenarchiv-roles',
-	access: 'notenarchiv-access',
-	modules: 'notenarchiv-modules',
-	repertoire: 'notenarchiv-repertoire',
-	folderBook: 'notenarchiv-folder-book',
-	printMirror: 'notenarchiv-print-mirror',
-	choirHandover: 'notenarchiv-choir-handover',
-	backup: 'notenarchiv-backup',
+	setup: 'cantoria-setup',
+	archive: 'cantoria-archive-folder',
+	roles: 'cantoria-roles',
+	access: 'cantoria-access',
+	modules: 'cantoria-modules',
+	repertoire: 'cantoria-repertoire',
+	folderBook: 'cantoria-folder-book',
+	printMirror: 'cantoria-print-mirror',
+	choirHandover: 'cantoria-choir-handover',
+	backup: 'cantoria-backup',
 } as const
 
 /** The role that imports and keeps the catalog (see docs/api.md). */

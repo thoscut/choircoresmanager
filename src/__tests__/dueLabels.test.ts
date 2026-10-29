@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -21,11 +21,11 @@ async function useTranslation(language: 'de' | 'de_DE'): Promise<void> {
 	const bundle = await import(`../../l10n/${language}.json`)
 	// Nextcloud writes the language in BCP 47 form into <html lang>: "de-DE"
 	setLanguage(language.replace('_', '-'))
-	register('notenarchiv', bundle.translations)
+	register('cantoria', bundle.translations)
 }
 
 afterEach(() => {
-	unregister('notenarchiv')
+	unregister('cantoria')
 	setLanguage('en')
 })
 
@@ -63,7 +63,7 @@ describe('dueCardLabel', () => {
 			})
 			expect(dueCardLabel('proposals', 1, '')).toBe('Vorschlag im Eingang')
 			expect(dueCardLabel('proposals', 4, '')).toBe('Vorschläge im Eingang')
-			unregister('notenarchiv')
+			unregister('cantoria')
 		}
 		await useTranslation('de')
 		expect(dueCardLabel('tasks_open', 1, '')).toBe('Offene Aufgabe für deine Rolle')

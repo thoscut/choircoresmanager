@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -36,8 +36,8 @@ const days = ref(30)
 const periodOptions = computed(() => [30, 90, 180, 366].map((value) => ({
 	id: value,
 	label: value === 366
-		? t('notenarchiv', 'within a year')
-		: n('notenarchiv', 'within %n day', 'within %n days', value),
+		? t('cantoria', 'within a year')
+		: n('cantoria', 'within %n day', 'within %n days', value),
 })))
 
 /** The period in words, for the header of the printout */
@@ -77,16 +77,16 @@ const today = parseIsoDate(toIsoDate(new Date()))
  */
 function endText(license: EndingLicense): string {
 	if (license.ended) {
-		return t('notenarchiv', 'ended on {date}', { date: formatDate(license.validUntil) })
+		return t('cantoria', 'ended on {date}', { date: formatDate(license.validUntil) })
 	}
 	const end = parseIsoDate(license.validUntil)
 	const left = end && today ? Math.round((end.getTime() - today.getTime()) / 86400000) : null
 	if (left === 0) {
-		return t('notenarchiv', 'ends today')
+		return t('cantoria', 'ends today')
 	}
 	return left === null
-		? t('notenarchiv', 'ends on {date}', { date: formatDate(license.validUntil) })
-		: n('notenarchiv', 'ends on {date} (in %n day)', 'ends on {date} (in %n days)', left, { date: formatDate(license.validUntil) })
+		? t('cantoria', 'ends on {date}', { date: formatDate(license.validUntil) })
+		: n('cantoria', 'ends on {date} (in %n day)', 'ends on {date} (in %n days)', left, { date: formatDate(license.validUntil) })
 }
 
 const endedCount = computed(() => licenses.value.filter((license) => license.ended).length)
@@ -94,8 +94,8 @@ const endedCount = computed(() => licenses.value.filter((license) => license.end
 
 <template>
 	<div class="licenses-view">
-		<ViewHeader :title="t('notenarchiv', 'Ending licenses')"
-			:description="t('notenarchiv', 'Licenses of protected versions that end soon or have ended. Renew the license or withdraw the copies from the singers\' portal and the print station in the rights tab of the copy.')"
+		<ViewHeader :title="t('cantoria', 'Ending licenses')"
+			:description="t('cantoria', 'Licenses of protected versions that end soon or have ended. Renew the license or withdraw the copies from the singers\' portal and the print station in the rights tab of the copy.')"
 			printable
 			:print-filter="printFilter"
 			reloadable
@@ -105,23 +105,23 @@ const endedCount = computed(() => licenses.value.filter((license) => license.end
 		<div class="licenses-view__content">
 			<NcSelect v-model="period"
 				class="licenses-view__period no-print"
-				:input-label="t('notenarchiv', 'Period')"
+				:input-label="t('cantoria', 'Period')"
 				:options="periodOptions"
 				:clearable="false"
 				:searchable="false" />
 
-			<NcEmptyContent v-if="!loaded && loading" :name="t('notenarchiv', 'Loading …')">
+			<NcEmptyContent v-if="!loaded && loading" :name="t('cantoria', 'Loading …')">
 				<template #icon>
 					<NcLoadingIcon :size="64" />
 				</template>
 			</NcEmptyContent>
-			<NcEmptyContent v-else-if="!loaded && error" :name="t('notenarchiv', 'The list could not be loaded')" :description="error">
+			<NcEmptyContent v-else-if="!loaded && error" :name="t('cantoria', 'The list could not be loaded')" :description="error">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiAlertCircleOutline" />
 				</template>
 				<template #action>
 					<NcButton @click="load">
-						{{ t('notenarchiv', 'Try again') }}
+						{{ t('cantoria', 'Try again') }}
 					</NcButton>
 				</template>
 			</NcEmptyContent>
@@ -131,38 +131,38 @@ const endedCount = computed(() => licenses.value.filter((license) => license.end
 				</NcNoteCard>
 				<!-- the same empty state as the other lists -->
 				<NcEmptyContent v-if="licenses.length === 0"
-					:name="t('notenarchiv', 'Nothing to renew')"
-					:description="t('notenarchiv', 'No license ends in this period, and none has ended.')">
+					:name="t('cantoria', 'Nothing to renew')"
+					:description="t('cantoria', 'No license ends in this period, and none has ended.')">
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiCheckCircleOutline" />
 					</template>
 				</NcEmptyContent>
 				<template v-else>
 					<p class="licenses-view__summary" aria-live="polite">
-						{{ n('notenarchiv', '%n license', '%n licenses', licenses.length) }}<template v-if="endedCount > 0">
-							· {{ n('notenarchiv', '%n has ended', '%n have ended', endedCount) }}
+						{{ n('cantoria', '%n license', '%n licenses', licenses.length) }}<template v-if="endedCount > 0">
+							· {{ n('cantoria', '%n has ended', '%n have ended', endedCount) }}
 						</template>
 					</p>
 					<table class="licenses-view__table">
 						<caption class="hidden-visually">
-							{{ t('notenarchiv', 'Ending licenses') }}
+							{{ t('cantoria', 'Ending licenses') }}
 						</caption>
 						<thead>
 							<tr>
 								<th scope="col">
-									{{ t('notenarchiv', 'Valid until') }}
+									{{ t('cantoria', 'Valid until') }}
 								</th>
 								<th scope="col">
-									{{ t('notenarchiv', 'Work') }}
+									{{ t('cantoria', 'Work') }}
 								</th>
 								<th scope="col">
-									{{ t('notenarchiv', 'License holder') }}
+									{{ t('cantoria', 'License holder') }}
 								</th>
 								<th scope="col">
-									{{ t('notenarchiv', 'Uses') }}
+									{{ t('cantoria', 'Uses') }}
 								</th>
 								<th scope="col">
-									{{ t('notenarchiv', 'Copies') }}
+									{{ t('cantoria', 'Copies') }}
 								</th>
 							</tr>
 						</thead>
@@ -175,7 +175,7 @@ const endedCount = computed(() => licenses.value.filter((license) => license.end
 									{{ endText(license) }}
 								</td>
 								<td>
-									<span class="licenses-view__title">{{ license.title || t('notenarchiv', 'Untitled') }}</span>
+									<span class="licenses-view__title">{{ license.title || t('cantoria', 'Untitled') }}</span>
 									<span v-if="license.composer" class="licenses-view__muted">{{ license.composer }}</span>
 								</td>
 								<td>{{ license.holder || '–' }}</td>
@@ -185,7 +185,7 @@ const endedCount = computed(() => licenses.value.filter((license) => license.end
 										:key="copy.id"
 										type="button"
 										class="licenses-view__shelfmark"
-										:aria-label="t('notenarchiv', 'Open the rights of {shelfmark}', { shelfmark: copy.shelfmark })"
+										:aria-label="t('cantoria', 'Open the rights of {shelfmark}', { shelfmark: copy.shelfmark })"
 										@click="openEntry(copy.id, 'rights')">
 										{{ copy.shelfmark }}
 									</button>

@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -29,7 +29,7 @@ const props = defineProps<{
 }>()
 
 const steps = computed(() => setupSteps(props.settings, props.report))
-const appUrl = generateUrl('/apps/notenarchiv/')
+const appUrl = generateUrl('/apps/cantoria/')
 
 /**
  * Name of a step.
@@ -39,15 +39,15 @@ const appUrl = generateUrl('/apps/notenarchiv/')
 function title(key: StepKey): string {
 	switch (key) {
 	case 'archive':
-		return t('notenarchiv', 'Archive folder')
+		return t('cantoria', 'Archive folder')
 	case 'roles':
-		return t('notenarchiv', 'Roles and groups')
+		return t('cantoria', 'Roles and groups')
 	case 'access':
-		return t('notenarchiv', 'Access to the archive folder')
+		return t('cantoria', 'Access to the archive folder')
 	case 'import':
-		return t('notenarchiv', 'Import catalog')
+		return t('cantoria', 'Import catalog')
 	default:
-		return t('notenarchiv', 'File sync')
+		return t('cantoria', 'File sync')
 	}
 }
 
@@ -59,13 +59,13 @@ function title(key: StepKey): string {
 function statusText(status: StepStatus): string {
 	switch (status) {
 	case 'done':
-		return t('notenarchiv', 'Completed')
+		return t('cantoria', 'Completed')
 	case 'missing':
-		return t('notenarchiv', 'Still to do')
+		return t('cantoria', 'Still to do')
 	case 'problem':
-		return t('notenarchiv', 'Needs attention')
+		return t('cantoria', 'Needs attention')
 	default:
-		return t('notenarchiv', 'Not checked yet')
+		return t('cantoria', 'Not checked yet')
 	}
 }
 
@@ -95,22 +95,22 @@ function statusIcon(status: StepStatus): string {
 function hint(step: SetupStep): string {
 	switch (step.key) {
 	case 'archive':
-		return t('notenarchiv', 'Choose the folder in Nextcloud that holds the score files.')
+		return t('cantoria', 'Choose the folder in Nextcloud that holds the score files.')
 	case 'roles':
 		return step.status === 'problem'
-			? t('notenarchiv', 'A group of a role no longer exists. Choose another group for the role.')
-			: t('notenarchiv', 'Give at least the catalog role (music librarians) a group.')
+			? t('cantoria', 'A group of a role no longer exists. Choose another group for the role.')
+			: t('cantoria', 'Give at least the catalog role (music librarians) a group.')
 	case 'access':
 		if (step.status === 'missing') {
-			return t('notenarchiv', 'Choose the archive folder first.')
+			return t('cantoria', 'Choose the archive folder first.')
 		}
 		return step.status === 'problem'
-			? t('notenarchiv', 'Some accounts cannot open the archive folder. Share it with their groups (reading is enough) and check again.')
-			: t('notenarchiv', 'Check whether everybody with a role can open the archive folder.')
+			? t('cantoria', 'Some accounts cannot open the archive folder. Share it with their groups (reading is enough) and check again.')
+			: t('cantoria', 'Check whether everybody with a role can open the archive folder.')
 	case 'import':
-		return t('notenarchiv', 'A music librarian imports the catalog in the app: Archive management → Import catalog.')
+		return t('cantoria', 'A music librarian imports the catalog in the app: Archive management → Import catalog.')
 	default:
-		return t('notenarchiv', 'A music librarian links the files in the app: Archive management → Run file sync.')
+		return t('cantoria', 'A music librarian links the files in the app: Archive management → Run file sync.')
 	}
 }
 
@@ -122,13 +122,13 @@ function hint(step: SetupStep): string {
 function target(key: StepKey): { href: string, label: string } {
 	switch (key) {
 	case 'archive':
-		return { href: '#' + SETTINGS_SECTIONS.archive, label: t('notenarchiv', 'To the archive folder') }
+		return { href: '#' + SETTINGS_SECTIONS.archive, label: t('cantoria', 'To the archive folder') }
 	case 'roles':
-		return { href: '#' + SETTINGS_SECTIONS.roles, label: t('notenarchiv', 'To roles and groups') }
+		return { href: '#' + SETTINGS_SECTIONS.roles, label: t('cantoria', 'To roles and groups') }
 	case 'access':
-		return { href: '#' + SETTINGS_SECTIONS.access, label: t('notenarchiv', 'To the access check') }
+		return { href: '#' + SETTINGS_SECTIONS.access, label: t('cantoria', 'To the access check') }
 	default:
-		return { href: appUrl, label: t('notenarchiv', 'Open the music archive') }
+		return { href: appUrl, label: t('cantoria', 'Open the music archive') }
 	}
 }
 </script>
@@ -136,7 +136,7 @@ function target(key: StepKey): { href: string, label: string } {
 <template>
 	<div class="setup">
 		<h3 class="setup__heading">
-			{{ t('notenarchiv', 'Setting up') }}
+			{{ t('cantoria', 'Setting up') }}
 		</h3>
 		<ol class="setup__steps">
 			<li v-for="step in steps" :key="step.key" :class="['setup__step', `setup__step--${step.status}`]">
@@ -155,7 +155,7 @@ function target(key: StepKey): { href: string, label: string } {
 			</li>
 		</ol>
 		<p>
-			<GuideLink :href="adminGuideUrl(ADMIN_GUIDE.setup)" :label="t('notenarchiv', 'Setting up in five steps (administration guide)')" />
+			<GuideLink :href="adminGuideUrl(ADMIN_GUIDE.setup)" :label="t('cantoria', 'Setting up in five steps (administration guide)')" />
 		</p>
 	</div>
 </template>

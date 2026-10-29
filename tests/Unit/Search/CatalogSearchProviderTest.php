@@ -3,30 +3,30 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Search;
+namespace OCA\Cantoria\Tests\Unit\Search;
 
-use OCA\Notenarchiv\Db\Contribution;
-use OCA\Notenarchiv\Db\ContributionMapper;
-use OCA\Notenarchiv\Db\Copy;
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\Person;
-use OCA\Notenarchiv\Db\PersonMapper;
-use OCA\Notenarchiv\Db\Work;
-use OCA\Notenarchiv\Db\WorkMapper;
-use OCA\Notenarchiv\Db\WorkVersion;
-use OCA\Notenarchiv\Db\WorkVersionMapper;
-use OCA\Notenarchiv\Search\CatalogSearchProvider;
-use OCA\Notenarchiv\Service\CatalogSearch;
-use OCA\Notenarchiv\Service\CatalogService;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\RightsPolicy;
-use OCA\Notenarchiv\Service\Roles;
-use OCA\Notenarchiv\Service\Sort;
-use OCA\Notenarchiv\Tests\Unit\Support\ModuleSwitches;
+use OCA\Cantoria\Db\Contribution;
+use OCA\Cantoria\Db\ContributionMapper;
+use OCA\Cantoria\Db\Copy;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Db\Person;
+use OCA\Cantoria\Db\PersonMapper;
+use OCA\Cantoria\Db\Work;
+use OCA\Cantoria\Db\WorkMapper;
+use OCA\Cantoria\Db\WorkVersion;
+use OCA\Cantoria\Db\WorkVersionMapper;
+use OCA\Cantoria\Search\CatalogSearchProvider;
+use OCA\Cantoria\Service\CatalogSearch;
+use OCA\Cantoria\Service\CatalogService;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\RightsPolicy;
+use OCA\Cantoria\Service\Roles;
+use OCA\Cantoria\Service\Sort;
+use OCA\Cantoria\Tests\Unit\Support\ModuleSwitches;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -113,8 +113,8 @@ final class CatalogSearchProviderTest extends TestCase {
 		$session = $this->createStub(IUserSession::class);
 		$session->method('getUser')->willReturn($user);
 		$url = $this->createStub(IURLGenerator::class);
-		$url->method('linkToRoute')->willReturn('/apps/notenarchiv/');
-		$url->method('imagePath')->willReturn('/apps/notenarchiv/img/app-dark.svg');
+		$url->method('linkToRoute')->willReturn('/apps/cantoria/');
+		$url->method('imagePath')->willReturn('/apps/cantoria/img/app-dark.svg');
 		$l = $this->createStub(IL10N::class);
 		$l->method('t')->willReturnArgument(0);
 		return new CatalogSearchProvider($this->search($modules), $modules, $roleService, $policy, $session, $url,
@@ -149,7 +149,7 @@ final class CatalogSearchProviderTest extends TestCase {
 			'persons of the register');
 		self::assertSame(['1-5 · Der Mond ist aufgegangen'], $titles($this->results($provider, '1 / 05')), 'shelf mark, any status');
 		$result = $this->results($provider, '1-1');
-		self::assertSame('/apps/notenarchiv/?copy=11', $result['entries'][0]['resourceUrl']);
+		self::assertSame('/apps/cantoria/?copy=11', $result['entries'][0]['resourceUrl']);
 		self::assertStringContainsString('Retired', $this->results($provider, '1-5')['entries'][0]['subline']);
 	}
 
@@ -184,7 +184,7 @@ final class CatalogSearchProviderTest extends TestCase {
 		self::assertNull($provider->getOrder('files.view.index', []));
 		self::assertSame([], $this->results($provider, 'mond')['entries']);
 		$on = $this->provider([Roles::LIBRARIAN], $this->modulesWithout());
-		self::assertSame(-1, $on->getOrder('notenarchiv.page.index', []));
+		self::assertSame(-1, $on->getOrder('cantoria.page.index', []));
 		self::assertIsInt($on->getOrder('files.view.index', []));
 	}
 

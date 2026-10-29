@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -26,7 +26,7 @@ defineProps<{
 		<NcIconSvgWrapper :path="mdiOpenInNew"
 			:size="16"
 			inline
-			:name="t('notenarchiv', 'opens in a new tab')" />
+			:name="t('cantoria', 'opens in a new tab')" />
 	</a>
 </template>
 

@@ -3,18 +3,18 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Controller;
+namespace OCA\Cantoria\Controller;
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Attribute\RequiresModule;
-use OCA\Notenarchiv\Service\DueService;
-use OCA\Notenarchiv\Service\LinkService;
-use OCA\Notenarchiv\Service\Roles;
-use OCA\Notenarchiv\Service\TaskService;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Attribute\RequiresModule;
+use OCA\Cantoria\Service\DueService;
+use OCA\Cantoria\Service\LinkService;
+use OCA\Cantoria\Service\Roles;
+use OCA\Cantoria\Service\TaskService;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\BruteForceProtection;
 use OCP\AppFramework\Http\Attribute\FrontpageRoute;
@@ -152,7 +152,7 @@ class TaskController extends Controller {
 	 * further attempts from the same address.
 	 */
 	#[NoAdminRequired]
-	#[BruteForceProtection(action: 'notenarchiv_link')]
+	#[BruteForceProtection(action: 'cantoria_link')]
 	#[RequiresModule('excerpt_links')]
 	#[FrontpageRoute(verb: 'GET', url: '/api/links/{token}', requirements: ['token' => '[A-Za-z0-9]{32}'])]
 	public function resolveLink(string $token): JSONResponse {

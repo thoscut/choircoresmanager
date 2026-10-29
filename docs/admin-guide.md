@@ -77,24 +77,24 @@ Apps → search "Notenarchiv" → **Download and enable**.
 
 ### From a release archive
 
-1. Download `notenarchiv-<version>.tar.gz` from the
+1. Download `cantoria-<version>.tar.gz` from the
    [releases of the repository](https://github.com/thoscut/choircoresmanager/releases).
 2. Unpack it into the `apps` folder of your Nextcloud, so that the app lies
-   in `apps/notenarchiv`.
-3. Enable it under Apps, or run `occ app:enable notenarchiv`.
+   in `apps/cantoria`.
+3. Enable it under Apps, or run `occ app:enable cantoria`.
 
 ### From the source code
 
-The folder must be named after the app id, `notenarchiv`. Building needs
+The folder must be named after the app id, `cantoria`. Building needs
 Node.js 24 and npm 11:
 
 ```sh
 cd /path/to/nextcloud/apps
-git clone https://github.com/thoscut/choircoresmanager.git notenarchiv
-cd notenarchiv
+git clone https://github.com/thoscut/choircoresmanager.git cantoria
+cd cantoria
 npm ci
 npm run build
-occ app:enable notenarchiv
+occ app:enable cantoria
 ```
 
 The app needs no Composer packages at runtime; `composer install` only
@@ -185,7 +185,7 @@ log, with the old and the new value.
 > role.
 
 On self-hosted instances the roles can also be set with
-`occ notenarchiv:setup <account> --role librarian=<group>,<group> --role conductor=<group> …`
+`occ cantoria:setup <account> --role librarian=<group>,<group> --role conductor=<group> …`
 (roles: `librarian`, `operations`, `conductor`, `contributor`, `reader`,
 `member` for the choir members).
 
@@ -205,7 +205,7 @@ their own Nextcloud. The app reads files through the account of the person
 who uses it, so everybody only sees files they may see anyway. Background
 jobs (weekly backup, checksums) read through the account that chose the
 folder. The app never changes, moves or deletes files; it only writes into
-its own subfolder `_notenarchiv-app`, for exports of the catalog, and into
+its own subfolder `_cantoria-app`, for exports of the catalog, and into
 the backup folder outside the archive folder (section 5). Only an
 administrator sets or changes the archive folder: background jobs and
 backups run as the account that set it.
@@ -226,7 +226,7 @@ hand; such a link stays. A file with a shelf mark whose name ends with
 transcription: the file sync counts it as a report, not as a score file, and
 reads it into review points (module "Reviewing transcriptions").
 
-With shell access: `occ notenarchiv:setup <account> <folder>` (the folder
+With shell access: `occ cantoria:setup <account> <folder>` (the folder
 relative to the account's files). With an archive folder set, the command
 ends with the access check below in short and names the accounts of the
 role groups that cannot open the folder.
@@ -245,7 +245,7 @@ folder, too.
   single persons works, but a group follows a change of office by itself.
 - **Read permission is enough.** Permission to edit is only needed by those
   who put corrected files into the folder, and by those who store exports in
-  its subfolder `_notenarchiv-app`: the catalog role (archive management) and
+  its subfolder `_cantoria-app`: the catalog role (archive management) and
   the account that chose the folder.
 - The backups and annual snapshots do not lie in the archive folder (see
   [section 5](#5-backups-and-restore)), so sharing it with the role groups
@@ -295,7 +295,7 @@ Nextcloud first; an import file may be at most 20 MB.
    internal preservation copies, the distribution of rights status,
    repertoire and publication, and warnings.
 3. **Import now**. Before an import into a catalog that already holds data,
-   the app stores a snapshot of the previous state in `_notenarchiv-app`.
+   the app stores a snapshot of the previous state in `_cantoria-app`.
 4. **File sync** → **Run file sync** links the files of the archive folder to
    the copies.
 
@@ -380,7 +380,7 @@ unchanged since, otherwise they are computed. Snapshots made before 0.10
 still hold names; delete them when you no longer need them.
 
 **Updating from a version before 0.10.** Earlier versions wrote backups and
-snapshots into `_notenarchiv-app` inside the archive folder. The first
+snapshots into `_cantoria-app` inside the archive folder. The first
 backup after the update moves them into the backup folder. Whatever cannot
 be moved (for example without permission to delete in the archive folder)
 is named on the settings page; move it by hand or delete it.
@@ -403,9 +403,9 @@ reinstalling the app. Nothing existing is overwritten.
 3. Confirm that it is the right and most recent backup and **Restore now**.
 
 In the web interface a backup file may be at most 64 MB. On self-hosted
-instances `occ notenarchiv:restore <file> [<account>]` reads the file from the
+instances `occ cantoria:restore <file> [<account>]` reads the file from the
 server's file system without that limit, and
-`occ notenarchiv:export --full` writes a complete backup to standard output.
+`occ cantoria:export --full` writes a complete backup to standard output.
 Every value of the backup is checked against the database schema before
 anything is written; a refused restore changes nothing.
 
@@ -536,14 +536,14 @@ commands are a convenience for self-hosted instances:
 
 | Command | Does |
 |---|---|
-| `occ notenarchiv:setup <account> [<folder>] [--role role=groups]` | sets the archive folder and the role groups; with an archive folder it names the accounts of the role groups that cannot open it |
-| `occ notenarchiv:import <account> <file> [--execute]` | imports the catalog CSV; a dry run unless `--execute` is given |
-| `occ notenarchiv:export [--extended] [--full]` | writes the catalog CSV, all fields, or the complete backup (JSON) to standard output |
-| `occ notenarchiv:file-sync <account>` | runs the file sync; refused (exit code 1) while another one is running |
-| `occ notenarchiv:restore <file> [<account>]` | restores a complete backup into an empty catalog |
-| `occ notenarchiv:modules list\|enable\|disable\|preset` | shows and switches the modules (section 12) |
-| `occ notenarchiv:privacy-report <account or name>` | writes what the app stores about a person as JSON (access, Art. 15 GDPR; section 10) |
-| `occ notenarchiv:privacy-erase <account or name> [--execute]` | removes a person from the folder book and the audit log (erasure, Art. 17 GDPR); a dry run unless `--execute` is given |
+| `occ cantoria:setup <account> [<folder>] [--role role=groups]` | sets the archive folder and the role groups; with an archive folder it names the accounts of the role groups that cannot open it |
+| `occ cantoria:import <account> <file> [--execute]` | imports the catalog CSV; a dry run unless `--execute` is given |
+| `occ cantoria:export [--extended] [--full]` | writes the catalog CSV, all fields, or the complete backup (JSON) to standard output |
+| `occ cantoria:file-sync <account>` | runs the file sync; refused (exit code 1) while another one is running |
+| `occ cantoria:restore <file> [<account>]` | restores a complete backup into an empty catalog |
+| `occ cantoria:modules list\|enable\|disable\|preset` | shows and switches the modules (section 12) |
+| `occ cantoria:privacy-report <account or name>` | writes what the app stores about a person as JSON (access, Art. 15 GDPR; section 10) |
+| `occ cantoria:privacy-erase <account or name> [--execute]` | removes a person from the folder book and the audit log (erasure, Art. 17 GDPR); a dry run unless `--execute` is given |
 
 ## 10. Data protection
 
@@ -583,9 +583,9 @@ still out), but no longer the account; audit entries lose the account and
 keep the display name of who made a change.
 
 **Access and erasure.** On self-hosted instances `occ
-notenarchiv:privacy-report <account or name>` lists the loans, the audit
+cantoria:privacy-report <account or name>` lists the loans, the audit
 entries made by the person and persons of the same name in the register of
-persons (JSON). `occ notenarchiv:privacy-erase <account or name> --execute`
+persons (JSON). `occ cantoria:privacy-erase <account or name> --execute`
 removes the personal data of the loans (also from their audit entries; an
 open loan stays recorded as out, without the holder) and the account and
 name from the audit entries made by the person; the erasure itself is
@@ -767,9 +767,9 @@ writes files into a folder others can open (see section 16).
 | Links for choir members | Excerpt links, Playback, Releases | off (in no preset) | Choir members see neither the app nor "Shared with me"; their routes answer 404; no links for choir members can be made. Existing links are kept and expire as before. |
 | Practice audio for choir members | Links for choir members, Practice audio files | off (in no preset) | Choir members make no practice files; the server refuses every request. |
 | Public links | Excerpt links, Playback, Publication | off (in no preset) | Every public link answers the same 404 page; no new public links. Existing links are kept and expire as before. |
-| Public repertoire page | Rights confirmation and licenses | off (in no preset) | `/apps/notenarchiv/repertoire` answers 404; the work fields for the page are hidden. |
+| Public repertoire page | Rights confirmation and licenses | off (in no preset) | `/apps/cantoria/repertoire` answers 404; the work fields for the page are hidden. |
 | Practising without a network | – | off (in no preset) | Nothing can be kept on a device from "Shared with me" or a public link; the next visit with a network removes what was kept there. |
-| Interface for agents | – | off (in no preset) | The API for agents (`/ocs/v2.php/apps/notenarchiv/api/v1/…`) answers 404; the MCP server reports the interface as switched off. Nothing else changes. |
+| Interface for agents | – | off (in no preset) | The API for agents (`/ocs/v2.php/apps/cantoria/api/v1/…`) answers 404; the MCP server reports the interface as switched off. Nothing else changes. |
 
 ### Command line
 
@@ -777,10 +777,10 @@ On instances with shell access the same is possible with `occ`; the command
 resolves the dependencies and reports them:
 
 ```sh
-occ notenarchiv:modules list            # table: switch, active, needs (--json for scripts)
-occ notenarchiv:modules enable calendar # also switches on "concerts" if needed
-occ notenarchiv:modules disable statistics practice_audio
-occ notenarchiv:modules preset standard # simple | standard | complete
+occ cantoria:modules list            # table: switch, active, needs (--json for scripts)
+occ cantoria:modules enable calendar # also switches on "concerts" if needed
+occ cantoria:modules disable statistics practice_audio
+occ cantoria:modules preset standard # simple | standard | complete
 ```
 
 Module keys are listed in `docs/api.md` ("Modules and the personal view").
@@ -818,7 +818,7 @@ of the tool chain reaches the archive as a new file in the archive folder
 Setting up:
 
 1. Switch on the module **Interface for agents** (Settings → Modules, or
-   `occ notenarchiv:modules enable agent_api`). For proposals, the
+   `occ cantoria:modules enable agent_api`). For proposals, the
    **Proposals inbox** must be on as well; for questions, **Questions and
    tasks**; for review points and reports, **Reviewing transcriptions**.
 2. Create an account that only the agent uses and a group for it, and give
@@ -864,8 +864,8 @@ one by one, after the choir has decided.
 |---|---|
 | **Links for choir members** | The role **Choir members** sees the page "Shared with me": the whole pieces or excerpts that the music librarians or the conductor share with the choir, to view and play with a voice emphasised, optionally with the scan (PDF). Only for versions released for the singers' portal. |
 | **Practice audio for choir members** | Choir members make a WAV or MIDI file of one voice of such a piece or excerpt, where the rights allow practice audio files. Every file is recorded in the audit log. |
-| **Public links** | A link that shows and plays a whole piece or an excerpt without login (`/apps/notenarchiv/p/<token>`), optionally with the scan (PDF). Only for versions released for publication that are confirmed public domain or have a license for online publication. |
-| **Public repertoire page** | `/apps/notenarchiv/repertoire`: the works the catalog librarian chooses among those with a version confirmed as public domain, with life dates, scoring and links to CPDL and IMSLP. |
+| **Public links** | A link that shows and plays a whole piece or an excerpt without login (`/apps/cantoria/p/<token>`), optionally with the scan (PDF). Only for versions released for publication that are confirmed public domain or have a license for online publication. |
+| **Public repertoire page** | `/apps/cantoria/repertoire`: the works the catalog librarian chooses among those with a version confirmed as public domain, with life dates, scoring and links to CPDL and IMSLP. |
 | **Practising without a network** | Choir members keep pieces of "Shared with me" on their device and view, play and practise them there without a network: in the browser, no app to install. Only for links whose version choir members may save and print. With **Public links**, visitors can keep a public link the same way, only where the public domain of the version is confirmed. |
 
 Whatever the switches say, choir members and the public only ever get the
@@ -882,9 +882,9 @@ describes the threat model.
    with an archive role always gets the archive, not "Shared with me".
 2. Settings → **Roles and groups** → **Choir members (shared excerpts
    only)**: choose the group and **Save roles** (or
-   `occ notenarchiv:setup <account> --role member=Choir`).
+   `occ cantoria:setup <account> --role member=Choir`).
 3. Switch on **Links for choir members** (Settings → Modules, or
-   `occ notenarchiv:modules enable member_links`). It also switches on what
+   `occ cantoria:modules enable member_links`). It also switches on what
    it needs: excerpt links, playback and the releases.
 
 **Recommended order:**
@@ -910,14 +910,14 @@ be shared, the whole piece, an excerpt and the scan alike. Links can be passed o
 note of a link for choir members is read by all choir members. Calls are
 counted, but without names.
 
-**Practising without a network** (module `offline`, `occ notenarchiv:modules
+**Practising without a network** (module `offline`, `occ cantoria:modules
 enable offline`):
 
 - **What is kept, and where.** Nothing is kept until a choir member chooses
   **Keep on this device** for a piece, optionally **With the scan (PDF)**.
   Then the notes of the link, the scan if chosen, the page "Shared with me"
   and its scripts are stored in the browser of that device (a service
-  worker of the app at `/apps/notenarchiv/offline-worker`, which only
+  worker of the app at `/apps/cantoria/offline-worker`, which only
   answers from the device when the network does not). Passages and settings
   for practising are remembered in the browser as before. Nothing is
   written to the server without a network: practice files need it, as the
@@ -946,10 +946,10 @@ enable offline`):
   worker and everything it kept. After an update of the app the worker
   renews itself and drops the old scripts.
 
-**Concert folder** (module `concert_folder`, `occ notenarchiv:modules
+**Concert folder** (module `concert_folder`, `occ cantoria:modules
 enable concert_folder`, group **Concerts and repertoire**, in no preset):
 the conductor and the catalog librarian get a page of their own,
-`/apps/notenarchiv/concert-folder` (also in the navigation), with the
+`/apps/cantoria/concert-folder` (also in the navigation), with the
 programmes still to be sung and the score and scan of each item; a whole
 programme can be kept on the device for the rehearsal and the concert
 without a network. The rights are those of the score view; an internal
@@ -1032,7 +1032,7 @@ archive folder (guideline 4 of the
 Setting up:
 
 1. Switch on **Print station** and **Mirror folder for the print station**
-   (Settings → Modules, or `occ notenarchiv:modules enable print_mirror`).
+   (Settings → Modules, or `occ cantoria:modules enable print_mirror`).
 2. Create or choose a folder for the print station **outside the archive
    folder**, for example a folder shared with the print station's account.
    Your account must be able to read the archive folder and to create,
@@ -1086,7 +1086,7 @@ purpose.
 Setting up:
 
 1. Switch on **Singers' portal** and **Hand-over to the choir system**
-   (Settings → Modules, or `occ notenarchiv:modules enable choir_handover`).
+   (Settings → Modules, or `occ cantoria:modules enable choir_handover`).
 2. Create or choose a folder **outside the archive folder**, and not the
    folder of the print station, for example a folder shared with the
    account of the choir system. Your account must be able to read the
@@ -1181,7 +1181,7 @@ für Exporte im Archivordner.*)
   writes through the account that chose the folder, so it fails the same way
   when that account loses access (the catalog role and admins are notified).
 - **To do:** give the catalog role permission to edit the folder (at least
-  its subfolder `_notenarchiv-app`), and make sure the account shown as
+  its subfolder `_cantoria-app`), and make sure the account shown as
   "chosen by" under **Archive folder** still has access, or let an
   administrator choose the folder again with an account that has. Backups
   go into the backup folder of that account (section 5), which it must be

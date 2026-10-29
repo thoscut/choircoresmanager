@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -95,12 +95,12 @@ function currentValue(proposal: Proposal): string {
 	const copy = copiesOf(proposal)[0]
 	const detail = copy ? details.get(copy.id) : undefined
 	if (detail === undefined || detail === 'failed') {
-		return t('notenarchiv', 'unknown')
+		return t('cantoria', 'unknown')
 	}
 	if (detail === 'loading') {
 		return '…'
 	}
-	return displayValue(fieldInfo(proposal.object_type, proposal.field), detail[proposal.object_type]?.[proposal.field]) || t('notenarchiv', '(empty)')
+	return displayValue(fieldInfo(proposal.object_type, proposal.field), detail[proposal.object_type]?.[proposal.field]) || t('cantoria', '(empty)')
 }
 
 /**
@@ -117,10 +117,10 @@ function proposedValue(proposal: Proposal): string {
 	}
 	if (proposal.object_type === 'version' && proposal.field === 'portal_since' && value === null) {
 		// from the comparison with the choir system (milestone 0.12)
-		return t('notenarchiv', 'Removed from the singers\' portal')
+		return t('cantoria', 'Removed from the singers\' portal')
 	}
 	const shown = typeof value === 'object' && value !== null ? JSON.stringify(value) : value as string | number | boolean | null
-	return displayValue(fieldInfo(proposal.object_type, proposal.field), shown) || t('notenarchiv', '(empty)')
+	return displayValue(fieldInfo(proposal.object_type, proposal.field), shown) || t('cantoria', '(empty)')
 }
 
 /**
@@ -131,11 +131,11 @@ function proposedValue(proposal: Proposal): string {
 function levelLabel(proposal: Proposal): string {
 	switch (proposal.object_type) {
 	case 'work':
-		return t('notenarchiv', 'Work')
+		return t('cantoria', 'Work')
 	case 'version':
-		return t('notenarchiv', 'Version')
+		return t('cantoria', 'Version')
 	default:
-		return t('notenarchiv', 'Copy')
+		return t('cantoria', 'Copy')
 	}
 }
 
@@ -182,10 +182,10 @@ async function decide(): Promise<void> {
 		const text = reason.value.trim() === '' ? null : reason.value.trim()
 		if (current.accept) {
 			await acceptProposal(current.proposal.id, text)
-			showSuccess(t('notenarchiv', 'The proposal has been accepted and applied.'))
+			showSuccess(t('cantoria', 'The proposal has been accepted and applied.'))
 		} else {
 			await rejectProposal(current.proposal.id, text)
-			showSuccess(t('notenarchiv', 'The proposal has been rejected.'))
+			showSuccess(t('cantoria', 'The proposal has been rejected.'))
 		}
 		deciding.value = null
 		await Promise.all([load(), loadEntries(), loadDetail()])
@@ -199,34 +199,34 @@ async function decide(): Promise<void> {
 
 <template>
 	<div class="proposals-view">
-		<ViewHeader :title="t('notenarchiv', 'Inbox')"
-			:description="t('notenarchiv', 'Changes proposed by tools and transcription rounds. Nothing changes until the catalog role accepts a proposal.')"
+		<ViewHeader :title="t('cantoria', 'Inbox')"
+			:description="t('cantoria', 'Changes proposed by tools and transcription rounds. Nothing changes until the catalog role accepts a proposal.')"
 			printable
 			reloadable
 			:loading="loading"
 			@reload="load" />
 
 		<div class="proposals-view__content">
-			<NcEmptyContent v-if="!loaded && loading" :name="t('notenarchiv', 'Loading …')">
+			<NcEmptyContent v-if="!loaded && loading" :name="t('cantoria', 'Loading …')">
 				<template #icon>
 					<NcLoadingIcon :size="64" />
 				</template>
 			</NcEmptyContent>
 			<NcEmptyContent v-else-if="!loaded && error"
-				:name="t('notenarchiv', 'The inbox could not be loaded')"
+				:name="t('cantoria', 'The inbox could not be loaded')"
 				:description="error">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiAlertCircleOutline" />
 				</template>
 				<template #action>
 					<NcButton @click="load">
-						{{ t('notenarchiv', 'Try again') }}
+						{{ t('cantoria', 'Try again') }}
 					</NcButton>
 				</template>
 			</NcEmptyContent>
 			<NcEmptyContent v-else-if="proposals.length === 0"
-				:name="t('notenarchiv', 'The inbox is empty')"
-				:description="t('notenarchiv', 'There are no open proposals. Tools and transcription rounds put their proposals here; nothing else to do now.')">
+				:name="t('cantoria', 'The inbox is empty')"
+				:description="t('cantoria', 'There are no open proposals. Tools and transcription rounds put their proposals here; nothing else to do now.')">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiInboxOutline" />
 				</template>
@@ -235,13 +235,13 @@ async function decide(): Promise<void> {
 						<template #icon>
 							<NcIconSvgWrapper :path="mdiHomeOutline" />
 						</template>
-						{{ t('notenarchiv', 'Open the start page') }}
+						{{ t('cantoria', 'Open the start page') }}
 					</NcButton>
 				</template>
 			</NcEmptyContent>
 			<template v-else>
 				<p class="proposals-view__count">
-					{{ n('notenarchiv', '%n open proposal', '%n open proposals', proposals.length) }}
+					{{ n('cantoria', '%n open proposal', '%n open proposals', proposals.length) }}
 				</p>
 				<section v-for="group in groups"
 					:key="group.key"
@@ -258,25 +258,25 @@ async function decide(): Promise<void> {
 							</button>
 							<span>{{ group.title }}</span>
 						</template>
-						<span v-else>{{ t('notenarchiv', 'Unknown object ({key})', { key: group.key }) }}</span>
+						<span v-else>{{ t('cantoria', 'Unknown object ({key})', { key: group.key }) }}</span>
 					</h3>
 					<table class="proposals-view__table">
 						<thead>
 							<tr>
 								<th scope="col">
-									{{ t('notenarchiv', 'Field') }}
+									{{ t('cantoria', 'Field') }}
 								</th>
 								<th scope="col">
-									{{ t('notenarchiv', 'Now') }}
+									{{ t('cantoria', 'Now') }}
 								</th>
 								<th scope="col">
-									{{ t('notenarchiv', 'Proposed') }}
+									{{ t('cantoria', 'Proposed') }}
 								</th>
 								<th scope="col">
-									{{ t('notenarchiv', 'Source and reason') }}
+									{{ t('cantoria', 'Source and reason') }}
 								</th>
 								<th v-if="isLibrarian" scope="col" class="no-print">
-									<span class="hidden-visually">{{ t('notenarchiv', 'Actions') }}</span>
+									<span class="hidden-visually">{{ t('cantoria', 'Actions') }}</span>
 								</th>
 							</tr>
 						</thead>
@@ -286,10 +286,10 @@ async function decide(): Promise<void> {
 									<span class="proposals-view__level">{{ levelLabel(proposal) }}</span>
 									{{ fieldLabel(proposal.object_type, proposal.field) }}
 								</td>
-								<td class="proposals-view__old" :data-label="t('notenarchiv', 'Now')">
+								<td class="proposals-view__old" :data-label="t('cantoria', 'Now')">
 									{{ currentValue(proposal) }}
 								</td>
-								<td class="proposals-view__new" :data-label="t('notenarchiv', 'Proposed')">
+								<td class="proposals-view__new" :data-label="t('cantoria', 'Proposed')">
 									{{ proposedValue(proposal) }}
 								</td>
 								<td>
@@ -299,19 +299,19 @@ async function decide(): Promise<void> {
 								</td>
 								<td v-if="isLibrarian" class="proposals-view__actions no-print">
 									<NcButton variant="primary"
-										:aria-label="t('notenarchiv', 'Accept: {field}', { field: fieldLabel(proposal.object_type, proposal.field) })"
+										:aria-label="t('cantoria', 'Accept: {field}', { field: fieldLabel(proposal.object_type, proposal.field) })"
 										@click="startDecision(proposal, true)">
 										<template #icon>
 											<NcIconSvgWrapper :path="mdiCheck" />
 										</template>
-										{{ t('notenarchiv', 'Accept') }}
+										{{ t('cantoria', 'Accept') }}
 									</NcButton>
-									<NcButton :aria-label="t('notenarchiv', 'Reject: {field}', { field: fieldLabel(proposal.object_type, proposal.field) })"
+									<NcButton :aria-label="t('cantoria', 'Reject: {field}', { field: fieldLabel(proposal.object_type, proposal.field) })"
 										@click="startDecision(proposal, false)">
 										<template #icon>
 											<NcIconSvgWrapper :path="mdiClose" />
 										</template>
-										{{ t('notenarchiv', 'Reject') }}
+										{{ t('cantoria', 'Reject') }}
 									</NcButton>
 								</td>
 							</tr>
@@ -322,8 +322,8 @@ async function decide(): Promise<void> {
 		</div>
 
 		<ActionDialog v-if="deciding !== null"
-			:name="deciding.accept ? t('notenarchiv', 'Accept proposal') : t('notenarchiv', 'Reject proposal')"
-			:submit-label="deciding.accept ? t('notenarchiv', 'Accept and apply') : t('notenarchiv', 'Reject')"
+			:name="deciding.accept ? t('cantoria', 'Accept proposal') : t('cantoria', 'Reject proposal')"
+			:submit-label="deciding.accept ? t('cantoria', 'Accept and apply') : t('cantoria', 'Reject')"
 			:busy="busy"
 			:error="decideError"
 			@submit="decide"
@@ -333,10 +333,10 @@ async function decide(): Promise<void> {
 				{{ currentValue(deciding.proposal) }} → <strong>{{ proposedValue(deciding.proposal) }}</strong>
 			</p>
 			<p v-if="deciding.accept" class="action-dialog__hint">
-				{{ t('notenarchiv', 'The value is changed with your rights and recorded in the audit log.') }}
+				{{ t('cantoria', 'The value is changed with your rights and recorded in the audit log.') }}
 			</p>
 			<NcTextArea v-model="reason"
-				:label="t('notenarchiv', 'Reason (optional)')"
+				:label="t('cantoria', 'Reason (optional)')"
 				resize="vertical"
 				rows="3" />
 		</ActionDialog>

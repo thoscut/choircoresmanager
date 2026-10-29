@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -32,22 +32,22 @@ require __DIR__ . '/harness.php';
 [$root, $uid] = IntegrationTest::start($argv, ['nextcloud-root', 'uid']);
 $programmeCsv = $argv[3] ?? null;
 
-use OCA\Notenarchiv\Controller\StatisticsController;
-use OCA\Notenarchiv\Db\ProposalMapper;
-use OCA\Notenarchiv\Service\AppSettings;
-use OCA\Notenarchiv\Service\CatalogCsv;
-use OCA\Notenarchiv\Service\CatalogService;
-use OCA\Notenarchiv\Service\ChecksumService;
-use OCA\Notenarchiv\Service\CopyAssistantService;
-use OCA\Notenarchiv\Service\EventService;
-use OCA\Notenarchiv\Service\LicenseService;
-use OCA\Notenarchiv\Service\PerformanceImportService;
-use OCA\Notenarchiv\Service\PersonService;
-use OCA\Notenarchiv\Service\ReleaseListService;
-use OCA\Notenarchiv\Service\RepertoireService;
-use OCA\Notenarchiv\Service\RightsService;
-use OCA\Notenarchiv\Service\Roles;
-use OCA\Notenarchiv\Service\StatisticsService;
+use OCA\Cantoria\Controller\StatisticsController;
+use OCA\Cantoria\Db\ProposalMapper;
+use OCA\Cantoria\Service\AppSettings;
+use OCA\Cantoria\Service\CatalogCsv;
+use OCA\Cantoria\Service\CatalogService;
+use OCA\Cantoria\Service\ChecksumService;
+use OCA\Cantoria\Service\CopyAssistantService;
+use OCA\Cantoria\Service\EventService;
+use OCA\Cantoria\Service\LicenseService;
+use OCA\Cantoria\Service\PerformanceImportService;
+use OCA\Cantoria\Service\PersonService;
+use OCA\Cantoria\Service\ReleaseListService;
+use OCA\Cantoria\Service\RepertoireService;
+use OCA\Cantoria\Service\RightsService;
+use OCA\Cantoria\Service\Roles;
+use OCA\Cantoria\Service\StatisticsService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataDownloadResponse;
 use OCP\IDBConnection;
@@ -254,11 +254,11 @@ try {
 	$check('internal preservation copies are not listed', array_intersect($preservation, $listed) === [], implode(', ', array_intersect($preservation, $listed)));
 
 	// ---- controller: access and CSV --------------------------------------------
-	$l = Server::get(IFactory::class)->get('notenarchiv');
+	$l = Server::get(IFactory::class)->get('cantoria');
 	$controller = fn (string $user): StatisticsController => new StatisticsController(Server::get(IRequest::class), $user, Server::get(Roles::class),
 		$statistics, $l, Server::get(LoggerInterface::class));
-	$check('without a role no statistics', $controller('notenarchiv-test-nobody')->overview()->getStatus() === Http::STATUS_FORBIDDEN
-		&& $controller('notenarchiv-test-nobody')->csv()->getStatus() === Http::STATUS_FORBIDDEN);
+	$check('without a role no statistics', $controller('cantoria-test-nobody')->overview()->getStatus() === Http::STATUS_FORBIDDEN
+		&& $controller('cantoria-test-nobody')->csv()->getStatus() === Http::STATUS_FORBIDDEN);
 	$check('invalid period: 400', $controller($uid)->overview(2020, 2010)->getStatus() === Http::STATUS_BAD_REQUEST
 		&& $controller($uid)->reportCsv(1700)->getStatus() === Http::STATUS_BAD_REQUEST);
 	$csv = $controller($uid)->csv();

@@ -1191,7 +1191,7 @@ stays as it is. **Create proposals** puts the first two groups into the
 ### The public repertoire page
 
 The catalog librarian can list works on a public page of the choir
-(`/apps/notenarchiv/repertoire`) with title, composer and lyricist, life
+(`/apps/cantoria/repertoire`) with title, composer and lyricist, life
 dates, scoring and links to CPDL and IMSLP:
 
 1. Confirm a version of the work as public domain (tab **Rights**).

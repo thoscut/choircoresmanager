@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -35,7 +35,7 @@ const reportSection = useTemplateRef<HTMLElement>('reportSection')
 async function choose(): Promise<void> {
 	let nodes
 	try {
-		nodes = await getFilePickerBuilder(t('notenarchiv', 'Choose the export of the choir system (.csv or .xlsx)'))
+		nodes = await getFilePickerBuilder(t('cantoria', 'Choose the export of the choir system (.csv or .xlsx)'))
 			.setMultiSelect(false)
 			.setMimeTypeFilter(['text/csv', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'])
 			.setType(FilePickerType.Choose)
@@ -50,7 +50,7 @@ async function choose(): Promise<void> {
 	}
 	const node = nodes[0]
 	if (!node?.fileid) {
-		showError(t('notenarchiv', 'The chosen file cannot be used.'))
+		showError(t('cantoria', 'The chosen file cannot be used.'))
 		await focusAfterDialog(chooseButton)
 		return
 	}
@@ -71,7 +71,7 @@ async function run(dryRun: boolean): Promise<void> {
 	try {
 		report.value = await compareChoirSystem(file.value.id, dryRun)
 		if (!dryRun) {
-			showSuccess(t('notenarchiv', 'The differences are in the inbox as proposals.'))
+			showSuccess(t('cantoria', 'The differences are in the inbox as proposals.'))
 		}
 	} catch (caught) {
 		error.value = errorMessage(caught)
@@ -98,7 +98,7 @@ function pieceName(piece: ComparedPiece): string {
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiFileCompare" />
 				</template>
-				{{ file ? t('notenarchiv', 'Choose another file …') : t('notenarchiv', 'Compare with an export …') }}
+				{{ file ? t('cantoria', 'Choose another file …') : t('cantoria', 'Compare with an export …') }}
 			</NcButton>
 			<NcButton v-if="report?.dryRun && report.added.length + report.removed.length > 0"
 				variant="primary"
@@ -108,12 +108,12 @@ function pieceName(piece: ComparedPiece): string {
 					<NcLoadingIcon v-if="busy" />
 					<NcIconSvgWrapper v-else :path="mdiInboxArrowDownOutline" />
 				</template>
-				{{ t('notenarchiv', 'Create proposals') }}
+				{{ t('cantoria', 'Create proposals') }}
 			</NcButton>
 		</div>
 		<p v-if="busy" class="choir-compare__muted">
 			<NcLoadingIcon :size="20" />
-			{{ t('notenarchiv', 'Comparing …') }}
+			{{ t('cantoria', 'Comparing …') }}
 		</p>
 		<NcNoteCard v-if="error" type="error" role="alert">
 			{{ error }}
@@ -122,17 +122,17 @@ function pieceName(piece: ComparedPiece): string {
 		<section v-if="report && !busy"
 			ref="reportSection"
 			class="choir-compare__report"
-			:aria-label="t('notenarchiv', 'Comparison with the choir system')">
+			:aria-label="t('cantoria', 'Comparison with the choir system')">
 			<NcNoteCard :type="report.dryRun ? 'info' : 'success'">
 				{{ report.dryRun
-					? t('notenarchiv', '{file}: {matched} of {rows} rows are pieces of the archive. Nothing has been proposed yet.', { file: report.file, matched: report.matched, rows: report.rows })
-					: t('notenarchiv', '{file}: the proposals are in the inbox. The catalog changes only when they are accepted there.', { file: report.file }) }}
+					? t('cantoria', '{file}: {matched} of {rows} rows are pieces of the archive. Nothing has been proposed yet.', { file: report.file, matched: report.matched, rows: report.rows })
+					: t('cantoria', '{file}: the proposals are in the inbox. The catalog changes only when they are accepted there.', { file: report.file }) }}
 			</NcNoteCard>
 			<p v-if="report.added.length + report.removed.length + report.removeThere.length === 0">
-				{{ t('notenarchiv', 'The choir system has exactly what the list of the singers\' portal says.') }}
+				{{ t('cantoria', 'The choir system has exactly what the list of the singers\' portal says.') }}
 			</p>
 			<template v-if="report.added.length > 0">
-				<h4>{{ n('notenarchiv', '%n piece is in the choir system but not recorded as in the portal', '%n pieces are in the choir system but not recorded as in the portal', report.added.length) }}</h4>
+				<h4>{{ n('cantoria', '%n piece is in the choir system but not recorded as in the portal', '%n pieces are in the choir system but not recorded as in the portal', report.added.length) }}</h4>
 				<ul>
 					<li v-for="piece in report.added" :key="'a' + piece.versionId">
 						{{ pieceName(piece) }}
@@ -140,7 +140,7 @@ function pieceName(piece: ComparedPiece): string {
 				</ul>
 			</template>
 			<template v-if="report.removed.length > 0">
-				<h4>{{ n('notenarchiv', '%n piece is recorded as in the portal but missing in the choir system', '%n pieces are recorded as in the portal but missing in the choir system', report.removed.length) }}</h4>
+				<h4>{{ n('cantoria', '%n piece is recorded as in the portal but missing in the choir system', '%n pieces are recorded as in the portal but missing in the choir system', report.removed.length) }}</h4>
 				<ul>
 					<li v-for="piece in report.removed" :key="'r' + piece.versionId">
 						{{ pieceName(piece) }}
@@ -148,21 +148,21 @@ function pieceName(piece: ComparedPiece): string {
 				</ul>
 			</template>
 			<p v-if="report.alreadyProposed > 0" class="choir-compare__muted">
-				{{ n('notenarchiv', '%n difference is already waiting in the inbox.', '%n differences are already waiting in the inbox.', report.alreadyProposed) }}
+				{{ n('cantoria', '%n difference is already waiting in the inbox.', '%n differences are already waiting in the inbox.', report.alreadyProposed) }}
 			</p>
 			<template v-if="report.removeThere.length > 0">
 				<NcNoteCard type="warning">
-					{{ n('notenarchiv', '%n piece is in the choir system but not released for the singers\' portal. Remove it there; the archive stays as it is.', '%n pieces are in the choir system but not released for the singers\' portal. Remove them there; the archive stays as it is.', report.removeThere.length) }}
+					{{ n('cantoria', '%n piece is in the choir system but not released for the singers\' portal. Remove it there; the archive stays as it is.', '%n pieces are in the choir system but not released for the singers\' portal. Remove them there; the archive stays as it is.', report.removeThere.length) }}
 				</NcNoteCard>
 				<ul>
 					<li v-for="piece in report.removeThere" :key="'x' + piece.versionId">
 						{{ pieceName(piece) }}
-						<span class="choir-compare__muted">{{ piece.reason || t('notenarchiv', 'Another version of the work is valid for the choir.') }}</span>
+						<span class="choir-compare__muted">{{ piece.reason || t('cantoria', 'Another version of the work is valid for the choir.') }}</span>
 					</li>
 				</ul>
 			</template>
 			<template v-if="report.unknownCount > 0">
-				<h4>{{ n('notenarchiv', '%n row without a shelf mark of the archive', '%n rows without a shelf mark of the archive', report.unknownCount) }}</h4>
+				<h4>{{ n('cantoria', '%n row without a shelf mark of the archive', '%n rows without a shelf mark of the archive', report.unknownCount) }}</h4>
 				<ul>
 					<li v-for="(row, index) in report.unknown" :key="'u' + index">
 						{{ row }}

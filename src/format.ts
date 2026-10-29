@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -12,7 +12,7 @@ import type { FieldInfo, FieldValue } from './types.ts'
 import { getCanonicalLocale } from '@nextcloud/l10n'
 import { t } from './l10n.ts'
 
-const APP = 'notenarchiv'
+const APP = 'cantoria'
 
 /**
  * Translate an English label delivered by the server (field labels, option
@@ -142,14 +142,14 @@ export function displayValue(info: FieldInfo | undefined, value: FieldValue | un
 	}
 	switch (info?.type) {
 	case 'boolean':
-		return value === true || value === 1 || value === '1' || value === 'true' ? t('notenarchiv', 'Yes') : t('notenarchiv', 'No')
+		return value === true || value === 1 || value === '1' || value === 'true' ? t('cantoria', 'Yes') : t('cantoria', 'No')
 	case 'choice':
 		return optionLabel(info, String(value))
 	case 'date':
 		return formatDate(String(value))
 	default:
 		if (typeof value === 'boolean') {
-			return value ? t('notenarchiv', 'Yes') : t('notenarchiv', 'No')
+			return value ? t('cantoria', 'Yes') : t('cantoria', 'No')
 		}
 		// A date in a text field (e.g. "last performed" from the import) looks like every other date
 		return typeof value === 'string' && ISO_DATE_TEXT.test(value) ? formatDate(value) : String(value)
@@ -168,10 +168,10 @@ export function displayAuditValue(info: FieldInfo | undefined, value: string | n
 	}
 	if (info?.type === 'boolean') {
 		if (['1', 'true', 'yes', 'ja'].includes(value.toLowerCase())) {
-			return t('notenarchiv', 'Yes')
+			return t('cantoria', 'Yes')
 		}
 		if (['0', 'false', 'no', 'nein'].includes(value.toLowerCase())) {
-			return t('notenarchiv', 'No')
+			return t('cantoria', 'No')
 		}
 	}
 	return displayValue(info, value)

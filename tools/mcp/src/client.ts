@@ -1,10 +1,10 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 /**
- * HTTP client of the API for agents (OCS, /ocs/v2.php/apps/notenarchiv/api/v1).
+ * HTTP client of the API for agents (OCS, /ocs/v2.php/apps/cantoria/api/v1).
  *
  * - Signs in with Basic authentication (account and app password) and sends
  *   `OCS-APIRequest: true`, which Nextcloud requires instead of a CSRF token.
@@ -16,9 +16,9 @@
  */
 import type { Config } from './config.js'
 
-export const API_PATH = '/ocs/v2.php/apps/notenarchiv/api/v1'
+export const API_PATH = '/ocs/v2.php/apps/cantoria/api/v1'
 const TIMEOUT_MS = 30_000
-const USER_AGENT = 'notenarchiv-mcp/1.0'
+const USER_AGENT = 'cantoria-mcp/1.0'
 
 /** What went wrong, for the agent and for tests. */
 export type ApiErrorKind = 'auth' | 'forbidden' | 'not_found' | 'invalid' | 'rate_limited' | 'server' | 'network' | 'read_only'
@@ -38,7 +38,7 @@ export type Query = Record<string, string | number | boolean | null | undefined>
 /** The parts of `fetch` the client uses (replaced in tests). */
 export type Fetch = (url: string, init: RequestInit) => Promise<Response>
 
-export class NotenarchivClient {
+export class CantoriaClient {
 	private readonly authorization: string
 	private readonly secrets: string[]
 
@@ -90,7 +90,7 @@ export class NotenarchivClient {
 	 */
 	async post(path: string, body: Record<string, unknown>): Promise<unknown> {
 		if (this.config.readOnly) {
-			throw new ApiError('read_only', 0, 'The server runs read-only (NOTENARCHIV_READ_ONLY=1): nothing is written.')
+			throw new ApiError('read_only', 0, 'The server runs read-only (CANTORIA_READ_ONLY=1): nothing is written.')
 		}
 		return this.request('POST', path, {}, body)
 	}
@@ -133,7 +133,7 @@ export class NotenarchivClient {
 		const envelope = parseEnvelope(text)
 		if (response.status >= 200 && response.status < 300) {
 			if (envelope === null) {
-				throw new ApiError('server', response.status, 'The answer of the server is not an OCS answer. Is NOTENARCHIV_URL the address of Nextcloud?')
+				throw new ApiError('server', response.status, 'The answer of the server is not an OCS answer. Is CANTORIA_URL the address of Nextcloud?')
 			}
 			return envelope.data
 		}
@@ -144,9 +144,9 @@ export class NotenarchivClient {
 		const message = this.redact(serverMessage.trim())
 		switch (true) {
 		case status >= 300 && status < 400:
-			return new ApiError('server', status, 'The server answered with a redirect, which is not followed. Check NOTENARCHIV_URL (https, the address of Nextcloud).')
+			return new ApiError('server', status, 'The server answered with a redirect, which is not followed. Check CANTORIA_URL (https, the address of Nextcloud).')
 		case status === 401:
-			return new ApiError('auth', status, 'Nextcloud refused the login. Check NOTENARCHIV_USER and NOTENARCHIV_APP_PASSWORD (an app password of the agent\'s own account).')
+			return new ApiError('auth', status, 'Nextcloud refused the login. Check CANTORIA_USER and CANTORIA_APP_PASSWORD (an app password of the agent\'s own account).')
 		case status === 403:
 			return new ApiError('forbidden', status, `Not permitted for the roles of this account${message === '' ? '.' : ': ' + message}`)
 		case status === 404:

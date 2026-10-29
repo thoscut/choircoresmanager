@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -18,21 +18,21 @@ import { t } from './l10n.ts'
  */
 export function statusMessage(status: number, requestId = ''): string {
 	if (status === 401) {
-		return t('notenarchiv', 'You are no longer logged in. Please reload the page and log in again.')
+		return t('cantoria', 'You are no longer logged in. Please reload the page and log in again.')
 	}
 	if (status === 403) {
-		return t('notenarchiv', 'Your account may not do this. Please ask the music librarians for the role you need.')
+		return t('cantoria', 'Your account may not do this. Please ask the music librarians for the role you need.')
 	}
 	if (status === 404) {
-		return t('notenarchiv', 'This no longer exists or is switched off. Please reload the page.')
+		return t('cantoria', 'This no longer exists or is switched off. Please reload the page.')
 	}
 	if (status === 413) {
-		return t('notenarchiv', 'The file is too large for the server. Please choose a smaller file or ask the administration to allow larger uploads.')
+		return t('cantoria', 'The file is too large for the server. Please choose a smaller file or ask the administration to allow larger uploads.')
 	}
 	if (status >= 500) {
 		return requestId !== ''
-			? t('notenarchiv', 'The server could not finish this. Please try again in a moment. If it happens again, tell the administration this request ID for the Nextcloud log: {id}', { id: requestId })
-			: t('notenarchiv', 'The server could not finish this. Please try again in a moment. If it happens again, tell the administration the time, so that it finds the error in the Nextcloud log.')
+			? t('cantoria', 'The server could not finish this. Please try again in a moment. If it happens again, tell the administration this request ID for the Nextcloud log: {id}', { id: requestId })
+			: t('cantoria', 'The server could not finish this. Please try again in a moment. If it happens again, tell the administration the time, so that it finds the error in the Nextcloud log.')
 	}
-	return t('notenarchiv', 'The server refused the request (HTTP {status}). Please reload the page and try again.', { status })
+	return t('cantoria', 'The server refused the request (HTTP {status}). Please reload the page and try again.', { status })
 }

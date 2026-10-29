@@ -3,20 +3,20 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Service\ApiV1;
+namespace OCA\Cantoria\Service\ApiV1;
 
-use OCA\Notenarchiv\Db\ArchiveFile;
-use OCA\Notenarchiv\Db\Copy;
-use OCA\Notenarchiv\Db\Proposal;
-use OCA\Notenarchiv\Db\Task;
-use OCA\Notenarchiv\Db\Work;
-use OCA\Notenarchiv\Db\WorkVersion;
-use OCA\Notenarchiv\Exception\InvalidInputException;
-use OCA\Notenarchiv\Service\Fields;
+use OCA\Cantoria\Db\ArchiveFile;
+use OCA\Cantoria\Db\Copy;
+use OCA\Cantoria\Db\Proposal;
+use OCA\Cantoria\Db\Task;
+use OCA\Cantoria\Db\Work;
+use OCA\Cantoria\Db\WorkVersion;
+use OCA\Cantoria\Exception\InvalidInputException;
+use OCA\Cantoria\Service\Fields;
 
 /**
  * The catalog in the API for agents (v1): the search over the rows of
@@ -27,10 +27,10 @@ use OCA\Notenarchiv\Service\Fields;
  * Account names are left out (fields of PERSONAL_FIELDS): an agent needs
  * the decision, not who took it.
  *
- * @psalm-import-type Entry from \OCA\Notenarchiv\Service\CatalogService
- * @psalm-import-type NotenarchivCatalogRow from \OCA\Notenarchiv\ResponseDefinitions
- * @psalm-import-type NotenarchivCopy from \OCA\Notenarchiv\ResponseDefinitions
- * @psalm-import-type NotenarchivFieldValues from \OCA\Notenarchiv\ResponseDefinitions
+ * @psalm-import-type Entry from \OCA\Cantoria\Service\CatalogService
+ * @psalm-import-type CantoriaCatalogRow from \OCA\Cantoria\ResponseDefinitions
+ * @psalm-import-type CantoriaCopy from \OCA\Cantoria\ResponseDefinitions
+ * @psalm-import-type CantoriaFieldValues from \OCA\Cantoria\ResponseDefinitions
  * @psalm-type CatalogFilters = array{q?: ?string, shelfmark?: ?string, binder?: ?int, status?: ?string, rights_status?: ?string,
  *     confirmed?: ?bool, repertoire_class?: ?string, has_musicxml?: ?bool}
  */
@@ -50,7 +50,7 @@ final class CatalogView {
 	 * accounts that may not view them (RightsPolicy).
 	 *
 	 * @param list<array<string, mixed>> $entries rows of CatalogService::entries()
-	 * @return list<NotenarchivCatalogRow>
+	 * @return list<CantoriaCatalogRow>
 	 */
 	public static function rows(array $entries, bool $withPreservationCopies): array {
 		$rows = [];
@@ -88,7 +88,7 @@ final class CatalogView {
 	/**
 	 * Sort key of a row: the order of the shelf.
 	 *
-	 * @param NotenarchivCatalogRow $row
+	 * @param CantoriaCatalogRow $row
 	 * @return list<int>
 	 */
 	public static function key(array $row): array {
@@ -100,9 +100,9 @@ final class CatalogView {
 	 * title, composer, arranger and work number (case-insensitive, parts of
 	 * words); `shelfmark` is exact ("5-1" also finds "5-01").
 	 *
-	 * @param list<NotenarchivCatalogRow> $rows
+	 * @param list<CantoriaCatalogRow> $rows
 	 * @param CatalogFilters $filters
-	 * @return list<NotenarchivCatalogRow>
+	 * @return list<CantoriaCatalogRow>
 	 * @throws InvalidInputException for a value a filter does not know
 	 */
 	public static function filter(array $rows, array $filters): array {
@@ -132,7 +132,7 @@ final class CatalogView {
 	 *
 	 * @param Entry $entry CatalogService::entry()
 	 * @param callable(string): string $translate translates an English source string
-	 * @return NotenarchivCopy
+	 * @return CantoriaCopy
 	 */
 	public static function copy(array $entry, string $uid, callable $translate): array {
 		$work = $entry['work'];
@@ -193,7 +193,7 @@ final class CatalogView {
 	/**
 	 * The values of every field of the registry, except account names.
 	 *
-	 * @return NotenarchivFieldValues
+	 * @return CantoriaFieldValues
 	 */
 	public static function fieldValues(string $level, Work|WorkVersion|Copy $entity): array {
 		$values = [];
@@ -227,7 +227,7 @@ final class CatalogView {
 	}
 
 	/**
-	 * @param NotenarchivCatalogRow $row
+	 * @param CantoriaCatalogRow $row
 	 */
 	private static function sameShelfmark(array $row, string $shelfmark): bool {
 		if (preg_match('/^(\d+)\s*-\s*(\d+)$/', $shelfmark, $parts) === 1) {

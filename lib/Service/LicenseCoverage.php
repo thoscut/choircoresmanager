@@ -3,15 +3,15 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Service;
+namespace OCA\Cantoria\Service;
 
-use OCA\Notenarchiv\Db\Copy;
-use OCA\Notenarchiv\Db\License;
-use OCA\Notenarchiv\Db\WorkVersion;
+use OCA\Cantoria\Db\Copy;
+use OCA\Cantoria\Db\License;
+use OCA\Cantoria\Db\WorkVersion;
 
 /**
  * Whether the copies and files of a version are covered by its licenses

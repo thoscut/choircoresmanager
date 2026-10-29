@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+# SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # Runs the integration tests in tests/Integration against a freshly
@@ -11,7 +11,7 @@
 # data built with `node tools/demo/build.mjs`. Run it as the user that owns
 # the Nextcloud files. The script
 #   1. creates a test account and its group,
-#   2. assigns the roles (occ notenarchiv:setup),
+#   2. assigns the roles (occ cantoria:setup),
 #   3. copies the demo folder into the account's files and scans it,
 #   4. sets the demo folder as archive folder,
 #   5. imports the catalog (dry run, then for real) and runs the file sync,
@@ -45,7 +45,7 @@
 #   CI_USER   test account, created by the script (default: demo-librarian)
 #   CI_GROUP  its group, created by the script; holds the roles "librarian"
 #             and "reader" (default: demo-archive)
-#   DEMO_DIR  the built demo folder (default: build/demo/Notenarchiv-Demo)
+#   DEMO_DIR  the built demo folder (default: build/demo/Cantoria-Demo)
 #   PHP       PHP command (default: php)
 #   AGENT_USER, AGENT_GROUP  account and group of the agent in step 7,
 #             created and deleted by the script (default: demo-agent,
@@ -65,7 +65,7 @@ NC_ROOT="$(cd "$1" && pwd)"
 REPO="$(cd "$(dirname "$0")/../.." && pwd)"
 CI_USER="${CI_USER:-demo-librarian}"
 CI_GROUP="${CI_GROUP:-demo-archive}"
-DEMO_DIR="${DEMO_DIR:-$REPO/build/demo/Notenarchiv-Demo}"
+DEMO_DIR="${DEMO_DIR:-$REPO/build/demo/Cantoria-Demo}"
 PHP="${PHP:-php}"
 AGENT_USER="${AGENT_USER:-demo-agent}"
 AGENT_GROUP="${AGENT_GROUP:-demo-agents}"
@@ -139,7 +139,7 @@ fi
 step "0. Preconditions"
 occ status
 occ app:list --enabled > "$WORK/apps.txt"
-for app in notenarchiv notifications dav; do
+for app in cantoria notifications dav; do
 	if ! grep -q "^  - $app:" "$WORK/apps.txt"; then
 		echo "The app $app is not enabled." >&2
 		exit 2
@@ -151,7 +151,7 @@ for account in "$CI_USER" "$AGENT_USER"; do
 		exit 2
 	fi
 done
-occ notenarchiv:export --full > "$WORK/backup.json"
+occ cantoria:export --full > "$WORK/backup.json"
 # shellcheck disable=SC2016 # PHP code, not shell
 "$PHP" -r '
 	$backup = json_decode((string)file_get_contents($argv[1]), true, 512, JSON_THROW_ON_ERROR);
@@ -168,21 +168,21 @@ step "1. Test account $CI_USER in group $CI_GROUP"
 occ group:add "$CI_GROUP"
 # Random password, only passed through the environment, never printed.
 password="$(head -c 32 /dev/urandom | base64 | tr -dc 'A-Za-z0-9')"
-OC_PASS="$password" occ user:add --password-from-env --display-name="Notenarchiv CI" --group="$CI_GROUP" "$CI_USER"
+OC_PASS="$password" occ user:add --password-from-env --display-name="Cantoria CI" --group="$CI_GROUP" "$CI_USER"
 unset password
 
 step "2. Roles"
 # The account holds the catalog role and the read role only, so that the
 # tests can check what a librarian without further roles may not do.
-occ notenarchiv:setup "$CI_USER" --role "librarian=$CI_GROUP" --role "reader=$CI_GROUP" \
+occ cantoria:setup "$CI_USER" --role "librarian=$CI_GROUP" --role "reader=$CI_GROUP" \
 	--role conductor= --role operations= --role contributor=
 
 step "2b. Modules"
 # A new installation starts with the preset "standard"; the tests cover
 # every function, so all modules are switched on. modules_test switches
 # some off and on again and restores this state exactly.
-occ notenarchiv:modules list
-occ notenarchiv:modules preset complete
+occ cantoria:modules list
+occ cantoria:modules preset complete
 
 step "3. Demo data in the files of $CI_USER"
 datadir="$(occ config:system:get datadirectory)"
@@ -195,11 +195,11 @@ cp -r "$DEMO_DIR" "$datadir/$CI_USER/files/$FOLDER"
 occ files:scan --path="/$CI_USER/files/$FOLDER"
 
 step "4. Archive folder"
-occ notenarchiv:setup "$CI_USER" "$FOLDER"
+occ cantoria:setup "$CI_USER" "$FOLDER"
 
 step "5. Catalog import and file sync (figures from tools/demo/README.md)"
-occ notenarchiv:import "$CI_USER" "$IMPORT/catalog.csv" > "$WORK/import-dry-run.json"
-occ notenarchiv:import --execute "$CI_USER" "$IMPORT/catalog.csv" > "$WORK/import.json"
+occ cantoria:import "$CI_USER" "$IMPORT/catalog.csv" > "$WORK/import-dry-run.json"
+occ cantoria:import --execute "$CI_USER" "$IMPORT/catalog.csv" > "$WORK/import.json"
 for report in import-dry-run.json import.json; do
 	expect "$report" rows 23
 	# All 23 rows create a copy also in the real run: the dry run left nothing.
@@ -212,7 +212,7 @@ done
 expect import-dry-run.json dryRun true
 expect import.json dryRun false
 
-occ notenarchiv:file-sync "$CI_USER" > "$WORK/file-sync.json"
+occ cantoria:file-sync "$CI_USER" > "$WORK/file-sync.json"
 expect file-sync.json files 30
 expect file-sync.json byType '{"pdf": 23, "mxl": 4, "musicxml": 3}'
 expect file-sync.json assigned 29
@@ -239,7 +239,7 @@ expect file-sync.json rightsNotices.proposals 1
 
 step "5b. Interface for agents"
 # Never part of a preset ("complete" leaves it off): switched on by itself.
-occ notenarchiv:modules enable agent_api
+occ cantoria:modules enable agent_api
 
 step "6. Integration tests"
 failed=()
@@ -337,8 +337,8 @@ occ group:add "$AGENT_GROUP"
 # Random login password, only passed through the environment, never printed;
 # the agent signs in with an app password of its own (made in agent-demo.mjs).
 agent_password="$(head -c 32 /dev/urandom | base64 | tr -dc 'A-Za-z0-9')"
-OC_PASS="$agent_password" occ user:add --password-from-env --display-name="Notenarchiv CI agent" --group="$AGENT_GROUP" "$AGENT_USER"
-occ notenarchiv:setup "$CI_USER" --role "contributor=$AGENT_GROUP"
+OC_PASS="$agent_password" occ user:add --password-from-env --display-name="Cantoria CI agent" --group="$AGENT_GROUP" "$AGENT_USER"
+occ cantoria:setup "$CI_USER" --role "contributor=$AGENT_GROUP"
 if [ -z "${NC_URL:-}" ]; then
 	NC_URL="http://127.0.0.1:$NC_PORT"
 	"$PHP" -d memory_limit=1G -S "127.0.0.1:$NC_PORT" -t "$NC_ROOT" > "$WORK/php-server.log" 2>&1 &
@@ -351,7 +351,7 @@ if [ -z "${NC_URL:-}" ]; then
 		sleep 0.2
 	done
 fi
-if ! NOTENARCHIV_URL="$NC_URL" AGENT_USER="$AGENT_USER" AGENT_LOGIN_PASSWORD="$agent_password" NC_ROOT="$NC_ROOT" PHP="$PHP" SHELFMARK=1-1 \
+if ! CANTORIA_URL="$NC_URL" AGENT_USER="$AGENT_USER" AGENT_LOGIN_PASSWORD="$agent_password" NC_ROOT="$NC_ROOT" PHP="$PHP" SHELFMARK=1-1 \
 	node "$MCP/ci/agent-demo.mjs"; then
 	agent_failed=1
 fi
@@ -362,7 +362,7 @@ if ! "$PHP" -d memory_limit=1G "$REPO/tools/ci/agent-demo-cleanup.php" "$NC_ROOT
 fi
 occ user:delete "$AGENT_USER"
 occ group:delete "$AGENT_GROUP"
-occ notenarchiv:setup "$CI_USER" --role contributor=
+occ cantoria:setup "$CI_USER" --role contributor=
 if [ -n "$server_pid" ]; then
 	kill "$server_pid" 2>/dev/null || true
 	server_pid=""

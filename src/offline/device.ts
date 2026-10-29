@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -27,7 +27,7 @@ export function offlineSupported(): boolean {
 
 /** Absolute address of the scope: the app's path, which covers the pages */
 function scopeUrl(): string {
-	return new URL(generateUrl('/apps/notenarchiv/'), window.location.href).href
+	return new URL(generateUrl('/apps/cantoria/'), window.location.href).href
 }
 
 /**
@@ -94,10 +94,10 @@ export async function setUpWorker(name: CollectionName, enabled: boolean): Promi
 		return false
 	}
 	try {
-		await navigator.serviceWorker.register(generateUrl('/apps/notenarchiv/offline-worker'), { scope: generateUrl('/apps/notenarchiv/') })
+		await navigator.serviceWorker.register(generateUrl('/apps/cantoria/offline-worker'), { scope: generateUrl('/apps/cantoria/') })
 		return true
 	} catch (error) {
-		console.warn('Notenarchiv: the service worker for practising without a network could not be registered', error)
+		console.warn('Cantoria: the service worker for practising without a network could not be registered', error)
 		return false
 	}
 }
@@ -118,7 +118,7 @@ export async function accountKey(name: CollectionName = 'member'): Promise<strin
 		return PUBLIC_ACCOUNT
 	}
 	const uid = getCurrentUser()?.uid ?? ''
-	const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('notenarchiv|' + uid))
+	const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('cantoria|' + uid))
 	return Array.from(new Uint8Array(digest).slice(0, 16), (byte) => byte.toString(16).padStart(2, '0')).join('')
 }
 
@@ -146,11 +146,11 @@ async function writeCatalog(collection: Collection, catalog: Catalog): Promise<v
  *
  * @param cache - the cache
  * @param url - address, also the key in the cache
- * @param header - value of X-Notenarchiv-Page the answer must have (a page), or null
+ * @param header - value of X-Cantoria-Page the answer must have (a page), or null
  */
 async function keep(cache: Cache, url: string, header: string | null = null): Promise<Response> {
 	const response = await fetch(url, { credentials: 'same-origin', cache: 'no-store', headers: { requesttoken: getRequestToken() ?? '' } })
-	if (!response.ok || response.redirected || (header !== null && response.headers.get('X-Notenarchiv-Page') !== header)) {
+	if (!response.ok || response.redirected || (header !== null && response.headers.get('X-Cantoria-Page') !== header)) {
 		let message = ''
 		try {
 			message = ((await response.json()) as { error?: string }).error ?? ''
@@ -171,7 +171,7 @@ async function keep(cache: Cache, url: string, header: string | null = null): Pr
  * @param page - the answer with the page
  */
 async function servedAt(page: Response): Promise<string> {
-	const state = /id="initial-state-notenarchiv-excerpt" value="([^"]+)"/.exec(await page.text())?.[1]
+	const state = /id="initial-state-cantoria-excerpt" value="([^"]+)"/.exec(await page.text())?.[1]
 	try {
 		const served = (JSON.parse(atob(state ?? '')) as { served?: unknown }).served
 		if (typeof served === 'string' && Number.isFinite(Date.parse(served))) {
@@ -223,7 +223,7 @@ export async function keepPieces(name: CollectionName, pieces: PieceForDevice[],
 	}
 	if (addresses.score) {
 		const page = await fetch(addresses.page(''), { credentials: 'same-origin', cache: 'no-store' })
-		if (page.ok && page.headers.get('X-Notenarchiv-Page') === collection.header) {
+		if (page.ok && page.headers.get('X-Cantoria-Page') === collection.header) {
 			await cache.put(addresses.page(''), page)
 		}
 	}

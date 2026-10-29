@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -130,12 +130,12 @@ function fromDraft(info: FieldInfo, value: DraftValue): FieldValue {
 	const text = String(value).trim()
 	if (info.type === 'number') {
 		if (!/^-?\d+$/.test(text)) {
-			throw new Error(t('notenarchiv', 'Please enter a whole number.'))
+			throw new Error(t('cantoria', 'Please enter a whole number.'))
 		}
 		return Number.parseInt(text, 10)
 	}
 	if (info.type === 'date' && !/^\d{4}-\d{2}-\d{2}$/.test(text)) {
-		throw new Error(t('notenarchiv', 'Please enter a date.'))
+		throw new Error(t('cantoria', 'Please enter a date.'))
 	}
 	return info.type === 'text' || info.type === 'longtext' ? String(value) : text
 }
@@ -190,7 +190,7 @@ async function save(): Promise<void> {
 	if (needsStatusReason.value) {
 		const statusReason = typeof draft.status_reason === 'string' ? draft.status_reason.trim() : ''
 		if (statusReason === '') {
-			errors.status_reason = t('notenarchiv', 'Please give a reason for this status.')
+			errors.status_reason = t('cantoria', 'Please give a reason for this status.')
 			valid = false
 		} else {
 			// The server expects the reason in the same request as the status
@@ -199,12 +199,12 @@ async function save(): Promise<void> {
 	}
 
 	if (!valid) {
-		showError(t('notenarchiv', 'Please check the marked fields.'))
+		showError(t('cantoria', 'Please check the marked fields.'))
 		focusFirstField(true)
 		return
 	}
 	if (Object.keys(changes).length === 0) {
-		showInfo(t('notenarchiv', 'Nothing has changed.'))
+		showInfo(t('cantoria', 'Nothing has changed.'))
 		editing.value = false
 		focusEditButton()
 		return
@@ -213,7 +213,7 @@ async function save(): Promise<void> {
 	saving.value = true
 	try {
 		await updateFields(props.level, props.record.id, changes, reason.value)
-		showSuccess(n('notenarchiv', '%n change saved', '%n changes saved', Object.keys(changes).length))
+		showSuccess(n('cantoria', '%n change saved', '%n changes saved', Object.keys(changes).length))
 		editing.value = false
 		focusEditButton()
 		emit('saved')
@@ -231,7 +231,7 @@ async function save(): Promise<void> {
  */
 function hintFor(key: string): string {
 	if (key === 'status_reason' && needsStatusReason.value) {
-		return t('notenarchiv', 'Required for this status.')
+		return t('cantoria', 'Required for this status.')
 	}
 	// Explanations from the field registry (e.g. the special cases of the protection term)
 	const hint = fieldInfo(props.level, key)?.hint
@@ -251,12 +251,12 @@ function hintFor(key: string): string {
 			<NcButton v-if="editableKeys.length > 0 && !editing"
 				ref="editButton"
 				variant="tertiary"
-				:aria-label="t('notenarchiv', 'Edit {section}', { section: heading })"
+				:aria-label="t('cantoria', 'Edit {section}', { section: heading })"
 				@click="startEditing">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiPencilOutline" />
 				</template>
-				{{ t('notenarchiv', 'Edit') }}
+				{{ t('cantoria', 'Edit') }}
 			</NcButton>
 		</div>
 
@@ -275,14 +275,14 @@ function hintFor(key: string): string {
 			</div>
 		</dl>
 		<p v-if="!editing && fields.length === 0" class="field-section__none">
-			{{ t('notenarchiv', 'No fields.') }}
+			{{ t('cantoria', 'No fields.') }}
 		</p>
 		<NcButton v-if="!editing && emptyCount > 0"
 			variant="tertiary"
 			@click="showEmpty = !showEmpty">
 			{{ showEmpty
-				? t('notenarchiv', 'Hide empty fields')
-				: n('notenarchiv', 'Show %n empty field', 'Show %n empty fields', emptyCount) }}
+				? t('cantoria', 'Hide empty fields')
+				: n('cantoria', 'Show %n empty field', 'Show %n empty fields', emptyCount) }}
 		</NcButton>
 
 		<!-- Editing -->
@@ -305,18 +305,18 @@ function hintFor(key: string): string {
 			</template>
 
 			<NcTextField v-model="reason"
-				:label="t('notenarchiv', 'Reason for the change (optional)')"
-				:helper-text="t('notenarchiv', 'Stored in the audit log.')" />
+				:label="t('cantoria', 'Reason for the change (optional)')"
+				:helper-text="t('cantoria', 'Stored in the audit log.')" />
 
 			<div class="field-section__actions">
 				<NcButton :disabled="saving" @click="cancelEditing">
-					{{ t('notenarchiv', 'Cancel') }}
+					{{ t('cantoria', 'Cancel') }}
 				</NcButton>
 				<NcButton type="submit" variant="primary" :disabled="saving">
 					<template v-if="saving" #icon>
 						<NcLoadingIcon />
 					</template>
-					{{ t('notenarchiv', 'Save') }}
+					{{ t('cantoria', 'Save') }}
 				</NcButton>
 			</div>
 		</form>

@@ -9,7 +9,7 @@
 	"vorlage": {
 		"typ": "druck",
 		"seiten": 1,
-		"schreiber_oder_verlag": "Notenarchiv-Demo (CC0)",
+		"schreiber_oder_verlag": "Cantoria-Demo (CC0)",
 		"beschreibung": "Platzhalter-Scan des Demo-Bestands, eine Seite; Sopran/Alt und Tenor/Bass je auf einem System, Text unter Sopran und Tenor, zwei Strophen."
 	},
 	"umfang": {
@@ -57,8 +57,8 @@
 			{ "rolle": "Text", "name": "Matthias Claudius", "lebensdaten": "1740–1815", "beleg": "Lebensdaten laut Demo-Personenliste" },
 			{ "rolle": "Satz", "name": "Demo-Satz (CC0)", "lebensdaten": "–", "beleg": "eigens für den Demo-Bestand gesetzt, CC0" }
 		],
-		"ausgabe": "Notenarchiv-Demo (CC0), ohne Verlagsnummer",
-		"rights": "Melodie und Text gemeinfrei. Satz: CC0 1.0 (Notenarchiv-Demo-Bestand)"
+		"ausgabe": "Cantoria-Demo (CC0), ohne Verlagsnummer",
+		"rights": "Melodie und Text gemeinfrei. Satz: CC0 1.0 (Cantoria-Demo-Bestand)"
 	},
 	"wv": {
 		"herkunft": "Neuaufbau aus dem Demo-Scan (Spec); keine OMR-Gegenprobe, Ersatzproben Taktlängen, Harmonik und Parallelstellen der Strophen.",

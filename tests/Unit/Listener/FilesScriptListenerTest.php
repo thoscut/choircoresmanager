@@ -3,18 +3,18 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Listener;
+namespace OCA\Cantoria\Tests\Unit\Listener;
 
 use OCA\Files\Event\LoadAdditionalScriptsEvent;
-use OCA\Notenarchiv\Listener\FilesScriptListener;
-use OCA\Notenarchiv\Service\FilesIntegrationService;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\Roles;
-use OCA\Notenarchiv\Tests\Unit\Support\ModuleSwitches;
+use OCA\Cantoria\Listener\FilesScriptListener;
+use OCA\Cantoria\Service\FilesIntegrationService;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\Roles;
+use OCA\Cantoria\Tests\Unit\Support\ModuleSwitches;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\EventDispatcher\Event;
 use OCP\IAppConfig;
@@ -121,7 +121,7 @@ final class FilesScriptListenerTest extends TestCase {
 		self::assertSame(1, $this->scriptsFor('librarian'));
 		self::assertSame(1, $this->scriptsFor('board'), 'read-only role');
 		self::assertSame([FilesScriptListener::STATE => self::STATE], $this->provided);
-		self::assertSame('notenarchiv-files', FilesScriptListener::SCRIPT);
+		self::assertSame('cantoria-files', FilesScriptListener::SCRIPT);
 	}
 
 	public function testAdminsWithoutARoleGetItBecauseTheyMayRead(): void {

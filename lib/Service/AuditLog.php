@@ -3,14 +3,14 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Service;
+namespace OCA\Cantoria\Service;
 
-use OCA\Notenarchiv\Db\AuditEntry;
-use OCA\Notenarchiv\Db\AuditEntryMapper;
+use OCA\Cantoria\Db\AuditEntry;
+use OCA\Cantoria\Db\AuditEntryMapper;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IUserManager;
 

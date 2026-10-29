@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -29,24 +29,24 @@ declare(strict_types=1);
 require __DIR__ . '/harness.php';
 [$root, $uid, $shelfmark] = IntegrationTest::start($argv, ['nextcloud-root', 'uid', 'shelfmark']);
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Db\ArchiveFileMapper;
-use OCA\Notenarchiv\Db\AuditEntryMapper;
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\Event;
-use OCA\Notenarchiv\Db\EventItemMapper;
-use OCA\Notenarchiv\Db\VersionState;
-use OCA\Notenarchiv\Exception\ModuleDisabledException;
-use OCA\Notenarchiv\Service\CatalogService;
-use OCA\Notenarchiv\Service\CorrectionService;
-use OCA\Notenarchiv\Service\EventService;
-use OCA\Notenarchiv\Service\FileSyncService;
-use OCA\Notenarchiv\Service\FullBackupService;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\RightsService;
-use OCA\Notenarchiv\Service\Roles;
-use OCA\Notenarchiv\Service\ScoreService;
-use OCA\Notenarchiv\Service\StateService;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Db\ArchiveFileMapper;
+use OCA\Cantoria\Db\AuditEntryMapper;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Db\Event;
+use OCA\Cantoria\Db\EventItemMapper;
+use OCA\Cantoria\Db\VersionState;
+use OCA\Cantoria\Exception\ModuleDisabledException;
+use OCA\Cantoria\Service\CatalogService;
+use OCA\Cantoria\Service\CorrectionService;
+use OCA\Cantoria\Service\EventService;
+use OCA\Cantoria\Service\FileSyncService;
+use OCA\Cantoria\Service\FullBackupService;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\RightsService;
+use OCA\Cantoria\Service\Roles;
+use OCA\Cantoria\Service\ScoreService;
+use OCA\Cantoria\Service\StateService;
 use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
@@ -264,7 +264,7 @@ try {
 	$sung = $events->detail($event->getId(), $uid)['items'][0] ?? [];
 	$check('the revision sung stays when another one becomes current', ($sung['revision'] ?? null) === $latest->getNumber()
 		&& ($sung['revision_sung'] ?? false) === true);
-	$csv = $events->songOrderCsv($event->getId(), $uid, Server::get(\OCP\L10N\IFactory::class)->get('notenarchiv', 'en'));
+	$csv = $events->songOrderCsv($event->getId(), $uid, Server::get(\OCP\L10N\IFactory::class)->get('cantoria', 'en'));
 	$check('the song order names the revision', str_contains($csv, 'Revision') && str_contains($csv, ';' . $latest->getNumber() . ";\r\n"),
 		strtok($csv, "\n") ?: '');
 } catch (Throwable $e) {

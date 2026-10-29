@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -8,7 +8,7 @@ import type { Catalog } from '../offline/rules.ts'
 import { describe, expect, it } from 'vitest'
 import { COLLECTIONS, localDay, MAX_DAYS_UNCHECKED, pageCollection, parseCatalog, requestKind, syncCatalog, usable } from '../offline/rules.ts'
 
-const SCOPE = '/index.php/apps/notenarchiv/'
+const SCOPE = '/index.php/apps/cantoria/'
 const TOKEN = 'a'.repeat(32)
 const OTHER = 'b'.repeat(32)
 
@@ -28,7 +28,7 @@ describe('requests of the page for choir members', () => {
 		// the scan opens in the page or in a tab of its own
 		expect(requestKind(`${SCOPE}api/member/links/${TOKEN}/scan`, SCOPE, 'document', true)).toEqual({ kind: 'scan', collection: 'member', key: TOKEN })
 		expect(requestKind(`${SCOPE}api/member/links/${TOKEN}/scan`, SCOPE, '', false)).toEqual({ kind: 'scan', collection: 'member', key: TOKEN })
-		expect(requestKind('/apps/notenarchiv/js/notenarchiv-member.mjs', SCOPE, 'script', false)).toEqual({ kind: 'asset' })
+		expect(requestKind('/apps/cantoria/js/cantoria-member.mjs', SCOPE, 'script', false)).toEqual({ kind: 'asset' })
 		expect(requestKind('/apps/theming/theme/light.css', SCOPE, 'style', false)).toEqual({ kind: 'asset' })
 	})
 
@@ -69,7 +69,7 @@ describe('requests of the concert folder and of public links', () => {
 	it('have caches of their own', () => {
 		const caches = Object.values(COLLECTIONS).map((collection) => collection.cache)
 		expect(new Set(caches).size).toBe(caches.length)
-		expect(caches.every((cache) => cache.startsWith('notenarchiv-') && !cache.startsWith('notenarchiv-shell-'))).toBe(true)
+		expect(caches.every((cache) => cache.startsWith('cantoria-') && !cache.startsWith('cantoria-shell-'))).toBe(true)
 	})
 })
 

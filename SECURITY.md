@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 # Security policy
@@ -223,9 +223,9 @@ public links stop working at once.
 **The public pages.**
 
 - Exactly three routes are public (`#[PublicPage]`), the only routes of
-  their controllers: `GET /apps/notenarchiv/p/{token}`, the scan of a public
-  link `GET /apps/notenarchiv/p/{token}/scan` and
-  `GET /apps/notenarchiv/repertoire`. All are plain GET requests, limited
+  their controllers: `GET /apps/cantoria/p/{token}`, the scan of a public
+  link `GET /apps/cantoria/p/{token}/scan` and
+  `GET /apps/cantoria/repertoire`. All are plain GET requests, limited
   per address (60 in 10 minutes, the scan 30) and per account, protected by
   Nextcloud's brute-force protection and need their module; the unit test
   checks this.
@@ -312,7 +312,7 @@ public links stop working at once.
 
 ### Interface for agents
 
-The API for agents (OCS, `/ocs/v2.php/apps/notenarchiv/api/v1/…`,
+The API for agents (OCS, `/ocs/v2.php/apps/cantoria/api/v1/…`,
 [docs/api-v1.md](docs/api-v1.md)) and the MCP server in `tools/mcp` follow
 these rules:
 
@@ -360,7 +360,7 @@ account can do; it offers a stable, documented and limited contract.
 - Files are read through the requesting user's own view of Nextcloud; the app
   never grants access to files a user could not open otherwise. Background
   jobs read through the account that configured the archive folder and only
-  write into `_notenarchiv-app/` inside it (exports of the catalog) and into
+  write into `_cantoria-app/` inside it (exports of the catalog) and into
   the backup folder of that account.
 - The backup folder holds what names people or accounts or opens links: the
   weekly and manual backups (ODS with the audit log, complete JSON backup)

@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -80,7 +80,7 @@ function openDialog(kind: 'answer' | 'close'): void {
 
 async function submit(): Promise<void> {
 	if (dialog.value === 'answer' && text.value.trim() === '') {
-		error.value = t('notenarchiv', 'Please enter an answer.')
+		error.value = t('cantoria', 'Please enter an answer.')
 		return
 	}
 	busy.value = true
@@ -88,10 +88,10 @@ async function submit(): Promise<void> {
 	try {
 		if (dialog.value === 'answer') {
 			await answerTask(props.task.id, text.value.trim())
-			showSuccess(t('notenarchiv', 'The answer has been saved.'))
+			showSuccess(t('cantoria', 'The answer has been saved.'))
 		} else {
 			await closeTask(props.task.id, closeStatus.value, text.value.trim() === '' ? null : text.value.trim())
-			showSuccess(t('notenarchiv', 'The task has been closed.'))
+			showSuccess(t('cantoria', 'The task has been closed.'))
 		}
 		dialog.value = null
 		emit('changed')
@@ -144,29 +144,29 @@ function showScore(): void {
 			{{ task.question }}
 		</p>
 		<dl class="task-item__facts">
-			<dt>{{ t('notenarchiv', 'For') }}</dt>
+			<dt>{{ t('cantoria', 'For') }}</dt>
 			<dd>{{ roleLabel(task.addressee) }}</dd>
 			<template v-if="task.category">
-				<dt>{{ t('notenarchiv', 'Category') }}</dt>
+				<dt>{{ t('cantoria', 'Category') }}</dt>
 				<dd>{{ taskCategoryLabel(task.category) }}</dd>
 			</template>
 			<template v-if="task.origin">
-				<dt>{{ t('notenarchiv', 'Origin') }}</dt>
+				<dt>{{ t('cantoria', 'Origin') }}</dt>
 				<dd>{{ task.origin }}</dd>
 			</template>
 			<template v-if="task.due">
-				<dt>{{ t('notenarchiv', 'Due') }}</dt>
+				<dt>{{ t('cantoria', 'Due') }}</dt>
 				<dd :class="{ 'task-item__overdue': overdue }">
 					{{ formatDate(task.due) }}
 					<template v-if="overdue">
-						({{ t('notenarchiv', 'overdue') }})
+						({{ t('cantoria', 'overdue') }})
 					</template>
 				</dd>
 			</template>
-			<dt>{{ t('notenarchiv', 'Created') }}</dt>
+			<dt>{{ t('cantoria', 'Created') }}</dt>
 			<dd>{{ formatDateTime(task.created) }}</dd>
 			<template v-if="task.answer !== null">
-				<dt>{{ t('notenarchiv', 'Answer') }}</dt>
+				<dt>{{ t('cantoria', 'Answer') }}</dt>
 				<dd class="task-item__answer">
 					{{ task.answer }}
 					<span v-if="task.answered" class="task-item__muted">
@@ -175,7 +175,7 @@ function showScore(): void {
 				</dd>
 			</template>
 			<template v-if="isClosed">
-				<dt>{{ t('notenarchiv', 'Closed') }}</dt>
+				<dt>{{ t('cantoria', 'Closed') }}</dt>
 				<dd>
 					{{ taskStatusLabel(task.status) }}<template v-if="task.closed">
 						, {{ formatDateTime(task.closed) }}
@@ -188,28 +188,28 @@ function showScore(): void {
 		</dl>
 		<div class="task-item__actions no-print">
 			<NcButton v-if="canAnswer" variant="primary" @click="openDialog('answer')">
-				{{ t('notenarchiv', 'Answer') }}
+				{{ t('cantoria', 'Answer') }}
 			</NcButton>
 			<NcButton v-if="canClose" @click="openDialog('close')">
-				{{ t('notenarchiv', 'Close') }}
+				{{ t('cantoria', 'Close') }}
 			</NcButton>
 			<NcButton v-if="canShowScore && (task.measure_from || task.voice)" variant="tertiary" @click="showScore">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiMusic" />
 				</template>
-				{{ t('notenarchiv', 'Show in the score') }}
+				{{ t('cantoria', 'Show in the score') }}
 			</NcButton>
 			<NcButton v-if="showCopy" variant="tertiary" @click="openCopy">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiOpenInApp" />
 				</template>
-				{{ t('notenarchiv', 'Open {shelfmark}', { shelfmark: task.shelfmark ?? '' }) }}
+				{{ t('cantoria', 'Open {shelfmark}', { shelfmark: task.shelfmark ?? '' }) }}
 			</NcButton>
 		</div>
 
 		<ActionDialog v-if="dialog !== null"
-			:name="dialog === 'answer' ? t('notenarchiv', 'Answer the task') : t('notenarchiv', 'Close the task')"
-			:submit-label="dialog === 'answer' ? t('notenarchiv', 'Save answer') : t('notenarchiv', 'Close task')"
+			:name="dialog === 'answer' ? t('cantoria', 'Answer the task') : t('cantoria', 'Close the task')"
+			:submit-label="dialog === 'answer' ? t('cantoria', 'Save answer') : t('cantoria', 'Close task')"
 			:busy="busy"
 			:error="error"
 			@submit="submit"
@@ -219,29 +219,29 @@ function showScore(): void {
 			</p>
 			<template v-if="dialog === 'answer'">
 				<NcTextArea v-model="text"
-					:label="t('notenarchiv', 'Answer (required)')"
+					:label="t('cantoria', 'Answer (required)')"
 					required
 					resize="vertical"
 					rows="5" />
 			</template>
 			<template v-else>
 				<fieldset class="task-item__fieldset">
-					<legend>{{ t('notenarchiv', 'Result') }}</legend>
+					<legend>{{ t('cantoria', 'Result') }}</legend>
 					<NcCheckboxRadioSwitch v-model="closeStatus"
 						type="radio"
 						value="applied"
 						name="task-close-status">
-						{{ t('notenarchiv', 'Applied (the catalog or the file was corrected)') }}
+						{{ t('cantoria', 'Applied (the catalog or the file was corrected)') }}
 					</NcCheckboxRadioSwitch>
 					<NcCheckboxRadioSwitch v-model="closeStatus"
 						type="radio"
 						value="discarded"
 						name="task-close-status">
-						{{ t('notenarchiv', 'Discarded (nothing to change)') }}
+						{{ t('cantoria', 'Discarded (nothing to change)') }}
 					</NcCheckboxRadioSwitch>
 				</fieldset>
 				<NcTextArea v-model="text"
-					:label="t('notenarchiv', 'Note (optional)')"
+					:label="t('cantoria', 'Note (optional)')"
 					resize="vertical"
 					rows="3" />
 			</template>

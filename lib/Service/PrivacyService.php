@@ -3,24 +3,24 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Service;
+namespace OCA\Cantoria\Service;
 
-use OCA\Notenarchiv\Db\AuditEntryMapper;
-use OCA\Notenarchiv\Db\FolderLoan;
-use OCA\Notenarchiv\Db\FolderLoanMapper;
-use OCA\Notenarchiv\Db\FolderMapper;
-use OCA\Notenarchiv\Db\PersonMapper;
+use OCA\Cantoria\Db\AuditEntryMapper;
+use OCA\Cantoria\Db\FolderLoan;
+use OCA\Cantoria\Db\FolderLoanMapper;
+use OCA\Cantoria\Db\FolderMapper;
+use OCA\Cantoria\Db\PersonMapper;
 
 /**
  * Access and erasure for one person (milestone 0.11, Art. 15 and 17 GDPR),
  * by Nextcloud account or by name: the loans of the folder book, the audit
  * entries made by them, and persons of the same name in the register of
- * persons. For self-hosted instances via `occ notenarchiv:privacy-report`
- * and `notenarchiv:privacy-erase`; a deleted Nextcloud account is handled
+ * persons. For self-hosted instances via `occ cantoria:privacy-report`
+ * and `cantoria:privacy-erase`; a deleted Nextcloud account is handled
  * automatically (forgetAccount).
  *
  * Erasure removes the personal data of the loans (also from their audit

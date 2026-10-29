@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -201,7 +201,7 @@ export function choiceLabel(level: Level, key: string, value: string | null | un
 export async function initMeta(): Promise<void> {
 	let initial: Meta | null = null
 	try {
-		initial = loadState<Meta | null>('notenarchiv', 'meta', null)
+		initial = loadState<Meta | null>('cantoria', 'meta', null)
 	} catch {
 		initial = null
 	}

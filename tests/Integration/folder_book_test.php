@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -36,20 +36,20 @@ declare(strict_types=1);
 require __DIR__ . '/harness.php';
 [$root, $uid, $shelfmark] = IntegrationTest::start($argv, ['nextcloud-root', 'uid', 'shelfmark']);
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Controller\FolderBookController;
-use OCA\Notenarchiv\Db\AuditEntryMapper;
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\FolderLoan;
-use OCA\Notenarchiv\Db\FolderLoanMapper;
-use OCA\Notenarchiv\Exception\AccessDeniedException;
-use OCA\Notenarchiv\Exception\ModuleDisabledException;
-use OCA\Notenarchiv\Middleware\ModuleMiddleware;
-use OCA\Notenarchiv\Service\FolderBookService;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\PrivacyService;
-use OCA\Notenarchiv\Service\RightsService;
-use OCA\Notenarchiv\Service\Roles;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Controller\FolderBookController;
+use OCA\Cantoria\Db\AuditEntryMapper;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Db\FolderLoan;
+use OCA\Cantoria\Db\FolderLoanMapper;
+use OCA\Cantoria\Exception\AccessDeniedException;
+use OCA\Cantoria\Exception\ModuleDisabledException;
+use OCA\Cantoria\Middleware\ModuleMiddleware;
+use OCA\Cantoria\Service\FolderBookService;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\PrivacyService;
+use OCA\Cantoria\Service\RightsService;
+use OCA\Cantoria\Service\Roles;
 use OCP\DB\Exception as DbException;
 use OCP\IAppConfig;
 use OCP\IDBConnection;

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+# SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # Builds the release archive for the Nextcloud app store:
@@ -25,7 +25,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$ROOT"
 
-APP_ID=notenarchiv
+APP_ID=cantoria
 VERSION=$(sed -n 's:.*<version>\(.*\)</version>.*:\1:p' appinfo/info.xml)
 SIGN=0
 if [ "${1:-}" = "--sign" ]; then

@@ -1,5 +1,5 @@
 name: Bug report
-description: Something in the Notenarchiv app does not work as described.
+description: Something in the Cantoria app does not work as described.
 labels: ["bug"]
 body:
   - type: markdown
@@ -31,8 +31,8 @@ body:
   - type: input
     id: app-version
     attributes:
-      label: Notenarchiv version
-      description: Apps → Notenarchiv, or `occ app:list | grep notenarchiv`.
+      label: Cantoria version
+      description: Apps → Cantoria, or `occ app:list | grep cantoria`.
       placeholder: e.g. 0.1.26
     validations:
       required: true

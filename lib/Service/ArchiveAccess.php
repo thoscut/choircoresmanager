@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Service;
+namespace OCA\Cantoria\Service;
 
-use OCA\Notenarchiv\Exception\InvalidInputException;
+use OCA\Cantoria\Exception\InvalidInputException;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\IGroup;
@@ -72,7 +72,7 @@ class ArchiveAccess {
 			return $this->rootFolder->getUserFolder($uid)->getFirstNodeById($folderId) instanceof Folder;
 		} catch (\Exception $e) {
 			// No such account, storage not available, …: the account cannot open it now.
-			$this->logger->info('Notenarchiv: access to the archive folder could not be checked for ' . $uid . ': ' . $e->getMessage());
+			$this->logger->info('Cantoria: access to the archive folder could not be checked for ' . $uid . ': ' . $e->getMessage());
 			return false;
 		}
 	}

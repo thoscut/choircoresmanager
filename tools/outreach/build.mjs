@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-// Builds outreach material for the Notenarchiv app with the sender of a
+// Builds outreach material for the Cantoria app with the sender of a
 // choir: a flyer (DIN lang), a business card and two banners.
 //
 //   node build.mjs [--sender file] [--lang de] [--only a,b] [--out dir]
@@ -46,7 +46,7 @@ const MIN_CONTRAST = 4.5
 
 const IMAGE_TYPES = { '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp' }
 
-const HELP = `Builds a flyer, a business card and two banners for the Notenarchiv app.
+const HELP = `Builds a flyer, a business card and two banners for the Cantoria app.
 
   node build.mjs [options]
 

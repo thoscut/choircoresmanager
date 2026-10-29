@@ -1,7 +1,7 @@
-# SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+# SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-# Continuous integration of the Notenarchiv app on GitHub Actions.
+# Continuous integration of the Cantoria app on GitHub Actions.
 #
 # Every job runs in a pinned container image and installs what it needs, so
 # it does not depend on the software of the runner host (the REUSE check runs
@@ -379,10 +379,10 @@ jobs:
         # the tools in vendor-bin/, and Nextcloud loads the app's classes
         # itself, so no "composer install" is needed.
         run: |
-          mkdir "$NEXTCLOUD_ROOT/apps/notenarchiv"
-          cp -r appinfo lib templates img js css l10n LICENSE "$NEXTCLOUD_ROOT/apps/notenarchiv/"
-          php "$NEXTCLOUD_ROOT/occ" app:enable notenarchiv
-          for app in notenarchiv notifications; do
+          mkdir "$NEXTCLOUD_ROOT/apps/cantoria"
+          cp -r appinfo lib templates img js css l10n LICENSE "$NEXTCLOUD_ROOT/apps/cantoria/"
+          php "$NEXTCLOUD_ROOT/occ" app:enable cantoria
+          for app in cantoria notifications; do
             php "$NEXTCLOUD_ROOT/occ" app:list --enabled | grep -E "^  - $app:"
           done
       - name: Integration tests and the agent run with the demo data

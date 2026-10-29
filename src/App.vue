@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -90,7 +90,7 @@ const PersonalViewDialog = defineAsyncComponent(() => import('./components/Perso
 
 /** Tell that a link or the back button led to a function that is switched off. */
 function noticeSwitchedOff(): void {
-	startNotice.value = { text: t('notenarchiv', 'This function is switched off.'), type: 'warning' }
+	startNotice.value = { text: t('cantoria', 'This function is switched off.'), type: 'warning' }
 }
 
 watch(switchedOffNotice, (value) => {
@@ -111,7 +111,7 @@ const catalogEmpty = computed(() => entriesStatus.value === 'ready' && entries.v
  * Nextcloud adds the name of the instance.
  */
 const pageTitle = computed(() => {
-	const appName = t('notenarchiv', 'Music archive')
+	const appName = t('cantoria', 'Music archive')
 	if (!hasAccess.value) {
 		return appName
 	}
@@ -157,7 +157,7 @@ async function followStartParams(params: StartParams): Promise<void> {
 		}
 	}
 	if (copyId !== null && isMissingCopy(copyId, entriesStatus.value === 'ready' ? entries.value : null)) {
-		startNotice.value = { text: t('notenarchiv', 'This copy does not exist or is no longer available.'), type: 'warning' }
+		startNotice.value = { text: t('cantoria', 'This copy does not exist or is no longer available.'), type: 'warning' }
 		// Do not try again on reload; keep the view in the URL
 		navigate(currentView.value, { eventId: currentEventId.value, replace: true })
 		return
@@ -187,13 +187,13 @@ async function openLink(token: string): Promise<void> {
 		const link = await resolveLink(token)
 		const notices: string[] = []
 		if (link.changed) {
-			notices.push(t('notenarchiv', 'The score has been changed since the link was created. Measures and voices may no longer match.'))
+			notices.push(t('cantoria', 'The score has been changed since the link was created. Measures and voices may no longer match.'))
 		}
 		if (link.note) {
-			notices.push(t('notenarchiv', 'Note: {note}', { note: link.note }))
+			notices.push(t('cantoria', 'Note: {note}', { note: link.note }))
 		}
 		if (link.createdByName) {
-			notices.push(t('notenarchiv', 'Link by {name}, valid until {date}.', { name: link.createdByName, date: formatDate(link.expires ?? '') }))
+			notices.push(t('cantoria', 'Link by {name}, valid until {date}.', { name: link.createdByName, date: formatDate(link.expires ?? '') }))
 		}
 		scoreRequest.value = {
 			copyId: link.copy_id,
@@ -207,7 +207,7 @@ async function openLink(token: string): Promise<void> {
 		}
 		await openEntry(link.copy_id)
 	} catch (error) {
-		startNotice.value = { text: t('notenarchiv', 'The link cannot be opened: {reason}', { reason: errorMessage(error) }), type: 'error' }
+		startNotice.value = { text: t('cantoria', 'The link cannot be opened: {reason}', { reason: errorMessage(error) }), type: 'error' }
 	} finally {
 		// Do not open the link again on reload; keep the view in the URL
 		navigate(currentView.value, { eventId: currentEventId.value, replace: true })
@@ -258,26 +258,26 @@ const settingsUrl = adminSettingsUrl()
 </script>
 
 <template>
-	<NcContent app-name="notenarchiv">
+	<NcContent app-name="cantoria">
 		<CatalogNavigation v-if="hasAccess" />
 
-		<NcAppContent :page-heading="t('notenarchiv', 'Music archive')" :page-title="pageTitle">
+		<NcAppContent :page-heading="t('cantoria', 'Music archive')" :page-title="pageTitle">
 			<!-- Meta could not be loaded -->
 			<NcEmptyContent v-if="meta === null && metaError !== ''"
-				:name="t('notenarchiv', 'The music archive could not be loaded')"
+				:name="t('cantoria', 'The music archive could not be loaded')"
 				:description="metaError">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiAlertCircleOutline" />
 				</template>
 				<template #action>
 					<NcButton @click="retry">
-						{{ t('notenarchiv', 'Try again') }}
+						{{ t('cantoria', 'Try again') }}
 					</NcButton>
 				</template>
 			</NcEmptyContent>
 
 			<!-- Starting -->
-			<NcEmptyContent v-else-if="meta === null" :name="t('notenarchiv', 'Loading …')">
+			<NcEmptyContent v-else-if="meta === null" :name="t('cantoria', 'Loading …')">
 				<template #icon>
 					<NcLoadingIcon :size="64" />
 				</template>
@@ -285,13 +285,13 @@ const settingsUrl = adminSettingsUrl()
 
 			<!-- No role -->
 			<NcEmptyContent v-else-if="!hasAccess"
-				:name="t('notenarchiv', 'No access to the music archive')"
-				:description="t('notenarchiv', 'Your account has no role in the music archive. Please ask the administration to add your account to the group of your role.')">
+				:name="t('cantoria', 'No access to the music archive')"
+				:description="t('cantoria', 'Your account has no role in the music archive. Please ask the administration to add your account to the group of your role.')">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiAccountLockOutline" />
 				</template>
 				<template #action>
-					<GuideLink :href="userGuideUrl(USER_GUIDE.noAccess)" :label="t('notenarchiv', 'No access to the music archive (guide)')" />
+					<GuideLink :href="userGuideUrl(USER_GUIDE.noAccess)" :label="t('cantoria', 'No access to the music archive (guide)')" />
 				</template>
 			</NcEmptyContent>
 
@@ -302,7 +302,7 @@ const settingsUrl = adminSettingsUrl()
 
 				<!-- Loading the catalog -->
 				<NcEmptyContent v-if="entriesStatus === 'loading' || entriesStatus === 'idle'"
-					:name="t('notenarchiv', 'Loading the catalog …')">
+					:name="t('cantoria', 'Loading the catalog …')">
 					<template #icon>
 						<NcLoadingIcon :size="64" />
 					</template>
@@ -310,33 +310,33 @@ const settingsUrl = adminSettingsUrl()
 
 				<!-- Loading failed -->
 				<NcEmptyContent v-else-if="entriesStatus === 'error'"
-					:name="t('notenarchiv', 'The catalog could not be loaded')"
+					:name="t('cantoria', 'The catalog could not be loaded')"
 					:description="entriesError">
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiAlertCircleOutline" />
 					</template>
 					<template #action>
 						<NcButton @click="retry">
-							{{ t('notenarchiv', 'Try again') }}
+							{{ t('cantoria', 'Try again') }}
 						</NcButton>
 					</template>
 				</NcEmptyContent>
 
 				<!-- Empty catalog -->
 				<NcEmptyContent v-else-if="catalogEmpty"
-					:name="t('notenarchiv', 'No catalog yet')">
+					:name="t('cantoria', 'No catalog yet')">
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiBookshelf" />
 					</template>
 					<template #description>
 						<template v-if="isLibrarian">
-							{{ t('notenarchiv', 'Import the existing catalog (CSV) in the archive management: Archive management → Import catalog. A complete backup is restored there as well.') }}
+							{{ t('cantoria', 'Import the existing catalog (CSV) in the archive management: Archive management → Import catalog. A complete backup is restored there as well.') }}
 						</template>
 						<template v-else-if="isAdmin">
-							{{ t('notenarchiv', 'First choose the archive folder and assign the roles in the settings. Then a music librarian imports the catalog. A complete backup can be restored in the settings.') }}
+							{{ t('cantoria', 'First choose the archive folder and assign the roles in the settings. Then a music librarian imports the catalog. A complete backup can be restored in the settings.') }}
 						</template>
 						<template v-else>
-							{{ t('notenarchiv', 'The music librarian has not imported the catalog yet.') }}
+							{{ t('cantoria', 'The music librarian has not imported the catalog yet.') }}
 						</template>
 					</template>
 					<template v-if="isLibrarian || canChangeSettings" #action>
@@ -345,13 +345,13 @@ const settingsUrl = adminSettingsUrl()
 								<template #icon>
 									<NcIconSvgWrapper :path="mdiArchiveOutline" />
 								</template>
-								{{ t('notenarchiv', 'Open archive management') }}
+								{{ t('cantoria', 'Open archive management') }}
 							</NcButton>
 							<NcButton v-if="canChangeSettings" :href="settingsUrl">
 								<template #icon>
 									<NcIconSvgWrapper :path="mdiCogOutline" />
 								</template>
-								{{ t('notenarchiv', 'Open settings') }}
+								{{ t('cantoria', 'Open settings') }}
 							</NcButton>
 						</div>
 					</template>
@@ -468,14 +468,14 @@ const settingsUrl = adminSettingsUrl()
 		display: none !important;
 	}
 
-	#notenarchiv * {
+	#cantoria * {
 		color: #000 !important;
 		background-color: transparent !important;
 		box-shadow: none !important;
 	}
 
-	#notenarchiv a,
-	#notenarchiv button {
+	#cantoria a,
+	#cantoria button {
 		text-decoration: none !important;
 	}
 }

@@ -3,17 +3,17 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Service;
+namespace OCA\Cantoria\Tests\Unit\Service;
 
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
-use OCA\Notenarchiv\Exception\InvalidInputException;
-use OCA\Notenarchiv\Service\FullBackupService;
+use OCA\Cantoria\Exception\InvalidInputException;
+use OCA\Cantoria\Service\FullBackupService;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -33,7 +33,7 @@ final class FullBackupServiceTest extends TestCase {
 		return json_encode($overrides + [
 			'format' => FullBackupService::FORMAT,
 			'formatVersion' => FullBackupService::FORMAT_VERSION,
-			'app' => 'notenarchiv',
+			'app' => 'cantoria',
 			'appVersion' => '0.1.11',
 			'created' => '2026-10-22T12:00:00+00:00',
 			'tables' => [
@@ -79,7 +79,7 @@ final class FullBackupServiceTest extends TestCase {
 		yield 'not JSON' => ['Mappe;Nr;Signatur'];
 		yield 'empty' => [''];
 		yield 'JSON list' => ['[1, 2, 3]'];
-		yield 'JSON scalar' => ['"notenarchiv-backup"'];
+		yield 'JSON scalar' => ['"cantoria-backup"'];
 		yield 'other format' => [self::backup(['format' => 'something-else'])];
 		yield 'version missing' => [json_encode(['format' => FullBackupService::FORMAT, 'tables' => []], JSON_THROW_ON_ERROR)];
 		yield 'version as text' => [self::backup(['formatVersion' => '1'])];

@@ -3,30 +3,30 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Service;
+namespace OCA\Cantoria\Tests\Unit\Service;
 
-use OCA\Notenarchiv\Db\ArchiveFile;
-use OCA\Notenarchiv\Db\ArchiveFileMapper;
-use OCA\Notenarchiv\Db\Copy;
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\EventItem;
-use OCA\Notenarchiv\Db\ReviewPointMapper;
-use OCA\Notenarchiv\Db\TranscriptionReportMapper;
-use OCA\Notenarchiv\Db\VersionState;
-use OCA\Notenarchiv\Db\VersionStateMapper;
-use OCA\Notenarchiv\Db\WorkVersion;
-use OCA\Notenarchiv\Db\WorkVersionMapper;
-use OCA\Notenarchiv\Exception\InvalidInputException;
-use OCA\Notenarchiv\Service\AppSettings;
-use OCA\Notenarchiv\Service\AuditLog;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\Roles;
-use OCA\Notenarchiv\Service\StateService;
-use OCA\Notenarchiv\Tests\Unit\Support\ModuleSwitches;
+use OCA\Cantoria\Db\ArchiveFile;
+use OCA\Cantoria\Db\ArchiveFileMapper;
+use OCA\Cantoria\Db\Copy;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Db\EventItem;
+use OCA\Cantoria\Db\ReviewPointMapper;
+use OCA\Cantoria\Db\TranscriptionReportMapper;
+use OCA\Cantoria\Db\VersionState;
+use OCA\Cantoria\Db\VersionStateMapper;
+use OCA\Cantoria\Db\WorkVersion;
+use OCA\Cantoria\Db\WorkVersionMapper;
+use OCA\Cantoria\Exception\InvalidInputException;
+use OCA\Cantoria\Service\AppSettings;
+use OCA\Cantoria\Service\AuditLog;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\Roles;
+use OCA\Cantoria\Service\StateService;
+use OCA\Cantoria\Tests\Unit\Support\ModuleSwitches;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IDateTimeZone;
 use OCP\IDBConnection;

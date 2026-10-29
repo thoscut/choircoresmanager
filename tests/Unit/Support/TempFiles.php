@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Support;
+namespace OCA\Cantoria\Tests\Unit\Support;
 
 use OCP\ITempManager;
 use PHPUnit\Framework\TestCase;
@@ -25,7 +25,7 @@ trait TempFiles {
 	protected function tempManager(): ITempManager {
 		$manager = $this->createStub(ITempManager::class);
 		$manager->method('getTemporaryFile')->willReturnCallback(function (string $postFix = ''): string {
-			$path = tempnam(sys_get_temp_dir(), 'notenarchiv-test');
+			$path = tempnam(sys_get_temp_dir(), 'cantoria-test');
 			if ($path === false) {
 				throw new \RuntimeException('No temporary file');
 			}
@@ -36,7 +36,7 @@ trait TempFiles {
 	}
 
 	protected function tempFile(string $content): string {
-		$path = tempnam(sys_get_temp_dir(), 'notenarchiv-test');
+		$path = tempnam(sys_get_temp_dir(), 'cantoria-test');
 		if ($path === false) {
 			throw new \RuntimeException('No temporary file');
 		}

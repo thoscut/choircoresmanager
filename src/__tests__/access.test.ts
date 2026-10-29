@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -91,8 +91,8 @@ describe('settings and the archive folder', () => {
 	})
 
 	it('links to the access check under Administration', () => {
-		expect(adminSettingsUrl('notenarchiv-access')).toMatch(/\/settings\/admin\/notenarchiv#notenarchiv-access$/)
-		expect(adminSettingsUrl()).toMatch(/\/settings\/admin\/notenarchiv$/)
+		expect(adminSettingsUrl('cantoria-access')).toMatch(/\/settings\/admin\/cantoria#cantoria-access$/)
+		expect(adminSettingsUrl()).toMatch(/\/settings\/admin\/cantoria$/)
 	})
 
 	it('reads the reason of a refused score', () => {

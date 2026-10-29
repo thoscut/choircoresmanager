@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -17,7 +17,7 @@
  * dismisses the agent's points afterwards.
  *
  * Environment:
- *   NOTENARCHIV_URL       Nextcloud, e.g. http://127.0.0.1:8080
+ *   CANTORIA_URL       Nextcloud, e.g. http://127.0.0.1:8080
  *   AGENT_USER            the agent's account (role "contributor")
  *   AGENT_LOGIN_PASSWORD  its login password, used once to get an app password
  *   NC_ROOT               the Nextcloud directory (for occ)
@@ -43,7 +43,7 @@ const env = (name, fallback) => {
 	}
 	return value
 }
-const url = env('NOTENARCHIV_URL').replace(/\/+$/, '')
+const url = env('CANTORIA_URL').replace(/\/+$/, '')
 const user = env('AGENT_USER')
 const loginPassword = env('AGENT_LOGIN_PASSWORD')
 const ncRoot = env('NC_ROOT')
@@ -92,14 +92,14 @@ const connect = async (appPassword, extra = {}) => {
 	const transport = new StdioClientTransport({
 		command: process.execPath,
 		args: [server],
-		env: { ...getDefaultEnvironment(), NOTENARCHIV_URL: url, NOTENARCHIV_USER: user, NOTENARCHIV_APP_PASSWORD: appPassword, ...extra },
+		env: { ...getDefaultEnvironment(), CANTORIA_URL: url, CANTORIA_USER: user, CANTORIA_APP_PASSWORD: appPassword, ...extra },
 		stderr: 'pipe',
 	})
 	let stderr = ''
 	transport.stderr?.on('data', (chunk) => {
 		stderr += chunk
 	})
-	const client = new Client({ name: 'notenarchiv-ci-agent', version: '1.0.0' })
+	const client = new Client({ name: 'cantoria-ci-agent', version: '1.0.0' })
 	await client.connect(transport)
 	return { client, stderr: () => stderr }
 }
@@ -205,33 +205,33 @@ try {
 	// Deciding a review point is for people: api/v1 has no route, the route of the UI checks the role.
 	const point = demoPoints.find((entry) => entry.role === 'conductor') ?? demoPoints[0]
 	for (const path of [`review_points/${point?.id ?? 0}/decision`, `review-points/${point?.id ?? 0}/decision`, `copies/${copy?.id ?? 0}/corrections`]) {
-		const missing = await request('POST', `/ocs/v2.php/apps/notenarchiv/api/v1/${path}`, appPassword, { status: 'confirmed' })
+		const missing = await request('POST', `/ocs/v2.php/apps/cantoria/api/v1/${path}`, appPassword, { status: 'confirmed' })
 		check(`api/v1 has no route ${path.replace(/\d+/g, '{id}')} (404/405)`, missing.status === 404 || missing.status === 405, `HTTP ${missing.status}`)
 	}
-	const decision = await request('POST', `/index.php/apps/notenarchiv/api/review-points/${point?.id ?? 0}/decision`, appPassword,
+	const decision = await request('POST', `/index.php/apps/cantoria/api/review-points/${point?.id ?? 0}/decision`, appPassword,
 		{ status: 'confirmed', reason: 'agent' })
 	check('deciding a review point with the app password is refused (403)', decision.status === 403, `HTTP ${decision.status}`)
-	const correction = await request('POST', `/index.php/apps/notenarchiv/api/versions/${copy?.version_id ?? 0}/corrections`, appPassword,
+	const correction = await request('POST', `/index.php/apps/cantoria/api/versions/${copy?.version_id ?? 0}/corrections`, appPassword,
 		{ fileId: 0, content: '<score-partwise/>', pointIds: [point?.id ?? 0] })
 	check('saving a correction with the app password is refused (403)', correction.status === 403, `HTTP ${correction.status}`)
 	const unchanged = data(await client.callTool({ name: 'get_review', arguments: { copy_id: copy?.id ?? 0, status: 'open', limit: 100 } }))
 	check('the point stays open', unchanged?.items?.some((entry) => entry.id === point?.id) === true)
 
-	const confirm = await request('POST', `/index.php/apps/notenarchiv/api/versions/${copy?.version_id ?? 0}/confirm`, appPassword,
+	const confirm = await request('POST', `/index.php/apps/cantoria/api/versions/${copy?.version_id ?? 0}/confirm`, appPassword,
 		{ status: 'public_domain', reason: 'agent', evidence: 'agent' })
 	check('confirming rights with the app password is refused (403)', confirm.status === 403, `HTTP ${confirm.status}`)
-	const noRoute = await request('POST', `/ocs/v2.php/apps/notenarchiv/api/v1/versions/${copy?.version_id ?? 0}/confirm`, appPassword, {})
+	const noRoute = await request('POST', `/ocs/v2.php/apps/cantoria/api/v1/versions/${copy?.version_id ?? 0}/confirm`, appPassword, {})
 	check('api/v1 has no route to confirm (404/405)', noRoute.status === 404 || noRoute.status === 405, `HTTP ${noRoute.status}`)
 
-	occRun('notenarchiv:modules', 'disable', 'agent_api')
+	occRun('cantoria:modules', 'disable', 'agent_api')
 	try {
-		const off = await request('GET', '/ocs/v2.php/apps/notenarchiv/api/v1/modules', appPassword)
+		const off = await request('GET', '/ocs/v2.php/apps/cantoria/api/v1/modules', appPassword)
 		check('without agent_api the API answers 404 with OCS meta', off.status === 404 && off.json?.ocs?.meta?.statuscode === 404
 			&& off.json?.ocs?.meta?.message === 'This function is switched off.', `HTTP ${off.status} ${JSON.stringify(off.json?.ocs?.meta)}`)
 		const offTool = await client.callTool({ name: 'search_catalog', arguments: {} })
 		check('and the tool reports it', offTool.isError === true && /switched off/.test(data(offTool)), String(data(offTool)))
 	} finally {
-		occRun('notenarchiv:modules', 'enable', 'agent_api')
+		occRun('cantoria:modules', 'enable', 'agent_api')
 	}
 	check('switched on again', !(await client.callTool({ name: 'list_due', arguments: {} })).isError)
 
@@ -240,7 +240,7 @@ try {
 		stderr().trim())
 
 	// ---- 4. Read-only mode ----
-	const readOnly = await connect(appPassword, { NOTENARCHIV_READ_ONLY: '1' })
+	const readOnly = await connect(appPassword, { CANTORIA_READ_ONLY: '1' })
 	const readOnlyNames = (await readOnly.client.listTools()).tools.map((tool) => tool.name)
 	check('read-only: no writing tools', !readOnlyNames.includes('propose_change') && !readOnlyNames.includes('create_task')
 		&& !readOnlyNames.includes('submit_transcription_report') && readOnlyNames.includes('search_catalog') && readOnlyNames.includes('get_review'),
@@ -252,7 +252,7 @@ try {
 	// ---- 5. The app password is deleted ----
 	const deleted = await request('DELETE', '/ocs/v2.php/core/apppassword', appPassword)
 	check('app password deleted', deleted.status === 200, `HTTP ${deleted.status}`)
-	const after = await request('GET', '/ocs/v2.php/apps/notenarchiv/api/v1/modules', appPassword)
+	const after = await request('GET', '/ocs/v2.php/apps/cantoria/api/v1/modules', appPassword)
 	check('the deleted app password no longer signs in', after.status === 401, `HTTP ${after.status}`)
 }
 

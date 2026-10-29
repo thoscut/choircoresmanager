@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -48,7 +48,7 @@ const restoredNote = useTemplateRef('restoredNote')
 async function choose(): Promise<void> {
 	let nodes
 	try {
-		nodes = await getFilePickerBuilder(t('notenarchiv', 'Choose the backup file (JSON)'))
+		nodes = await getFilePickerBuilder(t('cantoria', 'Choose the backup file (JSON)'))
 			.setMultiSelect(false)
 			.setMimeTypeFilter(['application/json'])
 			.setType(FilePickerType.Choose)
@@ -63,7 +63,7 @@ async function choose(): Promise<void> {
 	}
 	const node = nodes[0]
 	if (!node?.fileid) {
-		showError(t('notenarchiv', 'The chosen file cannot be used.'))
+		showError(t('cantoria', 'The chosen file cannot be used.'))
 		await focusAfterDialog(chooseButton)
 		return
 	}
@@ -82,7 +82,7 @@ async function restore(): Promise<void> {
 	try {
 		restored.value = await restoreBackup(file.value.id)
 		file.value = null
-		showSuccess(t('notenarchiv', 'The backup has been restored.'))
+		showSuccess(t('cantoria', 'The backup has been restored.'))
 		emit('restored')
 		// The button to restore is disabled now (the catalog is filled)
 		await focusAfterDialog(restoredNote)
@@ -102,33 +102,33 @@ async function restore(): Promise<void> {
 function tableLabel(table: string): string {
 	switch (table.replace(/^notarch_/, '')) {
 	case 'works':
-		return t('notenarchiv', 'Works')
+		return t('cantoria', 'Works')
 	case 'versions':
-		return t('notenarchiv', 'Versions')
+		return t('cantoria', 'Versions')
 	case 'copies':
-		return t('notenarchiv', 'Copies')
+		return t('cantoria', 'Copies')
 	case 'files':
-		return t('notenarchiv', 'Files')
+		return t('cantoria', 'Files')
 	case 'licenses':
-		return t('notenarchiv', 'Licenses')
+		return t('cantoria', 'Licenses')
 	case 'proposals':
-		return t('notenarchiv', 'Proposals')
+		return t('cantoria', 'Proposals')
 	case 'tasks':
-		return t('notenarchiv', 'Tasks')
+		return t('cantoria', 'Tasks')
 	case 'links':
-		return t('notenarchiv', 'Internal links')
+		return t('cantoria', 'Internal links')
 	case 'events':
-		return t('notenarchiv', 'Concerts and song lists')
+		return t('cantoria', 'Concerts and song lists')
 	case 'event_items':
-		return t('notenarchiv', 'Programme lines')
+		return t('cantoria', 'Programme lines')
 	case 'persons':
-		return t('notenarchiv', 'Persons')
+		return t('cantoria', 'Persons')
 	case 'contributions':
-		return t('notenarchiv', 'Contributions')
+		return t('cantoria', 'Contributions')
 	case 'merges':
-		return t('notenarchiv', 'Merges')
+		return t('cantoria', 'Merges')
 	case 'audit':
-		return t('notenarchiv', 'Audit log')
+		return t('cantoria', 'Audit log')
 	default:
 		return table
 	}
@@ -138,35 +138,35 @@ function tableLabel(table: string): string {
 <template>
 	<div class="backup-restore">
 		<p>
-			{{ t('notenarchiv', 'The complete backup contains all data of the music archive (catalog, rights, licenses, tasks, programmes, persons and the audit log) in one JSON file. The files of the archive folder are not part of it.') }}
+			{{ t('cantoria', 'The complete backup contains all data of the music archive (catalog, rights, licenses, tasks, programmes, persons and the audit log) in one JSON file. The files of the archive folder are not part of it.') }}
 		</p>
 		<div class="backup-restore__actions">
 			<NcButton :href="fullBackupUrl()" download>
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiDownload" />
 				</template>
-				{{ t('notenarchiv', 'Download complete backup (JSON)') }}
+				{{ t('cantoria', 'Download complete backup (JSON)') }}
 			</NcButton>
 		</div>
 
-		<h4>{{ t('notenarchiv', 'Restore') }}</h4>
+		<h4>{{ t('cantoria', 'Restore') }}</h4>
 		<NcNoteCard type="warning">
-			{{ t('notenarchiv', 'A backup can only be restored into an empty catalog, e.g. after reinstalling the app. Nothing existing is overwritten; with data in the catalog the restore is refused.') }}
+			{{ t('cantoria', 'A backup can only be restored into an empty catalog, e.g. after reinstalling the app. Nothing existing is overwritten; with data in the catalog the restore is refused.') }}
 		</NcNoteCard>
 		<p v-if="catalogFilled" class="backup-restore__muted">
-			{{ t('notenarchiv', 'The catalog is not empty, so a restore is not possible.') }}
+			{{ t('cantoria', 'The catalog is not empty, so a restore is not possible.') }}
 		</p>
 		<div class="backup-restore__actions">
 			<NcButton ref="chooseButton" :disabled="busy || catalogFilled" @click="choose">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiBackupRestore" />
 				</template>
-				{{ t('notenarchiv', 'Restore from a backup …') }}
+				{{ t('cantoria', 'Restore from a backup …') }}
 			</NcButton>
 		</div>
 
 		<NcNoteCard v-if="restored" ref="restoredNote" type="success">
-			<p>{{ t('notenarchiv', 'Restored:') }}</p>
+			<p>{{ t('cantoria', 'Restored:') }}</p>
 			<dl class="backup-restore__figures">
 				<template v-for="(count, table) in restored" :key="table">
 					<dt>{{ tableLabel(String(table)) }}</dt>
@@ -176,8 +176,8 @@ function tableLabel(table: string): string {
 		</NcNoteCard>
 
 		<ActionDialog v-if="file"
-			:name="t('notenarchiv', 'Restore backup')"
-			:submit-label="t('notenarchiv', 'Restore now')"
+			:name="t('cantoria', 'Restore backup')"
+			:submit-label="t('cantoria', 'Restore now')"
 			:busy="busy"
 			:error="error"
 			:submit-disabled="!understood"
@@ -186,11 +186,11 @@ function tableLabel(table: string): string {
 			@close="file = null">
 			<p class="backup-restore__warning">
 				<NcIconSvgWrapper :path="mdiAlertOutline" inline />
-				{{ t('notenarchiv', 'All data of the backup are written into the empty catalog: works, versions, copies, rights, licenses, tasks, programmes, persons and the audit log.') }}
+				{{ t('cantoria', 'All data of the backup are written into the empty catalog: works, versions, copies, rights, licenses, tasks, programmes, persons and the audit log.') }}
 			</p>
-			<p>{{ t('notenarchiv', 'File: {name}', { name: file.name }) }}</p>
+			<p>{{ t('cantoria', 'File: {name}', { name: file.name }) }}</p>
 			<NcCheckboxRadioSwitch v-model="understood">
-				{{ t('notenarchiv', 'I have checked that this is the right and most recent backup.') }}
+				{{ t('cantoria', 'I have checked that this is the right and most recent backup.') }}
 			</NcCheckboxRadioSwitch>
 		</ActionDialog>
 	</div>

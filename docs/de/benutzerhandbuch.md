@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 # Benutzerhandbuch
@@ -1270,7 +1270,7 @@ sie dort annimmst (siehe
 ### Die öffentliche Repertoireseite
 
 Die Archivverwaltung kann Werke auf einer öffentlichen Seite des Chors
-(`/apps/notenarchiv/repertoire`) zeigen, mit Titel, Komposition und Text,
+(`/apps/cantoria/repertoire`) zeigen, mit Titel, Komposition und Text,
 Lebensdaten, Besetzung und Links zu CPDL und IMSLP:
 
 1. Bestätige eine Fassung des Werks als gemeinfrei (Reiter **Rechte**).

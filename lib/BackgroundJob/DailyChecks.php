@@ -3,33 +3,33 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\BackgroundJob;
+namespace OCA\Cantoria\BackgroundJob;
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\Event;
-use OCA\Notenarchiv\Db\EventMapper;
-use OCA\Notenarchiv\Db\LicenseMapper;
-use OCA\Notenarchiv\Db\WorkMapper;
-use OCA\Notenarchiv\Db\WorkVersionMapper;
-use OCA\Notenarchiv\Exception\InvalidInputException;
-use OCA\Notenarchiv\Service\AppSettings;
-use OCA\Notenarchiv\Service\ConcertDeadlines;
-use OCA\Notenarchiv\Service\ExportService;
-use OCA\Notenarchiv\Service\FieldValue;
-use OCA\Notenarchiv\Service\FolderBookService;
-use OCA\Notenarchiv\Service\HandoverService;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\NotificationService;
-use OCA\Notenarchiv\Service\PersonService;
-use OCA\Notenarchiv\Service\PrintMirrorService;
-use OCA\Notenarchiv\Service\ProtectionTerm;
-use OCA\Notenarchiv\Service\RightsService;
-use OCA\Notenarchiv\Service\Roles;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Db\Event;
+use OCA\Cantoria\Db\EventMapper;
+use OCA\Cantoria\Db\LicenseMapper;
+use OCA\Cantoria\Db\WorkMapper;
+use OCA\Cantoria\Db\WorkVersionMapper;
+use OCA\Cantoria\Exception\InvalidInputException;
+use OCA\Cantoria\Service\AppSettings;
+use OCA\Cantoria\Service\ConcertDeadlines;
+use OCA\Cantoria\Service\ExportService;
+use OCA\Cantoria\Service\FieldValue;
+use OCA\Cantoria\Service\FolderBookService;
+use OCA\Cantoria\Service\HandoverService;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\NotificationService;
+use OCA\Cantoria\Service\PersonService;
+use OCA\Cantoria\Service\PrintMirrorService;
+use OCA\Cantoria\Service\ProtectionTerm;
+use OCA\Cantoria\Service\RightsService;
+use OCA\Cantoria\Service\Roles;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJob;
 use OCP\BackgroundJob\TimedJob;

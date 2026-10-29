@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -86,15 +86,15 @@ const onlyVersion = computed(() => props.detail.siblings.every((sibling) => sibl
 
 const validText = computed(() => {
 	if (validSince.value !== '') {
-		return t('notenarchiv', 'This version is valid for the choir since {date}.', { date: formatDate(validSince.value) })
+		return t('cantoria', 'This version is valid for the choir since {date}.', { date: formatDate(validSince.value) })
 	}
 	if (otherValidCopies.value.length > 0) {
-		return t('notenarchiv', 'Another version of this work is valid for the choir: {shelfmarks}.', { shelfmarks: otherValidCopies.value.join(', ') })
+		return t('cantoria', 'Another version of this work is valid for the choir: {shelfmarks}.', { shelfmarks: otherValidCopies.value.join(', ') })
 	}
 	if (onlyVersion.value) {
-		return t('notenarchiv', 'Only version of the work – not decided.')
+		return t('cantoria', 'Only version of the work – not decided.')
 	}
-	return t('notenarchiv', 'No version of this work has been chosen yet.')
+	return t('cantoria', 'No version of this work has been chosen yet.')
 })
 
 // ---- licenses ------------------------------------------------------------------
@@ -127,15 +127,15 @@ function licensePeriod(license: License): string {
 	const from = license.valid_from ? formatDate(license.valid_from) : ''
 	const until = license.valid_until ? formatDate(license.valid_until) : ''
 	if (from && until) {
-		return t('notenarchiv', '{from} to {until}', { from, until })
+		return t('cantoria', '{from} to {until}', { from, until })
 	}
 	if (until) {
-		return t('notenarchiv', 'until {until}', { until })
+		return t('cantoria', 'until {until}', { until })
 	}
 	if (from) {
-		return t('notenarchiv', 'from {from}', { from })
+		return t('cantoria', 'from {from}', { from })
 	}
-	return t('notenarchiv', 'no time limit')
+	return t('cantoria', 'no time limit')
 }
 
 /**
@@ -158,7 +158,7 @@ const sortedLicenses = computed(() => [...props.detail.licenses].sort((a, b) => 
  */
 function currentValue(proposal: Proposal): string {
 	const record = props.detail[proposal.object_type]
-	return displayValue(fieldInfo(proposal.object_type, proposal.field), record?.[proposal.field]) || t('notenarchiv', '(empty)')
+	return displayValue(fieldInfo(proposal.object_type, proposal.field), record?.[proposal.field]) || t('cantoria', '(empty)')
 }
 
 /**
@@ -174,7 +174,7 @@ function proposedValue(proposal: Proposal): string {
 		value = proposal.new_value
 	}
 	const shown = typeof value === 'object' && value !== null ? JSON.stringify(value) : value as string | number | boolean | null
-	return displayValue(fieldInfo(proposal.object_type, proposal.field), shown) || t('notenarchiv', '(empty)')
+	return displayValue(fieldInfo(proposal.object_type, proposal.field), shown) || t('cantoria', '(empty)')
 }
 
 // ---- actions -------------------------------------------------------------------
@@ -209,17 +209,17 @@ function openDialog(kind: DialogKind): void {
 const dialogTitle = computed(() => {
 	switch (dialog.value) {
 	case 'confirm':
-		return t('notenarchiv', 'Confirm the rights status')
+		return t('cantoria', 'Confirm the rights status')
 	case 'open':
-		return t('notenarchiv', 'When in doubt: set to open')
+		return t('cantoria', 'When in doubt: set to open')
 	case 'portal-add':
-		return t('notenarchiv', 'Provide in the singers\' portal')
+		return t('cantoria', 'Provide in the singers\' portal')
 	case 'portal-remove':
-		return t('notenarchiv', 'Take out of the singers\' portal')
+		return t('cantoria', 'Take out of the singers\' portal')
 	case 'valid-set':
-		return t('notenarchiv', 'Set as valid for the choir')
+		return t('cantoria', 'Set as valid for the choir')
 	case 'valid-clear':
-		return t('notenarchiv', 'Set as no longer valid for the choir')
+		return t('cantoria', 'Set as no longer valid for the choir')
 	default:
 		return ''
 	}
@@ -228,17 +228,17 @@ const dialogTitle = computed(() => {
 const dialogSubmit = computed(() => {
 	switch (dialog.value) {
 	case 'confirm':
-		return t('notenarchiv', 'Confirm')
+		return t('cantoria', 'Confirm')
 	case 'open':
-		return t('notenarchiv', 'Set to open')
+		return t('cantoria', 'Set to open')
 	case 'portal-add':
-		return t('notenarchiv', 'Save date')
+		return t('cantoria', 'Save date')
 	case 'portal-remove':
-		return t('notenarchiv', 'Record removal')
+		return t('cantoria', 'Record removal')
 	case 'valid-set':
-		return t('notenarchiv', 'Set as valid')
+		return t('cantoria', 'Set as valid')
 	case 'valid-clear':
-		return t('notenarchiv', 'Clear')
+		return t('cantoria', 'Clear')
 	default:
 		return ''
 	}
@@ -261,15 +261,15 @@ async function submitDialog(): Promise<void> {
 	}
 	const reason = draft.value.reason.trim()
 	if (reasonRequired.value && reason === '') {
-		error.value = t('notenarchiv', 'Please give a reason.')
+		error.value = t('cantoria', 'Please give a reason.')
 		return
 	}
 	if (kind === 'confirm' && draft.value.evidence.trim() === '') {
-		error.value = t('notenarchiv', 'Please name the evidence.')
+		error.value = t('cantoria', 'Please name the evidence.')
 		return
 	}
 	if (againstProposal.value && !proposalChecked.value) {
-		error.value = t('notenarchiv', 'Please confirm that you have checked the protection proposal.')
+		error.value = t('cantoria', 'Please confirm that you have checked the protection proposal.')
 		return
 	}
 	busy.value = true
@@ -278,27 +278,27 @@ async function submitDialog(): Promise<void> {
 		switch (kind) {
 		case 'confirm':
 			await confirmRights(versionId.value, draft.value.status, reason, draft.value.evidence.trim())
-			showSuccess(t('notenarchiv', 'The rights status has been confirmed.'))
+			showSuccess(t('cantoria', 'The rights status has been confirmed.'))
 			break
 		case 'open':
 			await setRightsOpen(versionId.value, reason)
-			showSuccess(t('notenarchiv', 'The rights status is now open.'))
+			showSuccess(t('cantoria', 'The rights status is now open.'))
 			break
 		case 'portal-add':
 			await addToPortal(versionId.value, draft.value.date)
-			showSuccess(t('notenarchiv', 'Recorded as provided in the singers\' portal.'))
+			showSuccess(t('cantoria', 'Recorded as provided in the singers\' portal.'))
 			break
 		case 'portal-remove':
 			await removeFromPortal(versionId.value, reason)
-			showSuccess(t('notenarchiv', 'Recorded as taken out of the singers\' portal.'))
+			showSuccess(t('cantoria', 'Recorded as taken out of the singers\' portal.'))
 			break
 		case 'valid-set':
 			await setValidVersion(versionId.value, reason === '' ? null : reason)
-			showSuccess(t('notenarchiv', 'This version is now valid for the choir.'))
+			showSuccess(t('cantoria', 'This version is now valid for the choir.'))
 			break
 		case 'valid-clear':
 			await clearValidVersion(versionId.value, reason === '' ? null : reason)
-			showSuccess(t('notenarchiv', 'This version is no longer valid for the choir.'))
+			showSuccess(t('cantoria', 'This version is no longer valid for the choir.'))
 			break
 		}
 		dialog.value = null
@@ -312,7 +312,7 @@ async function submitDialog(): Promise<void> {
 
 function onLicenseSaved(): void {
 	licenseDialog.value = null
-	showSuccess(t('notenarchiv', 'The license has been saved.'))
+	showSuccess(t('cantoria', 'The license has been saved.'))
 	emit('saved')
 }
 </script>
@@ -323,30 +323,30 @@ function onLicenseSaved(): void {
 		<section v-if="isModuleActive('rights')" class="rights-panel__section" aria-labelledby="rights-panel-confirmation">
 			<div class="rights-panel__title">
 				<h3 id="rights-panel-confirmation">
-					{{ t('notenarchiv', 'Confirmation') }}
+					{{ t('cantoria', 'Confirmation') }}
 				</h3>
 				<HelpTerm term="rightsStatus" />
 			</div>
 			<p v-if="isConfirmed" class="rights-panel__state rights-panel__state--success">
 				<NcIconSvgWrapper :path="mdiCheckCircleOutline" :size="20" inline />
-				<span>{{ t('notenarchiv', '{status}, confirmed on {date} by {name}.', { status: choiceLabel('version', 'rights_status', rightsStatus), date: formatDate(confirmedAt), name: confirmedBy }) }}</span>
+				<span>{{ t('cantoria', '{status}, confirmed on {date} by {name}.', { status: choiceLabel('version', 'rights_status', rightsStatus), date: formatDate(confirmedAt), name: confirmedBy }) }}</span>
 			</p>
 			<p v-else class="rights-panel__state rights-panel__state--warning">
 				<NcIconSvgWrapper :path="mdiAlertOutline" :size="20" inline />
-				<span>{{ t('notenarchiv', 'The rights status is not confirmed.') }}</span>
+				<span>{{ t('cantoria', 'The rights status is not confirmed.') }}</span>
 			</p>
 			<dl v-if="isConfirmed" class="rights-panel__facts">
-				<dt>{{ t('notenarchiv', 'Reason') }}</dt>
+				<dt>{{ t('cantoria', 'Reason') }}</dt>
 				<dd>{{ version.confirmed_reason }}</dd>
-				<dt>{{ t('notenarchiv', 'Evidence') }}</dt>
+				<dt>{{ t('cantoria', 'Evidence') }}</dt>
 				<dd>{{ version.confirmed_evidence }}</dd>
 			</dl>
 			<div v-if="isLibrarian" class="rights-panel__actions">
 				<NcButton @click="openDialog('confirm')">
-					{{ isConfirmed ? t('notenarchiv', 'Confirm again') : t('notenarchiv', 'Confirm') }}
+					{{ isConfirmed ? t('cantoria', 'Confirm again') : t('cantoria', 'Confirm') }}
 				</NcButton>
 				<NcButton variant="tertiary" @click="openDialog('open')">
-					{{ t('notenarchiv', 'When in doubt: set to open') }}
+					{{ t('cantoria', 'When in doubt: set to open') }}
 				</NcButton>
 			</div>
 		</section>
@@ -355,16 +355,16 @@ function onLicenseSaved(): void {
 		<section v-if="isModuleActive('portal') || isModuleActive('print_station')" class="rights-panel__section" aria-labelledby="rights-panel-releases">
 			<div class="rights-panel__title">
 				<h3 id="rights-panel-releases">
-					{{ t('notenarchiv', 'Releases') }}
+					{{ t('cantoria', 'Releases') }}
 				</h3>
 				<HelpTerm term="release" />
 			</div>
 			<ul class="rights-panel__releases">
 				<li v-if="isModuleActive('portal')">
-					<span class="rights-panel__release-name">{{ t('notenarchiv', 'Singers\' portal') }}</span>
+					<span class="rights-panel__release-name">{{ t('cantoria', 'Singers\' portal') }}</span>
 					<span v-if="releases.portal === null" class="rights-panel__state rights-panel__state--success">
 						<NcIconSvgWrapper :path="mdiCheckCircleOutline" :size="20" inline />
-						{{ t('notenarchiv', 'Released') }}
+						{{ t('cantoria', 'Released') }}
 					</span>
 					<span v-else class="rights-panel__state rights-panel__state--error">
 						<NcIconSvgWrapper :path="mdiCloseCircleOutline" :size="20" inline />
@@ -372,10 +372,10 @@ function onLicenseSaved(): void {
 					</span>
 				</li>
 				<li v-if="isModuleActive('print_station')">
-					<span class="rights-panel__release-name">{{ t('notenarchiv', 'Print station') }}</span>
+					<span class="rights-panel__release-name">{{ t('cantoria', 'Print station') }}</span>
 					<span v-if="releases.printStation === null" class="rights-panel__state rights-panel__state--success">
 						<NcIconSvgWrapper :path="mdiCheckCircleOutline" :size="20" inline />
-						{{ t('notenarchiv', 'Released') }}
+						{{ t('cantoria', 'Released') }}
 					</span>
 					<span v-else class="rights-panel__state rights-panel__state--error">
 						<NcIconSvgWrapper :path="mdiCloseCircleOutline" :size="20" inline />
@@ -385,22 +385,22 @@ function onLicenseSaved(): void {
 			</ul>
 			<template v-if="isModuleActive('portal')">
 				<p v-if="releases.onPortal">
-					{{ t('notenarchiv', 'In the singers\' portal since {date}.', { date: formatDate(portalSince) }) }}
+					{{ t('cantoria', 'In the singers\' portal since {date}.', { date: formatDate(portalSince) }) }}
 				</p>
 				<p v-else-if="portalRemovedAt !== ''" class="rights-panel__muted">
-					{{ t('notenarchiv', 'Taken out of the singers\' portal on {date}: {reason}', { date: formatDate(portalRemovedAt), reason: portalRemovedReason }) }}
+					{{ t('cantoria', 'Taken out of the singers\' portal on {date}: {reason}', { date: formatDate(portalRemovedAt), reason: portalRemovedReason }) }}
 				</p>
 				<div v-if="isLibrarian && !isPreservationCopy" class="rights-panel__actions">
 					<NcButton v-if="!releases.onPortal && releases.portal === null" @click="openDialog('portal-add')">
-						{{ t('notenarchiv', 'Provide in the singers\' portal') }}
+						{{ t('cantoria', 'Provide in the singers\' portal') }}
 					</NcButton>
 					<NcButton v-if="releases.onPortal" @click="openDialog('portal-remove')">
-						{{ t('notenarchiv', 'Take out of the singers\' portal') }}
+						{{ t('cantoria', 'Take out of the singers\' portal') }}
 					</NcButton>
 				</div>
 				<p v-if="releases.onPortal && releases.portal !== null" class="rights-panel__state rights-panel__state--error">
 					<NcIconSvgWrapper :path="mdiAlertOutline" :size="20" inline />
-					{{ t('notenarchiv', 'This version is in the singers\' portal but no longer released for it. Please take it out.') }}
+					{{ t('cantoria', 'This version is in the singers\' portal but no longer released for it. Please take it out.') }}
 				</p>
 			</template>
 		</section>
@@ -409,27 +409,27 @@ function onLicenseSaved(): void {
 		<section v-if="isModuleActive('valid_version')" class="rights-panel__section" aria-labelledby="rights-panel-valid">
 			<div class="rights-panel__title">
 				<h3 id="rights-panel-valid">
-					{{ t('notenarchiv', 'Valid for the choir') }}
+					{{ t('cantoria', 'Valid for the choir') }}
 				</h3>
 				<HelpTerm term="validVersion" />
 			</div>
 			<p>{{ validText }}</p>
 			<dl v-if="validSince !== '' && (validReason !== '' || validSetBy !== '')" class="rights-panel__facts">
 				<template v-if="validSetBy !== ''">
-					<dt>{{ t('notenarchiv', 'Set by') }}</dt>
+					<dt>{{ t('cantoria', 'Set by') }}</dt>
 					<dd>{{ validSetBy }}</dd>
 				</template>
 				<template v-if="validReason !== ''">
-					<dt>{{ t('notenarchiv', 'Reason') }}</dt>
+					<dt>{{ t('cantoria', 'Reason') }}</dt>
 					<dd>{{ validReason }}</dd>
 				</template>
 			</dl>
 			<div v-if="isConductor" class="rights-panel__actions">
 				<NcButton v-if="validSince === ''" @click="openDialog('valid-set')">
-					{{ t('notenarchiv', 'Set as valid for the choir') }}
+					{{ t('cantoria', 'Set as valid for the choir') }}
 				</NcButton>
 				<NcButton v-else @click="openDialog('valid-clear')">
-					{{ t('notenarchiv', 'Set as no longer valid for the choir') }}
+					{{ t('cantoria', 'Set as no longer valid for the choir') }}
 				</NcButton>
 			</div>
 		</section>
@@ -437,28 +437,28 @@ function onLicenseSaved(): void {
 		<!-- Licenses (module "rights") -->
 		<section v-if="isModuleActive('rights')" class="rights-panel__section" aria-labelledby="rights-panel-licenses">
 			<h3 id="rights-panel-licenses">
-				{{ t('notenarchiv', 'Licenses') }}
+				{{ t('cantoria', 'Licenses') }}
 			</h3>
 			<p v-for="warning in detail.licenseWarnings ?? []" :key="warning" class="rights-panel__state rights-panel__state--warning">
 				<NcIconSvgWrapper :path="mdiAlertOutline" :size="20" inline />
 				{{ warning }}
 			</p>
 			<p v-if="sortedLicenses.length === 0" class="rights-panel__muted">
-				{{ t('notenarchiv', 'No licenses recorded.') }}
+				{{ t('cantoria', 'No licenses recorded.') }}
 			</p>
 			<ul v-else class="rights-panel__licenses">
 				<li v-for="license in sortedLicenses" :key="license.id" class="rights-panel__license">
 					<div class="rights-panel__license-head">
-						<strong>{{ license.holder || t('notenarchiv', 'License') }}</strong>
+						<strong>{{ license.holder || t('cantoria', 'License') }}</strong>
 						<span v-if="licenseState(license) === 'ended'" class="rights-panel__chip rights-panel__chip--error">
-							{{ t('notenarchiv', 'ended') }}
+							{{ t('cantoria', 'ended') }}
 						</span>
 						<span v-else-if="licenseState(license) === 'ending'" class="rights-panel__chip rights-panel__chip--warning">
-							{{ t('notenarchiv', 'ends soon') }}
+							{{ t('cantoria', 'ends soon') }}
 						</span>
 						<NcButton v-if="isLibrarian"
 							variant="tertiary"
-							:aria-label="t('notenarchiv', 'Edit license')"
+							:aria-label="t('cantoria', 'Edit license')"
 							@click="licenseDialog = { license }">
 							<template #icon>
 								<NcIconSvgWrapper :path="mdiPencilOutline" />
@@ -466,20 +466,20 @@ function onLicenseSaved(): void {
 						</NcButton>
 					</div>
 					<dl class="rights-panel__facts">
-						<dt>{{ t('notenarchiv', 'Uses') }}</dt>
+						<dt>{{ t('cantoria', 'Uses') }}</dt>
 						<dd>{{ licenseUses(license) }}</dd>
-						<dt>{{ t('notenarchiv', 'Valid') }}</dt>
+						<dt>{{ t('cantoria', 'Valid') }}</dt>
 						<dd>{{ licensePeriod(license) }}</dd>
 						<template v-if="license.quantity !== null">
-							<dt>{{ t('notenarchiv', 'Number of copies') }}</dt>
+							<dt>{{ t('cantoria', 'Number of copies') }}</dt>
 							<dd>{{ license.quantity }}</dd>
 						</template>
 						<template v-if="license.evidence">
-							<dt>{{ t('notenarchiv', 'Evidence') }}</dt>
+							<dt>{{ t('cantoria', 'Evidence') }}</dt>
 							<dd>{{ license.evidence }}</dd>
 						</template>
 						<template v-if="license.notes">
-							<dt>{{ t('notenarchiv', 'Notes') }}</dt>
+							<dt>{{ t('cantoria', 'Notes') }}</dt>
 							<dd>{{ license.notes }}</dd>
 						</template>
 					</dl>
@@ -490,7 +490,7 @@ function onLicenseSaved(): void {
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiPlus" />
 					</template>
-					{{ t('notenarchiv', 'Add license') }}
+					{{ t('cantoria', 'Add license') }}
 				</NcButton>
 			</div>
 		</section>
@@ -498,7 +498,7 @@ function onLicenseSaved(): void {
 		<!-- Open proposals -->
 		<section v-if="detail.proposals.length > 0" class="rights-panel__section" aria-labelledby="rights-panel-proposals">
 			<h3 id="rights-panel-proposals">
-				{{ t('notenarchiv', 'Open proposals') }}
+				{{ t('cantoria', 'Open proposals') }}
 			</h3>
 			<ul class="rights-panel__proposals">
 				<li v-for="proposal in detail.proposals" :key="proposal.id">
@@ -512,7 +512,7 @@ function onLicenseSaved(): void {
 				</li>
 			</ul>
 			<NcButton v-if="canSeeProposals" variant="tertiary" @click="navigate('proposals')">
-				{{ t('notenarchiv', 'Go to the inbox') }}
+				{{ t('cantoria', 'Go to the inbox') }}
 			</NcButton>
 		</section>
 
@@ -525,7 +525,7 @@ function onLicenseSaved(): void {
 			@close="dialog = null">
 			<template v-if="dialog === 'confirm'">
 				<fieldset class="rights-panel__fieldset">
-					<legend>{{ t('notenarchiv', 'Confirmed status') }}</legend>
+					<legend>{{ t('cantoria', 'Confirmed status') }}</legend>
 					<NcCheckboxRadioSwitch v-model="draft.status"
 						type="radio"
 						value="public_domain"
@@ -540,22 +540,22 @@ function onLicenseSaved(): void {
 					</NcCheckboxRadioSwitch>
 				</fieldset>
 				<NcTextArea v-model="draft.reason"
-					:label="t('notenarchiv', 'Reason (required)')"
+					:label="t('cantoria', 'Reason (required)')"
 					required
 					resize="vertical"
 					rows="3" />
 				<NcTextArea v-model="draft.evidence"
-					:label="t('notenarchiv', 'Evidence (required), e.g. source of the life dates or license')"
+					:label="t('cantoria', 'Evidence (required), e.g. source of the life dates or license')"
 					required
 					resize="vertical"
 					rows="2" />
 				<div v-if="againstProposal" class="rights-panel__against">
 					<p class="rights-panel__state rights-panel__state--warning">
 						<NcIconSvgWrapper :path="mdiAlertOutline" :size="20" inline />
-						<span>{{ t('notenarchiv', 'The protection proposal does not say "public domain": {reason}', { reason: detail.protection?.reasonText ?? '' }) }}</span>
+						<span>{{ t('cantoria', 'The protection proposal does not say "public domain": {reason}', { reason: detail.protection?.reasonText ?? '' }) }}</span>
 					</p>
 					<NcCheckboxRadioSwitch v-model="proposalChecked" type="checkbox">
-						{{ t('notenarchiv', 'I have checked the proposal and confirm public domain all the same.') }}
+						{{ t('cantoria', 'I have checked the proposal and confirm public domain all the same.') }}
 					</NcCheckboxRadioSwitch>
 				</div>
 				<!-- what the confirmation leads to, updated when the status changes -->
@@ -565,13 +565,13 @@ function onLicenseSaved(): void {
 					</p>
 				</div>
 				<p class="action-dialog__hint">
-					{{ t('notenarchiv', 'The confirmation is recorded with your name and the date. Changing the rights status later removes it.') }}
+					{{ t('cantoria', 'The confirmation is recorded with your name and the date. Changing the rights status later removes it.') }}
 				</p>
 			</template>
 			<template v-else-if="dialog === 'open'">
-				<p>{{ t('notenarchiv', 'The rights status becomes "open" and any confirmation is removed.') }}</p>
+				<p>{{ t('cantoria', 'The rights status becomes "open" and any confirmation is removed.') }}</p>
 				<NcTextArea v-model="draft.reason"
-					:label="t('notenarchiv', 'Reason (required)')"
+					:label="t('cantoria', 'Reason (required)')"
 					required
 					resize="vertical"
 					rows="3" />
@@ -580,21 +580,21 @@ function onLicenseSaved(): void {
 				<DateField v-model="draft.date"
 					:max="today"
 					required
-					:label="t('notenarchiv', 'In the singers\' portal since')" />
+					:label="t('cantoria', 'In the singers\' portal since')" />
 			</template>
 			<template v-else-if="dialog === 'portal-remove'">
 				<NcTextArea v-model="draft.reason"
-					:label="t('notenarchiv', 'Reason (required)')"
+					:label="t('cantoria', 'Reason (required)')"
 					required
 					resize="vertical"
 					rows="3" />
 			</template>
 			<template v-else>
 				<p v-if="dialog === 'valid-set' && otherValidCopies.length > 0">
-					{{ t('notenarchiv', 'The version that is valid now ({shelfmarks}) will no longer be valid.', { shelfmarks: otherValidCopies.join(', ') }) }}
+					{{ t('cantoria', 'The version that is valid now ({shelfmarks}) will no longer be valid.', { shelfmarks: otherValidCopies.join(', ') }) }}
 				</p>
 				<NcTextArea v-model="draft.reason"
-					:label="t('notenarchiv', 'Reason (optional)')"
+					:label="t('cantoria', 'Reason (optional)')"
 					resize="vertical"
 					rows="3" />
 			</template>

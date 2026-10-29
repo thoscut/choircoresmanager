@@ -3,19 +3,19 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Controller;
+namespace OCA\Cantoria\Controller;
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Attribute\RequiresModule;
-use OCA\Notenarchiv\Service\ChecksumService;
-use OCA\Notenarchiv\Service\CopyAssistantService;
-use OCA\Notenarchiv\Service\InventoryService;
-use OCA\Notenarchiv\Service\MergeService;
-use OCA\Notenarchiv\Service\Roles;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Attribute\RequiresModule;
+use OCA\Cantoria\Service\ChecksumService;
+use OCA\Cantoria\Service\CopyAssistantService;
+use OCA\Cantoria\Service\InventoryService;
+use OCA\Cantoria\Service\MergeService;
+use OCA\Cantoria\Service\Roles;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\FrontpageRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;

@@ -3,20 +3,20 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Controller;
+namespace OCA\Cantoria\Controller;
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Attribute\RequiresModule;
-use OCA\Notenarchiv\Db\VersionState;
-use OCA\Notenarchiv\ResponseDefinitions;
-use OCA\Notenarchiv\Service\ApiV1\Values;
-use OCA\Notenarchiv\Service\CatalogService;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\StateService;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Attribute\RequiresModule;
+use OCA\Cantoria\Db\VersionState;
+use OCA\Cantoria\ResponseDefinitions;
+use OCA\Cantoria\Service\ApiV1\Values;
+use OCA\Cantoria\Service\CatalogService;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\StateService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -35,9 +35,9 @@ use Psr\Log\LoggerInterface;
  * (guideline 1). Internal preservation copies are left out for roles that
  * may not view them, as in the other routes.
  *
- * @psalm-import-type NotenarchivRevisions from ResponseDefinitions
- * @psalm-import-type NotenarchivRevision from ResponseDefinitions
- * @psalm-import-type NotenarchivRevisionChange from ResponseDefinitions
+ * @psalm-import-type CantoriaRevisions from ResponseDefinitions
+ * @psalm-import-type CantoriaRevision from ResponseDefinitions
+ * @psalm-import-type CantoriaRevisionChange from ResponseDefinitions
  * @psalm-suppress UnusedClass
  */
 #[RequiresModule(Modules::AGENT_API)]
@@ -68,7 +68,7 @@ class ApiV1StateController extends OCSController {
 	 * revisions is done on the two files.
 	 *
 	 * @param int $id ID of the copy
-	 * @return DataResponse<Http::STATUS_OK, NotenarchivRevisions, array{}>
+	 * @return DataResponse<Http::STATUS_OK, CantoriaRevisions, array{}>
 	 * @throws OCSForbiddenException The account has no role, or the copy is an internal preservation copy it may not view
 	 * @throws OCSNotFoundException The copy does not exist, or the revisions or the interface for agents are switched off
 	 *
@@ -96,7 +96,7 @@ class ApiV1StateController extends OCSController {
 	 * A revision without account names; `own` tells whether the calling
 	 * account recorded it.
 	 *
-	 * @return NotenarchivRevision
+	 * @return CantoriaRevision
 	 */
 	private static function revision(VersionState $state, string $uid): array {
 		return [
@@ -119,7 +119,7 @@ class ApiV1StateController extends OCSController {
 	}
 
 	/**
-	 * @return list<NotenarchivRevisionChange>
+	 * @return list<CantoriaRevisionChange>
 	 */
 	private static function changes(?string $json): array {
 		if ($json === null || $json === '') {

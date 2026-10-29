@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -21,17 +21,17 @@ declare(strict_types=1);
 require __DIR__ . '/harness.php';
 [$root, $uid, $programmeCsv, $songListCsv, $shelfmarkA, $shelfmarkB] = IntegrationTest::start($argv, ['nextcloud-root', 'uid', 'programme-csv', 'song-list-csv', 'shelfmark-a', 'shelfmark-b']);
 
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\EventItem;
-use OCA\Notenarchiv\Db\EventItemMapper;
-use OCA\Notenarchiv\Db\WorkVersionMapper;
-use OCA\Notenarchiv\Service\AppSettings;
-use OCA\Notenarchiv\Service\CatalogService;
-use OCA\Notenarchiv\Service\EventService;
-use OCA\Notenarchiv\Service\PerformanceImportService;
-use OCA\Notenarchiv\Service\RepertoireService;
-use OCA\Notenarchiv\Service\RightsService;
-use OCA\Notenarchiv\Service\Roles;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Db\EventItem;
+use OCA\Cantoria\Db\EventItemMapper;
+use OCA\Cantoria\Db\WorkVersionMapper;
+use OCA\Cantoria\Service\AppSettings;
+use OCA\Cantoria\Service\CatalogService;
+use OCA\Cantoria\Service\EventService;
+use OCA\Cantoria\Service\PerformanceImportService;
+use OCA\Cantoria\Service\RepertoireService;
+use OCA\Cantoria\Service\RightsService;
+use OCA\Cantoria\Service\Roles;
 use OCP\IDBConnection;
 use OCP\L10N\IFactory;
 use OCP\Server;
@@ -106,7 +106,7 @@ try {
 		json_encode(array_column($detail['items'], 'warnings')));
 	$events->reorder($concert->getId(), [$itemB->getId(), $itemA->getId()], $uid);
 	$check('reordered', $events->detail($concert->getId(), $uid)['items'][0]['id'] === $itemB->getId());
-	$csv = $events->songOrderCsv($concert->getId(), $uid, Server::get(IFactory::class)->get('notenarchiv', 'en'));
+	$csv = $events->songOrderCsv($concert->getId(), $uid, Server::get(IFactory::class)->get('cantoria', 'en'));
 	$check('song order CSV: four rows of the event, an empty one, the header, two pieces', substr_count($csv, "\r\n") === 8
 		&& str_contains($csv, '3:05') && str_contains($csv, 'Work number (GEMA)') && str_contains($csv, 'Lyricist'), $csv);
 	$events->setFixed($concert->getId(), $uid);

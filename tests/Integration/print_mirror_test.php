@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -40,22 +40,22 @@ declare(strict_types=1);
 require __DIR__ . '/harness.php';
 [$root, $uid, $shelfmark] = IntegrationTest::start($argv, ['nextcloud-root', 'uid', 'shelfmark']);
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Controller\PrintMirrorController;
-use OCA\Notenarchiv\Db\ArchiveFileMapper;
-use OCA\Notenarchiv\Db\AuditEntryMapper;
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\MirrorFileMapper;
-use OCA\Notenarchiv\Db\WorkMapper;
-use OCA\Notenarchiv\Db\WorkVersionMapper;
-use OCA\Notenarchiv\Exception\ModuleDisabledException;
-use OCA\Notenarchiv\Middleware\ModuleMiddleware;
-use OCA\Notenarchiv\Service\AppSettings;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\PrintMirrorService;
-use OCA\Notenarchiv\Service\ReleaseListService;
-use OCA\Notenarchiv\Service\RightsService;
-use OCA\Notenarchiv\Service\Roles;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Controller\PrintMirrorController;
+use OCA\Cantoria\Db\ArchiveFileMapper;
+use OCA\Cantoria\Db\AuditEntryMapper;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Db\MirrorFileMapper;
+use OCA\Cantoria\Db\WorkMapper;
+use OCA\Cantoria\Db\WorkVersionMapper;
+use OCA\Cantoria\Exception\ModuleDisabledException;
+use OCA\Cantoria\Middleware\ModuleMiddleware;
+use OCA\Cantoria\Service\AppSettings;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\PrintMirrorService;
+use OCA\Cantoria\Service\ReleaseListService;
+use OCA\Cantoria\Service\RightsService;
+use OCA\Cantoria\Service\Roles;
 use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
@@ -101,7 +101,7 @@ $originalSwitches = $switches();
 $originalSettings = $settings();
 $archiveListing = fn (): array => array_map(fn ($node): string => $node->getName(), $archive->getDirectoryListing());
 $archiveBefore = $archiveListing();
-$targetName = 'Notenarchiv print station test ' . bin2hex(random_bytes(3));
+$targetName = 'Cantoria print station test ' . bin2hex(random_bytes(3));
 $sha = fn (File $file): string => hash('sha256', $file->getContent());
 $names = fn (array $entries): array => array_map(fn (array $entry): string => $entry['name'], $entries);
 $reasons = fn (array $report, string $name): array => array_values(array_map(fn (array $e): string => (string)$e['reason'],

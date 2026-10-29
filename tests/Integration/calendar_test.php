@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -27,11 +27,11 @@ require __DIR__ . '/harness.php';
 [$root, $uid] = IntegrationTest::start($argv, ['nextcloud-root', 'uid']);
 
 use OCA\DAV\CalDAV\CalDavBackend;
-use OCA\Notenarchiv\Dashboard\DueWidget;
-use OCA\Notenarchiv\Service\ConcertCalendarService;
-use OCA\Notenarchiv\Service\DueService;
-use OCA\Notenarchiv\Service\EventService;
-use OCA\Notenarchiv\Service\RightsService;
+use OCA\Cantoria\Dashboard\DueWidget;
+use OCA\Cantoria\Service\ConcertCalendarService;
+use OCA\Cantoria\Service\DueService;
+use OCA\Cantoria\Service\EventService;
+use OCA\Cantoria\Service\RightsService;
 use OCP\IDBConnection;
 use OCP\Server;
 use Sabre\VObject\Reader;
@@ -78,17 +78,17 @@ $events = Server::get(EventService::class);
 $calendar = Server::get(ConcertCalendarService::class);
 $today = Server::get(RightsService::class)->today($uid);
 $principal = 'principals/users/' . $uid;
-$calendarUri = 'notenarchiv-test-' . bin2hex(random_bytes(4));
+$calendarUri = 'cantoria-test-' . bin2hex(random_bytes(4));
 $calendarId = null;
 
 $db->beginTransaction();
 try {
 	// A calendar of the test account, created for this test only
-	$calendarId = (int)$backend->createCalendar($principal, $calendarUri, ['{DAV:}displayname' => 'Notenarchiv Test Ä']);
+	$calendarId = (int)$backend->createCalendar($principal, $calendarUri, ['{DAV:}displayname' => 'Cantoria Test Ä']);
 	$offered = array_column($calendar->writableCalendars($uid), 'name', 'uri');
-	$check('the new calendar is offered', ($offered[$calendarUri] ?? null) === 'Notenarchiv Test Ä', json_encode($offered));
+	$check('the new calendar is offered', ($offered[$calendarUri] ?? null) === 'Cantoria Test Ä', json_encode($offered));
 	$check('an account without a role gets no calendars',
-		$throws(fn () => $calendar->writableCalendars('notenarchiv-no-such-account')) !== null);
+		$throws(fn () => $calendar->writableCalendars('cantoria-no-such-account')) !== null);
 
 	// A concert in 50 days (deadline stage "8 weeks"), with a time
 	$date = (new DateTimeImmutable($today))->modify('+50 days')->format('Y-m-d');
@@ -108,7 +108,7 @@ try {
 		substr_count($file['content'], "\r\nBEGIN:VEVENT\r\n") === 4 && str_contains($file['content'], "\r\nBEGIN:VTIMEZONE\r\n")
 		&& preg_match('/\r\nDTSTART;TZID=[^:]+:' . str_replace('-', '', $date) . 'T193000\r\n/', $file['content']) === 1);
 	$upcoming = $calendar->upcomingFile(false, $uid);
-	$check('upcoming concerts contain the concert', str_contains($upcoming['content'], 'notenarchiv-concert-' . $concert->getId() . '-')
+	$check('upcoming concerts contain the concert', str_contains($upcoming['content'], 'cantoria-concert-' . $concert->getId() . '-')
 		&& $problems($upcoming['content']) === [], implode('; ', $problems($upcoming['content'])));
 
 	// Add to the calendar: the concert and its three deadlines

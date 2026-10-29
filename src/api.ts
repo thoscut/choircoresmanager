@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -85,7 +85,7 @@ import { normalizeAccessReport, normalizeGroups, normalizeSettings } from './set
 import { statusMessage } from './serverErrors.ts'
 import { LEVELS } from './types.ts'
 
-const APP = 'notenarchiv'
+const APP = 'cantoria'
 
 /**
  * URL of an API endpoint.
@@ -115,17 +115,17 @@ export function errorMessage(error: unknown): string {
 		}
 		if (error.response?.status === 429) {
 			// rate limit of Nextcloud: no `{ error }` in the response
-			return t('notenarchiv', 'Too many requests. Please wait a moment and try again.')
+			return t('cantoria', 'Too many requests. Please wait a moment and try again.')
 		}
 		if (error.response) {
 			return statusMessage(error.response.status, String(error.response.headers?.['x-request-id'] ?? ''))
 		}
-		return t('notenarchiv', 'The server cannot be reached. Please check your connection.')
+		return t('cantoria', 'The server cannot be reached. Please check your connection.')
 	}
 	if (error instanceof Error && error.message) {
 		return error.message
 	}
-	return t('notenarchiv', 'An unexpected error occurred.')
+	return t('cantoria', 'An unexpected error occurred.')
 }
 
 /** `reason` of an error response: the archive folder is not shared with the account. */

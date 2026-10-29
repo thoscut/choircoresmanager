@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -22,7 +22,7 @@ import { errorMessage } from '../api.ts'
  * the check of the pieces kept on the device. Throws without a network.
  */
 export async function fetchMemberLinks(): Promise<MemberLink[]> {
-	const { data } = await axios.get<{ links?: MemberLink[] }>(generateUrl('/apps/notenarchiv/api/member/links'), { timeout: 8000 })
+	const { data } = await axios.get<{ links?: MemberLink[] }>(generateUrl('/apps/cantoria/api/member/links'), { timeout: 8000 })
 	return Array.isArray(data?.links) ? data.links : []
 }
 
@@ -33,7 +33,7 @@ export async function fetchMemberLinks(): Promise<MemberLink[]> {
  * @param action - 'score', 'scan' or 'practice-audio'
  */
 function memberUrl(token: string, action: string): string {
-	return generateUrl('/apps/notenarchiv/api/member/links/{token}/{action}', { token, action })
+	return generateUrl('/apps/cantoria/api/member/links/{token}/{action}', { token, action })
 }
 
 /**
@@ -103,7 +103,7 @@ export async function authorizeMemberPracticeAudio(token: string, input: MemberP
  * the check of the pieces kept on the device. Throws without a network.
  */
 export async function fetchFolderConcerts(): Promise<FolderConcert[]> {
-	const { data } = await axios.get<{ concerts?: FolderConcert[] }>(generateUrl('/apps/notenarchiv/api/concert-folder'), { timeout: 8000 })
+	const { data } = await axios.get<{ concerts?: FolderConcert[] }>(generateUrl('/apps/cantoria/api/concert-folder'), { timeout: 8000 })
 	return Array.isArray(data?.concerts) ? data.concerts : []
 }
 
@@ -116,7 +116,7 @@ export async function fetchFolderConcerts(): Promise<FolderConcert[]> {
  */
 export async function fetchFolderScore(id: number): Promise<string> {
 	try {
-		const { data } = await axios.get<string>(generateUrl('/apps/notenarchiv/api/concert-folder/items/{id}/score', { id }),
+		const { data } = await axios.get<string>(generateUrl('/apps/cantoria/api/concert-folder/items/{id}/score', { id }),
 			{ responseType: 'text', transformResponse: [(raw) => raw] })
 		return data
 	} catch (error) {

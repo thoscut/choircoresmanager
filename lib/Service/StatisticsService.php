@@ -3,24 +3,24 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Service;
+namespace OCA\Cantoria\Service;
 
-use OCA\Notenarchiv\Db\ArchiveFileMapper;
-use OCA\Notenarchiv\Db\Event;
-use OCA\Notenarchiv\Db\EventItem;
-use OCA\Notenarchiv\Db\EventMapper;
-use OCA\Notenarchiv\Db\License;
-use OCA\Notenarchiv\Db\LicenseMapper;
-use OCA\Notenarchiv\Db\Proposal;
-use OCA\Notenarchiv\Db\Row;
-use OCA\Notenarchiv\Db\Task;
-use OCA\Notenarchiv\Db\Work;
-use OCA\Notenarchiv\Db\WorkVersion;
-use OCA\Notenarchiv\Exception\InvalidInputException;
+use OCA\Cantoria\Db\ArchiveFileMapper;
+use OCA\Cantoria\Db\Event;
+use OCA\Cantoria\Db\EventItem;
+use OCA\Cantoria\Db\EventMapper;
+use OCA\Cantoria\Db\License;
+use OCA\Cantoria\Db\LicenseMapper;
+use OCA\Cantoria\Db\Proposal;
+use OCA\Cantoria\Db\Row;
+use OCA\Cantoria\Db\Task;
+use OCA\Cantoria\Db\Work;
+use OCA\Cantoria\Db\WorkVersion;
+use OCA\Cantoria\Exception\InvalidInputException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDateTimeZone;

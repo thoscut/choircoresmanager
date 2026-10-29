@@ -3,27 +3,27 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Controller;
+namespace OCA\Cantoria\Controller;
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Attribute\RequiresModule;
-use OCA\Notenarchiv\Db\ReviewPoint;
-use OCA\Notenarchiv\Db\TranscriptionReport;
-use OCA\Notenarchiv\Exception\AccessDeniedException;
-use OCA\Notenarchiv\Exception\InvalidInputException;
-use OCA\Notenarchiv\ResponseDefinitions;
-use OCA\Notenarchiv\Service\ApiV1\Page;
-use OCA\Notenarchiv\Service\ApiV1\ReviewView;
-use OCA\Notenarchiv\Service\ApiV1\Values;
-use OCA\Notenarchiv\Service\CatalogService;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\ReviewService;
-use OCA\Notenarchiv\Service\RightsPolicy;
-use OCA\Notenarchiv\Service\Roles;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Attribute\RequiresModule;
+use OCA\Cantoria\Db\ReviewPoint;
+use OCA\Cantoria\Db\TranscriptionReport;
+use OCA\Cantoria\Exception\AccessDeniedException;
+use OCA\Cantoria\Exception\InvalidInputException;
+use OCA\Cantoria\ResponseDefinitions;
+use OCA\Cantoria\Service\ApiV1\Page;
+use OCA\Cantoria\Service\ApiV1\ReviewView;
+use OCA\Cantoria\Service\ApiV1\Values;
+use OCA\Cantoria\Service\CatalogService;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\ReviewService;
+use OCA\Cantoria\Service\RightsPolicy;
+use OCA\Cantoria\Service\Roles;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -46,9 +46,9 @@ use Psr\Log\LoggerInterface;
  * file sync. Internal preservation copies are left out for roles that may
  * not view them, as in the other routes.
  *
- * @psalm-import-type NotenarchivReview from ResponseDefinitions
- * @psalm-import-type NotenarchivCorrectionOrderPage from ResponseDefinitions
- * @psalm-import-type NotenarchivReportResult from ResponseDefinitions
+ * @psalm-import-type CantoriaReview from ResponseDefinitions
+ * @psalm-import-type CantoriaCorrectionOrderPage from ResponseDefinitions
+ * @psalm-import-type CantoriaReportResult from ResponseDefinitions
  * @psalm-suppress UnusedClass
  */
 #[RequiresModule(Modules::AGENT_API)]
@@ -85,7 +85,7 @@ class ApiV1ReviewController extends OCSController {
 	 * @param 'conductor'|'librarian'|null $role Only review points of this responsible role
 	 * @param int<1, 100> $limit Review points per page
 	 * @param string|null $cursor The "next_cursor" of the page before; omit it for the first page
-	 * @return DataResponse<Http::STATUS_OK, NotenarchivReview, array{}>
+	 * @return DataResponse<Http::STATUS_OK, CantoriaReview, array{}>
 	 * @throws OCSBadRequestException The status, the role, the limit or the cursor is not valid
 	 * @throws OCSForbiddenException The account has no role, or the copy is an internal preservation copy it may not view
 	 * @throws OCSNotFoundException The copy does not exist, or the review of transcriptions or the interface for agents is switched off
@@ -138,7 +138,7 @@ class ApiV1ReviewController extends OCSController {
 	 * @param int|null $copy_id Only the orders of this copy
 	 * @param int<1, 100> $limit Orders per page
 	 * @param string|null $cursor The "next_cursor" of the page before; omit it for the first page
-	 * @return DataResponse<Http::STATUS_OK, NotenarchivCorrectionOrderPage, array{}>
+	 * @return DataResponse<Http::STATUS_OK, CantoriaCorrectionOrderPage, array{}>
 	 * @throws OCSBadRequestException The limit or the cursor is not valid
 	 * @throws OCSForbiddenException The account has no role in the music archive
 	 * @throws OCSNotFoundException The review of transcriptions or the interface for agents is switched off
@@ -175,7 +175,7 @@ class ApiV1ReviewController extends OCSController {
 	 * @param int $id ID of the copy the report is about
 	 * @param string|null $content The report as JSON text (the content of bericht.json, at most 1 MB); send this or "report"
 	 * @param array<string, mixed>|null $report The report as a JSON object, instead of "content"
-	 * @return DataResponse<Http::STATUS_CREATED, NotenarchivReportResult, array{}>|DataResponse<Http::STATUS_OK, NotenarchivReportResult, array{}>
+	 * @return DataResponse<Http::STATUS_CREATED, CantoriaReportResult, array{}>|DataResponse<Http::STATUS_OK, CantoriaReportResult, array{}>
 	 * @throws OCSBadRequestException The report is not valid, names another shelf mark, or comes both or neither as text and object
 	 * @throws OCSForbiddenException The roles of the account may not hand in reports, or the copy is an internal preservation copy it may not view
 	 * @throws OCSNotFoundException The copy does not exist, or the review of transcriptions or the interface for agents is switched off

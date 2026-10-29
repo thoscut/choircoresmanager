@@ -3,24 +3,24 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Service;
+namespace OCA\Cantoria\Tests\Unit\Service;
 
-use OCA\Notenarchiv\Db\AuditEntry;
-use OCA\Notenarchiv\Db\AuditEntryMapper;
-use OCA\Notenarchiv\Db\Folder;
-use OCA\Notenarchiv\Db\FolderLoan;
-use OCA\Notenarchiv\Db\FolderLoanMapper;
-use OCA\Notenarchiv\Db\FolderMapper;
-use OCA\Notenarchiv\Db\Person;
-use OCA\Notenarchiv\Db\PersonMapper;
-use OCA\Notenarchiv\Service\AuditLog;
-use OCA\Notenarchiv\Service\FolderBookService;
-use OCA\Notenarchiv\Service\LifeDates;
-use OCA\Notenarchiv\Service\PrivacyService;
+use OCA\Cantoria\Db\AuditEntry;
+use OCA\Cantoria\Db\AuditEntryMapper;
+use OCA\Cantoria\Db\Folder;
+use OCA\Cantoria\Db\FolderLoan;
+use OCA\Cantoria\Db\FolderLoanMapper;
+use OCA\Cantoria\Db\FolderMapper;
+use OCA\Cantoria\Db\Person;
+use OCA\Cantoria\Db\PersonMapper;
+use OCA\Cantoria\Service\AuditLog;
+use OCA\Cantoria\Service\FolderBookService;
+use OCA\Cantoria\Service\LifeDates;
+use OCA\Cantoria\Service\PrivacyService;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 

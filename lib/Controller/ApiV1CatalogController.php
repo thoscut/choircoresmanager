@@ -3,23 +3,23 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Controller;
+namespace OCA\Cantoria\Controller;
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Attribute\RequiresModule;
-use OCA\Notenarchiv\Exception\AccessDeniedException;
-use OCA\Notenarchiv\ResponseDefinitions;
-use OCA\Notenarchiv\Service\ApiV1\CatalogView;
-use OCA\Notenarchiv\Service\ApiV1\Page;
-use OCA\Notenarchiv\Service\CatalogService;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\RightsPolicy;
-use OCA\Notenarchiv\Service\Roles;
-use OCA\Notenarchiv\Service\TextReference;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Attribute\RequiresModule;
+use OCA\Cantoria\Exception\AccessDeniedException;
+use OCA\Cantoria\ResponseDefinitions;
+use OCA\Cantoria\Service\ApiV1\CatalogView;
+use OCA\Cantoria\Service\ApiV1\Page;
+use OCA\Cantoria\Service\CatalogService;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\RightsPolicy;
+use OCA\Cantoria\Service\Roles;
+use OCA\Cantoria\Service\TextReference;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -39,9 +39,9 @@ use Psr\Log\LoggerInterface;
  * these routes only need the interface for agents. Internal preservation
  * copies are left out for roles that may not view them.
  *
- * @psalm-import-type NotenarchivCatalogPage from ResponseDefinitions
- * @psalm-import-type NotenarchivCopy from ResponseDefinitions
- * @psalm-import-type NotenarchivTextReference from ResponseDefinitions
+ * @psalm-import-type CantoriaCatalogPage from ResponseDefinitions
+ * @psalm-import-type CantoriaCopy from ResponseDefinitions
+ * @psalm-import-type CantoriaTextReference from ResponseDefinitions
  * @psalm-suppress UnusedClass
  */
 #[RequiresModule(Modules::AGENT_API)]
@@ -77,7 +77,7 @@ class ApiV1CatalogController extends OCSController {
 	 * @param bool|null $has_musicxml Whether the copy has a MusicXML file
 	 * @param int<1, 100> $limit Rows per page
 	 * @param string|null $cursor The "next_cursor" of the page before; omit it for the first page
-	 * @return DataResponse<Http::STATUS_OK, NotenarchivCatalogPage, array{}>
+	 * @return DataResponse<Http::STATUS_OK, CantoriaCatalogPage, array{}>
 	 * @throws OCSBadRequestException A filter value, the limit or the cursor is not valid
 	 * @throws OCSForbiddenException The account has no role in the music archive
 	 * @throws OCSNotFoundException The interface for agents is switched off
@@ -110,7 +110,7 @@ class ApiV1CatalogController extends OCSController {
 	 * its tasks and open proposals. Parts of switched-off modules are empty.
 	 *
 	 * @param int $id ID of the copy (the "id" of a search row, not the shelf mark)
-	 * @return DataResponse<Http::STATUS_OK, NotenarchivCopy, array{}>
+	 * @return DataResponse<Http::STATUS_OK, CantoriaCopy, array{}>
 	 * @throws OCSForbiddenException The account has no role, or the copy is an internal preservation copy it may not view
 	 * @throws OCSNotFoundException The copy does not exist, or the interface for agents is switched off
 	 *
@@ -145,7 +145,7 @@ class ApiV1CatalogController extends OCSController {
 	 * @param string|null $voice Voice, e.g. "Tenor II"
 	 * @param int|null $verse Verse
 	 * @param string|null $note Short note at the end (at most 500 characters)
-	 * @return DataResponse<Http::STATUS_OK, NotenarchivTextReference, array{}>
+	 * @return DataResponse<Http::STATUS_OK, CantoriaTextReference, array{}>
 	 * @throws OCSBadRequestException A part of the place is not valid
 	 * @throws OCSForbiddenException The account has no role, or the copy is an internal preservation copy it may not view
 	 * @throws OCSNotFoundException The copy does not exist, or the interface for agents is switched off

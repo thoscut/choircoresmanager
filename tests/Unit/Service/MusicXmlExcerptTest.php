@@ -3,14 +3,14 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Service;
+namespace OCA\Cantoria\Tests\Unit\Service;
 
-use OCA\Notenarchiv\Exception\InvalidInputException;
-use OCA\Notenarchiv\Service\MusicXmlExcerpt;
+use OCA\Cantoria\Exception\InvalidInputException;
+use OCA\Cantoria\Service\MusicXmlExcerpt;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -91,7 +91,7 @@ final class MusicXmlExcerptTest extends TestCase {
 		self::assertSame(['3', '4', '5'], self::numbers($xpath, 'P1'));
 		self::assertSame(['3', '4', '5'], self::numbers($xpath, 'P2'));
 		self::assertSame('Der Mond ist aufgegangen', self::text($xpath, '/score-partwise/work/work-title'));
-		self::assertSame('Melodie und Text gemeinfrei. Satz: CC0 1.0 (Notenarchiv-Demo-Bestand)', self::text($xpath, '/score-partwise/identification/rights'));
+		self::assertSame('Melodie und Text gemeinfrei. Satz: CC0 1.0 (Cantoria-Demo-Bestand)', self::text($xpath, '/score-partwise/identification/rights'));
 		self::assertSame(3, self::found($xpath, '/score-partwise/credit'), 'title, subtitle and composer credit');
 		self::assertSame(2, self::found($xpath, '/score-partwise/part-list/score-part'));
 		self::assertSame(1, self::found($xpath, '/score-partwise/part[@id="P1"]/measure[@number="3"]/note/lyric[@number="1"]/text[.="gold"]'), 'the notes are the same');

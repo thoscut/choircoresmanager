@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: CC0-1.0
  */
 
@@ -19,11 +19,11 @@ const testConfig = {
 /**
  * The service worker of the pages that keep pieces on a device (milestone
  * 0.15): a classic script without imports, built after the app into
- * js/notenarchiv-offline-worker.js; OfflineController::worker serves it from
+ * js/cantoria-offline-worker.js; OfflineController::worker serves it from
  * the app's path, so that it covers the pages.
  */
 const offlineWorker = {
-	name: 'notenarchiv-offline-worker',
+	name: 'cantoria-offline-worker',
 	apply: 'build' as const,
 	async closeBundle() {
 		await build({
@@ -37,8 +37,8 @@ const offlineWorker = {
 				lib: {
 					entry: resolve(join('src', 'offline', 'worker.ts')),
 					formats: ['iife'],
-					name: 'notenarchivOfflineWorker',
-					fileName: () => 'notenarchiv-offline-worker.js',
+					name: 'cantoriaOfflineWorker',
+					fileName: () => 'cantoria-offline-worker.js',
 				},
 			},
 		})

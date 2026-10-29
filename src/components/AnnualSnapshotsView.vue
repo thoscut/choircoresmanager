@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -71,7 +71,7 @@ function createdText(snapshot: Snapshot): string {
  * @param snapshot - the snapshot
  */
 function snapshotLabel(snapshot: Snapshot): string {
-	return t('notenarchiv', 'Year {year}, frozen on {date}', { year: snapshot.year, date: createdText(snapshot) })
+	return t('cantoria', 'Year {year}, frozen on {date}', { year: snapshot.year, date: createdText(snapshot) })
 }
 
 // ---- making a snapshot ----
@@ -91,7 +91,7 @@ async function create(): Promise<void> {
 	createError.value = ''
 	try {
 		const result = await createSnapshot()
-		showSuccess(t('notenarchiv', 'The snapshot has been stored in {folder}.', { folder: result.folder }))
+		showSuccess(t('cantoria', 'The snapshot has been stored in {folder}.', { folder: result.folder }))
 		confirming.value = false
 		await load()
 	} catch (caught) {
@@ -114,8 +114,8 @@ async function changeAuto(auto: boolean): Promise<void> {
 	try {
 		overview.value = { ...overview.value, auto: await setSnapshotAuto(auto) }
 		showSuccess(auto
-			? t('notenarchiv', 'The state is frozen automatically at the turn of the year.')
-			: t('notenarchiv', 'The state is no longer frozen automatically.'))
+			? t('cantoria', 'The state is frozen automatically at the turn of the year.')
+			: t('cantoria', 'The state is no longer frozen automatically.'))
 	} catch (caught) {
 		error.value = errorMessage(caught)
 	} finally {
@@ -156,7 +156,7 @@ const newerOption = computed({
 
 async function compare(): Promise<void> {
 	if (older.value === null || newer.value === null) {
-		compareError.value = t('notenarchiv', 'Choose two snapshots to compare.')
+		compareError.value = t('cantoria', 'Choose two snapshots to compare.')
 		return
 	}
 	comparing.value = true
@@ -175,11 +175,11 @@ async function compare(): Promise<void> {
 const FILE_GROUPS = ['added', 'removed', 'changed'] as const
 
 const licenseFields: Record<string, () => string> = {
-	holder: () => t('notenarchiv', 'License holder or publisher'),
-	uses: () => t('notenarchiv', 'Uses'),
-	quantity: () => t('notenarchiv', 'Number of copies'),
-	valid_from: () => t('notenarchiv', 'Valid from'),
-	valid_until: () => t('notenarchiv', 'Valid until'),
+	holder: () => t('cantoria', 'License holder or publisher'),
+	uses: () => t('cantoria', 'Uses'),
+	quantity: () => t('cantoria', 'Number of copies'),
+	valid_from: () => t('cantoria', 'Valid from'),
+	valid_until: () => t('cantoria', 'Valid until'),
 }
 
 /**
@@ -190,10 +190,10 @@ const licenseFields: Record<string, () => string> = {
  */
 function changeLabel(level: Level | 'license', field: string): string {
 	if (field === 'title') {
-		return t('notenarchiv', 'Title')
+		return t('cantoria', 'Title')
 	}
 	if (field === 'version') {
-		return t('notenarchiv', 'Version')
+		return t('cantoria', 'Version')
 	}
 	if (level === 'license') {
 		return licenseFields[field]?.() ?? field
@@ -252,37 +252,37 @@ function licenseDetails(row: { holder: string | null, uses: string | null }): st
 function licenseChangeLabel(change: 'added' | 'changed' | 'removed'): string {
 	switch (change) {
 	case 'added':
-		return t('notenarchiv', 'New license')
+		return t('cantoria', 'New license')
 	case 'removed':
-		return t('notenarchiv', 'License removed')
+		return t('cantoria', 'License removed')
 	default:
-		return t('notenarchiv', 'License changed')
+		return t('cantoria', 'License changed')
 	}
 }
 </script>
 
 <template>
 	<div class="snapshots-view">
-		<ViewHeader :title="t('notenarchiv', 'Annual snapshots')"
-			:description="t('notenarchiv', 'A snapshot freezes the state of the archive: the catalog as CSV and JSON, without accounts and the folder book, and a list of checksums of the archive files, in a dated folder of the backup folder outside the archive folder. Two snapshots can be compared and printed.')"
+		<ViewHeader :title="t('cantoria', 'Annual snapshots')"
+			:description="t('cantoria', 'A snapshot freezes the state of the archive: the catalog as CSV and JSON, without accounts and the folder book, and a list of checksums of the archive files, in a dated folder of the backup folder outside the archive folder. Two snapshots can be compared and printed.')"
 			printable
 			reloadable
 			:loading="loading"
 			@reload="load" />
 
 		<div class="snapshots-view__content">
-			<NcEmptyContent v-if="!overview && loading" :name="t('notenarchiv', 'Loading …')">
+			<NcEmptyContent v-if="!overview && loading" :name="t('cantoria', 'Loading …')">
 				<template #icon>
 					<NcLoadingIcon :size="64" />
 				</template>
 			</NcEmptyContent>
-			<NcEmptyContent v-else-if="!overview && error" :name="t('notenarchiv', 'The snapshots could not be loaded')" :description="error">
+			<NcEmptyContent v-else-if="!overview && error" :name="t('cantoria', 'The snapshots could not be loaded')" :description="error">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiAlertCircleOutline" />
 				</template>
 				<template #action>
 					<NcButton @click="load">
-						{{ t('notenarchiv', 'Try again') }}
+						{{ t('cantoria', 'Try again') }}
 					</NcButton>
 				</template>
 			</NcEmptyContent>
@@ -295,56 +295,56 @@ function licenseChangeLabel(change: 'added' | 'changed' | 'removed'): string {
 					{{ error }}
 				</NcNoteCard>
 				<NcNoteCard v-if="overview.lastError" type="warning" class="no-print">
-					{{ t('notenarchiv', 'The last automatic snapshot failed: {error}', { error: overview.lastError }) }}
+					{{ t('cantoria', 'The last automatic snapshot failed: {error}', { error: overview.lastError }) }}
 				</NcNoteCard>
 				<NcNoteCard v-if="overview.running" type="info" class="no-print">
-					{{ t('notenarchiv', 'A snapshot has been in the making since {time}.', { time: formatDateTime(overview.running.since) }) }}
+					{{ t('cantoria', 'A snapshot has been in the making since {time}.', { time: formatDateTime(overview.running.since) }) }}
 				</NcNoteCard>
 
 				<section v-if="isLibrarian" class="snapshots-view__section no-print" aria-labelledby="snapshots-make">
 					<h3 id="snapshots-make">
-						{{ t('notenarchiv', 'Freeze the state') }}
+						{{ t('cantoria', 'Freeze the state') }}
 					</h3>
 					<p>
-						{{ t('notenarchiv', 'A new snapshot of the year {year} is written to the folder "{folder}" of the account that set the archive folder. Existing snapshots are never changed.', { year: overview.next.year, folder: overview.next.folder }) }}
+						{{ t('cantoria', 'A new snapshot of the year {year} is written to the folder "{folder}" of the account that set the archive folder. Existing snapshots are never changed.', { year: overview.next.year, folder: overview.next.folder }) }}
 					</p>
 					<p v-if="overview.next.exists" class="snapshots-view__muted">
-						{{ t('notenarchiv', 'There is a snapshot of {year} already; the new one is added next to it.', { year: overview.next.year }) }}
+						{{ t('cantoria', 'There is a snapshot of {year} already; the new one is added next to it.', { year: overview.next.year }) }}
 					</p>
 					<div class="snapshots-view__actions">
 						<NcButton variant="primary" @click="startCreate">
 							<template #icon>
 								<NcIconSvgWrapper :path="mdiArchiveClockOutline" />
 							</template>
-							{{ t('notenarchiv', 'Freeze the state now …') }}
+							{{ t('cantoria', 'Freeze the state now …') }}
 						</NcButton>
 					</div>
 					<NcCheckboxRadioSwitch :model-value="overview.auto"
 						type="switch"
 						:disabled="autoBusy"
 						@update:model-value="changeAuto">
-						{{ t('notenarchiv', 'Freeze automatically at the turn of the year') }}
+						{{ t('cantoria', 'Freeze automatically at the turn of the year') }}
 						<template #description>
-							{{ t('notenarchiv', 'In January, once, for the year before; written as the account that set the archive folder.') }}
+							{{ t('cantoria', 'In January, once, for the year before; written as the account that set the archive folder.') }}
 						</template>
 					</NcCheckboxRadioSwitch>
 				</section>
 
 				<section class="snapshots-view__section no-print" aria-labelledby="snapshots-list">
 					<h3 id="snapshots-list">
-						{{ n('notenarchiv', '%n snapshot', '%n snapshots', overview.snapshots.length) }}
+						{{ n('cantoria', '%n snapshot', '%n snapshots', overview.snapshots.length) }}
 					</h3>
 					<p v-if="overview.snapshots.length === 0" class="snapshots-view__muted">
 						{{ isLibrarian
-							? t('notenarchiv', 'There is no snapshot yet. Freeze the state above.')
-							: t('notenarchiv', 'There is no snapshot yet. The catalog librarian makes them.') }}
+							? t('cantoria', 'There is no snapshot yet. Freeze the state above.')
+							: t('cantoria', 'There is no snapshot yet. The catalog librarian makes them.') }}
 					</p>
 					<ul v-else class="snapshots-view__list">
 						<li v-for="snapshot in overview.snapshots" :key="snapshot.name">
 							<strong>{{ snapshotLabel(snapshot) }}</strong>
 							<span class="snapshots-view__muted"> · {{ snapshot.name }}</span>
 							<span v-if="!snapshot.complete" class="snapshots-view__warning">
-								· {{ t('notenarchiv', 'incomplete: a file is missing, it cannot be compared') }}
+								· {{ t('cantoria', 'incomplete: a file is missing, it cannot be compared') }}
 							</span>
 						</li>
 					</ul>
@@ -352,22 +352,22 @@ function licenseChangeLabel(change: 'added' | 'changed' | 'removed'): string {
 
 				<section v-if="options.length >= 2" class="snapshots-view__section" aria-labelledby="snapshots-compare">
 					<h3 id="snapshots-compare">
-						{{ t('notenarchiv', 'Compare two snapshots') }}
+						{{ t('cantoria', 'Compare two snapshots') }}
 					</h3>
 					<div class="snapshots-view__compare no-print">
 						<NcSelect v-model="olderOption"
-							:input-label="t('notenarchiv', 'Earlier snapshot')"
+							:input-label="t('cantoria', 'Earlier snapshot')"
 							:options="options"
 							:clearable="false" />
 						<NcSelect v-model="newerOption"
-							:input-label="t('notenarchiv', 'Later snapshot')"
+							:input-label="t('cantoria', 'Later snapshot')"
 							:options="options"
 							:clearable="false" />
 						<NcButton :disabled="comparing" @click="compare">
 							<template v-if="comparing" #icon>
 								<NcLoadingIcon />
 							</template>
-							{{ t('notenarchiv', 'Compare') }}
+							{{ t('cantoria', 'Compare') }}
 						</NcButton>
 					</div>
 					<NcNoteCard v-if="compareError" type="error" role="alert">
@@ -376,15 +376,15 @@ function licenseChangeLabel(change: 'added' | 'changed' | 'removed'): string {
 
 					<div v-if="comparison" class="snapshots-view__result" aria-live="polite">
 						<p class="snapshots-view__heading">
-							{{ t('notenarchiv', 'Changes from {older} to {newer}', { older: snapshotLabel(comparison.older), newer: snapshotLabel(comparison.newer) }) }}
+							{{ t('cantoria', 'Changes from {older} to {newer}', { older: snapshotLabel(comparison.older), newer: snapshotLabel(comparison.newer) }) }}
 						</p>
 						<p v-if="differenceCount(comparison) === 0" class="snapshots-view__ok">
 							<NcIconSvgWrapper :path="mdiCheckCircleOutline" inline />
-							{{ t('notenarchiv', 'No differences.') }}
+							{{ t('cantoria', 'No differences.') }}
 						</p>
 
 						<template v-if="comparison.copies.added.length > 0">
-							<h4>{{ n('notenarchiv', '%n new copy', '%n new copies', comparison.copies.added.length) }}</h4>
+							<h4>{{ n('cantoria', '%n new copy', '%n new copies', comparison.copies.added.length) }}</h4>
 							<ul>
 								<li v-for="row in comparison.copies.added" :key="row.shelfmark">
 									{{ row.shelfmark }} · {{ row.title ?? '–' }}
@@ -392,7 +392,7 @@ function licenseChangeLabel(change: 'added' | 'changed' | 'removed'): string {
 							</ul>
 						</template>
 						<template v-if="comparison.copies.removed.length > 0">
-							<h4>{{ n('notenarchiv', '%n copy no longer in the catalog', '%n copies no longer in the catalog', comparison.copies.removed.length) }}</h4>
+							<h4>{{ n('cantoria', '%n copy no longer in the catalog', '%n copies no longer in the catalog', comparison.copies.removed.length) }}</h4>
 							<ul>
 								<li v-for="row in comparison.copies.removed" :key="row.shelfmark">
 									{{ row.shelfmark }} · {{ row.title ?? '–' }}
@@ -400,7 +400,7 @@ function licenseChangeLabel(change: 'added' | 'changed' | 'removed'): string {
 							</ul>
 						</template>
 						<template v-if="comparison.copies.changed.length > 0">
-							<h4>{{ n('notenarchiv', '%n changed copy', '%n changed copies', comparison.copies.changed.length) }}</h4>
+							<h4>{{ n('cantoria', '%n changed copy', '%n changed copies', comparison.copies.changed.length) }}</h4>
 							<ul>
 								<li v-for="row in comparison.copies.changed" :key="row.shelfmark">
 									{{ row.shelfmark }} · {{ row.title ?? '–' }}:
@@ -409,7 +409,7 @@ function licenseChangeLabel(change: 'added' | 'changed' | 'removed'): string {
 							</ul>
 						</template>
 						<template v-if="comparison.rights.length > 0">
-							<h4>{{ n('notenarchiv', '%n version with changed rights', '%n versions with changed rights', comparison.rights.length) }}</h4>
+							<h4>{{ n('cantoria', '%n version with changed rights', '%n versions with changed rights', comparison.rights.length) }}</h4>
 							<ul>
 								<li v-for="(row, index) in comparison.rights" :key="`${row.shelfmark}-${index}`">
 									{{ row.shelfmark || '–' }} · {{ row.title ?? '–' }}:
@@ -418,7 +418,7 @@ function licenseChangeLabel(change: 'added' | 'changed' | 'removed'): string {
 							</ul>
 						</template>
 						<template v-if="comparison.licenses.length > 0">
-							<h4>{{ n('notenarchiv', '%n license change', '%n license changes', comparison.licenses.length) }}</h4>
+							<h4>{{ n('cantoria', '%n license change', '%n license changes', comparison.licenses.length) }}</h4>
 							<ul>
 								<li v-for="(row, index) in comparison.licenses" :key="`${row.shelfmark}-${index}`">
 									{{ licenseChangeLabel(row.change) }}: {{ row.shelfmark || '–' }} · {{ row.title ?? '–' }}
@@ -431,16 +431,16 @@ function licenseChangeLabel(change: 'added' | 'changed' | 'removed'): string {
 						</template>
 
 						<NcNoteCard v-if="!comparison.files.compared" type="warning">
-							{{ t('notenarchiv', 'The checksums of one of the snapshots cannot be read, so the files were not compared.') }}
+							{{ t('cantoria', 'The checksums of one of the snapshots cannot be read, so the files were not compared.') }}
 						</NcNoteCard>
 						<template v-for="group in FILE_GROUPS" :key="group">
 							<template v-if="comparison.files[group].length > 0">
 								<h4>
 									{{ group === 'added'
-										? n('notenarchiv', '%n new file', '%n new files', comparison.files[group].length)
+										? n('cantoria', '%n new file', '%n new files', comparison.files[group].length)
 										: group === 'removed'
-											? n('notenarchiv', '%n file no longer there', '%n files no longer there', comparison.files[group].length)
-											: n('notenarchiv', '%n file with changed content', '%n files with changed content', comparison.files[group].length) }}
+											? n('cantoria', '%n file no longer there', '%n files no longer there', comparison.files[group].length)
+											: n('cantoria', '%n file with changed content', '%n files with changed content', comparison.files[group].length) }}
 								</h4>
 								<ul class="snapshots-view__files">
 									<li v-for="file in comparison.files[group]" :key="file.path">
@@ -453,30 +453,30 @@ function licenseChangeLabel(change: 'added' | 'changed' | 'removed'): string {
 					</div>
 				</section>
 				<p v-else-if="overview.snapshots.length > 0" class="snapshots-view__muted no-print">
-					{{ t('notenarchiv', 'A comparison needs two complete snapshots.') }}
+					{{ t('cantoria', 'A comparison needs two complete snapshots.') }}
 				</p>
 			</template>
 		</div>
 
 		<ActionDialog v-if="confirming && overview"
-			:name="t('notenarchiv', 'Freeze the state now')"
-			:submit-label="t('notenarchiv', 'Freeze')"
+			:name="t('cantoria', 'Freeze the state now')"
+			:submit-label="t('cantoria', 'Freeze')"
 			:busy="busy"
 			:error="createError"
 			@submit="create"
 			@close="confirming = false">
-			<p>{{ t('notenarchiv', 'The app writes a new folder for the year {year} into "{folder}":', { year: overview.next.year, folder: overview.next.folder }) }}</p>
+			<p>{{ t('cantoria', 'The app writes a new folder for the year {year} into "{folder}":', { year: overview.next.year, folder: overview.next.folder }) }}</p>
 			<ul class="snapshots-view__files-to-write">
-				<li>{{ t('notenarchiv', 'catalog.csv: the catalog with all fields, as in the weekly backup') }}</li>
-				<li>{{ t('notenarchiv', 'catalog.json: the complete backup of the catalog, licenses, persons and audit log') }}</li>
+				<li>{{ t('cantoria', 'catalog.csv: the catalog with all fields, as in the weekly backup') }}</li>
+				<li>{{ t('cantoria', 'catalog.json: the complete backup of the catalog, licenses, persons and audit log') }}</li>
 				<li>
-					{{ n('notenarchiv', 'manifest.csv: SHA-256 checksum, size and path of %n archive file ({size})',
+					{{ n('cantoria', 'manifest.csv: SHA-256 checksum, size and path of %n archive file ({size})',
 						'manifest.csv: SHA-256 checksum, size and path of %n archive files ({size} in total)',
 						overview.next.archiveFiles, { size: formatSize(overview.next.bytes) }) }}
 				</li>
 			</ul>
 			<p class="action-dialog__hint">
-				{{ t('notenarchiv', 'Every archive file is read for its checksum; with many files this takes a few minutes. Keep this page open until it is done.') }}
+				{{ t('cantoria', 'Every archive file is read for its checksum; with many files this takes a few minutes. Keep this page open until it is done.') }}
 			</p>
 		</ActionDialog>
 	</div>

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -10,16 +10,16 @@
  * and never contain the app password or the account.
  */
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
-import { NotenarchivClient } from './client.js'
+import { CantoriaClient } from './client.js'
 import { ConfigError, readConfig } from './config.js'
 import { createServer } from './server.js'
 
 try {
 	const config = readConfig(process.env)
-	const server = createServer(new NotenarchivClient(config))
+	const server = createServer(new CantoriaClient(config))
 	await server.connect(new StdioServerTransport())
-	process.stderr.write(`notenarchiv-mcp: ready for ${new URL(config.baseUrl).host}${config.readOnly ? ' (read-only)' : ''}\n`)
+	process.stderr.write(`cantoria-mcp: ready for ${new URL(config.baseUrl).host}${config.readOnly ? ' (read-only)' : ''}\n`)
 } catch (error) {
-	process.stderr.write(`notenarchiv-mcp: ${error instanceof ConfigError ? error.message : 'could not start.'}\n`)
+	process.stderr.write(`cantoria-mcp: ${error instanceof ConfigError ? error.message : 'could not start.'}\n`)
 	process.exit(2)
 }

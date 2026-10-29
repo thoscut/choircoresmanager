@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Recreates the screenshots of the documentation (docs/screenshots) from a
- * Nextcloud with the Notenarchiv app and the public demo data (tools/demo).
+ * Nextcloud with the Cantoria app and the public demo data (tools/demo).
  *
  *   node shoot.mjs --url http://localhost:8080 [--prepare] [--only a,b] [--out dir]
  *
@@ -27,7 +27,7 @@ const { values: args } = parseArgs({
 		prepare: { type: 'boolean', default: false },
 		'no-optimize': { type: 'boolean', default: false },
 		list: { type: 'boolean', default: false },
-		'demo-folder': { type: 'string', default: 'Notenarchiv-Demo' },
+		'demo-folder': { type: 'string', default: 'Cantoria-Demo' },
 	},
 })
 
@@ -93,7 +93,7 @@ async function browserPath() {
 const WIDTH = 1600
 const HEIGHT = 1000
 const BASE = args.url.replace(/\/+$/, '')
-const APP = `${BASE}/index.php/apps/notenarchiv/`
+const APP = `${BASE}/index.php/apps/cantoria/`
 const sleep = (ms) => new Promise((done) => setTimeout(done, ms))
 
 /**
@@ -160,7 +160,7 @@ class Session {
 				json = JSON.parse(text)
 			} catch {}
 			return { status: response.status, json }
-		}, method, `${BASE}/index.php/apps/notenarchiv${path}`, body)
+		}, method, `${BASE}/index.php/apps/cantoria${path}`, body)
 	}
 
 	/** Raw request in the session (WebDAV, OCS). */

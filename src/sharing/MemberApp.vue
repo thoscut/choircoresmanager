@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -50,7 +50,7 @@ import { scopeText } from './linkScope.ts'
  */
 function initialLinks(): MemberLink[] {
 	try {
-		const state = loadState<MemberPageState>('notenarchiv', 'member', { links: [] })
+		const state = loadState<MemberPageState>('cantoria', 'member', { links: [] })
 		return Array.isArray(state.links) ? state.links : []
 	} catch {
 		return []
@@ -62,7 +62,7 @@ function initialLinks(): MemberLink[] {
  */
 function initialOffline(): { enabled: boolean, version: string } {
 	try {
-		const state = loadState<MemberPageState>('notenarchiv', 'member', { links: [] })
+		const state = loadState<MemberPageState>('cantoria', 'member', { links: [] })
 		return { enabled: state.offline?.enabled === true, version: String(state.offline?.version ?? '') }
 	} catch {
 		return { enabled: false, version: '' }
@@ -141,12 +141,12 @@ function lockText(link: MemberLink): string {
 	case 'ok':
 		return ''
 	case 'expired':
-		return t('notenarchiv', 'This link has expired. It is removed from this device at the next start with a network.')
+		return t('cantoria', 'This link has expired. It is removed from this device at the next start with a network.')
 	case 'unchecked':
-		return n('notenarchiv', 'Locked: not checked with the server for more than %n day. Please open this page once with a network.',
+		return n('cantoria', 'Locked: not checked with the server for more than %n day. Please open this page once with a network.',
 			'Locked: not checked with the server for more than %n days. Please open this page once with a network.', MAX_DAYS_UNCHECKED)
 	default:
-		return t('notenarchiv', 'There is no network, and this piece is not kept on this device.')
+		return t('cantoria', 'There is no network, and this piece is not kept on this device.')
 	}
 }
 
@@ -188,15 +188,15 @@ async function setKept(link: MemberLink, keep: boolean, withScan: boolean): Prom
 		if (keep) {
 			catalog.value = await keepPieces('member', [forDevice(link)], withScan, offlineConfig.version)
 			await askToPersist()
-			deviceStatus.value = t('notenarchiv', '"{title}" is kept on this device.', { title: link.title })
+			deviceStatus.value = t('cantoria', '"{title}" is kept on this device.', { title: link.title })
 		} else {
 			catalog.value = await forgetPieces('member', [link.token])
-			deviceStatus.value = t('notenarchiv', '"{title}" is removed from this device.', { title: link.title })
+			deviceStatus.value = t('cantoria', '"{title}" is removed from this device.', { title: link.title })
 		}
 	} catch (error) {
-		keepError.value = t('notenarchiv', '"{title}" could not be kept on this device: {reason}', {
+		keepError.value = t('cantoria', '"{title}" could not be kept on this device: {reason}', {
 			title: link.title,
-			reason: error instanceof Error && error.message !== '' ? error.message : t('notenarchiv', 'Please check the network and the space on the device.'),
+			reason: error instanceof Error && error.message !== '' ? error.message : t('cantoria', 'Please check the network and the space on the device.'),
 		})
 		catalog.value = await readCatalog('member')
 	} finally {
@@ -213,10 +213,10 @@ async function keepAll(): Promise<void> {
 	try {
 		catalog.value = await keepPieces('member', pieces.map(forDevice), false, offlineConfig.version)
 		await askToPersist()
-		deviceStatus.value = n('notenarchiv', '%n piece is kept on this device.', '%n pieces are kept on this device.', pieces.length)
+		deviceStatus.value = n('cantoria', '%n piece is kept on this device.', '%n pieces are kept on this device.', pieces.length)
 	} catch (error) {
-		keepError.value = t('notenarchiv', 'Not every piece could be kept on this device: {reason}', {
-			reason: error instanceof Error && error.message !== '' ? error.message : t('notenarchiv', 'Please check the network and the space on the device.'),
+		keepError.value = t('cantoria', 'Not every piece could be kept on this device: {reason}', {
+			reason: error instanceof Error && error.message !== '' ? error.message : t('cantoria', 'Please check the network and the space on the device.'),
 		})
 		catalog.value = await readCatalog('member')
 	} finally {
@@ -231,7 +231,7 @@ async function deleteDevice(): Promise<void> {
 	forgetPractising()
 	catalog.value = null
 	confirmingDelete.value = false
-	deviceStatus.value = t('notenarchiv', 'Everything the music archive kept on this device is deleted.')
+	deviceStatus.value = t('cantoria', 'Everything the music archive kept on this device is deleted.')
 	await refreshStorage()
 }
 
@@ -242,14 +242,14 @@ const storageText = computed(() => {
 		return ''
 	}
 	return info.quota === null
-		? t('notenarchiv', '{used} used on this device.', { used: formatSize(info.usage) })
-		: t('notenarchiv', '{used} of {available} used on this device.', { used: formatSize(info.usage), available: formatSize(info.quota) })
+		? t('cantoria', '{used} used on this device.', { used: formatSize(info.usage) })
+		: t('cantoria', '{used} of {available} used on this device.', { used: formatSize(info.usage), available: formatSize(info.quota) })
 })
 
 const checkedText = computed(() => {
 	const checked = catalog.value ? Date.parse(catalog.value.checked) : NaN
 	return Number.isFinite(checked)
-		? t('notenarchiv', 'Last checked with the server: {time}.', { time: formatDateTime(Math.floor(checked / 1000)) })
+		? t('cantoria', 'Last checked with the server: {time}.', { time: formatDateTime(Math.floor(checked / 1000)) })
 		: ''
 })
 
@@ -259,10 +259,10 @@ function onOnline(): void {
 
 /** Words of a text reference (the same texts as in the archive). */
 const WORDS = {
-	page: (page: string) => t('notenarchiv', 'p. {page}', { page }),
-	measure: (measure: string) => t('notenarchiv', 'm. {measure}', { measure }),
-	measures: (from: string, to: string) => t('notenarchiv', 'm. {from}–{to}', { from, to }),
-	verse: (verse: string) => t('notenarchiv', 'verse {verse}', { verse }),
+	page: (page: string) => t('cantoria', 'p. {page}', { page }),
+	measure: (measure: string) => t('cantoria', 'm. {measure}', { measure }),
+	measures: (from: string, to: string) => t('cantoria', 'm. {from}–{to}', { from, to }),
+	verse: (verse: string) => t('cantoria', 'verse {verse}', { verse }),
 }
 
 /**
@@ -272,7 +272,7 @@ const WORDS = {
  */
 function place(link: MemberLink): string {
 	return scopeText({ measureFrom: link.measure_from, measureTo: link.measure_to, voice: link.voice, verse: link.verse }, WORDS,
-		t('notenarchiv', 'Whole piece'))
+		t('cantoria', 'Whole piece'))
 }
 
 async function loadSelectedScore(): Promise<void> {
@@ -296,7 +296,7 @@ async function loadSelectedScore(): Promise<void> {
 	} catch (error) {
 		if (selectedToken.value === link.token) {
 			scoreStatus.value = 'error'
-			scoreError.value = error instanceof Error && error.message !== '' ? error.message : t('notenarchiv', 'The score could not be loaded.')
+			scoreError.value = error instanceof Error && error.message !== '' ? error.message : t('cantoria', 'The score could not be loaded.')
 		}
 	}
 }
@@ -328,7 +328,7 @@ async function select(link: MemberLink, moveFocus = true): Promise<void> {
 function exportAudio(input: MemberPracticeAudioInput): Promise<void> {
 	const link = selected.value
 	if (!link) {
-		return Promise.reject(new Error(t('notenarchiv', 'Please choose a piece from the list first.')))
+		return Promise.reject(new Error(t('cantoria', 'Please choose a piece from the list first.')))
 	}
 	return authorizeMemberPracticeAudio(link.token, input)
 }
@@ -347,7 +347,7 @@ onMounted(async () => {
 		select(linked, false)
 		nextTick(() => excerptHeading.value?.scrollIntoView?.({ block: 'start' }))
 	} else if (token !== null) {
-		notice.value = t('notenarchiv', 'This link is not available to you, or no longer: it may have expired or been revoked. Please ask the conductor or the music librarians for a new link. Everything else shared with you is listed below.')
+		notice.value = t('cantoria', 'This link is not available to you, or no longer: it may have expired or been revoked. Please ask the conductor or the music librarians for a new link. Everything else shared with you is listed below.')
 	} else if (links.length === 1) {
 		select(links[0], false)
 	}
@@ -357,15 +357,15 @@ onBeforeUnmount(() => window.removeEventListener('online', onOnline))
 </script>
 
 <template>
-	<NcContent app-name="notenarchiv">
-		<NcAppContent :page-heading="t('notenarchiv', 'Shared with me')"
-			:page-title="t('notenarchiv', 'Shared with me') + ' - ' + t('notenarchiv', 'Music archive')">
+	<NcContent app-name="cantoria">
+		<NcAppContent :page-heading="t('cantoria', 'Shared with me')"
+			:page-title="t('cantoria', 'Shared with me') + ' - ' + t('cantoria', 'Music archive')">
 			<div class="member-app">
 				<h2 :id="pageHeadingId" class="member-app__title">
-					{{ t('notenarchiv', 'Shared with me') }}
+					{{ t('cantoria', 'Shared with me') }}
 				</h2>
 				<p class="member-app__intro">
-					{{ t('notenarchiv', 'Pieces and excerpts that the conductor or the music librarians share with the choir members: view, listen and practise your voice. Each link is valid for a limited time.') }}
+					{{ t('cantoria', 'Pieces and excerpts that the conductor or the music librarians share with the choir members: view, listen and practise your voice. Each link is valid for a limited time.') }}
 				</p>
 
 				<NcNoteCard v-if="notice" type="warning" role="status">
@@ -373,13 +373,13 @@ onBeforeUnmount(() => window.removeEventListener('online', onOnline))
 				</NcNoteCard>
 				<NcNoteCard v-if="withoutNetwork" type="info" role="status">
 					{{ keptCount > 0
-						? t('notenarchiv', 'No network: the pieces kept on this device can be viewed, played and practised. {checked}', { checked: checkedText })
-						: t('notenarchiv', 'No network, and no piece is kept on this device.') }}
+						? t('cantoria', 'No network: the pieces kept on this device can be viewed, played and practised. {checked}', { checked: checkedText })
+						: t('cantoria', 'No network, and no piece is kept on this device.') }}
 				</NcNoteCard>
 
 				<NcEmptyContent v-if="links.length === 0"
-					:name="t('notenarchiv', 'Nothing has been shared with you yet')"
-					:description="t('notenarchiv', 'When the conductor or the music librarians share a piece or an excerpt with the choir members, it appears here. Each link is valid for at most six months.')">
+					:name="t('cantoria', 'Nothing has been shared with you yet')"
+					:description="t('cantoria', 'When the conductor or the music librarians share a piece or an excerpt with the choir members, it appears here. Each link is valid for at most six months.')">
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiMusicNoteOutline" />
 					</template>
@@ -389,14 +389,14 @@ onBeforeUnmount(() => window.removeEventListener('online', onOnline))
 					<div class="member-app__layout">
 						<section class="member-app__list" :aria-labelledby="listHeadingId">
 							<h3 :id="listHeadingId" class="member-app__list-title">
-								{{ n('notenarchiv', '%n shared link', '%n shared links', links.length) }}
+								{{ n('cantoria', '%n shared link', '%n shared links', links.length) }}
 							</h3>
 							<div v-if="offlineOn && !withoutNetwork && notKept.length > 1" class="member-app__keep-all">
 								<NcButton variant="secondary" :disabled="keeping !== null" @click="keepAll">
-									{{ n('notenarchiv', 'Keep %n piece on this device', 'Keep all %n pieces on this device', notKept.length) }}
+									{{ n('cantoria', 'Keep %n piece on this device', 'Keep all %n pieces on this device', notKept.length) }}
 								</NcButton>
 								<p v-if="keeping === 'all'" class="member-app__muted">
-									{{ t('notenarchiv', 'Keeping on this device …') }}
+									{{ t('cantoria', 'Keeping on this device …') }}
 								</p>
 							</div>
 							<ul class="member-app__items">
@@ -415,18 +415,18 @@ onBeforeUnmount(() => window.removeEventListener('online', onOnline))
 									</p>
 									<p>{{ place(link) }}</p>
 									<p v-if="link.note" class="member-app__note-text">
-										{{ t('notenarchiv', 'Note: {note}', { note: link.note }) }}
+										{{ t('cantoria', 'Note: {note}', { note: link.note }) }}
 									</p>
 									<p class="member-app__muted">
 										<template v-if="link.expires">
-											{{ t('notenarchiv', 'Valid until {date}', { date: formatDate(link.expires) }) }} ·
+											{{ t('cantoria', 'Valid until {date}', { date: formatDate(link.expires) }) }} ·
 										</template>
-										{{ link.canPlay ? t('notenarchiv', 'Playback: yes') : t('notenarchiv', 'Playback: no') }}
+										{{ link.canPlay ? t('cantoria', 'Playback: yes') : t('cantoria', 'Playback: no') }}
 										<template v-if="link.canExportAudio">
-											· {{ t('notenarchiv', 'Practice files: yes') }}
+											· {{ t('cantoria', 'Practice files: yes') }}
 										</template>
 										<template v-if="link.scan">
-											· {{ t('notenarchiv', 'with scan (PDF)') }}
+											· {{ t('cantoria', 'with scan (PDF)') }}
 										</template>
 									</p>
 									<div v-if="offlineOn" class="member-app__device">
@@ -435,27 +435,27 @@ onBeforeUnmount(() => window.removeEventListener('online', onOnline))
 												:model-value="isKept(link)"
 												:disabled="withoutNetwork || keeping !== null"
 												@update:model-value="(on: boolean) => setKept(link, on, false)">
-												{{ t('notenarchiv', 'Keep on this device') }}
+												{{ t('cantoria', 'Keep on this device') }}
 											</NcCheckboxRadioSwitch>
 											<NcCheckboxRadioSwitch v-if="isKept(link) && link.scan"
 												type="switch"
 												:model-value="scanKept(link)"
 												:disabled="withoutNetwork || keeping !== null"
 												@update:model-value="(on: boolean) => setKept(link, true, on)">
-												{{ t('notenarchiv', 'With the scan (PDF)') }}
+												{{ t('cantoria', 'With the scan (PDF)') }}
 											</NcCheckboxRadioSwitch>
 											<p v-if="keeping === link.token" class="member-app__muted">
-												{{ t('notenarchiv', 'Keeping on this device …') }}
+												{{ t('cantoria', 'Keeping on this device …') }}
 											</p>
 											<p v-else-if="isKept(link) && lockText(link) !== ''" class="member-app__muted">
 												{{ lockText(link) }}
 											</p>
 										</template>
 										<p v-else class="member-app__muted">
-											{{ t('notenarchiv', 'Cannot be kept on this device: the rights do not allow saving the notes.') }}
+											{{ t('cantoria', 'Cannot be kept on this device: the rights do not allow saving the notes.') }}
 										</p>
 										<p v-if="withoutNetwork && !isKept(link)" class="member-app__muted">
-											{{ t('notenarchiv', 'Not on this device: needs a network.') }}
+											{{ t('cantoria', 'Not on this device: needs a network.') }}
 										</p>
 									</div>
 								</li>
@@ -471,14 +471,14 @@ onBeforeUnmount(() => window.removeEventListener('online', onOnline))
 							<Attribution :credits="selected.credits ?? []" :notices="selected.notices ?? []" />
 							<NcNoteCard v-if="selected.note" type="info" class="member-app__note">
 								<p class="member-app__note-text">
-									{{ t('notenarchiv', 'Note: {note}', { note: selected.note }) }}
+									{{ t('cantoria', 'Note: {note}', { note: selected.note }) }}
 								</p>
 							</NcNoteCard>
 							<p v-if="selected.expires" class="member-app__muted">
-								{{ t('notenarchiv', 'Valid until {date}', { date: formatDate(selected.expires) }) }}
+								{{ t('cantoria', 'Valid until {date}', { date: formatDate(selected.expires) }) }}
 							</p>
 							<p v-if="selected.scan && withoutNetwork && !scanKept(selected)" class="member-app__muted">
-								{{ t('notenarchiv', 'The scan is not kept on this device.') }}
+								{{ t('cantoria', 'The scan is not kept on this device.') }}
 							</p>
 							<ScanFrame v-else-if="selected.scan"
 								:key="selected.token"
@@ -486,20 +486,20 @@ onBeforeUnmount(() => window.removeEventListener('online', onOnline))
 								:piece-key="selected.token"
 								:title="selected.title" />
 
-							<NcEmptyContent v-if="scoreStatus === 'loading'" :name="t('notenarchiv', 'Loading the score …')">
+							<NcEmptyContent v-if="scoreStatus === 'loading'" :name="t('cantoria', 'Loading the score …')">
 								<template #icon>
 									<NcLoadingIcon :size="64" />
 								</template>
 							</NcEmptyContent>
 							<NcEmptyContent v-else-if="scoreStatus === 'error'"
-								:name="t('notenarchiv', 'The score cannot be shown')"
+								:name="t('cantoria', 'The score cannot be shown')"
 								:description="scoreError">
 								<template #icon>
 									<NcIconSvgWrapper :path="mdiAlertCircleOutline" />
 								</template>
 								<template #action>
 									<NcButton @click="loadSelectedScore">
-										{{ t('notenarchiv', 'Try again') }}
+										{{ t('cantoria', 'Try again') }}
 									</NcButton>
 								</template>
 							</NcEmptyContent>
@@ -520,44 +520,44 @@ onBeforeUnmount(() => window.removeEventListener('online', onOnline))
 								:offline="withoutNetwork" />
 						</section>
 						<p v-else class="member-app__muted">
-							{{ t('notenarchiv', 'Choose a piece from the list to see and hear it.') }}
+							{{ t('cantoria', 'Choose a piece from the list to see and hear it.') }}
 						</p>
 					</div>
 				</template>
 
 				<section class="member-app__device-section" :aria-labelledby="deviceHeadingId">
 					<h3 :id="deviceHeadingId" class="member-app__list-title">
-						{{ t('notenarchiv', 'On this device') }}
+						{{ t('cantoria', 'On this device') }}
 					</h3>
 					<template v-if="offlineOn">
 						<p>
-							{{ n('notenarchiv', '%n piece is kept on this device for practising without a network.', '%n pieces are kept on this device for practising without a network.', keptCount) }}
+							{{ n('cantoria', '%n piece is kept on this device for practising without a network.', '%n pieces are kept on this device for practising without a network.', keptCount) }}
 							{{ storageText }}
 						</p>
 						<p v-if="keptCount > 0" class="member-app__muted">
 							{{ checkedText }}
-							{{ storage?.persisted ? t('notenarchiv', 'The browser keeps them even when space runs short.') : t('notenarchiv', 'The browser may delete them when space runs short; on an iPhone or iPad, add this page to the home screen.') }}
+							{{ storage?.persisted ? t('cantoria', 'The browser keeps them even when space runs short.') : t('cantoria', 'The browser may delete them when space runs short; on an iPhone or iPad, add this page to the home screen.') }}
 						</p>
 					</template>
 					<p v-else-if="offlineConfig.enabled" class="member-app__muted">
-						{{ t('notenarchiv', 'This browser cannot keep pieces for practising without a network.') }}
+						{{ t('cantoria', 'This browser cannot keep pieces for practising without a network.') }}
 					</p>
 					<p class="member-app__muted">
-						{{ t('notenarchiv', 'Passages and settings for practising are remembered in this browser only. On a shared device, delete them when you are done.') }}
+						{{ t('cantoria', 'Passages and settings for practising are remembered in this browser only. On a shared device, delete them when you are done.') }}
 					</p>
 					<NcNoteCard v-if="keepError" type="error" role="alert">
 						{{ keepError }}
 					</NcNoteCard>
 					<div class="member-app__device-buttons">
 						<NcButton v-if="!confirmingDelete" variant="secondary" @click="confirmingDelete = true">
-							{{ t('notenarchiv', 'Delete everything on this device') }}
+							{{ t('cantoria', 'Delete everything on this device') }}
 						</NcButton>
 						<template v-else>
 							<NcButton variant="error" @click="deleteDevice">
-								{{ t('notenarchiv', 'Delete kept pieces, passages and settings') }}
+								{{ t('cantoria', 'Delete kept pieces, passages and settings') }}
 							</NcButton>
 							<NcButton variant="tertiary" @click="confirmingDelete = false">
-								{{ t('notenarchiv', 'Cancel') }}
+								{{ t('cantoria', 'Cancel') }}
 							</NcButton>
 						</template>
 					</div>

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -30,22 +30,22 @@ declare(strict_types=1);
 require __DIR__ . '/harness.php';
 [$root, $uid] = IntegrationTest::start($argv, ['nextcloud-root', 'uid']);
 
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\Event;
-use OCA\Notenarchiv\Exception\UserFacingException;
-use OCA\Notenarchiv\Service\EventService;
-use OCA\Notenarchiv\Service\FolderBookService;
-use OCA\Notenarchiv\Service\FullBackupService;
-use OCA\Notenarchiv\Service\LicenseService;
-use OCA\Notenarchiv\Service\LinkService;
-use OCA\Notenarchiv\Service\MergeService;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\PersonService;
-use OCA\Notenarchiv\Service\ProposalService;
-use OCA\Notenarchiv\Service\ReviewService;
-use OCA\Notenarchiv\Service\RightsService;
-use OCA\Notenarchiv\Service\StateService;
-use OCA\Notenarchiv\Service\TaskService;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Db\Event;
+use OCA\Cantoria\Exception\UserFacingException;
+use OCA\Cantoria\Service\EventService;
+use OCA\Cantoria\Service\FolderBookService;
+use OCA\Cantoria\Service\FullBackupService;
+use OCA\Cantoria\Service\LicenseService;
+use OCA\Cantoria\Service\LinkService;
+use OCA\Cantoria\Service\MergeService;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\PersonService;
+use OCA\Cantoria\Service\ProposalService;
+use OCA\Cantoria\Service\ReviewService;
+use OCA\Cantoria\Service\RightsService;
+use OCA\Cantoria\Service\StateService;
+use OCA\Cantoria\Service\TaskService;
 use OCP\IDBConnection;
 use OCP\Server;
 

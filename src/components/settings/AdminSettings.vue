@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -45,7 +45,7 @@ const accessReport = ref<AccessReport | null>(null)
 /** Opened through the link of the app: run the access check right away */
 const accessRequested = window.location.hash === '#' + SETTINGS_SECTIONS.access
 
-const appUrl = generateUrl('/apps/notenarchiv/')
+const appUrl = generateUrl('/apps/cantoria/')
 const sections = SETTINGS_SECTIONS
 
 /**
@@ -101,39 +101,39 @@ onMounted(async () => {
 </script>
 
 <template>
-	<div class="notenarchiv-settings">
+	<div class="cantoria-settings">
 		<NcSettingsSection :id="sections.setup"
-			:name="t('notenarchiv', 'Music archive')"
-			:description="t('notenarchiv', 'Settings of the music archive for the whole instance. The daily work happens in the app.')"
+			:name="t('cantoria', 'Music archive')"
+			:description="t('cantoria', 'Settings of the music archive for the whole instance. The daily work happens in the app.')"
 			:doc-url="adminGuideUrl(ADMIN_GUIDE.setup)">
-			<div class="notenarchiv-settings__intro">
+			<div class="cantoria-settings__intro">
 				<SetupChecklist v-if="settings" :settings="settings" :report="accessReport" />
 				<NcButton :href="appUrl">
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiArrowRight" />
 					</template>
-					{{ t('notenarchiv', 'Open the music archive') }}
+					{{ t('cantoria', 'Open the music archive') }}
 				</NcButton>
-				<p v-if="settings?.admin" class="notenarchiv-settings__muted">
-					{{ t('notenarchiv', 'Administrators can give this page to a group, e.g. the music librarians, under Administration privileges. That gives no role; complete backup and restore stay with administrators.') }}
+				<p v-if="settings?.admin" class="cantoria-settings__muted">
+					{{ t('cantoria', 'Administrators can give this page to a group, e.g. the music librarians, under Administration privileges. That gives no role; complete backup and restore stay with administrators.') }}
 				</p>
 			</div>
 		</NcSettingsSection>
 
-		<p v-if="loading" class="notenarchiv-settings__busy">
+		<p v-if="loading" class="cantoria-settings__busy">
 			<NcLoadingIcon :size="20" />
-			{{ t('notenarchiv', 'Loading …') }}
+			{{ t('cantoria', 'Loading …') }}
 		</p>
 		<NcNoteCard v-else-if="loadError && settings === null" type="error">
 			<p>{{ loadError }}</p>
 			<NcButton @click="load">
-				{{ t('notenarchiv', 'Try again') }}
+				{{ t('cantoria', 'Try again') }}
 			</NcButton>
 		</NcNoteCard>
 
 		<template v-if="settings">
 			<NcSettingsSection :id="sections.archive"
-				:name="t('notenarchiv', 'Archive folder')"
+				:name="t('cantoria', 'Archive folder')"
 				:doc-url="adminGuideUrl(ADMIN_GUIDE.archive)">
 				<ArchiveFolderSettings :archive="settings.archive"
 					:backups="settings.backups"
@@ -143,13 +143,13 @@ onMounted(async () => {
 			</NcSettingsSection>
 
 			<NcSettingsSection :id="sections.roles"
-				:name="t('notenarchiv', 'Roles and groups')"
+				:name="t('cantoria', 'Roles and groups')"
 				:doc-url="adminGuideUrl(ADMIN_GUIDE.roles)">
 				<RoleSettings :settings="settings" @saved="onRolesSaved" />
 			</NcSettingsSection>
 
 			<NcSettingsSection :id="sections.access"
-				:name="t('notenarchiv', 'Access to the archive folder')"
+				:name="t('cantoria', 'Access to the archive folder')"
 				:doc-url="adminGuideUrl(ADMIN_GUIDE.access)">
 				<ArchiveAccessCheck v-model:report="accessReport"
 					:archive="settings.archive"
@@ -158,35 +158,35 @@ onMounted(async () => {
 			</NcSettingsSection>
 
 			<NcSettingsSection :id="sections.modules"
-				:name="t('notenarchiv', 'Modules')"
+				:name="t('cantoria', 'Modules')"
 				:doc-url="adminGuideUrl(ADMIN_GUIDE.modules)">
 				<ModuleSettings @changed="load" />
 			</NcSettingsSection>
 
 			<NcSettingsSection v-if="settings.repertoire"
 				:id="sections.repertoire"
-				:name="t('notenarchiv', 'Repertoire')"
+				:name="t('cantoria', 'Repertoire')"
 				:doc-url="adminGuideUrl(ADMIN_GUIDE.roles)">
 				<RepertoireSettings :thresholds="settings.repertoire" @saved="onThresholdsSaved" />
 			</NcSettingsSection>
 
 			<NcSettingsSection v-if="settings.printMirror"
 				:id="sections.printMirror"
-				:name="t('notenarchiv', 'Print station: mirror folder')"
+				:name="t('cantoria', 'Print station: mirror folder')"
 				:doc-url="adminGuideUrl(ADMIN_GUIDE.printMirror)">
 				<PrintMirrorSettings />
 			</NcSettingsSection>
 
 			<NcSettingsSection v-if="settings.choirHandover"
 				:id="sections.choirHandover"
-				:name="t('notenarchiv', 'Hand-over to the choir system')"
+				:name="t('cantoria', 'Hand-over to the choir system')"
 				:doc-url="adminGuideUrl(ADMIN_GUIDE.choirHandover)">
 				<PrintMirrorSettings kind="handover" />
 			</NcSettingsSection>
 
 			<NcSettingsSection v-if="settings.folderBook"
 				:id="sections.folderBook"
-				:name="t('notenarchiv', 'Folder book: retention period')"
+				:name="t('cantoria', 'Folder book: retention period')"
 				:doc-url="adminGuideUrl(ADMIN_GUIDE.folderBook)">
 				<FolderBookSettings />
 			</NcSettingsSection>
@@ -194,7 +194,7 @@ onMounted(async () => {
 			<!-- Restoring stays with admins; giving the page to a group does not include it -->
 			<NcSettingsSection v-if="settings.admin"
 				:id="sections.backup"
-				:name="t('notenarchiv', 'Complete backup and restore')"
+				:name="t('cantoria', 'Complete backup and restore')"
 				:doc-url="adminGuideUrl(ADMIN_GUIDE.backup)">
 				<BackupRestore :catalog-filled="settings.catalogEmpty === false" @restored="load" />
 			</NcSettingsSection>
@@ -203,23 +203,23 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-.notenarchiv-settings__intro {
+.cantoria-settings__intro {
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
 	gap: calc(3 * var(--default-grid-baseline));
 }
 
-.notenarchiv-settings__intro p {
+.cantoria-settings__intro p {
 	max-width: 70ch;
 	margin: 0;
 }
 
-.notenarchiv-settings__muted {
+.cantoria-settings__muted {
 	color: var(--color-text-maxcontrast);
 }
 
-.notenarchiv-settings__busy {
+.cantoria-settings__busy {
 	display: flex;
 	align-items: center;
 	gap: calc(2 * var(--default-grid-baseline));

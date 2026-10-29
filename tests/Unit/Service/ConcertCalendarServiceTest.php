@@ -3,21 +3,21 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Service;
+namespace OCA\Cantoria\Tests\Unit\Service;
 
-use OCA\Notenarchiv\Db\Event;
-use OCA\Notenarchiv\Db\EventMapper;
-use OCA\Notenarchiv\Exception\AccessDeniedException;
-use OCA\Notenarchiv\Exception\InvalidInputException;
-use OCA\Notenarchiv\Service\ConcertCalendarService;
-use OCA\Notenarchiv\Service\ConcertIcs;
-use OCA\Notenarchiv\Service\RightsService;
-use OCA\Notenarchiv\Service\Roles;
-use OCA\Notenarchiv\Tests\Unit\Support\FakeCalendar;
+use OCA\Cantoria\Db\Event;
+use OCA\Cantoria\Db\EventMapper;
+use OCA\Cantoria\Exception\AccessDeniedException;
+use OCA\Cantoria\Exception\InvalidInputException;
+use OCA\Cantoria\Service\ConcertCalendarService;
+use OCA\Cantoria\Service\ConcertIcs;
+use OCA\Cantoria\Service\RightsService;
+use OCA\Cantoria\Service\Roles;
+use OCA\Cantoria\Tests\Unit\Support\FakeCalendar;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Calendar\ICalendar;
@@ -76,7 +76,7 @@ final class ConcertCalendarServiceTest extends TestCase {
 		$l->method('n')->willReturnCallback(fn (string $singular, string $plural, int $count, array $parameters = []): string
 			=> vsprintf(str_replace('%n', (string)$count, $count === 1 ? $singular : $plural), $parameters));
 		$url = $this->createStub(IURLGenerator::class);
-		$url->method('linkToRouteAbsolute')->willReturn('https://cloud.example.org/apps/notenarchiv/');
+		$url->method('linkToRouteAbsolute')->willReturn('https://cloud.example.org/apps/cantoria/');
 		$config = $this->createStub(IConfig::class);
 		$config->method('getSystemValueString')->willReturn('ocabc123');
 		$time = $this->createStub(ITimeFactory::class);
@@ -149,7 +149,7 @@ final class ConcertCalendarServiceTest extends TestCase {
 		self::assertSame(['calendar' => 'Persönlich', 'concerts' => 1, 'created' => 4, 'updates' => [], 'skipped' => 0, 'failed' => 0], $first);
 		self::assertCount(4, $personal->objects);
 		foreach (array_keys($personal->objects) as $name) {
-			self::assertMatchesRegularExpression('/^notenarchiv-concert-7(-deadline-(10|8|6))?-[0-9a-f]{12}\.ics$/', $name, 'object name = UID');
+			self::assertMatchesRegularExpression('/^cantoria-concert-7(-deadline-(10|8|6))?-[0-9a-f]{12}\.ics$/', $name, 'object name = UID');
 		}
 
 		// Changed and added again: nothing new, four updates with the new content
@@ -185,7 +185,7 @@ final class ConcertCalendarServiceTest extends TestCase {
 		$this->calendars = [$calendar];
 		$this->addEvent(7, '2026-12-12');
 		// Imported by hand earlier, under a name chosen by the calendar program
-		$uid = 'notenarchiv-concert-7-' . substr(hash('sha256', 'ocabc123'), 0, 12);
+		$uid = 'cantoria-concert-7-' . substr(hash('sha256', 'ocabc123'), 0, 12);
 		$calendar->objects['strange name?.ics'] = "BEGIN:VCALENDAR\r\nUID:" . $uid . "\r\nEND:VCALENDAR\r\n";
 		$result = $this->service()->add(7, 'my calendar', false, 'anna maria@example.org');
 		self::assertSame(0, $result['created']);
@@ -229,7 +229,7 @@ final class ConcertCalendarServiceTest extends TestCase {
 		$result = $this->service()->add(null, 'personal', false, 'anna');
 		self::assertSame(2, $result['concerts']);
 		self::assertSame(2, $result['created']);
-		self::assertSame(['notenarchiv-concert-2', 'notenarchiv-concert-3'],
+		self::assertSame(['cantoria-concert-2', 'cantoria-concert-3'],
 			array_map(fn (string $name): string => substr($name, 0, 21), array_keys($personal->objects)));
 	}
 
@@ -247,7 +247,7 @@ final class ConcertCalendarServiceTest extends TestCase {
 		$upcoming = $service->upcomingFile(false, 'anna');
 		self::assertSame('concerts.ics', $upcoming['name']);
 		self::assertStringContainsString("X-WR-CALNAME:Concerts of the music archive\r\n", $upcoming['content']);
-		self::assertLessThan(strpos($upcoming['content'], 'notenarchiv-concert-3-'), strpos($upcoming['content'], 'notenarchiv-concert-2-'), 'the next concert first');
+		self::assertLessThan(strpos($upcoming['content'], 'cantoria-concert-3-'), strpos($upcoming['content'], 'cantoria-concert-2-'), 'the next concert first');
 
 		foreach ([9 => 'Only concerts can be added to a calendar.', 10 => 'This concert has no date yet.', 99 => 'Not found.'] as $id => $message) {
 			try {

@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -102,15 +102,15 @@ onMounted(() => {
 function statusText(status: AccessStatus, canOpen: number, cannotOpen: number): string {
 	switch (status) {
 	case 'ok':
-		return n('notenarchiv', '%n checked account can open it', 'All %n checked accounts can open it', canOpen)
+		return n('cantoria', '%n checked account can open it', 'All %n checked accounts can open it', canOpen)
 	case 'missing':
-		return n('notenarchiv', '%n account cannot open it', '%n accounts cannot open it', cannotOpen)
+		return n('cantoria', '%n account cannot open it', '%n accounts cannot open it', cannotOpen)
 	case 'unchecked':
-		return t('notenarchiv', 'Not checked')
+		return t('cantoria', 'Not checked')
 	case 'empty':
-		return t('notenarchiv', 'No members')
+		return t('cantoria', 'No members')
 	case 'gone':
-		return t('notenarchiv', 'The group no longer exists')
+		return t('cantoria', 'The group no longer exists')
 	}
 	return ''
 }
@@ -156,11 +156,11 @@ function roleLabel(role: string): string {
 <template>
 	<div class="settings-block">
 		<p class="settings-block__text">
-			{{ t('notenarchiv', 'The app reads files only with the permissions of the person who uses it. Whoever cannot open the archive folder in their own Nextcloud sees the catalog, but no scores, scans or practice files. The check looks at every member of the role groups; it only reads and shares nothing.') }}
+			{{ t('cantoria', 'The app reads files only with the permissions of the person who uses it. Whoever cannot open the archive folder in their own Nextcloud sees the catalog, but no scores, scans or practice files. The check looks at every member of the role groups; it only reads and shares nothing.') }}
 		</p>
 
 		<NcNoteCard v-if="archive.id === 0" type="info">
-			{{ t('notenarchiv', 'Choose the archive folder first.') }}
+			{{ t('cantoria', 'Choose the archive folder first.') }}
 		</NcNoteCard>
 
 		<div class="settings-block__actions">
@@ -169,7 +169,7 @@ function roleLabel(role: string): string {
 					<NcLoadingIcon v-if="busy" />
 					<NcIconSvgWrapper v-else :path="mdiFolderAccountOutline" />
 				</template>
-				{{ report ? t('notenarchiv', 'Check again') : t('notenarchiv', 'Check access') }}
+				{{ report ? t('cantoria', 'Check again') : t('cantoria', 'Check access') }}
 			</NcButton>
 		</div>
 
@@ -180,24 +180,24 @@ function roleLabel(role: string): string {
 		<!-- Always present, so that screen readers announce the result -->
 		<div role="status" class="access-check__status">
 			<p v-if="busy" class="settings-block__muted">
-				{{ t('notenarchiv', 'Checking the accounts … With many members this takes a moment.') }}
+				{{ t('cantoria', 'Checking the accounts … With many members this takes a moment.') }}
 			</p>
 			<template v-else-if="report">
 				<h3 ref="resultHeading" tabindex="-1" class="access-check__heading">
-					{{ t('notenarchiv', 'Result') }}
+					{{ t('cantoria', 'Result') }}
 				</h3>
 				<p>
 					<strong v-if="withoutAccess.length === 0">
-						{{ t('notenarchiv', 'Every checked account of the role groups can open the archive folder.') }}
+						{{ t('cantoria', 'Every checked account of the role groups can open the archive folder.') }}
 					</strong>
 					<strong v-else>
-						{{ n('notenarchiv', '%n account of the role groups cannot open the archive folder.', '%n accounts of the role groups cannot open the archive folder.', withoutAccess.length) }}
+						{{ n('cantoria', '%n account of the role groups cannot open the archive folder.', '%n accounts of the role groups cannot open the archive folder.', withoutAccess.length) }}
 					</strong>
 				</p>
 				<p>
 					{{ report.self.canOpen
-						? t('notenarchiv', 'You can open the archive folder yourself.')
-						: t('notenarchiv', 'You cannot open the archive folder yourself, so the app shows you no files either.') }}
+						? t('cantoria', 'You can open the archive folder yourself.')
+						: t('cantoria', 'You cannot open the archive folder yourself, so the app shows you no files either.') }}
 				</p>
 			</template>
 		</div>
@@ -206,31 +206,31 @@ function roleLabel(role: string): string {
 			<div class="access-check__table-wrapper">
 				<table class="access-check__table">
 					<caption class="hidden-visually">
-						{{ t('notenarchiv', 'Access to the archive folder per role and group') }}
+						{{ t('cantoria', 'Access to the archive folder per role and group') }}
 					</caption>
 					<thead>
 						<tr>
 							<th scope="col">
-								{{ t('notenarchiv', 'Role') }}
+								{{ t('cantoria', 'Role') }}
 							</th>
 							<th scope="col">
-								{{ t('notenarchiv', 'Group') }}
+								{{ t('cantoria', 'Group') }}
 							</th>
 							<th scope="col">
-								{{ t('notenarchiv', 'Access') }}
+								{{ t('cantoria', 'Access') }}
 							</th>
 							<th scope="col">
-								{{ t('notenarchiv', 'Cannot open the folder') }}
+								{{ t('cantoria', 'Cannot open the folder') }}
 							</th>
 							<th scope="col">
-								{{ t('notenarchiv', 'Not checked') }}
+								{{ t('cantoria', 'Not checked') }}
 							</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr v-if="rows.length === 0">
 							<td colspan="5">
-								{{ t('notenarchiv', 'No group has a role yet.') }}
+								{{ t('cantoria', 'No group has a role yet.') }}
 							</td>
 						</tr>
 						<tr v-for="row in rows" :key="`${row.role}-${row.id}`" :class="`access-check__row--${row.status}`">
@@ -261,7 +261,7 @@ function roleLabel(role: string): string {
 						<tr v-if="admins && admins.members > 0" :class="`access-check__row--${adminsStatus}`">
 							<td>–</td>
 							<th scope="row">
-								{{ t('notenarchiv', 'Administrators without a role') }}
+								{{ t('cantoria', 'Administrators without a role') }}
 							</th>
 							<td>
 								<span class="access-check__state">
@@ -288,24 +288,24 @@ function roleLabel(role: string): string {
 			</div>
 
 			<p v-if="admins && admins.cannotOpen.length > 0" class="settings-block__text settings-block__muted">
-				{{ t('notenarchiv', 'Administrators without a role can read the catalog. To open scores in the app, they need access to the archive folder as well.') }}
+				{{ t('cantoria', 'Administrators without a role can read the catalog. To open scores in the app, they need access to the archive folder as well.') }}
 			</p>
 			<p v-if="anyNotChecked" class="settings-block__text settings-block__muted">
-				{{ t('notenarchiv', 'Not checked are disabled accounts, accounts that have never logged in (their access follows from their groups like that of the others), and accounts beyond the limit of the check.') }}
+				{{ t('cantoria', 'Not checked are disabled accounts, accounts that have never logged in (their access follows from their groups like that of the others), and accounts beyond the limit of the check.') }}
 			</p>
 			<NcNoteCard v-if="!report.complete" type="warning">
-				{{ t('notenarchiv', 'Not every account was checked: the check stops after {limit} accounts.', { limit: report.limit }) }}
+				{{ t('cantoria', 'Not every account was checked: the check stops after {limit} accounts.', { limit: report.limit }) }}
 			</NcNoteCard>
 
 			<NcNoteCard v-if="actionNeeded" type="warning">
-				<p><strong>{{ t('notenarchiv', 'How to give access') }}</strong></p>
+				<p><strong>{{ t('cantoria', 'How to give access') }}</strong></p>
 				<ol class="access-check__steps">
-					<li>{{ t('notenarchiv', 'Share the archive folder with the groups of the roles, or keep it in a team folder or group folder that these groups can open. Sharing with single persons is possible, but a group follows changes of office by itself.') }}</li>
-					<li>{{ t('notenarchiv', 'Read permission is enough. Only whoever puts corrected files into the folder or stores exports and backups there (the catalog role, and the account that chose the folder for the weekly backups) needs permission to edit.') }}</li>
+					<li>{{ t('cantoria', 'Share the archive folder with the groups of the roles, or keep it in a team folder or group folder that these groups can open. Sharing with single persons is possible, but a group follows changes of office by itself.') }}</li>
+					<li>{{ t('cantoria', 'Read permission is enough. Only whoever puts corrected files into the folder or stores exports and backups there (the catalog role, and the account that chose the folder for the weekly backups) needs permission to edit.') }}</li>
 					<li v-if="rows.some((row) => row.status === 'gone')">
-						{{ t('notenarchiv', 'A group that no longer exists: choose another group for the role under "Roles and groups".') }}
+						{{ t('cantoria', 'A group that no longer exists: choose another group for the role under "Roles and groups".') }}
 					</li>
-					<li>{{ t('notenarchiv', 'Then check again.') }}</li>
+					<li>{{ t('cantoria', 'Then check again.') }}</li>
 				</ol>
 				<NcButton v-if="report.self.canOpen"
 					:href="folderUrl"
@@ -314,10 +314,10 @@ function roleLabel(role: string): string {
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiOpenInNew" />
 					</template>
-					{{ t('notenarchiv', 'Open the archive folder in Files (new tab)') }}
+					{{ t('cantoria', 'Open the archive folder in Files (new tab)') }}
 				</NcButton>
 				<p class="access-check__guide">
-					<GuideLink :href="adminGuideUrl(ADMIN_GUIDE.sharing)" :label="t('notenarchiv', 'Sharing the archive folder (administration guide)')" />
+					<GuideLink :href="adminGuideUrl(ADMIN_GUIDE.sharing)" :label="t('cantoria', 'Sharing the archive folder (administration guide)')" />
 				</p>
 			</NcNoteCard>
 		</template>

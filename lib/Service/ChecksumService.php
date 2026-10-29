@@ -3,20 +3,20 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Service;
+namespace OCA\Cantoria\Service;
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Db\ArchiveFile;
-use OCA\Notenarchiv\Db\ArchiveFileMapper;
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\WorkMapper;
-use OCA\Notenarchiv\Db\WorkVersionMapper;
-use OCA\Notenarchiv\Exception\InvalidInputException;
-use OCA\Notenarchiv\Exception\NotFoundException;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Db\ArchiveFile;
+use OCA\Cantoria\Db\ArchiveFileMapper;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Db\WorkMapper;
+use OCA\Cantoria\Db\WorkVersionMapper;
+use OCA\Cantoria\Exception\InvalidInputException;
+use OCA\Cantoria\Exception\NotFoundException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Files\File;
@@ -72,7 +72,7 @@ class ChecksumService {
 		try {
 			$archive = $this->settings->archiveFolder($uid);
 		} catch (InvalidInputException $e) {
-			$this->logger->warning('Notenarchiv: checksums skipped: ' . $e->getMessage());
+			$this->logger->warning('Cantoria: checksums skipped: ' . $e->getMessage());
 			return $result;
 		}
 		$cursor = $this->appConfig->getValueInt(Application::APP_ID, self::CURSOR_KEY, 0, true);
@@ -90,7 +90,7 @@ class ChecksumService {
 			try {
 				$state = $this->check($file, $archive);
 			} catch (\Throwable $e) {
-				$this->logger->warning('Notenarchiv: checksum of file ' . $file->getId() . ' failed: ' . $e->getMessage(), ['exception' => $e]);
+				$this->logger->warning('Cantoria: checksum of file ' . $file->getId() . ' failed: ' . $e->getMessage(), ['exception' => $e]);
 				continue;
 			}
 			$result['checked']++;

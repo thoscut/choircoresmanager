@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -82,8 +82,8 @@ const changesHeadingId = useId()
 const first = computed(() => props.model.measures[props.range.start]?.number ?? '')
 const last = computed(() => props.model.measures[props.range.end]?.number ?? '')
 const place = computed(() => first.value === last.value
-	? t('notenarchiv', 'Measure {number}, {voice}', { number: first.value, voice: props.voiceName })
-	: t('notenarchiv', 'Measures {from} to {to}, {voice}', { from: first.value, to: last.value, voice: props.voiceName }))
+	? t('cantoria', 'Measure {number}, {voice}', { number: first.value, voice: props.voiceName })
+	: t('cantoria', 'Measures {from} to {to}, {voice}', { from: first.value, to: last.value, voice: props.voiceName }))
 
 // ---- the notes ----------------------------------------------------------------
 
@@ -92,7 +92,7 @@ let rows: NoteRow[] = []
 try {
 	rows = listNotes(parseScoreDocument(props.scoreText), props.range, voiceTargets(props.model.parts, props.voice.members))
 } catch {
-	readError.value = t('notenarchiv', 'This score cannot be corrected in the app: only partwise MusicXML files can.')
+	readError.value = t('cantoria', 'This score cannot be corrected in the app: only partwise MusicXML files can.')
 }
 const noteRows = rows
 
@@ -128,18 +128,18 @@ const positions = computed(() => {
  * @param what - name of the control
  */
 function controlLabel(row: NoteRow, what: string): string {
-	return t('notenarchiv', 'Measure {measure}, note {number}: {what}', { measure: row.measure, number: positions.value.get(row.key) ?? 0, what })
+	return t('cantoria', 'Measure {measure}, note {number}: {what}', { measure: row.measure, number: positions.value.get(row.key) ?? 0, what })
 }
 
 const NOTE_TYPES: Record<string, () => string> = {
-	breve: () => t('notenarchiv', 'Double whole note'),
-	whole: () => t('notenarchiv', 'Whole note'),
-	half: () => t('notenarchiv', 'Half note'),
-	quarter: () => t('notenarchiv', 'Quarter note'),
-	eighth: () => t('notenarchiv', 'Eighth note'),
-	'16th': () => t('notenarchiv', '16th note'),
-	'32nd': () => t('notenarchiv', '32nd note'),
-	'64th': () => t('notenarchiv', '64th note'),
+	breve: () => t('cantoria', 'Double whole note'),
+	whole: () => t('cantoria', 'Whole note'),
+	half: () => t('cantoria', 'Half note'),
+	quarter: () => t('cantoria', 'Quarter note'),
+	eighth: () => t('cantoria', 'Eighth note'),
+	'16th': () => t('cantoria', '16th note'),
+	'32nd': () => t('cantoria', '32nd note'),
+	'64th': () => t('cantoria', '64th note'),
 }
 
 /**
@@ -148,21 +148,21 @@ const NOTE_TYPES: Record<string, () => string> = {
  * @param row - note of the list
  */
 function durationText(row: NoteRow): string {
-	let text = row.type ? (NOTE_TYPES[row.type]?.() ?? row.type) : t('notenarchiv', 'Note value not given')
+	let text = row.type ? (NOTE_TYPES[row.type]?.() ?? row.type) : t('cantoria', 'Note value not given')
 	if (row.dots === 1) {
-		text = t('notenarchiv', 'dotted {value}', { value: text })
+		text = t('cantoria', 'dotted {value}', { value: text })
 	} else if (row.dots > 1) {
-		text = t('notenarchiv', 'double-dotted {value}', { value: text })
+		text = t('cantoria', 'double-dotted {value}', { value: text })
 	}
 	if (row.rest) {
-		text = t('notenarchiv', 'Rest ({value})', { value: text })
+		text = t('cantoria', 'Rest ({value})', { value: text })
 	}
 	const flags: string[] = []
 	if (row.chord) {
-		flags.push(t('notenarchiv', 'chord note'))
+		flags.push(t('cantoria', 'chord note'))
 	}
 	if (row.grace) {
-		flags.push(t('notenarchiv', 'grace note'))
+		flags.push(t('cantoria', 'grace note'))
 	}
 	return flags.length > 0 ? `${text}, ${flags.join(', ')}` : text
 }
@@ -175,15 +175,15 @@ function durationText(row: NoteRow): string {
 function alterLabel(alter: number): string {
 	switch (alter) {
 	case -2:
-		return t('notenarchiv', '𝄫 double flat')
+		return t('cantoria', '𝄫 double flat')
 	case -1:
-		return t('notenarchiv', '♭ flat')
+		return t('cantoria', '♭ flat')
 	case 1:
-		return t('notenarchiv', '♯ sharp')
+		return t('cantoria', '♯ sharp')
 	case 2:
-		return t('notenarchiv', '𝄪 double sharp')
+		return t('cantoria', '𝄪 double sharp')
 	}
-	return t('notenarchiv', 'none')
+	return t('cantoria', 'none')
 }
 
 /**
@@ -194,24 +194,24 @@ function alterLabel(alter: number): string {
 function accidentalLabel(value: string | null): string {
 	switch (value) {
 	case 'sharp':
-		return t('notenarchiv', '♯ sharp')
+		return t('cantoria', '♯ sharp')
 	case 'natural':
-		return t('notenarchiv', '♮ natural')
+		return t('cantoria', '♮ natural')
 	case 'flat':
-		return t('notenarchiv', '♭ flat')
+		return t('cantoria', '♭ flat')
 	case 'double-sharp':
-		return t('notenarchiv', '𝄪 double sharp')
+		return t('cantoria', '𝄪 double sharp')
 	case 'sharp-sharp':
-		return t('notenarchiv', '♯♯ two sharps')
+		return t('cantoria', '♯♯ two sharps')
 	case 'flat-flat':
-		return t('notenarchiv', '𝄫 double flat')
+		return t('cantoria', '𝄫 double flat')
 	case 'natural-sharp':
-		return t('notenarchiv', '♮♯ natural and sharp')
+		return t('cantoria', '♮♯ natural and sharp')
 	case 'natural-flat':
-		return t('notenarchiv', '♮♭ natural and flat')
+		return t('cantoria', '♮♭ natural and flat')
 	case null:
 	case '':
-		return t('notenarchiv', 'none')
+		return t('cantoria', 'none')
 	}
 	return value
 }
@@ -285,15 +285,15 @@ const changes = computed(() => pendingChanges(noteRows, valueMap(), true, langua
 function changeText(change: NoteChange): string {
 	switch (change.kind) {
 	case 'pitch':
-		return t('notenarchiv', 'Measure {measure}: {old} → {new}', { measure: change.measure, old: change.old, new: change.new })
+		return t('cantoria', 'Measure {measure}: {old} → {new}', { measure: change.measure, old: change.old, new: change.new })
 	case 'accidental':
-		return t('notenarchiv', 'Measure {measure}: visible accidental {old} → {new}', {
+		return t('cantoria', 'Measure {measure}: visible accidental {old} → {new}', {
 			measure: change.measure, old: accidentalLabel(change.old), new: accidentalLabel(change.new),
 		})
 	}
 	return change.verse
-		? t('notenarchiv', 'Measure {measure}, verse {verse}: "{old}" → "{new}"', { measure: change.measure, verse: change.verse, old: change.old, new: change.new })
-		: t('notenarchiv', 'Measure {measure}: "{old}" → "{new}"', { measure: change.measure, old: change.old, new: change.new })
+		? t('cantoria', 'Measure {measure}, verse {verse}: "{old}" → "{new}"', { measure: change.measure, verse: change.verse, old: change.old, new: change.new })
+		: t('cantoria', 'Measure {measure}: "{old}" → "{new}"', { measure: change.measure, old: change.old, new: change.new })
 }
 
 /** Keys of rows with a change, to mark them in the table. */
@@ -368,8 +368,8 @@ onBeforeUnmount(() => {
 })
 
 const previewDescription = computed(() => changes.value.length === 0
-	? t('notenarchiv', 'Preview of {place}, unchanged.', { place: place.value })
-	: t('notenarchiv', 'Preview of {place}. Changed notes are drawn in color with bold note heads; the list of changes names them.', { place: place.value }))
+	? t('cantoria', 'Preview of {place}, unchanged.', { place: place.value })
+	: t('cantoria', 'Preview of {place}. Changed notes are drawn in color with bold note heads; the list of changes names them.', { place: place.value }))
 
 // ---- review points ---------------------------------------------------------------
 
@@ -401,22 +401,22 @@ async function save(): Promise<void> {
 	}
 	const fileId = props.detail.score?.fileId
 	if (fileId === undefined) {
-		error.value = t('notenarchiv', 'There is no score to correct.')
+		error.value = t('cantoria', 'There is no score to correct.')
 		return
 	}
 	let result: { xml: string, changes: NoteChange[] }
 	try {
 		result = correctedScore(props.scoreText, noteRows, valueMap())
 	} catch {
-		error.value = t('notenarchiv', 'This score cannot be corrected in the app: only partwise MusicXML files can.')
+		error.value = t('cantoria', 'This score cannot be corrected in the app: only partwise MusicXML files can.')
 		return
 	}
 	if (result.changes.length === 0) {
-		error.value = t('notenarchiv', 'Nothing has been changed yet.')
+		error.value = t('cantoria', 'Nothing has been changed yet.')
 		return
 	}
 	if (!sameMeasureLengths(props.scoreText, result.xml)) {
-		error.value = t('notenarchiv', 'The lengths of the measures would change. The correction cannot be saved.')
+		error.value = t('cantoria', 'The lengths of the measures would change. The correction cannot be saved.')
 		return
 	}
 	busy.value = true
@@ -429,8 +429,8 @@ async function save(): Promise<void> {
 			reason: reason.value.trim() || null,
 		})
 		showSuccess(typeof saved.state === 'number'
-			? t('notenarchiv', 'Saved as a new file: {name}. It is revision {number} of this version.', { name: saved.file.name, number: saved.state })
-			: t('notenarchiv', 'Saved as a new file: {name}', { name: saved.file.name }))
+			? t('cantoria', 'Saved as a new file: {name}. It is revision {number} of this version.', { name: saved.file.name, number: saved.state })
+			: t('cantoria', 'Saved as a new file: {name}', { name: saved.file.name }))
 		emit('saved', saved)
 	} catch (caught) {
 		error.value = errorMessage(caught)
@@ -452,7 +452,7 @@ function onUpdateOpen(open: boolean): void {
 </script>
 
 <template>
-	<NcDialog :name="t('notenarchiv', 'Correct notes: {place}', { place })"
+	<NcDialog :name="t('cantoria', 'Correct notes: {place}', { place })"
 		:open="true"
 		size="large"
 		:no-close="busy"
@@ -463,42 +463,42 @@ function onUpdateOpen(open: boolean): void {
 			</NcNoteCard>
 			<template v-else>
 				<p class="correction__hint">
-					{{ t('notenarchiv', 'Only pitches, visible accidentals and syllables can be changed here. The alteration is the sounding pitch; the visible accidental is the sign printed before the note. Note values stay as they are; anything larger is a correction order for the tool chain.') }}
+					{{ t('cantoria', 'Only pitches, visible accidentals and syllables can be changed here. The alteration is the sounding pitch; the visible accidental is the sign printed before the note. Note values stay as they are; anything larger is a correction order for the tool chain.') }}
 				</p>
 				<p class="correction__hint">
-					{{ t('notenarchiv', 'Saving writes a new file next to the old one, with your permissions in Nextcloud. The old file stays unchanged; the change is recorded in the audit log.') }}
+					{{ t('cantoria', 'Saving writes a new file next to the old one, with your permissions in Nextcloud. The old file stays unchanged; the change is recorded in the audit log.') }}
 				</p>
 
 				<p v-if="noteRows.length === 0" class="correction__hint">
-					{{ t('notenarchiv', 'This voice has no notes in these measures.') }}
+					{{ t('cantoria', 'This voice has no notes in these measures.') }}
 				</p>
 				<div v-else class="correction__table-wrapper">
 					<table class="correction__table">
 						<caption>
-							{{ t('notenarchiv', 'Notes of {place}', { place }) }}
+							{{ t('cantoria', 'Notes of {place}', { place }) }}
 						</caption>
 						<thead>
 							<tr>
 								<th scope="col">
-									{{ t('notenarchiv', 'Measure') }}
+									{{ t('cantoria', 'Measure') }}
 								</th>
 								<th scope="col">
-									{{ t('notenarchiv', 'Note value') }}
+									{{ t('cantoria', 'Note value') }}
 								</th>
 								<th scope="col">
-									{{ t('notenarchiv', 'Step') }}
+									{{ t('cantoria', 'Step') }}
 								</th>
 								<th scope="col">
-									{{ t('notenarchiv', 'Alteration') }}
+									{{ t('cantoria', 'Alteration') }}
 								</th>
 								<th scope="col">
-									{{ t('notenarchiv', 'Octave') }}
+									{{ t('cantoria', 'Octave') }}
 								</th>
 								<th scope="col">
-									{{ t('notenarchiv', 'Visible accidental') }}
+									{{ t('cantoria', 'Visible accidental') }}
 								</th>
 								<th scope="col">
-									{{ t('notenarchiv', 'Syllables') }}
+									{{ t('cantoria', 'Syllables') }}
 								</th>
 							</tr>
 						</thead>
@@ -508,19 +508,19 @@ function onUpdateOpen(open: boolean): void {
 								:class="{ 'correction__row--changed': changedKeys.has(row.key) }">
 								<th scope="row">
 									{{ row.measure }}
-									<span v-if="changedKeys.has(row.key)" class="correction__changed-tag">{{ t('notenarchiv', 'changed') }}</span>
+									<span v-if="changedKeys.has(row.key)" class="correction__changed-tag">{{ t('cantoria', 'changed') }}</span>
 								</th>
 								<td>{{ durationText(row) }}</td>
 								<template v-if="row.pitched">
 									<td>
-										<select v-model="values[row.key].step" :aria-label="controlLabel(row, t('notenarchiv', 'Step'))">
+										<select v-model="values[row.key].step" :aria-label="controlLabel(row, t('cantoria', 'Step'))">
 											<option v-for="step in STEPS" :key="step" :value="step">
 												{{ stepLabel(step, language) }}
 											</option>
 										</select>
 									</td>
 									<td>
-										<select v-model.number="values[row.key].alter" :aria-label="controlLabel(row, t('notenarchiv', 'Alteration'))">
+										<select v-model.number="values[row.key].alter" :aria-label="controlLabel(row, t('cantoria', 'Alteration'))">
 											<option v-if="extraAlter(row)" :value="row.alter">
 												{{ row.alter }}
 											</option>
@@ -536,12 +536,12 @@ function onUpdateOpen(open: boolean): void {
 											max="9"
 											step="1"
 											class="correction__octave"
-											:aria-label="controlLabel(row, t('notenarchiv', 'Octave'))"
+											:aria-label="controlLabel(row, t('cantoria', 'Octave'))"
 											@input="setOctave(row, ($event.target as HTMLInputElement).value)">
 									</td>
 									<td>
 										<select :value="values[row.key].accidental ?? ''"
-											:aria-label="controlLabel(row, t('notenarchiv', 'Visible accidental'))"
+											:aria-label="controlLabel(row, t('cantoria', 'Visible accidental'))"
 											@change="setAccidental(row, ($event.target as HTMLSelectElement).value)">
 											<option value="">
 												{{ accidentalLabel(null) }}
@@ -556,7 +556,7 @@ function onUpdateOpen(open: boolean): void {
 									</td>
 								</template>
 								<td v-else colspan="4" class="correction__muted">
-									{{ row.rest ? t('notenarchiv', 'Rest: nothing to change') : t('notenarchiv', 'No pitch') }}
+									{{ row.rest ? t('cantoria', 'Rest: nothing to change') : t('cantoria', 'No pitch') }}
 								</td>
 								<td>
 									<span v-if="row.lyrics.length === 0" class="correction__muted">–</span>
@@ -568,8 +568,8 @@ function onUpdateOpen(open: boolean): void {
 											maxlength="200"
 											class="correction__syllable"
 											:aria-label="controlLabel(row, lyric.number
-												? t('notenarchiv', 'syllable of verse {verse}', { verse: lyric.number })
-												: t('notenarchiv', 'syllable'))"
+												? t('cantoria', 'syllable of verse {verse}', { verse: lyric.number })
+												: t('cantoria', 'syllable'))"
 											@input="setSyllable(row, lyricIndex, textIndex, ($event.target as HTMLInputElement).value)">
 									</span>
 								</td>
@@ -580,10 +580,10 @@ function onUpdateOpen(open: boolean): void {
 
 				<section class="correction__section" :aria-labelledby="changesHeadingId">
 					<h3 :id="changesHeadingId" class="correction__heading">
-						{{ t('notenarchiv', 'Changes') }}
+						{{ t('cantoria', 'Changes') }}
 					</h3>
 					<p v-if="changes.length === 0" class="correction__muted">
-						{{ t('notenarchiv', 'No changes yet.') }}
+						{{ t('cantoria', 'No changes yet.') }}
 					</p>
 					<ul v-else class="correction__changes">
 						<li v-for="(change, index) in changes" :key="index">
@@ -591,20 +591,20 @@ function onUpdateOpen(open: boolean): void {
 						</li>
 					</ul>
 					<NcButton variant="tertiary" :disabled="changes.length === 0" @click="reset">
-						{{ t('notenarchiv', 'Undo all changes') }}
+						{{ t('cantoria', 'Undo all changes') }}
 					</NcButton>
 				</section>
 
 				<section class="correction__section" :aria-labelledby="previewHeadingId">
 					<h3 :id="previewHeadingId" class="correction__heading">
-						{{ t('notenarchiv', 'Preview') }}
+						{{ t('cantoria', 'Preview') }}
 					</h3>
 					<p v-if="previewState === 'rendering'" class="correction__muted">
 						<NcLoadingIcon :size="20" class="correction__loading" />
-						{{ t('notenarchiv', 'Engraving the preview …') }}
+						{{ t('cantoria', 'Engraving the preview …') }}
 					</p>
 					<p v-else-if="previewState === 'error'" class="correction__muted">
-						{{ t('notenarchiv', 'The preview could not be shown. The list of changes above is complete.') }}
+						{{ t('cantoria', 'The preview could not be shown. The list of changes above is complete.') }}
 					</p>
 					<div ref="previewElement"
 						class="correction__preview"
@@ -621,7 +621,7 @@ function onUpdateOpen(open: boolean): void {
 				</section>
 
 				<fieldset v-if="candidatePoints.length > 0" class="correction__points">
-					<legend>{{ t('notenarchiv', 'Review points settled by this correction') }}</legend>
+					<legend>{{ t('cantoria', 'Review points settled by this correction') }}</legend>
 					<NcCheckboxRadioSwitch v-for="point in candidatePoints"
 						:key="point.id"
 						:model-value="pointIds.includes(point.id)"
@@ -633,7 +633,7 @@ function onUpdateOpen(open: boolean): void {
 				</fieldset>
 
 				<NcTextArea v-model="reason"
-					:label="t('notenarchiv', 'Reason (optional), e.g. compared with the scan')"
+					:label="t('cantoria', 'Reason (optional), e.g. compared with the scan')"
 					resize="vertical"
 					rows="2" />
 			</template>
@@ -643,7 +643,7 @@ function onUpdateOpen(open: boolean): void {
 		</div>
 		<template #actions>
 			<NcButton :disabled="busy" @click="emit('close')">
-				{{ t('notenarchiv', 'Cancel') }}
+				{{ t('cantoria', 'Cancel') }}
 			</NcButton>
 			<NcButton variant="primary"
 				:disabled="busy || readError !== '' || changes.length === 0"
@@ -651,7 +651,7 @@ function onUpdateOpen(open: boolean): void {
 				<template v-if="busy" #icon>
 					<NcLoadingIcon />
 				</template>
-				{{ t('notenarchiv', 'Save as new file') }}
+				{{ t('cantoria', 'Save as new file') }}
 			</NcButton>
 		</template>
 	</NcDialog>

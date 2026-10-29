@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -76,8 +76,8 @@ async function runSync(): Promise<void> {
 		const report = await syncMirror(props.kind)
 		preview.value = null
 		showSuccess(props.kind === 'handover'
-			? t('notenarchiv', 'The hand-over folder for the choir system has been synced.')
-			: t('notenarchiv', 'The mirror folder of the print station has been synced.'))
+			? t('cantoria', 'The hand-over folder for the choir system has been synced.')
+			: t('cantoria', 'The mirror folder of the print station has been synced.'))
 		status.value = { folder: status.value?.folder ?? null, started: true, report }
 	} catch (caught) {
 		error.value = errorMessage(caught)
@@ -89,20 +89,20 @@ async function runSync(): Promise<void> {
 </script>
 
 <template>
-	<section class="mirror-sync" :aria-label="kind === 'handover' ? t('notenarchiv', 'Hand-over to the choir system') : t('notenarchiv', 'Mirror folder for the print station')">
+	<section class="mirror-sync" :aria-label="kind === 'handover' ? t('cantoria', 'Hand-over to the choir system') : t('cantoria', 'Mirror folder for the print station')">
 		<template v-if="status">
 			<p v-if="status.folder">
-				{{ t('notenarchiv', 'Target folder: {path} (account {user})', { path: status.folder.path, user: status.folder.user }) }}
+				{{ t('cantoria', 'Target folder: {path} (account {user})', { path: status.folder.path, user: status.folder.user }) }}
 			</p>
 			<NcNoteCard v-else type="info">
 				{{ admin
-					? t('notenarchiv', 'Choose a target folder above. The app then shows a preview before it writes anything.')
-					: t('notenarchiv', 'No target folder has been chosen yet. An administrator chooses it in the settings of the music archive.') }}
+					? t('cantoria', 'Choose a target folder above. The app then shows a preview before it writes anything.')
+					: t('cantoria', 'No target folder has been chosen yet. An administrator chooses it in the settings of the music archive.') }}
 			</NcNoteCard>
 			<p v-if="status.folder" class="mirror-sync__muted">
 				{{ status.started
-					? t('notenarchiv', 'The sync runs daily in the background. The app writes only into this folder and removes only files it wrote itself.')
-					: t('notenarchiv', 'The daily sync starts after the first sync by hand. Look at the preview first.') }}
+					? t('cantoria', 'The sync runs daily in the background. The app writes only into this folder and removes only files it wrote itself.')
+					: t('cantoria', 'The daily sync starts after the first sync by hand. Look at the preview first.') }}
 			</p>
 			<div v-if="status.folder" class="mirror-sync__actions">
 				<NcButton variant="primary" :disabled="busy" @click="showPreview">
@@ -110,7 +110,7 @@ async function runSync(): Promise<void> {
 						<NcLoadingIcon v-if="busy" />
 						<NcIconSvgWrapper v-else :path="mdiFolderSyncOutline" />
 					</template>
-					{{ status.started ? t('notenarchiv', 'Sync now …') : t('notenarchiv', 'Preview and first sync …') }}
+					{{ status.started ? t('cantoria', 'Sync now …') : t('cantoria', 'Preview and first sync …') }}
 				</NcButton>
 			</div>
 		</template>
@@ -120,12 +120,12 @@ async function runSync(): Promise<void> {
 
 		<div v-if="status?.report" class="mirror-sync__report">
 			<h4>
-				{{ t('notenarchiv', 'Last sync: {time}', { time: formatDateTime(status.report.time) }) }}
+				{{ t('cantoria', 'Last sync: {time}', { time: formatDateTime(status.report.time) }) }}
 			</h4>
 			<p>
-				{{ n('notenarchiv', '%n file in the folder.', '%n files in the folder.', status.report.files) }}
+				{{ n('cantoria', '%n file in the folder.', '%n files in the folder.', status.report.files) }}
 				<template v-if="!hasChanges(status.report) && status.report.skipped.length === 0">
-					{{ t('notenarchiv', 'Nothing had to change.') }}
+					{{ t('cantoria', 'Nothing had to change.') }}
 				</template>
 			</p>
 			<section v-for="section in reportSections(status.report)" :key="section.key" class="mirror-sync__section">
@@ -140,19 +140,19 @@ async function runSync(): Promise<void> {
 		</div>
 
 		<NcDialog v-if="preview"
-			:name="t('notenarchiv', 'Preview of the sync')"
+			:name="t('cantoria', 'Preview of the sync')"
 			:open="true"
 			size="normal"
 			@update:open="preview = null">
 			<div class="mirror-sync__preview">
 				<NcNoteCard v-if="!preview.writable" type="error">
-					{{ t('notenarchiv', 'The account of the target folder may not write into it. Give it write permission or choose another folder in the settings.') }}
+					{{ t('cantoria', 'The account of the target folder may not write into it. Give it write permission or choose another folder in the settings.') }}
 				</NcNoteCard>
 				<p v-if="!hasChanges(preview)">
-					{{ t('notenarchiv', 'The folder is up to date: nothing would be copied, replaced or removed.') }}
+					{{ t('cantoria', 'The folder is up to date: nothing would be copied, replaced or removed.') }}
 				</p>
 				<p v-else>
-					{{ t('notenarchiv', 'This is what the sync would do now. Files that the app did not write stay as they are.') }}
+					{{ t('cantoria', 'This is what the sync would do now. Files that the app did not write stay as they are.') }}
 				</p>
 				<section v-for="section in reportSections(preview)" :key="section.key" class="mirror-sync__section">
 					<h3>{{ section.title }} ({{ section.entries.length }})</h3>
@@ -166,13 +166,13 @@ async function runSync(): Promise<void> {
 			</div>
 			<template #actions>
 				<NcButton :disabled="busy" @click="preview = null">
-					{{ t('notenarchiv', 'Cancel') }}
+					{{ t('cantoria', 'Cancel') }}
 				</NcButton>
 				<NcButton variant="primary" :disabled="busy || !preview.writable" @click="runSync">
 					<template v-if="busy" #icon>
 						<NcLoadingIcon />
 					</template>
-					{{ t('notenarchiv', 'Sync now') }}
+					{{ t('cantoria', 'Sync now') }}
 				</NcButton>
 			</template>
 		</NcDialog>

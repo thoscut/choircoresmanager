@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Service;
+namespace OCA\Cantoria\Service;
 
-use OCA\Notenarchiv\AppInfo\Application;
+use OCA\Cantoria\AppInfo\Application;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IGroupManager;
 use OCP\Notification\IManager;
@@ -119,7 +119,7 @@ class NotificationService {
 					->setSubject($subject, $parameters);
 				$this->manager->notify($notification);
 			} catch (\Throwable $e) {
-				$this->logger->warning('Notenarchiv: notification failed: ' . $e->getMessage(), ['exception' => $e]);
+				$this->logger->warning('Cantoria: notification failed: ' . $e->getMessage(), ['exception' => $e]);
 			}
 		}
 	}
@@ -131,7 +131,7 @@ class NotificationService {
 		try {
 			$this->manager->markProcessed($this->base($subject, $objectType, $objectId));
 		} catch (\Throwable $e) {
-			$this->logger->warning('Notenarchiv: withdrawing notification failed: ' . $e->getMessage(), ['exception' => $e]);
+			$this->logger->warning('Cantoria: withdrawing notification failed: ' . $e->getMessage(), ['exception' => $e]);
 		}
 	}
 

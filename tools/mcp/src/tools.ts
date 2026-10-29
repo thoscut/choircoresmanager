@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -17,7 +17,7 @@
  * archive folder, never through these tools.
  */
 import type { ToolAnnotations } from '@modelcontextprotocol/sdk/types.js'
-import type { NotenarchivClient } from './client.js'
+import type { CantoriaClient } from './client.js'
 
 import { z } from 'zod'
 
@@ -30,7 +30,7 @@ export interface ToolDefinition {
 	annotations: ToolAnnotations
 	/** Whether the tool writes; such tools do not exist in read-only mode */
 	writes: boolean
-	run: (client: NotenarchivClient, args: Record<string, unknown>) => Promise<unknown>
+	run: (client: CantoriaClient, args: Record<string, unknown>) => Promise<unknown>
 }
 
 const READ: ToolAnnotations = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }
@@ -377,7 +377,7 @@ export const TOOLS: ToolDefinition[] = [
 ]
 
 /** Instructions for the agent, sent when it connects. */
-export const INSTRUCTIONS = 'Tools for the sheet music archive (Notenarchiv) of a choir in Nextcloud. '
+export const INSTRUCTIONS = 'Tools for Cantoria, the sheet music archive of a choir in Nextcloud. '
 	+ 'Call "modules" first to see your roles, the active modules and what you may write. '
 	+ 'The archive has three levels: work (Werk), version (Fassung: setting, arrangement, edition; rights belong here) and '
 	+ 'copy (Exemplar, with a shelf mark like "5-1"). '

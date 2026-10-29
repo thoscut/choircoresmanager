@@ -3,15 +3,15 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Service;
+namespace OCA\Cantoria\Tests\Unit\Service;
 
-use OCA\Notenarchiv\Db\Event;
-use OCA\Notenarchiv\Service\ConcertIcs;
-use OCA\Notenarchiv\Service\IcsWriter;
+use OCA\Cantoria\Db\Event;
+use OCA\Cantoria\Service\ConcertIcs;
+use OCA\Cantoria\Service\IcsWriter;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
 use OCP\IDateTimeZone;
@@ -29,7 +29,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(IcsWriter::class)]
 final class ConcertIcsTest extends TestCase {
 	private const NOW = 1792670400; // 2026-10-22 12:00:00 UTC
-	private const APP_URL = 'https://cloud.example.org/apps/notenarchiv/';
+	private const APP_URL = 'https://cloud.example.org/apps/cantoria/';
 
 	private ConcertIcs $ics;
 	private string $instanceId = 'ocabc123';
@@ -132,7 +132,7 @@ final class ConcertIcsTest extends TestCase {
 		$first = self::components($this->ics->document([self::concert()], false, 'anna', null))[0]['UID'];
 		$again = self::components($this->ics()->document([self::concert(['title' => 'Neuer Titel', 'event_date' => '2026-12-13'])], false, 'ben', null))[0]['UID'];
 		self::assertSame($first, $again, 'same concert, same UID, whoever asks and whatever changed');
-		self::assertMatchesRegularExpression('/^notenarchiv-concert-42-[0-9a-f]{12}$/', $first);
+		self::assertMatchesRegularExpression('/^cantoria-concert-42-[0-9a-f]{12}$/', $first);
 		self::assertStringNotContainsString($this->instanceId, $first, 'the instance id itself is not published');
 
 		$this->instanceId = 'ocother';
@@ -190,7 +190,7 @@ final class ConcertIcsTest extends TestCase {
 		self::assertSame('Adventskonzert: Clarify the rights of all pieces', $deadlines[1]['SUMMARY']);
 		self::assertSame('Adventskonzert: Prepare the concert binders', $deadlines[2]['SUMMARY']);
 		self::assertStringContainsString('Deadline 10 weeks before the concert on 2026-12-12.', $deadlines[0]['DESCRIPTION']);
-		self::assertMatchesRegularExpression('/^notenarchiv-concert-42-deadline-10-[0-9a-f]{12}$/', $deadlines[0]['UID']);
+		self::assertMatchesRegularExpression('/^cantoria-concert-42-deadline-10-[0-9a-f]{12}$/', $deadlines[0]['UID']);
 		self::assertStringNotContainsString('VALARM', $ics);
 	}
 

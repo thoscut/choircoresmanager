@@ -3,15 +3,15 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Command;
+namespace OCA\Cantoria\Command;
 
-use OCA\Notenarchiv\Exception\InvalidInputException;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\ModuleSettings;
+use OCA\Cantoria\Exception\InvalidInputException;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\ModuleSettings;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
@@ -21,10 +21,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Modules on the command line, the same as in the settings:
- *   occ notenarchiv:modules list [--json]
- *   occ notenarchiv:modules enable <module>…   (also switches on what they need)
- *   occ notenarchiv:modules disable <module>…  (names what stops working)
- *   occ notenarchiv:modules preset simple|standard|complete
+ *   occ cantoria:modules list [--json]
+ *   occ cantoria:modules enable <module>…   (also switches on what they need)
+ *   occ cantoria:modules disable <module>…  (names what stops working)
+ *   occ cantoria:modules preset simple|standard|complete
  * Every changed switch is recorded in the audit log (without an account).
  *
  * @psalm-import-type ModuleChanges from ModuleSettings
@@ -41,7 +41,7 @@ class ModulesCommand extends Command {
 
 	#[\Override]
 	protected function configure(): void {
-		$this->setName('notenarchiv:modules')
+		$this->setName('cantoria:modules')
 			->setDescription('List, switch on and off the modules of the music archive, or apply a preset')
 			->addArgument('action', InputArgument::REQUIRED, implode('|', self::ACTIONS))
 			->addArgument('names', InputArgument::OPTIONAL | InputArgument::IS_ARRAY,

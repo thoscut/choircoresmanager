@@ -3,25 +3,25 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Controller;
+namespace OCA\Cantoria\Controller;
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Attribute\RequiresModule;
-use OCA\Notenarchiv\Exception\AccessDeniedException;
-use OCA\Notenarchiv\ResponseDefinitions;
-use OCA\Notenarchiv\Service\ApiV1\Page;
-use OCA\Notenarchiv\Service\ApiV1\TaskView;
-use OCA\Notenarchiv\Service\ApiV1\Values;
-use OCA\Notenarchiv\Service\CatalogService;
-use OCA\Notenarchiv\Service\DueService;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\RightsPolicy;
-use OCA\Notenarchiv\Service\Roles;
-use OCA\Notenarchiv\Service\TaskService;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Attribute\RequiresModule;
+use OCA\Cantoria\Exception\AccessDeniedException;
+use OCA\Cantoria\ResponseDefinitions;
+use OCA\Cantoria\Service\ApiV1\Page;
+use OCA\Cantoria\Service\ApiV1\TaskView;
+use OCA\Cantoria\Service\ApiV1\Values;
+use OCA\Cantoria\Service\CatalogService;
+use OCA\Cantoria\Service\DueService;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\RightsPolicy;
+use OCA\Cantoria\Service\Roles;
+use OCA\Cantoria\Service\TaskService;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Attribute\ApiRoute;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
@@ -40,9 +40,9 @@ use Psr\Log\LoggerInterface;
  * (API v1, see docs/api-v1.md). Who may ask and answer is decided by
  * TaskService, as in the app; closing a task stays with people in the app.
  *
- * @psalm-import-type NotenarchivDue from ResponseDefinitions
- * @psalm-import-type NotenarchivTask from ResponseDefinitions
- * @psalm-import-type NotenarchivTaskPage from ResponseDefinitions
+ * @psalm-import-type CantoriaDue from ResponseDefinitions
+ * @psalm-import-type CantoriaTask from ResponseDefinitions
+ * @psalm-import-type CantoriaTaskPage from ResponseDefinitions
  * @psalm-suppress UnusedClass
  */
 #[RequiresModule(Modules::AGENT_API)]
@@ -70,7 +70,7 @@ class ApiV1TaskController extends OCSController {
 	 * concerts with a deadline now, only of active modules. The tasks behind
 	 * the card "tasks_open" are listed by GET /api/v1/tasks?scope=mine.
 	 *
-	 * @return DataResponse<Http::STATUS_OK, NotenarchivDue, array{}>
+	 * @return DataResponse<Http::STATUS_OK, CantoriaDue, array{}>
 	 * @throws OCSForbiddenException The account has no role in the music archive
 	 * @throws OCSNotFoundException The interface for agents is switched off
 	 *
@@ -102,7 +102,7 @@ class ApiV1TaskController extends OCSController {
 	 * @param int|null $copy_id Only the tasks of this copy
 	 * @param int<1, 100> $limit Tasks per page
 	 * @param string|null $cursor The "next_cursor" of the page before; omit it for the first page
-	 * @return DataResponse<Http::STATUS_OK, NotenarchivTaskPage, array{}>
+	 * @return DataResponse<Http::STATUS_OK, CantoriaTaskPage, array{}>
 	 * @throws OCSBadRequestException The scope, the limit or the cursor is not valid
 	 * @throws OCSForbiddenException The account has no role in the music archive
 	 * @throws OCSNotFoundException Questions and tasks or the interface for agents are switched off
@@ -148,7 +148,7 @@ class ApiV1TaskController extends OCSController {
 	 * @param int|null $verse Verse
 	 * @param string|null $origin Where the question comes from, e.g. the name of a transcription round
 	 * @param string|null $due Date by which an answer is needed (YYYY-MM-DD)
-	 * @return DataResponse<Http::STATUS_CREATED, NotenarchivTask, array{}>
+	 * @return DataResponse<Http::STATUS_CREATED, CantoriaTask, array{}>
 	 * @throws OCSBadRequestException A value is missing or not valid
 	 * @throws OCSForbiddenException The roles of the account may not create tasks, or the copy is an internal preservation copy it may not view
 	 * @throws OCSNotFoundException The copy does not exist, or questions and tasks or the interface for agents are switched off
@@ -184,7 +184,7 @@ class ApiV1TaskController extends OCSController {
 	 *
 	 * @param int $id ID of the task
 	 * @param string $answer The answer
-	 * @return DataResponse<Http::STATUS_OK, NotenarchivTask, array{}>
+	 * @return DataResponse<Http::STATUS_OK, CantoriaTask, array{}>
 	 * @throws OCSBadRequestException The answer is empty, or the task is not open any more
 	 * @throws OCSForbiddenException The task is addressed to a role the account does not hold
 	 * @throws OCSNotFoundException The task does not exist, or questions and tasks or the interface for agents are switched off

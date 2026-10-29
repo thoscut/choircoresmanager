@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -78,7 +78,7 @@ const backupButton = useTemplateRef('backupButton')
 async function chooseCsv(): Promise<void> {
 	let nodes
 	try {
-		nodes = await getFilePickerBuilder(t('notenarchiv', 'Choose the catalog file (CSV)'))
+		nodes = await getFilePickerBuilder(t('cantoria', 'Choose the catalog file (CSV)'))
 			.setMultiSelect(false)
 			.setMimeTypeFilter(['text/csv'])
 			.setType(FilePickerType.Choose)
@@ -93,7 +93,7 @@ async function chooseCsv(): Promise<void> {
 	}
 	const node = nodes[0]
 	if (!node?.fileid) {
-		showError(t('notenarchiv', 'The chosen file cannot be used.'))
+		showError(t('cantoria', 'The chosen file cannot be used.'))
 		await focusAfterDialog(importButton)
 		return
 	}
@@ -116,7 +116,7 @@ async function doImport(dryRun: boolean): Promise<void> {
 	try {
 		importReport.value = await runImport(importFile.value.id, dryRun)
 		if (!dryRun) {
-			showSuccess(t('notenarchiv', 'The catalog has been imported.'))
+			showSuccess(t('cantoria', 'The catalog has been imported.'))
 			await loadEntries()
 			await loadDetail()
 		}
@@ -182,7 +182,7 @@ async function doStoreExport(): Promise<void> {
 	storeBusy.value = true
 	try {
 		storedPath.value = await storeExport()
-		showSuccess(t('notenarchiv', 'The export was stored in the archive folder.'))
+		showSuccess(t('cantoria', 'The export was stored in the archive folder.'))
 	} catch (error) {
 		showError(errorMessage(error))
 	} finally {
@@ -203,7 +203,7 @@ async function doBackup(): Promise<void> {
 		const stored = await storeBackup()
 		backupPaths.value = stored.paths
 		backupAccount.value = stored.account
-		showSuccess(t('notenarchiv', 'The backup has been stored in the backup folder.'))
+		showSuccess(t('cantoria', 'The backup has been stored in the backup folder.'))
 	} catch (error) {
 		showError(errorMessage(error))
 	} finally {
@@ -231,28 +231,28 @@ function onUpdateOpen(open: boolean): void {
 </script>
 
 <template>
-	<NcDialog :name="t('notenarchiv', 'Archive management')"
+	<NcDialog :name="t('cantoria', 'Archive management')"
 		:open="true"
 		size="large"
 		:no-close="importBusy || syncBusy || performanceBusy || personBusy || restoreBusy"
 		@update:open="onUpdateOpen">
 		<NcNoteCard v-if="!hasArchiveFolder" type="warning">
-			<p>{{ t('notenarchiv', 'No archive folder has been chosen yet. File sync and stored exports need it; an administrator sets it in the settings.') }}</p>
+			<p>{{ t('cantoria', 'No archive folder has been chosen yet. File sync and stored exports need it; an administrator sets it in the settings.') }}</p>
 			<NcButton v-if="canChangeSettings" :href="adminSettingsUrl()">
-				{{ t('notenarchiv', 'Open settings') }}
+				{{ t('cantoria', 'Open settings') }}
 			</NcButton>
 		</NcNoteCard>
 		<p v-else class="archive-management__muted">
-			{{ t('notenarchiv', 'Archive folder: {path}', { path: meta?.archive.path ?? '' }) }}
+			{{ t('cantoria', 'Archive folder: {path}', { path: meta?.archive.path ?? '' }) }}
 		</p>
 
 		<!-- Import -->
 		<section ref="importSection" class="archive-management__section" aria-labelledby="archive-import">
 			<h3 id="archive-import">
-				{{ t('notenarchiv', 'Import catalog') }}
+				{{ t('cantoria', 'Import catalog') }}
 			</h3>
 			<p>
-				{{ t('notenarchiv', 'Imports the catalog from a CSV file in your Nextcloud. First a dry run shows what would change; only then you decide. Copies are matched by shelf mark, nothing is deleted, and before every import a snapshot of the current state is saved. The import can be repeated.') }}
+				{{ t('cantoria', 'Imports the catalog from a CSV file in your Nextcloud. First a dry run shows what would change; only then you decide. Copies are matched by shelf mark, nothing is deleted, and before every import a snapshot of the current state is saved. The import can be repeated.') }}
 			</p>
 
 			<div class="archive-management__actions">
@@ -260,7 +260,7 @@ function onUpdateOpen(open: boolean): void {
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiFileTableOutline" />
 					</template>
-					{{ importFile ? t('notenarchiv', 'Choose another file …') : t('notenarchiv', 'Choose CSV file …') }}
+					{{ importFile ? t('cantoria', 'Choose another file …') : t('cantoria', 'Choose CSV file …') }}
 				</NcButton>
 				<NcButton v-if="importFile && importReport?.dryRun"
 					variant="primary"
@@ -270,21 +270,21 @@ function onUpdateOpen(open: boolean): void {
 						<NcLoadingIcon v-if="importBusy" />
 						<NcIconSvgWrapper v-else :path="mdiImport" />
 					</template>
-					{{ t('notenarchiv', 'Import now') }}
+					{{ t('cantoria', 'Import now') }}
 				</NcButton>
 				<NcButton v-if="importFile && importReport && !importReport.dryRun"
 					variant="tertiary"
 					@click="resetImport">
-					{{ t('notenarchiv', 'Done') }}
+					{{ t('cantoria', 'Done') }}
 				</NcButton>
 			</div>
 
 			<p v-if="importFile" class="archive-management__muted">
-				{{ t('notenarchiv', 'File: {name}', { name: importFile.name }) }}
+				{{ t('cantoria', 'File: {name}', { name: importFile.name }) }}
 			</p>
 			<p v-if="importBusy" class="archive-management__busy">
 				<NcLoadingIcon :size="20" />
-				{{ importReport?.dryRun ? t('notenarchiv', 'Importing …') : t('notenarchiv', 'Checking the file (dry run) …') }}
+				{{ importReport?.dryRun ? t('cantoria', 'Importing …') : t('cantoria', 'Checking the file (dry run) …') }}
 			</p>
 			<NcNoteCard v-if="importError" type="error">
 				{{ importError }}
@@ -295,10 +295,10 @@ function onUpdateOpen(open: boolean): void {
 		<!-- Performances and song lists (module "performance_import") -->
 		<section v-if="isModuleActive('performance_import')" class="archive-management__section" aria-labelledby="archive-performances">
 			<h3 id="archive-performances">
-				{{ t('notenarchiv', 'Import performances and song lists') }}
+				{{ t('cantoria', 'Import performances and song lists') }}
 			</h3>
 			<p>
-				{{ t('notenarchiv', 'Imports the history of concerts and song lists from a spreadsheet (.xlsx or .csv). First a dry run shows what would be imported. Lines with an unclear shelf mark can be assigned afterwards under "Unclear programme lines".') }}
+				{{ t('cantoria', 'Imports the history of concerts and song lists from a spreadsheet (.xlsx or .csv). First a dry run shows what would be imported. Lines with an unclear shelf mark can be assigned afterwards under "Unclear programme lines".') }}
 			</p>
 			<PerformanceImport @busy="performanceBusy = $event" />
 		</section>
@@ -306,10 +306,10 @@ function onUpdateOpen(open: boolean): void {
 		<!-- Persons (module "persons") -->
 		<section v-if="isModuleActive('persons')" class="archive-management__section" aria-labelledby="archive-persons">
 			<h3 id="archive-persons">
-				{{ t('notenarchiv', 'Import persons') }}
+				{{ t('cantoria', 'Import persons') }}
 			</h3>
 			<p>
-				{{ t('notenarchiv', 'Imports the research list of composers, lyricists and arrangers (CSV with the columns Name; Werke; Signaturen; Lebensdaten laut Verzeichnis; Lebensdaten recherchiert; Schutz bis; Status; Quelle; Geprueft am). First a dry run shows what would be imported. A repeated import only fills empty values; checked persons are never changed.') }}
+				{{ t('cantoria', 'Imports the research list of composers, lyricists and arrangers (CSV with the columns Name; Werke; Signaturen; Lebensdaten laut Verzeichnis; Lebensdaten recherchiert; Schutz bis; Status; Quelle; Geprueft am). First a dry run shows what would be imported. A repeated import only fills empty values; checked persons are never changed.') }}
 			</p>
 			<PersonImport @busy="personBusy = $event" />
 		</section>
@@ -317,10 +317,10 @@ function onUpdateOpen(open: boolean): void {
 		<!-- File sync -->
 		<section ref="syncSection" class="archive-management__section" aria-labelledby="archive-file-sync">
 			<h3 id="archive-file-sync">
-				{{ t('notenarchiv', 'File sync') }}
+				{{ t('cantoria', 'File sync') }}
 			</h3>
 			<p>
-				{{ t('notenarchiv', 'Links the files in the archive folder to the copies. A file belongs to a copy if its name starts with the shelf mark, e.g. "6-08_Title.pdf" belongs to 6-8. Files are only read, never changed.') }}
+				{{ t('cantoria', 'Links the files in the archive folder to the copies. A file belongs to a copy if its name starts with the shelf mark, e.g. "6-08_Title.pdf" belongs to 6-8. Files are only read, never changed.') }}
 			</p>
 			<div class="archive-management__actions">
 				<NcButton ref="syncButton" :disabled="syncBusy || syncRunning || !hasArchiveFolder" @click="doFileSync">
@@ -328,17 +328,17 @@ function onUpdateOpen(open: boolean): void {
 						<NcLoadingIcon v-if="syncBusy" />
 						<NcIconSvgWrapper v-else :path="mdiFileSyncOutline" />
 					</template>
-					{{ t('notenarchiv', 'Run file sync') }}
+					{{ t('cantoria', 'Run file sync') }}
 				</NcButton>
 				<NcButton v-if="syncRunning" variant="tertiary" @click="loadSyncStatus">
-					{{ t('notenarchiv', 'Check again') }}
+					{{ t('cantoria', 'Check again') }}
 				</NcButton>
 			</div>
 			<NcNoteCard v-if="syncRunning && !syncBusy && syncStatus?.running" type="info">
-				{{ t('notenarchiv', 'A file sync has been running since {time}. Its report appears here when it has finished.', { time: formatDateTime(syncStatus.running.since) }) }}
+				{{ t('cantoria', 'A file sync has been running since {time}. Its report appears here when it has finished.', { time: formatDateTime(syncStatus.running.since) }) }}
 			</NcNoteCard>
 			<p v-else-if="syncStatus?.last && !syncReport" class="archive-management__muted">
-				{{ t('notenarchiv', 'Last file sync: {time}, {files} files, {new} new, {changed} changed, {missing} not found.', {
+				{{ t('cantoria', 'Last file sync: {time}, {files} files, {new} new, {changed} changed, {missing} not found.', {
 					time: formatDateTime(syncStatus.last.time),
 					files: syncStatus.last.files,
 					new: syncStatus.last.new,
@@ -355,44 +355,44 @@ function onUpdateOpen(open: boolean): void {
 		<!-- Export -->
 		<section class="archive-management__section" aria-labelledby="archive-export">
 			<h3 id="archive-export">
-				{{ t('notenarchiv', 'Export') }}
+				{{ t('cantoria', 'Export') }}
 			</h3>
 			<p>
-				{{ t('notenarchiv', 'The catalog as a CSV file (UTF-8, separated by semicolons) – the way back without the app. The catalog format has the columns of the original catalog and can be imported again; the complete export also contains all new fields.') }}
+				{{ t('cantoria', 'The catalog as a CSV file (UTF-8, separated by semicolons) – the way back without the app. The catalog format has the columns of the original catalog and can be imported again; the complete export also contains all new fields.') }}
 			</p>
 			<div class="archive-management__actions">
 				<NcButton :href="exportUrl(false)" download>
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiDownload" />
 					</template>
-					{{ t('notenarchiv', 'Download (catalog format)') }}
+					{{ t('cantoria', 'Download (catalog format)') }}
 				</NcButton>
 				<NcButton :href="exportUrl(true)" download>
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiDownload" />
 					</template>
-					{{ t('notenarchiv', 'Download (complete)') }}
+					{{ t('cantoria', 'Download (complete)') }}
 				</NcButton>
 				<NcButton ref="storeButton" :disabled="storeBusy || !hasArchiveFolder" @click="doStoreExport">
 					<template #icon>
 						<NcLoadingIcon v-if="storeBusy" />
 						<NcIconSvgWrapper v-else :path="mdiFolderDownloadOutline" />
 					</template>
-					{{ t('notenarchiv', 'Store export in the archive folder') }}
+					{{ t('cantoria', 'Store export in the archive folder') }}
 				</NcButton>
 			</div>
 			<NcNoteCard v-if="storedPath" type="success">
-				{{ t('notenarchiv', 'Stored as {path} in the archive folder.', { path: storedPath }) }}
+				{{ t('cantoria', 'Stored as {path} in the archive folder.', { path: storedPath }) }}
 			</NcNoteCard>
 		</section>
 
 		<!-- Backup -->
 		<section class="archive-management__section" aria-labelledby="archive-backup">
 			<h3 id="archive-backup">
-				{{ t('notenarchiv', 'Backup') }}
+				{{ t('cantoria', 'Backup') }}
 			</h3>
 			<p>
-				{{ t('notenarchiv', 'A complete backup (CSV, spreadsheet with the audit log and JSON for a restore) is stored every week in the backup folder, outside the archive folder; the newest eight weekly backups are kept. Store one now, e.g. before larger changes.') }}
+				{{ t('cantoria', 'A complete backup (CSV, spreadsheet with the audit log and JSON for a restore) is stored every week in the backup folder, outside the archive folder; the newest eight weekly backups are kept. Store one now, e.g. before larger changes.') }}
 			</p>
 			<div class="archive-management__actions">
 				<NcButton ref="backupButton" :disabled="backupBusy || !hasArchiveFolder" @click="doBackup">
@@ -400,11 +400,11 @@ function onUpdateOpen(open: boolean): void {
 						<NcLoadingIcon v-if="backupBusy" />
 						<NcIconSvgWrapper v-else :path="mdiShieldCheckOutline" />
 					</template>
-					{{ t('notenarchiv', 'Store a complete backup now') }}
+					{{ t('cantoria', 'Store a complete backup now') }}
 				</NcButton>
 			</div>
 			<NcNoteCard v-if="backupPaths.length > 0" type="success">
-				<p>{{ t('notenarchiv', 'Stored in the files of the account {account}:', { account: backupAccount }) }}</p>
+				<p>{{ t('cantoria', 'Stored in the files of the account {account}:', { account: backupAccount }) }}</p>
 				<ul class="archive-management__paths">
 					<li v-for="path in backupPaths" :key="path">
 						{{ path }}
@@ -416,14 +416,14 @@ function onUpdateOpen(open: boolean): void {
 		<!-- Complete backup and restore -->
 		<section class="archive-management__section" aria-labelledby="archive-restore">
 			<h3 id="archive-restore">
-				{{ t('notenarchiv', 'Complete backup and restore') }}
+				{{ t('cantoria', 'Complete backup and restore') }}
 			</h3>
 			<BackupRestore :catalog-filled="catalogFilled" @busy="restoreBusy = $event" @restored="onRestored" />
 		</section>
 
 		<template #actions>
 			<NcButton :disabled="importBusy || syncBusy || performanceBusy || personBusy || restoreBusy" @click="onUpdateOpen(false)">
-				{{ t('notenarchiv', 'Close') }}
+				{{ t('cantoria', 'Close') }}
 			</NcButton>
 		</template>
 	</NcDialog>

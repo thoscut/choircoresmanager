@@ -1,5 +1,5 @@
 {
-	"name": "notenarchiv/notenarchiv",
+	"name": "cantoria/cantoria",
 	"description": "Sheet music archive for choirs (Nextcloud app)",
 	"license": "AGPL-3.0-or-later",
 	"authors": [
@@ -13,13 +13,13 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"OCA\\Notenarchiv\\": "lib/"
+			"OCA\\Cantoria\\": "lib/"
 		}
 	},
 	"autoload-dev": {
 		"psr-4": {
 			"NCU\\": "vendor/nextcloud/ocp/NCU/",
-			"OCA\\Notenarchiv\\Tests\\": "tests/",
+			"OCA\\Cantoria\\Tests\\": "tests/",
 			"OCP\\": "vendor/nextcloud/ocp/OCP/"
 		}
 	},

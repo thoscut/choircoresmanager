@@ -3,14 +3,14 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Db;
+namespace OCA\Cantoria\Tests\Unit\Db;
 
 use Doctrine\DBAL\Schema\Table;
-use OCA\Notenarchiv\Tests\Unit\Support\MigratedSchema;
+use OCA\Cantoria\Tests\Unit\Support\MigratedSchema;
 use OCP\AppFramework\Db\Entity;
 use OCP\AppFramework\Db\QBMapper;
 use PHPUnit\Framework\Attributes\CoversNothing;
@@ -165,7 +165,7 @@ final class EntitySchemaTest extends TestCase {
 	private function mappedEntities(): array {
 		$result = [];
 		foreach (glob(__DIR__ . '/../../../lib/Db/*Mapper.php') ?: [] as $file) {
-			$class = 'OCA\\Notenarchiv\\Db\\' . basename($file, '.php');
+			$class = 'OCA\\Cantoria\\Db\\' . basename($file, '.php');
 			if (!is_subclass_of($class, QBMapper::class)) {
 				continue;
 			}

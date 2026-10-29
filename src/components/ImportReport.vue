@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -19,13 +19,13 @@ const props = defineProps<{
 }>()
 
 const counts = computed(() => [
-	{ label: t('notenarchiv', 'Rows in the file'), value: props.report.rows },
-	{ label: props.report.dryRun ? t('notenarchiv', 'New copies (would be created)') : t('notenarchiv', 'New copies (created)'), value: props.report.created },
-	{ label: props.report.dryRun ? t('notenarchiv', 'Copies with changes (would be updated)') : t('notenarchiv', 'Copies with changes (updated)'), value: props.report.changed },
-	{ label: t('notenarchiv', 'Unchanged copies'), value: props.report.unchanged },
-	{ label: t('notenarchiv', 'Changed fields in total'), value: props.report.fieldsChanged },
-	{ label: t('notenarchiv', 'With MusicXML'), value: props.report.withMusicxml },
-	{ label: t('notenarchiv', 'Internal preservation copies'), value: props.report.preservationCopies },
+	{ label: t('cantoria', 'Rows in the file'), value: props.report.rows },
+	{ label: props.report.dryRun ? t('cantoria', 'New copies (would be created)') : t('cantoria', 'New copies (created)'), value: props.report.created },
+	{ label: props.report.dryRun ? t('cantoria', 'Copies with changes (would be updated)') : t('cantoria', 'Copies with changes (updated)'), value: props.report.changed },
+	{ label: t('cantoria', 'Unchanged copies'), value: props.report.unchanged },
+	{ label: t('cantoria', 'Changed fields in total'), value: props.report.fieldsChanged },
+	{ label: t('cantoria', 'With MusicXML'), value: props.report.withMusicxml },
+	{ label: t('cantoria', 'Internal preservation copies'), value: props.report.preservationCopies },
 ])
 
 type Distribution = { label: string, rows: { label: string, count: number }[] }
@@ -41,21 +41,21 @@ function rows(values: Record<string, number> | unknown[] | undefined, label: (ke
 		return []
 	}
 	return Object.entries(values)
-		.map(([key, count]) => ({ label: key === '' ? t('notenarchiv', '(empty)') : label(key), count }))
+		.map(([key, count]) => ({ label: key === '' ? t('cantoria', '(empty)') : label(key), count }))
 		.sort((a, b) => b.count - a.count)
 }
 
 const distributions = computed<Distribution[]>(() => [
 	{
-		label: t('notenarchiv', 'Rights status'),
+		label: t('cantoria', 'Rights status'),
 		rows: rows(props.report.distribution?.rightsStatus, (key) => choiceLabel('version', 'rights_status', key)),
 	},
 	{
-		label: t('notenarchiv', 'Repertoire'),
+		label: t('cantoria', 'Repertoire'),
 		rows: rows(props.report.distribution?.repertoire, (key) => key),
 	},
 	{
-		label: t('notenarchiv', 'Publication'),
+		label: t('cantoria', 'Publication'),
 		rows: rows(props.report.distribution?.publication, (key) => key),
 	},
 ].filter((distribution) => distribution.rows.length > 0))
@@ -65,28 +65,28 @@ const distributions = computed<Distribution[]>(() => [
 	<div class="import-report">
 		<NcNoteCard v-if="report.dryRun"
 			type="info"
-			:heading="t('notenarchiv', 'Dry run – nothing has been changed yet')">
-			{{ t('notenarchiv', 'Please check the report. The catalog only changes when you click "Import now".') }}
+			:heading="t('cantoria', 'Dry run – nothing has been changed yet')">
+			{{ t('cantoria', 'Please check the report. The catalog only changes when you click "Import now".') }}
 		</NcNoteCard>
 		<NcNoteCard v-else
 			type="success"
-			:heading="t('notenarchiv', 'Import completed')">
+			:heading="t('cantoria', 'Import completed')">
 			<template v-if="report.snapshot">
-				{{ t('notenarchiv', 'The previous state was saved as a snapshot: {path}', { path: report.snapshot }) }}
+				{{ t('cantoria', 'The previous state was saved as a snapshot: {path}', { path: report.snapshot }) }}
 			</template>
 			<template v-else>
-				{{ t('notenarchiv', 'Every change is recorded in the audit log.') }}
+				{{ t('cantoria', 'Every change is recorded in the audit log.') }}
 			</template>
 		</NcNoteCard>
 
 		<p>
-			<strong>{{ report.restore ? t('notenarchiv', 'Restore: yes') : t('notenarchiv', 'Restore: no') }}</strong>
+			<strong>{{ report.restore ? t('cantoria', 'Restore: yes') : t('cantoria', 'Restore: no') }}</strong>
 			–
 			<template v-if="report.restore">
-				{{ t('notenarchiv', 'The catalog is still empty, so all columns of the file are taken over, including read-only ones.') }}
+				{{ t('cantoria', 'The catalog is still empty, so all columns of the file are taken over, including read-only ones.') }}
 			</template>
 			<template v-else>
-				{{ t('notenarchiv', 'The catalog already contains data. Copies are matched by their shelf mark and updated; read-only fields are kept.') }}
+				{{ t('cantoria', 'The catalog already contains data. Copies are matched by their shelf mark and updated; read-only fields are kept.') }}
 			</template>
 		</p>
 
@@ -112,24 +112,24 @@ const distributions = computed<Distribution[]>(() => [
 		</div>
 
 		<NcNoteCard v-if="report.warnings.length > 0" type="warning">
-			<ReportList :summary="n('notenarchiv', '%n warning', '%n warnings', report.warnings.length)"
+			<ReportList :summary="n('cantoria', '%n warning', '%n warnings', report.warnings.length)"
 				:items="report.warnings" />
 		</NcNoteCard>
 
 		<div v-if="report.notInCsv.length > 0">
-			<ReportList :summary="n('notenarchiv', '%n copy is no longer in the CSV', '%n copies are no longer in the CSV', report.notInCsv.length)"
+			<ReportList :summary="n('cantoria', '%n copy is no longer in the CSV', '%n copies are no longer in the CSV', report.notInCsv.length)"
 				:items="report.notInCsv"
 				inline
 				:open-up-to="40" />
 			<p class="import-report__muted">
-				{{ t('notenarchiv', 'They stay in the catalog – nothing is deleted. If a copy is really gone, change its status.') }}
+				{{ t('cantoria', 'They stay in the catalog – nothing is deleted. If a copy is really gone, change its status.') }}
 			</p>
 		</div>
 
 		<p class="import-report__muted import-report__source">
-			{{ t('notenarchiv', 'File: {source}', { source: report.source }) }}
+			{{ t('cantoria', 'File: {source}', { source: report.source }) }}
 			<br>
-			{{ t('notenarchiv', 'Checksum (SHA-256): {sha256}', { sha256: report.sha256 }) }}
+			{{ t('cantoria', 'Checksum (SHA-256): {sha256}', { sha256: report.sha256 }) }}
 		</p>
 	</div>
 </template>

@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -164,7 +164,7 @@ async function load(): Promise<void> {
 	} catch (error) {
 		console.error('Excerpt view: the score could not be shown', error)
 		status.value = 'error'
-		errorText.value = t('notenarchiv', 'The excerpt could not be shown in this browser. Please try another browser; the text reference above names the measures.')
+		errorText.value = t('cantoria', 'The excerpt could not be shown in this browser. Please try another browser; the text reference above names the measures.')
 	}
 }
 
@@ -226,15 +226,15 @@ function applyRange(): void {
 	const result = resolveRange(loaded.measures, from, to)
 	if ('error' in result) {
 		rangeError.value = result.error === 'order'
-			? t('notenarchiv', 'Measure {to} does not come after measure {from}.', { from, to })
-			: t('notenarchiv', 'There is no measure {number} in this score.', { number: result.error === 'from' ? from : to })
+			? t('cantoria', 'Measure {to} does not come after measure {from}.', { from, to })
+			: t('cantoria', 'There is no measure {number} in this score.', { number: result.error === 'from' ? from : to })
 		return
 	}
 	rangeError.value = ''
 	range.value = result.start === 0 && result.end === loaded.measures.length - 1 ? null : result
 	layout()
 	updateTimeline()
-	announce(t('notenarchiv', 'Measures {from} to {to}', { from: shownNumbers.value.first, to: shownNumbers.value.last }))
+	announce(t('cantoria', 'Measures {from} to {to}', { from: shownNumbers.value.first, to: shownNumbers.value.last }))
 }
 
 function showAllMeasures(): void {
@@ -297,8 +297,8 @@ const focusKey = ref('')
  */
 function labelOf(voice: Voice): string {
 	return voiceLabel(voice, (part, number, staff) => part !== ''
-		? t('notenarchiv', '{part}, voice {number}', { part, number })
-		: t('notenarchiv', 'Staff {staff}, voice {number}', { staff, number }))
+		? t('cantoria', '{part}, voice {number}', { part, number })
+		: t('cantoria', 'Staff {staff}, voice {number}', { staff, number }))
 }
 
 interface VoiceOption {
@@ -307,7 +307,7 @@ interface VoiceOption {
 }
 
 const voiceOptions = computed<VoiceOption[]>(() => [
-	{ id: '', label: t('notenarchiv', 'No focus voice') },
+	{ id: '', label: t('cantoria', 'No focus voice') },
 	...(model.value?.voices ?? []).map((voice) => ({ id: voice.key, label: labelOf(voice) })),
 ])
 
@@ -354,7 +354,7 @@ const metronome = ref(remembered?.metronome ?? false)
 const position = ref(0)
 const timeline = shallowRef<Timeline>({ events: [], measures: [], duration: 0 })
 
-const tempoText = computed(() => t('notenarchiv', 'Tempo: {percent} %', { percent: tempoPercent.value }))
+const tempoText = computed(() => t('cantoria', 'Tempo: {percent} %', { percent: tempoPercent.value }))
 
 function updateTimeline(): void {
 	const loaded = model.value
@@ -486,7 +486,7 @@ function ensurePlayer(): ScorePlayerType {
 				playing.value = false
 				position.value = 0
 				resetHighlights()
-				announce(t('notenarchiv', 'End of playback.'))
+				announce(t('cantoria', 'End of playback.'))
 			},
 		})
 		player.setTimeline(timeline.value)
@@ -506,7 +506,7 @@ async function togglePlay(): Promise<void> {
 	if (current.isPlaying) {
 		current.pause()
 		playing.value = false
-		announce(t('notenarchiv', 'Paused at measure {number}.', { number: currentMeasureNumber.value }))
+		announce(t('cantoria', 'Paused at measure {number}.', { number: currentMeasureNumber.value }))
 		return
 	}
 	await startPlaying(current)
@@ -528,8 +528,8 @@ async function startPlaying(current: ScorePlayerType): Promise<void> {
 		updatePosition(current.currentTime())
 		const number = currentMeasureNumber.value
 		announce(bars > 0
-			? t('notenarchiv', 'Count-in, then playing from measure {number}.', { number })
-			: t('notenarchiv', 'Playing from measure {number}.', { number }))
+			? t('cantoria', 'Count-in, then playing from measure {number}.', { number })
+			: t('cantoria', 'Playing from measure {number}.', { number }))
 	}
 }
 
@@ -547,8 +547,8 @@ function moveTo(time: number): void {
 	lastMeasureAnnouncement = Date.now()
 	const number = currentMeasureNumber.value
 	announce(current.isPlaying
-		? t('notenarchiv', 'Playing from measure {number}.', { number })
-		: t('notenarchiv', 'Start at measure {number}.', { number }))
+		? t('cantoria', 'Playing from measure {number}.', { number })
+		: t('cantoria', 'Start at measure {number}.', { number }))
 }
 
 /**
@@ -610,7 +610,7 @@ function stop(): void {
 	position.value = 0
 	resetHighlights()
 	if (wasActive) {
-		announce(t('notenarchiv', 'Stopped.'))
+		announce(t('cantoria', 'Stopped.'))
 	}
 }
 
@@ -648,8 +648,8 @@ watch(loop, (on) => {
 	}
 	player?.setLoop(on)
 	announce(on
-		? t('notenarchiv', 'Loop on: measures {from} to {to} play again and again.', { from: shownNumbers.value.first, to: shownNumbers.value.last })
-		: t('notenarchiv', 'Loop off.'))
+		? t('cantoria', 'Loop on: measures {from} to {to} play again and again.', { from: shownNumbers.value.first, to: shownNumbers.value.last })
+		: t('cantoria', 'Loop off.'))
 })
 
 // ---- following the playback -------------------------------------------------
@@ -761,17 +761,17 @@ function announceMeasure(number: string): void {
 		return
 	}
 	lastMeasureAnnouncement = now
-	announce(t('notenarchiv', 'Measure {number}', { number }))
+	announce(t('cantoria', 'Measure {number}', { number }))
 }
 
 // ---- text reference and description -----------------------------------------
 
 /** Words of a text reference (the same texts as in the archive). */
 const WORDS = {
-	page: (page: string) => t('notenarchiv', 'p. {page}', { page }),
-	measure: (measure: string) => t('notenarchiv', 'm. {measure}', { measure }),
-	measures: (from: string, to: string) => t('notenarchiv', 'm. {from}–{to}', { from, to }),
-	verse: (verse: string) => t('notenarchiv', 'verse {verse}', { verse }),
+	page: (page: string) => t('cantoria', 'p. {page}', { page }),
+	measure: (measure: string) => t('cantoria', 'm. {measure}', { measure }),
+	measures: (from: string, to: string) => t('cantoria', 'm. {from}–{to}', { from, to }),
+	verse: (verse: string) => t('cantoria', 'verse {verse}', { verse }),
 }
 
 /** A link without measures: the whole piece */
@@ -783,17 +783,17 @@ const reference = computed(() => [props.title, scopeText({
 	measureTo: props.measureTo,
 	voice: props.voice,
 	verse: props.verse,
-}, WORDS, t('notenarchiv', 'Whole piece'))].filter((part) => part.trim() !== '').join(' · '))
+}, WORDS, t('cantoria', 'Whole piece'))].filter((part) => part.trim() !== '').join(' · '))
 
 /** The shown measures as text */
 const rangeText = computed(() => (whole.value && range.value === null
-	? t('notenarchiv', 'Whole piece')
-	: t('notenarchiv', 'Measures {from} to {to}', { from: shownNumbers.value.first, to: shownNumbers.value.last })))
+	? t('cantoria', 'Whole piece')
+	: t('cantoria', 'Measures {from} to {to}', { from: shownNumbers.value.first, to: shownNumbers.value.last })))
 
 const rangeHint = computed(() => {
-	const parts = [t('notenarchiv', 'Printed measure numbers {first} to {last}.', numberSpan.value)]
+	const parts = [t('cantoria', 'Printed measure numbers {first} to {last}.', numberSpan.value)]
 	if (model.value?.pickup) {
-		parts.push(t('notenarchiv', 'The pickup is measure 0.'))
+		parts.push(t('cantoria', 'The pickup is measure 0.'))
 	}
 	return parts.join(' ')
 })
@@ -805,14 +805,14 @@ const keyText = computed(() => {
 	}
 	const fifths = signatures.fifths
 	let text = fifths === 0
-		? t('notenarchiv', 'no sharps or flats')
-		: (fifths > 0 ? n('notenarchiv', '%n sharp', '%n sharps', fifths) : n('notenarchiv', '%n flat', '%n flats', -fifths))
+		? t('cantoria', 'no sharps or flats')
+		: (fifths > 0 ? n('cantoria', '%n sharp', '%n sharps', fifths) : n('cantoria', '%n flat', '%n flats', -fifths))
 	if (signatures.mode === 'major') {
-		text += ', ' + t('notenarchiv', 'major')
+		text += ', ' + t('cantoria', 'major')
 	} else if (signatures.mode === 'minor') {
-		text += ', ' + t('notenarchiv', 'minor')
+		text += ', ' + t('cantoria', 'minor')
 	}
-	return t('notenarchiv', 'Key signature: {key}', { key: text })
+	return t('cantoria', 'Key signature: {key}', { key: text })
 })
 
 const summary = computed(() => {
@@ -822,8 +822,8 @@ const summary = computed(() => {
 	}
 	return [
 		rangeText.value,
-		n('notenarchiv', '%n voice', '%n voices', loaded.voices.length),
-		focusVoice.value ? t('notenarchiv', 'Focus voice: {voice}', { voice: labelOf(focusVoice.value) }) : t('notenarchiv', 'No focus voice'),
+		n('cantoria', '%n voice', '%n voices', loaded.voices.length),
+		focusVoice.value ? t('cantoria', 'Focus voice: {voice}', { voice: labelOf(focusVoice.value) }) : t('cantoria', 'No focus voice'),
 	].join(' · ')
 })
 
@@ -833,21 +833,21 @@ const description = computed(() => {
 		return ''
 	}
 	const sentences = [
-		whole.value ? t('notenarchiv', 'Score of {title}', { title: props.title }) : t('notenarchiv', 'Excerpt of {title}', { title: props.title }),
+		whole.value ? t('cantoria', 'Score of {title}', { title: props.title }) : t('cantoria', 'Excerpt of {title}', { title: props.title }),
 		rangeText.value,
-		n('notenarchiv', '%n voice: {voices}', '%n voices: {voices}', loaded.voices.length, { voices: loaded.voices.map(labelOf).join(', ') }),
+		n('cantoria', '%n voice: {voices}', '%n voices: {voices}', loaded.voices.length, { voices: loaded.voices.map(labelOf).join(', ') }),
 		focusVoice.value
-			? t('notenarchiv', 'The focus voice {voice} is shown in color with bold note heads and stems, the other voices in a lighter gray.', { voice: labelOf(focusVoice.value) })
-			: t('notenarchiv', 'No focus voice'),
+			? t('cantoria', 'The focus voice {voice} is shown in color with bold note heads and stems, the other voices in a lighter gray.', { voice: labelOf(focusVoice.value) })
+			: t('cantoria', 'No focus voice'),
 	]
 	if (props.verse) {
-		sentences.push(t('notenarchiv', 'Verse {verse}', { verse: props.verse }))
+		sentences.push(t('cantoria', 'Verse {verse}', { verse: props.verse }))
 	}
 	if (keyText.value !== '') {
 		sentences.push(keyText.value)
 	}
 	if (loaded.signatures.time !== '') {
-		sentences.push(t('notenarchiv', 'Time signature: {time}', { time: loaded.signatures.time }))
+		sentences.push(t('cantoria', 'Time signature: {time}', { time: loaded.signatures.time }))
 	}
 	return sentences.join('. ') + '.'
 })
@@ -867,27 +867,27 @@ const exportPart = computed<PracticePart>(() => {
 	const voice = focusVoice.value
 	return voice && mode.value !== 'all'
 		? { voice, mode: mode.value, label: labelOf(voice) }
-		: { voice: null, mode: 'all', label: t('notenarchiv', 'Tutti') }
+		: { voice: null, mode: 'all', label: t('cantoria', 'Tutti') }
 })
 
 const exportChoice = computed(() => {
 	const part = exportPart.value
 	// the count-in of the playback is at the start of the file, too
 	const timing = countInBars.value > 0
-		? t('notenarchiv', '{tempo}, count-in {bars}', { tempo: tempoText.value, bars: countInBars.value === 1 ? t('notenarchiv', '1 bar') : t('notenarchiv', '2 bars') })
+		? t('cantoria', '{tempo}, count-in {bars}', { tempo: tempoText.value, bars: countInBars.value === 1 ? t('cantoria', '1 bar') : t('cantoria', '2 bars') })
 		: tempoText.value
 	// pitch and mixer of the playback, too (milestone 0.13)
 	const mixed = mixChanged(mix.value)
-	const tempo = [timing, transpose.value !== 0 ? transposeText(transpose.value) : '', mixed ? t('notenarchiv', 'mixer as set above') : '']
+	const tempo = [timing, transpose.value !== 0 ? transposeText(transpose.value) : '', mixed ? t('cantoria', 'mixer as set above') : '']
 		.filter((text) => text !== '').join(', ')
 	if (part.voice === null) {
 		return mixed
-			? t('notenarchiv', 'All voices, {tempo}', { tempo })
-			: t('notenarchiv', 'All voices equal, {tempo}', { tempo })
+			? t('cantoria', 'All voices, {tempo}', { tempo })
+			: t('cantoria', 'All voices equal, {tempo}', { tempo })
 	}
 	return part.mode === 'solo'
-		? t('notenarchiv', '{voice} alone, {tempo}', { voice: part.label, tempo })
-		: t('notenarchiv', '{voice} louder, {tempo}', { voice: part.label, tempo })
+		? t('cantoria', '{voice} alone, {tempo}', { voice: part.label, tempo })
+		: t('cantoria', '{voice} louder, {tempo}', { voice: part.label, tempo })
 })
 
 function clearDownload(): void {
@@ -935,7 +935,7 @@ async function makePracticeFile(): Promise<void> {
 	const name = practiceFileName({ shelfmark: '', title: props.title, label: part.label, from: first, to: last, ext })
 	exporting.value = true
 	exportError.value = ''
-	exportStatus.value = t('notenarchiv', 'Checking the rights …')
+	exportStatus.value = t('cantoria', 'Checking the rights …')
 	exportController = new AbortController()
 	const signal = exportController.signal
 	try {
@@ -948,7 +948,7 @@ async function makePracticeFile(): Promise<void> {
 			measure_from: first,
 			measure_to: last,
 		})
-		exportStatus.value = t('notenarchiv', 'Making the file …')
+		exportStatus.value = t('cantoria', 'Making the file …')
 		await nextFrame()
 		const events = transposeTimeline(playbackTimeline(loaded, shown, repeats.value), transpose.value)
 		const countIn = countInFor(loaded, events, 0, countInBars.value)
@@ -964,21 +964,21 @@ async function makePracticeFile(): Promise<void> {
 				signal,
 				countIn,
 				onProgress: (done) => {
-					exportStatus.value = t('notenarchiv', 'Making the file … {percent} %', { percent: Math.floor(done * 10) * 10 })
+					exportStatus.value = t('cantoria', 'Making the file … {percent} %', { percent: Math.floor(done * 10) * 10 })
 				},
 			})
 			data = encodeWav(samples, SAMPLE_RATE, 1)
 		}
 		offer(data, name, format.value === 'wav' ? 'audio/wav' : 'audio/midi')
-		exportStatus.value = t('notenarchiv', 'The practice file {name} is ready.', { name })
+		exportStatus.value = t('cantoria', 'The practice file {name} is ready.', { name })
 	} catch (error) {
 		if (error instanceof RenderCancelled || signal.aborted) {
-			exportStatus.value = t('notenarchiv', 'Cancelled. No file was made.')
+			exportStatus.value = t('cantoria', 'Cancelled. No file was made.')
 		} else {
 			exportStatus.value = ''
 			exportError.value = error instanceof RangeError
-				? t('notenarchiv', 'The file is too large for this browser. Please try MIDI instead of WAV.')
-				: (error instanceof Error && error.message !== '' ? error.message : t('notenarchiv', 'The file could not be made in this browser.'))
+				? t('cantoria', 'The file is too large for this browser. Please try MIDI instead of WAV.')
+				: (error instanceof Error && error.message !== '' ? error.message : t('cantoria', 'The file could not be made in this browser.'))
 		}
 	} finally {
 		exporting.value = false
@@ -1063,25 +1063,25 @@ onBeforeUnmount(() => {
 	<!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -->
 	<div class="excerpt-viewer" @keydown="onKeydown">
 		<p class="excerpt-viewer__reference">
-			<span class="excerpt-viewer__label">{{ t('notenarchiv', 'Text reference') }}:</span>
+			<span class="excerpt-viewer__label">{{ t('cantoria', 'Text reference') }}:</span>
 			{{ reference }}
 		</p>
 
-		<NcEmptyContent v-if="status === 'loading'" :name="t('notenarchiv', 'Engraving the score …')">
+		<NcEmptyContent v-if="status === 'loading'" :name="t('cantoria', 'Engraving the score …')">
 			<template #icon>
 				<NcLoadingIcon :size="64" />
 			</template>
 		</NcEmptyContent>
 
 		<NcEmptyContent v-else-if="status === 'error'"
-			:name="t('notenarchiv', 'The score cannot be shown')"
+			:name="t('cantoria', 'The score cannot be shown')"
 			:description="errorText">
 			<template #icon>
 				<NcIconSvgWrapper :path="mdiAlertCircleOutline" />
 			</template>
 			<template #action>
 				<NcButton @click="load">
-					{{ t('notenarchiv', 'Try again') }}
+					{{ t('cantoria', 'Try again') }}
 				</NcButton>
 			</template>
 		</NcEmptyContent>
@@ -1092,23 +1092,23 @@ onBeforeUnmount(() => {
 				<div v-if="canPlay"
 					class="excerpt-viewer__buttons"
 					role="group"
-					:aria-label="t('notenarchiv', 'Playback')">
+					:aria-label="t('cantoria', 'Playback')">
 					<NcButton variant="primary" @click="togglePlay">
 						<template #icon>
 							<NcIconSvgWrapper :path="playing ? mdiPause : mdiPlay" />
 						</template>
-						{{ playing ? t('notenarchiv', 'Pause') : t('notenarchiv', 'Play') }}
+						{{ playing ? t('cantoria', 'Pause') : t('cantoria', 'Play') }}
 					</NcButton>
 					<NcButton :disabled="!playing && position === 0" @click="stop">
 						<template #icon>
 							<NcIconSvgWrapper :path="mdiStop" />
 						</template>
-						{{ t('notenarchiv', 'Stop') }}
+						{{ t('cantoria', 'Stop') }}
 					</NcButton>
 				</div>
-				<div class="excerpt-viewer__buttons" role="group" :aria-label="t('notenarchiv', 'Size of the score')">
+				<div class="excerpt-viewer__buttons" role="group" :aria-label="t('cantoria', 'Size of the score')">
 					<NcButton variant="tertiary"
-						:aria-label="t('notenarchiv', 'Smaller')"
+						:aria-label="t('cantoria', 'Smaller')"
 						:disabled="zoomIndex === 0"
 						@click="zoomBy(-1)">
 						<template #icon>
@@ -1117,7 +1117,7 @@ onBeforeUnmount(() => {
 					</NcButton>
 					<span class="excerpt-viewer__zoom-value">{{ zoomPercent }} %</span>
 					<NcButton variant="tertiary"
-						:aria-label="t('notenarchiv', 'Larger')"
+						:aria-label="t('cantoria', 'Larger')"
 						:disabled="zoomIndex === ZOOM_STEPS.length - 1"
 						@click="zoomBy(1)">
 						<template #icon>
@@ -1132,7 +1132,7 @@ onBeforeUnmount(() => {
 					<template #icon>
 						<NcIconSvgWrapper :path="settingsShown ? mdiChevronUp : mdiTuneVariant" />
 					</template>
-					<span class="excerpt-viewer__settings-label">{{ t('notenarchiv', 'Settings') }}</span>
+					<span class="excerpt-viewer__settings-label">{{ t('cantoria', 'Settings') }}</span>
 				</NcButton>
 				<!-- The lyrics stay in view with the bar while the score scrolls -->
 				<PracticeLyrics v-if="canPlay && lyricsVoice"
@@ -1154,18 +1154,18 @@ onBeforeUnmount(() => {
 					@announce="announce" />
 			</div>
 			<NcNoteCard v-if="!canPlay" type="info" class="excerpt-viewer__note">
-				{{ playReason || t('notenarchiv', 'Playback is not available for this excerpt.') }}
+				{{ playReason || t('cantoria', 'Playback is not available for this excerpt.') }}
 			</NcNoteCard>
 
 			<div v-show="settingsShown" :id="settingsId" class="excerpt-viewer__controls">
-				<section v-if="canPlay" class="excerpt-viewer__group" :aria-label="t('notenarchiv', 'Playback')">
-					<NcRadioGroup v-model="mode" :label="t('notenarchiv', 'Voices during playback')">
-						<NcRadioGroupButton value="all" :label="t('notenarchiv', 'All equal')" />
+				<section v-if="canPlay" class="excerpt-viewer__group" :aria-label="t('cantoria', 'Playback')">
+					<NcRadioGroup v-model="mode" :label="t('cantoria', 'Voices during playback')">
+						<NcRadioGroupButton value="all" :label="t('cantoria', 'All equal')" />
 						<NcRadioGroupButton value="focus"
-							:label="t('notenarchiv', 'Focus voice louder')"
+							:label="t('cantoria', 'Focus voice louder')"
 							:disabled="!focusVoice" />
 						<NcRadioGroupButton value="solo"
-							:label="t('notenarchiv', 'Focus voice only')"
+							:label="t('cantoria', 'Focus voice only')"
 							:disabled="!focusVoice" />
 					</NcRadioGroup>
 					<label class="excerpt-viewer__slider" :for="tempoId">
@@ -1177,20 +1177,20 @@ onBeforeUnmount(() => {
 							:max="TEMPO_MAX"
 							step="5"
 							:aria-describedby="tempoHintId"
-							:aria-valuetext="t('notenarchiv', '{percent} % of the tempo', { percent: tempoPercent })">
-						<span :id="tempoHintId" class="excerpt-viewer__hint">{{ t('notenarchiv', 'Percent of the tempo in the score.') }}</span>
+							:aria-valuetext="t('cantoria', '{percent} % of the tempo', { percent: tempoPercent })">
+						<span :id="tempoHintId" class="excerpt-viewer__hint">{{ t('cantoria', 'Percent of the tempo in the score.') }}</span>
 					</label>
-					<NcRadioGroup v-model="countInChoice" :label="t('notenarchiv', 'Count-in')">
-						<NcRadioGroupButton value="0" :label="t('notenarchiv', 'Off')" />
-						<NcRadioGroupButton value="1" :label="t('notenarchiv', '1 bar')" />
-						<NcRadioGroupButton value="2" :label="t('notenarchiv', '2 bars')" />
+					<NcRadioGroup v-model="countInChoice" :label="t('cantoria', 'Count-in')">
+						<NcRadioGroupButton value="0" :label="t('cantoria', 'Off')" />
+						<NcRadioGroupButton value="1" :label="t('cantoria', '1 bar')" />
+						<NcRadioGroupButton value="2" :label="t('cantoria', '2 bars')" />
 					</NcRadioGroup>
 					<div class="excerpt-viewer__switches">
 						<NcCheckboxRadioSwitch v-model="repeats" type="switch">
-							{{ t('notenarchiv', 'Play repeats') }}
+							{{ t('cantoria', 'Play repeats') }}
 						</NcCheckboxRadioSwitch>
 						<NcCheckboxRadioSwitch v-model="loop" type="switch">
-							{{ t('notenarchiv', 'Loop') }}
+							{{ t('cantoria', 'Loop') }}
 						</NcCheckboxRadioSwitch>
 					</div>
 					<PracticeTools v-model:mix="mix"
@@ -1230,29 +1230,29 @@ onBeforeUnmount(() => {
 
 				<NcSelect v-model="focusOption"
 					class="excerpt-viewer__voice"
-					:input-label="t('notenarchiv', 'Focus voice')"
+					:input-label="t('cantoria', 'Focus voice')"
 					:options="voiceOptions"
 					:clearable="false"
 					:searchable="false" />
 
-				<section class="excerpt-viewer__group" :aria-label="t('notenarchiv', 'Measures')">
+				<section class="excerpt-viewer__group" :aria-label="t('cantoria', 'Measures')">
 					<form class="excerpt-viewer__buttons" @submit.prevent="applyRange">
 						<!-- NcTextField puts a class on its input, not on its box: the width is set here -->
 						<div class="excerpt-viewer__measure-field">
 							<NcTextField v-model="rangeFrom"
-								:label="t('notenarchiv', 'From measure')"
+								:label="t('cantoria', 'From measure')"
 								:error="rangeError !== ''" />
 						</div>
 						<div class="excerpt-viewer__measure-field">
 							<NcTextField v-model="rangeTo"
-								:label="t('notenarchiv', 'To measure')"
+								:label="t('cantoria', 'To measure')"
 								:error="rangeError !== ''" />
 						</div>
 						<NcButton type="submit">
-							{{ t('notenarchiv', 'Show') }}
+							{{ t('cantoria', 'Show') }}
 						</NcButton>
 						<NcButton v-if="range" variant="tertiary" @click="showAllMeasures">
-							{{ t('notenarchiv', 'All measures') }}
+							{{ t('cantoria', 'All measures') }}
 						</NcButton>
 					</form>
 				</section>
@@ -1263,18 +1263,18 @@ onBeforeUnmount(() => {
 			<p class="excerpt-viewer__hint">
 				{{ rangeHint }}
 				<template v-if="canPlay">
-					{{ t('notenarchiv', '"Loop" plays the shown measures again and again.') }}
+					{{ t('cantoria', '"Loop" plays the shown measures again and again.') }}
 				</template>
 			</p>
 
 			<p :id="summaryId" class="excerpt-viewer__summary">
 				{{ summary }}
 				<template v-if="canPlay">
-					· {{ t('notenarchiv', 'Click a note to play from there.') }}
+					· {{ t('cantoria', 'Click a note to play from there.') }}
 				</template>
 			</p>
 			<p v-if="canPlay" :id="scoreHintId" class="hidden-visually">
-				{{ t('notenarchiv', 'Space plays and pauses. The arrow keys left and right go to the previous or next measure.') }}
+				{{ t('cantoria', 'Space plays and pauses. The arrow keys left and right go to the previous or next measure.') }}
 			</p>
 			<!-- Scrollable score; focusable so it can be scrolled with the keyboard.
 			     A click on a note plays from there; the keyboard alternative are the
@@ -1284,7 +1284,7 @@ onBeforeUnmount(() => {
 				class="excerpt-viewer__score"
 				tabindex="0"
 				role="region"
-				:aria-label="t('notenarchiv', 'Score')"
+				:aria-label="t('cantoria', 'Score')"
 				:aria-describedby="canPlay ? `${summaryId} ${scoreHintId}` : summaryId"
 				@click="onScoreClick">
 				<div ref="pagesElement"
@@ -1302,43 +1302,43 @@ onBeforeUnmount(() => {
 				</div>
 			</div>
 			<details class="excerpt-viewer__description">
-				<summary>{{ whole ? t('notenarchiv', 'Description of the piece') : t('notenarchiv', 'Description of the excerpt') }}</summary>
+				<summary>{{ whole ? t('cantoria', 'Description of the piece') : t('cantoria', 'Description of the excerpt') }}</summary>
 				<p>{{ description }}</p>
 			</details>
 
-			<section v-if="canExport" class="excerpt-viewer__export" :aria-label="t('notenarchiv', 'Practice file')">
+			<section v-if="canExport" class="excerpt-viewer__export" :aria-label="t('cantoria', 'Practice file')">
 				<h3 class="excerpt-viewer__export-title">
-					{{ t('notenarchiv', 'Practice file') }}
+					{{ t('cantoria', 'Practice file') }}
 				</h3>
 				<p class="excerpt-viewer__hint">
-					{{ t('notenarchiv', 'A practice file of the shown measures ({measures}) for your own practising, made in your browser from the playback above: {choice}. Choose the voice and "Focus voice louder" or "Focus voice only" above. Every practice file is recorded in the audit log of the music archive.', { measures: rangeText, choice: exportChoice }) }}
+					{{ t('cantoria', 'A practice file of the shown measures ({measures}) for your own practising, made in your browser from the playback above: {choice}. Choose the voice and "Focus voice louder" or "Focus voice only" above. Every practice file is recorded in the audit log of the music archive.', { measures: rangeText, choice: exportChoice }) }}
 				</p>
 				<div class="excerpt-viewer__buttons">
-					<NcRadioGroup v-model="format" :label="t('notenarchiv', 'Format')">
-						<NcRadioGroupButton value="wav" :label="t('notenarchiv', 'WAV (audio)')" />
-						<NcRadioGroupButton value="midi" :label="t('notenarchiv', 'MIDI')" />
+					<NcRadioGroup v-model="format" :label="t('cantoria', 'Format')">
+						<NcRadioGroupButton value="wav" :label="t('cantoria', 'WAV (audio)')" />
+						<NcRadioGroupButton value="midi" :label="t('cantoria', 'MIDI')" />
 					</NcRadioGroup>
 					<NcButton :disabled="exporting" :aria-describedby="exportStatusId" @click="makePracticeFile">
 						<template #icon>
 							<NcLoadingIcon v-if="exporting" :size="20" />
 							<NcIconSvgWrapper v-else :path="mdiDownload" />
 						</template>
-						{{ t('notenarchiv', 'Make practice file') }}
+						{{ t('cantoria', 'Make practice file') }}
 					</NcButton>
 					<NcButton v-if="exporting" variant="tertiary" @click="cancelExport">
-						{{ t('notenarchiv', 'Cancel') }}
+						{{ t('cantoria', 'Cancel') }}
 					</NcButton>
 				</div>
 				<p :id="exportStatusId" class="excerpt-viewer__hint" role="status">
 					{{ exportStatus }}
-					<a v-if="download && !exporting" :href="download.url" :download="download.name">{{ t('notenarchiv', 'Download again') }}</a>
+					<a v-if="download && !exporting" :href="download.url" :download="download.name">{{ t('cantoria', 'Download again') }}</a>
 				</p>
 				<NcNoteCard v-if="exportError" type="error" role="alert">
 					{{ exportError }}
 				</NcNoteCard>
 			</section>
 			<p v-else-if="offline && exportAudio !== null && canPlay" class="excerpt-viewer__hint">
-				{{ t('notenarchiv', 'Practice files need a network: the server checks the rights and records each file first. Playing and practising work without one.') }}
+				{{ t('cantoria', 'Practice files need a network: the server checks the rights and records each file first. Playing and practising work without one.') }}
 			</p>
 
 			<p class="hidden-visually" role="status">

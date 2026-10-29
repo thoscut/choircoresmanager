@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -19,9 +19,9 @@ describe('size of the notes', () => {
 	})
 
 	it('ignores a stored value outside the steps', () => {
-		window.localStorage.setItem('notenarchiv.zoom', '99')
+		window.localStorage.setItem('cantoria.zoom', '99')
 		expect(storedZoom()).toBe(ZOOM_DEFAULT)
-		window.localStorage.setItem('notenarchiv.zoom', 'big')
+		window.localStorage.setItem('cantoria.zoom', 'big')
 		expect(storedZoom()).toBe(ZOOM_DEFAULT)
 	})
 

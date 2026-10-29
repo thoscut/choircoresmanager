@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -29,18 +29,18 @@ require __DIR__ . '/harness.php';
 [$root, $uid] = IntegrationTest::start($argv, ['nextcloud-root', 'uid']);
 
 use OCA\Files\Event\LoadAdditionalScriptsEvent;
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Controller\FilesIntegrationController;
-use OCA\Notenarchiv\Db\ArchiveFile;
-use OCA\Notenarchiv\Db\ArchiveFileMapper;
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Exception\ModuleDisabledException;
-use OCA\Notenarchiv\Listener\FilesScriptListener;
-use OCA\Notenarchiv\Middleware\ModuleMiddleware;
-use OCA\Notenarchiv\Service\AppSettings;
-use OCA\Notenarchiv\Service\FilesIntegrationService;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\Roles;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Controller\FilesIntegrationController;
+use OCA\Cantoria\Db\ArchiveFile;
+use OCA\Cantoria\Db\ArchiveFileMapper;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Exception\ModuleDisabledException;
+use OCA\Cantoria\Listener\FilesScriptListener;
+use OCA\Cantoria\Middleware\ModuleMiddleware;
+use OCA\Cantoria\Service\AppSettings;
+use OCA\Cantoria\Service\FilesIntegrationService;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\Roles;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\JSONResponse;
@@ -62,7 +62,7 @@ $check = IntegrationTest::check(...);
 $throws = IntegrationTest::throws(...);
 
 const NOT_LISTED = 'This file is not listed in the music archive.';
-const SCRIPT = 'notenarchiv/js/notenarchiv-files';
+const SCRIPT = 'cantoria/js/cantoria-files';
 
 $db = Server::get(IDBConnection::class);
 $appConfig = Server::get(IAppConfig::class);
@@ -114,7 +114,7 @@ $scriptLoaded = function (?IUser $account) use ($session): bool {
 
 // A second account without a role, with one file of its own. Created
 // outside the transaction, so that deleting it removes its files, too.
-$otherUid = 'notenarchiv-files-test-' . bin2hex(random_bytes(4));
+$otherUid = 'cantoria-files-test-' . bin2hex(random_bytes(4));
 $other = $users->createUser($otherUid, bin2hex(random_bytes(24)) . 'aA1!');
 $check('second account created', $other instanceof IUser);
 $foreignFileId = 0;

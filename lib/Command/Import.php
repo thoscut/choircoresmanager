@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Command;
+namespace OCA\Cantoria\Command;
 
-use OCA\Notenarchiv\Service\ImportService;
+use OCA\Cantoria\Service\ImportService;
 use OCP\Files\File;
 use OCP\Files\IRootFolder;
 use Symfony\Component\Console\Command\Command;
@@ -28,7 +28,7 @@ class Import extends Command {
 
 	#[\Override]
 	protected function configure(): void {
-		$this->setName('notenarchiv:import')
+		$this->setName('cantoria:import')
 			->setDescription('Import the catalog from CSV; a dry run unless --execute is given')
 			->addArgument('user', InputArgument::REQUIRED, 'account that owns the CSV and is recorded in the audit log')
 			->addArgument('file', InputArgument::REQUIRED, 'path of the CSV, relative to the account\'s files')

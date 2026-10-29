@@ -9,7 +9,7 @@
 	"vorlage": {
 		"typ": "kopie",
 		"seiten": 2,
-		"schreiber_oder_verlag": "Notenarchiv-Demo (CC0)",
+		"schreiber_oder_verlag": "Cantoria-Demo (CC0)",
 		"beschreibung": "Platzhalter-Scan des Demo-Bestands, zwei Seiten; Tenor I/II und Bass I/II je auf einem System, Text unter Tenor I und Bass I, zwei Strophen."
 	},
 	"umfang": {
@@ -58,15 +58,15 @@
 			{ "rolle": "Übertragung", "name": "Johann Gottfried Herder", "lebensdaten": "1744–1803", "beleg": "Lebensdaten laut Demo-Personenliste" },
 			{ "rolle": "Satz", "name": "Demo-Satz (CC0)", "lebensdaten": "–", "beleg": "eigens für den Demo-Bestand gesetzt, CC0" }
 		],
-		"ausgabe": "Notenarchiv-Demo (CC0), Heft 2",
-		"rights": "Melodie und Text gemeinfrei. Satz: CC0 1.0 (Notenarchiv-Demo-Bestand)"
+		"ausgabe": "Cantoria-Demo (CC0), Heft 2",
+		"rights": "Melodie und Text gemeinfrei. Satz: CC0 1.0 (Cantoria-Demo-Bestand)"
 	},
 	"wv": {
 		"herkunft": "Neuaufbau aus dem Demo-Scan (Spec); keine OMR-Gegenprobe, Ersatzproben Taktlängen, Harmonik und Wiederholung gegen die zweite Strophe.",
 		"pruefstand": "Kopie eines Drucks, zwei Seiten, zwei Systeme; 16 Takte mit Wiederholung T. 1–8, 4 Stimmen, 2 Strophen. Geprüft: Taktlängen, Harmonik, Text. Ausgelassen: Atemzeichen T. 12 (Tenor I). Unsicher: T. 3 Tenor I Punktierung, T. 7 Tenor II gis/g, T. 8 Wiederholungszeichen, T. 14 Bass I h/a.",
 		"begruendung": "Silcher † 1860, Dach † 1659 und Herder † 1803 (Demo-Personenliste); der Satz ist ein eigener Demo-Satz unter CC0 – gemeinfrei.",
 		"felder": {
-			"Verlag / Bestellnummer": "Notenarchiv-Demo (CC0), Heft 2"
+			"Verlag / Bestellnummer": "Cantoria-Demo (CC0), Heft 2"
 		}
 	},
 	"rueckfragen": ["T. 9: Soll die zweite Strophe in der Wiederholung unter Tenor I oder unter Bass I stehen?"],

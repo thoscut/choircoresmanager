@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -43,7 +43,7 @@ interface CopyOption {
 /** Every copy of the catalog, by shelf mark and title. */
 const copyOptions = computed<CopyOption[]>(() => entries.value.map((entry) => ({
 	id: entry.id,
-	label: entry.status === 'active' ? `${entry.shelfmark} ${entry.title ?? ''}`.trim() : `${entry.shelfmark} ${entry.title ?? ''} (${t('notenarchiv', 'not active')})`,
+	label: entry.status === 'active' ? `${entry.shelfmark} ${entry.title ?? ''}`.trim() : `${entry.shelfmark} ${entry.title ?? ''} (${t('cantoria', 'not active')})`,
 })))
 
 const draft = reactive({
@@ -100,7 +100,7 @@ function orNull(value: string): string | null {
 async function save(): Promise<void> {
 	error.value = ''
 	if (draft.label.trim() === '') {
-		error.value = t('notenarchiv', 'Please give the folder a number or name.')
+		error.value = t('cantoria', 'Please give the folder a number or name.')
 		return
 	}
 	const contents = contentsInput(rows.value.map((row) => ({ copyId: row.copy?.id ?? null, count: row.count })))
@@ -109,7 +109,7 @@ async function save(): Promise<void> {
 		return
 	}
 	if (draft.retire && draft.statusReason.trim() === '') {
-		error.value = t('notenarchiv', 'Please give a reason for taking the folder out of service.')
+		error.value = t('cantoria', 'Please give a reason for taking the folder out of service.')
 		return
 	}
 	const input: FolderInput = {
@@ -143,8 +143,8 @@ async function save(): Promise<void> {
 </script>
 
 <template>
-	<ActionDialog :name="folder ? t('notenarchiv', 'Edit folder {label}', { label: folder.label }) : t('notenarchiv', 'New folder')"
-		:submit-label="t('notenarchiv', 'Save')"
+	<ActionDialog :name="folder ? t('cantoria', 'Edit folder {label}', { label: folder.label }) : t('cantoria', 'New folder')"
+		:submit-label="t('cantoria', 'Save')"
 		:busy="busy"
 		:error="error"
 		size="large"
@@ -152,21 +152,21 @@ async function save(): Promise<void> {
 		@close="emit('close')">
 		<div class="folder-dialog__row">
 			<NcTextField v-model="draft.label"
-				:label="t('notenarchiv', 'Number or name (required)')"
+				:label="t('cantoria', 'Number or name (required)')"
 				required
 				maxlength="64" />
 			<NcTextField v-model="draft.voice"
-				:label="t('notenarchiv', 'Voice or section, e.g. Tenor I')"
+				:label="t('cantoria', 'Voice or section, e.g. Tenor I')"
 				maxlength="64" />
 		</div>
 
 		<fieldset class="folder-dialog__group">
-			<legend>{{ t('notenarchiv', 'Contents: copies from the catalog') }}</legend>
+			<legend>{{ t('cantoria', 'Contents: copies from the catalog') }}</legend>
 			<div v-for="(row, index) in rows" :key="row.key" class="folder-dialog__item">
 				<NcSelect v-model="row.copy"
 					class="folder-dialog__copy"
-					:input-label="t('notenarchiv', 'Copy {number}', { number: index + 1 })"
-					:placeholder="t('notenarchiv', 'Shelf mark or title')"
+					:input-label="t('cantoria', 'Copy {number}', { number: index + 1 })"
+					:placeholder="t('cantoria', 'Shelf mark or title')"
 					:options="copyOptions" />
 				<NcTextField v-model="row.count"
 					class="folder-dialog__count"
@@ -175,9 +175,9 @@ async function save(): Promise<void> {
 					min="1"
 					max="999"
 					step="1"
-					:label="t('notenarchiv', 'Number')" />
+					:label="t('cantoria', 'Number')" />
 				<NcButton variant="tertiary"
-					:aria-label="t('notenarchiv', 'Remove copy {number}', { number: index + 1 })"
+					:aria-label="t('cantoria', 'Remove copy {number}', { number: index + 1 })"
 					@click="removeRow(row.key)">
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiDeleteOutline" />
@@ -188,12 +188,12 @@ async function save(): Promise<void> {
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiPlus" />
 				</template>
-				{{ t('notenarchiv', 'Add a copy') }}
+				{{ t('cantoria', 'Add a copy') }}
 			</NcButton>
 		</fieldset>
 
 		<fieldset class="folder-dialog__group">
-			<legend>{{ t('notenarchiv', 'Condition') }}</legend>
+			<legend>{{ t('cantoria', 'Condition') }}</legend>
 			<NcCheckboxRadioSwitch v-for="wear in WEARS"
 				:key="wear"
 				v-model="draft.wear"
@@ -204,33 +204,33 @@ async function save(): Promise<void> {
 			</NcCheckboxRadioSwitch>
 		</fieldset>
 		<NcTextArea v-model="draft.missing"
-			:label="t('notenarchiv', 'Missing sheets at the moment')"
-			:helper-text="t('notenarchiv', 'For example: 2-35, page 3. Empty when nothing is missing.')"
+			:label="t('cantoria', 'Missing sheets at the moment')"
+			:helper-text="t('cantoria', 'For example: 2-35, page 3. Empty when nothing is missing.')"
 			resize="vertical"
 			rows="2" />
 		<NcTextArea v-model="draft.note"
-			:label="t('notenarchiv', 'Note')"
-			:helper-text="t('notenarchiv', 'About the folder only. Notes about a person belong to the loan, where they are removed after the retention period.')"
+			:label="t('cantoria', 'Note')"
+			:helper-text="t('cantoria', 'About the folder only. Notes about a person belong to the loan, where they are removed after the retention period.')"
 			resize="vertical"
 			rows="2" />
 
 		<template v-if="folder && !retired">
 			<NcCheckboxRadioSwitch v-model="draft.retire" type="switch" :disabled="out">
-				{{ t('notenarchiv', 'Take this folder out of service') }}
+				{{ t('cantoria', 'Take this folder out of service') }}
 			</NcCheckboxRadioSwitch>
 			<p v-if="out" class="action-dialog__hint">
-				{{ t('notenarchiv', 'The folder is out. Take it back first, then you can take it out of service.') }}
+				{{ t('cantoria', 'The folder is out. Take it back first, then you can take it out of service.') }}
 			</p>
 			<NcTextField v-if="draft.retire"
 				v-model="draft.statusReason"
-				:label="t('notenarchiv', 'Reason (required)')"
+				:label="t('cantoria', 'Reason (required)')"
 				required />
 		</template>
 		<NcCheckboxRadioSwitch v-if="folder && retired" v-model="draft.reactivate" type="switch">
-			{{ t('notenarchiv', 'Put this folder back into service') }}
+			{{ t('cantoria', 'Put this folder back into service') }}
 		</NcCheckboxRadioSwitch>
 		<p class="action-dialog__hint">
-			{{ t('notenarchiv', 'Folders are not deleted. A folder out of service stays in the folder book with its loans.') }}
+			{{ t('cantoria', 'Folders are not deleted. A folder out of service stays in the folder book with its loans.') }}
 		</p>
 	</ActionDialog>
 </template>

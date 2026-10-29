@@ -3,21 +3,21 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Service;
+namespace OCA\Cantoria\Tests\Unit\Service;
 
-use OCA\Notenarchiv\Db\Proposal;
-use OCA\Notenarchiv\Db\WorkVersion;
-use OCA\Notenarchiv\Exception\InvalidInputException;
-use OCA\Notenarchiv\Service\ApiV1\CatalogView;
-use OCA\Notenarchiv\Service\ApiV1\Page;
-use OCA\Notenarchiv\Service\ApiV1\StatisticsView;
-use OCA\Notenarchiv\Service\ApiV1\TaskView;
-use OCA\Notenarchiv\Service\ApiV1\Values;
-use OCA\Notenarchiv\Service\Fields;
+use OCA\Cantoria\Db\Proposal;
+use OCA\Cantoria\Db\WorkVersion;
+use OCA\Cantoria\Exception\InvalidInputException;
+use OCA\Cantoria\Service\ApiV1\CatalogView;
+use OCA\Cantoria\Service\ApiV1\Page;
+use OCA\Cantoria\Service\ApiV1\StatisticsView;
+use OCA\Cantoria\Service\ApiV1\TaskView;
+use OCA\Cantoria\Service\ApiV1\Values;
+use OCA\Cantoria\Service\Fields;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 

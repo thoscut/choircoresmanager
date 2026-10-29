@@ -3,52 +3,52 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Service;
+namespace OCA\Cantoria\Tests\Unit\Service;
 
-use OCA\Notenarchiv\Db\ArchiveFile;
-use OCA\Notenarchiv\Db\ArchiveFileMapper;
-use OCA\Notenarchiv\Db\AuditEntry;
-use OCA\Notenarchiv\Db\AuditEntryMapper;
-use OCA\Notenarchiv\Db\Contribution;
-use OCA\Notenarchiv\Db\ContributionMapper;
-use OCA\Notenarchiv\Db\Copy;
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\ExcerptLink;
-use OCA\Notenarchiv\Db\ExcerptLinkMapper;
-use OCA\Notenarchiv\Db\License;
-use OCA\Notenarchiv\Db\LicenseMapper;
-use OCA\Notenarchiv\Db\Person;
-use OCA\Notenarchiv\Db\PersonMapper;
-use OCA\Notenarchiv\Db\Work;
-use OCA\Notenarchiv\Db\WorkMapper;
-use OCA\Notenarchiv\Db\WorkVersion;
-use OCA\Notenarchiv\Db\WorkVersionMapper;
-use OCA\Notenarchiv\Exception\AccessDeniedException;
-use OCA\Notenarchiv\Exception\InvalidInputException;
-use OCA\Notenarchiv\Exception\ModuleDisabledException;
-use OCA\Notenarchiv\Exception\NotFoundException;
-use OCA\Notenarchiv\Exception\UnknownLinkException;
-use OCA\Notenarchiv\Service\AppSettings;
-use OCA\Notenarchiv\Service\AuditLog;
-use OCA\Notenarchiv\Service\FieldValue;
-use OCA\Notenarchiv\Service\LinkService;
-use OCA\Notenarchiv\Service\LinkTokens;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\MusicXmlExcerpt;
-use OCA\Notenarchiv\Service\PracticeAudioService;
-use OCA\Notenarchiv\Service\PublicRepertoireService;
-use OCA\Notenarchiv\Service\RightsPolicy;
-use OCA\Notenarchiv\Service\RightsService;
-use OCA\Notenarchiv\Service\Roles;
-use OCA\Notenarchiv\Service\ScanService;
-use OCA\Notenarchiv\Service\ScoreService;
-use OCA\Notenarchiv\Service\SharedLinkService;
-use OCA\Notenarchiv\Tests\Unit\Support\FakeCrypto;
-use OCA\Notenarchiv\Tests\Unit\Support\ModuleSwitches;
+use OCA\Cantoria\Db\ArchiveFile;
+use OCA\Cantoria\Db\ArchiveFileMapper;
+use OCA\Cantoria\Db\AuditEntry;
+use OCA\Cantoria\Db\AuditEntryMapper;
+use OCA\Cantoria\Db\Contribution;
+use OCA\Cantoria\Db\ContributionMapper;
+use OCA\Cantoria\Db\Copy;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Db\ExcerptLink;
+use OCA\Cantoria\Db\ExcerptLinkMapper;
+use OCA\Cantoria\Db\License;
+use OCA\Cantoria\Db\LicenseMapper;
+use OCA\Cantoria\Db\Person;
+use OCA\Cantoria\Db\PersonMapper;
+use OCA\Cantoria\Db\Work;
+use OCA\Cantoria\Db\WorkMapper;
+use OCA\Cantoria\Db\WorkVersion;
+use OCA\Cantoria\Db\WorkVersionMapper;
+use OCA\Cantoria\Exception\AccessDeniedException;
+use OCA\Cantoria\Exception\InvalidInputException;
+use OCA\Cantoria\Exception\ModuleDisabledException;
+use OCA\Cantoria\Exception\NotFoundException;
+use OCA\Cantoria\Exception\UnknownLinkException;
+use OCA\Cantoria\Service\AppSettings;
+use OCA\Cantoria\Service\AuditLog;
+use OCA\Cantoria\Service\FieldValue;
+use OCA\Cantoria\Service\LinkService;
+use OCA\Cantoria\Service\LinkTokens;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\MusicXmlExcerpt;
+use OCA\Cantoria\Service\PracticeAudioService;
+use OCA\Cantoria\Service\PublicRepertoireService;
+use OCA\Cantoria\Service\RightsPolicy;
+use OCA\Cantoria\Service\RightsService;
+use OCA\Cantoria\Service\Roles;
+use OCA\Cantoria\Service\ScanService;
+use OCA\Cantoria\Service\ScoreService;
+use OCA\Cantoria\Service\SharedLinkService;
+use OCA\Cantoria\Tests\Unit\Support\FakeCrypto;
+use OCA\Cantoria\Tests\Unit\Support\ModuleSwitches;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Files\File;

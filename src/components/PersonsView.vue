@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -31,7 +31,7 @@ import { isLibrarian, openEntry } from '../store.ts'
 const persons = ref<Person[]>([])
 const query = ref('')
 /** The search in words, for the header of the printout */
-const printFilter = computed(() => query.value.trim() === '' ? '' : t('notenarchiv', 'Search: {text}', { text: query.value.trim() }))
+const printFilter = computed(() => query.value.trim() === '' ? '' : t('cantoria', 'Search: {text}', { text: query.value.trim() }))
 const loaded = ref(false)
 const loading = ref(false)
 const error = ref('')
@@ -104,7 +104,7 @@ const actionError = ref('')
  */
 async function onSaved(person: Person): Promise<void> {
 	editing.value = null
-	showSuccess(t('notenarchiv', 'The person has been saved.'))
+	showSuccess(t('cantoria', 'The person has been saved.'))
 	await load()
 	await select(person.id)
 }
@@ -116,7 +116,7 @@ async function check(): Promise<void> {
 	busy.value = true
 	try {
 		await markPersonChecked(current.value.person.id)
-		showSuccess(t('notenarchiv', 'Marked as checked.'))
+		showSuccess(t('cantoria', 'Marked as checked.'))
 		await load()
 		await select(current.value.person.id)
 	} catch (caught) {
@@ -134,7 +134,7 @@ async function remove(): Promise<void> {
 	actionError.value = ''
 	try {
 		await deletePerson(current.value.person.id)
-		showSuccess(t('notenarchiv', 'The person has been deleted.'))
+		showSuccess(t('cantoria', 'The person has been deleted.'))
 		deleting.value = false
 		current.value = null
 		selectedPersonId.value = null
@@ -166,8 +166,8 @@ function dateText(value: string | null, precision: string | null): string {
 
 <template>
 	<div class="persons-view">
-		<ViewHeader :title="t('notenarchiv', 'Persons')"
-			:description="t('notenarchiv', 'Composers, lyricists and arrangers with life dates. The life dates are the basis of the protection proposal; unknown or uncertain data counts as protected.')"
+		<ViewHeader :title="t('cantoria', 'Persons')"
+			:description="t('cantoria', 'Composers, lyricists and arrangers with life dates. The life dates are the basis of the protection proposal; unknown or uncertain data counts as protected.')"
 			printable
 			:print-filter="printFilter"
 			reloadable
@@ -178,40 +178,40 @@ function dateText(value: string | null, precision: string | null): string {
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiAccountPlusOutline" />
 					</template>
-					{{ t('notenarchiv', 'New person') }}
+					{{ t('cantoria', 'New person') }}
 				</NcButton>
 			</template>
 		</ViewHeader>
 
 		<div class="persons-view__content">
-			<section class="persons-view__list" :aria-label="t('notenarchiv', 'Register')">
+			<section class="persons-view__list" :aria-label="t('cantoria', 'Register')">
 				<!-- NcTextField puts a class on its input, so the wrapper hides it in print -->
 				<div class="no-print">
 					<NcTextField v-model="query"
 						type="search"
-						:label="t('notenarchiv', 'Search by name or GND number')" />
+						:label="t('cantoria', 'Search by name or GND number')" />
 				</div>
 				<p class="persons-view__muted">
-					{{ n('notenarchiv', '%n person', '%n persons', shown.length) }}
+					{{ n('cantoria', '%n person', '%n persons', shown.length) }}
 				</p>
-				<NcEmptyContent v-if="!loaded && loading" :name="t('notenarchiv', 'Loading …')">
+				<NcEmptyContent v-if="!loaded && loading" :name="t('cantoria', 'Loading …')">
 					<template #icon>
 						<NcLoadingIcon :size="64" />
 					</template>
 				</NcEmptyContent>
-				<NcEmptyContent v-else-if="!loaded && error" :name="t('notenarchiv', 'The register could not be loaded')" :description="error">
+				<NcEmptyContent v-else-if="!loaded && error" :name="t('cantoria', 'The register could not be loaded')" :description="error">
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiAlertCircleOutline" />
 					</template>
 					<template #action>
 						<NcButton @click="load">
-							{{ t('notenarchiv', 'Try again') }}
+							{{ t('cantoria', 'Try again') }}
 						</NcButton>
 					</template>
 				</NcEmptyContent>
 				<NcEmptyContent v-else-if="shown.length === 0"
-					:name="t('notenarchiv', 'No persons')"
-					:description="t('notenarchiv', 'Persons are added here, in the rights of a version or by the person import in the archive management.')">
+					:name="t('cantoria', 'No persons')"
+					:description="t('cantoria', 'Persons are added here, in the rights of a version or by the person import in the archive management.')">
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiAccountSearchOutline" />
 					</template>
@@ -227,13 +227,13 @@ function dateText(value: string | null, precision: string | null): string {
 							<span class="persons-view__muted">
 								{{ lifeDates(person) }}
 								<template v-if="person.contributions">
-									· {{ n('notenarchiv', '%n work', '%n works', person.contributions) }}
+									· {{ n('cantoria', '%n work', '%n works', person.contributions) }}
 								</template>
 							</span>
 							<span v-if="person.blocking" class="persons-view__warning">
 								{{ blockingReasonLabel(person.blocking) }}
 							</span>
-							<span v-if="!person.checked_at" class="persons-view__muted">{{ t('notenarchiv', 'not checked') }}</span>
+							<span v-if="!person.checked_at" class="persons-view__muted">{{ t('cantoria', 'not checked') }}</span>
 						</button>
 					</li>
 				</ul>
@@ -247,39 +247,39 @@ function dateText(value: string | null, precision: string | null): string {
 					<NcLoadingIcon />
 				</p>
 				<dl class="persons-view__facts">
-					<dt>{{ t('notenarchiv', 'Born') }}</dt>
+					<dt>{{ t('cantoria', 'Born') }}</dt>
 					<dd>{{ dateText(current.person.born, current.person.born_precision) }}</dd>
-					<dt>{{ t('notenarchiv', 'Died') }}</dt>
+					<dt>{{ t('cantoria', 'Died') }}</dt>
 					<dd>{{ dateText(current.person.died, current.person.died_precision) }}</dd>
 					<template v-if="current.person.life_dates_text">
-						<dt>{{ t('notenarchiv', 'Life dates as found') }}</dt>
+						<dt>{{ t('cantoria', 'Life dates as found') }}</dt>
 						<dd>{{ current.person.life_dates_text }}</dd>
 					</template>
 					<template v-if="current.person.source">
-						<dt>{{ t('notenarchiv', 'Source of the life dates') }}</dt>
+						<dt>{{ t('cantoria', 'Source of the life dates') }}</dt>
 						<dd>{{ current.person.source }}</dd>
 					</template>
-					<dt>{{ t('notenarchiv', 'Identification') }}</dt>
+					<dt>{{ t('cantoria', 'Identification') }}</dt>
 					<dd>{{ personOptionLabel('identification', current.person.identification) || '–' }}</dd>
 					<template v-if="current.person.gnd">
-						<dt>{{ t('notenarchiv', 'GND number') }}</dt>
+						<dt>{{ t('cantoria', 'GND number') }}</dt>
 						<dd>{{ current.person.gnd }}</dd>
 					</template>
 					<template v-if="current.person.wikidata">
-						<dt>{{ t('notenarchiv', 'Wikidata ID') }}</dt>
+						<dt>{{ t('cantoria', 'Wikidata ID') }}</dt>
 						<dd>{{ current.person.wikidata }}</dd>
 					</template>
-					<dt>{{ t('notenarchiv', 'Checked') }}</dt>
+					<dt>{{ t('cantoria', 'Checked') }}</dt>
 					<dd>
 						<template v-if="current.person.checked_at">
-							{{ t('notenarchiv', 'on {date} by {name}', { date: formatDate(current.person.checked_at), name: current.person.checked_by_name || current.person.checked_by || '' }) }}
+							{{ t('cantoria', 'on {date} by {name}', { date: formatDate(current.person.checked_at), name: current.person.checked_by_name || current.person.checked_by || '' }) }}
 						</template>
 						<template v-else>
-							{{ t('notenarchiv', 'not checked') }}
+							{{ t('cantoria', 'not checked') }}
 						</template>
 					</dd>
 					<template v-if="current.person.notes">
-						<dt>{{ t('notenarchiv', 'Notes') }}</dt>
+						<dt>{{ t('cantoria', 'Notes') }}</dt>
 						<dd class="persons-view__notes">
 							{{ current.person.notes }}
 						</dd>
@@ -290,35 +290,35 @@ function dateText(value: string | null, precision: string | null): string {
 						<template #icon>
 							<NcIconSvgWrapper :path="mdiPencilOutline" />
 						</template>
-						{{ t('notenarchiv', 'Edit') }}
+						{{ t('cantoria', 'Edit') }}
 					</NcButton>
 					<NcButton :disabled="busy" @click="check">
 						<template #icon>
 							<NcIconSvgWrapper :path="mdiCheckDecagramOutline" />
 						</template>
-						{{ t('notenarchiv', 'Mark as checked') }}
+						{{ t('cantoria', 'Mark as checked') }}
 					</NcButton>
 					<NcButton v-if="current.contributions.length === 0" variant="tertiary" @click="deleting = true; actionError = ''">
 						<template #icon>
 							<NcIconSvgWrapper :path="mdiDeleteOutline" />
 						</template>
-						{{ t('notenarchiv', 'Delete') }}
+						{{ t('cantoria', 'Delete') }}
 					</NcButton>
 				</div>
 				<p v-if="actionError" class="persons-view__error" role="alert">
 					{{ actionError }}
 				</p>
 
-				<h4>{{ t('notenarchiv', 'Involved in') }}</h4>
+				<h4>{{ t('cantoria', 'Involved in') }}</h4>
 				<p v-if="current.contributions.length === 0" class="persons-view__muted">
-					{{ t('notenarchiv', 'No work yet.') }}
+					{{ t('cantoria', 'No work yet.') }}
 				</p>
 				<ul v-else class="persons-view__works">
 					<li v-for="contribution in current.contributions" :key="contribution.id">
-						<strong>{{ contribution.title || t('notenarchiv', '(no title)') }}</strong>
+						<strong>{{ contribution.title || t('cantoria', '(no title)') }}</strong>
 						<span class="persons-view__muted">
 							{{ contributionRoleLabel(contribution.role) }}<template v-if="contribution.text_for_composition">
-								· {{ t('notenarchiv', 'Text written for this composition') }}
+								· {{ t('cantoria', 'Text written for this composition') }}
 							</template>
 						</span>
 						<span class="persons-view__copies">
@@ -326,7 +326,7 @@ function dateText(value: string | null, precision: string | null): string {
 								:key="copy.id"
 								type="button"
 								class="persons-view__copy"
-								:aria-label="t('notenarchiv', 'Open {shelfmark}', { shelfmark: copy.shelfmark })"
+								:aria-label="t('cantoria', 'Open {shelfmark}', { shelfmark: copy.shelfmark })"
 								@click="openEntry(copy.id, 'rights')">
 								{{ copy.shelfmark }}
 							</button>
@@ -343,14 +343,14 @@ function dateText(value: string | null, precision: string | null): string {
 			@close="editing = null" />
 
 		<ActionDialog v-if="deleting && current"
-			:name="t('notenarchiv', 'Delete person')"
-			:submit-label="t('notenarchiv', 'Delete')"
+			:name="t('cantoria', 'Delete person')"
+			:submit-label="t('cantoria', 'Delete')"
 			variant="error"
 			:busy="busy"
 			:error="actionError"
 			@submit="remove"
 			@close="deleting = false">
-			<p>{{ t('notenarchiv', 'Delete {name} from the register? This is only possible while the person is not involved in any version.', { name: current.person.name }) }}</p>
+			<p>{{ t('cantoria', 'Delete {name} from the register? This is only possible while the person is not involved in any version.', { name: current.person.name }) }}</p>
 		</ActionDialog>
 	</div>
 </template>

@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -43,25 +43,25 @@ function isLevel(value: string): value is Level {
 function objectLabel(type: string): string {
 	switch (type) {
 	case 'work':
-		return t('notenarchiv', 'Work')
+		return t('cantoria', 'Work')
 	case 'version':
-		return t('notenarchiv', 'Version')
+		return t('cantoria', 'Version')
 	case 'copy':
-		return t('notenarchiv', 'Copy')
+		return t('cantoria', 'Copy')
 	case 'file':
-		return t('notenarchiv', 'File')
+		return t('cantoria', 'File')
 	case 'review_point':
-		return t('notenarchiv', 'Review point')
+		return t('cantoria', 'Review point')
 	case 'review_report':
-		return t('notenarchiv', 'Transcription report')
+		return t('cantoria', 'Transcription report')
 	case 'folder':
-		return t('notenarchiv', 'Folder')
+		return t('cantoria', 'Folder')
 	case 'folder_loan':
-		return t('notenarchiv', 'Loan of a folder')
+		return t('cantoria', 'Loan of a folder')
 	case 'print_mirror':
-		return t('notenarchiv', 'Print station')
+		return t('cantoria', 'Print station')
 	case 'choir_handover':
-		return t('notenarchiv', 'Hand-over to the choir system')
+		return t('cantoria', 'Hand-over to the choir system')
 	default:
 		return type
 	}
@@ -75,43 +75,43 @@ function objectLabel(type: string): string {
 function actionLabel(action: string): string {
 	switch (action) {
 	case 'created':
-		return t('notenarchiv', 'Created')
+		return t('cantoria', 'Created')
 	case 'changed':
-		return t('notenarchiv', 'Changed')
+		return t('cantoria', 'Changed')
 	case 'import':
-		return t('notenarchiv', 'Import')
+		return t('cantoria', 'Import')
 	case 'restore':
-		return t('notenarchiv', 'Restore')
+		return t('cantoria', 'Restore')
 	case 'not_found':
-		return t('notenarchiv', 'File not found')
+		return t('cantoria', 'File not found')
 	case 'file_sync':
-		return t('notenarchiv', 'File sync')
+		return t('cantoria', 'File sync')
 	case 'practice_audio':
-		return t('notenarchiv', 'Practice files made')
+		return t('cantoria', 'Practice files made')
 	case 'imported':
-		return t('notenarchiv', 'Report read')
+		return t('cantoria', 'Report read')
 	case 'decided':
-		return t('notenarchiv', 'Decided')
+		return t('cantoria', 'Decided')
 	case 'corrected':
-		return t('notenarchiv', 'Corrected')
+		return t('cantoria', 'Corrected')
 	case 'folder_issued':
-		return t('notenarchiv', 'Issue')
+		return t('cantoria', 'Issue')
 	case 'folder_taken_back':
-		return t('notenarchiv', 'Take back')
+		return t('cantoria', 'Take back')
 	case 'anonymized':
-		return t('notenarchiv', 'Name removed')
+		return t('cantoria', 'Name removed')
 	case 'erased':
-		return t('notenarchiv', 'Personal data erased on request')
+		return t('cantoria', 'Personal data erased on request')
 	case 'mirror_copied':
-		return t('notenarchiv', 'Copied')
+		return t('cantoria', 'Copied')
 	case 'mirror_replaced':
-		return t('notenarchiv', 'Replaced')
+		return t('cantoria', 'Replaced')
 	case 'mirror_removed':
-		return t('notenarchiv', 'Removed')
+		return t('cantoria', 'Removed')
 	case 'state_recorded':
-		return t('notenarchiv', 'Revision recorded')
+		return t('cantoria', 'Revision recorded')
 	case 'state_current':
-		return t('notenarchiv', 'Current revision set')
+		return t('cantoria', 'Current revision set')
 	default:
 		return action
 	}
@@ -134,22 +134,22 @@ function practiceAudioText(value: string): string {
 		return value
 	}
 	const modes: Record<string, string> = {
-		all: t('notenarchiv', 'All equal'),
-		focus: t('notenarchiv', 'Focus voice louder'),
-		solo: t('notenarchiv', 'Focus voice only'),
+		all: t('cantoria', 'All equal'),
+		focus: t('cantoria', 'Focus voice louder'),
+		solo: t('cantoria', 'Focus voice only'),
 	}
 	const [from, to] = String(details.measures ?? '').split('-')
 	const voice = details.voice === '*'
-		? t('notenarchiv', 'Every voice and a tutti (ZIP)')
-		: (typeof details.voice === 'string' && details.voice !== '' ? details.voice : t('notenarchiv', 'Tutti'))
+		? t('cantoria', 'Every voice and a tutti (ZIP)')
+		: (typeof details.voice === 'string' && details.voice !== '' ? details.voice : t('cantoria', 'Tutti'))
 	return [
 		String(details.copy ?? ''),
-		t('notenarchiv', 'Measures {from} to {to}', { from: from ?? '', to: to ?? '' }),
+		t('cantoria', 'Measures {from} to {to}', { from: from ?? '', to: to ?? '' }),
 		voice,
 		modes[String(details.mode)] ?? String(details.mode ?? ''),
 		String(details.format ?? '').toUpperCase(),
 		typeof details.tempo === 'number' ? `${details.tempo} %` : '',
-		details.repeats === false ? t('notenarchiv', 'without repeats') : t('notenarchiv', 'with repeats'),
+		details.repeats === false ? t('cantoria', 'without repeats') : t('cantoria', 'with repeats'),
 	].filter((part) => part !== '').join(' · ')
 }
 
@@ -186,17 +186,17 @@ function value(entry: AuditEntry, value: string | null): string {
 function who(entry: AuditEntry): string {
 	if (!entry.user_name && !entry.user_id && entry.roles === 'member') {
 		// Choir members are recorded without account or name (milestone 0.11)
-		return t('notenarchiv', 'A choir member')
+		return t('cantoria', 'A choir member')
 	}
-	return entry.user_name || entry.user_id || t('notenarchiv', 'System')
+	return entry.user_name || entry.user_id || t('cantoria', 'System')
 }
 </script>
 
 <template>
 	<div class="audit-list">
 		<NcEmptyContent v-if="audit.length === 0"
-			:name="t('notenarchiv', 'No changes yet')"
-			:description="t('notenarchiv', 'Every change is recorded here: who, when, old and new value, reason.')">
+			:name="t('cantoria', 'No changes yet')"
+			:description="t('cantoria', 'Every change is recorded here: who, when, old and new value, reason.')">
 			<template #icon>
 				<NcIconSvgWrapper :path="mdiHistory" />
 			</template>
@@ -212,22 +212,22 @@ function who(entry: AuditEntry): string {
 					{{ subject(entry) }}
 				</div>
 				<div v-if="entry.field && (entry.old_value !== null || entry.new_value !== null)" class="audit-list__change">
-					<span class="audit-list__old">{{ value(entry, entry.old_value) || t('notenarchiv', '(empty)') }}</span>
+					<span class="audit-list__old">{{ value(entry, entry.old_value) || t('cantoria', '(empty)') }}</span>
 					<span aria-hidden="true"> → </span>
-					<span class="hidden-visually">{{ t('notenarchiv', 'changed to') }}</span>
-					<span class="audit-list__new">{{ value(entry, entry.new_value) || t('notenarchiv', '(empty)') }}</span>
+					<span class="hidden-visually">{{ t('cantoria', 'changed to') }}</span>
+					<span class="audit-list__new">{{ value(entry, entry.new_value) || t('cantoria', '(empty)') }}</span>
 				</div>
 				<div v-else-if="entry.new_value" class="audit-list__change">
 					{{ entry.action === 'practice_audio' ? practiceAudioText(entry.new_value) : entry.new_value }}
 				</div>
 				<div v-if="entry.reason" class="audit-list__reason">
-					{{ t('notenarchiv', 'Reason: {reason}', { reason: entry.reason }) }}
+					{{ t('cantoria', 'Reason: {reason}', { reason: entry.reason }) }}
 				</div>
 			</li>
 		</ol>
 
 		<NcButton v-if="sorted.length > limit" variant="tertiary" @click="limit += PAGE">
-			{{ n('notenarchiv', 'Show %n more entry', 'Show %n more entries', Math.min(PAGE, sorted.length - limit)) }}
+			{{ n('cantoria', 'Show %n more entry', 'Show %n more entries', Math.min(PAGE, sorted.length - limit)) }}
 		</NcButton>
 	</div>
 </template>

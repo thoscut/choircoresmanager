@@ -3,24 +3,24 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Controller;
+namespace OCA\Cantoria\Controller;
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Exception\AccessDeniedException;
-use OCA\Notenarchiv\Exception\InvalidInputException;
-use OCA\Notenarchiv\Service\AppSettings;
-use OCA\Notenarchiv\Service\ArchiveAccess;
-use OCA\Notenarchiv\Service\AuditLog;
-use OCA\Notenarchiv\Service\FullBackupService;
-use OCA\Notenarchiv\Service\Input;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\RepertoireService;
-use OCA\Notenarchiv\Service\Roles;
-use OCA\Notenarchiv\Settings\Admin;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Exception\AccessDeniedException;
+use OCA\Cantoria\Exception\InvalidInputException;
+use OCA\Cantoria\Service\AppSettings;
+use OCA\Cantoria\Service\ArchiveAccess;
+use OCA\Cantoria\Service\AuditLog;
+use OCA\Cantoria\Service\FullBackupService;
+use OCA\Cantoria\Service\Input;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\RepertoireService;
+use OCA\Cantoria\Service\Roles;
+use OCA\Cantoria\Settings\Admin;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting;
 use OCP\AppFramework\Http\Attribute\FrontpageRoute;

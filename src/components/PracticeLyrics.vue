@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -72,13 +72,13 @@ const next = computed(() => shownLine(lines.value[lineIndex.value + 1]))
 	<div v-if="syllables.length > 0 && (part === 'choices' || shown)" class="practice-lyrics">
 		<div v-if="part === 'choices'" class="practice-lyrics__choices">
 			<NcCheckboxRadioSwitch v-model="shown" type="switch">
-				{{ t('notenarchiv', 'Read the lyrics along ({voice})', { voice: voiceLabel }) }}
+				{{ t('cantoria', 'Read the lyrics along ({voice})', { voice: voiceLabel }) }}
 			</NcCheckboxRadioSwitch>
-			<NcRadioGroup v-if="shown" v-model="step" :label="t('notenarchiv', 'Learn the lyrics')">
-				<NcRadioGroupButton value="0" :label="t('notenarchiv', 'All letters')" />
-				<NcRadioGroupButton value="1" :label="t('notenarchiv', 'Some hidden')" />
-				<NcRadioGroupButton value="2" :label="t('notenarchiv', 'Most hidden')" />
-				<NcRadioGroupButton value="3" :label="t('notenarchiv', 'First letters')" />
+			<NcRadioGroup v-if="shown" v-model="step" :label="t('cantoria', 'Learn the lyrics')">
+				<NcRadioGroupButton value="0" :label="t('cantoria', 'All letters')" />
+				<NcRadioGroupButton value="1" :label="t('cantoria', 'Some hidden')" />
+				<NcRadioGroupButton value="2" :label="t('cantoria', 'Most hidden')" />
+				<NcRadioGroupButton value="3" :label="t('cantoria', 'First letters')" />
 			</NcRadioGroup>
 		</div>
 		<!-- Not a live region: the screen reader reads the lyrics when the person goes there -->

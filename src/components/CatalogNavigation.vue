@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -90,7 +90,7 @@ import {
 /** The settings are a page under Administration → Music archive. */
 const settingsUrl = adminSettingsUrl()
 /** The concert folder is a page of its own, also without a network (milestone 0.15). */
-const concertFolderUrl = generateUrl('/apps/notenarchiv/concert-folder')
+const concertFolderUrl = generateUrl('/apps/cantoria/concert-folder')
 const showConcertFolder = computed(() => isModuleActive('concert_folder') && (isConductor.value || isLibrarian.value))
 
 const isMobile = useIsMobile()
@@ -214,7 +214,7 @@ watch(() => filters.search, (search) => {
 
 const binderSelectOptions = computed<Option<number>[]>(() => binderOptions.value.map((binder) => ({
 	id: binder,
-	label: t('notenarchiv', 'Binder {binder}', { binder }),
+	label: t('cantoria', 'Binder {binder}', { binder }),
 })))
 
 const rightsSelectOptions = computed<Option<string>[]>(() => {
@@ -235,7 +235,7 @@ const statusSelectOptions = computed<Option<string>[]>(() => {
 	}
 	return [
 		...keys.map((key) => ({ id: key, label: choiceLabel('copy', 'status', key) })),
-		{ id: 'all', label: t('notenarchiv', 'All statuses') },
+		{ id: 'all', label: t('cantoria', 'All statuses') },
 	]
 })
 
@@ -269,9 +269,9 @@ const countText = computed(() => {
 	const shown = visibleEntries.value.length
 	const total = entries.value.length
 	if (shown === total) {
-		return n('notenarchiv', '%n copy', '%n copies', total)
+		return n('cantoria', '%n copy', '%n copies', total)
 	}
-	return t('notenarchiv', '{shown} of {total} copies', { shown, total })
+	return t('cantoria', '{shown} of {total} copies', { shown, total })
 })
 
 /**
@@ -291,10 +291,10 @@ function onFooterClick(event: Event, open: 'archive' | 'view'): void {
 </script>
 
 <template>
-	<NcAppNavigation :aria-label="t('notenarchiv', 'Navigation of the music archive')">
+	<NcAppNavigation :aria-label="t('cantoria', 'Navigation of the music archive')">
 		<template #search>
 			<NcAppNavigationSearch v-model="filters.search"
-				:label="t('notenarchiv', 'Shelf mark, title or composer')" />
+				:label="t('cantoria', 'Shelf mark, title or composer')" />
 		</template>
 
 		<!-- NcAppNavigation wraps this slot in a list (ul) of its own -->
@@ -310,7 +310,7 @@ function onFooterClick(event: Event, open: 'archive' | 'view'): void {
 				</template>
 			</NcAppNavigationItem>
 
-			<NcAppNavigationCaption :name="t('notenarchiv', 'Archive')" />
+			<NcAppNavigationCaption :name="t('cantoria', 'Archive')" />
 			<NcAppNavigationItem :name="viewTitle('catalog', isLibrarian)"
 				:href="viewHref('catalog')"
 				:active="isActive('catalog')"
@@ -325,14 +325,14 @@ function onFooterClick(event: Event, open: 'archive' | 'view'): void {
 				</p>
 
 				<NcSelect v-model="filters.rightsStatus"
-					:input-label="t('notenarchiv', 'Rights status')"
-					:placeholder="t('notenarchiv', 'Any rights status')"
+					:input-label="t('cantoria', 'Rights status')"
+					:placeholder="t('cantoria', 'Any rights status')"
 					:options="rightsSelectOptions"
 					:reduce="reduceId" />
 
 				<NcSelect v-model="filters.repertoire"
-					:input-label="t('notenarchiv', 'Repertoire')"
-					:placeholder="t('notenarchiv', 'Any repertoire')"
+					:input-label="t('cantoria', 'Repertoire')"
+					:placeholder="t('cantoria', 'Any repertoire')"
 					:options="repertoireSelectOptions"
 					:reduce="reduceId" />
 
@@ -347,41 +347,41 @@ function onFooterClick(event: Event, open: 'archive' | 'view'): void {
 						<NcIconSvgWrapper :path="moreFiltersOpen ? mdiChevronUp : mdiChevronDown" />
 					</template>
 					{{ moreFiltersCount > 0
-						? t('notenarchiv', 'More filters ({count} active)', { count: moreFiltersCount })
-						: t('notenarchiv', 'More filters') }}
+						? t('cantoria', 'More filters ({count} active)', { count: moreFiltersCount })
+						: t('cantoria', 'More filters') }}
 				</NcButton>
 
 				<div v-show="moreFiltersOpen" id="catalog-more-filters" class="catalog-filters__more">
 					<NcSelect v-model="filters.binder"
-						:input-label="t('notenarchiv', 'Archive binder')"
-						:placeholder="t('notenarchiv', 'All binders')"
+						:input-label="t('cantoria', 'Archive binder')"
+						:placeholder="t('cantoria', 'All binders')"
 						:options="binderSelectOptions"
 						:reduce="reduceId" />
 
 					<NcSelect v-model="filters.status"
-						:input-label="t('notenarchiv', 'Status')"
+						:input-label="t('cantoria', 'Status')"
 						:options="statusSelectOptions"
 						:clearable="false"
 						:searchable="false"
 						:reduce="reduceId" />
 
 					<NcCheckboxRadioSwitch v-model="filters.musicxml">
-						{{ t('notenarchiv', 'With MusicXML') }}
+						{{ t('cantoria', 'With MusicXML') }}
 					</NcCheckboxRadioSwitch>
 					<NcCheckboxRadioSwitch v-model="filters.preservationCopy">
-						{{ t('notenarchiv', 'Internal preservation copies only') }}
+						{{ t('cantoria', 'Internal preservation copies only') }}
 					</NcCheckboxRadioSwitch>
 					<NcCheckboxRadioSwitch v-if="isModuleActive('rights')" v-model="filters.unconfirmed">
-						{{ t('notenarchiv', 'Public domain, not confirmed') }}
+						{{ t('cantoria', 'Public domain, not confirmed') }}
 					</NcCheckboxRadioSwitch>
 					<NcCheckboxRadioSwitch v-if="isModuleActive('valid_version')" v-model="filters.noValidVersion">
-						{{ t('notenarchiv', 'No version valid for the choir') }}
+						{{ t('cantoria', 'No version valid for the choir') }}
 					</NcCheckboxRadioSwitch>
 					<NcCheckboxRadioSwitch v-if="isModuleActive('transcription_review')" v-model="filters.reviewOpen">
-						{{ t('notenarchiv', 'Open review points') }}
+						{{ t('cantoria', 'Open review points') }}
 					</NcCheckboxRadioSwitch>
 					<NcCheckboxRadioSwitch v-if="isModuleActive('rights')" v-model="filters.copiesUnlicensed">
-						{{ t('notenarchiv', 'Photocopies without a license') }}
+						{{ t('cantoria', 'Photocopies without a license') }}
 					</NcCheckboxRadioSwitch>
 				</div>
 
@@ -392,7 +392,7 @@ function onFooterClick(event: Event, open: 'archive' | 'view'): void {
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiFilterRemoveOutline" />
 					</template>
-					{{ t('notenarchiv', 'Reset search and filters') }}
+					{{ t('cantoria', 'Reset search and filters') }}
 				</NcButton>
 			</li>
 			<NcAppNavigationItem v-for="entry in archiveViews"
@@ -406,7 +406,7 @@ function onFooterClick(event: Event, open: 'archive' | 'view'): void {
 				</template>
 			</NcAppNavigationItem>
 
-			<NcAppNavigationCaption v-if="releaseViews.length > 0" :name="t('notenarchiv', 'Releases')" />
+			<NcAppNavigationCaption v-if="releaseViews.length > 0" :name="t('cantoria', 'Releases')" />
 			<NcAppNavigationItem v-for="entry in releaseViews"
 				:key="entry.view"
 				:name="entry.name"
@@ -418,7 +418,7 @@ function onFooterClick(event: Event, open: 'archive' | 'view'): void {
 				</template>
 			</NcAppNavigationItem>
 
-			<NcAppNavigationCaption v-if="programmeViews.length > 0" :name="t('notenarchiv', 'Programmes')" />
+			<NcAppNavigationCaption v-if="programmeViews.length > 0" :name="t('cantoria', 'Programmes')" />
 			<NcAppNavigationItem v-for="entry in programmeViews"
 				:key="entry.view"
 				:name="entry.name"
@@ -432,14 +432,14 @@ function onFooterClick(event: Event, open: 'archive' | 'view'): void {
 
 			<!-- A link: the concert folder is a page of its own that also opens without a network -->
 			<NcAppNavigationItem v-if="showConcertFolder"
-				:name="t('notenarchiv', 'Concert folder')"
+				:name="t('cantoria', 'Concert folder')"
 				:href="concertFolderUrl">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiFolderMusicOutline" />
 				</template>
 			</NcAppNavigationItem>
 
-			<NcAppNavigationCaption v-if="maintenanceViews.length > 0" :name="t('notenarchiv', 'Maintaining the catalog')" />
+			<NcAppNavigationCaption v-if="maintenanceViews.length > 0" :name="t('cantoria', 'Maintaining the catalog')" />
 			<NcAppNavigationItem v-for="entry in maintenanceViews"
 				:key="entry.view"
 				:name="entry.name"
@@ -455,20 +455,20 @@ function onFooterClick(event: Event, open: 'archive' | 'view'): void {
 		<template #footer>
 			<NcAppNavigationList class="catalog-footer">
 				<!-- the guide opens in a new tab (external link) -->
-				<NcAppNavigationItem :name="t('notenarchiv', 'Help')"
+				<NcAppNavigationItem :name="t('cantoria', 'Help')"
 					:href="helpUrl()">
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiHelpCircleOutline" />
 					</template>
 				</NcAppNavigationItem>
-				<NcAppNavigationItem :name="t('notenarchiv', 'Customize view')"
+				<NcAppNavigationItem :name="t('cantoria', 'Customize view')"
 					@click="onFooterClick($event, 'view')">
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiEyeSettingsOutline" />
 					</template>
 				</NcAppNavigationItem>
 				<NcAppNavigationItem v-if="isLibrarian"
-					:name="t('notenarchiv', 'Archive management')"
+					:name="t('cantoria', 'Archive management')"
 					@click="onFooterClick($event, 'archive')">
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiArchiveOutline" />
@@ -476,7 +476,7 @@ function onFooterClick(event: Event, open: 'archive' | 'view'): void {
 				</NcAppNavigationItem>
 				<!-- A link: the settings are a page under Administration -->
 				<NcAppNavigationItem v-if="canChangeSettings"
-					:name="t('notenarchiv', 'Settings')"
+					:name="t('cantoria', 'Settings')"
 					:href="settingsUrl">
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiCogOutline" />

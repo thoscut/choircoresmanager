@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -80,8 +80,8 @@ async function submit(): Promise<void> {
 </script>
 
 <template>
-	<ActionDialog :name="eventId === null ? t('notenarchiv', 'Add upcoming concerts to my calendar') : t('notenarchiv', 'Add to my calendar')"
-		:submit-label="t('notenarchiv', 'Add to calendar')"
+	<ActionDialog :name="eventId === null ? t('cantoria', 'Add upcoming concerts to my calendar') : t('cantoria', 'Add to my calendar')"
+		:submit-label="t('cantoria', 'Add to calendar')"
 		:busy="busy"
 		:submit-disabled="loading || chosen === ''"
 		:error="error"
@@ -89,13 +89,13 @@ async function submit(): Promise<void> {
 		@close="emit('close')">
 		<p v-if="loading" class="calendar-dialog__loading">
 			<NcLoadingIcon :size="20" />
-			{{ t('notenarchiv', 'Loading your calendars …') }}
+			{{ t('cantoria', 'Loading your calendars …') }}
 		</p>
 		<NcNoteCard v-else-if="calendars.length === 0 && error === ''" type="info">
-			{{ t('notenarchiv', 'You have no calendar that can take new entries. Create one in the Calendar app, or download the calendar file instead.') }}
+			{{ t('cantoria', 'You have no calendar that can take new entries. Create one in the Calendar app, or download the calendar file instead.') }}
 		</NcNoteCard>
 		<fieldset v-else-if="calendars.length > 0" class="calendar-dialog__calendars">
-			<legend>{{ t('notenarchiv', 'Calendar') }}</legend>
+			<legend>{{ t('cantoria', 'Calendar') }}</legend>
 			<NcCheckboxRadioSwitch v-for="calendar in calendars"
 				:key="calendar.uri"
 				v-model="chosen"
@@ -113,11 +113,11 @@ async function submit(): Promise<void> {
 		</fieldset>
 		<p class="action-dialog__hint">
 			{{ deadlines
-				? t('notenarchiv', 'The preparation deadlines (10, 8 and 6 weeks before) are added as separate all-day entries.')
-				: t('notenarchiv', 'Only the concerts are added, without the preparation deadlines.') }}
+				? t('cantoria', 'The preparation deadlines (10, 8 and 6 weeks before) are added as separate all-day entries.')
+				: t('cantoria', 'Only the concerts are added, without the preparation deadlines.') }}
 		</p>
 		<p class="action-dialog__hint">
-			{{ t('notenarchiv', 'An entry that is already in one of your calendars is updated there, not added twice. Changes you made to it in the calendar are replaced.') }}
+			{{ t('cantoria', 'An entry that is already in one of your calendars is updated there, not added twice. Changes you made to it in the calendar are replaced.') }}
 		</p>
 	</ActionDialog>
 </template>

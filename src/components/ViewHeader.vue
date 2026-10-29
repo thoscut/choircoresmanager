@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -82,7 +82,7 @@ function print(): void {
 			<slot name="actions" />
 			<NcButton v-if="reloadable"
 				variant="tertiary"
-				:aria-label="t('notenarchiv', 'Reload')"
+				:aria-label="t('cantoria', 'Reload')"
 				:disabled="loading"
 				@click="emit('reload')">
 				<template #icon>
@@ -94,7 +94,7 @@ function print(): void {
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiPrinterOutline" />
 				</template>
-				{{ t('notenarchiv', 'Print') }}
+				{{ t('cantoria', 'Print') }}
 			</NcButton>
 		</div>
 	</header>

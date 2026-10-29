@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -132,17 +132,17 @@ async function submit(): Promise<void> {
 	try {
 		if (dialog.value === 'add') {
 			if (!personOption.value || !roleOption.value) {
-				error.value = t('notenarchiv', 'Please choose a person and a role.')
+				error.value = t('cantoria', 'Please choose a person and a role.')
 				return
 			}
 			await addContribution(Number(props.detail.version.id), personOption.value.id, roleOption.value.id, textForComposition.value)
-			showSuccess(t('notenarchiv', 'The person has been added.'))
+			showSuccess(t('cantoria', 'The person has been added.'))
 		} else if (dialog.value === 'edit' && editing.value) {
 			await updateContribution(editing.value.id, { role: roleOption.value?.id ?? editing.value.role, text_for_composition: textForComposition.value })
-			showSuccess(t('notenarchiv', 'The contribution has been changed.'))
+			showSuccess(t('cantoria', 'The contribution has been changed.'))
 		} else if (dialog.value === 'remove' && editing.value) {
 			await removeContribution(editing.value.id)
-			showSuccess(t('notenarchiv', 'The contribution has been removed.'))
+			showSuccess(t('cantoria', 'The contribution has been removed.'))
 		}
 		dialog.value = null
 		emit('saved')
@@ -156,11 +156,11 @@ async function submit(): Promise<void> {
 const dialogTitle = computed(() => {
 	switch (dialog.value) {
 	case 'add':
-		return t('notenarchiv', 'Add a person')
+		return t('cantoria', 'Add a person')
 	case 'edit':
-		return t('notenarchiv', 'Change the contribution')
+		return t('cantoria', 'Change the contribution')
 	default:
-		return t('notenarchiv', 'Remove the contribution')
+		return t('cantoria', 'Remove the contribution')
 	}
 })
 </script>
@@ -168,7 +168,7 @@ const dialogTitle = computed(() => {
 <template>
 	<section class="contributions" aria-labelledby="contributions-heading">
 		<h3 id="contributions-heading">
-			{{ t('notenarchiv', 'Persons involved and protection') }}
+			{{ t('cantoria', 'Persons involved and protection') }}
 		</h3>
 
 		<div v-if="protection" class="contributions__protection" :class="`contributions__protection--${protection.status}`">
@@ -196,7 +196,7 @@ const dialogTitle = computed(() => {
 		</div>
 
 		<p v-if="contributions.length === 0" class="contributions__muted">
-			{{ t('notenarchiv', 'No persons are recorded for this version.') }}
+			{{ t('cantoria', 'No persons are recorded for this version.') }}
 		</p>
 		<ul v-else class="contributions__list">
 			<li v-for="contribution in contributions" :key="contribution.id" class="contributions__item">
@@ -213,29 +213,29 @@ const dialogTitle = computed(() => {
 					<p class="contributions__muted">
 						{{ contributionRoleLabel(contribution.role) }}
 						<template v-if="contribution.text_for_composition">
-							· {{ t('notenarchiv', 'Text written for this composition') }}
+							· {{ t('cantoria', 'Text written for this composition') }}
 						</template>
 					</p>
 					<p v-if="contribution.person" class="contributions__muted">
 						{{ personOptionLabel('identification', contribution.person.identification) }}
 						<template v-if="contribution.person.checked_at">
-							· {{ t('notenarchiv', 'checked on {date}', { date: formatDate(contribution.person.checked_at) }) }}
+							· {{ t('cantoria', 'checked on {date}', { date: formatDate(contribution.person.checked_at) }) }}
 						</template>
 						<template v-else>
-							· {{ t('notenarchiv', 'not checked') }}
+							· {{ t('cantoria', 'not checked') }}
 						</template>
 					</p>
 				</div>
 				<div v-if="isLibrarian" class="contributions__actions">
 					<NcButton variant="tertiary"
-						:aria-label="t('notenarchiv', 'Change the contribution of {name}', { name: contribution.person?.name ?? '' })"
+						:aria-label="t('cantoria', 'Change the contribution of {name}', { name: contribution.person?.name ?? '' })"
 						@click="startEdit(contribution)">
 						<template #icon>
 							<NcIconSvgWrapper :path="mdiPencilOutline" />
 						</template>
 					</NcButton>
 					<NcButton variant="tertiary"
-						:aria-label="t('notenarchiv', 'Remove {name} from this version', { name: contribution.person?.name ?? '' })"
+						:aria-label="t('cantoria', 'Remove {name} from this version', { name: contribution.person?.name ?? '' })"
 						@click="startRemove(contribution)">
 						<template #icon>
 							<NcIconSvgWrapper :path="mdiDeleteOutline" />
@@ -249,43 +249,43 @@ const dialogTitle = computed(() => {
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiAccountPlusOutline" />
 				</template>
-				{{ t('notenarchiv', 'Add a person') }}
+				{{ t('cantoria', 'Add a person') }}
 			</NcButton>
 		</div>
 
 		<ActionDialog v-if="dialog !== null"
 			:name="dialogTitle"
-			:submit-label="dialog === 'remove' ? t('notenarchiv', 'Remove') : t('notenarchiv', 'Save')"
+			:submit-label="dialog === 'remove' ? t('cantoria', 'Remove') : t('cantoria', 'Save')"
 			:variant="dialog === 'remove' ? 'error' : 'primary'"
 			:busy="busy"
 			:error="error"
 			@submit="submit"
 			@close="dialog = null">
 			<template v-if="dialog === 'remove'">
-				<p>{{ t('notenarchiv', 'Remove {name} from this version? The person stays in the register.', { name: editing?.person?.name ?? '' }) }}</p>
+				<p>{{ t('cantoria', 'Remove {name} from this version? The person stays in the register.', { name: editing?.person?.name ?? '' }) }}</p>
 			</template>
 			<template v-else>
 				<template v-if="dialog === 'add'">
 					<NcSelect v-model="personOption"
-						:input-label="t('notenarchiv', 'Person')"
+						:input-label="t('cantoria', 'Person')"
 						:options="personOptions" />
 					<NcButton variant="tertiary" @click="creatingPerson = true">
 						<template #icon>
 							<NcIconSvgWrapper :path="mdiAccountPlusOutline" />
 						</template>
-						{{ t('notenarchiv', 'Person not in the register: create') }}
+						{{ t('cantoria', 'Person not in the register: create') }}
 					</NcButton>
 				</template>
 				<NcSelect v-model="roleOption"
-					:input-label="t('notenarchiv', 'Role')"
+					:input-label="t('cantoria', 'Role')"
 					:options="roleOptions"
 					:clearable="false"
 					:searchable="false" />
 				<NcCheckboxRadioSwitch v-model="textForComposition" type="switch">
-					{{ t('notenarchiv', 'Text written for this composition') }}
+					{{ t('cantoria', 'Text written for this composition') }}
 				</NcCheckboxRadioSwitch>
 				<p class="action-dialog__hint">
-					{{ t('notenarchiv', 'Documents § 65 (3) of the German copyright act; it does not change the proposal.') }}
+					{{ t('cantoria', 'Documents § 65 (3) of the German copyright act; it does not change the proposal.') }}
 				</p>
 			</template>
 		</ActionDialog>

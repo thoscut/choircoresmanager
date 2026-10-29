@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -17,21 +17,21 @@ declare(strict_types=1);
  *
  * Usage (PHP 8.2+ with mbstring):
  *   php tools/demo/check-csv.php <app root> <import folder>
- *   php tools/demo/check-csv.php . build/demo/Notenarchiv-Demo/_Import
+ *   php tools/demo/check-csv.php . build/demo/Cantoria-Demo/_Import
  *
  * <app root> is the folder with lib/ (and vendor/ from `composer install`,
  * which provides the public Nextcloud API the classes refer to).
  * Exit code 0 when every check passed.
  */
 
-use OCA\Notenarchiv\Exception\InvalidInputException;
-use OCA\Notenarchiv\Service\CatalogCsv;
-use OCA\Notenarchiv\Service\Fields;
-use OCA\Notenarchiv\Service\FieldValue;
-use OCA\Notenarchiv\Service\LifeDates;
-use OCA\Notenarchiv\Service\PerformanceImportService;
-use OCA\Notenarchiv\Service\PersonImportService;
-use OCA\Notenarchiv\Service\TranscriptionReportParser;
+use OCA\Cantoria\Exception\InvalidInputException;
+use OCA\Cantoria\Service\CatalogCsv;
+use OCA\Cantoria\Service\Fields;
+use OCA\Cantoria\Service\FieldValue;
+use OCA\Cantoria\Service\LifeDates;
+use OCA\Cantoria\Service\PerformanceImportService;
+use OCA\Cantoria\Service\PersonImportService;
+use OCA\Cantoria\Service\TranscriptionReportParser;
 
 if ($argc < 3) {
 	fwrite(STDERR, "usage: php check-csv.php <app root> <import folder>\n");
@@ -43,7 +43,7 @@ if (is_file($appRoot . '/vendor/autoload.php')) {
 }
 // Prepended, so that the app classes always come from <app root>/lib.
 spl_autoload_register(function (string $class) use ($appRoot): void {
-	$prefix = 'OCA\\Notenarchiv\\';
+	$prefix = 'OCA\\Cantoria\\';
 	if (str_starts_with($class, $prefix)) {
 		$file = $appRoot . '/lib/' . str_replace('\\', '/', substr($class, strlen($prefix))) . '.php';
 		if (is_file($file)) {

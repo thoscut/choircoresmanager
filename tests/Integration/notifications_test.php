@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -21,17 +21,17 @@ declare(strict_types=1);
 require __DIR__ . '/harness.php';
 [$root, $uid, $shelfmark] = IntegrationTest::start($argv, ['nextcloud-root', 'uid', 'shelfmark']);
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\BackgroundJob\DailyChecks;
-use OCA\Notenarchiv\BackgroundJob\WeeklyBackup;
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Notification\Notifier;
-use OCA\Notenarchiv\Service\AppSettings;
-use OCA\Notenarchiv\Service\FullBackupService;
-use OCA\Notenarchiv\Service\LicenseService;
-use OCA\Notenarchiv\Service\NotificationService;
-use OCA\Notenarchiv\Service\ProposalService;
-use OCA\Notenarchiv\Service\RightsService;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\BackgroundJob\DailyChecks;
+use OCA\Cantoria\BackgroundJob\WeeklyBackup;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Notification\Notifier;
+use OCA\Cantoria\Service\AppSettings;
+use OCA\Cantoria\Service\FullBackupService;
+use OCA\Cantoria\Service\LicenseService;
+use OCA\Cantoria\Service\NotificationService;
+use OCA\Cantoria\Service\ProposalService;
+use OCA\Cantoria\Service\RightsService;
 use OCP\IAppConfig;
 use OCP\IDBConnection;
 use OCP\Notification\IManager;

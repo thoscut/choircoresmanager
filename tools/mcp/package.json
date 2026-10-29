@@ -1,12 +1,12 @@
 {
-  "name": "notenarchiv-mcp",
+  "name": "cantoria-mcp",
   "version": "1.0.0",
   "private": true,
-  "description": "MCP server for the API for agents (v1) of the Nextcloud app Notenarchiv; runs locally next to the agent, over stdio",
+  "description": "MCP server for the API for agents (v1) of the Nextcloud app Cantoria; runs locally next to the agent, over stdio",
   "license": "AGPL-3.0-or-later",
   "type": "module",
   "bin": {
-    "notenarchiv-mcp": "dist/src/index.js"
+    "cantoria-mcp": "dist/src/index.js"
   },
   "files": [
     "dist/src"

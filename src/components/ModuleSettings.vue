@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -74,7 +74,7 @@ function labelsOf(keys: readonly string[]): string {
  * @param module - the module
  */
 function needsText(module: ModuleInfo): string {
-	return module.requires.length > 0 ? t('notenarchiv', 'Needs: {modules}.', { modules: labelsOf(module.requires) }) : ''
+	return module.requires.length > 0 ? t('cantoria', 'Needs: {modules}.', { modules: labelsOf(module.requires) }) : ''
 }
 
 /**
@@ -87,7 +87,7 @@ function inactiveText(module: ModuleInfo): string {
 	if (because.length === 0) {
 		return ''
 	}
-	return t('notenarchiv', 'Switched on, but not working at the moment, because this is switched off: {modules}.', { modules: because.map((other) => other.label).join(', ') })
+	return t('cantoria', 'Switched on, but not working at the moment, because this is switched off: {modules}.', { modules: because.map((other) => other.label).join(', ') })
 }
 
 /**
@@ -101,7 +101,7 @@ function legalText(module: ModuleInfo): string {
 	if (!legal || !settings.value?.publicModules.includes(module.key) || (legal.imprint && legal.privacy)) {
 		return ''
 	}
-	return t('notenarchiv', 'Before these pages go online: enter the addresses of the imprint and the privacy policy under Administration → Theming. The public pages show them; the privacy policy must name the server logs with IP addresses.')
+	return t('cantoria', 'Before these pages go online: enter the addresses of the imprint and the privacy policy under Administration → Theming. The public pages show them; the privacy policy must name the server logs with IP addresses.')
 }
 
 /**
@@ -112,21 +112,21 @@ function legalText(module: ModuleInfo): string {
 function announce(changes: ModuleChanges): void {
 	const parts: string[] = []
 	if (changes.enabled.length > 0) {
-		parts.push(t('notenarchiv', 'Switched on: {modules}.', { modules: labelsOf(changes.enabled) }))
+		parts.push(t('cantoria', 'Switched on: {modules}.', { modules: labelsOf(changes.enabled) }))
 	}
 	if (changes.alsoEnabled.length > 0) {
-		parts.push(t('notenarchiv', 'Also switched on, because it is needed: {modules}.', { modules: labelsOf(changes.alsoEnabled) }))
+		parts.push(t('cantoria', 'Also switched on, because it is needed: {modules}.', { modules: labelsOf(changes.alsoEnabled) }))
 	}
 	if (changes.disabled.length > 0) {
-		parts.push(t('notenarchiv', 'Switched off: {modules}.', { modules: labelsOf(changes.disabled) }))
+		parts.push(t('cantoria', 'Switched off: {modules}.', { modules: labelsOf(changes.disabled) }))
 	}
 	if (changes.inactive.length > 0) {
-		parts.push(t('notenarchiv', 'No longer working: {modules}.', { modules: labelsOf(changes.inactive) }))
+		parts.push(t('cantoria', 'No longer working: {modules}.', { modules: labelsOf(changes.inactive) }))
 	}
 	if (changes.activated.length > 0) {
-		parts.push(t('notenarchiv', 'Working again: {modules}.', { modules: labelsOf(changes.activated) }))
+		parts.push(t('cantoria', 'Working again: {modules}.', { modules: labelsOf(changes.activated) }))
 	}
-	statusText.value = parts.length > 0 ? parts.join(' ') : t('notenarchiv', 'Nothing has changed.')
+	statusText.value = parts.length > 0 ? parts.join(' ') : t('cantoria', 'Nothing has changed.')
 }
 
 /**
@@ -240,31 +240,31 @@ function alsoOnText(module: ModuleInfo): string {
 		return ''
 	}
 	const also = switchedOnWith(module.key, modules.value)
-	return also.length > 0 ? t('notenarchiv', 'Switching it on also switches on: {modules}.', { modules: also.map((other) => other.label).join(', ') }) : ''
+	return also.length > 0 ? t('cantoria', 'Switching it on also switches on: {modules}.', { modules: also.map((other) => other.label).join(', ') }) : ''
 }
 </script>
 
 <template>
 	<div class="module-settings">
 		<p class="module-settings__intro">
-			{{ t('notenarchiv', 'Switch off what your choir does not need. A switched-off function disappears from the app and is off on the server, too: no routes, no background jobs, no notifications. Its data are kept and are back when you switch it on again. Switching off never relaxes a check of the rights.') }}
+			{{ t('cantoria', 'Switch off what your choir does not need. A switched-off function disappears from the app and is off on the server, too: no routes, no background jobs, no notifications. Its data are kept and are back when you switch it on again. Switching off never relaxes a check of the rights.') }}
 		</p>
 
 		<p v-if="loading" class="module-settings__busy">
 			<NcLoadingIcon :size="20" />
-			{{ t('notenarchiv', 'Loading …') }}
+			{{ t('cantoria', 'Loading …') }}
 		</p>
 		<NcNoteCard v-else-if="loadError" type="error">
 			<p>{{ loadError }}</p>
 			<NcButton @click="load">
-				{{ t('notenarchiv', 'Try again') }}
+				{{ t('cantoria', 'Try again') }}
 			</NcButton>
 		</NcNoteCard>
 
 		<template v-else-if="settings">
 			<section class="module-settings__core" aria-labelledby="module-settings-core">
 				<h3 id="module-settings-core">
-					{{ t('notenarchiv', 'Always on') }}
+					{{ t('cantoria', 'Always on') }}
 				</h3>
 				<ul>
 					<li v-for="text in settings.core" :key="text">
@@ -275,7 +275,7 @@ function alsoOnText(module: ModuleInfo): string {
 
 			<section aria-labelledby="module-settings-presets">
 				<h3 id="module-settings-presets">
-					{{ t('notenarchiv', 'Presets') }}
+					{{ t('cantoria', 'Presets') }}
 				</h3>
 				<ul class="module-settings__presets">
 					<li v-for="preset in settings.presets" :key="preset.key">
@@ -327,29 +327,29 @@ function alsoOnText(module: ModuleInfo): string {
 		</template>
 
 		<ActionDialog v-if="pendingOff !== null"
-			:name="t('notenarchiv', 'Switch off {module}?', { module: pendingOff.module.label })"
-			:submit-label="t('notenarchiv', 'Switch off')"
+			:name="t('cantoria', 'Switch off {module}?', { module: pendingOff.module.label })"
+			:submit-label="t('cantoria', 'Switch off')"
 			:busy="busy"
 			@submit="confirmOff"
 			@close="cancelOff">
-			<p>{{ t('notenarchiv', 'These functions need it and stop working:') }}</p>
+			<p>{{ t('cantoria', 'These functions need it and stop working:') }}</p>
 			<ul class="module-settings__list">
 				<li v-for="other in pendingOff.stopping" :key="other.key">
 					{{ other.label }}
 				</li>
 			</ul>
-			<p>{{ t('notenarchiv', 'Their switches stay as they are; they work again when you switch {module} on. No data are deleted.', { module: pendingOff.module.label }) }}</p>
+			<p>{{ t('cantoria', 'Their switches stay as they are; they work again when you switch {module} on. No data are deleted.', { module: pendingOff.module.label }) }}</p>
 		</ActionDialog>
 
 		<ActionDialog v-if="pendingPreset !== null"
-			:name="t('notenarchiv', 'Apply the preset “{preset}”?', { preset: pendingPreset.label })"
-			:submit-label="t('notenarchiv', 'Apply preset')"
+			:name="t('cantoria', 'Apply the preset “{preset}”?', { preset: pendingPreset.label })"
+			:submit-label="t('cantoria', 'Apply preset')"
 			:busy="busy"
 			@submit="confirmPreset"
 			@close="cancelPreset">
 			<p>{{ pendingPreset.description }}</p>
 			<template v-if="presetDiff.on.length > 0">
-				<p>{{ t('notenarchiv', 'Switched on:') }}</p>
+				<p>{{ t('cantoria', 'Switched on:') }}</p>
 				<ul class="module-settings__list">
 					<li v-for="module in presetDiff.on" :key="module.key">
 						{{ module.label }}
@@ -357,7 +357,7 @@ function alsoOnText(module: ModuleInfo): string {
 				</ul>
 			</template>
 			<template v-if="presetDiff.off.length > 0">
-				<p>{{ t('notenarchiv', 'Switched off:') }}</p>
+				<p>{{ t('cantoria', 'Switched off:') }}</p>
 				<ul class="module-settings__list">
 					<li v-for="module in presetDiff.off" :key="module.key">
 						{{ module.label }}
@@ -365,9 +365,9 @@ function alsoOnText(module: ModuleInfo): string {
 				</ul>
 			</template>
 			<p v-if="presetDiff.on.length === 0 && presetDiff.off.length === 0">
-				{{ t('notenarchiv', 'The switches already match this preset.') }}
+				{{ t('cantoria', 'The switches already match this preset.') }}
 			</p>
-			<p>{{ t('notenarchiv', 'The data of switched-off functions are kept.') }}</p>
+			<p>{{ t('cantoria', 'The data of switched-off functions are kept.') }}</p>
 		</ActionDialog>
 	</div>
 </template>

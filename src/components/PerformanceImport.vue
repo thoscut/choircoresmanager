@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -44,7 +44,7 @@ const reportSection = useTemplateRef<HTMLElement>('reportSection')
 async function choose(): Promise<void> {
 	let nodes
 	try {
-		nodes = await getFilePickerBuilder(t('notenarchiv', 'Choose the list of performances (.xlsx or .csv)'))
+		nodes = await getFilePickerBuilder(t('cantoria', 'Choose the list of performances (.xlsx or .csv)'))
 			.setMultiSelect(false)
 			.setMimeTypeFilter(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'text/csv'])
 			.setType(FilePickerType.Choose)
@@ -59,7 +59,7 @@ async function choose(): Promise<void> {
 	}
 	const node = nodes[0]
 	if (!node?.fileid) {
-		showError(t('notenarchiv', 'The chosen file cannot be used.'))
+		showError(t('cantoria', 'The chosen file cannot be used.'))
 		await focusAfterDialog(chooseButton)
 		return
 	}
@@ -86,7 +86,7 @@ async function run(dryRun: boolean): Promise<void> {
 			ownChoir.value = report.value.ownChoir
 		}
 		if (!dryRun) {
-			showSuccess(t('notenarchiv', 'The performances have been imported.'))
+			showSuccess(t('cantoria', 'The performances have been imported.'))
 			await loadEntries()
 		}
 	} catch (caught) {
@@ -115,7 +115,7 @@ function reset(): void {
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiFileTableOutline" />
 				</template>
-				{{ file ? t('notenarchiv', 'Choose another file …') : t('notenarchiv', 'Choose file …') }}
+				{{ file ? t('cantoria', 'Choose another file …') : t('cantoria', 'Choose file …') }}
 			</NcButton>
 			<NcButton v-if="file && report?.dryRun"
 				variant="primary"
@@ -125,18 +125,18 @@ function reset(): void {
 					<NcLoadingIcon v-if="busy" />
 					<NcIconSvgWrapper v-else :path="mdiImport" />
 				</template>
-				{{ t('notenarchiv', 'Import now') }}
+				{{ t('cantoria', 'Import now') }}
 			</NcButton>
 			<NcButton v-if="file && report && !report.dryRun" variant="tertiary" @click="reset">
-				{{ t('notenarchiv', 'Done') }}
+				{{ t('cantoria', 'Done') }}
 			</NcButton>
 		</div>
 		<p v-if="file" class="performance-import__muted">
-			{{ t('notenarchiv', 'File: {name}', { name: file.name }) }}
+			{{ t('cantoria', 'File: {name}', { name: file.name }) }}
 		</p>
 		<p v-if="busy" class="performance-import__busy">
 			<NcLoadingIcon :size="20" />
-			{{ dryRunning ? t('notenarchiv', 'Checking the file (dry run) …') : t('notenarchiv', 'Importing …') }}
+			{{ dryRunning ? t('cantoria', 'Checking the file (dry run) …') : t('cantoria', 'Importing …') }}
 		</p>
 		<NcNoteCard v-if="error" type="error" role="alert">
 			{{ error }}
@@ -145,55 +145,55 @@ function reset(): void {
 		<section v-if="report && !busy"
 			ref="reportSection"
 			class="performance-import__report"
-			:aria-label="t('notenarchiv', 'Import report')">
+			:aria-label="t('cantoria', 'Import report')">
 			<NcNoteCard :type="report.dryRun ? 'info' : 'success'">
 				{{ report.dryRun
-					? t('notenarchiv', 'Dry run – nothing has been changed yet')
-					: t('notenarchiv', 'Import completed') }}
+					? t('cantoria', 'Dry run – nothing has been changed yet')
+					: t('cantoria', 'Import completed') }}
 			</NcNoteCard>
 			<form v-if="report.dryRun" class="performance-import__choir" @submit.prevent="run(true)">
 				<NcTextField v-model="ownChoir"
-					:label="t('notenarchiv', 'Own choir in the file')"
-					:helper-text="t('notenarchiv', 'Only lines of this choir count as performances. Correct the name if it was detected wrongly and check again.')" />
+					:label="t('cantoria', 'Own choir in the file')"
+					:helper-text="t('cantoria', 'Only lines of this choir count as performances. Correct the name if it was detected wrongly and check again.')" />
 				<NcButton type="submit" :disabled="busy">
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiRefresh" />
 					</template>
-					{{ t('notenarchiv', 'Check again') }}
+					{{ t('cantoria', 'Check again') }}
 				</NcButton>
 			</form>
 			<dl class="performance-import__figures">
-				<dt>{{ t('notenarchiv', 'Concerts') }}</dt>
+				<dt>{{ t('cantoria', 'Concerts') }}</dt>
 				<dd>{{ report.events }}</dd>
-				<dt>{{ t('notenarchiv', 'Song lists') }}</dt>
+				<dt>{{ t('cantoria', 'Song lists') }}</dt>
 				<dd>{{ report.songLists }}</dd>
-				<dt>{{ t('notenarchiv', 'Programme lines') }}</dt>
+				<dt>{{ t('cantoria', 'Programme lines') }}</dt>
 				<dd>{{ report.items }}</dd>
-				<dt>{{ t('notenarchiv', 'Assigned to a copy') }}</dt>
+				<dt>{{ t('cantoria', 'Assigned to a copy') }}</dt>
 				<dd>{{ report.certain }}</dd>
-				<dt>{{ t('notenarchiv', 'Shelf mark unclear') }}</dt>
+				<dt>{{ t('cantoria', 'Shelf mark unclear') }}</dt>
 				<dd>{{ report.ambiguous }}</dd>
-				<dt>{{ t('notenarchiv', 'Not in the archive') }}</dt>
+				<dt>{{ t('cantoria', 'Not in the archive') }}</dt>
 				<dd>{{ report.notInCatalog }}</dd>
-				<dt>{{ t('notenarchiv', 'Counted as performances') }}</dt>
+				<dt>{{ t('cantoria', 'Counted as performances') }}</dt>
 				<dd>{{ report.counted }}</dd>
-				<dt>{{ t('notenarchiv', 'Sheets read') }}</dt>
+				<dt>{{ t('cantoria', 'Sheets read') }}</dt>
 				<dd>{{ report.sheets.join(', ') || '–' }}</dd>
 			</dl>
 			<template v-if="report.unknownShelfmarks.length > 0">
-				<h4>{{ n('notenarchiv', '%n shelf mark is not in the catalog', '%n shelf marks are not in the catalog', report.unknownShelfmarks.length) }}</h4>
+				<h4>{{ n('cantoria', '%n shelf mark is not in the catalog', '%n shelf marks are not in the catalog', report.unknownShelfmarks.length) }}</h4>
 				<p class="performance-import__marks">
 					{{ report.unknownShelfmarks.join(', ') }}
 				</p>
 			</template>
 			<p class="performance-import__muted">
-				{{ t('notenarchiv', 'A new import replaces the previously imported concerts and song lists. Planned events are never touched.') }}
+				{{ t('cantoria', 'A new import replaces the previously imported concerts and song lists. Planned events are never touched.') }}
 			</p>
 			<p v-if="report.snapshot" class="performance-import__muted">
-				{{ t('notenarchiv', 'The previous state was saved as a snapshot: {path}', { path: report.snapshot }) }}
+				{{ t('cantoria', 'The previous state was saved as a snapshot: {path}', { path: report.snapshot }) }}
 			</p>
 			<p class="performance-import__muted">
-				{{ t('notenarchiv', 'Checksum (SHA-256): {sha256}', { sha256: report.sha256 }) }}
+				{{ t('cantoria', 'Checksum (SHA-256): {sha256}', { sha256: report.sha256 }) }}
 			</p>
 		</section>
 	</div>

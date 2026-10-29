@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -47,8 +47,8 @@ watch(() => props.piece, (piece) => {
  */
 function measuresOf(mark: Pick<Mark, 'from' | 'to'>): string {
 	return mark.from === mark.to
-		? t('notenarchiv', 'm. {measure}', { measure: mark.from })
-		: t('notenarchiv', 'm. {from}–{to}', { from: mark.from, to: mark.to })
+		? t('cantoria', 'm. {measure}', { measure: mark.from })
+		: t('cantoria', 'm. {from}–{to}', { from: mark.from, to: mark.to })
 }
 
 function remember(): void {
@@ -56,7 +56,7 @@ function remember(): void {
 	marks.value = addMark(marks.value, { name: name.value, from: props.from, to: props.to }, measures)
 	storeMarks(props.piece, marks.value)
 	name.value = ''
-	emit('announce', t('notenarchiv', 'Passage {measures} remembered in this browser.', { measures }))
+	emit('announce', t('cantoria', 'Passage {measures} remembered in this browser.', { measures }))
 }
 
 /**
@@ -65,7 +65,7 @@ function remember(): void {
  * @param mark - the passage
  */
 function removeLabel(mark: Mark): string {
-	return t('notenarchiv', 'Remove passage "{name}"', { name: mark.name })
+	return t('cantoria', 'Remove passage "{name}"', { name: mark.name })
 }
 
 /**
@@ -76,7 +76,7 @@ function removeLabel(mark: Mark): string {
 function forget(mark: Mark): void {
 	marks.value = marks.value.filter((other) => other !== mark)
 	storeMarks(props.piece, marks.value)
-	emit('announce', t('notenarchiv', 'Passage "{name}" removed.', { name: mark.name }))
+	emit('announce', t('cantoria', 'Passage "{name}" removed.', { name: mark.name }))
 }
 </script>
 
@@ -85,19 +85,19 @@ function forget(mark: Mark): void {
 		<form class="practice-marks__new" @submit.prevent="remember">
 			<div class="practice-marks__name">
 				<NcTextField v-model="name"
-					:label="t('notenarchiv', 'Name of the passage')"
+					:label="t('cantoria', 'Name of the passage')"
 					:maxlength="MAX_NAME" />
 			</div>
 			<NcButton type="submit">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiBookmarkOutline" />
 				</template>
-				{{ t('notenarchiv', 'Remember {measures}', { measures: measuresOf(props) }) }}
+				{{ t('cantoria', 'Remember {measures}', { measures: measuresOf(props) }) }}
 			</NcButton>
 		</form>
 		<ul v-if="marks.length > 0"
 			class="practice-marks__list"
-			:aria-label="t('notenarchiv', 'Remembered passages')">
+			:aria-label="t('cantoria', 'Remembered passages')">
 			<li v-for="mark in marks" :key="`${mark.from}-${mark.to}`">
 				<NcButton variant="secondary" @click="emit('apply', mark)">
 					{{ mark.name }}
@@ -115,7 +115,7 @@ function forget(mark: Mark): void {
 			</li>
 		</ul>
 		<p class="practice-marks__hint">
-			{{ t('notenarchiv', 'A remembered passage is shown and played in a loop. The passages are kept in this browser only.') }}
+			{{ t('cantoria', 'A remembered passage is shown and played in a loop. The passages are kept in this browser only.') }}
 		</p>
 	</div>
 </template>

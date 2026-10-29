@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -40,7 +40,7 @@ import { fetchFolderConcerts, fetchFolderScore } from './api.ts'
 
 function initialState(): FolderPageState {
 	try {
-		const state = loadState<FolderPageState>('notenarchiv', 'folder', { concerts: [], version: '' })
+		const state = loadState<FolderPageState>('cantoria', 'folder', { concerts: [], version: '' })
 		return { concerts: Array.isArray(state.concerts) ? state.concerts : [], version: String(state.version ?? '') }
 	} catch {
 		return { concerts: [], version: '' }
@@ -54,7 +54,7 @@ const pageHeadingId = useId()
 const deviceHeadingId = useId()
 const itemHeadingId = useId()
 const itemHeading = ref<HTMLElement | null>(null)
-const archiveUrl = generateUrl('/apps/notenarchiv/')
+const archiveUrl = generateUrl('/apps/cantoria/')
 
 const selectedId = ref<number | null>(null)
 const selectedConcert = computed(() => concerts.find((concert) => concert.items.some((item) => item.id === selectedId.value)) ?? null)
@@ -124,10 +124,10 @@ function lockText(item: FolderItem): string {
 	case 'ok':
 		return ''
 	case 'unchecked':
-		return n('notenarchiv', 'Locked: not checked with the server for more than %n day. Please open this page once with a network.',
+		return n('cantoria', 'Locked: not checked with the server for more than %n day. Please open this page once with a network.',
 			'Locked: not checked with the server for more than %n days. Please open this page once with a network.', MAX_DAYS_UNCHECKED)
 	default:
-		return t('notenarchiv', 'There is no network, and this piece is not kept on this device.')
+		return t('cantoria', 'There is no network, and this piece is not kept on this device.')
 	}
 }
 
@@ -166,14 +166,14 @@ async function setConcertKept(concert: FolderConcert, keep: boolean): Promise<vo
 		if (keep) {
 			catalog.value = await keepPieces('folder', items.map(forDevice), withScans.value[concert.id] === true, state.version)
 			await askToPersist()
-			deviceStatus.value = n('notenarchiv', '%n piece is kept on this device.', '%n pieces are kept on this device.', items.length)
+			deviceStatus.value = n('cantoria', '%n piece is kept on this device.', '%n pieces are kept on this device.', items.length)
 		} else {
 			catalog.value = await forgetPieces('folder', items.map((item) => String(item.id)))
-			deviceStatus.value = t('notenarchiv', '"{title}" is removed from this device.', { title: concert.title })
+			deviceStatus.value = t('cantoria', '"{title}" is removed from this device.', { title: concert.title })
 		}
 	} catch (error) {
-		keepError.value = t('notenarchiv', 'Not every piece could be kept on this device: {reason}', {
-			reason: error instanceof Error && error.message !== '' ? error.message : t('notenarchiv', 'Please check the network and the space on the device.'),
+		keepError.value = t('cantoria', 'Not every piece could be kept on this device: {reason}', {
+			reason: error instanceof Error && error.message !== '' ? error.message : t('cantoria', 'Please check the network and the space on the device.'),
 		})
 		catalog.value = await readCatalog('folder')
 	} finally {
@@ -188,7 +188,7 @@ async function deleteDevice(): Promise<void> {
 	forgetPractising()
 	catalog.value = null
 	confirmingDelete.value = false
-	deviceStatus.value = t('notenarchiv', 'Everything the concert folder kept on this device is deleted.')
+	deviceStatus.value = t('cantoria', 'Everything the concert folder kept on this device is deleted.')
 	await refreshStorage()
 }
 
@@ -198,14 +198,14 @@ const storageText = computed(() => {
 		return ''
 	}
 	return info.quota === null
-		? t('notenarchiv', '{used} used on this device.', { used: formatSize(info.usage) })
-		: t('notenarchiv', '{used} of {available} used on this device.', { used: formatSize(info.usage), available: formatSize(info.quota) })
+		? t('cantoria', '{used} used on this device.', { used: formatSize(info.usage) })
+		: t('cantoria', '{used} of {available} used on this device.', { used: formatSize(info.usage), available: formatSize(info.quota) })
 })
 
 const checkedText = computed(() => {
 	const checked = catalog.value ? Date.parse(catalog.value.checked) : NaN
 	return Number.isFinite(checked)
-		? t('notenarchiv', 'Last checked with the server: {time}.', { time: formatDateTime(Math.floor(checked / 1000)) })
+		? t('cantoria', 'Last checked with the server: {time}.', { time: formatDateTime(Math.floor(checked / 1000)) })
 		: ''
 })
 
@@ -251,7 +251,7 @@ async function loadSelectedScore(): Promise<void> {
 	} catch (error) {
 		if (selectedId.value === item.id) {
 			scoreStatus.value = 'error'
-			scoreError.value = error instanceof Error && error.message !== '' ? error.message : t('notenarchiv', 'The score could not be loaded.')
+			scoreError.value = error instanceof Error && error.message !== '' ? error.message : t('cantoria', 'The score could not be loaded.')
 		}
 	}
 }
@@ -300,27 +300,27 @@ onBeforeUnmount(() => window.removeEventListener('online', onOnline))
 </script>
 
 <template>
-	<NcContent app-name="notenarchiv">
-		<NcAppContent :page-heading="t('notenarchiv', 'Concert folder')"
-			:page-title="t('notenarchiv', 'Concert folder') + ' - ' + t('notenarchiv', 'Music archive')">
+	<NcContent app-name="cantoria">
+		<NcAppContent :page-heading="t('cantoria', 'Concert folder')"
+			:page-title="t('cantoria', 'Concert folder') + ' - ' + t('cantoria', 'Music archive')">
 			<div class="folder-app">
 				<h2 :id="pageHeadingId" class="folder-app__title">
-					{{ t('notenarchiv', 'Concert folder') }}
+					{{ t('cantoria', 'Concert folder') }}
 				</h2>
 				<p class="folder-app__intro">
-					{{ t('notenarchiv', 'The programmes still to be sung, in their order: view, play and practise each piece, and keep a whole programme on this device for the rehearsal and the concert without a network.') }}
-					<a v-if="!withoutNetwork" :href="archiveUrl" class="folder-app__link">{{ t('notenarchiv', 'Back to the music archive') }}</a>
+					{{ t('cantoria', 'The programmes still to be sung, in their order: view, play and practise each piece, and keep a whole programme on this device for the rehearsal and the concert without a network.') }}
+					<a v-if="!withoutNetwork" :href="archiveUrl" class="folder-app__link">{{ t('cantoria', 'Back to the music archive') }}</a>
 				</p>
 
 				<NcNoteCard v-if="withoutNetwork" type="info" role="status">
 					{{ keptCount > 0
-						? t('notenarchiv', 'No network: the pieces kept on this device can be viewed, played and practised. {checked}', { checked: checkedText })
-						: t('notenarchiv', 'No network, and no piece is kept on this device.') }}
+						? t('cantoria', 'No network: the pieces kept on this device can be viewed, played and practised. {checked}', { checked: checkedText })
+						: t('cantoria', 'No network, and no piece is kept on this device.') }}
 				</NcNoteCard>
 
 				<NcEmptyContent v-if="concerts.length === 0"
-					:name="t('notenarchiv', 'No programme to be sung')"
-					:description="t('notenarchiv', 'Concerts and song lists in draft or fixed appear here, the next one first.')">
+					:name="t('cantoria', 'No programme to be sung')"
+					:description="t('cantoria', 'Concerts and song lists in draft or fixed appear here, the next one first.')">
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiMusicNoteOutline" />
 					</template>
@@ -333,29 +333,29 @@ onBeforeUnmount(() => window.removeEventListener('online', onOnline))
 							class="folder-app__concert"
 							:aria-labelledby="`folder-concert-${concert.id}`">
 							<h3 :id="`folder-concert-${concert.id}`" class="folder-app__concert-title">
-								{{ concert.title || (concert.kind === 'song_list' ? t('notenarchiv', 'Song list') : t('notenarchiv', 'Concert')) }}
+								{{ concert.title || (concert.kind === 'song_list' ? t('cantoria', 'Song list') : t('cantoria', 'Concert')) }}
 							</h3>
 							<p v-if="when(concert)" class="folder-app__muted">
 								{{ when(concert) }}
 							</p>
 							<p class="folder-app__muted">
-								{{ concert.status === 'fixed' ? t('notenarchiv', 'Programme fixed') : t('notenarchiv', 'Draft programme') }}
+								{{ concert.status === 'fixed' ? t('cantoria', 'Programme fixed') : t('cantoria', 'Draft programme') }}
 							</p>
 							<div v-if="offlineOn && keepable(concert).length > 0" class="folder-app__device">
 								<NcCheckboxRadioSwitch type="switch"
 									:model-value="concertKept(concert)"
 									:disabled="withoutNetwork || keeping !== null"
 									@update:model-value="(on: boolean) => setConcertKept(concert, on)">
-									{{ n('notenarchiv', 'Keep %n piece on this device', 'Keep all %n pieces on this device', keepable(concert).length) }}
+									{{ n('cantoria', 'Keep %n piece on this device', 'Keep all %n pieces on this device', keepable(concert).length) }}
 								</NcCheckboxRadioSwitch>
 								<NcCheckboxRadioSwitch v-if="!concertKept(concert) && concert.items.some((item) => item.scan && item.offline)"
 									:model-value="withScans[concert.id] === true"
 									:disabled="withoutNetwork || keeping !== null"
 									@update:model-value="(on: boolean) => withScans[concert.id] = on">
-									{{ t('notenarchiv', 'With the scans (PDF)') }}
+									{{ t('cantoria', 'With the scans (PDF)') }}
 								</NcCheckboxRadioSwitch>
 								<p v-if="keeping === concert.id" class="folder-app__muted">
-									{{ t('notenarchiv', 'Keeping on this device …') }}
+									{{ t('cantoria', 'Keeping on this device …') }}
 								</p>
 							</div>
 							<ol class="folder-app__items">
@@ -377,23 +377,23 @@ onBeforeUnmount(() => window.removeEventListener('online', onOnline))
 											{{ item.shelfmark }} ·
 										</template>
 										<template v-if="item.encore">
-											{{ t('notenarchiv', 'Encore') }} ·
+											{{ t('cantoria', 'Encore') }} ·
 										</template>
 										<template v-if="item.duration">
 											{{ duration(item.duration) }} ·
 										</template>
-										{{ item.score ? t('notenarchiv', 'Score') : t('notenarchiv', 'No score') }}<template v-if="item.scan">
-											· {{ t('notenarchiv', 'Scan') }}
+										{{ item.score ? t('cantoria', 'Score') : t('cantoria', 'No score') }}<template v-if="item.scan">
+											· {{ t('cantoria', 'Scan') }}
 										</template>
 									</p>
 									<p v-if="item.participation || item.note" class="folder-app__note-text">
 										{{ [item.participation, item.note].filter(Boolean).join(' · ') }}
 									</p>
 									<p v-if="offlineOn && isKept(item)" class="folder-app__muted">
-										{{ lockText(item) !== '' && withoutNetwork ? lockText(item) : (scanKept(item) ? t('notenarchiv', 'On this device, with the scan') : t('notenarchiv', 'On this device')) }}
+										{{ lockText(item) !== '' && withoutNetwork ? lockText(item) : (scanKept(item) ? t('cantoria', 'On this device, with the scan') : t('cantoria', 'On this device')) }}
 									</p>
 									<p v-else-if="offlineOn && item.offlineReason" class="folder-app__muted">
-										{{ t('notenarchiv', 'Cannot be kept on this device: {reason}', { reason: item.offlineReason }) }}
+										{{ t('cantoria', 'Cannot be kept on this device: {reason}', { reason: item.offlineReason }) }}
 									</p>
 								</li>
 							</ol>
@@ -407,16 +407,16 @@ onBeforeUnmount(() => window.removeEventListener('online', onOnline))
 						<p v-if="selected.composer" class="folder-app__muted">
 							{{ selected.composer }}
 						</p>
-						<nav class="folder-app__turn" :aria-label="t('notenarchiv', 'Programme order')">
+						<nav class="folder-app__turn" :aria-label="t('cantoria', 'Programme order')">
 							<NcButton v-if="neighbours.previous" variant="tertiary" @click="select(neighbours.previous)">
-								{{ t('notenarchiv', 'Previous: {title}', { title: neighbours.previous.title }) }}
+								{{ t('cantoria', 'Previous: {title}', { title: neighbours.previous.title }) }}
 							</NcButton>
 							<NcButton v-if="neighbours.next" variant="secondary" @click="select(neighbours.next)">
-								{{ t('notenarchiv', 'Next: {title}', { title: neighbours.next.title }) }}
+								{{ t('cantoria', 'Next: {title}', { title: neighbours.next.title }) }}
 							</NcButton>
 						</nav>
 						<p v-if="selected.scan && withoutNetwork && !scanKept(selected)" class="folder-app__muted">
-							{{ t('notenarchiv', 'The scan is not kept on this device.') }}
+							{{ t('cantoria', 'The scan is not kept on this device.') }}
 						</p>
 						<ScanFrame v-else-if="selected.scan"
 							:key="selected.id"
@@ -425,26 +425,26 @@ onBeforeUnmount(() => window.removeEventListener('online', onOnline))
 							:title="selected.title" />
 
 						<NcEmptyContent v-if="!selected.score"
-							:name="t('notenarchiv', 'No score')"
-							:description="selected.reason ?? t('notenarchiv', 'This programme item has no MusicXML score.')">
+							:name="t('cantoria', 'No score')"
+							:description="selected.reason ?? t('cantoria', 'This programme item has no MusicXML score.')">
 							<template #icon>
 								<NcIconSvgWrapper :path="mdiMusicNoteOutline" />
 							</template>
 						</NcEmptyContent>
-						<NcEmptyContent v-else-if="scoreStatus === 'loading'" :name="t('notenarchiv', 'Loading the score …')">
+						<NcEmptyContent v-else-if="scoreStatus === 'loading'" :name="t('cantoria', 'Loading the score …')">
 							<template #icon>
 								<NcLoadingIcon :size="64" />
 							</template>
 						</NcEmptyContent>
 						<NcEmptyContent v-else-if="scoreStatus === 'error'"
-							:name="t('notenarchiv', 'The score cannot be shown')"
+							:name="t('cantoria', 'The score cannot be shown')"
 							:description="scoreError">
 							<template #icon>
 								<NcIconSvgWrapper :path="mdiAlertCircleOutline" />
 							</template>
 							<template #action>
 								<NcButton @click="loadSelectedScore">
-									{{ t('notenarchiv', 'Try again') }}
+									{{ t('cantoria', 'Try again') }}
 								</NcButton>
 							</template>
 						</NcEmptyContent>
@@ -461,40 +461,40 @@ onBeforeUnmount(() => window.removeEventListener('online', onOnline))
 							:offline="withoutNetwork" />
 					</section>
 					<p v-else class="folder-app__muted">
-						{{ t('notenarchiv', 'Choose a piece of a programme to see and hear it.') }}
+						{{ t('cantoria', 'Choose a piece of a programme to see and hear it.') }}
 					</p>
 				</div>
 
 				<section class="folder-app__device-section" :aria-labelledby="deviceHeadingId">
 					<h3 :id="deviceHeadingId" class="folder-app__concert-title">
-						{{ t('notenarchiv', 'On this device') }}
+						{{ t('cantoria', 'On this device') }}
 					</h3>
 					<template v-if="offlineOn">
 						<p>
-							{{ n('notenarchiv', '%n piece is kept on this device for practising without a network.', '%n pieces are kept on this device for practising without a network.', keptCount) }}
+							{{ n('cantoria', '%n piece is kept on this device for practising without a network.', '%n pieces are kept on this device for practising without a network.', keptCount) }}
 							{{ storageText }}
 						</p>
 						<p v-if="keptCount > 0" class="folder-app__muted">
 							{{ checkedText }}
-							{{ storage?.persisted ? t('notenarchiv', 'The browser keeps them even when space runs short.') : t('notenarchiv', 'The browser may delete them when space runs short; on an iPhone or iPad, add this page to the home screen.') }}
+							{{ storage?.persisted ? t('cantoria', 'The browser keeps them even when space runs short.') : t('cantoria', 'The browser may delete them when space runs short; on an iPhone or iPad, add this page to the home screen.') }}
 						</p>
 					</template>
 					<p v-else class="folder-app__muted">
-						{{ t('notenarchiv', 'This browser cannot keep pieces for practising without a network.') }}
+						{{ t('cantoria', 'This browser cannot keep pieces for practising without a network.') }}
 					</p>
 					<NcNoteCard v-if="keepError" type="error" role="alert">
 						{{ keepError }}
 					</NcNoteCard>
 					<div v-if="offlineOn" class="folder-app__device-buttons">
 						<NcButton v-if="!confirmingDelete" variant="secondary" @click="confirmingDelete = true">
-							{{ t('notenarchiv', 'Delete everything on this device') }}
+							{{ t('cantoria', 'Delete everything on this device') }}
 						</NcButton>
 						<template v-else>
 							<NcButton variant="error" @click="deleteDevice">
-								{{ t('notenarchiv', 'Delete kept pieces, passages and settings') }}
+								{{ t('cantoria', 'Delete kept pieces, passages and settings') }}
 							</NcButton>
 							<NcButton variant="tertiary" @click="confirmingDelete = false">
-								{{ t('notenarchiv', 'Cancel') }}
+								{{ t('cantoria', 'Cancel') }}
 							</NcButton>
 						</template>
 					</div>

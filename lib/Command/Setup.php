@@ -3,15 +3,15 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Command;
+namespace OCA\Cantoria\Command;
 
-use OCA\Notenarchiv\Service\AppSettings;
-use OCA\Notenarchiv\Service\ArchiveAccess;
-use OCA\Notenarchiv\Service\Roles;
+use OCA\Cantoria\Service\AppSettings;
+use OCA\Cantoria\Service\ArchiveAccess;
+use OCA\Cantoria\Service\Roles;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use Symfony\Component\Console\Command\Command;
@@ -37,7 +37,7 @@ class Setup extends Command {
 
 	#[\Override]
 	protected function configure(): void {
-		$this->setName('notenarchiv:setup')
+		$this->setName('cantoria:setup')
 			->setDescription('Set the archive folder and the role groups of the music archive')
 			->addArgument('user', InputArgument::REQUIRED, 'account whose view of the archive folder is used')
 			->addArgument('folder', InputArgument::OPTIONAL, 'archive folder, relative to the account\'s files')

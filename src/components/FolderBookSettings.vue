@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -37,7 +37,7 @@ onMounted(async () => {
 async function save(): Promise<void> {
 	const value = Number(months.value)
 	if (!Number.isInteger(value) || value < limits.value.min || value > limits.value.max) {
-		error.value = t('notenarchiv', 'Please enter the retention period as a whole number of months between {min} and {max}.', limits.value)
+		error.value = t('cantoria', 'Please enter the retention period as a whole number of months between {min} and {max}.', limits.value)
 		return
 	}
 	busy.value = true
@@ -46,7 +46,7 @@ async function save(): Promise<void> {
 		const settings = await saveFolderBookSettings(value)
 		saved.value = settings.retentionMonths
 		months.value = String(settings.retentionMonths)
-		showSuccess(t('notenarchiv', 'The retention period has been saved.'))
+		showSuccess(t('cantoria', 'The retention period has been saved.'))
 	} catch (caught) {
 		error.value = errorMessage(caught)
 	} finally {
@@ -61,7 +61,7 @@ async function save(): Promise<void> {
 			{{ retentionText(saved) }}
 		</p>
 		<p class="folder-book-settings__muted">
-			{{ t('notenarchiv', 'The daily check removes them, also while the folder book is switched off. The audit log keeps that a loan was anonymised, without the name. Backups made before still contain the names: keep them no longer than this period.') }}
+			{{ t('cantoria', 'The daily check removes them, also while the folder book is switched off. The audit log keeps that a loan was anonymised, without the name. Backups made before still contain the names: keep them no longer than this period.') }}
 		</p>
 		<form class="folder-book-settings__form" @submit.prevent="save">
 			<NcTextField v-model="months"
@@ -70,12 +70,12 @@ async function save(): Promise<void> {
 				:min="String(limits.min)"
 				:max="String(limits.max)"
 				step="1"
-				:label="t('notenarchiv', 'Retention period in months after the return')" />
+				:label="t('cantoria', 'Retention period in months after the return')" />
 			<NcButton type="submit" :disabled="busy">
 				<template v-if="busy" #icon>
 					<NcLoadingIcon />
 				</template>
-				{{ t('notenarchiv', 'Save retention period') }}
+				{{ t('cantoria', 'Save retention period') }}
 			</NcButton>
 		</form>
 		<NcNoteCard v-if="error" type="error" role="alert">

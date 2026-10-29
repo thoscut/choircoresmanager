@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-// Builds the public demo data of the Notenarchiv app from tools/demo/catalog.json,
+// Builds the public demo data of the Cantoria app from tools/demo/catalog.json,
 // tools/demo/scores/*.json and tools/demo/reports/*.json (see tools/demo/README.md):
 //
-//   build/demo/Notenarchiv-Demo/            archive folder to upload to Nextcloud
+//   build/demo/Cantoria-Demo/            archive folder to upload to Nextcloud
 //     Mappe_1 … Mappe_4/                    placeholder PDFs, MusicXML files and transcription reports
 //     LIESMICH.txt                          note for people who open the folder
 //     _Import/                              CSV files for the imports (skipped by the file sync)
@@ -33,7 +33,7 @@ const out = resolve(root, (args.find((arg) => arg.startsWith('--out=')) ?? '--ou
 const checkOnly = args.includes('--check')
 
 const catalog = JSON.parse(readFileSync(join(here, 'catalog.json'), 'utf8'))
-const ENCODING = { software: 'Notenarchiv demo data (tools/demo/build.mjs)', date: catalog.date }
+const ENCODING = { software: 'Cantoria demo data (tools/demo/build.mjs)', date: catalog.date }
 
 const problems = []
 const fail = (message) => problems.push(message)
@@ -369,7 +369,7 @@ for (const copy of catalog.copies) {
 			subtitle: [copy.composer, copy.arranger_text].filter(Boolean).join(' · '),
 			pages: Number.parseInt(copy.pages, 10) || 1,
 			lines: [
-				`${catalog.choir} – Notenarchiv-Demo-Bestand (frei erfunden)`,
+				`${catalog.choir} – Cantoria-Demo-Bestand (frei erfunden)`,
 				`Signatur ${copy.shelfmark}, Archivmappe ${files.binder}`,
 				'Platzhalter für einen Notenscan. Die Werke sind gemeinfrei,',
 				'die Demo-Daten stehen unter CC0 1.0.',

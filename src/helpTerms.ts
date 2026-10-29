@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -42,50 +42,50 @@ export function helpTerm(term: HelpTermKey): HelpTermText {
 	switch (term) {
 	case 'version':
 		return {
-			name: t('notenarchiv', 'Version'),
-			text: t('notenarchiv', 'A version is one edition or arrangement of a work. Rights, releases and the valid version belong to the version, not to the work.'),
+			name: t('cantoria', 'Version'),
+			text: t('cantoria', 'A version is one edition or arrangement of a work. Rights, releases and the valid version belong to the version, not to the work.'),
 			section: USER_GUIDE.termVersion,
 		}
 	case 'copy':
 		return {
-			name: t('notenarchiv', 'Copy'),
-			text: t('notenarchiv', 'A copy is one copy of a version on the shelf or in the archive folder, with its own shelf mark and status. A version can have several copies.'),
+			name: t('cantoria', 'Copy'),
+			text: t('cantoria', 'A copy is one copy of a version on the shelf or in the archive folder, with its own shelf mark and status. A version can have several copies.'),
 			section: USER_GUIDE.termVersion,
 		}
 	case 'shelfmark':
 		return {
-			name: t('notenarchiv', 'Shelf mark'),
-			text: t('notenarchiv', 'The shelf mark says where a copy is kept: archive binder and number, e.g. 5-12. File names start with it, so that the file sync links the files to the copy.'),
+			name: t('cantoria', 'Shelf mark'),
+			text: t('cantoria', 'The shelf mark says where a copy is kept: archive binder and number, e.g. 5-12. File names start with it, so that the file sync links the files to the copy.'),
 			section: USER_GUIDE.termShelfmark,
 		}
 	case 'rightsStatus':
 		return {
-			name: t('notenarchiv', 'Rights status'),
-			text: t('notenarchiv', 'Public domain, protected or open. The app proposes a status from the data; it counts for releases only after the music librarians have confirmed it. It is not legal advice.'),
+			name: t('cantoria', 'Rights status'),
+			text: t('cantoria', 'Public domain, protected or open. The app proposes a status from the data; it counts for releases only after the music librarians have confirmed it. It is not legal advice.'),
 			section: USER_GUIDE.termRightsStatus,
 		}
 	case 'release':
 		return {
-			name: t('notenarchiv', 'Release'),
-			text: t('notenarchiv', 'A release says whether a version may be given out in a certain way, e.g. in the singers\' portal or at the print station. It follows from the confirmed rights or a valid license.'),
+			name: t('cantoria', 'Release'),
+			text: t('cantoria', 'A release says whether a version may be given out in a certain way, e.g. in the singers\' portal or at the print station. It follows from the confirmed rights or a valid license.'),
 			section: USER_GUIDE.termRelease,
 		}
 	case 'validVersion':
 		return {
-			name: t('notenarchiv', 'Valid version'),
-			text: t('notenarchiv', 'The version the conductor has chosen for the choir, at most one per work. It says nothing about the rights.'),
+			name: t('cantoria', 'Valid version'),
+			text: t('cantoria', 'The version the conductor has chosen for the choir, at most one per work. It says nothing about the rights.'),
 			section: USER_GUIDE.termValidVersion,
 		}
 	case 'preservationCopy':
 		return {
-			name: t('notenarchiv', 'Internal preservation copy'),
-			text: t('notenarchiv', 'A copy kept only for the archive, e.g. the scan of a protected print. It is never shared, played or exported.'),
+			name: t('cantoria', 'Internal preservation copy'),
+			text: t('cantoria', 'A copy kept only for the archive, e.g. the scan of a protected print. It is never shared, played or exported.'),
 			section: USER_GUIDE.termPreservationCopy,
 		}
 	case 'revision':
 		return {
-			name: t('notenarchiv', 'Revision'),
-			text: t('notenarchiv', 'A revision is one state of the MusicXML of a version, numbered 1, 2, 3 …: after a correction or a better transcription. The current revision is the one exports and printouts name.'),
+			name: t('cantoria', 'Revision'),
+			text: t('cantoria', 'A revision is one state of the MusicXML of a version, numbered 1, 2, 3 …: after a correction or a better transcription. The current revision is the one exports and printouts name.'),
 			section: USER_GUIDE.revisions,
 		}
 	}

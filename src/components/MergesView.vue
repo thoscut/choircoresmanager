@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -95,7 +95,7 @@ function keptWorkId(group: MergeCandidateGroup, index: number): number {
  */
 function workName(work: { title: string | null, composer: string | null, work_no?: string | null }): string {
 	const parts = [work.composer, work.work_no].filter((part) => part)
-	const title = work.title || t('notenarchiv', 'Untitled')
+	const title = work.title || t('cantoria', 'Untitled')
 	return parts.length > 0 ? `${title} (${parts.join(', ')})` : title
 }
 
@@ -130,7 +130,7 @@ function askMergeWork(group: MergeCandidateGroup, index: number, sourceWorkId: n
 		kind: 'work',
 		sourceId: source.workId,
 		targetId: target.workId,
-		text: t('notenarchiv', 'All versions of "{source}" ({sourceCopies}) move to "{target}" ({targetCopies}).', {
+		text: t('cantoria', 'All versions of "{source}" ({sourceCopies}) move to "{target}" ({targetCopies}).', {
 			source: workName(source),
 			sourceCopies: source.copies.map((copy) => copy.shelfmark).join(', '),
 			target: workName(target),
@@ -151,10 +151,10 @@ async function confirmPending(): Promise<void> {
 	try {
 		if (pending.value.kind === 'work') {
 			await mergeWorks(pending.value.sourceId, pending.value.targetId, note)
-			showSuccess(t('notenarchiv', 'The works have been merged.'))
+			showSuccess(t('cantoria', 'The works have been merged.'))
 		} else {
 			await moveCopy(pending.value.sourceId, pending.value.targetId, note)
-			showSuccess(t('notenarchiv', 'The copy has been moved.'))
+			showSuccess(t('cantoria', 'The copy has been moved.'))
 		}
 		pending.value = null
 		manualSource.value = ''
@@ -190,8 +190,8 @@ function entryOf(text: string): Entry | null {
 }
 
 const manualKindOptions = computed(() => [
-	{ id: 'work', label: t('notenarchiv', 'Merge works') },
-	{ id: 'copy', label: t('notenarchiv', 'Move a copy to another version') },
+	{ id: 'work', label: t('cantoria', 'Merge works') },
+	{ id: 'copy', label: t('cantoria', 'Move a copy to another version') },
 ])
 
 function askManual(): void {
@@ -199,23 +199,23 @@ function askManual(): void {
 	const source = entryOf(manualSource.value)
 	const target = entryOf(manualTarget.value)
 	if (!source || !target) {
-		manualError.value = t('notenarchiv', 'Please enter two shelf marks from the catalog.')
+		manualError.value = t('cantoria', 'Please enter two shelf marks from the catalog.')
 		return
 	}
 	if (source.work_id === null || target.work_id === null || source.version_id === null || target.version_id === null) {
-		manualError.value = t('notenarchiv', 'The catalog list is not up to date. Please reload the page.')
+		manualError.value = t('cantoria', 'The catalog list is not up to date. Please reload the page.')
 		return
 	}
 	if (manualKind.value === 'work') {
 		if (source.work_id === target.work_id) {
-			manualError.value = t('notenarchiv', '{source} and {target} already belong to the same work.', { source: source.shelfmark, target: target.shelfmark })
+			manualError.value = t('cantoria', '{source} and {target} already belong to the same work.', { source: source.shelfmark, target: target.shelfmark })
 			return
 		}
 		pending.value = {
 			kind: 'work',
 			sourceId: source.work_id,
 			targetId: target.work_id,
-			text: t('notenarchiv', 'All versions of "{source}" (work of {sourceShelfmark}) move to "{target}" (work of {targetShelfmark}).', {
+			text: t('cantoria', 'All versions of "{source}" (work of {sourceShelfmark}) move to "{target}" (work of {targetShelfmark}).', {
 				source: workName(source),
 				sourceShelfmark: source.shelfmark,
 				target: workName(target),
@@ -224,14 +224,14 @@ function askManual(): void {
 		}
 	} else {
 		if (source.version_id === target.version_id) {
-			manualError.value = t('notenarchiv', '{source} and {target} already belong to the same version.', { source: source.shelfmark, target: target.shelfmark })
+			manualError.value = t('cantoria', '{source} and {target} already belong to the same version.', { source: source.shelfmark, target: target.shelfmark })
 			return
 		}
 		pending.value = {
 			kind: 'copy',
 			sourceId: source.id,
 			targetId: target.version_id,
-			text: t('notenarchiv', 'Copy {source} moves to the version of {target} ("{title}"). Its former version is kept, also when it has no copies left.', {
+			text: t('cantoria', 'Copy {source} moves to the version of {target} ("{title}"). Its former version is kept, also when it has no copies left.', {
 				source: source.shelfmark,
 				target: target.shelfmark,
 				title: workName(target),
@@ -245,25 +245,25 @@ function askManual(): void {
 
 <template>
 	<div class="merges-view">
-		<ViewHeader :title="t('notenarchiv', 'Merge')"
-			:description="t('notenarchiv', 'When the catalog lists the same work twice, the entries become one. Nothing is deleted; every merge can be undone as long as the moved data has not been changed. A merge never changes a rights status.')"
+		<ViewHeader :title="t('cantoria', 'Merge')"
+			:description="t('cantoria', 'When the catalog lists the same work twice, the entries become one. Nothing is deleted; every merge can be undone as long as the moved data has not been changed. A merge never changes a rights status.')"
 			reloadable
 			:loading="loading"
 			@reload="load" />
 
 		<div class="merges-view__content">
-			<NcEmptyContent v-if="!loaded && loading" :name="t('notenarchiv', 'Loading …')">
+			<NcEmptyContent v-if="!loaded && loading" :name="t('cantoria', 'Loading …')">
 				<template #icon>
 					<NcLoadingIcon :size="64" />
 				</template>
 			</NcEmptyContent>
-			<NcEmptyContent v-else-if="!loaded && error" :name="t('notenarchiv', 'The list could not be loaded')" :description="error">
+			<NcEmptyContent v-else-if="!loaded && error" :name="t('cantoria', 'The list could not be loaded')" :description="error">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiAlertCircleOutline" />
 				</template>
 				<template #action>
 					<NcButton @click="load">
-						{{ t('notenarchiv', 'Try again') }}
+						{{ t('cantoria', 'Try again') }}
 					</NcButton>
 				</template>
 			</NcEmptyContent>
@@ -276,14 +276,14 @@ function askManual(): void {
 				<!-- Proposals -->
 				<section class="merges-view__section" aria-labelledby="merges-candidates">
 					<h3 id="merges-candidates">
-						{{ t('notenarchiv', 'Proposals') }}
+						{{ t('cantoria', 'Proposals') }}
 					</h3>
 					<p class="merges-view__muted">
-						{{ t('notenarchiv', 'Works with the same title and the same composer surname. Check the copies before merging: different arrangements stay different versions of one work.') }}
+						{{ t('cantoria', 'Works with the same title and the same composer surname. Check the copies before merging: different arrangements stay different versions of one work.') }}
 					</p>
 					<p v-if="candidates.length === 0" class="merges-view__empty">
 						<NcIconSvgWrapper :path="mdiCheckCircleOutline" inline />
-						{{ t('notenarchiv', 'No proposals: no work seems to be listed twice.') }}
+						{{ t('cantoria', 'No proposals: no work seems to be listed twice.') }}
 					</p>
 					<article v-for="(group, index) in candidates"
 						:key="group.title + index"
@@ -291,11 +291,11 @@ function askManual(): void {
 						:aria-labelledby="`merges-group-${index}`">
 						<h4 :id="`merges-group-${index}`">
 							{{ group.title }}
-							<span class="merges-view__muted">{{ n('notenarchiv', '%n work', '%n works', group.works.length) }}</span>
+							<span class="merges-view__muted">{{ n('cantoria', '%n work', '%n works', group.works.length) }}</span>
 						</h4>
 						<fieldset class="merges-view__works">
 							<legend class="hidden-visually">
-								{{ t('notenarchiv', 'Work to keep') }}
+								{{ t('cantoria', 'Work to keep') }}
 							</legend>
 							<div v-for="work in group.works" :key="work.workId" class="merges-view__work">
 								<div class="merges-view__work-text">
@@ -306,7 +306,7 @@ function askManual(): void {
 										:model-value="String(keptWorkId(group, index))"
 										@update:model-value="kept[index] = $event">
 										<span class="merges-view__work-name">{{ workName(work) }}</span>
-										<span v-if="work.workId === keptWorkId(group, index)" class="merges-view__keep">{{ t('notenarchiv', 'kept') }}</span>
+										<span v-if="work.workId === keptWorkId(group, index)" class="merges-view__keep">{{ t('cantoria', 'kept') }}</span>
 									</NcCheckboxRadioSwitch>
 									<span v-else class="merges-view__work-name">{{ workName(work) }}</span>
 									<span class="merges-view__copies">
@@ -314,7 +314,7 @@ function askManual(): void {
 											:key="copy.id"
 											type="button"
 											class="merges-view__shelfmark"
-											:aria-label="t('notenarchiv', 'Open {shelfmark}', { shelfmark: copy.shelfmark })"
+											:aria-label="t('cantoria', 'Open {shelfmark}', { shelfmark: copy.shelfmark })"
 											@click="openEntry(copy.id)">
 											{{ copy.shelfmark }}
 										</button>
@@ -326,7 +326,7 @@ function askManual(): void {
 									<template #icon>
 										<NcIconSvgWrapper :path="mdiCallMerge" />
 									</template>
-									{{ t('notenarchiv', 'Merge into the kept work') }}
+									{{ t('cantoria', 'Merge into the kept work') }}
 								</NcButton>
 							</div>
 						</fieldset>
@@ -336,12 +336,12 @@ function askManual(): void {
 				<!-- By shelf mark -->
 				<section v-if="isLibrarian" class="merges-view__section" aria-labelledby="merges-manual">
 					<h3 id="merges-manual">
-						{{ t('notenarchiv', 'Merge by shelf mark') }}
+						{{ t('cantoria', 'Merge by shelf mark') }}
 					</h3>
 					<form class="merges-view__manual" @submit.prevent="askManual">
 						<fieldset class="merges-view__kinds">
 							<legend class="hidden-visually">
-								{{ t('notenarchiv', 'What to do') }}
+								{{ t('cantoria', 'What to do') }}
 							</legend>
 							<NcCheckboxRadioSwitch v-for="option in manualKindOptions"
 								:key="option.id"
@@ -354,14 +354,14 @@ function askManual(): void {
 						</fieldset>
 						<div class="merges-view__fields">
 							<NcTextField v-model="manualSource"
-								:label="manualKind === 'work' ? t('notenarchiv', 'Work of shelf mark (is merged)') : t('notenarchiv', 'Copy (shelf mark)')" />
+								:label="manualKind === 'work' ? t('cantoria', 'Work of shelf mark (is merged)') : t('cantoria', 'Copy (shelf mark)')" />
 							<NcTextField v-model="manualTarget"
-								:label="manualKind === 'work' ? t('notenarchiv', 'into the work of shelf mark (is kept)') : t('notenarchiv', 'to the version of shelf mark')" />
+								:label="manualKind === 'work' ? t('cantoria', 'into the work of shelf mark (is kept)') : t('cantoria', 'to the version of shelf mark')" />
 							<NcButton type="submit" :disabled="manualSource.trim() === '' || manualTarget.trim() === ''">
 								<template #icon>
 									<NcIconSvgWrapper :path="manualKind === 'work' ? mdiCallMerge : mdiFileMoveOutline" />
 								</template>
-								{{ t('notenarchiv', 'Check and confirm …') }}
+								{{ t('cantoria', 'Check and confirm …') }}
 							</NcButton>
 						</div>
 						<NcNoteCard v-if="manualError" type="error" role="alert">
@@ -373,13 +373,13 @@ function askManual(): void {
 				<!-- History -->
 				<section class="merges-view__section" aria-labelledby="merges-history">
 					<h3 id="merges-history">
-						{{ t('notenarchiv', 'Merges') }}
+						{{ t('cantoria', 'Merges') }}
 					</h3>
 					<NcCheckboxRadioSwitch v-model="showUndone" type="switch" @update:model-value="loadHistory">
-						{{ t('notenarchiv', 'Also show undone merges') }}
+						{{ t('cantoria', 'Also show undone merges') }}
 					</NcCheckboxRadioSwitch>
 					<p v-if="merges.length === 0" class="merges-view__muted">
-						{{ t('notenarchiv', 'No merges yet.') }}
+						{{ t('cantoria', 'No merges yet.') }}
 					</p>
 					<MergeList v-else :merges="merges" @changed="afterChange" />
 				</section>
@@ -387,8 +387,8 @@ function askManual(): void {
 		</div>
 
 		<ActionDialog v-if="pending"
-			:name="pending.kind === 'work' ? t('notenarchiv', 'Merge works') : t('notenarchiv', 'Move copy')"
-			:submit-label="pending.kind === 'work' ? t('notenarchiv', 'Merge') : t('notenarchiv', 'Move')"
+			:name="pending.kind === 'work' ? t('cantoria', 'Merge works') : t('cantoria', 'Move copy')"
+			:submit-label="pending.kind === 'work' ? t('cantoria', 'Merge') : t('cantoria', 'Move')"
 			:busy="busy"
 			:error="pendingError"
 			@submit="confirmPending"
@@ -396,10 +396,10 @@ function askManual(): void {
 			<p>{{ pending.text }}</p>
 			<p class="action-dialog__hint">
 				{{ pending.kind === 'work'
-					? t('notenarchiv', 'The merged work disappears from the lists but is never deleted; the kept work gets a work number if it has none. This is refused when both works have a version valid for the choir. Programme lines move along.')
-					: t('notenarchiv', 'Programme lines move along. The rights status of the versions does not change.') }}
+					? t('cantoria', 'The merged work disappears from the lists but is never deleted; the kept work gets a work number if it has none. This is refused when both works have a version valid for the choir. Programme lines move along.')
+					: t('cantoria', 'Programme lines move along. The rights status of the versions does not change.') }}
 			</p>
-			<NcTextField v-model="reason" :label="t('notenarchiv', 'Reason (optional)')" />
+			<NcTextField v-model="reason" :label="t('cantoria', 'Reason (optional)')" />
 		</ActionDialog>
 	</div>
 </template>

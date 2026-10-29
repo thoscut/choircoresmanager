@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -13,9 +13,9 @@
  */
 
 /** Every cache of the app starts with this, so that "delete" finds them all */
-export const CACHE_PREFIX = 'notenarchiv-'
+export const CACHE_PREFIX = 'cantoria-'
 /** Scripts, styles, fonts and images of the pages, one cache per app version */
-export const SHELL_PREFIX = 'notenarchiv-shell-'
+export const SHELL_PREFIX = 'cantoria-shell-'
 /** Kept pieces are locked after this many days without a check with the server */
 export const MAX_DAYS_UNCHECKED = 30
 
@@ -33,7 +33,7 @@ export interface Collection {
 	cache: string
 	/** the list of kept pieces inside the cache, relative to the scope */
 	catalog: string
-	/** value of the header X-Notenarchiv-Page of the page */
+	/** value of the header X-Cantoria-Page of the page */
 	header: string
 	/** what the key of a piece looks like: token of a link, id of a programme item */
 	key: RegExp
@@ -42,9 +42,9 @@ export interface Collection {
 const TOKEN = /^[A-Za-z0-9]{32}$/
 
 export const COLLECTIONS: Record<CollectionName, Collection> = {
-	member: { name: 'member', cache: 'notenarchiv-offline', catalog: 'offline-catalog.json', header: 'member', key: TOKEN },
-	folder: { name: 'folder', cache: 'notenarchiv-folder', catalog: 'folder-catalog.json', header: 'concert-folder', key: /^\d{1,12}$/ },
-	public: { name: 'public', cache: 'notenarchiv-public', catalog: 'public-catalog.json', header: 'public', key: TOKEN },
+	member: { name: 'member', cache: 'cantoria-offline', catalog: 'offline-catalog.json', header: 'member', key: TOKEN },
+	folder: { name: 'folder', cache: 'cantoria-folder', catalog: 'folder-catalog.json', header: 'concert-folder', key: /^\d{1,12}$/ },
+	public: { name: 'public', cache: 'cantoria-public', catalog: 'public-catalog.json', header: 'public', key: TOKEN },
 }
 
 /** The account of the pieces kept from public links: there is none */
@@ -109,7 +109,7 @@ const PUBLIC_SCAN = /^p\/([A-Za-z0-9]{32})\/scan$/
  * What a request of a page in the scope of the worker is.
  *
  * @param path - pathname of the request
- * @param scopePath - pathname of the scope, ending in "/" (e.g. /index.php/apps/notenarchiv/)
+ * @param scopePath - pathname of the scope, ending in "/" (e.g. /index.php/apps/cantoria/)
  * @param destination - Request.destination ('' for fetch())
  * @param navigate - the request opens a page (Request.mode === 'navigate')
  */

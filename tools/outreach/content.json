@@ -1,6 +1,6 @@
 {
   "project": {
-    "name": "Notenarchiv",
+    "name": "Cantoria",
     "url": "https://github.com/thoscut/choircoresmanager",
     "url_short": "github.com/thoscut/choircoresmanager",
     "license": "AGPL-3.0-or-later"
@@ -54,7 +54,7 @@
       "call": "Ausprobieren. Mitmachen. Weitersagen.",
       "contact_label": "Kontakt",
       "license_line": "Freie Software · AGPL-3.0",
-      "fineprint": "Notenarchiv ist freie Software unter der GNU AGPL 3.0 oder neuer. Die Rechte-Hilfen folgen deutschem Urheberrecht; sie unterstützen eine Entscheidung und sind keine Rechtsberatung.",
+      "fineprint": "Cantoria ist freie Software unter der GNU AGPL 3.0 oder neuer. Die Rechte-Hilfen folgen deutschem Urheberrecht; sie unterstützen eine Entscheidung und sind keine Rechtsberatung.",
       "qr_label": "QR-Code mit dem Link zu",
       "logo_label": "Logo:"
     },
@@ -106,7 +106,7 @@
       "call": "Try it. Join in. Pass it on.",
       "contact_label": "Contact",
       "license_line": "Free software · AGPL-3.0",
-      "fineprint": "Notenarchiv is free software under the GNU AGPL 3.0 or later. The rights helpers follow German copyright law; they support a decision and are no legal advice.",
+      "fineprint": "Cantoria is free software under the GNU AGPL 3.0 or later. The rights helpers follow German copyright law; they support a decision and are no legal advice.",
       "qr_label": "QR code with the link to",
       "logo_label": "Logo:"
     }

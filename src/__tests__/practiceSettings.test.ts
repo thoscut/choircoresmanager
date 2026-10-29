@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -14,17 +14,17 @@ describe('settings for practising a shared piece', () => {
 
 	it('are remembered per piece with a version', () => {
 		storePracticeSettings('k1', { tempo: 80, linkTempo: 90, transpose: -2, metronome: true, mix: { s: 50 } })
-		expect(JSON.parse(window.localStorage.getItem('notenarchiv.practice.k1') ?? '')).toMatchObject({ v: 1, tempo: 80 })
+		expect(JSON.parse(window.localStorage.getItem('cantoria.practice.k1') ?? '')).toMatchObject({ v: 1, tempo: 80 })
 		expect(storedPracticeSettings('k1', [25, 200])).toEqual({ tempo: 80, linkTempo: 90, transpose: -2, metronome: true, mix: { s: 50 } })
 		expect(storedPracticeSettings('k2', [25, 200])).toBeNull()
 	})
 
 	it('ignore other versions and values out of range', () => {
-		window.localStorage.setItem('notenarchiv.practice.k1', JSON.stringify({ v: 2, tempo: 80 }))
+		window.localStorage.setItem('cantoria.practice.k1', JSON.stringify({ v: 2, tempo: 80 }))
 		expect(storedPracticeSettings('k1', [25, 200])).toBeNull()
-		window.localStorage.setItem('notenarchiv.practice.k1', JSON.stringify({ v: 1, tempo: 900, transpose: 40, metronome: 'yes', mix: { s: 500, a: 20, b: 'x' } }))
+		window.localStorage.setItem('cantoria.practice.k1', JSON.stringify({ v: 1, tempo: 900, transpose: 40, metronome: 'yes', mix: { s: 500, a: 20, b: 'x' } }))
 		expect(storedPracticeSettings('k1', [25, 200])).toEqual({ tempo: 200, linkTempo: null, transpose: 6, metronome: false, mix: { a: 20 } })
-		window.localStorage.setItem('notenarchiv.practice.k1', '{broken')
+		window.localStorage.setItem('cantoria.practice.k1', '{broken')
 		expect(storedPracticeSettings('k1', [25, 200])).toBeNull()
 	})
 

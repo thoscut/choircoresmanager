@@ -30,12 +30,12 @@ or newer, Node.js 24 with npm 11, and Composer for the PHP tools.
 
 ```sh
 cd /path/to/nextcloud/apps
-git clone https://github.com/thoscut/choircoresmanager.git notenarchiv
-cd notenarchiv
+git clone https://github.com/thoscut/choircoresmanager.git cantoria
+cd cantoria
 npm ci
 npm run dev          # development build; `npm run watch` rebuilds on changes
 composer install     # PHP tools: PHPUnit, Psalm, coding standard
-php ../../occ app:enable notenarchiv
+php ../../occ app:enable cantoria
 ```
 
 The [demo data](tools/demo/README.md) gives you a small invented archive to
@@ -70,7 +70,7 @@ creates an account and refuses to run when the catalog is not empty.
 ## Translations
 
 - English is the source language. Write user-facing texts as English source
-  strings: `t('notenarchiv', '…')` and `n('notenarchiv', '…', '…', count)` in
+  strings: `t('cantoria', '…')` and `n('cantoria', '…', '…', count)` in
   `src/`, `$l->t('…')` in `lib/`.
 - The German translations live in `tools/l10n/translations.mjs`. A plain
   string is used for both variants; an array holds `[informal, formal]`
@@ -148,7 +148,7 @@ like Nextcloud's own apps. Every new file needs an SPDX header in the form of
 its neighbours, for example in PHP after `declare(strict_types=1);`:
 
     /**
-     * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+     * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
      * SPDX-License-Identifier: AGPL-3.0-or-later
      */
 

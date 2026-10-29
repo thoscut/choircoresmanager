@@ -3,21 +3,21 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Service;
+namespace OCA\Cantoria\Service;
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Db\ArchiveFile;
-use OCA\Notenarchiv\Db\ArchiveFileMapper;
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\MirrorFile;
-use OCA\Notenarchiv\Db\MirrorFileMapper;
-use OCA\Notenarchiv\Exception\InvalidInputException;
-use OCA\Notenarchiv\Exception\RunInProgressException;
-use OCA\Notenarchiv\Exception\UserFacingException;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Db\ArchiveFile;
+use OCA\Cantoria\Db\ArchiveFileMapper;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Db\MirrorFile;
+use OCA\Cantoria\Db\MirrorFileMapper;
+use OCA\Cantoria\Exception\InvalidInputException;
+use OCA\Cantoria\Exception\RunInProgressException;
+use OCA\Cantoria\Exception\UserFacingException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Files\File;
 use OCP\Files\Folder;
@@ -405,7 +405,7 @@ class PrintMirrorService {
 			// A sync by hand is running at this moment.
 			return;
 		} catch (\Throwable $e) {
-			$this->logger->error('Notenarchiv: sync of ' . $this->prefix() . ' failed: ' . $e->getMessage(), ['exception' => $e]);
+			$this->logger->error('Cantoria: sync of ' . $this->prefix() . ' failed: ' . $e->getMessage(), ['exception' => $e]);
 			// Only messages meant for users go into the notification.
 			$parameters = $e instanceof UserFacingException
 				? ['error' => $e->getMessage(), 'errorParameters' => json_encode(array_map('strval', $e->getParameters()), JSON_THROW_ON_ERROR)]
@@ -491,7 +491,7 @@ class PrintMirrorService {
 			try {
 				$action();
 			} catch (\Exception $e) {
-				$this->logger->warning('Notenarchiv: ' . $this->prefix() . ', ' . $item['name'] . ': ' . $e->getMessage(), ['exception' => $e]);
+				$this->logger->warning('Cantoria: ' . $this->prefix() . ', ' . $item['name'] . ': ' . $e->getMessage(), ['exception' => $e]);
 				$report['skipped'][] = ['reason' => self::WRITE_FAILED] + $item;
 				return;
 			}

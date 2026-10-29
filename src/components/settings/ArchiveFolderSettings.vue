@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -98,7 +98,7 @@ async function checkChosen(folderId: number): Promise<void> {
 async function choose(): Promise<void> {
 	let nodes
 	try {
-		nodes = await getFilePickerBuilder(t('notenarchiv', 'Choose the archive folder'))
+		nodes = await getFilePickerBuilder(t('cantoria', 'Choose the archive folder'))
 			.setMultiSelect(false)
 			.allowDirectories(true)
 			.setMimeTypeFilter(['httpd/unix-directory'])
@@ -114,7 +114,7 @@ async function choose(): Promise<void> {
 	}
 	const node = nodes[0]
 	if (!node?.fileid || node.mime !== 'httpd/unix-directory') {
-		showError(t('notenarchiv', 'Please choose a folder.'))
+		showError(t('cantoria', 'Please choose a folder.'))
 		await focusAfterDialog(chooseButton)
 		return
 	}
@@ -133,7 +133,7 @@ async function save(): Promise<void> {
 		emit('saved', await saveSettings({ archiveFolderId: pending.value.id }))
 		pending.value = null
 		check.value = null
-		showSuccess(t('notenarchiv', 'The archive folder has been saved.'))
+		showSuccess(t('cantoria', 'The archive folder has been saved.'))
 	} catch (error) {
 		showError(errorMessage(error))
 	} finally {
@@ -147,30 +147,30 @@ async function save(): Promise<void> {
 <template>
 	<div class="settings-block">
 		<p class="settings-block__text">
-			{{ t('notenarchiv', 'The folder in Nextcloud that holds the score files (for example one subfolder per binder). The app only reads files. Exports of the catalog are stored in its subfolder "_notenarchiv-app".') }}
+			{{ t('cantoria', 'The folder in Nextcloud that holds the score files (for example one subfolder per binder). The app only reads files. Exports of the catalog are stored in its subfolder "_cantoria-app".') }}
 		</p>
 		<p v-if="archive.id > 0" class="settings-block__text">
-			{{ t('notenarchiv', 'Backups and annual snapshots name choir members and accounts. They lie outside the archive folder, in a folder of the account that set it, which the role groups do not see unless it is shared with them.') }}
+			{{ t('cantoria', 'Backups and annual snapshots name choir members and accounts. They lie outside the archive folder, in a folder of the account that set it, which the role groups do not see unless it is shared with them.') }}
 			<template v-if="backups.path">
-				<strong>{{ t('notenarchiv', 'Backup folder:') }}</strong>
+				<strong>{{ t('cantoria', 'Backup folder:') }}</strong>
 				{{ backups.path }}
 			</template>
 		</p>
 		<NcNoteCard v-if="backups.oldBackups" type="warning">
-			{{ t('notenarchiv', 'The subfolder "_notenarchiv-app" of the archive folder still holds backups or annual snapshots of an earlier version, which everyone with access to the archive folder can read. Move them into the backup folder or delete them.') }}
+			{{ t('cantoria', 'The subfolder "_cantoria-app" of the archive folder still holds backups or annual snapshots of an earlier version, which everyone with access to the archive folder can read. Move them into the backup folder or delete them.') }}
 		</NcNoteCard>
 		<p v-if="archive.id > 0">
-			<strong>{{ t('notenarchiv', 'Current archive folder:') }}</strong>
+			<strong>{{ t('cantoria', 'Current archive folder:') }}</strong>
 			{{ archive.path }}
 			<span v-if="archive.user" class="settings-block__muted">
-				{{ t('notenarchiv', '(chosen by {user})', { user: archive.user }) }}
+				{{ t('cantoria', '(chosen by {user})', { user: archive.user }) }}
 			</span>
 		</p>
 		<NcNoteCard v-else type="warning">
-			{{ t('notenarchiv', 'No archive folder has been chosen yet.') }}
+			{{ t('cantoria', 'No archive folder has been chosen yet.') }}
 		</NcNoteCard>
 		<p class="settings-block__text settings-block__muted">
-			{{ t('notenarchiv', 'Everyone with a role needs access to this folder in their own Nextcloud, e.g. through a share or a group folder. "Access to the archive folder" below shows who cannot open it.') }}
+			{{ t('cantoria', 'Everyone with a role needs access to this folder in their own Nextcloud, e.g. through a share or a group folder. "Access to the archive folder" below shows who cannot open it.') }}
 		</p>
 
 		<div class="settings-block__actions">
@@ -178,24 +178,24 @@ async function save(): Promise<void> {
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiFolderOutline" />
 				</template>
-				{{ t('notenarchiv', 'Choose folder …') }}
+				{{ t('cantoria', 'Choose folder …') }}
 			</NcButton>
 		</div>
 		<p v-if="!admin && archive.id > 0" class="settings-block__text settings-block__muted">
-			{{ t('notenarchiv', 'Only an administrator can change the archive folder: background jobs and backups run as the account that sets it.') }}
+			{{ t('cantoria', 'Only an administrator can change the archive folder: background jobs and backups run as the account that sets it.') }}
 		</p>
 		<template v-if="pending">
 			<p>
-				<strong>{{ t('notenarchiv', 'New archive folder:') }}</strong>
+				<strong>{{ t('cantoria', 'New archive folder:') }}</strong>
 				{{ pending.path }}
-				<span class="settings-block__muted">{{ t('notenarchiv', '(not saved yet)') }}</span>
+				<span class="settings-block__muted">{{ t('cantoria', '(not saved yet)') }}</span>
 			</p>
 
 			<!-- What saving does, before saving -->
 			<p class="settings-block__text">
-				{{ t('notenarchiv', 'Saving makes this folder the archive folder: the app reads the score files from it as your account sees it, and writes the weekly backups into a folder of your own files outside it ("Music archive backups").') }}
+				{{ t('cantoria', 'Saving makes this folder the archive folder: the app reads the score files from it as your account sees it, and writes the weekly backups into a folder of your own files outside it ("Music archive backups").') }}
 				<template v-if="archive.id > 0">
-					{{ t('notenarchiv', 'Files in the former folder are not moved or deleted; after the next file sync they are listed as "not found" until they are in the new folder too.') }}
+					{{ t('cantoria', 'Files in the former folder are not moved or deleted; after the next file sync they are listed as "not found" until they are in the new folder too.') }}
 				</template>
 			</p>
 
@@ -203,32 +203,32 @@ async function save(): Promise<void> {
 			<div role="status" class="settings-block">
 				<p v-if="checking" class="settings-block__busy">
 					<NcLoadingIcon :size="20" />
-					{{ t('notenarchiv', 'Checking who of the role groups can open this folder …') }}
+					{{ t('cantoria', 'Checking who of the role groups can open this folder …') }}
 				</p>
 				<NcNoteCard v-else-if="checkError" type="warning">
-					{{ t('notenarchiv', 'It could not be checked who can open this folder: {error}', { error: checkError }) }}
+					{{ t('cantoria', 'It could not be checked who can open this folder: {error}', { error: checkError }) }}
 				</NcNoteCard>
 				<NcNoteCard v-else-if="problems.length > 0" type="warning">
-					<p>{{ t('notenarchiv', 'These accounts of the role groups cannot open this folder, so the app will show them no files:') }}</p>
+					<p>{{ t('cantoria', 'These accounts of the role groups cannot open this folder, so the app will show them no files:') }}</p>
 					<ul class="archive-folder__problems">
 						<li v-for="problem in problems" :key="problem.key">
-							{{ t('notenarchiv', '{account} – group {group} ({role})', { account: problem.account, group: problem.group, role: problem.role }) }}
+							{{ t('cantoria', '{account} – group {group} ({role})', { account: problem.account, group: problem.group, role: problem.role }) }}
 						</li>
 					</ul>
-					<p>{{ t('notenarchiv', 'Share the folder with their groups before or right after saving; reading is enough.') }}</p>
-					<GuideLink :href="adminGuideUrl(ADMIN_GUIDE.sharing)" :label="t('notenarchiv', 'Sharing the archive folder (administration guide)')" />
+					<p>{{ t('cantoria', 'Share the folder with their groups before or right after saving; reading is enough.') }}</p>
+					<GuideLink :href="adminGuideUrl(ADMIN_GUIDE.sharing)" :label="t('cantoria', 'Sharing the archive folder (administration guide)')" />
 				</NcNoteCard>
 				<NcNoteCard v-else-if="noRoleGroups" type="info">
-					{{ t('notenarchiv', 'No group has a role yet. Give the roles their groups below; then check access.') }}
+					{{ t('cantoria', 'No group has a role yet. Give the roles their groups below; then check access.') }}
 				</NcNoteCard>
 				<NcNoteCard v-else-if="check" type="success">
-					{{ t('notenarchiv', 'Every checked account of the role groups can open this folder.') }}
+					{{ t('cantoria', 'Every checked account of the role groups can open this folder.') }}
 				</NcNoteCard>
 			</div>
 
 			<div class="settings-block__actions">
 				<NcButton :disabled="saving" @click="cancel">
-					{{ t('notenarchiv', 'Cancel') }}
+					{{ t('cantoria', 'Cancel') }}
 				</NcButton>
 				<NcButton ref="saveButton"
 					variant="primary"
@@ -237,7 +237,7 @@ async function save(): Promise<void> {
 					<template v-if="saving" #icon>
 						<NcLoadingIcon />
 					</template>
-					{{ t('notenarchiv', 'Save archive folder') }}
+					{{ t('cantoria', 'Save archive folder') }}
 				</NcButton>
 			</div>
 		</template>

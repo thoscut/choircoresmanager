@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -21,11 +21,11 @@ const props = defineProps<{
 const lines = computed(() => props.credits.map((credit) => {
 	switch (credit.role) {
 	case 'lyricist':
-		return t('notenarchiv', 'Text: {name}', { name: credit.name })
+		return t('cantoria', 'Text: {name}', { name: credit.name })
 	case 'translator':
-		return t('notenarchiv', 'Translation: {name}', { name: credit.name })
+		return t('cantoria', 'Translation: {name}', { name: credit.name })
 	default:
-		return t('notenarchiv', 'Arrangement: {name}', { name: credit.name })
+		return t('cantoria', 'Arrangement: {name}', { name: credit.name })
 	}
 }))
 </script>

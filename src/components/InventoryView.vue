@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -36,7 +36,7 @@ const inventory = ref<Inventory | null>(null)
 const binder = ref<number | null>(null)
 const showAll = ref(false)
 /** The filter in words, for the header of the printout */
-const printFilter = computed(() => showAll.value ? t('notenarchiv', 'Also copies that are not active') : '')
+const printFilter = computed(() => showAll.value ? t('cantoria', 'Also copies that are not active') : '')
 const loading = ref(false)
 const error = ref('')
 
@@ -67,8 +67,8 @@ onMounted(load)
 const binderOptions = computed(() => (inventory.value?.binders ?? []).map((entry) => ({
 	id: entry.binder,
 	label: entry.uncounted > 0
-		? t('notenarchiv', 'Binder {binder} ({active} active, {uncounted} never counted)', { binder: entry.binder, active: entry.active, uncounted: entry.uncounted })
-		: t('notenarchiv', 'Binder {binder} ({active} active)', { binder: entry.binder, active: entry.active }),
+		? t('cantoria', 'Binder {binder} ({active} active, {uncounted} never counted)', { binder: entry.binder, active: entry.active, uncounted: entry.uncounted })
+		: t('cantoria', 'Binder {binder} ({active} active)', { binder: entry.binder, active: entry.active }),
 })))
 
 const binderOption = computed({
@@ -129,22 +129,22 @@ function isInvalid(copyId: number): boolean {
 async function save(): Promise<void> {
 	saveError.value = ''
 	if (payload.value.invalid.length > 0) {
-		saveError.value = t('notenarchiv', 'Please enter whole numbers (0 or more) for the marked copies.')
+		saveError.value = t('cantoria', 'Please enter whole numbers (0 or more) for the marked copies.')
 		return
 	}
 	if (payload.value.counts.length === 0) {
-		saveError.value = t('notenarchiv', 'Please tick the copies that have been counted.')
+		saveError.value = t('cantoria', 'Please tick the copies that have been counted.')
 		return
 	}
 	const date = countDate.value ? toIsoDate(countDate.value) : null
 	if (date !== null && date > toIsoDate(new Date())) {
-		saveError.value = t('notenarchiv', 'The date of the count must not lie in the future.')
+		saveError.value = t('cantoria', 'The date of the count must not lie in the future.')
 		return
 	}
 	saving.value = true
 	try {
 		const recorded = await recordCounts(payload.value.counts, date)
-		showSuccess(n('notenarchiv', 'The count of %n copy has been recorded.', 'The count of %n copies has been recorded.', recorded))
+		showSuccess(n('cantoria', 'The count of %n copy has been recorded.', 'The count of %n copies has been recorded.', recorded))
 		await Promise.all([load(), loadEntries(), loadDetail()])
 		// The button is disabled now (nothing ticked): on to the next binder
 		await focusAfterUpdate(() => document.querySelector('.inventory-view input[role="combobox"], #app-content-vue input[role="combobox"]'))
@@ -161,7 +161,7 @@ async function save(): Promise<void> {
  * @param value - ISO date or null
  */
 function lastCounted(value: string | null): string {
-	return value ? formatDate(value) : t('notenarchiv', 'never')
+	return value ? formatDate(value) : t('cantoria', 'never')
 }
 
 /**
@@ -178,8 +178,8 @@ const today = parseIsoDate(toIsoDate(new Date()))
 
 <template>
 	<div class="inventory-view">
-		<ViewHeader :title="binder !== null ? t('notenarchiv', 'Inventory of binder {binder}', { binder }) : t('notenarchiv', 'Inventory')"
-			:description="t('notenarchiv', 'The copies of one archive binder in shelf order, to tick off on paper. As of {date}.', { date: printedOn })"
+		<ViewHeader :title="binder !== null ? t('cantoria', 'Inventory of binder {binder}', { binder }) : t('cantoria', 'Inventory')"
+			:description="t('cantoria', 'The copies of one archive binder in shelf order, to tick off on paper. As of {date}.', { date: printedOn })"
 			printable
 			:print-filter="printFilter"
 			reloadable
@@ -187,18 +187,18 @@ const today = parseIsoDate(toIsoDate(new Date()))
 			@reload="load" />
 
 		<div class="inventory-view__content">
-			<NcEmptyContent v-if="!inventory && loading" :name="t('notenarchiv', 'Loading …')">
+			<NcEmptyContent v-if="!inventory && loading" :name="t('cantoria', 'Loading …')">
 				<template #icon>
 					<NcLoadingIcon :size="64" />
 				</template>
 			</NcEmptyContent>
-			<NcEmptyContent v-else-if="!inventory && error" :name="t('notenarchiv', 'The list could not be loaded')" :description="error">
+			<NcEmptyContent v-else-if="!inventory && error" :name="t('cantoria', 'The list could not be loaded')" :description="error">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiAlertCircleOutline" />
 				</template>
 				<template #action>
 					<NcButton @click="load">
-						{{ t('notenarchiv', 'Try again') }}
+						{{ t('cantoria', 'Try again') }}
 					</NcButton>
 				</template>
 			</NcEmptyContent>
@@ -207,11 +207,11 @@ const today = parseIsoDate(toIsoDate(new Date()))
 				<div class="inventory-view__controls no-print">
 					<NcSelect v-model="binderOption"
 						class="inventory-view__binder"
-						:input-label="t('notenarchiv', 'Archive binder')"
+						:input-label="t('cantoria', 'Archive binder')"
 						:options="binderOptions"
 						:clearable="false" />
 					<NcCheckboxRadioSwitch v-model="showAll" type="switch" @update:model-value="load">
-						{{ t('notenarchiv', 'Also copies that are not active') }}
+						{{ t('cantoria', 'Also copies that are not active') }}
 					</NcCheckboxRadioSwitch>
 				</div>
 				<NcNoteCard v-if="error"
@@ -221,65 +221,65 @@ const today = parseIsoDate(toIsoDate(new Date()))
 					{{ error }}
 				</NcNoteCard>
 				<p v-if="binderFacts" class="inventory-view__facts">
-					{{ n('notenarchiv', '%n active copy', '%n active copies', binderFacts.active) }}
+					{{ n('cantoria', '%n active copy', '%n active copies', binderFacts.active) }}
 					<template v-if="binderFacts.oldestCount">
-						· {{ t('notenarchiv', 'oldest count: {date}', { date: formatDate(binderFacts.oldestCount) }) }}
+						· {{ t('cantoria', 'oldest count: {date}', { date: formatDate(binderFacts.oldestCount) }) }}
 					</template>
 					<template v-if="binderFacts.uncounted > 0">
-						· {{ n('notenarchiv', '%n copy never counted', '%n copies never counted', binderFacts.uncounted) }}
+						· {{ n('cantoria', '%n copy never counted', '%n copies never counted', binderFacts.uncounted) }}
 					</template>
 				</p>
 
 				<p v-if="inventory.rows.length === 0" class="inventory-view__muted">
-					{{ t('notenarchiv', 'This binder has no copies to list.') }}
+					{{ t('cantoria', 'This binder has no copies to list.') }}
 				</p>
 				<form v-else class="inventory-view__form" @submit.prevent="save">
 					<table class="inventory-view__table">
 						<caption class="hidden-visually">
-							{{ t('notenarchiv', 'Inventory of binder {binder}', { binder: inventory.binder }) }}
+							{{ t('cantoria', 'Inventory of binder {binder}', { binder: inventory.binder }) }}
 						</caption>
 						<thead>
 							<tr>
 								<th scope="col">
-									{{ t('notenarchiv', 'Shelf mark') }}
+									{{ t('cantoria', 'Shelf mark') }}
 								</th>
 								<th scope="col">
-									{{ t('notenarchiv', 'Title') }}
+									{{ t('cantoria', 'Title') }}
 								</th>
 								<th scope="col">
-									{{ t('notenarchiv', 'Kind') }}
+									{{ t('cantoria', 'Kind') }}
 								</th>
 								<th scope="col" class="inventory-view__number">
-									{{ t('notenarchiv', 'Number of originals') }}
+									{{ t('cantoria', 'Number of originals') }}
 								</th>
 								<th scope="col" class="inventory-view__number">
-									{{ t('notenarchiv', 'Number of copies') }}
+									{{ t('cantoria', 'Number of copies') }}
 								</th>
 								<th scope="col">
-									{{ t('notenarchiv', 'Last counted') }}
+									{{ t('cantoria', 'Last counted') }}
 								</th>
 								<template v-if="canCount">
 									<th scope="col" class="no-print">
-										{{ t('notenarchiv', 'Counted') }}
+										{{ t('cantoria', 'Counted') }}
 									</th>
 									<th scope="col" class="no-print">
-										{{ t('notenarchiv', 'Originals now') }}
+										{{ t('cantoria', 'Originals now') }}
 									</th>
 									<th scope="col" class="no-print">
-										{{ t('notenarchiv', 'Copies now') }}
+										{{ t('cantoria', 'Copies now') }}
 									</th>
 								</template>
 								<th scope="col" class="print-only inventory-view__tick">
-									{{ t('notenarchiv', 'There') }}
+									{{ t('cantoria', 'There') }}
 								</th>
 								<th scope="col" class="print-only inventory-view__write">
-									{{ t('notenarchiv', 'Originals now') }}
+									{{ t('cantoria', 'Originals now') }}
 								</th>
 								<th scope="col" class="print-only inventory-view__write">
-									{{ t('notenarchiv', 'Copies now') }}
+									{{ t('cantoria', 'Copies now') }}
 								</th>
 								<th scope="col" class="print-only inventory-view__note">
-									{{ t('notenarchiv', 'Note') }}
+									{{ t('cantoria', 'Note') }}
 								</th>
 							</tr>
 						</thead>
@@ -290,7 +290,7 @@ const today = parseIsoDate(toIsoDate(new Date()))
 								<th scope="row">
 									<button type="button"
 										class="inventory-view__shelfmark"
-										:aria-label="t('notenarchiv', 'Open {shelfmark}', { shelfmark: row.shelfmark })"
+										:aria-label="t('cantoria', 'Open {shelfmark}', { shelfmark: row.shelfmark })"
 										@click="openEntry(row.copyId)">
 										{{ row.shelfmark }}
 									</button>
@@ -304,12 +304,12 @@ const today = parseIsoDate(toIsoDate(new Date()))
 										{{ choiceLabel('copy', 'status', row.status) }}<template v-if="row.status_reason">: {{ row.status_reason }}</template>
 									</span>
 									<span v-if="row.preservation_copy" class="inventory-view__status">
-										{{ t('notenarchiv', 'Internal preservation copy') }}
+										{{ t('cantoria', 'Internal preservation copy') }}
 									</span>
 								</td>
 								<td>
 									{{ row.kind ? choiceLabel('copy', 'kind', row.kind) : '' }}
-									<span v-if="row.pages" class="inventory-view__muted inventory-view__pages">{{ t('notenarchiv', '{pages} p.', { pages: row.pages }) }}</span>
+									<span v-if="row.pages" class="inventory-view__muted inventory-view__pages">{{ t('cantoria', '{pages} p.', { pages: row.pages }) }}</span>
 								</td>
 								<td class="inventory-view__number">
 									{{ figure(row.originals_count) }}
@@ -323,14 +323,14 @@ const today = parseIsoDate(toIsoDate(new Date()))
 										<input v-model="drafts[row.copyId].counted"
 											type="checkbox"
 											class="inventory-view__check"
-											:aria-label="t('notenarchiv', '{shelfmark} counted', { shelfmark: row.shelfmark })">
+											:aria-label="t('cantoria', '{shelfmark} counted', { shelfmark: row.shelfmark })">
 									</td>
 									<td class="no-print">
 										<input :value="drafts[row.copyId].originals"
 											class="inventory-view__input"
 											inputmode="numeric"
 											:placeholder="figure(row.originals_count)"
-											:aria-label="t('notenarchiv', 'Originals of {shelfmark} now', { shelfmark: row.shelfmark })"
+											:aria-label="t('cantoria', 'Originals of {shelfmark} now', { shelfmark: row.shelfmark })"
 											:aria-invalid="isInvalid(row.copyId) ? 'true' : undefined"
 											@input="onFigure(row.copyId, 'originals', ($event.target as HTMLInputElement).value)">
 									</td>
@@ -339,7 +339,7 @@ const today = parseIsoDate(toIsoDate(new Date()))
 											class="inventory-view__input"
 											inputmode="numeric"
 											:placeholder="figure(row.copies_count)"
-											:aria-label="t('notenarchiv', 'Copies of {shelfmark} now', { shelfmark: row.shelfmark })"
+											:aria-label="t('cantoria', 'Copies of {shelfmark} now', { shelfmark: row.shelfmark })"
 											:aria-invalid="isInvalid(row.copyId) ? 'true' : undefined"
 											@input="onFigure(row.copyId, 'copies', ($event.target as HTMLInputElement).value)">
 									</td>
@@ -356,26 +356,26 @@ const today = parseIsoDate(toIsoDate(new Date()))
 
 					<div v-if="canCount" class="inventory-view__save no-print">
 						<p class="inventory-view__muted">
-							{{ t('notenarchiv', 'Tick the copies that are there. Enter a figure only when it differs; an empty field keeps the listed one.') }}
+							{{ t('cantoria', 'Tick the copies that are there. Enter a figure only when it differs; an empty field keeps the listed one.') }}
 						</p>
 						<div class="inventory-view__save-row">
 							<NcButton variant="tertiary" @click="markAll">
 								<template #icon>
 									<NcIconSvgWrapper :path="mdiCheckAll" />
 								</template>
-								{{ t('notenarchiv', 'Tick all') }}
+								{{ t('cantoria', 'Tick all') }}
 							</NcButton>
 							<NcDateTimePickerNative v-model="countDate"
 								class="inventory-view__date"
 								type="date"
 								:max="today ?? undefined"
-								:label="t('notenarchiv', 'Date of the count')" />
+								:label="t('cantoria', 'Date of the count')" />
 							<NcButton type="submit" variant="primary" :disabled="saving || countedCount === 0">
 								<template #icon>
 									<NcLoadingIcon v-if="saving" />
 									<NcIconSvgWrapper v-else :path="mdiContentSaveOutline" />
 								</template>
-								{{ n('notenarchiv', 'Record count of %n copy', 'Record count of %n copies', countedCount) }}
+								{{ n('cantoria', 'Record count of %n copy', 'Record count of %n copies', countedCount) }}
 							</NcButton>
 						</div>
 						<NcNoteCard v-if="saveError" type="error" role="alert">

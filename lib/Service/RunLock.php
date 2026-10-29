@@ -3,14 +3,14 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Service;
+namespace OCA\Cantoria\Service;
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Exception\RunInProgressException;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Exception\RunInProgressException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IAppConfig;
 use OCP\Lock\ILockingProvider;
@@ -54,7 +54,7 @@ class RunLock {
 	public function run(string $name, ?string $uid, callable $run): mixed {
 		$path = self::path($name);
 		try {
-			$this->locking->acquireLock($path, ILockingProvider::LOCK_EXCLUSIVE, 'Notenarchiv ' . $name);
+			$this->locking->acquireLock($path, ILockingProvider::LOCK_EXCLUSIVE, 'Cantoria ' . $name);
 		} catch (LockedException) {
 			throw match ($name) {
 				self::FILE_SYNC => new RunInProgressException('A file sync is already running. Wait until it has finished; the page shows its report afterwards.'),
@@ -102,7 +102,7 @@ class RunLock {
 	}
 
 	private static function path(string $name): string {
-		return 'notenarchiv/run/' . $name;
+		return 'cantoria/run/' . $name;
 	}
 
 	private static function key(string $name): string {

@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Service;
+namespace OCA\Cantoria\Service;
 
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Schema;
@@ -16,9 +16,9 @@ use Doctrine\DBAL\Types\BooleanType;
 use Doctrine\DBAL\Types\IntegerType;
 use Doctrine\DBAL\Types\SmallIntType;
 use Doctrine\DBAL\Types\StringType;
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Db\ExcerptLink;
-use OCA\Notenarchiv\Exception\InvalidInputException;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Db\ExcerptLink;
+use OCA\Cantoria\Exception\InvalidInputException;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\QueryBuilder\IQueryBuilder;
@@ -44,7 +44,7 @@ use OCP\Security\ISecureRandom;
  * @psalm-type Backup = array{formatVersion: int, created: string, appVersion: string, tables: array<string, list<BackupRow>>}
  */
 class FullBackupService {
-	public const FORMAT = 'notenarchiv-backup';
+	public const FORMAT = 'cantoria-backup';
 	public const FORMAT_VERSION = 1;
 
 	/** Largest backup file accepted for a restore in the web interface (bytes) */

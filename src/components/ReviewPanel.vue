@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -83,16 +83,16 @@ const countsText = computed(() => {
 	if (!counts) {
 		return ''
 	}
-	const parts = [n('notenarchiv', '%n open', '%n open', counts.open)]
+	const parts = [n('cantoria', '%n open', '%n open', counts.open)]
 	if (counts.question > 0) {
-		parts.push(n('notenarchiv', '%n question', '%n questions', counts.question))
+		parts.push(n('cantoria', '%n question', '%n questions', counts.question))
 	}
 	if (counts.correct > 0) {
-		parts.push(n('notenarchiv', '%n correction order', '%n correction orders', counts.correct))
+		parts.push(n('cantoria', '%n correction order', '%n correction orders', counts.correct))
 	}
 	const done = counts.confirmed + counts.corrected + counts.dismissed
 	if (done > 0) {
-		parts.push(n('notenarchiv', '%n decided', '%n decided', done))
+		parts.push(n('cantoria', '%n decided', '%n decided', done))
 	}
 	return parts.join(' · ')
 })
@@ -104,10 +104,10 @@ const reportTitle = computed(() => {
 	}
 	const parts: string[] = []
 	if (current.round) {
-		parts.push(t('notenarchiv', 'round {round}', { round: current.round }))
+		parts.push(t('cantoria', 'round {round}', { round: current.round }))
 	}
 	parts.push(current.report_date ? formatDate(current.report_date) : formatDateTime(current.created))
-	return t('notenarchiv', 'Report of the transcription ({details})', { details: parts.join(', ') })
+	return t('cantoria', 'Report of the transcription ({details})', { details: parts.join(', ') })
 })
 
 const persons = computed(() => (report.value?.summary?.persons ?? [])
@@ -120,11 +120,11 @@ const persons = computed(() => (report.value?.summary?.persons ?? [])
 const rightsClass = computed(() => {
 	switch (report.value?.rights_class) {
 	case 'gemeinfrei':
-		return t('notenarchiv', 'Public domain')
+		return t('cantoria', 'Public domain')
 	case 'geschützt':
-		return t('notenarchiv', 'Protected')
+		return t('cantoria', 'Protected')
 	case 'offen':
-		return t('notenarchiv', 'Open')
+		return t('cantoria', 'Open')
 	}
 	return report.value?.rights_class ?? ''
 })
@@ -167,11 +167,11 @@ async function saveDecision(): Promise<void> {
 		return
 	}
 	if (decision.value === 'correct' && correction.value.trim() === '') {
-		formError.value = t('notenarchiv', 'Please describe the correction.')
+		formError.value = t('cantoria', 'Please describe the correction.')
 		return
 	}
 	if (decision.value === 'dismissed' && reason.value.trim() === '') {
-		formError.value = t('notenarchiv', 'Please give a reason.')
+		formError.value = t('cantoria', 'Please give a reason.')
 		return
 	}
 	busy.value = true
@@ -183,7 +183,7 @@ async function saveDecision(): Promise<void> {
 			reason: reason.value.trim() || null,
 			addressee: decision.value === 'question' ? addressee.value : null,
 		})
-		say(t('notenarchiv', 'Saved: {place} is now "{status}".', { place: pointPlace(point), status: reviewStatusLabel(saved.status) }))
+		say(t('cantoria', 'Saved: {place} is now "{status}".', { place: pointPlace(point), status: reviewStatusLabel(saved.status) }))
 		decision.value = null
 		reason.value = ''
 		emit('changed')
@@ -205,7 +205,7 @@ function decidedText(point: ReviewPoint): string {
 	}
 	const when = formatDateTime(point.decided)
 	return point.decided_by_name || point.decided_by
-		? t('notenarchiv', '{name}, {date}', { name: point.decided_by_name || point.decided_by || '', date: when })
+		? t('cantoria', '{name}, {date}', { name: point.decided_by_name || point.decided_by || '', date: when })
 		: when
 }
 
@@ -215,7 +215,7 @@ defineExpose({ say })
 <template>
 	<section class="review-panel" :aria-labelledby="headingId">
 		<h3 :id="headingId" class="review-panel__heading">
-			{{ t('notenarchiv', 'Review of the transcription') }}
+			{{ t('cantoria', 'Review of the transcription') }}
 		</h3>
 		<p role="status" class="review-panel__status">
 			{{ statusText }}
@@ -223,12 +223,12 @@ defineExpose({ say })
 
 		<p v-if="loading && !review" class="review-panel__loading">
 			<NcLoadingIcon :size="20" />
-			{{ t('notenarchiv', 'Loading the review …') }}
+			{{ t('cantoria', 'Loading the review …') }}
 		</p>
 		<NcNoteCard v-else-if="error !== ''" type="error">
 			<p>{{ error }}</p>
 			<NcButton @click="emit('retry')">
-				{{ t('notenarchiv', 'Try again') }}
+				{{ t('cantoria', 'Try again') }}
 			</NcButton>
 		</NcNoteCard>
 
@@ -241,29 +241,29 @@ defineExpose({ say })
 				<summary>{{ reportTitle }}</summary>
 				<dl class="review-panel__facts">
 					<template v-if="report.review">
-						<dt>{{ t('notenarchiv', 'Review state') }}</dt>
+						<dt>{{ t('cantoria', 'Review state') }}</dt>
 						<dd class="review-panel__long">
 							{{ report.review }}
 						</dd>
 					</template>
 					<template v-if="report.origin">
-						<dt>{{ t('notenarchiv', 'Origin') }}</dt>
+						<dt>{{ t('cantoria', 'Origin') }}</dt>
 						<dd class="review-panel__long">
 							{{ report.origin }}
 						</dd>
 					</template>
 					<template v-if="report.summary?.template?.beschreibung">
-						<dt>{{ t('notenarchiv', 'Template') }}</dt>
+						<dt>{{ t('cantoria', 'Template') }}</dt>
 						<dd class="review-panel__long">
 							{{ report.summary.template.beschreibung }}
 						</dd>
 					</template>
 					<template v-if="rightsClass">
-						<dt>{{ t('notenarchiv', 'Rights according to the report') }}</dt>
+						<dt>{{ t('cantoria', 'Rights according to the report') }}</dt>
 						<dd>{{ rightsClass }}</dd>
 					</template>
 					<template v-if="persons.length > 0">
-						<dt>{{ t('notenarchiv', 'Persons involved') }}</dt>
+						<dt>{{ t('cantoria', 'Persons involved') }}</dt>
 						<dd>
 							<ul class="review-panel__plain-list">
 								<li v-for="(person, index) in persons" :key="index">
@@ -273,13 +273,13 @@ defineExpose({ say })
 						</dd>
 					</template>
 					<template v-if="report.reasoning">
-						<dt>{{ t('notenarchiv', 'Reasoning on the rights') }}</dt>
+						<dt>{{ t('cantoria', 'Reasoning on the rights') }}</dt>
 						<dd class="review-panel__long">
 							{{ report.reasoning }}
 						</dd>
 					</template>
 					<template v-if="(report.summary?.warnings ?? []).length > 0">
-						<dt>{{ t('notenarchiv', 'Notes on reading the report') }}</dt>
+						<dt>{{ t('cantoria', 'Notes on reading the report') }}</dt>
 						<dd>
 							<ul class="review-panel__plain-list">
 								<li v-for="(warning, index) in report.summary?.warnings ?? []" :key="index">
@@ -290,25 +290,25 @@ defineExpose({ say })
 					</template>
 				</dl>
 				<p v-if="earlierReports > 0" class="review-panel__hint">
-					{{ n('notenarchiv', '%n earlier report of this copy.', '%n earlier reports of this copy.', earlierReports) }}
+					{{ n('cantoria', '%n earlier report of this copy.', '%n earlier reports of this copy.', earlierReports) }}
 				</p>
 				<p class="review-panel__hint">
-					{{ t('notenarchiv', 'Rights and catalog fields of the report wait in the proposals inbox; the catalog only changes when they are accepted.') }}
+					{{ t('cantoria', 'Rights and catalog fields of the report wait in the proposals inbox; the catalog only changes when they are accepted.') }}
 				</p>
 			</details>
 
-			<NcRadioGroup v-model="filter" :label="t('notenarchiv', 'Show review points')">
-				<NcRadioGroupButton value="open" :label="t('notenarchiv', 'To do')" />
-				<NcRadioGroupButton value="all" :label="t('notenarchiv', 'All')" />
+			<NcRadioGroup v-model="filter" :label="t('cantoria', 'Show review points')">
+				<NcRadioGroupButton value="open" :label="t('cantoria', 'To do')" />
+				<NcRadioGroupButton value="all" :label="t('cantoria', 'All')" />
 			</NcRadioGroup>
 
 			<p v-if="points.length === 0" class="review-panel__hint">
-				{{ t('notenarchiv', 'There are no review points for this version.') }}
+				{{ t('cantoria', 'There are no review points for this version.') }}
 			</p>
 			<p v-else-if="shown.length === 0" class="review-panel__hint">
-				{{ t('notenarchiv', 'Every review point has been decided.') }}
+				{{ t('cantoria', 'Every review point has been decided.') }}
 			</p>
-			<ul v-else class="review-panel__list" :aria-label="t('notenarchiv', 'Review points')">
+			<ul v-else class="review-panel__list" :aria-label="t('cantoria', 'Review points')">
 				<li v-for="point in shown" :key="point.id">
 					<button type="button"
 						class="review-panel__point"
@@ -331,30 +331,30 @@ defineExpose({ say })
 					{{ pointPlace(selected) }}
 				</h4>
 				<dl class="review-panel__facts">
-					<dt>{{ t('notenarchiv', 'Kind') }}</dt>
+					<dt>{{ t('cantoria', 'Kind') }}</dt>
 					<dd>{{ reviewCategoryLabel(selected.category) }}</dd>
-					<dt>{{ t('notenarchiv', 'Status') }}</dt>
+					<dt>{{ t('cantoria', 'Status') }}</dt>
 					<dd>{{ reviewStatusLabel(selected.status) }}</dd>
-					<dt>{{ t('notenarchiv', 'Responsible') }}</dt>
+					<dt>{{ t('cantoria', 'Responsible') }}</dt>
 					<dd>{{ roleLabel(selected.role) }}</dd>
 					<template v-if="selected.text">
-						<dt>{{ t('notenarchiv', 'Note of the transcription') }}</dt>
+						<dt>{{ t('cantoria', 'Note of the transcription') }}</dt>
 						<dd class="review-panel__long">
 							{{ selected.text }}
 						</dd>
 					</template>
 					<template v-if="selected.page">
-						<dt>{{ t('notenarchiv', 'Page of the scan') }}</dt>
+						<dt>{{ t('cantoria', 'Page of the scan') }}</dt>
 						<dd>{{ selected.page }}</dd>
 					</template>
 					<template v-if="selected.correction">
-						<dt>{{ t('notenarchiv', 'Correction') }}</dt>
+						<dt>{{ t('cantoria', 'Correction') }}</dt>
 						<dd class="review-panel__long">
 							{{ selected.correction }}
 						</dd>
 					</template>
 					<template v-if="selected.decided !== null">
-						<dt>{{ t('notenarchiv', 'Decision') }}</dt>
+						<dt>{{ t('cantoria', 'Decision') }}</dt>
 						<dd>
 							{{ decidedText(selected) }}
 							<template v-if="selected.decision_reason">
@@ -369,7 +369,7 @@ defineExpose({ say })
 						<template #icon>
 							<NcIconSvgWrapper :path="mdiPlay" />
 						</template>
-						{{ t('notenarchiv', 'Play this passage') }}
+						{{ t('cantoria', 'Play this passage') }}
 					</NcButton>
 					<NcButton v-if="canCorrect && isUnresolved(selected) && pointMeasures(selected) !== null"
 						aria-haspopup="dialog"
@@ -377,13 +377,13 @@ defineExpose({ say })
 						<template #icon>
 							<NcIconSvgWrapper :path="mdiPencilOutline" />
 						</template>
-						{{ t('notenarchiv', 'Correct in the app …') }}
+						{{ t('cantoria', 'Correct in the app …') }}
 					</NcButton>
 				</div>
 
 				<form v-if="decisions.length > 0" class="review-panel__form" @submit.prevent="saveDecision">
 					<fieldset class="review-panel__decisions">
-						<legend>{{ t('notenarchiv', 'Decision') }}</legend>
+						<legend>{{ t('cantoria', 'Decision') }}</legend>
 						<NcCheckboxRadioSwitch v-for="option in decisions"
 							:key="option"
 							v-model="decision"
@@ -395,12 +395,12 @@ defineExpose({ say })
 					</fieldset>
 					<NcTextArea v-if="decision === 'correct'"
 						v-model="correction"
-						:label="t('notenarchiv', 'What should be corrected? (required)')"
+						:label="t('cantoria', 'What should be corrected? (required)')"
 						required
 						resize="vertical"
 						rows="3" />
 					<fieldset v-if="decision === 'question'" class="review-panel__decisions">
-						<legend>{{ t('notenarchiv', 'Question to') }}</legend>
+						<legend>{{ t('cantoria', 'Question to') }}</legend>
 						<NcCheckboxRadioSwitch v-model="addressee"
 							type="radio"
 							value="conductor"
@@ -416,7 +416,7 @@ defineExpose({ say })
 					</fieldset>
 					<NcTextArea v-if="decision !== null"
 						v-model="reason"
-						:label="decision === 'dismissed' ? t('notenarchiv', 'Reason (required)') : (decision === 'question' ? t('notenarchiv', 'Question (optional; the point is quoted)') : t('notenarchiv', 'Reason (optional)'))"
+						:label="decision === 'dismissed' ? t('cantoria', 'Reason (required)') : (decision === 'question' ? t('cantoria', 'Question (optional; the point is quoted)') : t('cantoria', 'Reason (optional)'))"
 						:required="decision === 'dismissed'"
 						resize="vertical"
 						rows="2" />
@@ -430,13 +430,13 @@ defineExpose({ say })
 						<template v-if="busy" #icon>
 							<NcLoadingIcon />
 						</template>
-						{{ t('notenarchiv', 'Save decision') }}
+						{{ t('cantoria', 'Save decision') }}
 					</NcButton>
 				</form>
 				<p v-else-if="isUnresolved(selected)" class="review-panel__hint">
 					{{ selected.role === 'librarian'
-						? t('notenarchiv', 'The catalog librarian decides this point.')
-						: t('notenarchiv', 'The conductor or the catalog librarian decides this point.') }}
+						? t('cantoria', 'The catalog librarian decides this point.')
+						: t('cantoria', 'The conductor or the catalog librarian decides this point.') }}
 				</p>
 			</section>
 		</template>

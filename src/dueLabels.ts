@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -22,27 +22,27 @@ import { n } from './l10n.ts'
 export function dueCardLabel(key: string, count: number, fallback: string): string {
 	switch (key) {
 	case 'tasks_open':
-		return n('notenarchiv', 'Open task for your role', 'Open tasks for your role', count)
+		return n('cantoria', 'Open task for your role', 'Open tasks for your role', count)
 	case 'tasks_answered':
-		return n('notenarchiv', 'Answered task to apply', 'Answered tasks to apply', count)
+		return n('cantoria', 'Answered task to apply', 'Answered tasks to apply', count)
 	case 'ambiguous_items':
-		return n('notenarchiv', 'Programme line with an unclear shelf mark', 'Programme lines with an unclear shelf mark', count)
+		return n('cantoria', 'Programme line with an unclear shelf mark', 'Programme lines with an unclear shelf mark', count)
 	case 'proposals':
-		return n('notenarchiv', 'Proposal in the inbox', 'Proposals in the inbox', count)
+		return n('cantoria', 'Proposal in the inbox', 'Proposals in the inbox', count)
 	case 'portal_remove':
-		return n('notenarchiv', 'Version to remove from the singers\' portal', 'Versions to remove from the singers\' portal', count)
+		return n('cantoria', 'Version to remove from the singers\' portal', 'Versions to remove from the singers\' portal', count)
 	case 'portal_add':
-		return n('notenarchiv', 'Released version not yet in the singers\' portal', 'Released versions not yet in the singers\' portal', count)
+		return n('cantoria', 'Released version not yet in the singers\' portal', 'Released versions not yet in the singers\' portal', count)
 	case 'confirm_current':
-		return n('notenarchiv', 'Current repertoire: public domain version to confirm', 'Current repertoire: public domain versions to confirm', count)
+		return n('cantoria', 'Current repertoire: public domain version to confirm', 'Current repertoire: public domain versions to confirm', count)
 	case 'rule1_current':
-		return n('notenarchiv', 'Current repertoire: preservation copy with originals to check', 'Current repertoire: preservation copies with originals to check', count)
+		return n('cantoria', 'Current repertoire: preservation copy with originals to check', 'Current repertoire: preservation copies with originals to check', count)
 	case 'licenses_expiring':
-		return n('notenarchiv', 'License ending or ended', 'Licenses ending or ended', count)
+		return n('cantoria', 'License ending or ended', 'Licenses ending or ended', count)
 	case 'copies_unlicensed':
-		return n('notenarchiv', 'Current repertoire: version with photocopies without a license', 'Current repertoire: versions with photocopies without a license', count)
+		return n('cantoria', 'Current repertoire: version with photocopies without a license', 'Current repertoire: versions with photocopies without a license', count)
 	case 'valid_missing':
-		return n('notenarchiv', 'Current repertoire: work without a chosen valid version', 'Current repertoire: works without a chosen valid version', count)
+		return n('cantoria', 'Current repertoire: work without a chosen valid version', 'Current repertoire: works without a chosen valid version', count)
 	default:
 		return fallback
 	}

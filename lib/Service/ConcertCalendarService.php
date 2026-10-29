@@ -3,16 +3,16 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Service;
+namespace OCA\Cantoria\Service;
 
-use OCA\Notenarchiv\Db\Event;
-use OCA\Notenarchiv\Db\EventMapper;
-use OCA\Notenarchiv\Exception\InvalidInputException;
-use OCA\Notenarchiv\Exception\NotFoundException;
+use OCA\Cantoria\Db\Event;
+use OCA\Cantoria\Db\EventMapper;
+use OCA\Cantoria\Exception\InvalidInputException;
+use OCA\Cantoria\Exception\NotFoundException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\Calendar\ICalendar;
 use OCP\Calendar\ICalendarIsEnabled;
@@ -139,7 +139,7 @@ class ConcertCalendarService {
 				} catch (\Exception $e) {
 					// CalendarException, or an error of the CalDAV server (e.g. an
 					// entry with this UID that the search cannot see)
-					$this->logger->warning('Notenarchiv: a calendar entry could not be created: ' . $e->getMessage(), ['exception' => $e]);
+					$this->logger->warning('Cantoria: a calendar entry could not be created: ' . $e->getMessage(), ['exception' => $e]);
 					$result['failed']++;
 				}
 			}

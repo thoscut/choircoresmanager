@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -20,20 +20,20 @@ import { t } from './l10n.ts'
  */
 export function confirmConsequences(status: string, preservationCopy: boolean, isActive: (module: string) => boolean): string[] {
 	if (preservationCopy) {
-		return [t('notenarchiv', 'This version is an internal preservation copy: it stays internal and is never shared, played or exported, whatever the rights status.')]
+		return [t('cantoria', 'This version is an internal preservation copy: it stays internal and is never shared, played or exported, whatever the rights status.')]
 	}
 	const uses = [
-		isActive('portal') ? t('notenarchiv', 'singers\' portal') : '',
-		isActive('print_station') ? t('notenarchiv', 'print station') : '',
-		isActive('practice_audio') ? t('notenarchiv', 'practice files') : '',
-		isActive('member_links') ? t('notenarchiv', 'sharing with choir members') : '',
-		isActive('public_links') ? t('notenarchiv', 'public links (after the release for publication)') : '',
+		isActive('portal') ? t('cantoria', 'singers\' portal') : '',
+		isActive('print_station') ? t('cantoria', 'print station') : '',
+		isActive('practice_audio') ? t('cantoria', 'practice files') : '',
+		isActive('member_links') ? t('cantoria', 'sharing with choir members') : '',
+		isActive('public_links') ? t('cantoria', 'public links (after the release for publication)') : '',
 	].filter((use) => use !== '')
 	if (uses.length === 0) {
 		return []
 	}
 	if (status === 'public_domain') {
-		return [t('notenarchiv', 'After the confirmation this becomes possible: {uses}.', { uses: uses.join(', ') })]
+		return [t('cantoria', 'After the confirmation this becomes possible: {uses}.', { uses: uses.join(', ') })]
 	}
-	return [t('notenarchiv', 'A protected version needs a valid license for each of these uses: {uses}.', { uses: uses.join(', ') })]
+	return [t('cantoria', 'A protected version needs a valid license for each of these uses: {uses}.', { uses: uses.join(', ') })]
 }

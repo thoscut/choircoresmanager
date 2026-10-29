@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -35,33 +35,33 @@ require __DIR__ . '/harness.php';
 [$root, $uid, $publicMark, $preservationMark] = IntegrationTest::start($argv,
 	['nextcloud-root', 'uid', 'shelfmark-public-domain', 'shelfmark-preservation-copy']);
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Controller\MemberController;
-use OCA\Notenarchiv\Controller\PageController;
-use OCA\Notenarchiv\Controller\PublicLinkController;
-use OCA\Notenarchiv\Controller\PublicRepertoireController;
-use OCA\Notenarchiv\Db\ArchiveFile;
-use OCA\Notenarchiv\Db\ArchiveFileMapper;
-use OCA\Notenarchiv\Db\AuditEntry;
-use OCA\Notenarchiv\Db\AuditEntryMapper;
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\ExcerptLink;
-use OCA\Notenarchiv\Db\ExcerptLinkMapper;
-use OCA\Notenarchiv\Db\WorkMapper;
-use OCA\Notenarchiv\Db\WorkVersionMapper;
-use OCA\Notenarchiv\Exception\ModuleDisabledException;
-use OCA\Notenarchiv\Middleware\ModuleMiddleware;
-use OCA\Notenarchiv\Service\CatalogService;
-use OCA\Notenarchiv\Service\LicenseService;
-use OCA\Notenarchiv\Service\LinkService;
-use OCA\Notenarchiv\Service\MetaService;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\PracticeAudioService;
-use OCA\Notenarchiv\Service\PublicRepertoireService;
-use OCA\Notenarchiv\Service\RightsService;
-use OCA\Notenarchiv\Service\Roles;
-use OCA\Notenarchiv\Service\ScoreService;
-use OCA\Notenarchiv\Service\SharedLinkService;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Controller\MemberController;
+use OCA\Cantoria\Controller\PageController;
+use OCA\Cantoria\Controller\PublicLinkController;
+use OCA\Cantoria\Controller\PublicRepertoireController;
+use OCA\Cantoria\Db\ArchiveFile;
+use OCA\Cantoria\Db\ArchiveFileMapper;
+use OCA\Cantoria\Db\AuditEntry;
+use OCA\Cantoria\Db\AuditEntryMapper;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Db\ExcerptLink;
+use OCA\Cantoria\Db\ExcerptLinkMapper;
+use OCA\Cantoria\Db\WorkMapper;
+use OCA\Cantoria\Db\WorkVersionMapper;
+use OCA\Cantoria\Exception\ModuleDisabledException;
+use OCA\Cantoria\Middleware\ModuleMiddleware;
+use OCA\Cantoria\Service\CatalogService;
+use OCA\Cantoria\Service\LicenseService;
+use OCA\Cantoria\Service\LinkService;
+use OCA\Cantoria\Service\MetaService;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\PracticeAudioService;
+use OCA\Cantoria\Service\PublicRepertoireService;
+use OCA\Cantoria\Service\RightsService;
+use OCA\Cantoria\Service\Roles;
+use OCA\Cantoria\Service\ScoreService;
+use OCA\Cantoria\Service\SharedLinkService;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\NotFoundResponse;
@@ -125,7 +125,7 @@ $memberGroups = $roles->groups(Roles::MEMBER);
 // A group and an account of the choir members, outside the transaction, so
 // that deleting them removes everything that belongs to them.
 $suffix = bin2hex(random_bytes(4));
-$group = Server::get(IGroupManager::class)->createGroup('notenarchiv-test-members-' . $suffix);
+$group = Server::get(IGroupManager::class)->createGroup('cantoria-test-members-' . $suffix);
 $member = Server::get(IUserManager::class)->createUser('member-' . $suffix, bin2hex(random_bytes(24)) . 'aA1!');
 $check('test group and account "member" created', $group instanceof IGroup && $member instanceof IUser);
 

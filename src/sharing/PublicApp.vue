@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -37,7 +37,7 @@ import { MAX_DAYS_UNCHECKED, usable } from '../offline/rules.ts'
  */
 function initialExcerpt(): PublicExcerpt | null {
 	try {
-		const excerpt = loadState<PublicExcerpt | null>('notenarchiv', 'excerpt', null)
+		const excerpt = loadState<PublicExcerpt | null>('cantoria', 'excerpt', null)
 		return excerpt && typeof excerpt.xml === 'string' && excerpt.xml !== '' ? excerpt : null
 	} catch {
 		return null
@@ -46,7 +46,7 @@ function initialExcerpt(): PublicExcerpt | null {
 
 function initialVersion(): string {
 	try {
-		return String(loadState<string>('notenarchiv', 'version', ''))
+		return String(loadState<string>('cantoria', 'version', ''))
 	} catch {
 		return ''
 	}
@@ -83,7 +83,7 @@ const checkedText = computed(() => {
 	const kept = catalog.value?.pieces[token]
 	const checked = kept ? Date.parse(kept.checked ?? catalog.value?.checked ?? '') : NaN
 	return Number.isFinite(checked)
-		? t('notenarchiv', 'Last checked with the server: {time}.', { time: formatDateTime(Math.floor(checked / 1000)) })
+		? t('cantoria', 'Last checked with the server: {time}.', { time: formatDateTime(Math.floor(checked / 1000)) })
 		: ''
 })
 
@@ -100,15 +100,15 @@ async function setKept(keep: boolean, withScan: boolean): Promise<void> {
 		if (keep) {
 			catalog.value = await keepPieces('public', [piece], withScan, version)
 			await askToPersist()
-			deviceStatus.value = t('notenarchiv', '"{title}" is kept on this device.', { title: piece.title })
+			deviceStatus.value = t('cantoria', '"{title}" is kept on this device.', { title: piece.title })
 		} else {
 			catalog.value = await forgetPieces('public', [token])
-			deviceStatus.value = t('notenarchiv', '"{title}" is removed from this device.', { title: piece.title })
+			deviceStatus.value = t('cantoria', '"{title}" is removed from this device.', { title: piece.title })
 		}
 	} catch (error) {
-		keepError.value = t('notenarchiv', '"{title}" could not be kept on this device: {reason}', {
+		keepError.value = t('cantoria', '"{title}" could not be kept on this device: {reason}', {
 			title: piece.title,
-			reason: error instanceof Error && error.message !== '' ? error.message : t('notenarchiv', 'Please check the network and the space on the device.'),
+			reason: error instanceof Error && error.message !== '' ? error.message : t('cantoria', 'Please check the network and the space on the device.'),
 		})
 	} finally {
 		keeping.value = false
@@ -119,9 +119,9 @@ async function setKept(keep: boolean, withScan: boolean): Promise<void> {
 const lockText = computed(() => {
 	switch (usable(catalog.value, token, new Date())) {
 	case 'expired':
-		return t('notenarchiv', 'This link has expired. It is removed from this device at the next start with a network.')
+		return t('cantoria', 'This link has expired. It is removed from this device at the next start with a network.')
 	case 'unchecked':
-		return n('notenarchiv', 'Locked: not checked with the server for more than %n day. Please open this page once with a network.',
+		return n('cantoria', 'Locked: not checked with the server for more than %n day. Please open this page once with a network.',
 			'Locked: not checked with the server for more than %n days. Please open this page once with a network.', MAX_DAYS_UNCHECKED)
 	default:
 		return ''
@@ -157,18 +157,18 @@ onMounted(async () => {
 			<Attribution :credits="excerpt.credits ?? []" :notices="excerpt.notices ?? []" />
 			<NcNoteCard type="info">
 				{{ excerpt.measureFrom === null
-					? t('notenarchiv', 'A piece shared by the choir. Playback comes from a simple synthesizer in your browser; it is no substitute for a recording.')
-					: t('notenarchiv', 'An excerpt of a score, shared by the choir. Playback comes from a simple synthesizer in your browser; it is no substitute for a recording.') }}
+					? t('cantoria', 'A piece shared by the choir. Playback comes from a simple synthesizer in your browser; it is no substitute for a recording.')
+					: t('cantoria', 'An excerpt of a score, shared by the choir. Playback comes from a simple synthesizer in your browser; it is no substitute for a recording.') }}
 			</NcNoteCard>
 			<NcNoteCard v-if="fromDevice" type="info" role="status">
-				{{ t('notenarchiv', 'No network: this piece is shown from this device. {checked}', { checked: checkedText }) }}
+				{{ t('cantoria', 'No network: this piece is shown from this device. {checked}', { checked: checkedText }) }}
 			</NcNoteCard>
 			<ScanFrame v-if="excerpt.scan && (!fromDevice || scanKept)"
 				collection="public"
 				:piece-key="token"
 				:title="excerpt.title" />
 			<p v-else-if="excerpt.scan" class="public-excerpt__composer">
-				{{ t('notenarchiv', 'The scan is not kept on this device.') }}
+				{{ t('cantoria', 'The scan is not kept on this device.') }}
 			</p>
 			<ExcerptViewer :xml="excerpt.xml"
 				:title="excerpt.title"
@@ -181,30 +181,30 @@ onMounted(async () => {
 				:can-play="excerpt.canPlay"
 				:practice-key="excerpt.practiceKey ?? null"
 				:offline="fromDevice" />
-			<section v-if="offlineOn" class="public-excerpt__device" :aria-label="t('notenarchiv', 'On this device')">
+			<section v-if="offlineOn" class="public-excerpt__device" :aria-label="t('cantoria', 'On this device')">
 				<NcCheckboxRadioSwitch type="switch"
 					:model-value="kept"
 					:disabled="fromDevice || keeping"
 					@update:model-value="(on: boolean) => setKept(on, false)">
-					{{ t('notenarchiv', 'Keep on this device') }}
+					{{ t('cantoria', 'Keep on this device') }}
 				</NcCheckboxRadioSwitch>
 				<NcCheckboxRadioSwitch v-if="kept && excerpt.scan"
 					type="switch"
 					:model-value="scanKept"
 					:disabled="fromDevice || keeping"
 					@update:model-value="(on: boolean) => setKept(true, on)">
-					{{ t('notenarchiv', 'With the scan (PDF)') }}
+					{{ t('cantoria', 'With the scan (PDF)') }}
 				</NcCheckboxRadioSwitch>
 				<p class="public-excerpt__composer">
 					{{ kept
-						? t('notenarchiv', 'Kept in this browser: this page opens without a network, while the link is valid. Open it once with a network at least every {days} days.', { days: MAX_DAYS_UNCHECKED })
-						: t('notenarchiv', 'Keep this piece in this browser to view, play and practise it without a network.') }}
+						? t('cantoria', 'Kept in this browser: this page opens without a network, while the link is valid. Open it once with a network at least every {days} days.', { days: MAX_DAYS_UNCHECKED })
+						: t('cantoria', 'Keep this piece in this browser to view, play and practise it without a network.') }}
 				</p>
 				<p v-if="kept && lockText" class="public-excerpt__composer">
 					{{ lockText }}
 				</p>
 				<p v-if="keeping" class="public-excerpt__composer">
-					{{ t('notenarchiv', 'Keeping on this device …') }}
+					{{ t('cantoria', 'Keeping on this device …') }}
 				</p>
 				<NcNoteCard v-if="keepError" type="error" role="alert">
 					{{ keepError }}
@@ -215,8 +215,8 @@ onMounted(async () => {
 			</section>
 		</template>
 		<NcEmptyContent v-else
-			:name="t('notenarchiv', 'The score cannot be shown')"
-			:description="t('notenarchiv', 'Please reload the page. If it stays empty, the link may no longer be valid.')">
+			:name="t('cantoria', 'The score cannot be shown')"
+			:description="t('cantoria', 'Please reload the page. If it stays empty, the link may no longer be valid.')">
 			<template #icon>
 				<NcIconSvgWrapper :path="mdiAlertCircleOutline" />
 			</template>
@@ -229,7 +229,7 @@ onMounted(async () => {
    clips it: the app scrolls in its own element, as in the other apps.
    Without this the page cannot be scrolled at all, on a phone not even to
    the score. */
-#notenarchiv-public {
+#cantoria-public {
 	flex: 1 1 auto;
 	min-width: 0;
 	overflow-y: auto;

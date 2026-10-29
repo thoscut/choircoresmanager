@@ -3,15 +3,15 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Service;
+namespace OCA\Cantoria\Tests\Unit\Service;
 
-use OCA\Notenarchiv\Exception\AccessDeniedException;
-use OCA\Notenarchiv\Service\Roles;
-use OCA\Notenarchiv\Settings\Admin;
+use OCA\Cantoria\Exception\AccessDeniedException;
+use OCA\Cantoria\Service\Roles;
+use OCA\Cantoria\Settings\Admin;
 use OCP\IAppConfig;
 use OCP\IGroupManager;
 use OCP\IUser;
@@ -54,7 +54,7 @@ final class RolesTest extends TestCase {
 		$settings = $this->createStub(ISettingsManager::class);
 		$settings->method('getAllowedAdminSettings')->willReturnCallback(function (string $section, IUser $user): array {
 			$this->settingsCalls++;
-			self::assertSame('notenarchiv', $section);
+			self::assertSame('cantoria', $section);
 			if ($this->settingsFail) {
 				throw new \RuntimeException('broken settings class of another app');
 			}

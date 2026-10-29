@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -53,7 +53,7 @@ describe('scan beside the score', () => {
 		storeScanPage(5, 1, 4)
 		expect(storedScanPage(5, 1)).toBe(4)
 		expect(storedScanPage(5, 2)).toBe(1)
-		window.localStorage.setItem('notenarchiv.scanPage.5.2', 'nonsense')
+		window.localStorage.setItem('cantoria.scanPage.5.2', 'nonsense')
 		expect(storedScanPage(5, 2)).toBe(1)
 	})
 })

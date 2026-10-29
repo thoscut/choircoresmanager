@@ -3,22 +3,22 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Service;
+namespace OCA\Cantoria\Service;
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Db\ArchiveFile;
-use OCA\Notenarchiv\Db\ArchiveFileMapper;
-use OCA\Notenarchiv\Db\Copy;
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\TranscriptionReportMapper;
-use OCA\Notenarchiv\Db\WorkVersion;
-use OCA\Notenarchiv\Db\WorkVersionMapper;
-use OCA\Notenarchiv\Exception\InvalidInputException;
-use OCA\Notenarchiv\Exception\UserFacingException;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Db\ArchiveFile;
+use OCA\Cantoria\Db\ArchiveFileMapper;
+use OCA\Cantoria\Db\Copy;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Db\TranscriptionReportMapper;
+use OCA\Cantoria\Db\WorkVersion;
+use OCA\Cantoria\Db\WorkVersionMapper;
+use OCA\Cantoria\Exception\InvalidInputException;
+use OCA\Cantoria\Exception\UserFacingException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Files\File;
 use OCP\Files\Folder;
@@ -120,7 +120,7 @@ class FileSyncService {
 
 	/**
 	 * @return array<string, mixed> report
-	 * @throws \OCA\Notenarchiv\Exception\RunInProgressException while another sync runs
+	 * @throws \OCA\Cantoria\Exception\RunInProgressException while another sync runs
 	 */
 	public function sync(string $uid): array {
 		return $this->runLock->run(RunLock::FILE_SYNC, $uid, function () use ($uid): array {
@@ -387,7 +387,7 @@ class FileSyncService {
 			} catch (UserFacingException $e) {
 				$counts['failed'][] = ['path' => $path, 'error' => $this->translate($e->getMessage(), $e->getParameters())];
 			} catch (\Throwable $e) {
-				$this->logger->error('Notenarchiv: reading the report ' . $path . ' failed: ' . $e->getMessage(), ['exception' => $e]);
+				$this->logger->error('Cantoria: reading the report ' . $path . ' failed: ' . $e->getMessage(), ['exception' => $e]);
 				$counts['failed'][] = ['path' => $path, 'error' => $this->l->t('Internal error. Details are in the Nextcloud log.')];
 			}
 		}

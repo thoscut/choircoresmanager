@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -155,10 +155,10 @@ export function hasChanges(report: MirrorReport): boolean {
 export function reportSections(report: MirrorReport): { key: 'copied' | 'replaced' | 'removed' | 'skipped', title: string, entries: MirrorEntry[] }[] {
 	const preview = report.dryRun
 	const sections = [
-		{ key: 'copied' as const, title: preview ? t('notenarchiv', 'Would be copied') : t('notenarchiv', 'Copied'), entries: report.copied },
-		{ key: 'replaced' as const, title: preview ? t('notenarchiv', 'Would be replaced') : t('notenarchiv', 'Replaced'), entries: report.replaced },
-		{ key: 'removed' as const, title: preview ? t('notenarchiv', 'Would be removed') : t('notenarchiv', 'Removed'), entries: report.removed },
-		{ key: 'skipped' as const, title: preview ? t('notenarchiv', 'Would be skipped') : t('notenarchiv', 'Skipped'), entries: report.skipped },
+		{ key: 'copied' as const, title: preview ? t('cantoria', 'Would be copied') : t('cantoria', 'Copied'), entries: report.copied },
+		{ key: 'replaced' as const, title: preview ? t('cantoria', 'Would be replaced') : t('cantoria', 'Replaced'), entries: report.replaced },
+		{ key: 'removed' as const, title: preview ? t('cantoria', 'Would be removed') : t('cantoria', 'Removed'), entries: report.removed },
+		{ key: 'skipped' as const, title: preview ? t('cantoria', 'Would be skipped') : t('cantoria', 'Skipped'), entries: report.skipped },
 	]
 	return sections.filter((section) => section.entries.length > 0)
 }

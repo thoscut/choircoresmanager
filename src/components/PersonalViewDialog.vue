@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -52,10 +52,10 @@ const views = computed(() => HIDEABLE_VIEWS
  */
 function cardLabel(key: string): string {
 	if (key === DUE_CONCERTS) {
-		return t('notenarchiv', 'Concert deadlines')
+		return t('cantoria', 'Concert deadlines')
 	}
 	if (key === DUE_TASKS) {
-		return t('notenarchiv', 'Tasks for your roles')
+		return t('cantoria', 'Tasks for your roles')
 	}
 	return dueCardLabel(key, 2, key)
 }
@@ -78,7 +78,7 @@ async function save(): Promise<void> {
 		if (meta.value !== null) {
 			meta.value = { ...meta.value, personalView: saved }
 		}
-		showSuccess(t('notenarchiv', 'Your view has been saved.'))
+		showSuccess(t('cantoria', 'Your view has been saved.'))
 		close()
 	} catch (caught) {
 		error.value = errorMessage(caught)
@@ -89,20 +89,20 @@ async function save(): Promise<void> {
 </script>
 
 <template>
-	<ActionDialog :name="t('notenarchiv', 'Customize view')"
-		:submit-label="t('notenarchiv', 'Save view')"
+	<ActionDialog :name="t('cantoria', 'Customize view')"
+		:submit-label="t('cantoria', 'Save view')"
 		:busy="busy"
 		:error="error"
 		@submit="save"
 		@close="close">
 		<p>
-			{{ t('notenarchiv', 'Hide what you do not need. This only changes what you see: your permissions stay the same, and hidden areas still open through links and notifications.') }}
+			{{ t('cantoria', 'Hide what you do not need. This only changes what you see: your permissions stay the same, and hidden areas still open through links and notifications.') }}
 		</p>
 
 		<fieldset class="personal-view__group">
-			<legend>{{ t('notenarchiv', 'Navigation') }}</legend>
+			<legend>{{ t('cantoria', 'Navigation') }}</legend>
 			<p v-if="views.length === 0" class="personal-view__muted">
-				{{ t('notenarchiv', 'There is nothing to hide here.') }}
+				{{ t('cantoria', 'There is nothing to hide here.') }}
 			</p>
 			<NcCheckboxRadioSwitch v-for="entry in views"
 				:key="entry.view"
@@ -113,9 +113,9 @@ async function save(): Promise<void> {
 		</fieldset>
 
 		<fieldset class="personal-view__group">
-			<legend>{{ t('notenarchiv', 'Start page') }}</legend>
+			<legend>{{ t('cantoria', 'Start page') }}</legend>
 			<p v-if="cards.length === 0" class="personal-view__muted">
-				{{ t('notenarchiv', 'There is nothing to hide here.') }}
+				{{ t('cantoria', 'There is nothing to hide here.') }}
 			</p>
 			<NcCheckboxRadioSwitch v-for="card in cards"
 				:key="card.key"

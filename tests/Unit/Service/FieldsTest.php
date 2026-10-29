@@ -3,17 +3,17 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Service;
+namespace OCA\Cantoria\Tests\Unit\Service;
 
 use Doctrine\DBAL\Schema\Table;
-use OCA\Notenarchiv\Service\CatalogCsv;
-use OCA\Notenarchiv\Service\Fields;
-use OCA\Notenarchiv\Service\Roles;
-use OCA\Notenarchiv\Tests\Unit\Support\MigratedSchema;
+use OCA\Cantoria\Service\CatalogCsv;
+use OCA\Cantoria\Service\Fields;
+use OCA\Cantoria\Service\Roles;
+use OCA\Cantoria\Tests\Unit\Support\MigratedSchema;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 

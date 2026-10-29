@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -102,14 +102,14 @@ async function resolve(item: EventItem): Promise<void> {
 		copyId = Number(choice)
 	}
 	if (copyId === 0 || Number.isNaN(copyId)) {
-		itemError[item.id] = t('notenarchiv', 'Please choose a copy.')
+		itemError[item.id] = t('cantoria', 'Please choose a copy.')
 		return
 	}
 	busyId.value = item.id
 	itemError[item.id] = ''
 	try {
 		await resolveEventItem(item.id, copyId)
-		showSuccess(t('notenarchiv', 'The programme line has been assigned.'))
+		showSuccess(t('cantoria', 'The programme line has been assigned.'))
 		items.value = items.value.filter((other) => other.id !== item.id)
 		await loadEntries()
 	} catch (caught) {
@@ -122,57 +122,57 @@ async function resolve(item: EventItem): Promise<void> {
 
 <template>
 	<div class="ambiguous-view">
-		<ViewHeader :title="t('notenarchiv', 'Unclear programme lines')"
-			:description="t('notenarchiv', 'Lines of imported programmes whose shelf mark is not clear. Choose the right copy or confirm that the piece is not in the archive.')"
+		<ViewHeader :title="t('cantoria', 'Unclear programme lines')"
+			:description="t('cantoria', 'Lines of imported programmes whose shelf mark is not clear. Choose the right copy or confirm that the piece is not in the archive.')"
 			printable
 			reloadable
 			:loading="loading"
 			@reload="load" />
 
 		<div class="ambiguous-view__content">
-			<NcEmptyContent v-if="!loaded && loading" :name="t('notenarchiv', 'Loading …')">
+			<NcEmptyContent v-if="!loaded && loading" :name="t('cantoria', 'Loading …')">
 				<template #icon>
 					<NcLoadingIcon :size="64" />
 				</template>
 			</NcEmptyContent>
 			<NcEmptyContent v-else-if="!loaded && error"
-				:name="t('notenarchiv', 'The list could not be loaded')"
+				:name="t('cantoria', 'The list could not be loaded')"
 				:description="error">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiAlertCircleOutline" />
 				</template>
 				<template #action>
 					<NcButton @click="load">
-						{{ t('notenarchiv', 'Try again') }}
+						{{ t('cantoria', 'Try again') }}
 					</NcButton>
 				</template>
 			</NcEmptyContent>
 			<NcEmptyContent v-else-if="items.length === 0"
-				:name="t('notenarchiv', 'All programme lines are assigned')"
-				:description="t('notenarchiv', 'There are no unclear shelf marks.')">
+				:name="t('cantoria', 'All programme lines are assigned')"
+				:description="t('cantoria', 'There are no unclear shelf marks.')">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiCheckCircleOutline" />
 				</template>
 			</NcEmptyContent>
 			<template v-else>
 				<p class="ambiguous-view__count">
-					{{ n('notenarchiv', '%n unclear line', '%n unclear lines', items.length) }}
+					{{ n('cantoria', '%n unclear line', '%n unclear lines', items.length) }}
 				</p>
 				<ul class="ambiguous-view__list">
 					<li v-for="item in items" :key="item.id" class="ambiguous-item">
 						<p class="ambiguous-item__title">
-							{{ item.title_text || t('notenarchiv', '(no title)') }}
+							{{ item.title_text || t('cantoria', '(no title)') }}
 							<span v-if="item.composer_text" class="ambiguous-item__muted">{{ item.composer_text }}</span>
 						</p>
 						<p class="ambiguous-item__muted">
 							{{ eventText(item) }}
 							<template v-if="item.candidates">
-								· {{ t('notenarchiv', 'Candidates: {candidates}', { candidates: item.candidates }) }}
+								· {{ t('cantoria', 'Candidates: {candidates}', { candidates: item.candidates }) }}
 							</template>
 						</p>
 						<fieldset v-if="canPlanEvents" class="ambiguous-item__choices no-print">
 							<legend class="hidden-visually">
-								{{ t('notenarchiv', 'Assign: {title}', { title: item.title_text ?? '' }) }}
+								{{ t('cantoria', 'Assign: {title}', { title: item.title_text ?? '' }) }}
 							</legend>
 							<NcCheckboxRadioSwitch v-for="candidate in candidates(item)"
 								:key="candidate.id"
@@ -189,18 +189,18 @@ async function resolve(item: EventItem): Promise<void> {
 								type="radio"
 								value="other"
 								:name="`ambiguous-${item.id}`">
-								{{ t('notenarchiv', 'Another copy') }}
+								{{ t('cantoria', 'Another copy') }}
 							</NcCheckboxRadioSwitch>
 							<NcSelect v-if="choices[item.id] === 'other'"
 								v-model="others[item.id]"
 								class="ambiguous-item__other"
-								:input-label="t('notenarchiv', 'Copy')"
+								:input-label="t('cantoria', 'Copy')"
 								:options="copyOptions" />
 							<NcCheckboxRadioSwitch v-model="choices[item.id]"
 								type="radio"
 								value="none"
 								:name="`ambiguous-${item.id}`">
-								{{ t('notenarchiv', 'Not in the archive') }}
+								{{ t('cantoria', 'Not in the archive') }}
 							</NcCheckboxRadioSwitch>
 							<div>
 								<NcButton variant="primary"
@@ -209,7 +209,7 @@ async function resolve(item: EventItem): Promise<void> {
 									<template v-if="busyId === item.id" #icon>
 										<NcLoadingIcon />
 									</template>
-									{{ t('notenarchiv', 'Assign') }}
+									{{ t('cantoria', 'Assign') }}
 								</NcButton>
 							</div>
 							<NcNoteCard v-if="itemError[item.id]" type="error" role="alert">

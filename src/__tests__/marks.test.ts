@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -15,13 +15,13 @@ describe('passages to practise', () => {
 		expect(storedMarks('copy:1')).toEqual([{ name: 'Fuge', from: '5', to: '12' }])
 		expect(storedMarks('copy:2')).toEqual([])
 		storeMarks('copy:1', [])
-		expect(window.localStorage.getItem('notenarchiv.marks.copy:1')).toBeNull()
+		expect(window.localStorage.getItem('cantoria.marks.copy:1')).toBeNull()
 	})
 
 	it('ignore broken entries in the storage', () => {
-		window.localStorage.setItem('notenarchiv.marks.copy:1', '{no json')
+		window.localStorage.setItem('cantoria.marks.copy:1', '{no json')
 		expect(storedMarks('copy:1')).toEqual([])
-		window.localStorage.setItem('notenarchiv.marks.copy:1', JSON.stringify([{ name: 'A', from: '1', to: '2' }, { name: 3 }, null]))
+		window.localStorage.setItem('cantoria.marks.copy:1', JSON.stringify([{ name: 'A', from: '1', to: '2' }, { name: 3 }, null]))
 		expect(storedMarks('copy:1')).toEqual([{ name: 'A', from: '1', to: '2' }])
 	})
 

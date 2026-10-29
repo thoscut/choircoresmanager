@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -61,11 +61,11 @@ watch(() => props.target, () => {
 	load()
 })
 
-const title = computed(() => props.target === 'portal' ? t('notenarchiv', 'Singers\' portal') : t('notenarchiv', 'Print station'))
+const title = computed(() => props.target === 'portal' ? t('cantoria', 'Singers\' portal') : t('cantoria', 'Print station'))
 
 const description = computed(() => props.target === 'portal'
-	? t('notenarchiv', 'Target and actual state of the singers\' portal: what has to be removed or added. Only confirmed public domain versions or versions with a license may be there, and only the version valid for the choir.')
-	: t('notenarchiv', 'Which versions may be printed at the print station: confirmed public domain or a license for the print station, and the version valid for the choir.'))
+	? t('cantoria', 'Target and actual state of the singers\' portal: what has to be removed or added. Only confirmed public domain versions or versions with a license may be there, and only the version valid for the choir.')
+	: t('cantoria', 'Which versions may be printed at the print station: confirmed public domain or a license for the print station, and the version valid for the choir.'))
 
 interface Option {
 	id: ReleaseStatus | ''
@@ -73,14 +73,14 @@ interface Option {
 }
 
 const statusOptions = computed<Option[]>(() => [
-	{ id: '', label: t('notenarchiv', 'All statuses') },
+	{ id: '', label: t('cantoria', 'All statuses') },
 	...ORDER.filter((status) => all.value || (status !== 'blocked' && status !== 'other_version_valid'))
 		.map((status) => ({ id: status, label: releaseStatusLabel(status) })),
 ])
 
 /** The filters in words, for the header of the printout */
 const printFilter = computed(() => [statusOption.value?.label ?? '',
-	all.value ? t('notenarchiv', 'Also versions that are not released or where another version is valid') : ''].filter((part) => part !== '').join(', '))
+	all.value ? t('cantoria', 'Also versions that are not released or where another version is valid') : ''].filter((part) => part !== '').join(', '))
 
 const statusOption = computed({
 	get: () => statusOptions.value.find((option) => option.id === releaseFilter.value) ?? statusOptions.value[0],
@@ -91,16 +91,16 @@ const statusOption = computed({
 
 /** Empty list: with a status chosen, nothing has it; otherwise nothing is released. */
 const emptyName = computed(() => releaseFilter.value !== '' || all.value
-	? t('notenarchiv', 'Nothing to show')
-	: t('notenarchiv', 'Nothing released yet'))
+	? t('cantoria', 'Nothing to show')
+	: t('cantoria', 'Nothing released yet'))
 
 const emptyDescription = computed(() => {
 	if (releaseFilter.value !== '' || all.value) {
-		return t('notenarchiv', 'No version has this status.')
+		return t('cantoria', 'No version has this status.')
 	}
 	return props.target === 'portal'
-		? t('notenarchiv', 'No version is released for the singers\' portal, and nothing has to be taken out. Releases are set in the "Rights" tab of a copy.')
-		: t('notenarchiv', 'No version is released for the print station. Releases are set in the "Rights" tab of a copy.')
+		? t('cantoria', 'No version is released for the singers\' portal, and nothing has to be taken out. Releases are set in the "Rights" tab of a copy.')
+		: t('cantoria', 'No version is released for the print station. Releases are set in the "Rights" tab of a copy.')
 })
 
 const groups = computed(() => ORDER
@@ -116,17 +116,17 @@ const groups = computed(() => ORDER
 function groupHint(status: ReleaseStatus): string {
 	switch (status) {
 	case 'remove':
-		return t('notenarchiv', 'In the portal but no longer released: take out.')
+		return t('cantoria', 'In the portal but no longer released: take out.')
 	case 'add':
-		return t('notenarchiv', 'Released and valid for the choir, not yet there: add.')
+		return t('cantoria', 'Released and valid for the choir, not yet there: add.')
 	case 'not_decided':
-		return t('notenarchiv', 'Released, but no version of the work is valid for the choir yet.')
+		return t('cantoria', 'Released, but no version of the work is valid for the choir yet.')
 	case 'ok':
-		return t('notenarchiv', 'In the portal and released.')
+		return t('cantoria', 'In the portal and released.')
 	case 'other_version_valid':
-		return t('notenarchiv', 'Released, but another version of the work is valid for the choir.')
+		return t('cantoria', 'Released, but another version of the work is valid for the choir.')
 	case 'blocked':
-		return t('notenarchiv', 'Not released.')
+		return t('cantoria', 'Not released.')
 	default:
 		return ''
 	}
@@ -138,8 +138,8 @@ function groupHint(status: ReleaseStatus): string {
  * @param row - list row
  */
 function rightsText(row: ReleaseRow): string {
-	const status = row.rightsStatus ? choiceLabel('version', 'rights_status', row.rightsStatus) : t('notenarchiv', 'not assessed')
-	return row.confirmed ? t('notenarchiv', '{status}, confirmed', { status }) : status
+	const status = row.rightsStatus ? choiceLabel('version', 'rights_status', row.rightsStatus) : t('cantoria', 'not assessed')
+	return row.confirmed ? t('cantoria', '{status}, confirmed', { status }) : status
 }
 </script>
 
@@ -156,12 +156,12 @@ function rightsText(row: ReleaseRow): string {
 		<div class="release-list__filters no-print">
 			<NcSelect v-model="statusOption"
 				class="release-list__status"
-				:input-label="t('notenarchiv', 'Status')"
+				:input-label="t('cantoria', 'Status')"
 				:options="statusOptions"
 				:clearable="false"
 				:searchable="false" />
 			<NcCheckboxRadioSwitch v-model="all" type="switch">
-				{{ t('notenarchiv', 'Also versions that are not released or where another version is valid') }}
+				{{ t('cantoria', 'Also versions that are not released or where another version is valid') }}
 			</NcCheckboxRadioSwitch>
 		</div>
 
@@ -170,10 +170,10 @@ function rightsText(row: ReleaseRow): string {
 				class="release-list__mirror no-print"
 				aria-labelledby="release-print-mirror">
 				<h3 id="release-print-mirror">
-					{{ t('notenarchiv', 'Mirror folder for the print station') }}
+					{{ t('cantoria', 'Mirror folder for the print station') }}
 				</h3>
 				<p class="release-list__hint">
-					{{ t('notenarchiv', 'The PDF scans of the versions this list shows (to add and not decided), copied into a folder of the print station.') }}
+					{{ t('cantoria', 'The PDF scans of the versions this list shows (to add and not decided), copied into a folder of the print station.') }}
 				</p>
 				<PrintMirrorSync />
 			</section>
@@ -181,10 +181,10 @@ function rightsText(row: ReleaseRow): string {
 				class="release-list__mirror no-print"
 				aria-labelledby="release-choir-handover">
 				<h3 id="release-choir-handover">
-					{{ t('notenarchiv', 'Hand-over to the choir system') }}
+					{{ t('cantoria', 'Hand-over to the choir system') }}
 				</h3>
 				<p class="release-list__hint">
-					{{ t('notenarchiv', 'The files of the versions released for the portal (in order, to add and not decided), with a list of the pieces and the conductor\'s notes, copied into a folder that the choir system reads.') }}
+					{{ t('cantoria', 'The files of the versions released for the portal (in order, to add and not decided), with a list of the pieces and the conductor\'s notes, copied into a folder that the choir system reads.') }}
 				</p>
 				<PrintMirrorSync kind="handover" />
 			</section>
@@ -192,27 +192,27 @@ function rightsText(row: ReleaseRow): string {
 				class="release-list__mirror no-print"
 				aria-labelledby="release-choir-compare">
 				<h3 id="release-choir-compare">
-					{{ t('notenarchiv', 'Compare with the choir system') }}
+					{{ t('cantoria', 'Compare with the choir system') }}
 				</h3>
 				<p class="release-list__hint">
-					{{ t('notenarchiv', 'Choose an export of the choir system (a list with the shelf mark, or titles that start with it). The app compares it with this list; what differs becomes a proposal in the inbox instead of a change.') }}
+					{{ t('cantoria', 'Choose an export of the choir system (a list with the shelf mark, or titles that start with it). The app compares it with this list; what differs becomes a proposal in the inbox instead of a change.') }}
 				</p>
 				<ChoirSystemCompare />
 			</section>
-			<NcEmptyContent v-if="!loaded && loading" :name="t('notenarchiv', 'Loading …')">
+			<NcEmptyContent v-if="!loaded && loading" :name="t('cantoria', 'Loading …')">
 				<template #icon>
 					<NcLoadingIcon :size="64" />
 				</template>
 			</NcEmptyContent>
 			<NcEmptyContent v-else-if="!loaded && error"
-				:name="t('notenarchiv', 'The list could not be loaded')"
+				:name="t('cantoria', 'The list could not be loaded')"
 				:description="error">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiAlertCircleOutline" />
 				</template>
 				<template #action>
 					<NcButton @click="load">
-						{{ t('notenarchiv', 'Try again') }}
+						{{ t('cantoria', 'Try again') }}
 					</NcButton>
 				</template>
 			</NcEmptyContent>
@@ -227,7 +227,7 @@ function rightsText(row: ReleaseRow): string {
 						<template #icon>
 							<NcIconSvgWrapper :path="mdiBookOpenPageVariantOutline" />
 						</template>
-						{{ t('notenarchiv', 'Open the catalog') }}
+						{{ t('cantoria', 'Open the catalog') }}
 					</NcButton>
 				</template>
 			</NcEmptyContent>
@@ -244,27 +244,27 @@ function rightsText(row: ReleaseRow): string {
 				</p>
 				<table class="release-list__table">
 					<caption class="hidden-visually">
-						{{ n('notenarchiv', '%n version: {status}', '%n versions: {status}', group.rows.length, { status: releaseStatusLabel(group.status) }) }}
+						{{ n('cantoria', '%n version: {status}', '%n versions: {status}', group.rows.length, { status: releaseStatusLabel(group.status) }) }}
 					</caption>
 					<thead>
 						<tr>
 							<th scope="col">
-								{{ t('notenarchiv', 'Shelf mark') }}
+								{{ t('cantoria', 'Shelf mark') }}
 							</th>
 							<th scope="col">
-								{{ t('notenarchiv', 'Title') }}
+								{{ t('cantoria', 'Title') }}
 							</th>
 							<th scope="col">
-								{{ t('notenarchiv', 'Rights') }}
+								{{ t('cantoria', 'Rights') }}
 							</th>
 							<th scope="col">
-								{{ t('notenarchiv', 'Valid since') }}
+								{{ t('cantoria', 'Valid since') }}
 							</th>
 							<th v-if="target === 'portal'" scope="col">
-								{{ t('notenarchiv', 'In the portal since') }}
+								{{ t('cantoria', 'In the portal since') }}
 							</th>
 							<th scope="col">
-								{{ t('notenarchiv', 'Reason') }}
+								{{ t('cantoria', 'Reason') }}
 							</th>
 						</tr>
 					</thead>
@@ -275,7 +275,7 @@ function rightsText(row: ReleaseRow): string {
 									:key="copy.id"
 									type="button"
 									class="release-list__shelfmark"
-									:aria-label="t('notenarchiv', 'Open {shelfmark}', { shelfmark: copy.shelfmark })"
+									:aria-label="t('cantoria', 'Open {shelfmark}', { shelfmark: copy.shelfmark })"
 									@click="openEntry(copy.id, 'rights')">
 									{{ copy.shelfmark }}
 								</button>

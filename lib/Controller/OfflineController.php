@@ -3,14 +3,14 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Controller;
+namespace OCA\Cantoria\Controller;
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Service\Modules;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Service\Modules;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
@@ -59,7 +59,7 @@ class OfflineController extends Controller {
 	#[NoCSRFRequired]
 	#[AnonRateLimit(limit: 30, period: 600)]
 	#[UserRateLimit(limit: 60, period: 600)]
-	#[BruteForceProtection(action: 'notenarchiv_offline_worker')]
+	#[BruteForceProtection(action: 'cantoria_offline_worker')]
 	#[FrontpageRoute(verb: 'GET', url: '/offline-worker')]
 	public function worker(): Response {
 		$script = self::REMOVING_WORKER;
@@ -69,7 +69,7 @@ class OfflineController extends Controller {
 				return new JSONResponse(['error' => $this->l->t('The app is not built.')], Http::STATUS_NOT_FOUND);
 			}
 			// A new version of the app gives a new worker, which drops the old cache of the pages
-			$script = str_replace('__NOTENARCHIV_VERSION__', $this->apps->getAppVersion(Application::APP_ID), $built);
+			$script = str_replace('__CANTORIA_VERSION__', $this->apps->getAppVersion(Application::APP_ID), $built);
 		}
 		$response = new DataDisplayResponse($script, Http::STATUS_OK, ['Content-Type' => 'text/javascript; charset=utf-8']);
 		$response->addHeader('X-Content-Type-Options', 'nosniff');
@@ -84,7 +84,7 @@ class OfflineController extends Controller {
 		self.addEventListener('install', () => self.skipWaiting())
 		self.addEventListener('activate', (event) => event.waitUntil((async () => {
 			for (const key of await caches.keys()) {
-				if (key.startsWith('notenarchiv-')) {
+				if (key.startsWith('cantoria-')) {
 					await caches.delete(key)
 				}
 			}

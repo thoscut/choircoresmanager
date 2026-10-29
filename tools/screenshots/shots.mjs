@@ -248,26 +248,26 @@ export const SHOTS = [
 		// Administration → Music archive: the roles and their groups
 		name: 'settings-roles', file: 'settings-roles.png', account: 'admin', ...en,
 		run: async (h) => {
-			await h.goto('/settings/admin/notenarchiv')
-			await h.page.waitForSelector('#notenarchiv-roles', { visible: true, timeout: 30000 })
-			await h.page.evaluate(() => document.querySelector('#notenarchiv-roles')?.scrollIntoView({ block: 'start' }))
+			await h.goto('/settings/admin/cantoria')
+			await h.page.waitForSelector('#cantoria-roles', { visible: true, timeout: 30000 })
+			await h.page.evaluate(() => document.querySelector('#cantoria-roles')?.scrollIntoView({ block: 'start' }))
 			await h.settle(1200)
-			return h.rect('#notenarchiv-roles', { pad: 0 })
+			return h.rect('#cantoria-roles', { pad: 0 })
 		},
 	},
 	{
 		// The access check of the archive folder, opened like the link of the app does
 		name: 'admin-settings', file: 'admin-settings.png', account: 'admin', ...en,
 		run: async (h) => {
-			await h.goto('/settings/admin/notenarchiv#notenarchiv-access')
-			await h.page.waitForSelector('#notenarchiv-access button', { visible: true, timeout: 30000 })
-			if (!(await h.page.$('#notenarchiv-access .access-check__table'))) {
-				await h.click('#notenarchiv-access button', h.t('Check access'))
+			await h.goto('/settings/admin/cantoria#cantoria-access')
+			await h.page.waitForSelector('#cantoria-access button', { visible: true, timeout: 30000 })
+			if (!(await h.page.$('#cantoria-access .access-check__table'))) {
+				await h.click('#cantoria-access button', h.t('Check access'))
 			}
-			await h.page.waitForSelector('#notenarchiv-access .access-check__table', { visible: true, timeout: 60000 })
-			await h.page.evaluate(() => document.querySelector('#notenarchiv-access')?.scrollIntoView({ block: 'start' }))
+			await h.page.waitForSelector('#cantoria-access .access-check__table', { visible: true, timeout: 60000 })
+			await h.page.evaluate(() => document.querySelector('#cantoria-access')?.scrollIntoView({ block: 'start' }))
 			await h.settle(1200)
-			return h.rect('#notenarchiv-access', { pad: 0 })
+			return h.rect('#cantoria-access', { pad: 0 })
 		},
 	},
 	{
@@ -367,7 +367,7 @@ export const SHOTS = [
 	{
 		name: 'shared-with-me', file: 'shared-with-me.png', account: 'member', ...en,
 		run: async (h) => {
-			await h.goto('/apps/notenarchiv/')
+			await h.goto('/apps/cantoria/')
 			await h.page.waitForSelector('.excerpt-viewer svg', { timeout: 60000 })
 			await h.settle(1500)
 		},
@@ -380,14 +380,14 @@ export const SHOTS = [
 			if (!link) {
 				throw new Error('No public link: run with --prepare')
 			}
-			await h.goto(`/apps/notenarchiv/p/${link.token}`)
+			await h.goto(`/apps/cantoria/p/${link.token}`)
 			await h.page.waitForSelector('.excerpt-viewer svg', { timeout: 60000 })
 			await h.settle(1500)
 		},
 	},
 	{
 		name: 'public-repertoire', file: 'public-repertoire.png', account: 'public', ...en,
-		run: async (h) => h.goto('/apps/notenarchiv/repertoire'),
+		run: async (h) => h.goto('/apps/cantoria/repertoire'),
 	},
 	{
 		name: 'folder-book', file: 'folder-book.png', account: 'librarian', ...en,
@@ -424,15 +424,15 @@ export const SHOTS = [
 	{
 		name: 'settings-print-mirror', file: 'settings-print-mirror.png', account: 'admin', ...en,
 		run: async (h) => {
-			await h.goto('/settings/admin/notenarchiv#notenarchiv-print-mirror')
-			await h.page.waitForSelector('#notenarchiv-print-mirror', { visible: true, timeout: 30000 })
+			await h.goto('/settings/admin/cantoria#cantoria-print-mirror')
+			await h.page.waitForSelector('#cantoria-print-mirror', { visible: true, timeout: 30000 })
 			await h.settle(1000)
-			await h.click('#notenarchiv-print-mirror button', h.t('Choose folder …'))
+			await h.click('#cantoria-print-mirror button', h.t('Choose folder …'))
 			await pickFolder(h, 'Print station')
-			await h.page.waitForFunction(() => document.querySelector('#notenarchiv-print-mirror')?.innerText.includes('fits'), { timeout: 30000 })
-			await h.page.evaluate(() => document.querySelector('#notenarchiv-print-mirror')?.scrollIntoView({ block: 'start' }))
+			await h.page.waitForFunction(() => document.querySelector('#cantoria-print-mirror')?.innerText.includes('fits'), { timeout: 30000 })
+			await h.page.evaluate(() => document.querySelector('#cantoria-print-mirror')?.scrollIntoView({ block: 'start' }))
 			await h.settle(800)
-			return h.rect('#notenarchiv-print-mirror', { pad: 0, fit: true })
+			return h.rect('#cantoria-print-mirror', { pad: 0, fit: true })
 		},
 	},
 	{

@@ -3,19 +3,19 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\BackgroundJob;
+namespace OCA\Cantoria\BackgroundJob;
 
-use OCA\Notenarchiv\Exception\InvalidInputException;
-use OCA\Notenarchiv\Exception\RunInProgressException;
-use OCA\Notenarchiv\Exception\UserFacingException;
-use OCA\Notenarchiv\Service\AnnualSnapshotService;
-use OCA\Notenarchiv\Service\AppSettings;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\RightsService;
+use OCA\Cantoria\Exception\InvalidInputException;
+use OCA\Cantoria\Exception\RunInProgressException;
+use OCA\Cantoria\Exception\UserFacingException;
+use OCA\Cantoria\Service\AnnualSnapshotService;
+use OCA\Cantoria\Service\AppSettings;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\RightsService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\IJob;
 use OCP\BackgroundJob\TimedJob;
@@ -66,12 +66,12 @@ class AnnualSnapshotJob extends TimedJob {
 				return;
 			}
 			$this->snapshots->setLastError(null);
-			$this->logger->info('Notenarchiv: annual snapshot ' . $result['name'] . ' stored');
+			$this->logger->info('Cantoria: annual snapshot ' . $result['name'] . ' stored');
 		} catch (RunInProgressException) {
 			// A snapshot by hand is being made; the job checks again in six hours.
 			return;
 		} catch (\Throwable $e) {
-			$this->logger->error('Notenarchiv: annual snapshot failed: ' . $e->getMessage(), ['exception' => $e]);
+			$this->logger->error('Cantoria: annual snapshot failed: ' . $e->getMessage(), ['exception' => $e]);
 			// Only messages meant for users are shown; internal details stay in the log.
 			$shown = $e instanceof UserFacingException ? $e
 				: new InvalidInputException('The automatic snapshot failed. Details are in the Nextcloud log; make a snapshot by hand or ask the administration.');

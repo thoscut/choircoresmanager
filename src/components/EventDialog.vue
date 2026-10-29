@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -48,7 +48,7 @@ const error = ref('')
 
 async function save(): Promise<void> {
 	if (draft.title.trim() === '') {
-		error.value = t('notenarchiv', 'Please enter a title.')
+		error.value = t('cantoria', 'Please enter a title.')
 		return
 	}
 	const input: EventInput = {
@@ -79,38 +79,38 @@ async function save(): Promise<void> {
 
 <template>
 	<ActionDialog :name="event
-			? (kind === 'concert' ? t('notenarchiv', 'Edit concert') : t('notenarchiv', 'Edit song list'))
-			: (kind === 'concert' ? t('notenarchiv', 'New concert') : t('notenarchiv', 'New song list'))"
-		:submit-label="t('notenarchiv', 'Save')"
+			? (kind === 'concert' ? t('cantoria', 'Edit concert') : t('cantoria', 'Edit song list'))
+			: (kind === 'concert' ? t('cantoria', 'New concert') : t('cantoria', 'New song list'))"
+		:submit-label="t('cantoria', 'Save')"
 		:busy="busy"
 		:error="error"
 		@submit="save"
 		@close="emit('close')">
-		<NcTextField v-model="draft.title" :label="t('notenarchiv', 'Title (required)')" required />
+		<NcTextField v-model="draft.title" :label="t('cantoria', 'Title (required)')" required />
 		<div class="event-dialog__row">
-			<DateField v-model="draft.date" :label="t('notenarchiv', 'Date')" />
+			<DateField v-model="draft.date" :label="t('cantoria', 'Date')" />
 			<NcTextField v-if="kind === 'song_list'"
 				v-model="draft.period"
-				:label="t('notenarchiv', 'Period, e.g. 2025/1 or 2018-Advent')" />
-			<NcTextField v-else v-model="draft.location" :label="t('notenarchiv', 'Location')" />
+				:label="t('cantoria', 'Period, e.g. 2025/1 or 2018-Advent')" />
+			<NcTextField v-else v-model="draft.location" :label="t('cantoria', 'Location')" />
 		</div>
 		<template v-if="kind === 'concert'">
 			<div class="event-dialog__row">
-				<DateField v-model="draft.startTime" type="time" :label="t('notenarchiv', 'Start time (optional)')" />
-				<DateField v-model="draft.endTime" type="time" :label="t('notenarchiv', 'End time (optional)')" />
+				<DateField v-model="draft.startTime" type="time" :label="t('cantoria', 'Start time (optional)')" />
+				<DateField v-model="draft.endTime" type="time" :label="t('cantoria', 'End time (optional)')" />
 			</div>
 			<p class="action-dialog__hint">
-				{{ t('notenarchiv', 'Local time at the venue. Without a time, the concert is an all-day entry in calendars.') }}
+				{{ t('cantoria', 'Local time at the venue. Without a time, the concert is an all-day entry in calendars.') }}
 			</p>
 			<NcCheckboxRadioSwitch v-model="draft.isPublic" type="switch">
-				{{ t('notenarchiv', 'Public concert') }}
+				{{ t('cantoria', 'Public concert') }}
 			</NcCheckboxRadioSwitch>
 			<NcCheckboxRadioSwitch v-model="draft.boardAgreed" type="switch">
-				{{ t('notenarchiv', 'The board has agreed') }}
+				{{ t('cantoria', 'The board has agreed') }}
 			</NcCheckboxRadioSwitch>
 		</template>
 		<NcTextArea v-model="draft.notes"
-			:label="t('notenarchiv', 'Notes')"
+			:label="t('cantoria', 'Notes')"
 			resize="vertical"
 			rows="3" />
 	</ActionDialog>

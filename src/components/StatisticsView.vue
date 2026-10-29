@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -66,7 +66,7 @@ async function load(): Promise<void> {
 		}
 		data.value = result
 		period.value = { ...result.period }
-		announcement.value = t('notenarchiv', 'Statistics for {from} to {to} loaded.', { from: result.period.from, to: result.period.to })
+		announcement.value = t('cantoria', 'Statistics for {from} to {to} loaded.', { from: result.period.from, to: result.period.to })
 	} catch (caught) {
 		if (request === latest) {
 			error.value = errorMessage(caught)
@@ -169,11 +169,11 @@ const shows = computed(() => ({
 }))
 
 const sections = computed(() => [
-	{ id: 'statistics-stock', label: t('notenarchiv', 'Stock') },
-	{ id: 'statistics-rights', label: t('notenarchiv', 'Rights') },
-	...(shows.value.concerts ? [{ id: 'statistics-repertoire', label: t('notenarchiv', 'Repertoire and performances') }] : []),
-	{ id: 'statistics-maintenance', label: t('notenarchiv', 'Maintenance') },
-	{ id: 'statistics-report', label: t('notenarchiv', 'Annual report') },
+	{ id: 'statistics-stock', label: t('cantoria', 'Stock') },
+	{ id: 'statistics-rights', label: t('cantoria', 'Rights') },
+	...(shows.value.concerts ? [{ id: 'statistics-repertoire', label: t('cantoria', 'Repertoire and performances') }] : []),
+	{ id: 'statistics-maintenance', label: t('cantoria', 'Maintenance') },
+	{ id: 'statistics-report', label: t('cantoria', 'Annual report') },
 ])
 
 /**
@@ -198,16 +198,16 @@ const keyFigures = computed(() => {
 	if (!stock) {
 		return []
 	}
-	const ofCopies = t('notenarchiv', 'of the copies')
-	const ofActive = t('notenarchiv', 'of the active copies')
+	const ofCopies = t('cantoria', 'of the copies')
+	const ofActive = t('cantoria', 'of the active copies')
 	return [
-		{ label: t('notenarchiv', 'Works'), value: stock.works, share: null, of: '' },
-		{ label: t('notenarchiv', 'Versions'), value: stock.versions, share: null, of: '' },
-		{ label: t('notenarchiv', 'Copies'), value: stock.copies, share: null, of: '' },
-		{ label: t('notenarchiv', 'Active copies'), value: stock.active, share: share(stock.active, stock.copies), of: ofCopies },
-		{ label: t('notenarchiv', 'Active copies with a file'), value: stock.activeWithFile, share: share(stock.activeWithFile, stock.active), of: ofActive },
-		{ label: t('notenarchiv', 'Active copies with MusicXML'), value: stock.activeWithMusicxml, share: share(stock.activeWithMusicxml, stock.active), of: ofActive },
-		{ label: t('notenarchiv', 'Internal preservation copies'), value: stock.preservationCopies, share: share(stock.preservationCopies, stock.copies), of: ofCopies },
+		{ label: t('cantoria', 'Works'), value: stock.works, share: null, of: '' },
+		{ label: t('cantoria', 'Versions'), value: stock.versions, share: null, of: '' },
+		{ label: t('cantoria', 'Copies'), value: stock.copies, share: null, of: '' },
+		{ label: t('cantoria', 'Active copies'), value: stock.active, share: share(stock.active, stock.copies), of: ofCopies },
+		{ label: t('cantoria', 'Active copies with a file'), value: stock.activeWithFile, share: share(stock.activeWithFile, stock.active), of: ofActive },
+		{ label: t('cantoria', 'Active copies with MusicXML'), value: stock.activeWithMusicxml, share: share(stock.activeWithMusicxml, stock.active), of: ofActive },
+		{ label: t('cantoria', 'Internal preservation copies'), value: stock.preservationCopies, share: share(stock.preservationCopies, stock.copies), of: ofCopies },
 	]
 })
 
@@ -224,7 +224,7 @@ const additionsMax = computed(() => maxOf(additions.value, (row) => row.total))
 
 const rightsRows = computed(() => (data.value?.rights.status ?? []).map((row) => ({
 	...row,
-	label: row.status === 'none' ? t('notenarchiv', 'No rights status') : choiceLabel('version', 'rights_status', row.status),
+	label: row.status === 'none' ? t('cantoria', 'No rights status') : choiceLabel('version', 'rights_status', row.status),
 })))
 const rightsMax = computed(() => maxOf(rightsRows.value, (row) => row.total))
 
@@ -234,11 +234,11 @@ const validRows = computed(() => {
 		return []
 	}
 	return [
-		{ label: t('notenarchiv', 'Works'), value: valid.works },
-		{ label: t('notenarchiv', 'With a valid version'), value: valid.withValid },
-		{ label: t('notenarchiv', 'Without a valid version'), value: valid.withoutValid },
-		{ label: t('notenarchiv', 'Without a valid version, with several versions'), value: valid.withoutValidSeveral },
-		{ label: t('notenarchiv', 'Current repertoire without a valid version'), value: valid.currentWithoutValid },
+		{ label: t('cantoria', 'Works'), value: valid.works },
+		{ label: t('cantoria', 'With a valid version'), value: valid.withValid },
+		{ label: t('cantoria', 'Without a valid version'), value: valid.withoutValid },
+		{ label: t('cantoria', 'Without a valid version, with several versions'), value: valid.withoutValidSeveral },
+		{ label: t('cantoria', 'Current repertoire without a valid version'), value: valid.currentWithoutValid },
 	]
 })
 
@@ -248,10 +248,10 @@ const licenseRows = computed(() => {
 		return []
 	}
 	return [
-		{ label: t('notenarchiv', 'Valid'), value: licenses.active },
-		{ label: n('notenarchiv', 'Ending within %n day', 'Ending within %n days', licenses.endingDays), value: licenses.ending },
-		{ label: t('notenarchiv', 'Ended'), value: licenses.ended },
-		{ label: t('notenarchiv', 'Not valid yet'), value: licenses.future },
+		{ label: t('cantoria', 'Valid'), value: licenses.active },
+		{ label: n('cantoria', 'Ending within %n day', 'Ending within %n days', licenses.endingDays), value: licenses.ending },
+		{ label: t('cantoria', 'Ended'), value: licenses.ended },
+		{ label: t('cantoria', 'Not valid yet'), value: licenses.future },
 	]
 })
 const licensesMax = computed(() => maxOf(licenseRows.value, (row) => row.value))
@@ -270,7 +270,7 @@ const PUBLICATION_STATUSES = ['free', 'blocked', 'internal', 'to_clarify', 'none
 
 const publicationRows = computed(() => PUBLICATION_STATUSES.map((status) => ({
 	status,
-	label: status === 'none' ? t('notenarchiv', 'Not set') : choiceLabel('version', 'publication_status', status),
+	label: status === 'none' ? t('cantoria', 'Not set') : choiceLabel('version', 'publication_status', status),
 	value: figure(data.value?.rights.publication, status),
 })))
 const publicationMax = computed(() => maxOf(publicationRows.value, (row) => row.value))
@@ -312,16 +312,16 @@ const inboxRows = computed(() => {
 	return [
 		...(shows.value.proposals
 			? [
-				{ label: t('notenarchiv', 'Open proposals'), value: maintenance.proposals.open },
-				{ label: t('notenarchiv', 'Open proposals older than 30 days'), value: maintenance.proposals.olderThan30Days },
+				{ label: t('cantoria', 'Open proposals'), value: maintenance.proposals.open },
+				{ label: t('cantoria', 'Open proposals older than 30 days'), value: maintenance.proposals.olderThan30Days },
 			]
 			: []),
-		{ label: t('notenarchiv', 'Files in the archive folder'), value: maintenance.checksums.files },
+		{ label: t('cantoria', 'Files in the archive folder'), value: maintenance.checksums.files },
 		...(shows.value.checksums
 			? [
-				{ label: t('notenarchiv', 'Files with a checksum'), value: maintenance.checksums.hashed },
-				{ label: t('notenarchiv', 'Files without a checksum yet'), value: maintenance.checksums.pending },
-				{ label: t('notenarchiv', 'Files changed without modification'), value: maintenance.checksums.mismatches },
+				{ label: t('cantoria', 'Files with a checksum'), value: maintenance.checksums.hashed },
+				{ label: t('cantoria', 'Files without a checksum yet'), value: maintenance.checksums.pending },
+				{ label: t('cantoria', 'Files changed without modification'), value: maintenance.checksums.mismatches },
 			]
 			: []),
 	]
@@ -338,8 +338,8 @@ const protectionMax = computed(() => maxOf(protectionYears.value, (row) => row.v
  * @param confirmed - whether it is confirmed
  */
 function rightsText(status: string | null, confirmed: boolean): string {
-	const label = status ? choiceLabel('version', 'rights_status', status) : t('notenarchiv', 'No rights status')
-	return confirmed ? t('notenarchiv', '{status}, confirmed', { status: label }) : label
+	const label = status ? choiceLabel('version', 'rights_status', status) : t('cantoria', 'No rights status')
+	return confirmed ? t('cantoria', '{status}, confirmed', { status: label }) : label
 }
 
 /**
@@ -350,13 +350,13 @@ function rightsText(status: string | null, confirmed: boolean): string {
 function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 	switch (key) {
 	case 'days30':
-		return t('notenarchiv', 'Up to 30 days old')
+		return t('cantoria', 'Up to 30 days old')
 	case 'days90':
-		return t('notenarchiv', '31 to 90 days old')
+		return t('cantoria', '31 to 90 days old')
 	case 'days365':
-		return t('notenarchiv', '91 to 365 days old')
+		return t('cantoria', '91 to 365 days old')
 	default:
-		return t('notenarchiv', 'Older')
+		return t('cantoria', 'Older')
 	}
 }
 </script>
@@ -364,8 +364,8 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 <template>
 	<div class="statistics-view"
 		:class="{ 'statistics-view--large': largePrint, 'statistics-view--print-report': printMode === 'report' }">
-		<ViewHeader :title="t('notenarchiv', 'Statistics')"
-			:description="t('notenarchiv', 'Figures for the board, the archive management and the conductor: stock, rights, repertoire and the state of maintenance. They contain no personal data of choir members.')"
+		<ViewHeader :title="t('cantoria', 'Statistics')"
+			:description="t('cantoria', 'Figures for the board, the archive management and the conductor: stock, rights, repertoire and the state of maintenance. They contain no personal data of choir members.')"
 			reloadable
 			:loading="loading"
 			@reload="reload">
@@ -374,13 +374,13 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiDownload" />
 					</template>
-					{{ t('notenarchiv', 'Statistics as CSV') }}
+					{{ t('cantoria', 'Statistics as CSV') }}
 				</NcButton>
 				<NcButton variant="secondary" :disabled="data === null" @click="print('overview')">
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiPrinterOutline" />
 					</template>
-					{{ t('notenarchiv', 'Print') }}
+					{{ t('cantoria', 'Print') }}
 				</NcButton>
 			</template>
 		</ViewHeader>
@@ -390,20 +390,20 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 				{{ announcement }}
 			</p>
 
-			<NcEmptyContent v-if="data === null && loading" :name="t('notenarchiv', 'Loading …')">
+			<NcEmptyContent v-if="data === null && loading" :name="t('cantoria', 'Loading …')">
 				<template #icon>
 					<NcLoadingIcon :size="64" />
 				</template>
 			</NcEmptyContent>
 			<NcEmptyContent v-else-if="data === null && error"
-				:name="t('notenarchiv', 'The statistics could not be loaded')"
+				:name="t('cantoria', 'The statistics could not be loaded')"
 				:description="error">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiAlertCircleOutline" />
 				</template>
 				<template #action>
 					<NcButton @click="load">
-						{{ t('notenarchiv', 'Try again') }}
+						{{ t('cantoria', 'Try again') }}
 					</NcButton>
 				</template>
 			</NcEmptyContent>
@@ -417,24 +417,24 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 					<div class="statistics-view__controls no-print">
 						<NcSelect v-model="fromOption"
 							class="statistics-view__year"
-							:input-label="t('notenarchiv', 'From year')"
+							:input-label="t('cantoria', 'From year')"
 							:options="yearOptions"
 							:clearable="false" />
 						<NcSelect v-model="toOption"
 							class="statistics-view__year"
-							:input-label="t('notenarchiv', 'To year')"
+							:input-label="t('cantoria', 'To year')"
 							:options="yearOptions"
 							:clearable="false" />
 						<NcCheckboxRadioSwitch v-model="largePrint" type="switch">
-							{{ t('notenarchiv', 'Large print') }}
+							{{ t('cantoria', 'Large print') }}
 						</NcCheckboxRadioSwitch>
 					</div>
 
 					<p class="statistics-view__period">
-						{{ t('notenarchiv', 'Period {period}, as of {date}. Figures without a year are those of today.', { period: periodText, date: formatDate(data.today) }) }}
+						{{ t('cantoria', 'Period {period}, as of {date}. Figures without a year are those of today.', { period: periodText, date: formatDate(data.today) }) }}
 					</p>
 
-					<nav class="statistics-view__nav no-print" :aria-label="t('notenarchiv', 'Sections of the statistics')">
+					<nav class="statistics-view__nav no-print" :aria-label="t('cantoria', 'Sections of the statistics')">
 						<ul>
 							<li v-for="section in sections" :key="section.id">
 								<a :href="'#' + section.id" @click="goTo($event, section.id)">{{ section.label }}</a>
@@ -445,20 +445,20 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 					<!-- Stock -->
 					<section class="statistics-view__section" aria-labelledby="statistics-stock">
 						<h3 id="statistics-stock">
-							{{ t('notenarchiv', 'Stock') }}
+							{{ t('cantoria', 'Stock') }}
 						</h3>
 						<table class="statistics-table statistics-table--narrow">
-							<caption>{{ t('notenarchiv', 'Key figures') }}</caption>
+							<caption>{{ t('cantoria', 'Key figures') }}</caption>
 							<thead>
 								<tr>
 									<th scope="col">
-										{{ t('notenarchiv', 'Figure') }}
+										{{ t('cantoria', 'Figure') }}
 									</th>
 									<th scope="col" class="statistics-table__number">
-										{{ t('notenarchiv', 'Number') }}
+										{{ t('cantoria', 'Number') }}
 									</th>
 									<th scope="col">
-										{{ t('notenarchiv', 'Share') }}
+										{{ t('cantoria', 'Share') }}
 									</th>
 								</tr>
 							</thead>
@@ -480,20 +480,20 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 						</table>
 
 						<table class="statistics-table">
-							<caption>{{ t('notenarchiv', 'Copies per binder') }}</caption>
+							<caption>{{ t('cantoria', 'Copies per binder') }}</caption>
 							<thead>
 								<tr>
 									<th scope="col">
-										{{ t('notenarchiv', 'Binder') }}
+										{{ t('cantoria', 'Binder') }}
 									</th>
 									<th v-for="status in COPY_STATUSES" :key="status" scope="col">
 										{{ choiceLabel('copy', 'status', status) }}
 									</th>
 									<th v-if="hasOtherStatus" scope="col" class="statistics-table__number">
-										{{ t('notenarchiv', 'Other status') }}
+										{{ t('cantoria', 'Other status') }}
 									</th>
 									<th scope="col" class="statistics-table__number">
-										{{ t('notenarchiv', 'Total') }}
+										{{ t('cantoria', 'Total') }}
 									</th>
 								</tr>
 							</thead>
@@ -525,7 +525,7 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 							<tfoot>
 								<tr>
 									<th scope="row">
-										{{ t('notenarchiv', 'Total') }}
+										{{ t('cantoria', 'Total') }}
 									</th>
 									<td v-for="status in COPY_STATUSES" :key="status" class="statistics-table__number">
 										{{ formatNumber(figure(data.stock.status, status)) }}
@@ -541,23 +541,23 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 						</table>
 
 						<table class="statistics-table">
-							<caption>{{ t('notenarchiv', 'New copies per year') }}</caption>
+							<caption>{{ t('cantoria', 'New copies per year') }}</caption>
 							<thead>
 								<tr>
 									<th scope="col">
-										{{ t('notenarchiv', 'Year') }}
+										{{ t('cantoria', 'Year') }}
 									</th>
 									<th scope="col">
-										{{ t('notenarchiv', 'Total') }}
+										{{ t('cantoria', 'Total') }}
 									</th>
 									<th scope="col" class="statistics-table__number">
-										{{ t('notenarchiv', 'New accessions') }}
+										{{ t('cantoria', 'New accessions') }}
 									</th>
 									<th scope="col" class="statistics-table__number">
-										{{ t('notenarchiv', 'From the catalog import') }}
+										{{ t('cantoria', 'From the catalog import') }}
 									</th>
 									<th scope="col" class="statistics-table__number">
-										{{ t('notenarchiv', 'Other') }}
+										{{ t('cantoria', 'Other') }}
 									</th>
 								</tr>
 							</thead>
@@ -582,30 +582,30 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 							</tbody>
 						</table>
 						<p class="statistics-view__note">
-							{{ t('notenarchiv', 'A copy counts in the year it was recorded: by the accession assistant, by the catalog import or, without an entry in the audit log, when it was created.') }}
+							{{ t('cantoria', 'A copy counts in the year it was recorded: by the accession assistant, by the catalog import or, without an entry in the audit log, when it was created.') }}
 						</p>
 					</section>
 
 					<!-- Rights -->
 					<section class="statistics-view__section" aria-labelledby="statistics-rights">
 						<h3 id="statistics-rights">
-							{{ t('notenarchiv', 'Rights') }}
+							{{ t('cantoria', 'Rights') }}
 						</h3>
 						<table class="statistics-table">
-							<caption>{{ t('notenarchiv', 'Rights status of the versions') }}</caption>
+							<caption>{{ t('cantoria', 'Rights status of the versions') }}</caption>
 							<thead>
 								<tr>
 									<th scope="col">
-										{{ t('notenarchiv', 'Rights status') }}
+										{{ t('cantoria', 'Rights status') }}
 									</th>
 									<th scope="col">
-										{{ t('notenarchiv', 'Total') }}
+										{{ t('cantoria', 'Total') }}
 									</th>
 									<th scope="col" class="statistics-table__number">
-										{{ t('notenarchiv', 'Confirmed') }}
+										{{ t('cantoria', 'Confirmed') }}
 									</th>
 									<th scope="col" class="statistics-table__number">
-										{{ t('notenarchiv', 'Not confirmed') }}
+										{{ t('cantoria', 'Not confirmed') }}
 									</th>
 								</tr>
 							</thead>
@@ -628,14 +628,14 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 						</table>
 
 						<table v-if="shows.validVersion" class="statistics-table statistics-table--narrow">
-							<caption>{{ t('notenarchiv', 'Valid version (chosen by the conductor)') }}</caption>
+							<caption>{{ t('cantoria', 'Valid version (chosen by the conductor)') }}</caption>
 							<thead>
 								<tr>
 									<th scope="col">
-										{{ t('notenarchiv', 'Works') }}
+										{{ t('cantoria', 'Works') }}
 									</th>
 									<th scope="col" class="statistics-table__number">
-										{{ t('notenarchiv', 'Number') }}
+										{{ t('cantoria', 'Number') }}
 									</th>
 								</tr>
 							</thead>
@@ -652,14 +652,14 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 						</table>
 
 						<table v-if="shows.licenses" class="statistics-table statistics-table--narrow">
-							<caption>{{ t('notenarchiv', 'Licenses') }}</caption>
+							<caption>{{ t('cantoria', 'Licenses') }}</caption>
 							<thead>
 								<tr>
 									<th scope="col">
-										{{ t('notenarchiv', 'Validity') }}
+										{{ t('cantoria', 'Validity') }}
 									</th>
 									<th scope="col">
-										{{ t('notenarchiv', 'Licenses') }}
+										{{ t('cantoria', 'Licenses') }}
 									</th>
 								</tr>
 							</thead>
@@ -676,7 +676,7 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 							<tfoot>
 								<tr>
 									<th scope="row">
-										{{ t('notenarchiv', 'Total') }}
+										{{ t('cantoria', 'Total') }}
 									</th>
 									<td class="statistics-table__number">
 										{{ formatNumber(data.rights.licenses.total) }}
@@ -686,17 +686,17 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 						</table>
 
 						<table v-if="shows.portal || shows.printStation" class="statistics-table">
-							<caption>{{ t('notenarchiv', 'Releases: versions per state of the lists') }}</caption>
+							<caption>{{ t('cantoria', 'Releases: versions per state of the lists') }}</caption>
 							<thead>
 								<tr>
 									<th scope="col">
-										{{ t('notenarchiv', 'State') }}
+										{{ t('cantoria', 'State') }}
 									</th>
 									<th v-if="shows.portal" scope="col" class="statistics-table__number">
-										{{ t('notenarchiv', 'Singers\' portal') }}
+										{{ t('cantoria', 'Singers\' portal') }}
 									</th>
 									<th v-if="shows.printStation" scope="col" class="statistics-table__number">
-										{{ t('notenarchiv', 'Print station') }}
+										{{ t('cantoria', 'Print station') }}
 									</th>
 								</tr>
 							</thead>
@@ -716,14 +716,14 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 						</table>
 
 						<table v-if="shows.publication" class="statistics-table statistics-table--narrow">
-							<caption>{{ t('notenarchiv', 'Publication status') }}</caption>
+							<caption>{{ t('cantoria', 'Publication status') }}</caption>
 							<thead>
 								<tr>
 									<th scope="col">
-										{{ t('notenarchiv', 'Publication status') }}
+										{{ t('cantoria', 'Publication status') }}
 									</th>
 									<th scope="col">
-										{{ t('notenarchiv', 'Versions') }}
+										{{ t('cantoria', 'Versions') }}
 									</th>
 								</tr>
 							</thead>
@@ -743,26 +743,26 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 					<!-- Repertoire and performances -->
 					<section v-if="shows.concerts" class="statistics-view__section" aria-labelledby="statistics-repertoire">
 						<h3 id="statistics-repertoire">
-							{{ t('notenarchiv', 'Repertoire and performances') }}
+							{{ t('cantoria', 'Repertoire and performances') }}
 						</h3>
 						<table class="statistics-table">
-							<caption>{{ t('notenarchiv', 'Concerts and pieces per year') }}</caption>
+							<caption>{{ t('cantoria', 'Concerts and pieces per year') }}</caption>
 							<thead>
 								<tr>
 									<th scope="col">
-										{{ t('notenarchiv', 'Year') }}
+										{{ t('cantoria', 'Year') }}
 									</th>
 									<th scope="col" class="statistics-table__number">
-										{{ t('notenarchiv', 'Concerts sung') }}
+										{{ t('cantoria', 'Concerts sung') }}
 									</th>
 									<th scope="col" class="statistics-table__number">
-										{{ t('notenarchiv', 'Planned concerts') }}
+										{{ t('cantoria', 'Planned concerts') }}
 									</th>
 									<th scope="col">
-										{{ t('notenarchiv', 'Pieces sung') }}
+										{{ t('cantoria', 'Pieces sung') }}
 									</th>
 									<th scope="col" class="statistics-table__number">
-										{{ t('notenarchiv', 'Different works') }}
+										{{ t('cantoria', 'Different works') }}
 									</th>
 								</tr>
 							</thead>
@@ -787,34 +787,34 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 							</tbody>
 						</table>
 						<p class="statistics-view__note">
-							{{ t('notenarchiv', 'Pieces sung are the documented performances: programme lines of concerts confirmed as sung that are assigned to a work of the catalog.') }}
+							{{ t('cantoria', 'Pieces sung are the documented performances: programme lines of concerts confirmed as sung that are assigned to a work of the catalog.') }}
 							<template v-if="data.repertoire.undated > 0">
-								{{ n('notenarchiv', '%n sung concert without a date is not counted in any year.', '%n sung concerts without a date are not counted in any year.', data.repertoire.undated) }}
+								{{ n('cantoria', '%n sung concert without a date is not counted in any year.', '%n sung concerts without a date are not counted in any year.', data.repertoire.undated) }}
 							</template>
 						</p>
 
 						<table class="statistics-table">
-							<caption>{{ t('notenarchiv', 'Most performed works {period}', { period: periodText }) }}</caption>
+							<caption>{{ t('cantoria', 'Most performed works {period}', { period: periodText }) }}</caption>
 							<thead>
 								<tr>
 									<th scope="col" class="statistics-table__number">
-										{{ t('notenarchiv', 'Rank') }}
+										{{ t('cantoria', 'Rank') }}
 									</th>
 									<th scope="col">
-										{{ t('notenarchiv', 'Work') }}
+										{{ t('cantoria', 'Work') }}
 									</th>
 									<th scope="col">
-										{{ t('notenarchiv', 'Performances') }}
+										{{ t('cantoria', 'Performances') }}
 									</th>
 									<th scope="col">
-										{{ t('notenarchiv', 'Last performed') }}
+										{{ t('cantoria', 'Last performed') }}
 									</th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr v-if="topWorks.length === 0">
 									<td colspan="4">
-										{{ t('notenarchiv', 'No documented performances in this period.') }}
+										{{ t('cantoria', 'No documented performances in this period.') }}
 									</td>
 								</tr>
 								<tr v-for="(row, index) in topWorks" :key="row.workId">
@@ -822,7 +822,7 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 										{{ index + 1 }}
 									</td>
 									<th scope="row">
-										{{ row.title || t('notenarchiv', 'Untitled') }}
+										{{ row.title || t('cantoria', 'Untitled') }}
 										<span v-if="row.composer" class="statistics-table__muted">{{ row.composer }}</span>
 									</th>
 									<td class="statistics-table__bar">
@@ -836,27 +836,27 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 						</table>
 
 						<table class="statistics-table">
-							<caption>{{ t('notenarchiv', 'Most performed composers {period}', { period: periodText }) }}</caption>
+							<caption>{{ t('cantoria', 'Most performed composers {period}', { period: periodText }) }}</caption>
 							<thead>
 								<tr>
 									<th scope="col" class="statistics-table__number">
-										{{ t('notenarchiv', 'Rank') }}
+										{{ t('cantoria', 'Rank') }}
 									</th>
 									<th scope="col">
-										{{ t('notenarchiv', 'Composer') }}
+										{{ t('cantoria', 'Composer') }}
 									</th>
 									<th scope="col">
-										{{ t('notenarchiv', 'Performances') }}
+										{{ t('cantoria', 'Performances') }}
 									</th>
 									<th scope="col" class="statistics-table__number">
-										{{ t('notenarchiv', 'Works') }}
+										{{ t('cantoria', 'Works') }}
 									</th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr v-if="topComposers.length === 0">
 									<td colspan="4">
-										{{ t('notenarchiv', 'No documented performances in this period.') }}
+										{{ t('cantoria', 'No documented performances in this period.') }}
 									</td>
 								</tr>
 								<tr v-for="(row, index) in topComposers" :key="row.composer">
@@ -876,18 +876,18 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 							</tbody>
 						</table>
 						<p class="statistics-view__note">
-							{{ t('notenarchiv', 'Performances are performance days. The composer is the one recorded for the work.') }}
+							{{ t('cantoria', 'Performances are performance days. The composer is the one recorded for the work.') }}
 						</p>
 
 						<table class="statistics-table statistics-table--narrow">
-							<caption>{{ t('notenarchiv', 'Repertoire classes of the works') }}</caption>
+							<caption>{{ t('cantoria', 'Repertoire classes of the works') }}</caption>
 							<thead>
 								<tr>
 									<th scope="col">
-										{{ t('notenarchiv', 'Repertoire') }}
+										{{ t('cantoria', 'Repertoire') }}
 									</th>
 									<th scope="col">
-										{{ t('notenarchiv', 'Works') }}
+										{{ t('cantoria', 'Works') }}
 									</th>
 								</tr>
 							</thead>
@@ -903,7 +903,7 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 							</tbody>
 						</table>
 						<p class="statistics-view__note">
-							{{ t('notenarchiv', 'Current: sung within the last {current} years; dormant: within the last {dormant} years; earlier: before that. {fromPerformances} works by documented performances, {fromImport} by the imported catalog.', {
+							{{ t('cantoria', 'Current: sung within the last {current} years; dormant: within the last {dormant} years; earlier: before that. {fromPerformances} works by documented performances, {fromImport} by the imported catalog.', {
 								current: data.repertoire.thresholds.current,
 								dormant: data.repertoire.thresholds.dormant,
 								fromPerformances: formatNumber(data.repertoire.sources.performances),
@@ -912,43 +912,43 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 						</p>
 
 						<table class="statistics-table">
-							<caption>{{ t('notenarchiv', 'Not sung for a long time') }}</caption>
+							<caption>{{ t('cantoria', 'Not sung for a long time') }}</caption>
 							<thead>
 								<tr>
 									<th scope="col">
-										{{ t('notenarchiv', 'Shelf mark') }}
+										{{ t('cantoria', 'Shelf mark') }}
 									</th>
 									<th scope="col">
-										{{ t('notenarchiv', 'Work') }}
+										{{ t('cantoria', 'Work') }}
 									</th>
 									<th scope="col">
-										{{ t('notenarchiv', 'Repertoire') }}
+										{{ t('cantoria', 'Repertoire') }}
 									</th>
 									<th scope="col" class="statistics-table__number">
-										{{ t('notenarchiv', 'Performances') }}
+										{{ t('cantoria', 'Performances') }}
 									</th>
 									<th scope="col">
-										{{ t('notenarchiv', 'Last performed') }}
+										{{ t('cantoria', 'Last performed') }}
 									</th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr v-if="longNotSung.length === 0">
 									<td colspan="5">
-										{{ t('notenarchiv', 'No such works.') }}
+										{{ t('cantoria', 'No such works.') }}
 									</td>
 								</tr>
 								<tr v-for="row in longNotSung" :key="row.workId">
 									<td class="statistics-table__shelfmark">
 										<button type="button"
 											class="statistics-table__link"
-											:aria-label="t('notenarchiv', 'Open {shelfmark}', { shelfmark: row.shelfmark })"
+											:aria-label="t('cantoria', 'Open {shelfmark}', { shelfmark: row.shelfmark })"
 											@click="openEntry(row.copyId)">
 											{{ row.shelfmark }}
 										</button>
 									</td>
 									<th scope="row">
-										{{ row.title || t('notenarchiv', 'Untitled') }}
+										{{ row.title || t('cantoria', 'Untitled') }}
 										<span v-if="row.composer" class="statistics-table__muted">{{ row.composer }}</span>
 									</th>
 									<td>{{ repertoireClassLabel(row.class) }}</td>
@@ -962,9 +962,9 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 							</tbody>
 						</table>
 						<p class="statistics-view__note">
-							{{ t('notenarchiv', 'Works sung before, but not within the current repertoire, that can be sung from the archive; the most often sung first.') }}
+							{{ t('cantoria', 'Works sung before, but not within the current repertoire, that can be sung from the archive; the most often sung first.') }}
 							<template v-if="data.repertoire.longNotSungTotal > longNotSung.length">
-								{{ t('notenarchiv', 'Showing {shown} of {total}.', { shown: longNotSung.length, total: data.repertoire.longNotSungTotal }) }}
+								{{ t('cantoria', 'Showing {shown} of {total}.', { shown: longNotSung.length, total: data.repertoire.longNotSungTotal }) }}
 							</template>
 						</p>
 					</section>
@@ -972,20 +972,20 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 					<!-- Maintenance -->
 					<section class="statistics-view__section" aria-labelledby="statistics-maintenance">
 						<h3 id="statistics-maintenance">
-							{{ t('notenarchiv', 'Maintenance') }}
+							{{ t('cantoria', 'Maintenance') }}
 						</h3>
 						<table v-if="shows.tasks" class="statistics-table">
-							<caption>{{ t('notenarchiv', 'Open tasks by role') }}</caption>
+							<caption>{{ t('cantoria', 'Open tasks by role') }}</caption>
 							<thead>
 								<tr>
 									<th scope="col">
-										{{ t('notenarchiv', 'Role') }}
+										{{ t('cantoria', 'Role') }}
 									</th>
 									<th scope="col" class="statistics-table__number">
-										{{ t('notenarchiv', 'Open') }}
+										{{ t('cantoria', 'Open') }}
 									</th>
 									<th scope="col" class="statistics-table__number">
-										{{ t('notenarchiv', 'Answered') }}
+										{{ t('cantoria', 'Answered') }}
 									</th>
 									<th v-for="key in TASK_AGE_KEYS"
 										:key="key"
@@ -1014,7 +1014,7 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 							<tfoot>
 								<tr>
 									<th scope="row">
-										{{ t('notenarchiv', 'Total') }}
+										{{ t('cantoria', 'Total') }}
 									</th>
 									<td class="statistics-table__number">
 										{{ formatNumber(taskTotals.open) }}
@@ -1032,14 +1032,14 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 						</table>
 
 						<table class="statistics-table statistics-table--narrow">
-							<caption>{{ t('notenarchiv', 'Inbox and checksums') }}</caption>
+							<caption>{{ t('cantoria', 'Inbox and checksums') }}</caption>
 							<thead>
 								<tr>
 									<th scope="col">
-										{{ t('notenarchiv', 'Figure') }}
+										{{ t('cantoria', 'Figure') }}
 									</th>
 									<th scope="col" class="statistics-table__number">
-										{{ t('notenarchiv', 'Number') }}
+										{{ t('cantoria', 'Number') }}
 									</th>
 								</tr>
 							</thead>
@@ -1056,27 +1056,27 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 						</table>
 
 						<table v-if="protection && shows.protection" class="statistics-table">
-							<caption>{{ t('notenarchiv', 'Protection terms ending {period}', { period: periodText }) }}</caption>
+							<caption>{{ t('cantoria', 'Protection terms ending {period}', { period: periodText }) }}</caption>
 							<thead>
 								<tr>
 									<th scope="col">
-										{{ t('notenarchiv', 'Protected until') }}
+										{{ t('cantoria', 'Protected until') }}
 									</th>
 									<th scope="col">
-										{{ t('notenarchiv', 'Shelf marks') }}
+										{{ t('cantoria', 'Shelf marks') }}
 									</th>
 									<th scope="col">
-										{{ t('notenarchiv', 'Work') }}
+										{{ t('cantoria', 'Work') }}
 									</th>
 									<th scope="col">
-										{{ t('notenarchiv', 'Rights status') }}
+										{{ t('cantoria', 'Rights status') }}
 									</th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr v-if="protection.rows.length === 0">
 									<td colspan="4">
-										{{ t('notenarchiv', 'No protection term ends in this period.') }}
+										{{ t('cantoria', 'No protection term ends in this period.') }}
 									</td>
 								</tr>
 								<tr v-for="row in protection.rows" :key="row.versionId">
@@ -1087,7 +1087,7 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 										{{ row.copies.map((copy) => copy.shelfmark).join(', ') }}
 									</td>
 									<th scope="row">
-										{{ row.title || t('notenarchiv', 'Untitled') }}
+										{{ row.title || t('cantoria', 'Untitled') }}
 										<span v-if="row.composer" class="statistics-table__muted">{{ row.composer }}</span>
 									</th>
 									<td>{{ rightsText(row.rightsStatus, row.confirmed) }}</td>
@@ -1095,14 +1095,14 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 							</tbody>
 						</table>
 						<table v-if="protectionYears.length > 1" class="statistics-table statistics-table--narrow">
-							<caption>{{ t('notenarchiv', 'Protection terms ending per year') }}</caption>
+							<caption>{{ t('cantoria', 'Protection terms ending per year') }}</caption>
 							<thead>
 								<tr>
 									<th scope="col">
-										{{ t('notenarchiv', 'Year') }}
+										{{ t('cantoria', 'Year') }}
 									</th>
 									<th scope="col">
-										{{ t('notenarchiv', 'Versions') }}
+										{{ t('cantoria', 'Versions') }}
 									</th>
 								</tr>
 							</thead>
@@ -1118,12 +1118,12 @@ function ageLabel(key: typeof TASK_AGE_KEYS[number]): string {
 							</tbody>
 						</table>
 						<p v-if="protection" class="statistics-view__note">
-							{{ t('notenarchiv', 'By the life dates of the persons involved, a proposal only and no legal advice.') }}
+							{{ t('cantoria', 'By the life dates of the persons involved, a proposal only and no legal advice.') }}
 							<template v-if="protection.total - protection.omitted > protection.rows.length">
-								{{ t('notenarchiv', 'Showing {shown} of {total}.', { shown: protection.rows.length, total: protection.total - protection.omitted }) }}
+								{{ t('cantoria', 'Showing {shown} of {total}.', { shown: protection.rows.length, total: protection.total - protection.omitted }) }}
 							</template>
 							<template v-if="protection.omitted > 0">
-								{{ n('notenarchiv', '%n internal preservation copy is counted but not listed.', '%n internal preservation copies are counted but not listed.', protection.omitted) }}
+								{{ n('cantoria', '%n internal preservation copy is counted but not listed.', '%n internal preservation copies are counted but not listed.', protection.omitted) }}
 							</template>
 						</p>
 					</section>

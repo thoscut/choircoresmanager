@@ -3,17 +3,17 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Controller;
+namespace OCA\Cantoria\Controller;
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Attribute\RequiresModule;
-use OCA\Notenarchiv\Exception\UserFacingException;
-use OCA\Notenarchiv\Service\ConcertFolderService;
-use OCA\Notenarchiv\Service\Modules;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Attribute\RequiresModule;
+use OCA\Cantoria\Exception\UserFacingException;
+use OCA\Cantoria\Service\ConcertFolderService;
+use OCA\Cantoria\Service\Modules;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
@@ -78,7 +78,7 @@ class ConcertFolderController extends Controller {
 		]);
 		$response = PageController::withScorePolicy(new TemplateResponse(Application::APP_ID, 'concert-folder'), false, true);
 		// The service worker keeps only this page of the archive on the device
-		$response->addHeader('X-Notenarchiv-Page', 'concert-folder');
+		$response->addHeader('X-Cantoria-Page', 'concert-folder');
 		return $response;
 	}
 

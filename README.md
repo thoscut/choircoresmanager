@@ -17,7 +17,7 @@
   <a href="#requirements"><img src="https://img.shields.io/badge/Nextcloud-33%E2%80%9335-0082c9?logo=nextcloud&amp;logoColor=white" alt="Nextcloud 33 to 35"></a>
   <a href="#accessibility"><img src="https://img.shields.io/badge/accessibility-WCAG%202.2%20AA-2e7d32" alt="Accessibility target: WCAG 2.2 AA"></a>
   <!-- Once the app is listed in the Nextcloud App Store, add:
-  <a href="https://apps.nextcloud.com/apps/notenarchiv"><img src="https://img.shields.io/badge/Nextcloud%20App%20Store-Notenarchiv-0082c9?logo=nextcloud&amp;logoColor=white" alt="Notenarchiv in the Nextcloud App Store"></a>
+  <a href="https://apps.nextcloud.com/apps/cantoria"><img src="https://img.shields.io/badge/Nextcloud%20App%20Store-Notenarchiv-0082c9?logo=nextcloud&amp;logoColor=white" alt="Notenarchiv in the Nextcloud App Store"></a>
   -->
 </p>
 
@@ -87,7 +87,7 @@ The screenshots show the invented demo archive from [tools/demo](tools/demo/READ
     <td width="33%" valign="top">
       <a href="docs/screenshots/backup-restore.png"><img src="docs/screenshots/backup-restore.png" width="280" alt="Archive management with the buttons for a backup now, the download of the complete backup and the restore into an empty catalog."></a>
       <h3>Backups</h3>
-      <p>Every week the app writes the catalog as CSV and ODS (with the audit log) and a complete JSON backup into the archive folder. Librarians can make a backup at any time, download it and restore it into an empty catalog, in the web interface or with <code>occ notenarchiv:restore</code>. Paper stays the fallback: every list prints in A4 black and white.</p>
+      <p>Every week the app writes the catalog as CSV and ODS (with the audit log) and a complete JSON backup into the archive folder. Librarians can make a backup at any time, download it and restore it into an empty catalog, in the web interface or with <code>occ cantoria:restore</code>. Paper stays the fallback: every list prints in A4 black and white.</p>
     </td>
   </tr>
   <tr>
@@ -170,7 +170,7 @@ choir, the "Demochor": 23 copies of 20 public domain works with placeholder
 scans, seven MusicXML settings, persons, concerts and song lists, all CC0.
 
 ```sh
-node tools/demo/build.mjs     # writes build/demo/Notenarchiv-Demo/ (Node.js 22 or newer)
+node tools/demo/build.mjs     # writes build/demo/Cantoria-Demo/ (Node.js 22 or newer)
 ```
 
 Upload the folder to your Nextcloud, choose it as archive folder, import
@@ -183,21 +183,21 @@ figures to expect.
 - **From the Nextcloud App Store** (once the app is published there): Apps →
   search "Notenarchiv" → Download and enable. This is the way for managed
   instances without shell access.
-- **Manually from a release archive:** download `notenarchiv-<version>.tar.gz`
+- **Manually from a release archive:** download `cantoria-<version>.tar.gz`
   from the [releases](https://github.com/thoscut/choircoresmanager/releases)
   as soon as one is published, unpack it into the `apps` (or `custom_apps`)
-  folder of your Nextcloud so that you get `apps/notenarchiv`, make the web
+  folder of your Nextcloud so that you get `apps/cantoria`, make the web
   server user its owner and enable the app under Apps or with
-  `occ app:enable notenarchiv`.
+  `occ app:enable cantoria`.
 - **From source** (needs Node.js 24 and npm 11; run the commands as the web
   server user):
 
   ```sh
   cd /path/to/nextcloud/apps
-  git clone https://github.com/thoscut/choircoresmanager.git notenarchiv
-  cd notenarchiv
+  git clone https://github.com/thoscut/choircoresmanager.git cantoria
+  cd cantoria
   npm ci && npm run build
-  php ../../occ app:enable notenarchiv
+  php ../../occ app:enable cantoria
   ```
 
   The app has no PHP dependencies at runtime; Composer is only needed for the
@@ -233,7 +233,7 @@ figures to expect.
    first) and runs the file sync.
 
 The [administration guide](docs/admin-guide.md) explains each step; self-hosted
-instances can also use `occ notenarchiv:setup`.
+instances can also use `occ cantoria:setup`.
 
 ## Privacy and security
 
@@ -242,7 +242,7 @@ instances can also use `occ notenarchiv:setup`.
 - **Files stay where they are.** The app reads the archive folder through each
   user's own view of Nextcloud and never changes, moves or deletes a file; it
   only writes exports of the catalog into its own sub folder
-  `_notenarchiv-app`, and backups and annual snapshots into a backup folder
+  `_cantoria-app`, and backups and annual snapshots into a backup folder
   outside the archive folder.
 - **Server-side checks.** Every request checks the caller's role. The only
   pages without login are a public link and the public repertoire page, and

@@ -36,17 +36,17 @@ only accepts signed releases from a public repository.
    [nextcloud/app-certificate-requests](https://github.com/nextcloud/app-certificate-requests):
 
    ```sh
-   openssl req -nodes -newkey rsa:4096 -keyout notenarchiv.key -out notenarchiv.csr -subj "/CN=notenarchiv"
+   openssl req -nodes -newkey rsa:4096 -keyout cantoria.key -out cantoria.csr -subj "/CN=cantoria"
    ```
 
-   Keep `notenarchiv.key` secret and outside the repository. Nextcloud
-   returns the signed certificate (`notenarchiv.crt`).
+   Keep `cantoria.key` secret and outside the repository. Nextcloud
+   returns the signed certificate (`cantoria.crt`).
 3. **Register the app** on [apps.nextcloud.com](https://apps.nextcloud.com)
    (account → register app) with the certificate and the signature of the app
    id:
 
    ```sh
-   echo -n "notenarchiv" | openssl dgst -sha512 -sign notenarchiv.key | openssl base64
+   echo -n "cantoria" | openssl dgst -sha512 -sign cantoria.key | openssl base64
    ```
 
 ## Version numbers
@@ -93,7 +93,7 @@ The internal builds before 0.6.0 were numbered 0.1.x.
    (for `occ integrity:sign-app`):
 
    ```sh
-   tools/release/package.sh --sign /path/notenarchiv.key /path/notenarchiv.crt /path/to/nextcloud/occ
+   tools/release/package.sh --sign /path/cantoria.key /path/cantoria.crt /path/to/nextcloud/occ
    ```
 
    The script checks `appinfo/info.xml` against the app store schema (with
@@ -102,7 +102,7 @@ The internal builds before 0.6.0 were numbered 0.1.x.
    refuses to package internal or development files, writes the code
    signature (`appinfo/signature.json`) into the archive and prints the
    archive signature.
-6. Attach `build/release/notenarchiv-<version>.tar.gz` to the release in the
+6. Attach `build/release/cantoria-<version>.tar.gz` to the release in the
    repository (the app store downloads it from a public HTTPS URL) and upload
    that URL with the printed signature on apps.nextcloud.com (account → upload
    app release). Mark pre-releases as nightly or with a pre-release version

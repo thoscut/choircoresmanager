@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -45,7 +45,7 @@ async function open(): Promise<void> {
 	} catch (reason) {
 		error.value = reason instanceof Error && reason.message !== ''
 			? reason.message
-			: t('notenarchiv', 'The scan could not be loaded. Without a network, only a scan kept on this device opens.')
+			: t('cantoria', 'The scan could not be loaded. Without a network, only a scan kept on this device opens.')
 	} finally {
 		loading.value = false
 	}
@@ -63,16 +63,16 @@ onBeforeUnmount(close)
 				:aria-controls="frameId"
 				:disabled="loading"
 				@click="open">
-				{{ loading ? t('notenarchiv', 'Loading the scan …') : t('notenarchiv', 'Show the scan (PDF)') }}
+				{{ loading ? t('cantoria', 'Loading the scan …') : t('cantoria', 'Show the scan (PDF)') }}
 			</NcButton>
 			<template v-else>
 				<NcButton variant="secondary" :aria-controls="frameId" @click="close">
-					{{ t('notenarchiv', 'Close the scan') }}
+					{{ t('cantoria', 'Close the scan') }}
 				</NcButton>
 				<a :href="address"
 					class="scan-frame__link"
 					target="_blank"
-					rel="noopener noreferrer">{{ t('notenarchiv', 'Open the scan (PDF)') }}<span class="hidden-visually"> {{ t('notenarchiv', '(opens in a new tab)') }}</span></a>
+					rel="noopener noreferrer">{{ t('cantoria', 'Open the scan (PDF)') }}<span class="hidden-visually"> {{ t('cantoria', '(opens in a new tab)') }}</span></a>
 			</template>
 		</div>
 		<NcNoteCard v-if="error" type="warning" role="alert">
@@ -82,7 +82,7 @@ onBeforeUnmount(close)
 			:id="frameId"
 			class="scan-frame__frame"
 			:src="address"
-			:title="t('notenarchiv', 'Scan of {title}', { title })" />
+			:title="t('cantoria', 'Scan of {title}', { title })" />
 	</div>
 </template>
 

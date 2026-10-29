@@ -7,7 +7,7 @@
 	"composer": "Ludwig van Beethoven",
 	"lyricist": "Friedrich Schiller",
 	"arranger": "Demo-Satz (CC0)",
-	"rights": "Melodie und Text gemeinfrei. Satz: CC0 1.0 (Notenarchiv-Demo-Bestand)",
+	"rights": "Melodie und Text gemeinfrei. Satz: CC0 1.0 (Cantoria-Demo-Bestand)",
 	"key": { "fifths": 1, "mode": "major" },
 	"time": "4/4",
 	"tempo": { "words": "Feierlich bewegt", "beatUnit": "quarter", "perMinute": 108 },

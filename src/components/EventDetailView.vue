@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -158,7 +158,7 @@ async function addItem(): Promise<void> {
 	if (!option) {
 		return
 	}
-	if (await act(() => addEventItem(props.eventId, option.id), t('notenarchiv', '{piece} has been added.', { piece: option.label }))) {
+	if (await act(() => addEventItem(props.eventId, option.id), t('cantoria', '{piece} has been added.', { piece: option.label }))) {
 		addOption.value = null
 	}
 	// The field was disabled while saving: back to it for the next piece
@@ -180,7 +180,7 @@ async function move(index: number, delta: number): Promise<void> {
 	[order[index], order[target]] = [order[target], order[index]]
 	const moved = items.value[index]
 	if (await act(() => reorderEventItems(props.eventId, order))) {
-		announcement.value = t('notenarchiv', '{piece} is now at position {position}.', { piece: itemTitle(moved), position: target + 1 })
+		announcement.value = t('cantoria', '{piece} is now at position {position}.', { piece: itemTitle(moved), position: target + 1 })
 		await nextTick()
 		document.getElementById(`event-item-${moved.id}-${delta < 0 ? 'up' : 'down'}`)?.focus()
 	}
@@ -190,7 +190,7 @@ const removing = ref<EventItem | null>(null)
 
 async function remove(): Promise<void> {
 	const item = removing.value
-	if (item && await act(() => removeEventItem(item.id), t('notenarchiv', 'The piece has been removed from the list.'))) {
+	if (item && await act(() => removeEventItem(item.id), t('cantoria', 'The piece has been removed from the list.'))) {
 		removing.value = null
 		await focusAfterDialog(() => document.getElementById('event-detail-items'))
 	}
@@ -202,7 +202,7 @@ async function remove(): Promise<void> {
  * @param item - event item
  */
 function itemTitle(item: EventItem): string {
-	return item.title || item.title_text || t('notenarchiv', '(no title)')
+	return item.title || item.title_text || t('cantoria', '(no title)')
 }
 
 /**
@@ -236,7 +236,7 @@ async function saveItem(): Promise<void> {
 	}
 	const duration = parseDuration(itemDraft.value.duration)
 	if (duration === undefined) {
-		itemError.value = t('notenarchiv', 'Please enter the duration as minutes:seconds, e.g. 3:05.')
+		itemError.value = t('cantoria', 'Please enter the duration as minutes:seconds, e.g. 3:05.')
 		return
 	}
 	busy.value = true
@@ -269,7 +269,7 @@ function startSung(): void {
 }
 
 async function submitSung(): Promise<void> {
-	if (await act(() => confirmSung(props.eventId, struck.value), t('notenarchiv', 'The concert has been confirmed as sung.'))) {
+	if (await act(() => confirmSung(props.eventId, struck.value), t('cantoria', 'The concert has been confirmed as sung.'))) {
 		confirmingSung.value = false
 		focusTitle()
 		await loadEntries()
@@ -277,7 +277,7 @@ async function submitSung(): Promise<void> {
 }
 
 async function submitFix(): Promise<void> {
-	if (await act(() => fixEvent(props.eventId), t('notenarchiv', 'The programme has been fixed.'))) {
+	if (await act(() => fixEvent(props.eventId), t('cantoria', 'The programme has been fixed.'))) {
 		fixing.value = false
 		focusTitle()
 	}
@@ -295,14 +295,14 @@ const cancelling = ref(false)
 const canCancel = computed(() => editable.value && isConcert.value)
 
 async function submitCancel(): Promise<void> {
-	if (await act(() => cancelEvent(props.eventId), t('notenarchiv', 'The concert has been cancelled.'))) {
+	if (await act(() => cancelEvent(props.eventId), t('cantoria', 'The concert has been cancelled.'))) {
 		cancelling.value = false
 		focusTitle()
 	}
 }
 
 async function reopen(): Promise<void> {
-	if (await act(() => reopenEvent(props.eventId), t('notenarchiv', 'The concert has been reopened as a draft.'))) {
+	if (await act(() => reopenEvent(props.eventId), t('cantoria', 'The concert has been reopened as a draft.'))) {
 		focusTitle()
 	}
 }
@@ -388,11 +388,11 @@ function revisionText(item: EventItem): string {
 		return ''
 	}
 	if (item.revision_sung) {
-		return t('notenarchiv', 'Revision {number} sung', { number })
+		return t('cantoria', 'Revision {number} sung', { number })
 	}
 	return item.revision_valid_since
-		? t('notenarchiv', 'Revision {number}, valid since {date}', { number, date: formatDate(item.revision_valid_since) })
-		: t('notenarchiv', 'Revision {number}', { number })
+		? t('cantoria', 'Revision {number}, valid since {date}', { number, date: formatDate(item.revision_valid_since) })
+		: t('cantoria', 'Revision {number}', { number })
 }
 </script>
 
@@ -403,25 +403,25 @@ function revisionText(item: EventItem): string {
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiArrowLeft" />
 				</template>
-				{{ isConcert ? t('notenarchiv', 'All concerts') : t('notenarchiv', 'All song lists') }}
+				{{ isConcert ? t('cantoria', 'All concerts') : t('cantoria', 'All song lists') }}
 			</NcButton>
 		</header>
 		<AppNotices />
 
-		<NcEmptyContent v-if="!data && loading" :name="t('notenarchiv', 'Loading …')">
+		<NcEmptyContent v-if="!data && loading" :name="t('cantoria', 'Loading …')">
 			<template #icon>
 				<NcLoadingIcon :size="64" />
 			</template>
 		</NcEmptyContent>
 		<NcEmptyContent v-else-if="!data && error"
-			:name="t('notenarchiv', 'The programme could not be loaded')"
+			:name="t('cantoria', 'The programme could not be loaded')"
 			:description="error">
 			<template #icon>
 				<NcIconSvgWrapper :path="mdiAlertCircleOutline" />
 			</template>
 			<template #action>
 				<NcButton @click="load">
-					{{ t('notenarchiv', 'Try again') }}
+					{{ t('cantoria', 'Try again') }}
 				</NcButton>
 			</template>
 		</NcEmptyContent>
@@ -431,16 +431,16 @@ function revisionText(item: EventItem): string {
 			<div class="event-detail__screen no-print">
 				<section class="event-detail__summary" aria-labelledby="event-detail-title">
 					<h2 id="event-detail-title" class="event-detail__title">
-						{{ event.title || t('notenarchiv', '(no title)') }}
+						{{ event.title || t('cantoria', '(no title)') }}
 					</h2>
 					<p class="event-detail__meta">
-						<span>{{ isConcert ? t('notenarchiv', 'Concert') : t('notenarchiv', 'Song list') }}</span>
+						<span>{{ isConcert ? t('cantoria', 'Concert') : t('cantoria', 'Song list') }}</span>
 						<span v-if="event.event_date">{{ formatDate(event.event_date) }}</span>
-						<span v-if="timeText(event)">{{ t('notenarchiv', '{time} (local time)', { time: timeText(event) }) }}</span>
+						<span v-if="timeText(event)">{{ t('cantoria', '{time} (local time)', { time: timeText(event) }) }}</span>
 						<span v-if="event.period">{{ event.period }}</span>
 						<span v-if="event.location">{{ event.location }}</span>
 						<span class="event-detail__status">{{ eventStatusLabel(event.status) }}</span>
-						<span v-if="event.imported">{{ t('notenarchiv', 'imported') }}</span>
+						<span v-if="event.imported">{{ t('cantoria', 'imported') }}</span>
 					</p>
 					<p v-if="event.notes" class="event-detail__notes">
 						{{ event.notes }}
@@ -449,13 +449,13 @@ function revisionText(item: EventItem): string {
 						<template #icon>
 							<NcIconSvgWrapper :path="mdiLockOutline" />
 						</template>
-						{{ t('notenarchiv', 'This programme is history (performed or imported) and cannot be changed.') }}
+						{{ t('cantoria', 'This programme is history (performed or imported) and cannot be changed.') }}
 					</NcNoteCard>
 					<NcNoteCard v-if="isCancelled" type="warning">
 						<template #icon>
 							<NcIconSvgWrapper :path="mdiCalendarRemoveOutline" />
 						</template>
-						{{ t('notenarchiv', 'This concert is cancelled. It stays in the list with its programme; there are no more deadline notifications. Add it to your calendar again to mark the entry there as cancelled.') }}
+						{{ t('cantoria', 'This concert is cancelled. It stays in the list with its programme; there are no more deadline notifications. Add it to your calendar again to mark the entry there as cancelled.') }}
 					</NcNoteCard>
 					<NcNoteCard v-if="error" type="error" role="alert">
 						{{ error }}
@@ -466,10 +466,10 @@ function revisionText(item: EventItem): string {
 							<template #icon>
 								<NcIconSvgWrapper :path="mdiPencilOutline" />
 							</template>
-							{{ t('notenarchiv', 'Edit') }}
+							{{ t('cantoria', 'Edit') }}
 						</NcButton>
 						<NcButton v-if="editable && event.status === 'draft'" :disabled="busy" @click="fixing = true">
-							{{ t('notenarchiv', 'Fix programme') }}
+							{{ t('cantoria', 'Fix programme') }}
 						</NcButton>
 						<NcButton v-if="canConfirmSung"
 							variant="primary"
@@ -478,47 +478,47 @@ function revisionText(item: EventItem): string {
 							<template #icon>
 								<NcIconSvgWrapper :path="mdiCheckAll" />
 							</template>
-							{{ t('notenarchiv', 'Confirm as sung') }}
+							{{ t('cantoria', 'Confirm as sung') }}
 						</NcButton>
 						<NcButton :href="songOrderUrl(event.id)" download>
 							<template #icon>
 								<NcIconSvgWrapper :path="mdiDownload" />
 							</template>
-							{{ t('notenarchiv', 'Song order (CSV)') }}
+							{{ t('cantoria', 'Song order (CSV)') }}
 						</NcButton>
 						<NcButton v-if="canCancel" :disabled="busy" @click="cancelling = true">
 							<template #icon>
 								<NcIconSvgWrapper :path="mdiCalendarRemoveOutline" />
 							</template>
-							{{ t('notenarchiv', 'Cancel concert') }}
+							{{ t('cantoria', 'Cancel concert') }}
 						</NcButton>
 						<NcButton v-if="isCancelled && canPlanEvents" :disabled="busy" @click="reopen">
-							{{ t('notenarchiv', 'Reopen concert') }}
+							{{ t('cantoria', 'Reopen concert') }}
 						</NcButton>
 					</div>
 					<p v-if="sungTooEarly" class="event-detail__hint">
-						{{ t('notenarchiv', 'A concert can be confirmed as sung on or after its date.') }}
+						{{ t('cantoria', 'A concert can be confirmed as sung on or after its date.') }}
 					</p>
 				</section>
 
 				<section class="event-detail__items" aria-labelledby="event-detail-items">
 					<h3 id="event-detail-items">
-						{{ n('notenarchiv', '%n piece', '%n pieces', items.length) }}
+						{{ n('cantoria', '%n piece', '%n pieces', items.length) }}
 					</h3>
 
 					<form v-if="editable" class="event-detail__add" @submit.prevent="addItem">
 						<NcSelect v-model="addOption"
 							class="event-detail__add-select"
-							:input-label="t('notenarchiv', 'Add a piece (search by shelf mark or title)')"
+							:input-label="t('cantoria', 'Add a piece (search by shelf mark or title)')"
 							:options="copyOptions"
 							:disabled="busy" />
 						<NcButton type="submit" :disabled="busy || !addOption">
-							{{ t('notenarchiv', 'Add') }}
+							{{ t('cantoria', 'Add') }}
 						</NcButton>
 					</form>
 
 					<p v-if="items.length === 0" class="event-detail__hint">
-						{{ t('notenarchiv', 'No pieces yet.') }}
+						{{ t('cantoria', 'No pieces yet.') }}
 					</p>
 					<ol v-else class="event-detail__list">
 						<li v-for="(item, index) in items"
@@ -531,27 +531,27 @@ function revisionText(item: EventItem): string {
 									<button v-if="item.copy_id"
 										type="button"
 										class="event-item__shelfmark"
-										:aria-label="t('notenarchiv', 'Open {shelfmark}', { shelfmark: item.shelfmark ?? '' })"
+										:aria-label="t('cantoria', 'Open {shelfmark}', { shelfmark: item.shelfmark ?? '' })"
 										@click="openEntry(item.copy_id)">
 										{{ item.shelfmark }}
 									</button>
-									<span v-else class="event-item__no-shelfmark">{{ item.assignment === 'ambiguous' ? t('notenarchiv', 'shelf mark unclear') : t('notenarchiv', 'not in the archive') }}</span>
+									<span v-else class="event-item__no-shelfmark">{{ item.assignment === 'ambiguous' ? t('cantoria', 'shelf mark unclear') : t('cantoria', 'not in the archive') }}</span>
 									<span>{{ itemTitle(item) }}</span>
-									<span v-if="item.encore" class="event-item__tag">{{ t('notenarchiv', 'Encore') }}</span>
-									<span v-if="item.struck" class="event-item__tag">{{ t('notenarchiv', 'not sung') }}</span>
+									<span v-if="item.encore" class="event-item__tag">{{ t('cantoria', 'Encore') }}</span>
+									<span v-if="item.struck" class="event-item__tag">{{ t('cantoria', 'not sung') }}</span>
 								</p>
 								<p v-if="itemPeople(item)" class="event-item__people">
 									{{ itemPeople(item) }}
 								</p>
 								<p class="event-item__facts">
-									<span>{{ t('notenarchiv', 'Duration: {duration}', { duration: formatDuration(item.duration) || '–' }) }}</span>
+									<span>{{ t('cantoria', 'Duration: {duration}', { duration: formatDuration(item.duration) || '–' }) }}</span>
 									<span v-if="typeof item.revision === 'number'">{{ revisionText(item) }}</span>
 									<span v-if="item.note">{{ item.note }}</span>
 								</p>
 								<ul v-if="item.warnings && item.warnings.length > 0" class="event-item__warnings">
 									<li v-for="warning in item.warnings" :key="warning">
 										<NcIconSvgWrapper :path="mdiAlertOutline" :size="18" inline />
-										<span><span class="hidden-visually">{{ t('notenarchiv', 'Warning:') }}</span> {{ warning }}</span>
+										<span><span class="hidden-visually">{{ t('cantoria', 'Warning:') }}</span> {{ warning }}</span>
 									</li>
 								</ul>
 							</div>
@@ -559,7 +559,7 @@ function revisionText(item: EventItem): string {
 								<NcButton :id="`event-item-${item.id}-up`"
 									variant="tertiary"
 									:disabled="busy || index === 0"
-									:aria-label="t('notenarchiv', 'Move up: {piece}', { piece: itemTitle(item) })"
+									:aria-label="t('cantoria', 'Move up: {piece}', { piece: itemTitle(item) })"
 									@click="move(index, -1)">
 									<template #icon>
 										<NcIconSvgWrapper :path="mdiArrowUp" />
@@ -568,7 +568,7 @@ function revisionText(item: EventItem): string {
 								<NcButton :id="`event-item-${item.id}-down`"
 									variant="tertiary"
 									:disabled="busy || index === items.length - 1"
-									:aria-label="t('notenarchiv', 'Move down: {piece}', { piece: itemTitle(item) })"
+									:aria-label="t('cantoria', 'Move down: {piece}', { piece: itemTitle(item) })"
 									@click="move(index, 1)">
 									<template #icon>
 										<NcIconSvgWrapper :path="mdiArrowDown" />
@@ -576,7 +576,7 @@ function revisionText(item: EventItem): string {
 								</NcButton>
 								<NcButton variant="tertiary"
 									:disabled="busy"
-									:aria-label="t('notenarchiv', 'Duration, encore and note: {piece}', { piece: itemTitle(item) })"
+									:aria-label="t('cantoria', 'Duration, encore and note: {piece}', { piece: itemTitle(item) })"
 									@click="editItem(item)">
 									<template #icon>
 										<NcIconSvgWrapper :path="mdiPencilOutline" />
@@ -584,7 +584,7 @@ function revisionText(item: EventItem): string {
 								</NcButton>
 								<NcButton variant="tertiary"
 									:disabled="busy"
-									:aria-label="t('notenarchiv', 'Remove: {piece}', { piece: itemTitle(item) })"
+									:aria-label="t('cantoria', 'Remove: {piece}', { piece: itemTitle(item) })"
 									@click="removing = item">
 									<template #icon>
 										<NcIconSvgWrapper :path="mdiDeleteOutline" />
@@ -595,32 +595,32 @@ function revisionText(item: EventItem): string {
 					</ol>
 
 					<p class="event-detail__total">
-						{{ t('notenarchiv', 'Total duration: {duration}', { duration: totalText }) }}
+						{{ t('cantoria', 'Total duration: {duration}', { duration: totalText }) }}
 						<template v-if="data.missingDurations > 0">
-							– {{ n('notenarchiv', '%n piece has no duration yet', '%n pieces have no duration yet', data.missingDurations) }}
+							– {{ n('cantoria', '%n piece has no duration yet', '%n pieces have no duration yet', data.missingDurations) }}
 						</template>
 					</p>
 				</section>
 
 				<section v-if="showCalendar" class="event-detail__calendar" aria-labelledby="event-detail-calendar">
 					<h3 id="event-detail-calendar">
-						{{ t('notenarchiv', 'Calendar') }}
+						{{ t('cantoria', 'Calendar') }}
 					</h3>
 					<NcCheckboxRadioSwitch v-if="!event.imported" v-model="withDeadlines" type="switch">
-						{{ t('notenarchiv', 'With the preparation deadlines (10, 8 and 6 weeks before)') }}
+						{{ t('cantoria', 'With the preparation deadlines (10, 8 and 6 weeks before)') }}
 					</NcCheckboxRadioSwitch>
 					<div class="event-detail__actions">
 						<NcButton v-if="canAddToCalendar" id="event-detail-add-to-calendar" @click="calendarDialogOpen = true">
 							<template #icon>
 								<NcIconSvgWrapper :path="mdiCalendarPlusOutline" />
 							</template>
-							{{ t('notenarchiv', 'Add to my calendar') }}
+							{{ t('cantoria', 'Add to my calendar') }}
 						</NcButton>
 						<NcButton :href="calendarFileUrl(event.id, withDeadlines && !event.imported)" download>
 							<template #icon>
 								<NcIconSvgWrapper :path="mdiCalendarExportOutline" />
 							</template>
-							{{ t('notenarchiv', 'Calendar file (.ics)') }}
+							{{ t('cantoria', 'Calendar file (.ics)') }}
 						</NcButton>
 					</div>
 					<!-- Always present, so that screen readers announce the result -->
@@ -633,29 +633,29 @@ function revisionText(item: EventItem): string {
 
 				<section class="event-detail__print-options" aria-labelledby="event-detail-print">
 					<h3 id="event-detail-print">
-						{{ t('notenarchiv', 'Print') }}
+						{{ t('cantoria', 'Print') }}
 					</h3>
 					<NcCheckboxRadioSwitch v-model="largePrint" type="switch">
-						{{ t('notenarchiv', 'Large print') }}
+						{{ t('cantoria', 'Large print') }}
 					</NcCheckboxRadioSwitch>
 					<div class="event-detail__actions">
 						<NcButton @click="print('programme')">
 							<template #icon>
 								<NcIconSvgWrapper :path="mdiPrinterOutline" />
 							</template>
-							{{ t('notenarchiv', 'Programme') }}
+							{{ t('cantoria', 'Programme') }}
 						</NcButton>
 						<NcButton @click="print('binders')">
 							<template #icon>
 								<NcIconSvgWrapper :path="mdiPrinterOutline" />
 							</template>
-							{{ t('notenarchiv', 'Concert binder list') }}
+							{{ t('cantoria', 'Concert binder list') }}
 						</NcButton>
 						<NcButton @click="print('songlist')">
 							<template #icon>
 								<NcIconSvgWrapper :path="mdiPrinterOutline" />
 							</template>
-							{{ t('notenarchiv', 'Song list') }}
+							{{ t('cantoria', 'Song list') }}
 						</NcButton>
 					</div>
 				</section>
@@ -671,10 +671,10 @@ function revisionText(item: EventItem): string {
 				</h1>
 				<p class="event-print__meta">
 					<template v-if="printMode === 'binders'">
-						{{ t('notenarchiv', 'Concert binder list') }} ·
+						{{ t('cantoria', 'Concert binder list') }} ·
 					</template>
 					<template v-else-if="printMode === 'songlist'">
-						{{ t('notenarchiv', 'Song list') }} ·
+						{{ t('cantoria', 'Song list') }} ·
 					</template>
 					{{ event.event_date ? formatDate(event.event_date) : event.period }}
 					<template v-if="event.location">
@@ -684,26 +684,26 @@ function revisionText(item: EventItem): string {
 				<table class="event-print__table">
 					<thead>
 						<tr>
-							<th>{{ t('notenarchiv', 'No.') }}</th>
-							<th>{{ t('notenarchiv', 'Shelf mark') }}</th>
-							<th>{{ t('notenarchiv', 'Title') }}</th>
-							<th>{{ t('notenarchiv', 'Composer / arrangement') }}</th>
+							<th>{{ t('cantoria', 'No.') }}</th>
+							<th>{{ t('cantoria', 'Shelf mark') }}</th>
+							<th>{{ t('cantoria', 'Title') }}</th>
+							<th>{{ t('cantoria', 'Composer / arrangement') }}</th>
 							<th v-if="showRevisionColumn">
-								{{ t('notenarchiv', 'Revision') }}
+								{{ t('cantoria', 'Revision') }}
 							</th>
 							<th v-if="printMode === 'programme'">
-								{{ t('notenarchiv', 'Duration') }}
+								{{ t('cantoria', 'Duration') }}
 							</th>
 							<template v-if="printMode === 'binders'">
 								<th class="event-print__tick">
-									{{ t('notenarchiv', 'Issued') }}
+									{{ t('cantoria', 'Issued') }}
 								</th>
 								<th class="event-print__tick">
-									{{ t('notenarchiv', 'Returned') }}
+									{{ t('cantoria', 'Returned') }}
 								</th>
 							</template>
 							<th v-if="printMode === 'songlist' && showPortalColumn">
-								{{ t('notenarchiv', 'Singers\' portal / paper only') }}
+								{{ t('cantoria', 'Singers\' portal / paper only') }}
 							</th>
 						</tr>
 					</thead>
@@ -715,7 +715,7 @@ function revisionText(item: EventItem): string {
 							</td>
 							<td>
 								{{ itemTitle(item) }}<template v-if="item.encore">
-									({{ t('notenarchiv', 'Encore') }})
+									({{ t('cantoria', 'Encore') }})
 								</template>
 							</td>
 							<td>{{ itemPeople(item) }}</td>
@@ -734,13 +734,13 @@ function revisionText(item: EventItem): string {
 								</td>
 							</template>
 							<td v-if="printMode === 'songlist' && showPortalColumn">
-								{{ inPortal(item) ? t('notenarchiv', 'Singers\' portal') : t('notenarchiv', 'paper only') }}
+								{{ inPortal(item) ? t('cantoria', 'Singers\' portal') : t('cantoria', 'paper only') }}
 							</td>
 						</tr>
 					</tbody>
 				</table>
 				<p v-if="printMode === 'programme'" class="event-print__total">
-					{{ t('notenarchiv', 'Total duration: {duration}', { duration: totalText }) }}
+					{{ t('cantoria', 'Total duration: {duration}', { duration: totalText }) }}
 				</p>
 			</section>
 		</template>
@@ -752,34 +752,34 @@ function revisionText(item: EventItem): string {
 			@close="editingEvent = false" />
 
 		<ActionDialog v-if="editing !== null"
-			:name="t('notenarchiv', 'Piece: {piece}', { piece: itemTitle(editing) })"
-			:submit-label="t('notenarchiv', 'Save')"
+			:name="t('cantoria', 'Piece: {piece}', { piece: itemTitle(editing) })"
+			:submit-label="t('cantoria', 'Save')"
 			:busy="busy"
 			:error="itemError"
 			@submit="saveItem"
 			@close="editing = null">
 			<NcTextField v-model="itemDraft.duration"
-				:label="t('notenarchiv', 'Duration (minutes:seconds)')"
+				:label="t('cantoria', 'Duration (minutes:seconds)')"
 				inputmode="numeric"
 				placeholder="3:05" />
 			<NcCheckboxRadioSwitch v-model="itemDraft.encore" type="switch">
-				{{ t('notenarchiv', 'Encore') }}
+				{{ t('cantoria', 'Encore') }}
 			</NcCheckboxRadioSwitch>
 			<NcTextArea v-model="itemDraft.note"
-				:label="t('notenarchiv', 'Note')"
+				:label="t('cantoria', 'Note')"
 				resize="vertical"
 				rows="2" />
 		</ActionDialog>
 
 		<ActionDialog v-if="removing !== null"
-			:name="t('notenarchiv', 'Remove piece')"
-			:submit-label="t('notenarchiv', 'Remove')"
+			:name="t('cantoria', 'Remove piece')"
+			:submit-label="t('cantoria', 'Remove')"
 			variant="error"
 			:busy="busy"
 			:error="error"
 			@submit="remove"
 			@close="removing = null">
-			<p>{{ t('notenarchiv', 'Remove {piece} from this programme?', { piece: itemTitle(removing) }) }}</p>
+			<p>{{ t('cantoria', 'Remove {piece} from this programme?', { piece: itemTitle(removing) }) }}</p>
 		</ActionDialog>
 
 		<CalendarDialog v-if="calendarDialogOpen && event"
@@ -789,37 +789,37 @@ function revisionText(item: EventItem): string {
 			@close="closeCalendarDialog" />
 
 		<ActionDialog v-if="cancelling"
-			:name="t('notenarchiv', 'Cancel concert')"
-			:submit-label="t('notenarchiv', 'Cancel concert')"
+			:name="t('cantoria', 'Cancel concert')"
+			:submit-label="t('cantoria', 'Cancel concert')"
 			variant="error"
 			:busy="busy"
 			:error="error"
 			@submit="submitCancel"
 			@close="cancelling = false">
-			<p>{{ t('notenarchiv', 'The concert is marked as cancelled. It stays in the list with its programme, and the notifications about its deadlines stop. It can be reopened later.') }}</p>
+			<p>{{ t('cantoria', 'The concert is marked as cancelled. It stays in the list with its programme, and the notifications about its deadlines stop. It can be reopened later.') }}</p>
 		</ActionDialog>
 
 		<ActionDialog v-if="fixing"
-			:name="t('notenarchiv', 'Fix programme')"
-			:submit-label="t('notenarchiv', 'Fix')"
+			:name="t('cantoria', 'Fix programme')"
+			:submit-label="t('cantoria', 'Fix')"
 			:busy="busy"
 			:error="error"
 			@submit="submitFix"
 			@close="fixing = false">
-			<p>{{ t('notenarchiv', 'The programme becomes fixed. It can still be changed until the concert is confirmed as sung.') }}</p>
+			<p>{{ t('cantoria', 'The programme becomes fixed. It can still be changed until the concert is confirmed as sung.') }}</p>
 		</ActionDialog>
 
 		<ActionDialog v-if="confirmingSung"
-			:name="t('notenarchiv', 'Confirm as sung')"
-			:submit-label="t('notenarchiv', 'Confirm')"
+			:name="t('cantoria', 'Confirm as sung')"
+			:submit-label="t('cantoria', 'Confirm')"
 			:busy="busy"
 			:error="error"
 			size="large"
 			@submit="submitSung"
 			@close="confirmingSung = false">
-			<p>{{ t('notenarchiv', 'Tick the pieces that were not sung. All other pieces count as documented performances. After that the programme can no longer be changed.') }}</p>
+			<p>{{ t('cantoria', 'Tick the pieces that were not sung. All other pieces count as documented performances. After that the programme can no longer be changed.') }}</p>
 			<fieldset class="event-detail__struck">
-				<legend>{{ t('notenarchiv', 'Not sung') }}</legend>
+				<legend>{{ t('cantoria', 'Not sung') }}</legend>
 				<NcCheckboxRadioSwitch v-for="item in items"
 					:key="item.id"
 					v-model="struck"

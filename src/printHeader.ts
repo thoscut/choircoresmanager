@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -30,8 +30,8 @@ export function printHeaderLine(header: PrintHeader): string {
 	return [
 		header.site.trim(),
 		header.view.trim(),
-		header.filter.trim() === '' ? '' : t('notenarchiv', 'Filter: {filter}', { filter: header.filter.trim() }),
-		t('notenarchiv', 'Printed on {date}', { date: header.date }),
+		header.filter.trim() === '' ? '' : t('cantoria', 'Filter: {filter}', { filter: header.filter.trim() }),
+		t('cantoria', 'Printed on {date}', { date: header.date }),
 	].filter((part) => part !== '').join(' · ')
 }
 
@@ -49,7 +49,7 @@ export function pageCounterContent(template: string): string {
 		.join(' ')
 }
 
-const STYLE_ID = 'notenarchiv-page-numbers'
+const STYLE_ID = 'cantoria-page-numbers'
 
 /**
  * Page numbers at the foot of every printed page, once per document.
@@ -62,7 +62,7 @@ export function addPageNumbers(): void {
 	const style = document.createElement('style')
 	style.id = STYLE_ID
 	// {page} and {pages} are kept as they are: they become the counters
-	const content = pageCounterContent(t('notenarchiv', 'Page {page} of {pages}', { page: '{page}', pages: '{pages}' }))
+	const content = pageCounterContent(t('cantoria', 'Page {page} of {pages}', { page: '{page}', pages: '{pages}' }))
 	style.textContent = `@media print { @page { @bottom-center { content: ${content}; font-size: 9pt; } } }`
 	document.head.appendChild(style)
 }

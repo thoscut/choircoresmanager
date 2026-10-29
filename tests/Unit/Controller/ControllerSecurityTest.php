@@ -3,94 +3,94 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Tests\Unit\Controller;
+namespace OCA\Cantoria\Tests\Unit\Controller;
 
-use OCA\Notenarchiv\Controller\AnnualSnapshotController;
-use OCA\Notenarchiv\Controller\ApiController;
-use OCA\Notenarchiv\Controller\ApiV1StatusController;
-use OCA\Notenarchiv\Controller\CalendarController;
-use OCA\Notenarchiv\Controller\ChoirSystemController;
-use OCA\Notenarchiv\Controller\ConcertFolderController;
-use OCA\Notenarchiv\Controller\FilesIntegrationController;
-use OCA\Notenarchiv\Controller\FolderBookController;
-use OCA\Notenarchiv\Controller\HandoverController;
-use OCA\Notenarchiv\Controller\MaintenanceController;
-use OCA\Notenarchiv\Controller\MemberController;
-use OCA\Notenarchiv\Controller\OfflineController;
-use OCA\Notenarchiv\Controller\PageController;
-use OCA\Notenarchiv\Controller\PracticeAudioController;
-use OCA\Notenarchiv\Controller\PrintMirrorController;
-use OCA\Notenarchiv\Controller\PublicLinkController;
-use OCA\Notenarchiv\Controller\PublicRepertoireController;
-use OCA\Notenarchiv\Controller\ReviewController;
-use OCA\Notenarchiv\Controller\ScanResponse;
-use OCA\Notenarchiv\Controller\SettingsController;
-use OCA\Notenarchiv\Controller\StateController;
-use OCA\Notenarchiv\Controller\TaskController;
-use OCA\Notenarchiv\Db\ArchiveFileMapper;
-use OCA\Notenarchiv\Db\AuditEntryMapper;
-use OCA\Notenarchiv\Db\CopyMapper;
-use OCA\Notenarchiv\Db\ExcerptLinkMapper;
-use OCA\Notenarchiv\Db\FolderLoanMapper;
-use OCA\Notenarchiv\Db\FolderMapper;
-use OCA\Notenarchiv\Db\LicenseMapper;
-use OCA\Notenarchiv\Db\MirrorFileMapper;
-use OCA\Notenarchiv\Db\ReviewPointMapper;
-use OCA\Notenarchiv\Db\TranscriptionReportMapper;
-use OCA\Notenarchiv\Db\VersionState;
-use OCA\Notenarchiv\Db\VersionStateMapper;
-use OCA\Notenarchiv\Db\WorkMapper;
-use OCA\Notenarchiv\Db\WorkVersionMapper;
-use OCA\Notenarchiv\Exception\AccessDeniedException;
-use OCA\Notenarchiv\Exception\InvalidInputException;
-use OCA\Notenarchiv\Exception\ModuleDisabledException;
-use OCA\Notenarchiv\Exception\NotFoundException;
-use OCA\Notenarchiv\Exception\NotSharedException;
-use OCA\Notenarchiv\Exception\UnknownLinkException;
-use OCA\Notenarchiv\Middleware\ModuleMiddleware;
-use OCA\Notenarchiv\Service\AnnualSnapshotService;
-use OCA\Notenarchiv\Service\AppSettings;
-use OCA\Notenarchiv\Service\ArchiveAccess;
-use OCA\Notenarchiv\Service\AuditLog;
-use OCA\Notenarchiv\Service\CatalogService;
-use OCA\Notenarchiv\Service\ChoirSystemCompareService;
-use OCA\Notenarchiv\Service\ConcertCalendarService;
-use OCA\Notenarchiv\Service\ConcertFolderService;
-use OCA\Notenarchiv\Service\CorrectionService;
-use OCA\Notenarchiv\Service\DueService;
-use OCA\Notenarchiv\Service\ExportService;
-use OCA\Notenarchiv\Service\FilesIntegrationService;
-use OCA\Notenarchiv\Service\FileSyncService;
-use OCA\Notenarchiv\Service\FolderBookService;
-use OCA\Notenarchiv\Service\FullBackupService;
-use OCA\Notenarchiv\Service\HandoverService;
-use OCA\Notenarchiv\Service\ImportService;
-use OCA\Notenarchiv\Service\LinkService;
-use OCA\Notenarchiv\Service\MetaService;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\NotificationService;
-use OCA\Notenarchiv\Service\PracticeAudioService;
-use OCA\Notenarchiv\Service\PrintMirrorService;
-use OCA\Notenarchiv\Service\PublicRepertoireService;
-use OCA\Notenarchiv\Service\ReleaseListService;
-use OCA\Notenarchiv\Service\RepertoireService;
-use OCA\Notenarchiv\Service\ReviewService;
-use OCA\Notenarchiv\Service\RightsPolicy;
-use OCA\Notenarchiv\Service\RightsService;
-use OCA\Notenarchiv\Service\Roles;
-use OCA\Notenarchiv\Service\RunLock;
-use OCA\Notenarchiv\Service\ScanService;
-use OCA\Notenarchiv\Service\ScoreService;
-use OCA\Notenarchiv\Service\SharedLinkService;
-use OCA\Notenarchiv\Service\StateService;
-use OCA\Notenarchiv\Service\TaskService;
-use OCA\Notenarchiv\Service\UserFiles;
-use OCA\Notenarchiv\Settings\Admin;
-use OCA\Notenarchiv\Tests\Unit\Support\ModuleSwitches;
+use OCA\Cantoria\Controller\AnnualSnapshotController;
+use OCA\Cantoria\Controller\ApiController;
+use OCA\Cantoria\Controller\ApiV1StatusController;
+use OCA\Cantoria\Controller\CalendarController;
+use OCA\Cantoria\Controller\ChoirSystemController;
+use OCA\Cantoria\Controller\ConcertFolderController;
+use OCA\Cantoria\Controller\FilesIntegrationController;
+use OCA\Cantoria\Controller\FolderBookController;
+use OCA\Cantoria\Controller\HandoverController;
+use OCA\Cantoria\Controller\MaintenanceController;
+use OCA\Cantoria\Controller\MemberController;
+use OCA\Cantoria\Controller\OfflineController;
+use OCA\Cantoria\Controller\PageController;
+use OCA\Cantoria\Controller\PracticeAudioController;
+use OCA\Cantoria\Controller\PrintMirrorController;
+use OCA\Cantoria\Controller\PublicLinkController;
+use OCA\Cantoria\Controller\PublicRepertoireController;
+use OCA\Cantoria\Controller\ReviewController;
+use OCA\Cantoria\Controller\ScanResponse;
+use OCA\Cantoria\Controller\SettingsController;
+use OCA\Cantoria\Controller\StateController;
+use OCA\Cantoria\Controller\TaskController;
+use OCA\Cantoria\Db\ArchiveFileMapper;
+use OCA\Cantoria\Db\AuditEntryMapper;
+use OCA\Cantoria\Db\CopyMapper;
+use OCA\Cantoria\Db\ExcerptLinkMapper;
+use OCA\Cantoria\Db\FolderLoanMapper;
+use OCA\Cantoria\Db\FolderMapper;
+use OCA\Cantoria\Db\LicenseMapper;
+use OCA\Cantoria\Db\MirrorFileMapper;
+use OCA\Cantoria\Db\ReviewPointMapper;
+use OCA\Cantoria\Db\TranscriptionReportMapper;
+use OCA\Cantoria\Db\VersionState;
+use OCA\Cantoria\Db\VersionStateMapper;
+use OCA\Cantoria\Db\WorkMapper;
+use OCA\Cantoria\Db\WorkVersionMapper;
+use OCA\Cantoria\Exception\AccessDeniedException;
+use OCA\Cantoria\Exception\InvalidInputException;
+use OCA\Cantoria\Exception\ModuleDisabledException;
+use OCA\Cantoria\Exception\NotFoundException;
+use OCA\Cantoria\Exception\NotSharedException;
+use OCA\Cantoria\Exception\UnknownLinkException;
+use OCA\Cantoria\Middleware\ModuleMiddleware;
+use OCA\Cantoria\Service\AnnualSnapshotService;
+use OCA\Cantoria\Service\AppSettings;
+use OCA\Cantoria\Service\ArchiveAccess;
+use OCA\Cantoria\Service\AuditLog;
+use OCA\Cantoria\Service\CatalogService;
+use OCA\Cantoria\Service\ChoirSystemCompareService;
+use OCA\Cantoria\Service\ConcertCalendarService;
+use OCA\Cantoria\Service\ConcertFolderService;
+use OCA\Cantoria\Service\CorrectionService;
+use OCA\Cantoria\Service\DueService;
+use OCA\Cantoria\Service\ExportService;
+use OCA\Cantoria\Service\FilesIntegrationService;
+use OCA\Cantoria\Service\FileSyncService;
+use OCA\Cantoria\Service\FolderBookService;
+use OCA\Cantoria\Service\FullBackupService;
+use OCA\Cantoria\Service\HandoverService;
+use OCA\Cantoria\Service\ImportService;
+use OCA\Cantoria\Service\LinkService;
+use OCA\Cantoria\Service\MetaService;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\NotificationService;
+use OCA\Cantoria\Service\PracticeAudioService;
+use OCA\Cantoria\Service\PrintMirrorService;
+use OCA\Cantoria\Service\PublicRepertoireService;
+use OCA\Cantoria\Service\ReleaseListService;
+use OCA\Cantoria\Service\RepertoireService;
+use OCA\Cantoria\Service\ReviewService;
+use OCA\Cantoria\Service\RightsPolicy;
+use OCA\Cantoria\Service\RightsService;
+use OCA\Cantoria\Service\Roles;
+use OCA\Cantoria\Service\RunLock;
+use OCA\Cantoria\Service\ScanService;
+use OCA\Cantoria\Service\ScoreService;
+use OCA\Cantoria\Service\SharedLinkService;
+use OCA\Cantoria\Service\StateService;
+use OCA\Cantoria\Service\TaskService;
+use OCA\Cantoria\Service\UserFiles;
+use OCA\Cantoria\Settings\Admin;
+use OCA\Cantoria\Tests\Unit\Support\ModuleSwitches;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
@@ -321,7 +321,7 @@ final class ControllerSecurityTest extends TestCase {
 	private static function routes(): array {
 		$routes = [];
 		foreach (glob(__DIR__ . '/../../../lib/Controller/*Controller.php') ?: [] as $file) {
-			$class = 'OCA\\Notenarchiv\\Controller\\' . basename($file, '.php');
+			$class = 'OCA\\Cantoria\\Controller\\' . basename($file, '.php');
 			self::assertTrue(is_subclass_of($class, Controller::class), $class);
 			foreach ((new \ReflectionClass($class))->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
 				$route = $method->getAttributes(FrontpageRoute::class)[0] ?? $method->getAttributes(ApiRoute::class)[0] ?? null;
@@ -369,7 +369,7 @@ final class ControllerSecurityTest extends TestCase {
 		foreach (self::API_V1 as $name => $counterpart) {
 			$route = $routes[$name];
 			[$class, $method] = explode('::', $name);
-			self::assertTrue(is_subclass_of('OCA\\Notenarchiv\\Controller\\' . $class, OCSController::class), $name . ' is an OCS controller');
+			self::assertTrue(is_subclass_of('OCA\\Cantoria\\Controller\\' . $class, OCSController::class), $name . ' is an OCS controller');
 			self::assertStringStartsWith('/api/v1/', $route['url'], $name);
 			self::assertContains(NoAdminRequired::class, $route['attributes'], $name);
 			self::assertContains(UserRateLimit::class, $route['attributes'], $name . ' is rate limited');
@@ -377,12 +377,12 @@ final class ControllerSecurityTest extends TestCase {
 			self::assertNotContains(PublicPage::class, $route['attributes'], $name);
 			self::assertNotContains(CORS::class, $route['attributes'], $name);
 
-			$modules = ModuleMiddleware::required('OCA\\Notenarchiv\\Controller\\' . $class, $method);
+			$modules = ModuleMiddleware::required('OCA\\Cantoria\\Controller\\' . $class, $method);
 			$expectedModules = [Modules::AGENT_API];
 			if ($counterpart !== null) {
 				self::assertArrayHasKey($counterpart, $routes, 'counterpart of ' . $name);
 				[$counterClass, $counterMethod] = explode('::', $counterpart);
-				$expectedModules = [...$expectedModules, ...ModuleMiddleware::required('OCA\\Notenarchiv\\Controller\\' . $counterClass, $counterMethod)];
+				$expectedModules = [...$expectedModules, ...ModuleMiddleware::required('OCA\\Cantoria\\Controller\\' . $counterClass, $counterMethod)];
 			}
 			sort($modules);
 			sort($expectedModules);
@@ -451,7 +451,7 @@ final class ControllerSecurityTest extends TestCase {
 			[$class, $method] = explode('::', $name);
 			self::assertSame('GET', $route['verb'], $name);
 			self::assertFalse($route['ocs'], $name);
-			self::assertSame($module === null ? [] : [$module], ModuleMiddleware::required('OCA\\Notenarchiv\\Controller\\' . $class, $method), $name . ' needs its module');
+			self::assertSame($module === null ? [] : [$module], ModuleMiddleware::required('OCA\\Cantoria\\Controller\\' . $class, $method), $name . ' needs its module');
 			self::assertContains(AnonRateLimit::class, $route['attributes'], $name . ' is limited per address');
 			self::assertContains(UserRateLimit::class, $route['attributes'], $name . ' is limited per account');
 			self::assertContains(BruteForceProtection::class, $route['attributes'], $name);
@@ -499,7 +499,7 @@ final class ControllerSecurityTest extends TestCase {
 		foreach (self::MEMBER_ROUTES as $name => $modules) {
 			self::assertArrayHasKey($name, $routes);
 			[$class, $method] = explode('::', $name);
-			$required = ModuleMiddleware::required('OCA\\Notenarchiv\\Controller\\' . $class, $method);
+			$required = ModuleMiddleware::required('OCA\\Cantoria\\Controller\\' . $class, $method);
 			sort($required);
 			self::assertSame($modules, $required, $name);
 			self::assertNotContains(PublicPage::class, $routes[$name]['attributes'], $name);
@@ -544,7 +544,7 @@ final class ControllerSecurityTest extends TestCase {
 		self::assertStringContainsString("microphone 'self'", $response->getFeaturePolicy()->buildPolicy(), 'recording oneself');
 		self::assertStringContainsString("camera 'none'", $response->getFeaturePolicy()->buildPolicy(), 'nothing else is opened');
 		self::assertStringContainsString("worker-src 'self'", $policy, 'the service worker for practising without a network');
-		self::assertSame('member', self::headers($response)['X-Notenarchiv-Page'] ?? null, 'the only page the worker keeps');
+		self::assertSame('member', self::headers($response)['X-Cantoria-Page'] ?? null, 'the only page the worker keeps');
 
 		$off = $this->pageController(false, true, false)->index();
 		self::assertSame(Http::STATUS_FORBIDDEN, $off->getStatus(), 'module switched off: no page');
@@ -679,13 +679,13 @@ final class ControllerSecurityTest extends TestCase {
 		self::assertStringContainsString("connect-src 'self'", $off->getContentSecurityPolicy()->buildPolicy());
 		self::assertStringNotContainsString('http', $off->getContentSecurityPolicy()->buildPolicy(), 'no other server');
 
-		$built = __DIR__ . '/../../../js/notenarchiv-offline-worker.js';
+		$built = __DIR__ . '/../../../js/cantoria-offline-worker.js';
 		foreach (['both on' => [], 'only the concert folder' => [Modules::OFFLINE], 'only the shared pages' => [Modules::CONCERT_FOLDER]] as $case => $without) {
 			$on = $controller($without)->worker();
 			if (is_file($built)) {
 				self::assertSame(Http::STATUS_OK, $on->getStatus(), $case);
 				self::assertStringContainsString('"0.15.0"', $on->render(), $case . ': the version names the cache of the scripts');
-				self::assertStringNotContainsString('__NOTENARCHIV_VERSION__', $on->render(), $case);
+				self::assertStringNotContainsString('__CANTORIA_VERSION__', $on->render(), $case);
 			} else {
 				self::assertSame(Http::STATUS_NOT_FOUND, $on->getStatus(), $case . ': without a build there is no worker');
 			}
@@ -717,7 +717,7 @@ final class ControllerSecurityTest extends TestCase {
 
 		$page = $this->concertFolderController('conductor', $folder)->page();
 		self::assertSame('concert-folder', $page->getTemplateName());
-		self::assertSame('concert-folder', self::headers($page)['X-Notenarchiv-Page'] ?? null, 'the page the worker keeps');
+		self::assertSame('concert-folder', self::headers($page)['X-Cantoria-Page'] ?? null, 'the page the worker keeps');
 		$policy = $page->getContentSecurityPolicy()->buildPolicy();
 		self::assertStringContainsString("'wasm-unsafe-eval'", $policy);
 		self::assertStringNotContainsString("'unsafe-eval'", $policy);
@@ -725,7 +725,7 @@ final class ControllerSecurityTest extends TestCase {
 		self::assertStringContainsString('frame-src blob:;', $policy, 'the scan from the browser\'s memory only');
 		$singer = $this->concertFolderController('singer', $folder)->page();
 		self::assertSame(Http::STATUS_FORBIDDEN, $singer->getStatus());
-		self::assertNull(self::headers($singer)['X-Notenarchiv-Page'] ?? null, 'the worker removes the kept folder for another account');
+		self::assertNull(self::headers($singer)['X-Cantoria-Page'] ?? null, 'the worker removes the kept folder for another account');
 
 		$score = $this->concertFolderController('conductor', $folder)->score(7);
 		self::assertSame(Http::STATUS_OK, $score->getStatus());
@@ -936,7 +936,7 @@ final class ControllerSecurityTest extends TestCase {
 		}
 		foreach (array_keys($routes) as $name) {
 			[$class, $method] = explode('::', $name);
-			$modules = ModuleMiddleware::required('OCA\\Notenarchiv\\Controller\\' . $class, $method);
+			$modules = ModuleMiddleware::required('OCA\\Cantoria\\Controller\\' . $class, $method);
 			if (in_array($name, self::CORE, true)) {
 				self::assertSame([], $modules, $name . ' belongs to the core');
 				continue;

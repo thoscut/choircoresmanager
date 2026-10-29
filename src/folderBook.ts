@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -162,7 +162,7 @@ export async function searchAccounts(search: string): Promise<AccountOption[]> {
 		return []
 	}
 	const { data } = await axios.get<{ ocs?: { data?: unknown } }>(generateOcsUrl('core/autocomplete/get'), {
-		params: { search: search.trim(), itemType: 'notenarchiv', itemId: 'folder-book', shareTypes: [0], limit: 10 },
+		params: { search: search.trim(), itemType: 'cantoria', itemId: 'folder-book', shareTypes: [0], limit: 10 },
 	})
 	return list<{ id?: unknown, label?: unknown }>(data.ocs?.data)
 		.filter((entry) => typeof entry.id === 'string' && entry.id !== '')
@@ -179,11 +179,11 @@ export async function searchAccounts(search: string): Promise<AccountOption[]> {
 export function wearLabel(wear: string | null | undefined): string {
 	switch (wear) {
 	case 'good':
-		return t('notenarchiv', 'Good')
+		return t('cantoria', 'Good')
 	case 'worn':
-		return t('notenarchiv', 'Worn')
+		return t('cantoria', 'Worn')
 	case 'damaged':
-		return t('notenarchiv', 'Damaged')
+		return t('cantoria', 'Damaged')
 	default:
 		return '–'
 	}
@@ -196,10 +196,10 @@ export function wearLabel(wear: string | null | undefined): string {
  */
 export function holderText(loan: FolderLoan): string {
 	if (loan.anonymized || loan.holderName === null) {
-		return t('notenarchiv', 'Former loan (name removed after the retention period)')
+		return t('cantoria', 'Former loan (name removed after the retention period)')
 	}
 	return loan.holderAccount
-		? t('notenarchiv', '{name} (Nextcloud account)', { name: loan.holderName })
+		? t('cantoria', '{name} (Nextcloud account)', { name: loan.holderName })
 		: loan.holderName
 }
 
@@ -211,9 +211,9 @@ export function holderText(loan: FolderLoan): string {
 export function outdatedText(item: FolderItem): string {
 	switch (item.outdated) {
 	case 'retired':
-		return t('notenarchiv', '{shelfmark}: the copy has been retired in the catalog.', { shelfmark: item.shelfmark })
+		return t('cantoria', '{shelfmark}: the copy has been retired in the catalog.', { shelfmark: item.shelfmark })
 	case 'other_version_valid':
-		return t('notenarchiv', '{shelfmark}: another version of the work is now valid for the choir.', { shelfmark: item.shelfmark })
+		return t('cantoria', '{shelfmark}: another version of the work is now valid for the choir.', { shelfmark: item.shelfmark })
 	default:
 		return ''
 	}
@@ -225,7 +225,7 @@ export function outdatedText(item: FolderItem): string {
  * @param months - months after the return
  */
 export function retentionText(months: number): string {
-	return n('notenarchiv',
+	return n('cantoria',
 		'Names, Nextcloud accounts and notes of a loan are removed automatically %n month after the folder came back. The loan itself stays as "former loan".',
 		'Names, Nextcloud accounts and notes of a loan are removed automatically %n months after the folder came back. The loan itself stays as "former loan".',
 		months)
@@ -237,7 +237,7 @@ export function retentionText(months: number): string {
  * @param months - months after the issue
  */
 export function openLoanText(months: number): string {
-	return n('notenarchiv',
+	return n('cantoria',
 		'A folder that does not come back loses its holder %n month after it was issued; it stays recorded as out.',
 		'A folder that does not come back loses its holder %n months after it was issued; it stays recorded as out.',
 		months)
@@ -324,7 +324,7 @@ export function contentsInput(rows: readonly { copyId: number | null, count: str
 		}
 		const count = row.count.trim() === '' ? 1 : Number(row.count)
 		if (!Number.isInteger(count) || count < 1 || count > 999) {
-			return { error: t('notenarchiv', 'Please enter the number of each copy as a whole number from 1 to 999.') }
+			return { error: t('cantoria', 'Please enter the number of each copy as a whole number from 1 to 999.') }
 		}
 		counts.set(row.copyId, (counts.get(row.copyId) ?? 0) + count)
 	}

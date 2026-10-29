@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -36,37 +36,37 @@ const accessCheckUrl = adminSettingsUrl(SETTINGS_SECTIONS.access)
 		<NcNoteCard v-if="startNotice !== null" :type="startNotice.type" :role="startNotice.type === 'error' ? 'alert' : 'status'">
 			<p>{{ startNotice.text }}</p>
 			<NcButton @click="startNotice = null">
-				{{ t('notenarchiv', 'Close') }}
+				{{ t('cantoria', 'Close') }}
 			</NcButton>
 		</NcNoteCard>
 		<NcNoteCard v-if="canChangeSettings && !hasArchiveFolder" type="warning">
-			<p>{{ t('notenarchiv', 'No archive folder has been chosen yet. Without it files cannot be linked and exports cannot be stored.') }}</p>
+			<p>{{ t('cantoria', 'No archive folder has been chosen yet. Without it files cannot be linked and exports cannot be stored.') }}</p>
 			<NcButton :href="settingsUrl">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiCogOutline" />
 				</template>
-				{{ t('notenarchiv', 'Open settings') }}
+				{{ t('cantoria', 'Open settings') }}
 			</NcButton>
 		</NcNoteCard>
 		<NcNoteCard v-else-if="!hasArchiveFolder" type="info">
-			{{ t('notenarchiv', 'No archive folder has been chosen yet. An administrator sets it in the settings of the music archive.') }}
+			{{ t('cantoria', 'No archive folder has been chosen yet. An administrator sets it in the settings of the music archive.') }}
 		</NcNoteCard>
 		<NcNoteCard v-if="archiveNotShared" type="warning">
-			<p>{{ t('notenarchiv', 'The archive folder is not shared with your account, so its files (scores, scans, practice files) do not open for you. Please ask the music librarians to share the archive folder with you or your group.') }}</p>
+			<p>{{ t('cantoria', 'The archive folder is not shared with your account, so its files (scores, scans, practice files) do not open for you. Please ask the music librarians to share the archive folder with you or your group.') }}</p>
 			<NcButton v-if="canChangeSettings" :href="accessCheckUrl">
 				<template #icon>
 					<NcIconSvgWrapper :path="mdiFolderAccountOutline" />
 				</template>
-				{{ t('notenarchiv', 'Check access to the archive folder') }}
+				{{ t('cantoria', 'Check access to the archive folder') }}
 			</NcButton>
 			<p>
-				<GuideLink :href="userGuideUrl(USER_GUIDE.filesNotShared)" :label="t('notenarchiv', 'Files you cannot open (user guide)')" />
+				<GuideLink :href="userGuideUrl(USER_GUIDE.filesNotShared)" :label="t('cantoria', 'Files you cannot open (user guide)')" />
 			</p>
 		</NcNoteCard>
 		<NcNoteCard v-if="hasNoRoleAsAdmin" type="info">
-			<p>{{ t('notenarchiv', 'You are an administrator without a role: you can read the music archive and change the settings. The proposals inbox and internal preservation copies are only open to the roles concerned. To edit the catalog, add yourself to a group with a role.') }}</p>
+			<p>{{ t('cantoria', 'You are an administrator without a role: you can read the music archive and change the settings. The proposals inbox and internal preservation copies are only open to the roles concerned. To edit the catalog, add yourself to a group with a role.') }}</p>
 			<p>
-				<GuideLink :href="adminGuideUrl(ADMIN_GUIDE.roles)" :label="t('notenarchiv', 'Roles and groups (administration guide)')" />
+				<GuideLink :href="adminGuideUrl(ADMIN_GUIDE.roles)" :label="t('cantoria', 'Roles and groups (administration guide)')" />
 			</p>
 		</NcNoteCard>
 	</div>

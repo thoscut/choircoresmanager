@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -90,14 +90,14 @@ function nextNumber(binder: number): number {
 
 async function saveOpen(): Promise<void> {
 	if (openDraft.value.length === 0) {
-		openError.value = t('notenarchiv', 'At least one binder has to stay open.')
+		openError.value = t('cantoria', 'At least one binder has to stay open.')
 		return
 	}
 	openBusy.value = true
 	openError.value = ''
 	try {
 		await saveOpenBinders(openChosen.value)
-		showSuccess(t('notenarchiv', 'The open binders have been saved.'))
+		showSuccess(t('cantoria', 'The open binders have been saved.'))
 		await loadProposal(null)
 		resetShelfmark()
 	} catch (caught) {
@@ -160,7 +160,7 @@ function infoOf(field: FormField): FieldInfo {
  */
 function labelOf(field: FormField): string {
 	const label = translateLabel(infoOf(field).label)
-	return field.required ? t('notenarchiv', '{label} (required)', { label }) : label
+	return field.required ? t('cantoria', '{label} (required)', { label }) : label
 }
 
 /**
@@ -171,11 +171,11 @@ function labelOf(field: FormField): string {
 function hintOf(field: FormField): string {
 	switch (field.key) {
 	case 'title_source':
-		return t('notenarchiv', 'Where the title comes from, e.g. title page or first page of music.')
+		return t('cantoria', 'Where the title comes from, e.g. title page or first page of music.')
 	case 'origin':
-		return t('notenarchiv', 'From whom or where the piece comes, e.g. donation of a choir member or bought from a publisher.')
+		return t('cantoria', 'From whom or where the piece comes, e.g. donation of a choir member or bought from a publisher.')
 	case 'notes':
-		return t('notenarchiv', 'Accession date and origin are added to the notes of the version automatically.')
+		return t('cantoria', 'Accession date and origin are added to the notes of the version automatically.')
 	default:
 		return ''
 	}
@@ -212,7 +212,7 @@ function resetShelfmark(): void {
 
 const binderOptions = computed(() => (proposal.value?.openBinders ?? []).map((value) => ({
 	id: value,
-	label: t('notenarchiv', 'Binder {binder}', { binder: value }),
+	label: t('cantoria', 'Binder {binder}', { binder: value }),
 })))
 
 const binderOption = computed({
@@ -235,25 +235,25 @@ function validate(): boolean {
 	for (const field of MAIN_FIELDS) {
 		const value = draft[field.key]
 		if (typeof value !== 'string' || value.trim() === '') {
-			errors[field.key] = t('notenarchiv', 'Please fill in this field.')
+			errors[field.key] = t('cantoria', 'Please fill in this field.')
 		}
 	}
 	if (typeof draft.accession_date === 'string' && draft.accession_date > today) {
-		errors.accession_date = t('notenarchiv', 'The accession date must not lie in the future.')
+		errors.accession_date = t('cantoria', 'The accession date must not lie in the future.')
 	}
 	if (binder.value === null) {
-		errors.binder = t('notenarchiv', 'Please choose a binder.')
+		errors.binder = t('cantoria', 'Please choose a binder.')
 	}
 	const number = numberText.value.trim()
 	if (!/^\d{1,4}$/.test(number) || Number.parseInt(number, 10) < 1) {
-		errors.number = t('notenarchiv', 'Please enter a whole number.')
+		errors.number = t('cantoria', 'Please enter a whole number.')
 	} else if (binder.value !== null && Number.parseInt(number, 10) < nextNumber(binder.value)) {
-		errors.number = t('notenarchiv', 'Numbers are never reused: the next free number in binder {binder} is {number}.', { binder: binder.value, number: nextNumber(binder.value) })
+		errors.number = t('cantoria', 'Numbers are never reused: the next free number in binder {binder} is {number}.', { binder: binder.value, number: nextNumber(binder.value) })
 	}
 	for (const key of ['originals_count', 'copies_count']) {
 		const value = draft[key]
 		if (typeof value === 'string' && value.trim() !== '' && !/^\d{1,6}$/.test(value.trim())) {
-			errors[key] = t('notenarchiv', 'Please enter a whole number.')
+			errors[key] = t('cantoria', 'Please enter a whole number.')
 		}
 	}
 	return Object.keys(errors).length === 0
@@ -316,7 +316,7 @@ function unlinkFile(): void {
 async function chooseFile(): Promise<void> {
 	let nodes
 	try {
-		nodes = await getFilePickerBuilder(t('notenarchiv', 'Choose a file in the archive folder'))
+		nodes = await getFilePickerBuilder(t('cantoria', 'Choose a file in the archive folder'))
 			.setMultiSelect(false)
 			.setType(FilePickerType.Choose)
 			.build()
@@ -330,7 +330,7 @@ async function chooseFile(): Promise<void> {
 	}
 	const node = nodes[0]
 	if (!node?.fileid) {
-		showError(t('notenarchiv', 'The chosen file cannot be used.'))
+		showError(t('cantoria', 'The chosen file cannot be used.'))
 	} else {
 		file.value = { id: node.fileid, name: node.displayname || node.basename }
 	}
@@ -340,7 +340,7 @@ async function chooseFile(): Promise<void> {
 async function submit(): Promise<void> {
 	error.value = ''
 	if (!validate()) {
-		error.value = t('notenarchiv', 'Please check the marked fields.')
+		error.value = t('cantoria', 'Please check the marked fields.')
 		focusFirstError()
 		return
 	}
@@ -348,7 +348,7 @@ async function submit(): Promise<void> {
 	try {
 		result.value = await createAccession(input(), file.value?.id ?? null)
 		addLabels([result.value.label])
-		showSuccess(t('notenarchiv', '{shelfmark} has been recorded.', { shelfmark: result.value.shelfmark }))
+		showSuccess(t('cantoria', '{shelfmark} has been recorded.', { shelfmark: result.value.shelfmark }))
 		// The form is replaced by the result: its message gets the focus
 		await focusAfterUpdate(resultNote)
 		await loadEntries()
@@ -409,8 +409,8 @@ async function addTypedLabels(): Promise<void> {
 	}
 	if (ids.length === 0) {
 		labelError.value = unknown.length > 0
-			? t('notenarchiv', 'Not in the catalog: {list}', { list: unknown.join(', ') })
-			: t('notenarchiv', 'Please enter shelf marks.')
+			? t('cantoria', 'Not in the catalog: {list}', { list: unknown.join(', ') })
+			: t('cantoria', 'Please enter shelf marks.')
 		return
 	}
 	labelBusy.value = true
@@ -421,7 +421,7 @@ async function addTypedLabels(): Promise<void> {
 		addLabels(fetched.sort((a, b) => (order.get(a.copyId) ?? 0) - (order.get(b.copyId) ?? 0)))
 		labelInput.value = ''
 		if (unknown.length > 0) {
-			labelError.value = t('notenarchiv', 'Not in the catalog: {list}', { list: unknown.join(', ') })
+			labelError.value = t('cantoria', 'Not in the catalog: {list}', { list: unknown.join(', ') })
 		}
 	} catch (caught) {
 		labelError.value = errorMessage(caught)
@@ -445,8 +445,8 @@ onMounted(async () => {
 
 <template>
 	<div class="accession-view">
-		<ViewHeader :title="t('notenarchiv', 'New accession and labels')"
-			:description="t('notenarchiv', 'A new piece gets the next free shelf mark; numbers are never reused, not even those of retired copies. Shelf labels can be printed for any copy.')" />
+		<ViewHeader :title="t('cantoria', 'New accession and labels')"
+			:description="t('cantoria', 'A new piece gets the next free shelf mark; numbers are never reused, not even those of retired copies. Shelf labels can be printed for any copy.')" />
 
 		<div class="accession-view__content">
 			<NcNoteCard v-if="proposalError" type="error" role="alert">
@@ -456,23 +456,23 @@ onMounted(async () => {
 			<!-- Form (librarian) -->
 			<section v-if="isLibrarian" class="accession-view__section" aria-labelledby="accession-form">
 				<h3 id="accession-form">
-					{{ t('notenarchiv', 'Record a new piece') }}
+					{{ t('cantoria', 'Record a new piece') }}
 				</h3>
 
 				<div v-if="result" class="accession-view__result">
 					<NcNoteCard ref="resultNote" type="success">
-						<p>{{ t('notenarchiv', '{shelfmark} has been recorded: work, version and copy.', { shelfmark: result.shelfmark }) }}</p>
-						<p>{{ t('notenarchiv', 'Its label is on the sheet below. Next: confirm the rights and add the persons involved in the rights tab.') }}</p>
+						<p>{{ t('cantoria', '{shelfmark} has been recorded: work, version and copy.', { shelfmark: result.shelfmark }) }}</p>
+						<p>{{ t('cantoria', 'Its label is on the sheet below. Next: confirm the rights and add the persons involved in the rights tab.') }}</p>
 					</NcNoteCard>
 					<div class="accession-view__actions">
 						<NcButton variant="primary" @click="openEntry(result.copyId, 'rights')">
-							{{ t('notenarchiv', 'Open {shelfmark}', { shelfmark: result.shelfmark }) }}
+							{{ t('cantoria', 'Open {shelfmark}', { shelfmark: result.shelfmark }) }}
 						</NcButton>
 						<NcButton @click="another">
 							<template #icon>
 								<NcIconSvgWrapper :path="mdiPlus" />
 							</template>
-							{{ t('notenarchiv', 'Record another piece') }}
+							{{ t('cantoria', 'Record another piece') }}
 						</NcButton>
 					</div>
 				</div>
@@ -484,20 +484,20 @@ onMounted(async () => {
 					@submit.prevent="submit">
 					<div class="accession-view__shelfmark">
 						<NcSelect v-model="binderOption"
-							:input-label="t('notenarchiv', 'Binder (required)')"
+							:input-label="t('cantoria', 'Binder (required)')"
 							:options="binderOptions"
 							:clearable="false"
 							:loading="proposalLoading"
 							:error="!!errors.binder"
 							:helper-text="errors.binder ?? ''" />
 						<NcTextField v-model="numberText"
-							:label="t('notenarchiv', 'Number (required)')"
+							:label="t('cantoria', 'Number (required)')"
 							inputmode="numeric"
 							:aria-invalid="errors.number ? 'true' : undefined"
 							:error="!!errors.number"
-							:helper-text="errors.number ?? (binder !== null ? t('notenarchiv', 'Next free number: {number}', { number: nextNumber(binder) }) : '')" />
+							:helper-text="errors.number ?? (binder !== null ? t('cantoria', 'Next free number: {number}', { number: nextNumber(binder) }) : '')" />
 						<p class="accession-view__preview" aria-live="polite">
-							<span class="accession-view__muted">{{ t('notenarchiv', 'Shelf mark') }}</span>
+							<span class="accession-view__muted">{{ t('cantoria', 'Shelf mark') }}</span>
 							<strong>{{ shelfmarkPreview || '–' }}</strong>
 						</p>
 					</div>
@@ -514,7 +514,7 @@ onMounted(async () => {
 					</div>
 
 					<NcCheckboxRadioSwitch v-model="showMore" type="switch">
-						{{ t('notenarchiv', 'More details (arranger, publisher, rights, counts)') }}
+						{{ t('cantoria', 'More details (arranger, publisher, rights, counts)') }}
 					</NcCheckboxRadioSwitch>
 					<div v-if="showMore" class="accession-view__fields">
 						<FieldInput v-for="field in MORE_FIELDS"
@@ -533,12 +533,12 @@ onMounted(async () => {
 							<template #icon>
 								<NcIconSvgWrapper :path="mdiFileLinkOutline" />
 							</template>
-							{{ file ? t('notenarchiv', 'Choose another file …') : t('notenarchiv', 'Link a file (optional) …') }}
+							{{ file ? t('cantoria', 'Choose another file …') : t('cantoria', 'Link a file (optional) …') }}
 						</NcButton>
 						<span v-if="file" class="accession-view__file-name">
 							{{ file.name }}
 							<NcButton variant="tertiary"
-								:aria-label="t('notenarchiv', 'Do not link {name}', { name: file.name })"
+								:aria-label="t('cantoria', 'Do not link {name}', { name: file.name })"
 								@click="unlinkFile">
 								<template #icon>
 									<NcIconSvgWrapper :path="mdiClose" />
@@ -546,7 +546,7 @@ onMounted(async () => {
 							</NcButton>
 						</span>
 						<p class="accession-view__muted">
-							{{ t('notenarchiv', 'Only a file inside the archive folder can be linked. It stays linked to this copy, whatever its name.') }}
+							{{ t('cantoria', 'Only a file inside the archive folder can be linked. It stays linked to this copy, whatever its name.') }}
 						</p>
 					</div>
 
@@ -559,7 +559,7 @@ onMounted(async () => {
 								<NcLoadingIcon v-if="busy" />
 								<NcIconSvgWrapper v-else :path="mdiCheckCircleOutline" />
 							</template>
-							{{ t('notenarchiv', 'Record accession') }}
+							{{ t('cantoria', 'Record accession') }}
 						</NcButton>
 					</div>
 				</form>
@@ -568,22 +568,22 @@ onMounted(async () => {
 			<!-- Open binders (librarian) -->
 			<section v-if="isLibrarian && proposal" class="accession-view__section" aria-labelledby="accession-binders">
 				<h3 id="accession-binders">
-					{{ t('notenarchiv', 'Binders open for new copies') }}
+					{{ t('cantoria', 'Binders open for new copies') }}
 				</h3>
 				<p class="accession-view__muted">
-					{{ t('notenarchiv', 'New copies go only into open binders. Open a new binder when the current one is full.') }}
+					{{ t('cantoria', 'New copies go only into open binders. Open a new binder when the current one is full.') }}
 				</p>
 				<fieldset class="accession-view__binders">
 					<legend class="hidden-visually">
-						{{ t('notenarchiv', 'Binders open for new copies') }}
+						{{ t('cantoria', 'Binders open for new copies') }}
 					</legend>
 					<NcCheckboxRadioSwitch v-for="value in binderChoices"
 						:key="value"
 						v-model="openDraft"
 						:value="String(value)">
 						{{ nextNumber(value) > 1
-							? t('notenarchiv', 'Binder {binder} (next number {number})', { binder: value, number: nextNumber(value) })
-							: t('notenarchiv', 'Binder {binder} (new)', { binder: value }) }}
+							? t('cantoria', 'Binder {binder} (next number {number})', { binder: value, number: nextNumber(value) })
+							: t('cantoria', 'Binder {binder} (new)', { binder: value }) }}
 					</NcCheckboxRadioSwitch>
 				</fieldset>
 				<NcNoteCard v-if="openError" type="error" role="alert">
@@ -594,7 +594,7 @@ onMounted(async () => {
 						<template v-if="openBusy" #icon>
 							<NcLoadingIcon />
 						</template>
-						{{ t('notenarchiv', 'Save open binders') }}
+						{{ t('cantoria', 'Save open binders') }}
 					</NcButton>
 				</div>
 			</section>
@@ -602,12 +602,12 @@ onMounted(async () => {
 			<!-- Labels -->
 			<section class="accession-view__section" aria-labelledby="accession-labels">
 				<h3 id="accession-labels">
-					{{ t('notenarchiv', 'Shelf labels') }}
+					{{ t('cantoria', 'Shelf labels') }}
 				</h3>
 				<form class="accession-view__label-form" @submit.prevent="addTypedLabels">
 					<NcTextArea v-model="labelInput"
-						:label="t('notenarchiv', 'Shelf marks')"
-						:helper-text="t('notenarchiv', 'Separated by commas or line breaks; 10-70..75 stands for 10-70 to 10-75.')"
+						:label="t('cantoria', 'Shelf marks')"
+						:helper-text="t('cantoria', 'Separated by commas or line breaks; 10-70..75 stands for 10-70 to 10-75.')"
 						rows="2"
 						resize="vertical" />
 					<NcButton type="submit" :disabled="labelBusy || labelInput.trim() === ''">
@@ -615,7 +615,7 @@ onMounted(async () => {
 							<NcLoadingIcon v-if="labelBusy" />
 							<NcIconSvgWrapper v-else :path="mdiLabelOutline" />
 						</template>
-						{{ t('notenarchiv', 'Add labels') }}
+						{{ t('cantoria', 'Add labels') }}
 					</NcButton>
 				</form>
 				<NcNoteCard v-if="labelError" type="warning" role="alert">
@@ -623,11 +623,11 @@ onMounted(async () => {
 				</NcNoteCard>
 
 				<template v-if="labels.length > 0">
-					<ul class="accession-view__labels" :aria-label="n('notenarchiv', '%n label on the sheet', '%n labels on the sheet', labels.length)">
+					<ul class="accession-view__labels" :aria-label="n('cantoria', '%n label on the sheet', '%n labels on the sheet', labels.length)">
 						<li v-for="label in labels" :key="label.copyId">
 							<span class="accession-view__label-text">{{ label.label }} – {{ label.title }}</span>
 							<NcButton variant="tertiary"
-								:aria-label="t('notenarchiv', 'Remove the label of {shelfmark}', { shelfmark: label.shelfmark })"
+								:aria-label="t('cantoria', 'Remove the label of {shelfmark}', { shelfmark: label.shelfmark })"
 								@click="removeLabel(label.copyId)">
 								<template #icon>
 									<NcIconSvgWrapper :path="mdiClose" />
@@ -638,7 +638,7 @@ onMounted(async () => {
 					<LabelSheet :labels="labels" />
 				</template>
 				<p v-else class="accession-view__muted">
-					{{ t('notenarchiv', 'No labels yet. Recorded pieces are added automatically.') }}
+					{{ t('cantoria', 'No labels yet. Recorded pieces are added automatically.') }}
 				</p>
 			</section>
 		</div>

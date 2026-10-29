@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
@@ -124,7 +124,7 @@ describe('count-in setting', () => {
 		expect(storedCountIn()).toBe(0)
 		storeCountIn(2)
 		expect(storedCountIn()).toBe(2)
-		window.localStorage.setItem('notenarchiv.countIn', 'nonsense')
+		window.localStorage.setItem('cantoria.countIn', 'nonsense')
 		expect(storedCountIn()).toBe(0)
 	})
 

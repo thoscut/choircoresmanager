@@ -1,5 +1,5 @@
 <!--
-  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+  - SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <script setup lang="ts">
@@ -106,9 +106,9 @@ interface SortOption {
 }
 
 const sortOptions = computed<SortOption[]>(() => [
-	{ id: 'catalog', label: t('notenarchiv', 'Catalog order') },
-	{ id: 'shelfmark', label: t('notenarchiv', 'Shelf mark') },
-	{ id: 'title', label: t('notenarchiv', 'Title') },
+	{ id: 'catalog', label: t('cantoria', 'Catalog order') },
+	{ id: 'shelfmark', label: t('cantoria', 'Shelf mark') },
+	{ id: 'title', label: t('cantoria', 'Title') },
 ])
 
 /** The sort order as an option of the select (a labelled select fits every width). */
@@ -125,9 +125,9 @@ const countText = computed(() => {
 	const shown = visibleEntries.value.length
 	const total = entries.value.length
 	if (shown === total) {
-		return n('notenarchiv', '%n copy', '%n copies', total)
+		return n('cantoria', '%n copy', '%n copies', total)
 	}
-	return t('notenarchiv', '{shown} of {total} copies', { shown, total })
+	return t('cantoria', '{shown} of {total} copies', { shown, total })
 })
 
 /**
@@ -145,8 +145,8 @@ function ariaSort(order: SortOrder): 'ascending' | 'none' {
  * @param entry - catalog entry
  */
 function filesTitle(entry: Entry): string {
-	return n('notenarchiv', '%n file', '%n files', entry.files)
-		+ ', ' + n('notenarchiv', '%n PDF', '%n PDFs', entry.pdfs)
+	return n('cantoria', '%n file', '%n files', entry.files)
+		+ ', ' + n('cantoria', '%n PDF', '%n PDFs', entry.pdfs)
 }
 
 /**
@@ -166,7 +166,7 @@ function confirmation(entry: Entry): true | null {
 function repertoireText(entry: Entry): string {
 	const parts = [repertoireClassLabel(entry.repertoire_class)]
 	if (entry.last_performed_on) {
-		parts.push(t('notenarchiv', 'last {date}', { date: formatDate(entry.last_performed_on) }))
+		parts.push(t('cantoria', 'last {date}', { date: formatDate(entry.last_performed_on) }))
 	}
 	return parts.join(', ')
 }
@@ -180,11 +180,11 @@ function repertoireDetail(entry: Entry): string {
 	// Derived from performances: the number says it. "From the imported catalog"
 	// would stand in nearly every row; the sidebar names the source.
 	const parts = [entry.repertoire_source === 'performances' && entry.performances
-		? n('notenarchiv', '%n documented performance', '%n documented performances', entry.performances)
+		? n('cantoria', '%n documented performance', '%n documented performances', entry.performances)
 		: (entry.repertoire_source === 'import' ? '' : repertoireSourceLabel(entry.repertoire_source))]
 	const songLists = songListCount(entry)
 	if (songLists > 0) {
-		parts.push(n('notenarchiv', 'on %n song list', 'on %n song lists', songLists))
+		parts.push(n('cantoria', 'on %n song list', 'on %n song lists', songLists))
 	}
 	return parts.filter((part) => part !== '').join(', ')
 }
@@ -197,7 +197,7 @@ function repertoireDetail(entry: Entry): string {
  */
 function reviewText(entry: Entry): string {
 	const open = isModuleActive('transcription_review') ? (entry.review_open ?? 0) : 0
-	return open > 0 ? n('notenarchiv', '%n open review point', '%n open review points', open) : ''
+	return open > 0 ? n('cantoria', '%n open review point', '%n open review points', open) : ''
 }
 
 /**
@@ -225,13 +225,13 @@ function statusText(entry: Entry): string {
 	<div ref="root" class="catalog">
 		<div ref="header" class="catalog__header">
 			<h2 class="hidden-visually">
-				{{ t('notenarchiv', 'Catalog') }}
+				{{ t('cantoria', 'Catalog') }}
 			</h2>
 			<NcTextField v-if="isMobile"
 				v-model="filters.search"
 				class="catalog__search"
 				type="search"
-				:label="t('notenarchiv', 'Shelf mark, title or composer')"
+				:label="t('cantoria', 'Shelf mark, title or composer')"
 				:show-trailing-button="filters.search !== ''"
 				@trailing-button-click="filters.search = ''">
 				<template #icon>
@@ -244,7 +244,7 @@ function statusText(entry: Entry): string {
 				</p>
 				<NcSelect v-model="sortOption"
 					class="catalog__sort"
-					:input-label="t('notenarchiv', 'Sort by')"
+					:input-label="t('cantoria', 'Sort by')"
 					:options="sortOptions"
 					:clearable="false"
 					:searchable="false" />
@@ -253,8 +253,8 @@ function statusText(entry: Entry): string {
 		<AppNotices />
 
 		<NcEmptyContent v-if="visibleEntries.length === 0"
-			:name="t('notenarchiv', 'No matches')"
-			:description="t('notenarchiv', 'No copy matches the search and filters. Retired copies are only shown when the status filter includes them.')">
+			:name="t('cantoria', 'No matches')"
+			:description="t('cantoria', 'No copy matches the search and filters. Retired copies are only shown when the status filter includes them.')">
 			<template #icon>
 				<NcIconSvgWrapper :path="mdiMagnify" />
 			</template>
@@ -263,7 +263,7 @@ function statusText(entry: Entry): string {
 					<template #icon>
 						<NcIconSvgWrapper :path="mdiFilterRemoveOutline" />
 					</template>
-					{{ t('notenarchiv', 'Reset search and filters') }}
+					{{ t('cantoria', 'Reset search and filters') }}
 				</NcButton>
 			</template>
 		</NcEmptyContent>
@@ -278,7 +278,7 @@ function statusText(entry: Entry): string {
 					@click="openRow(entry.id)">
 					<span class="catalog-card__head">
 						<span class="shelfmark">{{ entry.shelfmark }}</span>
-						<span class="catalog-card__title">{{ entry.title || t('notenarchiv', '(no title)') }}</span>
+						<span class="catalog-card__title">{{ entry.title || t('cantoria', '(no title)') }}</span>
 					</span>
 					<span v-if="entry.composer" class="catalog-card__composer">{{ entry.composer }}</span>
 					<span class="catalog-card__meta">
@@ -298,31 +298,31 @@ function statusText(entry: Entry): string {
 		<!-- Table for wide screens -->
 		<table v-else class="catalog-table">
 			<caption class="hidden-visually">
-				{{ t('notenarchiv', 'Catalog') }}
+				{{ t('cantoria', 'Catalog') }}
 			</caption>
 			<thead>
 				<tr>
 					<th scope="col" :aria-sort="ariaSort('shelfmark')">
 						<button type="button" class="catalog-table__sort" @click="sortModel = 'shelfmark'">
-							{{ t('notenarchiv', 'Shelf mark') }}
+							{{ t('cantoria', 'Shelf mark') }}
 						</button>
 					</th>
 					<th scope="col" :aria-sort="ariaSort('title')">
 						<button type="button" class="catalog-table__sort" @click="sortModel = 'title'">
-							{{ t('notenarchiv', 'Title') }}
+							{{ t('cantoria', 'Title') }}
 						</button>
 					</th>
 					<th scope="col">
-						{{ t('notenarchiv', 'Composer') }}
+						{{ t('cantoria', 'Composer') }}
 					</th>
 					<th scope="col">
-						{{ t('notenarchiv', 'Rights') }}
+						{{ t('cantoria', 'Rights') }}
 					</th>
 					<th scope="col">
-						{{ t('notenarchiv', 'Repertoire') }}
+						{{ t('cantoria', 'Repertoire') }}
 					</th>
 					<th scope="col" class="catalog-table__files">
-						{{ t('notenarchiv', 'Files') }}
+						{{ t('cantoria', 'Files') }}
 					</th>
 				</tr>
 			</thead>
@@ -335,7 +335,7 @@ function statusText(entry: Entry): string {
 						<button type="button"
 							class="catalog-table__open shelfmark"
 							:aria-current="entry.id === selectedId ? 'true' : undefined"
-							:aria-label="t('notenarchiv', 'Open {shelfmark}', { shelfmark: entry.shelfmark })"
+							:aria-label="t('cantoria', 'Open {shelfmark}', { shelfmark: entry.shelfmark })"
 							@click.stop="openRow(entry.id)">
 							{{ entry.shelfmark }}
 						</button>

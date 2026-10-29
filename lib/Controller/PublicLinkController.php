@@ -3,17 +3,17 @@
 declare(strict_types=1);
 
 /**
- * SPDX-FileCopyrightText: 2026 Thomas Scheel and Notenarchiv contributors
+ * SPDX-FileCopyrightText: 2026 Thomas Scheel and Cantoria contributors
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-namespace OCA\Notenarchiv\Controller;
+namespace OCA\Cantoria\Controller;
 
-use OCA\Notenarchiv\AppInfo\Application;
-use OCA\Notenarchiv\Attribute\RequiresModule;
-use OCA\Notenarchiv\Middleware\ModuleMiddleware;
-use OCA\Notenarchiv\Service\Modules;
-use OCA\Notenarchiv\Service\SharedLinkService;
+use OCA\Cantoria\AppInfo\Application;
+use OCA\Cantoria\Attribute\RequiresModule;
+use OCA\Cantoria\Middleware\ModuleMiddleware;
+use OCA\Cantoria\Service\Modules;
+use OCA\Cantoria\Service\SharedLinkService;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\AnonRateLimit;
@@ -69,7 +69,7 @@ class PublicLinkController extends Controller {
 	#[NoCSRFRequired]
 	#[AnonRateLimit(limit: 60, period: 600)]
 	#[UserRateLimit(limit: 120, period: 600)]
-	#[BruteForceProtection(action: 'notenarchiv_public_link')]
+	#[BruteForceProtection(action: 'cantoria_public_link')]
 	#[FrontpageRoute(verb: 'GET', url: '/p/{token}')]
 	public function show(string $token): Response {
 		$excerpt = null;
@@ -77,7 +77,7 @@ class PublicLinkController extends Controller {
 			try {
 				$excerpt = $this->shared->publicExcerpt($token);
 			} catch (\Throwable $e) {
-				$this->logger->error('Notenarchiv: public link: ' . $e->getMessage(), ['exception' => $e]);
+				$this->logger->error('Cantoria: public link: ' . $e->getMessage(), ['exception' => $e]);
 			}
 		}
 		if ($excerpt === null) {
@@ -96,7 +96,7 @@ class PublicLinkController extends Controller {
 		// A link that expires: not for search engines.
 		$response->addHeader('X-Robots-Tag', 'noindex, nofollow');
 		// The service worker keeps this page on the device only when the visitor asks for it (milestone 0.15)
-		$response->addHeader('X-Notenarchiv-Page', 'public');
+		$response->addHeader('X-Cantoria-Page', 'public');
 		$response->cacheFor(0, false, false);
 		return $response;
 	}
@@ -112,7 +112,7 @@ class PublicLinkController extends Controller {
 	#[NoCSRFRequired]
 	#[AnonRateLimit(limit: 30, period: 600)]
 	#[UserRateLimit(limit: 60, period: 600)]
-	#[BruteForceProtection(action: 'notenarchiv_public_link')]
+	#[BruteForceProtection(action: 'cantoria_public_link')]
 	#[FrontpageRoute(verb: 'GET', url: '/p/{token}/scan')]
 	public function scan(string $token): Response {
 		$scan = null;
@@ -120,7 +120,7 @@ class PublicLinkController extends Controller {
 			try {
 				$scan = $this->shared->publicScan($token);
 			} catch (\Throwable $e) {
-				$this->logger->error('Notenarchiv: public link: ' . $e->getMessage(), ['exception' => $e]);
+				$this->logger->error('Cantoria: public link: ' . $e->getMessage(), ['exception' => $e]);
 			}
 		}
 		if ($scan === null) {
