@@ -116,7 +116,7 @@ interne Zwischenstände heißen `0.7.0-dev.1` usw. (siehe `docs/release.md`).
 
 ### Stand auf einen Blick
 
-Stand: 28. Oktober 2026. **Fertig** heißt: im Code, getestet und in einer
+Stand: 29. Oktober 2026. **Fertig** heißt: im Code, getestet und in einer
 Version auf `main`. **Im Review** heißt: fertig im Code und grün in der CI,
 aber noch nicht in `main` zusammengeführt. **Geplant** heißt: noch nicht
 begonnen.
@@ -127,16 +127,16 @@ begonnen.
 | 0.7 Teilen, Mappen und Druckstation | fertig | Version 0.9.0 |
 | 0.8 Archiv und Abspielen | fertig (Übersetzungen außer Deutsch: muttersprachliche Prüfung offen) | Version 0.9.0 |
 | 0.9 Benutzerführung | fertig | Version 0.9.0, 0.9.1 |
-| 0.10 Verlässlich bauen und sichern | im Review | PR #10 |
-| 0.11 Rechte und Datenschutz schärfen | im Review | PR #10 |
-| 0.12 Klar bedienen und an das Chorsystem übergeben | im Review | PR #10 |
-| 0.13 Üben in der Notenansicht | im Review | PR #11 (baut auf PR #10 auf) |
-| 0.14 Text und Tonhöhe beim Mitsingen | im Review | PR #11 |
-| 0.15 Ohne Netz üben und vortragen | im Review | PR #12 (baut auf PR #11 auf) |
+| 0.10 Verlässlich bauen und sichern | fertig | Version 0.15.0 |
+| 0.11 Rechte und Datenschutz schärfen | fertig | Version 0.15.0 |
+| 0.12 Klar bedienen und an das Chorsystem übergeben | fertig | Version 0.15.0 |
+| 0.13 Üben in der Notenansicht | fertig (nicht in einem echten Nextcloud abgenommen) | Version 0.15.0 |
+| 0.14 Text und Tonhöhe beim Mitsingen | fertig (nicht in einem echten Nextcloud abgenommen) | Version 0.15.0 |
+| 0.15 Ohne Netz üben und vortragen | fertig bis auf die Abnahme auf echten Geräten | Version 0.15.0 |
 | 1.0 Stabil | geplant | – |
 
-Die aktuelle Version ist 0.9.1. Mit PR #10 und PR #11 kommen 0.10 bis 0.14
-dazu, mit PR #12 0.15; danach ist 1.0 offen.
+Die aktuelle Version ist 0.15.0 mit den Meilensteinen 0.10 bis 0.15
+(PR #10 bis #12); danach ist 1.0 offen.
 
 ### 0.1 Fundament
 
@@ -455,7 +455,7 @@ und Englisch. Die geführte Einrichtung kam schon mit den Einstellungen.*
 
 ### 0.10 Verlässlich bauen und sichern
 
-*Im Review (PR #10), noch nicht in `main`. Umgesetzt (Review Oktober
+*Fertig in 0.15.0 (PR #10). Umgesetzt (Review Oktober
 2026):* CI grün, Sicherungen außerhalb des
 Archivordners und ohne Link-Token, Löschfristen, Sicherung als Datenstrom mit
 Meldung bei alter Sicherung, Läufe gegeneinander gesperrt, Grenzen der
@@ -463,21 +463,21 @@ delegierten Einstellungsseite, `SECURITY.md` als Tabelle „Zusage → Test“.
 
 ### 0.11 Rechte und Datenschutz schärfen
 
-*Im Review (PR #10), noch nicht in `main`. Umgesetzt:* eine Regel für Erhaltungskopien auf allen Wegen, Link-Token
+*Fertig in 0.15.0 (PR #10). Umgesetzt:* eine Regel für Erhaltungskopien auf allen Wegen, Link-Token
 gehasht und verschlüsselt, Ausschnitte ohne Kommentare und Zusatzfelder,
 neue Nutzungsarten für Lizenzen, Rechtekonflikte, Datenschutz-Paket,
 rechtlicher Hintergrund DE/EN.
 
 ### 0.12 Klar bedienen und an das Chorsystem übergeben
 
-*Im Review (PR #10), noch nicht in `main`. Umgesetzt:* Begriffe bereinigt, Fehlermeldungen mit nächstem Schritt, Fokus
+*Fertig in 0.15.0 (PR #10). Umgesetzt:* Begriffe bereinigt, Fehlermeldungen mit nächstem Schritt, Fokus
 und Handy-Ansichten, Ausdrucke mit Kopfzeile, Modul `choir_handover`
 (Übergabeordner) und Vergleich mit dem Export des Chorsystems, Leitfaden
 „Notenarchiv neben einem Chorsystem“, Erklärung zur Barrierefreiheit.
 
 ### 0.13 Üben in der Notenansicht
 
-*Im Review (PR #11), noch nicht in `main`. Alle Punkte umgesetzt.*
+*Fertig in 0.15.0 (PR #11). Alle Punkte umgesetzt.*
 
 Aus dem Vergleich mit der Chor-App cori (Oktober 2026): was Sänger beim Üben
 eines geteilten Stücks erwarten und der Notenansicht noch fehlt. Dafür gilt:
@@ -517,7 +517,7 @@ Punkte:
 
 ### 0.14 Text und Tonhöhe beim Mitsingen
 
-*Im Review (PR #11), noch nicht in `main`. Alle Punkte umgesetzt.*
+*Fertig in 0.15.0 (PR #11). Alle Punkte umgesetzt.*
 
 - **Mitlaufender Text:** die Textzeile der gewählten Stimme groß unter den
   Noten, die gesungene Silbe hervorgehoben; Strophe wählbar. – *umgesetzt,
@@ -534,7 +534,7 @@ Punkte:
 
 ### 0.15 Ohne Netz üben und vortragen
 
-*Im Review (PR #12), noch nicht in `main`. Umgesetzt bis auf die Abnahme
+*Fertig in 0.15.0 (PR #12). Umgesetzt bis auf die Abnahme
 auf echten Geräten.* Aus der Planung
 „Offline-Betrieb ohne eigene Apps“ (Oktober 2026). Ziel: Stücke, die online
 bewusst „auf diesem Gerät gespeichert“ wurden, lassen sich ohne Netz

@@ -10,6 +10,8 @@ All notable changes to this app are documented in this file. The format follows
 
 ## [Unreleased]
 
+## [0.15.0] - 2026-10-29
+
 ### Added
 
 - **Practising without a network** (milestone 0.15, module "Practising
