@@ -1016,7 +1016,7 @@ class StatisticsService {
 	 */
 	private function workRows(): array {
 		$works = [];
-		foreach ($this->partialRows('notarch_works', self::WORK_COLUMNS) as $row) {
+		foreach ($this->partialRows('cantoria_works', self::WORK_COLUMNS) as $row) {
 			$work = Work::fromRow($row);
 			$works[$work->getId()] = $work;
 		}
@@ -1031,7 +1031,7 @@ class StatisticsService {
 	 */
 	private function versionRows(): array {
 		$versions = [];
-		foreach ($this->partialRows('notarch_versions', self::VERSION_COLUMNS) as $row) {
+		foreach ($this->partialRows('cantoria_versions', self::VERSION_COLUMNS) as $row) {
 			$version = WorkVersion::fromRow($row);
 			$versions[$version->getId()] = $version;
 		}
@@ -1044,7 +1044,7 @@ class StatisticsService {
 	 * @return list<EventItem>
 	 */
 	private function itemRows(): array {
-		return array_map(fn (array $row): EventItem => EventItem::fromRow($row), $this->partialRows('notarch_event_items', self::ITEM_COLUMNS));
+		return array_map(fn (array $row): EventItem => EventItem::fromRow($row), $this->partialRows('cantoria_event_items', self::ITEM_COLUMNS));
 	}
 
 	/**
@@ -1068,7 +1068,7 @@ class StatisticsService {
 	private function copyRows(): array {
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('id', 'version_id', 'binder', 'number', 'shelfmark', 'status', 'created')
-			->from('notarch_copies')
+			->from('cantoria_copies')
 			->orderBy('binder')
 			->addOrderBy('number');
 		$result = $qb->executeQuery();
@@ -1090,7 +1090,7 @@ class StatisticsService {
 	private function createdRows(): array {
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('object_id', 'time', 'reason')
-			->from('notarch_audit')
+			->from('cantoria_audit')
 			->where($qb->expr()->eq('object_type', $qb->createNamedParameter(Fields::COPY)))
 			->andWhere($qb->expr()->isNotNull('object_id'))
 			->andWhere($qb->expr()->eq('action', $qb->createNamedParameter('created')));
@@ -1111,7 +1111,7 @@ class StatisticsService {
 	private function taskRows(): array {
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('addressee', 'status', 'category', 'created')
-			->from('notarch_tasks')
+			->from('cantoria_tasks')
 			->where($qb->expr()->in('status', $qb->createNamedParameter([Task::OPEN, Task::ANSWERED], IQueryBuilder::PARAM_STR_ARRAY)));
 		$result = $qb->executeQuery();
 		$rows = [];
@@ -1129,7 +1129,7 @@ class StatisticsService {
 	private function proposalCounts(): array {
 		$qb = $this->db->getQueryBuilder();
 		$qb->select('created')
-			->from('notarch_proposals')
+			->from('cantoria_proposals')
 			->where($qb->expr()->eq('status', $qb->createNamedParameter(Proposal::OPEN)));
 		$result = $qb->executeQuery();
 		$limit = $this->time->getTime() - 30 * 86400;
@@ -1155,7 +1155,7 @@ class StatisticsService {
 		$qb->select('sha256_mismatch')
 			->selectAlias($qb->func()->count('id'), 'files')
 			->selectAlias($qb->func()->count('sha256'), 'hashed')
-			->from('notarch_files')
+			->from('cantoria_files')
 			->where($qb->expr()->eq('found', $qb->createNamedParameter(true, IQueryBuilder::PARAM_BOOL)))
 			->groupBy('sha256_mismatch');
 		$result = $qb->executeQuery();

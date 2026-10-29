@@ -317,21 +317,21 @@ try {
 	$missing = max(0, 2000 - count($catalog->entries()));
 	$added = [];
 	for ($i = 1; $i <= $missing; $i++) {
-		$workId = $insert('notarch_works', ['title' => 'Load test ' . $i, 'composer' => 'Composer ' . ($i % 150), 'created' => $now, 'modified' => $now]);
-		$versionId = $insert('notarch_versions', ['work_id' => $workId, 'rights_status' => ['public_domain', 'protected', 'open'][$i % 3],
+		$workId = $insert('cantoria_works', ['title' => 'Load test ' . $i, 'composer' => 'Composer ' . ($i % 150), 'created' => $now, 'modified' => $now]);
+		$versionId = $insert('cantoria_versions', ['work_id' => $workId, 'rights_status' => ['public_domain', 'protected', 'open'][$i % 3],
 			'preservation_copy' => false, 'created' => $now, 'modified' => $now]);
-		$copyId = $insert('notarch_copies', ['version_id' => $versionId, 'binder' => 9000 + intdiv($i, 100), 'number' => $i % 100 + 1,
+		$copyId = $insert('cantoria_copies', ['version_id' => $versionId, 'binder' => 9000 + intdiv($i, 100), 'number' => $i % 100 + 1,
 			'shelfmark' => (9000 + intdiv($i, 100)) . '-' . ($i % 100 + 1), 'sort_order' => 100000 + $i, 'status' => 'active',
 			'created' => $now, 'modified' => $now]);
 		$added[] = [$copyId, $versionId, $workId];
 	}
 	for ($e = 1; $e <= 100 && $added !== []; $e++) {
-		$eventId = $insert('notarch_events', ['kind' => 'concert', 'title' => 'Load test ' . $e,
+		$eventId = $insert('cantoria_events', ['kind' => 'concert', 'title' => 'Load test ' . $e,
 			'event_date' => sprintf('%04d-%02d-15', $year - intdiv($e, 10), $e % 12 + 1), 'status' => 'sung', 'imported' => true,
 			'created' => $now, 'modified' => $now]);
 		for ($p = 1; $p <= 15; $p++) {
 			[$copyId, $versionId, $workId] = $added[($e * 17 + $p * 31) % count($added)];
-			$insert('notarch_event_items', ['event_id' => $eventId, 'position' => $p, 'copy_id' => $copyId, 'version_id' => $versionId,
+			$insert('cantoria_event_items', ['event_id' => $eventId, 'position' => $p, 'copy_id' => $copyId, 'version_id' => $versionId,
 				'work_id' => $workId, 'assignment' => 'certain', 'counts' => true]);
 		}
 	}

@@ -29,12 +29,12 @@ class Version000700Date20261024120000 extends SimpleMigrationStep {
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		$schema = $schemaClosure();
 
-		if (!$schema->hasTable('notarch_review_reports')) {
-			$t = $schema->createTable('notarch_review_reports');
+		if (!$schema->hasTable('cantoria_review_reports')) {
+			$t = $schema->createTable('cantoria_review_reports');
 			$t->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true]);
 			$t->addColumn('version_id', Types::BIGINT, ['notnull' => true, 'unsigned' => true]);
 			$t->addColumn('copy_id', Types::BIGINT, ['notnull' => true, 'unsigned' => true]);
-			// notarch_files.id of the report file (file sync), null when it came through the API
+			// cantoria_files.id of the report file (file sync), null when it came through the API
 			$t->addColumn('report_file_id', Types::BIGINT, ['notnull' => false, 'unsigned' => true]);
 			$t->addColumn('source', Types::STRING, ['notnull' => true, 'length' => 8, 'default' => 'api']);
 			// SHA-256 of the received text
@@ -42,7 +42,7 @@ class Version000700Date20261024120000 extends SimpleMigrationStep {
 			$t->addColumn('round', Types::STRING, ['notnull' => false, 'length' => 40]);
 			$t->addColumn('report_date', Types::STRING, ['notnull' => false, 'length' => 10]);
 			$t->addColumn('basename', Types::STRING, ['notnull' => true, 'length' => 255]);
-			// notarch_files.id of the MusicXML the report is about and its SHA-256
+			// cantoria_files.id of the MusicXML the report is about and its SHA-256
 			$t->addColumn('musicxml_id', Types::BIGINT, ['notnull' => false, 'unsigned' => true]);
 			$t->addColumn('musicxml_sha256', Types::STRING, ['notnull' => false, 'length' => 64]);
 			$t->addColumn('method', Types::STRING, ['notnull' => false, 'length' => 32]);
@@ -58,18 +58,18 @@ class Version000700Date20261024120000 extends SimpleMigrationStep {
 			$t->addColumn('created_by', Types::STRING, ['notnull' => false, 'length' => 64]);
 			$t->addColumn('created', Types::BIGINT, ['notnull' => true, 'default' => 0]);
 			$t->setPrimaryKey(['id']);
-			$t->addIndex(['copy_id', 'sha256'], 'notarch_rrep_copy');
-			$t->addIndex(['version_id'], 'notarch_rrep_version');
-			$t->addIndex(['report_file_id'], 'notarch_rrep_file');
+			$t->addIndex(['copy_id', 'sha256'], 'cantoria_rrep_copy');
+			$t->addIndex(['version_id'], 'cantoria_rrep_version');
+			$t->addIndex(['report_file_id'], 'cantoria_rrep_file');
 		}
 
-		if (!$schema->hasTable('notarch_review_points')) {
-			$t = $schema->createTable('notarch_review_points');
+		if (!$schema->hasTable('cantoria_review_points')) {
+			$t = $schema->createTable('cantoria_review_points');
 			$t->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true]);
 			$t->addColumn('version_id', Types::BIGINT, ['notnull' => true, 'unsigned' => true]);
 			$t->addColumn('copy_id', Types::BIGINT, ['notnull' => true, 'unsigned' => true]);
 			$t->addColumn('report_id', Types::BIGINT, ['notnull' => false, 'unsigned' => true]);
-			// notarch_files.id of the MusicXML and its SHA-256 when the point was created
+			// cantoria_files.id of the MusicXML and its SHA-256 when the point was created
 			$t->addColumn('file_id', Types::BIGINT, ['notnull' => false, 'unsigned' => true]);
 			$t->addColumn('file_sha256', Types::STRING, ['notnull' => false, 'length' => 64]);
 			$t->addColumn('category', Types::STRING, ['notnull' => true, 'length' => 16]);
@@ -94,10 +94,10 @@ class Version000700Date20261024120000 extends SimpleMigrationStep {
 			$t->addColumn('created_by', Types::STRING, ['notnull' => false, 'length' => 64]);
 			$t->addColumn('created', Types::BIGINT, ['notnull' => true, 'default' => 0]);
 			$t->setPrimaryKey(['id']);
-			$t->addIndex(['version_id', 'status'], 'notarch_rpt_version');
-			$t->addIndex(['copy_id', 'status'], 'notarch_rpt_copy');
-			$t->addIndex(['report_id'], 'notarch_rpt_report');
-			$t->addIndex(['status'], 'notarch_rpt_status');
+			$t->addIndex(['version_id', 'status'], 'cantoria_rpt_version');
+			$t->addIndex(['copy_id', 'status'], 'cantoria_rpt_copy');
+			$t->addIndex(['report_id'], 'cantoria_rpt_report');
+			$t->addIndex(['status'], 'cantoria_rpt_status');
 		}
 
 		return $schema;

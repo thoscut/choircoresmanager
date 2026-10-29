@@ -55,12 +55,10 @@ texts are English source strings translated via Nextcloud l10n (German first).
 
 ## Database tables
 
-The tables carry the prefix `notarch_` (for example `notarch_works`,
-`notarch_versions`, `notarch_links`). The prefix comes from the working
-name "Notenarchiv" and stays on purpose: Nextcloud does not tie a table to
-an app id, so when the app id became `cantoria` (version 0.16.0) the data
-of existing test instances stayed in its tables without being copied, and
-the migrations did not need to change. New tables use the same prefix.
+The tables carry the prefix `cantoria_` (for example `cantoria_works`,
+`cantoria_versions`, `cantoria_links`); new tables use the same prefix.
+Until version 0.16.0 the prefix was `cantoria_`, after the working name
+"Notenarchiv".
 
 ## Domain glossary
 
@@ -278,10 +276,10 @@ document type declaration.
 
 **Complete backup.** `GET /api/backup/full` (any role, plain download without
 CSRF token) returns all app tables as JSON
-(`{ "format": "cantoria-backup", "formatVersion": 1, "appVersion", "created", "tables": { "notarch_works": [ … ] } }`).
+(`{ "format": "cantoria-backup", "formatVersion": 1, "appVersion", "created", "tables": { "cantoria_works": [ … ] } }`).
 `POST /api/backup/restore` `{ "fileId": 4711 }` (librarian or admin) restores
 such a file into an empty catalog and returns
-`{ "restored": { "notarch_works": 120, … } }`. Errors (400):
+`{ "restored": { "cantoria_works": 120, … } }`. Errors (400):
 `A backup can only be restored into an empty catalog.`, `The file is not a
 backup of the music archive.`, `The backup was made with a newer version of
 the app. Please update the app first.` and
@@ -521,7 +519,7 @@ role; `members` for the choir members and `public` for everyone, see
 `token` of a link for choir members or a public link is only sent to its
 creator and the catalog librarian, otherwise it is `null`; it is also
 `null` for links restored from a backup. The database holds the token only
-as hash and encrypted (`notarch_links.token`, `token_secret`, migration
+as hash and encrypted (`cantoria_links.token`, `token_secret`, migration
 `Version001100Date20261029100000`). `own` says whether the account made the
 link; links name no account, only the display name of the creator. Lists
 leave out links to internal preservation copies for roles that may not view
@@ -1869,8 +1867,8 @@ Switches: `notify_review_points` (requires `notifications` and
 ## Revisions of a version (module `version_states`, milestone 0.8)
 
 A **revision** is a record of the MusicXML of a version at one point: it
-points to a file of a copy (`notarch_files.id`, with its name at the time),
-keeps its SHA-256, what changed, who and when (table `notarch_states`). The
+points to a file of a copy (`cantoria_files.id`, with its name at the time),
+keeps its SHA-256, what changed, who and when (table `cantoria_states`). The
 app copies no file and changes none (guideline 4). A revision is never
 changed afterwards, except for the mark of the current revision. Module
 `version_states` (needs `score_viewer`; on in "standard" and "complete").
@@ -1951,7 +1949,7 @@ copied there, as a comment in practice files (MIDI text event, WAV
 in the song order. Shelf labels show none.
 
 **Concerts.** `POST /api/events/{id}/sung` keeps for each sung item the
-revision sung in `notarch_event_items.state_id`: the current revision of the
+revision sung in `cantoria_event_items.state_id`: the current revision of the
 version, else the newest (none while the module is off). `GET
 /api/events/{id}` adds per item `revision` (number of the revision sung, else
 of the current one; `null` without), `revision_valid_since` and
@@ -2348,9 +2346,9 @@ them while `public_repertoire` is active):
 | `imslp_url` | text (500) | An https link to `imslp.org` or `www.imslp.org`. |
 
 Migration `Version000710Date20261025100000` adds these three columns to
-`notarch_works`; links for choir members and public links use the existing
-column `circle` of `notarch_links`. Migration
-`Version000830Date20261028100000` adds `notarch_links.scan_file_id`
+`cantoria_works`; links for choir members and public links use the existing
+column `circle` of `cantoria_links`. Migration
+`Version000830Date20261028100000` adds `cantoria_links.scan_file_id`
 (nullable, no default); a whole piece needs no column.
 ## Folder book (module `folder_book`, milestone 0.7)
 
@@ -2460,7 +2458,7 @@ the translated text with what to do.
   control characters, at most 120 characters before `.pdf`; further scans of
   a copy get ` (2)`, ` (3)`. Plus `LIESMICH.txt` with the date and a note,
   in the language of the account of the target folder.
-- Only files listed in the manifest (table `notarch_mirror_files`: name,
+- Only files listed in the manifest (table `cantoria_mirror_files`: name,
   file id, SHA-256 of what was written) are replaced or removed, and only
   while their content still has that checksum. Foreign files stay. The
   manifest belongs to the instance (file ids) and is not part of the

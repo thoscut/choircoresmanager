@@ -16,7 +16,7 @@ use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
 /**
- * `notarch_versions.society_work_no` (milestone 0.11): the number of the work
+ * `cantoria_versions.society_work_no` (milestone 0.11): the number of the work
  * at the collecting society (GEMA), for the song order. Nullable without a
  * default.
  */
@@ -24,7 +24,7 @@ class Version001130Date20261029130000 extends SimpleMigrationStep {
 	#[\Override]
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		$schema = $schemaClosure();
-		$versions = $schema->getTable('notarch_versions');
+		$versions = $schema->getTable('cantoria_versions');
 		if ($versions->hasColumn('society_work_no')) {
 			return null;
 		}

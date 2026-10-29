@@ -28,8 +28,8 @@ class Version000500Date20261022190000 extends SimpleMigrationStep {
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		$schema = $schemaClosure();
 
-		if (!$schema->hasTable('notarch_persons')) {
-			$t = $schema->createTable('notarch_persons');
+		if (!$schema->hasTable('cantoria_persons')) {
+			$t = $schema->createTable('cantoria_persons');
 			$t->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true]);
 			$t->addColumn('name', Types::STRING, ['notnull' => true, 'length' => 255]);
 			$t->addColumn('gnd', Types::STRING, ['notnull' => false, 'length' => 20]);
@@ -47,11 +47,11 @@ class Version000500Date20261022190000 extends SimpleMigrationStep {
 			$t->addColumn('created', Types::BIGINT, ['notnull' => true, 'default' => 0]);
 			$t->addColumn('modified', Types::BIGINT, ['notnull' => true, 'default' => 0]);
 			$t->setPrimaryKey(['id']);
-			$t->addIndex(['name'], 'notarch_person_name');
+			$t->addIndex(['name'], 'cantoria_person_name');
 		}
 
-		if (!$schema->hasTable('notarch_contributions')) {
-			$t = $schema->createTable('notarch_contributions');
+		if (!$schema->hasTable('cantoria_contributions')) {
+			$t = $schema->createTable('cantoria_contributions');
 			$t->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true]);
 			$t->addColumn('version_id', Types::BIGINT, ['notnull' => true, 'unsigned' => true]);
 			$t->addColumn('person_id', Types::BIGINT, ['notnull' => true, 'unsigned' => true]);
@@ -59,12 +59,12 @@ class Version000500Date20261022190000 extends SimpleMigrationStep {
 			$t->addColumn('text_for_composition', Types::BOOLEAN, ['notnull' => false, 'default' => false]);
 			$t->addColumn('created', Types::BIGINT, ['notnull' => true, 'default' => 0]);
 			$t->setPrimaryKey(['id']);
-			$t->addIndex(['version_id'], 'notarch_contrib_ver');
-			$t->addIndex(['person_id'], 'notarch_contrib_person');
+			$t->addIndex(['version_id'], 'cantoria_contrib_ver');
+			$t->addIndex(['person_id'], 'cantoria_contrib_person');
 		}
 
-		if (!$schema->hasTable('notarch_merges')) {
-			$t = $schema->createTable('notarch_merges');
+		if (!$schema->hasTable('cantoria_merges')) {
+			$t = $schema->createTable('cantoria_merges');
 			$t->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true]);
 			$t->addColumn('kind', Types::STRING, ['notnull' => true, 'length' => 16]);
 			$t->addColumn('source_id', Types::BIGINT, ['notnull' => true, 'unsigned' => true]);
@@ -76,16 +76,16 @@ class Version000500Date20261022190000 extends SimpleMigrationStep {
 			$t->addColumn('undone', Types::BIGINT, ['notnull' => false]);
 			$t->addColumn('undone_by', Types::STRING, ['notnull' => false, 'length' => 64]);
 			$t->setPrimaryKey(['id']);
-			$t->addIndex(['kind', 'source_id'], 'notarch_merge_source');
-			$t->addIndex(['kind', 'target_id'], 'notarch_merge_target');
+			$t->addIndex(['kind', 'source_id'], 'cantoria_merge_source');
+			$t->addIndex(['kind', 'target_id'], 'cantoria_merge_target');
 		}
 
-		$t = $schema->getTable('notarch_works');
+		$t = $schema->getTable('cantoria_works');
 		if (!$t->hasColumn('merged_into')) {
 			$t->addColumn('merged_into', Types::BIGINT, ['notnull' => false, 'unsigned' => true]);
 		}
 
-		$t = $schema->getTable('notarch_files');
+		$t = $schema->getTable('cantoria_files');
 		$columns = [
 			'linked_manually' => [Types::BOOLEAN, ['notnull' => false, 'default' => false]],
 			'sha256_at' => [Types::BIGINT, ['notnull' => false]],

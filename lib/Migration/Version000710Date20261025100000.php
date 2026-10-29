@@ -22,7 +22,7 @@ use OCP\Migration\SimpleMigrationStep;
  *
  * Links for choir members and public links need no new column: they are
  * excerpt links with the circle `members` or `public` (column `circle` of
- * notarch_links, since 0.3).
+ * cantoria_links, since 0.3).
  *
  * Booleans are nullable with a default, as Nextcloud requires; names stay
  * within the limits Nextcloud checks for Oracle (columns 30 characters).
@@ -31,10 +31,10 @@ class Version000710Date20261025100000 extends SimpleMigrationStep {
 	#[\Override]
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		$schema = $schemaClosure();
-		if (!$schema->hasTable('notarch_works')) {
+		if (!$schema->hasTable('cantoria_works')) {
 			return null;
 		}
-		$table = $schema->getTable('notarch_works');
+		$table = $schema->getTable('cantoria_works');
 		$changed = false;
 		if (!$table->hasColumn('public_repertoire')) {
 			$table->addColumn('public_repertoire', Types::BOOLEAN, ['notnull' => false, 'default' => false]);

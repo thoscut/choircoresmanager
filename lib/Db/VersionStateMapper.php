@@ -18,7 +18,7 @@ use OCP\IDBConnection;
  */
 class VersionStateMapper extends QBMapper {
 	public function __construct(IDBConnection $db) {
-		parent::__construct($db, 'notarch_states', VersionState::class);
+		parent::__construct($db, 'cantoria_states', VersionState::class);
 	}
 
 	public function find(int $id): VersionState {

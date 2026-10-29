@@ -22,7 +22,7 @@ use OCP\AppFramework\Db\Entity;
  * correct (correction order for the tool chain), question (turned into a
  * task), dismissed; corrected is set by the app only (a correction in the
  * app or a new version of the MusicXML). `file_id`/`file_sha256` keep the
- * MusicXML (notarch_files.id) and its checksum the point was made for.
+ * MusicXML (cantoria_files.id) and its checksum the point was made for.
  *
  * @method int getVersionId()
  * @method void setVersionId(int $versionId)

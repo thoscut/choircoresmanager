@@ -35,7 +35,7 @@ class Version000810Date20261026100000 extends SimpleMigrationStep {
 		$schema = $schemaClosure();
 		$changed = false;
 
-		$versions = $schema->getTable('notarch_versions');
+		$versions = $schema->getTable('cantoria_versions');
 		if (!$versions->hasColumn('scientific_edition')) {
 			$versions->addColumn('scientific_edition', Types::BOOLEAN, ['notnull' => false, 'default' => false]);
 			$changed = true;
@@ -49,7 +49,7 @@ class Version000810Date20261026100000 extends SimpleMigrationStep {
 			$changed = true;
 		}
 
-		$files = $schema->getTable('notarch_files');
+		$files = $schema->getTable('cantoria_files');
 		if (!$files->hasColumn('rights_notice')) {
 			$files->addColumn('rights_notice', Types::STRING, ['notnull' => false, 'length' => 1000]);
 			$changed = true;

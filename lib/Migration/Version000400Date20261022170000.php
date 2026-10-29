@@ -24,8 +24,8 @@ class Version000400Date20261022170000 extends SimpleMigrationStep {
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		$schema = $schemaClosure();
 
-		if (!$schema->hasTable('notarch_events')) {
-			$t = $schema->createTable('notarch_events');
+		if (!$schema->hasTable('cantoria_events')) {
+			$t = $schema->createTable('cantoria_events');
 			$t->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true]);
 			$t->addColumn('kind', Types::STRING, ['notnull' => true, 'length' => 16, 'default' => 'concert']);
 			$t->addColumn('title', Types::STRING, ['notnull' => false, 'length' => 500]);
@@ -42,11 +42,11 @@ class Version000400Date20261022170000 extends SimpleMigrationStep {
 			$t->addColumn('created', Types::BIGINT, ['notnull' => true, 'default' => 0]);
 			$t->addColumn('modified', Types::BIGINT, ['notnull' => true, 'default' => 0]);
 			$t->setPrimaryKey(['id']);
-			$t->addIndex(['kind', 'event_date'], 'notarch_event_date');
+			$t->addIndex(['kind', 'event_date'], 'cantoria_event_date');
 		}
 
-		if (!$schema->hasTable('notarch_event_items')) {
-			$t = $schema->createTable('notarch_event_items');
+		if (!$schema->hasTable('cantoria_event_items')) {
+			$t = $schema->createTable('cantoria_event_items');
 			$t->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true]);
 			$t->addColumn('event_id', Types::BIGINT, ['notnull' => true, 'unsigned' => true]);
 			$t->addColumn('position', Types::INTEGER, ['notnull' => true, 'default' => 0]);
@@ -66,9 +66,9 @@ class Version000400Date20261022170000 extends SimpleMigrationStep {
 			$t->addColumn('duration', Types::INTEGER, ['notnull' => false]);
 			$t->addColumn('note', Types::TEXT, ['notnull' => false]);
 			$t->setPrimaryKey(['id']);
-			$t->addIndex(['event_id', 'position'], 'notarch_item_event');
-			$t->addIndex(['work_id'], 'notarch_item_work');
-			$t->addIndex(['assignment'], 'notarch_item_assign');
+			$t->addIndex(['event_id', 'position'], 'cantoria_item_event');
+			$t->addIndex(['work_id'], 'cantoria_item_work');
+			$t->addIndex(['assignment'], 'cantoria_item_assign');
 		}
 
 		return $schema;

@@ -18,7 +18,7 @@ use OCP\IDBConnection;
  */
 class TranscriptionReportMapper extends QBMapper {
 	public function __construct(IDBConnection $db) {
-		parent::__construct($db, 'notarch_review_reports', TranscriptionReport::class);
+		parent::__construct($db, 'cantoria_review_reports', TranscriptionReport::class);
 	}
 
 	public function find(int $id): TranscriptionReport {

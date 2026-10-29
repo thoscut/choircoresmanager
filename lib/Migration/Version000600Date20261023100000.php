@@ -27,7 +27,7 @@ class Version000600Date20261023100000 extends SimpleMigrationStep {
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		$schema = $schemaClosure();
 
-		$t = $schema->getTable('notarch_events');
+		$t = $schema->getTable('cantoria_events');
 		$columns = [
 			'start_time' => [Types::STRING, ['notnull' => false, 'length' => 5]],
 			'end_time' => [Types::STRING, ['notnull' => false, 'length' => 5]],

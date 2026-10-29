@@ -18,7 +18,7 @@ use OCP\IDBConnection;
  */
 class TaskMapper extends QBMapper {
 	public function __construct(IDBConnection $db) {
-		parent::__construct($db, 'notarch_tasks', Task::class);
+		parent::__construct($db, 'cantoria_tasks', Task::class);
 	}
 
 	public function find(int $id): Task {

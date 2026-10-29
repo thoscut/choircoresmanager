@@ -23,10 +23,10 @@ use OCP\Security\ICrypto;
 /**
  * Link tokens are stored as hashes (milestone 0.11):
  *
- * - `notarch_links.token_secret`: the token encrypted with the secret of
+ * - `cantoria_links.token_secret`: the token encrypted with the secret of
  *   the instance, so that the creator and the catalog librarian can copy
  *   the link again; nullable.
- * - `notarch_links.token` of existing links becomes the SHA-256 hash of the
+ * - `cantoria_links.token` of existing links becomes the SHA-256 hash of the
  *   token (64 characters, the length of the column); the token moves into
  *   `token_secret`. Tokens are 32 characters, so a row that already holds a
  *   hash is left alone and the step can run twice.
@@ -44,7 +44,7 @@ class Version001100Date20261029100000 extends SimpleMigrationStep {
 	#[\Override]
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		$schema = $schemaClosure();
-		$links = $schema->getTable('notarch_links');
+		$links = $schema->getTable('cantoria_links');
 		if ($links->hasColumn('token_secret')) {
 			return null;
 		}
@@ -55,10 +55,10 @@ class Version001100Date20261029100000 extends SimpleMigrationStep {
 	#[\Override]
 	public function postSchemaChange(IOutput $output, Closure $schemaClosure, array $options): void {
 		$select = $this->db->getQueryBuilder();
-		$select->select('id', 'token')->from('notarch_links');
+		$select->select('id', 'token')->from('cantoria_links');
 		$result = $select->executeQuery();
 		$update = $this->db->getQueryBuilder();
-		$update->update('notarch_links')
+		$update->update('cantoria_links')
 			->set('token', $update->createParameter('hash'))
 			->set('token_secret', $update->createParameter('secret'))
 			->where($update->expr()->eq('id', $update->createParameter('id')));

@@ -68,7 +68,7 @@ final class NotifierTest extends TestCase {
 	public static function exportFailures(): iterable {
 		$generic = '[The automatic export of the music archive failed: [Internal error. Details are in the Nextcloud log.]]';
 		yield 'internal error' => [[], $generic];
-		yield 'raw message of an older notification' => [['message' => 'SQLSTATE[42S02]: Base table not found: oc_notarch_works'], $generic];
+		yield 'raw message of an older notification' => [['message' => 'SQLSTATE[42S02]: Base table not found: oc_cantoria_works'], $generic];
 		yield 'message for users' => [['error' => 'No write permission for exports in the archive folder.', 'errorParameters' => '[]'],
 			'[The automatic export of the music archive failed: [No write permission for exports in the archive folder.]]'];
 		yield 'message with parameter' => [['error' => 'The archive folder contains a file named %s.', 'errorParameters' => '["_cantoria-app"]'],

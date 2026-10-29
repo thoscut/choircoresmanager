@@ -26,8 +26,8 @@ class Version000100Date20261022000000 extends SimpleMigrationStep {
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		$schema = $schemaClosure();
 
-		if (!$schema->hasTable('notarch_works')) {
-			$t = $schema->createTable('notarch_works');
+		if (!$schema->hasTable('cantoria_works')) {
+			$t = $schema->createTable('cantoria_works');
 			$t->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true]);
 			$t->addColumn('work_no', Types::STRING, ['notnull' => false, 'length' => 20]);
 			$t->addColumn('title', Types::STRING, ['notnull' => false, 'length' => 500]);
@@ -42,8 +42,8 @@ class Version000100Date20261022000000 extends SimpleMigrationStep {
 			$t->setPrimaryKey(['id']);
 		}
 
-		if (!$schema->hasTable('notarch_versions')) {
-			$t = $schema->createTable('notarch_versions');
+		if (!$schema->hasTable('cantoria_versions')) {
+			$t = $schema->createTable('cantoria_versions');
 			$t->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true]);
 			$t->addColumn('work_id', Types::BIGINT, ['notnull' => true, 'unsigned' => true]);
 			$t->addColumn('kind', Types::STRING, ['notnull' => false, 'length' => 32]);
@@ -71,11 +71,11 @@ class Version000100Date20261022000000 extends SimpleMigrationStep {
 			$t->addColumn('created', Types::BIGINT, ['notnull' => true, 'default' => 0]);
 			$t->addColumn('modified', Types::BIGINT, ['notnull' => true, 'default' => 0]);
 			$t->setPrimaryKey(['id']);
-			$t->addIndex(['work_id'], 'notarch_ver_work');
+			$t->addIndex(['work_id'], 'cantoria_ver_work');
 		}
 
-		if (!$schema->hasTable('notarch_copies')) {
-			$t = $schema->createTable('notarch_copies');
+		if (!$schema->hasTable('cantoria_copies')) {
+			$t = $schema->createTable('cantoria_copies');
 			$t->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true]);
 			$t->addColumn('version_id', Types::BIGINT, ['notnull' => true, 'unsigned' => true]);
 			$t->addColumn('binder', Types::INTEGER, ['notnull' => true, 'default' => 0]);
@@ -98,12 +98,12 @@ class Version000100Date20261022000000 extends SimpleMigrationStep {
 			$t->addColumn('created', Types::BIGINT, ['notnull' => true, 'default' => 0]);
 			$t->addColumn('modified', Types::BIGINT, ['notnull' => true, 'default' => 0]);
 			$t->setPrimaryKey(['id']);
-			$t->addUniqueIndex(['shelfmark'], 'notarch_copy_shelf');
-			$t->addIndex(['version_id'], 'notarch_copy_ver');
+			$t->addUniqueIndex(['shelfmark'], 'cantoria_copy_shelf');
+			$t->addIndex(['version_id'], 'cantoria_copy_ver');
 		}
 
-		if (!$schema->hasTable('notarch_files')) {
-			$t = $schema->createTable('notarch_files');
+		if (!$schema->hasTable('cantoria_files')) {
+			$t = $schema->createTable('cantoria_files');
 			$t->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true]);
 			$t->addColumn('copy_id', Types::BIGINT, ['notnull' => false, 'unsigned' => true]);
 			$t->addColumn('file_id', Types::BIGINT, ['notnull' => true, 'unsigned' => true]);
@@ -120,12 +120,12 @@ class Version000100Date20261022000000 extends SimpleMigrationStep {
 			$t->addColumn('found', Types::BOOLEAN, ['notnull' => false, 'default' => true]);
 			$t->addColumn('synced_at', Types::BIGINT, ['notnull' => true, 'default' => 0]);
 			$t->setPrimaryKey(['id']);
-			$t->addUniqueIndex(['file_id'], 'notarch_file_fileid');
-			$t->addIndex(['copy_id'], 'notarch_file_copy');
+			$t->addUniqueIndex(['file_id'], 'cantoria_file_fileid');
+			$t->addIndex(['copy_id'], 'cantoria_file_copy');
 		}
 
-		if (!$schema->hasTable('notarch_audit')) {
-			$t = $schema->createTable('notarch_audit');
+		if (!$schema->hasTable('cantoria_audit')) {
+			$t = $schema->createTable('cantoria_audit');
 			$t->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true]);
 			$t->addColumn('operation', Types::STRING, ['notnull' => true, 'length' => 32]);
 			$t->addColumn('time', Types::BIGINT, ['notnull' => true, 'default' => 0]);
@@ -140,8 +140,8 @@ class Version000100Date20261022000000 extends SimpleMigrationStep {
 			$t->addColumn('new_value', Types::TEXT, ['notnull' => false]);
 			$t->addColumn('reason', Types::TEXT, ['notnull' => false]);
 			$t->setPrimaryKey(['id']);
-			$t->addIndex(['object_type', 'object_id'], 'notarch_audit_obj');
-			$t->addIndex(['operation'], 'notarch_audit_op');
+			$t->addIndex(['object_type', 'object_id'], 'cantoria_audit_obj');
+			$t->addIndex(['operation'], 'cantoria_audit_op');
 		}
 
 		return $schema;

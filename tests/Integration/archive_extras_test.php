@@ -294,7 +294,7 @@ try {
 		$json = $folder->get(AnnualSnapshotService::CATALOG_JSON);
 		$tablesOfSnapshot = $json instanceof File ? array_keys(FullBackupService::parse($json->getContent())['tables']) : [];
 		$check('the snapshot holds no folder book, audit log or links', $tablesOfSnapshot !== []
-			&& array_intersect($tablesOfSnapshot, ['notarch_folder_loans', 'notarch_audit', 'notarch_links', 'notarch_tasks']) === [],
+			&& array_intersect($tablesOfSnapshot, ['cantoria_folder_loans', 'cantoria_audit', 'cantoria_links', 'cantoria_tasks']) === [],
 			implode(', ', $tablesOfSnapshot));
 		$csv = $folder->get(AnnualSnapshotService::CATALOG_CSV);
 		$check('the catalog of the snapshot names no accounts', $csv instanceof File && !str_contains(strtok($csv->getContent(), "\n") ?: '', 'confirmed_by'));

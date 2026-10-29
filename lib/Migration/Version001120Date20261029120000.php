@@ -37,7 +37,7 @@ class Version001120Date20261029120000 extends SimpleMigrationStep {
 	#[\Override]
 	public function postSchemaChange(IOutput $output, Closure $schemaClosure, array $options): void {
 		$qb = $this->db->getQueryBuilder();
-		$qb->update('notarch_audit')
+		$qb->update('cantoria_audit')
 			->set('user_id', $qb->createNamedParameter(null, IQueryBuilder::PARAM_NULL))
 			->set('user_name', $qb->createNamedParameter(null, IQueryBuilder::PARAM_NULL))
 			->where($qb->expr()->eq('roles', $qb->createNamedParameter(Roles::MEMBER)));

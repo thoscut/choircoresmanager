@@ -18,7 +18,7 @@ use OCP\IDBConnection;
  */
 class LicenseMapper extends QBMapper {
 	public function __construct(IDBConnection $db) {
-		parent::__construct($db, 'notarch_licenses', License::class);
+		parent::__construct($db, 'cantoria_licenses', License::class);
 	}
 
 	public function find(int $id): License {

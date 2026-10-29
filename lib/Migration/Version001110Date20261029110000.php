@@ -18,13 +18,13 @@ use OCP\Migration\SimpleMigrationStep;
 /**
  * Milestone 0.11, rights:
  *
- * - `notarch_versions.melody_origin` and `text_origin`: `traditional` when
+ * - `cantoria_versions.melody_origin` and `text_origin`: `traditional` when
  *   the melody or the text is traditional and public domain (with evidence),
  *   `text_origin` also `none` for a version without text; null when the
  *   persons recorded say who wrote it. The protection proposal needs a
  *   composer and, for a version with text, a lyricist, unless the part is
  *   traditional.
- * - `notarch_licenses.share_notice`: the notice a license asks for on shared
+ * - `cantoria_licenses.share_notice`: the notice a license asks for on shared
  *   pages ("By kind permission of …"), written by the catalog librarian.
  *
  * Nullable without a default, so that the columns can be added to filled
@@ -35,14 +35,14 @@ class Version001110Date20261029110000 extends SimpleMigrationStep {
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		$schema = $schemaClosure();
 		$changed = false;
-		$versions = $schema->getTable('notarch_versions');
+		$versions = $schema->getTable('cantoria_versions');
 		foreach (['melody_origin', 'text_origin'] as $column) {
 			if (!$versions->hasColumn($column)) {
 				$versions->addColumn($column, Types::STRING, ['notnull' => false, 'length' => 16]);
 				$changed = true;
 			}
 		}
-		$licenses = $schema->getTable('notarch_licenses');
+		$licenses = $schema->getTable('cantoria_licenses');
 		if (!$licenses->hasColumn('share_notice')) {
 			$licenses->addColumn('share_notice', Types::STRING, ['notnull' => false, 'length' => 1000]);
 			$changed = true;

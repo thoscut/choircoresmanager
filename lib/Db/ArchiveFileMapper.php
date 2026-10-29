@@ -18,7 +18,7 @@ use OCP\IDBConnection;
  */
 class ArchiveFileMapper extends QBMapper {
 	public function __construct(IDBConnection $db) {
-		parent::__construct($db, 'notarch_files', ArchiveFile::class);
+		parent::__construct($db, 'cantoria_files', ArchiveFile::class);
 	}
 
 	public function find(int $id): ArchiveFile {

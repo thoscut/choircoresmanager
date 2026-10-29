@@ -17,15 +17,15 @@ use OCP\Migration\SimpleMigrationStep;
 
 /**
  * Milestone 0.7, folders and the print station:
- * - `notarch_folders`: the choir folders handed out to choir members, with
+ * - `cantoria_folders`: the choir folders handed out to choir members, with
  *   their contents (copies and counts as JSON), condition and missing
  *   sheets. Never deleted; a status instead.
- * - `notarch_folder_loans`: who has which folder since when, and the
+ * - `cantoria_folder_loans`: who has which folder since when, and the
  *   return. `open_folder_id` holds the folder id while the folder is out;
  *   its unique index lets a folder be issued only once at a time, also when
  *   two requests come at the same moment. The names of persons are
  *   anonymised after the retention period; the row stays.
- * - `notarch_mirror_files`: the files the app wrote into the target folder
+ * - `cantoria_mirror_files`: the files the app wrote into the target folder
  *   of the print station, with their checksums. Only these files are ever
  *   replaced or removed. Instance-specific like the settings (file ids),
  *   therefore not part of the complete backup.
@@ -38,8 +38,8 @@ class Version000720Date20261025110000 extends SimpleMigrationStep {
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		$schema = $schemaClosure();
 
-		if (!$schema->hasTable('notarch_folders')) {
-			$t = $schema->createTable('notarch_folders');
+		if (!$schema->hasTable('cantoria_folders')) {
+			$t = $schema->createTable('cantoria_folders');
 			$t->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true]);
 			// number or name of the folder, e.g. "12" or "Tenor 3"
 			$t->addColumn('label', Types::STRING, ['notnull' => true, 'length' => 64]);
@@ -60,8 +60,8 @@ class Version000720Date20261025110000 extends SimpleMigrationStep {
 			$t->setPrimaryKey(['id']);
 		}
 
-		if (!$schema->hasTable('notarch_folder_loans')) {
-			$t = $schema->createTable('notarch_folder_loans');
+		if (!$schema->hasTable('cantoria_folder_loans')) {
+			$t = $schema->createTable('cantoria_folder_loans');
 			$t->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true]);
 			$t->addColumn('folder_id', Types::BIGINT, ['notnull' => true, 'unsigned' => true]);
 			// the folder id while the folder is out, null after the return
@@ -81,13 +81,13 @@ class Version000720Date20261025110000 extends SimpleMigrationStep {
 			$t->addColumn('created', Types::BIGINT, ['notnull' => true, 'default' => 0]);
 			$t->addColumn('modified', Types::BIGINT, ['notnull' => true, 'default' => 0]);
 			$t->setPrimaryKey(['id']);
-			$t->addIndex(['folder_id'], 'notarch_floan_folder');
-			$t->addUniqueIndex(['open_folder_id'], 'notarch_floan_open');
-			$t->addIndex(['returned_on'], 'notarch_floan_returned');
+			$t->addIndex(['folder_id'], 'cantoria_floan_folder');
+			$t->addUniqueIndex(['open_folder_id'], 'cantoria_floan_open');
+			$t->addIndex(['returned_on'], 'cantoria_floan_returned');
 		}
 
-		if (!$schema->hasTable('notarch_mirror_files')) {
-			$t = $schema->createTable('notarch_mirror_files');
+		if (!$schema->hasTable('cantoria_mirror_files')) {
+			$t = $schema->createTable('cantoria_mirror_files');
 			$t->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true]);
 			// file name in the target folder
 			$t->addColumn('name', Types::STRING, ['notnull' => true, 'length' => 255]);
@@ -96,12 +96,12 @@ class Version000720Date20261025110000 extends SimpleMigrationStep {
 			// SHA-256 of the content the app wrote
 			$t->addColumn('sha256', Types::STRING, ['notnull' => true, 'length' => 64]);
 			$t->addColumn('copy_id', Types::BIGINT, ['notnull' => false, 'unsigned' => true]);
-			// notarch_files.id of the scan it was copied from, and its ETag then
+			// cantoria_files.id of the scan it was copied from, and its ETag then
 			$t->addColumn('source_id', Types::BIGINT, ['notnull' => false, 'unsigned' => true]);
 			$t->addColumn('source_etag', Types::STRING, ['notnull' => false, 'length' => 64]);
 			$t->addColumn('written', Types::BIGINT, ['notnull' => true, 'default' => 0]);
 			$t->setPrimaryKey(['id']);
-			$t->addUniqueIndex(['name'], 'notarch_mirr_name');
+			$t->addUniqueIndex(['name'], 'cantoria_mirr_name');
 		}
 
 		return $schema;

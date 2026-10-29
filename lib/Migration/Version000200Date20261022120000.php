@@ -33,7 +33,7 @@ class Version000200Date20261022120000 extends SimpleMigrationStep {
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		$schema = $schemaClosure();
 
-		$t = $schema->getTable('notarch_versions');
+		$t = $schema->getTable('cantoria_versions');
 		$columns = [
 			'confirmed_by' => [Types::STRING, ['notnull' => false, 'length' => 64]],
 			'confirmed_by_name' => [Types::STRING, ['notnull' => false, 'length' => 255]],
@@ -59,8 +59,8 @@ class Version000200Date20261022120000 extends SimpleMigrationStep {
 			}
 		}
 
-		if (!$schema->hasTable('notarch_licenses')) {
-			$t = $schema->createTable('notarch_licenses');
+		if (!$schema->hasTable('cantoria_licenses')) {
+			$t = $schema->createTable('cantoria_licenses');
 			$t->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true]);
 			$t->addColumn('version_id', Types::BIGINT, ['notnull' => true, 'unsigned' => true]);
 			$t->addColumn('holder', Types::STRING, ['notnull' => false, 'length' => 500]);
@@ -73,11 +73,11 @@ class Version000200Date20261022120000 extends SimpleMigrationStep {
 			$t->addColumn('created', Types::BIGINT, ['notnull' => true, 'default' => 0]);
 			$t->addColumn('modified', Types::BIGINT, ['notnull' => true, 'default' => 0]);
 			$t->setPrimaryKey(['id']);
-			$t->addIndex(['version_id'], 'notarch_lic_ver');
+			$t->addIndex(['version_id'], 'cantoria_lic_ver');
 		}
 
-		if (!$schema->hasTable('notarch_proposals')) {
-			$t = $schema->createTable('notarch_proposals');
+		if (!$schema->hasTable('cantoria_proposals')) {
+			$t = $schema->createTable('cantoria_proposals');
 			$t->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true]);
 			$t->addColumn('object_type', Types::STRING, ['notnull' => true, 'length' => 16]);
 			$t->addColumn('object_id', Types::BIGINT, ['notnull' => true, 'unsigned' => true]);
@@ -92,8 +92,8 @@ class Version000200Date20261022120000 extends SimpleMigrationStep {
 			$t->addColumn('decided', Types::BIGINT, ['notnull' => false]);
 			$t->addColumn('decision_reason', Types::TEXT, ['notnull' => false]);
 			$t->setPrimaryKey(['id']);
-			$t->addIndex(['status'], 'notarch_prop_status');
-			$t->addIndex(['object_type', 'object_id'], 'notarch_prop_obj');
+			$t->addIndex(['status'], 'cantoria_prop_status');
+			$t->addIndex(['object_type', 'object_id'], 'cantoria_prop_obj');
 		}
 
 		return $schema;
@@ -106,10 +106,10 @@ class Version000200Date20261022120000 extends SimpleMigrationStep {
 	#[\Override]
 	public function postSchemaChange(IOutput $output, Closure $schemaClosure, array $options): void {
 		$select = $this->db->getQueryBuilder();
-		$select->select('id', 'publication')->from('notarch_versions')->where($select->expr()->isNull('publication_status'));
+		$select->select('id', 'publication')->from('cantoria_versions')->where($select->expr()->isNull('publication_status'));
 		$result = $select->executeQuery();
 		$update = $this->db->getQueryBuilder();
-		$update->update('notarch_versions')
+		$update->update('cantoria_versions')
 			->set('publication_status', $update->createParameter('status'))
 			->where($update->expr()->eq('id', $update->createParameter('id')));
 		foreach ($result->fetchAllAssociative() as $row) {

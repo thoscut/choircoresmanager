@@ -18,7 +18,7 @@ use OCP\IDBConnection;
  */
 class WorkMapper extends QBMapper {
 	public function __construct(IDBConnection $db) {
-		parent::__construct($db, 'notarch_works', Work::class);
+		parent::__construct($db, 'cantoria_works', Work::class);
 	}
 
 	public function find(int $id): Work {

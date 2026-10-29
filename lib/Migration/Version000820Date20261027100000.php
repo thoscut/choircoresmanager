@@ -18,15 +18,15 @@ use OCP\Migration\SimpleMigrationStep;
 /**
  * Milestone 0.8, revisions of a version (module "version_states"):
  *
- * - `notarch_states`: one row per revision of the MusicXML of a version. It
- *   points to the file (`notarch_files.id`, with the name at the time) and
+ * - `cantoria_states`: one row per revision of the MusicXML of a version. It
+ *   points to the file (`cantoria_files.id`, with the name at the time) and
  *   keeps its checksum, the measures and voices changed, a note, who and
  *   when. The app copies no file (guideline 4); a row is never changed
  *   afterwards except for `valid_since`/`valid_set_by`, the mark of the
  *   current revision that the catalog librarian sets. `number` counts per
  *   version (1, 2, 3 …); the unique index keeps it so also when two requests
  *   come at the same moment.
- * - `notarch_event_items.state_id`: the revision sung in a concert, set when
+ * - `cantoria_event_items.state_id`: the revision sung in a concert, set when
  *   the concert is confirmed as sung.
  *
  * Names stay within the limits Nextcloud checks for Oracle (tables 27,
@@ -38,13 +38,13 @@ class Version000820Date20261027100000 extends SimpleMigrationStep {
 		$schema = $schemaClosure();
 		$changed = false;
 
-		if (!$schema->hasTable('notarch_states')) {
-			$t = $schema->createTable('notarch_states');
+		if (!$schema->hasTable('cantoria_states')) {
+			$t = $schema->createTable('cantoria_states');
 			$t->addColumn('id', Types::BIGINT, ['autoincrement' => true, 'notnull' => true, 'unsigned' => true]);
 			$t->addColumn('version_id', Types::BIGINT, ['notnull' => true, 'unsigned' => true]);
 			// the copy whose file it is
 			$t->addColumn('copy_id', Types::BIGINT, ['notnull' => false, 'unsigned' => true]);
-			// notarch_files.id of the MusicXML file and its name at the time
+			// cantoria_files.id of the MusicXML file and its name at the time
 			$t->addColumn('file_id', Types::BIGINT, ['notnull' => true, 'unsigned' => true]);
 			$t->addColumn('file_name', Types::STRING, ['notnull' => true, 'length' => 255, 'default' => '']);
 			// SHA-256 of the file content; null when the file could not be read
@@ -66,12 +66,12 @@ class Version000820Date20261027100000 extends SimpleMigrationStep {
 			$t->addColumn('valid_since', Types::STRING, ['notnull' => false, 'length' => 10]);
 			$t->addColumn('valid_set_by', Types::STRING, ['notnull' => false, 'length' => 255]);
 			$t->setPrimaryKey(['id']);
-			$t->addUniqueIndex(['version_id', 'number'], 'notarch_state_number');
-			$t->addIndex(['file_id'], 'notarch_state_file');
+			$t->addUniqueIndex(['version_id', 'number'], 'cantoria_state_number');
+			$t->addIndex(['file_id'], 'cantoria_state_file');
 			$changed = true;
 		}
 
-		$items = $schema->getTable('notarch_event_items');
+		$items = $schema->getTable('cantoria_event_items');
 		if (!$items->hasColumn('state_id')) {
 			$items->addColumn('state_id', Types::BIGINT, ['notnull' => false, 'unsigned' => true]);
 			$changed = true;

@@ -18,7 +18,7 @@ use OCP\IDBConnection;
  */
 class ContributionMapper extends QBMapper {
 	public function __construct(IDBConnection $db) {
-		parent::__construct($db, 'notarch_contributions', Contribution::class);
+		parent::__construct($db, 'cantoria_contributions', Contribution::class);
 	}
 
 	public function find(int $id): Contribution {

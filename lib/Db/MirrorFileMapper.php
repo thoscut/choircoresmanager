@@ -20,7 +20,7 @@ use OCP\IDBConnection;
  */
 class MirrorFileMapper extends QBMapper {
 	public function __construct(IDBConnection $db) {
-		parent::__construct($db, 'notarch_mirror_files', MirrorFile::class);
+		parent::__construct($db, 'cantoria_mirror_files', MirrorFile::class);
 	}
 
 	/**

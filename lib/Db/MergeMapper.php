@@ -18,7 +18,7 @@ use OCP\IDBConnection;
  */
 class MergeMapper extends QBMapper {
 	public function __construct(IDBConnection $db) {
-		parent::__construct($db, 'notarch_merges', Merge::class);
+		parent::__construct($db, 'cantoria_merges', Merge::class);
 	}
 
 	public function find(int $id): Merge {

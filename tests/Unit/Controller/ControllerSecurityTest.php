@@ -833,7 +833,7 @@ final class ControllerSecurityTest extends TestCase {
 		$roles->method('groups')->willReturnCallback(fn (string $role): array => $role === Roles::READER ? ['board', 'deleted'] : []);
 		$roles->method('isAdmin')->willReturnCallback(fn (string $uid): bool => $uid === 'root');
 		$backup = $this->createStub(FullBackupService::class);
-		$backup->method('counts')->willReturn(['notarch_copies' => 0, 'notarch_files' => 0, 'notarch_audit' => 0]);
+		$backup->method('counts')->willReturn(['cantoria_copies' => 0, 'cantoria_files' => 0, 'cantoria_audit' => 0]);
 		$board = $this->createStub(IGroup::class);
 		$board->method('getGID')->willReturn('board');
 		$board->method('getDisplayName')->willReturn('Board');

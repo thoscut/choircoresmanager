@@ -133,10 +133,10 @@ begonnen.
 | 0.13 Üben in der Notenansicht | fertig (nicht in einem echten Nextcloud abgenommen) | Version 0.15.0 |
 | 0.14 Text und Tonhöhe beim Mitsingen | fertig (nicht in einem echten Nextcloud abgenommen) | Version 0.15.0 |
 | 0.15 Ohne Netz üben und vortragen | fertig bis auf die Abnahme auf echten Geräten | Version 0.15.0 |
-| Umbenennung in Cantoria (App-ID `cantoria`) | fertig | Version 0.16.0 |
+| Umbenennung in Cantoria (App-ID `cantoria`, Tabellen `cantoria_*`) | fertig | Version 0.16.0, 0.16.1 |
 | 1.0 Stabil | geplant | – |
 
-Die aktuelle Version ist 0.16.0: Die App heißt jetzt Cantoria, vorher
+Die aktuelle Version ist 0.16.1: Die App heißt jetzt Cantoria, vorher
 „Notenarchiv“. Die Meilensteine 0.10 bis 0.15 kamen mit 0.15.0 (PR #10
 bis #12); danach ist 1.0 offen.
 

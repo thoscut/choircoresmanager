@@ -73,7 +73,7 @@ class CorrectionService {
 	/**
 	 * Saves a corrected score of a version as a new file.
 	 *
-	 * @param int $archiveFileId the score file shown (notarch_files.id)
+	 * @param int $archiveFileId the score file shown (cantoria_files.id)
 	 * @param string $content the whole changed MusicXML
 	 * @param array<array-key, mixed> $pointIds review points the correction settles (request data)
 	 * @return array{file: ArchiveFile, changes: list<Change>, points: list<int>, state: ?int} `state`: number of the new revision, if recorded

@@ -29,9 +29,9 @@ final class FieldsTest extends TestCase {
 	use MigratedSchema;
 
 	private const TABLES = [
-		Fields::WORK => 'notarch_works',
-		Fields::VERSION => 'notarch_versions',
-		Fields::COPY => 'notarch_copies',
+		Fields::WORK => 'cantoria_works',
+		Fields::VERSION => 'cantoria_versions',
+		Fields::COPY => 'cantoria_copies',
 	];
 
 	/**

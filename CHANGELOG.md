@@ -10,6 +10,15 @@ All notable changes to this app are documented in this file. The format follows
 
 ## [Unreleased]
 
+## [0.16.1] - 2026-10-29
+
+### Changed
+
+- The database tables carry the prefix `cantoria_` instead of `notarch_`.
+  The migrations create them under the new names; there is no migration
+  of the old tables, as the app was never published (the test instances
+  started with new data).
+
 ## [0.16.0] - 2026-10-29
 
 ### Changed

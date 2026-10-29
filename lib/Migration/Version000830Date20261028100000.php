@@ -18,7 +18,7 @@ use OCP\Migration\SimpleMigrationStep;
 /**
  * Whole pieces and the scan in links for choir members and public links:
  *
- * - `notarch_links.scan_file_id`: the PDF scan (`notarch_files.id`, role
+ * - `cantoria_links.scan_file_id`: the PDF scan (`cantoria_files.id`, role
  *   `score_pdf`) that a link for choir members or a public link offers
  *   besides the notes; null for no scan. A link without measures shows the
  *   whole piece; that needs no column (`measure_from` and `measure_to` are
@@ -32,7 +32,7 @@ class Version000830Date20261028100000 extends SimpleMigrationStep {
 	#[\Override]
 	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		$schema = $schemaClosure();
-		$links = $schema->getTable('notarch_links');
+		$links = $schema->getTable('cantoria_links');
 		if ($links->hasColumn('scan_file_id')) {
 			return null;
 		}

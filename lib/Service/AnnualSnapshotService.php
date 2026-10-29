@@ -539,13 +539,13 @@ class AnnualSnapshotService {
 		};
 		$copies = [];
 		$shelfmarks = [];
-		foreach ($backup['tables']['notarch_copies'] ?? [] as $row) {
+		foreach ($backup['tables']['cantoria_copies'] ?? [] as $row) {
 			$shelfmark = (string)($row['shelfmark'] ?? '');
 			$copies[$shelfmark] = $row;
 			$shelfmarks[(int)($row['version_id'] ?? 0)][] = $shelfmark;
 		}
-		return ['copies' => $copies, 'versions' => $byId('notarch_versions'), 'works' => $byId('notarch_works'),
-			'licenses' => $byId('notarch_licenses'), 'shelfmarks' => $shelfmarks];
+		return ['copies' => $copies, 'versions' => $byId('cantoria_versions'), 'works' => $byId('cantoria_works'),
+			'licenses' => $byId('cantoria_licenses'), 'shelfmarks' => $shelfmarks];
 	}
 
 	/**

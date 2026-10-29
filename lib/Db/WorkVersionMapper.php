@@ -18,7 +18,7 @@ use OCP\IDBConnection;
  */
 class WorkVersionMapper extends QBMapper {
 	public function __construct(IDBConnection $db) {
-		parent::__construct($db, 'notarch_versions', WorkVersion::class);
+		parent::__construct($db, 'cantoria_versions', WorkVersion::class);
 	}
 
 	public function find(int $id): WorkVersion {

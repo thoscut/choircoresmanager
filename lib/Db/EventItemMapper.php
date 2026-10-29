@@ -18,7 +18,7 @@ use OCP\IDBConnection;
  */
 class EventItemMapper extends QBMapper {
 	public function __construct(IDBConnection $db) {
-		parent::__construct($db, 'notarch_event_items', EventItem::class);
+		parent::__construct($db, 'cantoria_event_items', EventItem::class);
 	}
 
 	public function find(int $id): EventItem {

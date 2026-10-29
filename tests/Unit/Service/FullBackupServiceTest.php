@@ -37,9 +37,9 @@ final class FullBackupServiceTest extends TestCase {
 			'appVersion' => '0.1.11',
 			'created' => '2026-10-22T12:00:00+00:00',
 			'tables' => [
-				'notarch_works' => [['id' => 1, 'title' => 'Ave verum corpus', 'merged_into' => null]],
-				'notarch_versions' => [['id' => 2, 'work_id' => 1, 'preservation_copy' => false, 'duration' => 180]],
-				'notarch_audit' => [],
+				'cantoria_works' => [['id' => 1, 'title' => 'Ave verum corpus', 'merged_into' => null]],
+				'cantoria_versions' => [['id' => 2, 'work_id' => 1, 'preservation_copy' => false, 'duration' => 180]],
+				'cantoria_audit' => [],
 			],
 		], JSON_THROW_ON_ERROR);
 	}
@@ -50,15 +50,15 @@ final class FullBackupServiceTest extends TestCase {
 		self::assertSame('2026-10-22T12:00:00+00:00', $backup['created']);
 		self::assertSame('0.1.11', $backup['appVersion']);
 		self::assertSame([
-			'notarch_works' => [['id' => 1, 'title' => 'Ave verum corpus', 'merged_into' => null]],
-			'notarch_versions' => [['id' => 2, 'work_id' => 1, 'preservation_copy' => false, 'duration' => 180]],
-			'notarch_audit' => [],
+			'cantoria_works' => [['id' => 1, 'title' => 'Ave verum corpus', 'merged_into' => null]],
+			'cantoria_versions' => [['id' => 2, 'work_id' => 1, 'preservation_copy' => false, 'duration' => 180]],
+			'cantoria_audit' => [],
 		], $backup['tables']);
 	}
 
 	public function testUnknownTablesAreDropped(): void {
-		$content = self::backup(['tables' => ['oc_users' => [['uid' => 'admin']], 'notarch_works' => []]]);
-		self::assertSame(['notarch_works' => []], FullBackupService::parse($content)['tables']);
+		$content = self::backup(['tables' => ['oc_users' => [['uid' => 'admin']], 'cantoria_works' => []]]);
+		self::assertSame(['cantoria_works' => []], FullBackupService::parse($content)['tables']);
 	}
 
 	public function testMissingDescriptionsAreReplaced(): void {
@@ -85,11 +85,11 @@ final class FullBackupServiceTest extends TestCase {
 		yield 'version as text' => [self::backup(['formatVersion' => '1'])];
 		yield 'tables missing' => [json_encode(['format' => FullBackupService::FORMAT, 'formatVersion' => 1], JSON_THROW_ON_ERROR)];
 		yield 'tables as list' => [self::backup(['tables' => [[]]])];
-		yield 'rows as object' => [self::backup(['tables' => ['notarch_works' => ['a' => ['id' => 1]]]])];
-		yield 'row as list' => [self::backup(['tables' => ['notarch_works' => [[1, 'Ave']]]])];
-		yield 'row as scalar' => [self::backup(['tables' => ['notarch_works' => ['Ave']]])];
-		yield 'empty row' => [self::backup(['tables' => ['notarch_works' => [new \stdClass()]]])];
-		yield 'nested value' => [self::backup(['tables' => ['notarch_works' => [['id' => 1, 'title' => ['de' => 'Ave']]]]])];
+		yield 'rows as object' => [self::backup(['tables' => ['cantoria_works' => ['a' => ['id' => 1]]]])];
+		yield 'row as list' => [self::backup(['tables' => ['cantoria_works' => [[1, 'Ave']]]])];
+		yield 'row as scalar' => [self::backup(['tables' => ['cantoria_works' => ['Ave']]])];
+		yield 'empty row' => [self::backup(['tables' => ['cantoria_works' => [new \stdClass()]]])];
+		yield 'nested value' => [self::backup(['tables' => ['cantoria_works' => [['id' => 1, 'title' => ['de' => 'Ave']]]]])];
 	}
 
 	#[DataProvider('notABackup')]
@@ -109,7 +109,7 @@ final class FullBackupServiceTest extends TestCase {
 		$deep = str_repeat('[', 100) . str_repeat(']', 100);
 		$this->expectException(InvalidInputException::class);
 		$this->expectExceptionMessage('The file is not a backup of the music archive.');
-		FullBackupService::parse(self::backup(['tables' => ['notarch_works' => [['id' => 1, 'title' => 'x']]], 'extra' => json_decode($deep)]));
+		FullBackupService::parse(self::backup(['tables' => ['cantoria_works' => [['id' => 1, 'title' => 'x']]], 'extra' => json_decode($deep)]));
 	}
 
 	/**
@@ -162,16 +162,16 @@ final class FullBackupServiceTest extends TestCase {
 		$tables = FullBackupService::TABLES;
 		$position = array_flip($tables);
 		// Referenced tables come first.
-		self::assertLessThan($position['notarch_versions'], $position['notarch_works']);
-		self::assertLessThan($position['notarch_copies'], $position['notarch_versions']);
-		self::assertLessThan($position['notarch_files'], $position['notarch_copies']);
-		self::assertLessThan($position['notarch_event_items'], $position['notarch_events']);
-		self::assertLessThan($position['notarch_contributions'], $position['notarch_persons']);
-		self::assertLessThan($position['notarch_folder_loans'], $position['notarch_folders']);
+		self::assertLessThan($position['cantoria_versions'], $position['cantoria_works']);
+		self::assertLessThan($position['cantoria_copies'], $position['cantoria_versions']);
+		self::assertLessThan($position['cantoria_files'], $position['cantoria_copies']);
+		self::assertLessThan($position['cantoria_event_items'], $position['cantoria_events']);
+		self::assertLessThan($position['cantoria_contributions'], $position['cantoria_persons']);
+		self::assertLessThan($position['cantoria_folder_loans'], $position['cantoria_folders']);
 		// Revisions point to files; programme items to the revision sung (milestone 0.8)
-		self::assertLessThan($position['notarch_states'], $position['notarch_files']);
-		self::assertLessThan($position['notarch_event_items'], $position['notarch_states']);
-		self::assertNotContains('notarch_mirror_files', $tables, 'the manifest of the print station belongs to this instance');
+		self::assertLessThan($position['cantoria_states'], $position['cantoria_files']);
+		self::assertLessThan($position['cantoria_event_items'], $position['cantoria_states']);
+		self::assertNotContains('cantoria_mirror_files', $tables, 'the manifest of the print station belongs to this instance');
 		self::assertSame(array_values(array_unique($tables)), $tables);
 	}
 }

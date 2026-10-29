@@ -91,12 +91,12 @@ final class ExportServiceTest extends TestCase {
 
 	public function testABackupHoldsNoLinkTokensAndASnapshotNoAccounts(): void {
 		$link = ['id' => 4, 'token' => hash('sha256', 'abcdefghijklmnopqrstuvwxyz012345'), 'token_secret' => 'encrypted', 'created_by' => 'lena'];
-		self::assertSame(['id' => 4, 'token' => '', 'token_secret' => null, 'created_by' => 'lena'], FullBackupService::exportRow('notarch_links', $link, false));
+		self::assertSame(['id' => 4, 'token' => '', 'token_secret' => null, 'created_by' => 'lena'], FullBackupService::exportRow('cantoria_links', $link, false));
 		$version = ['id' => 2, 'confirmed_by' => 'lena', 'confirmed_by_name' => 'Lena', 'valid_set_by' => null, 'rights_status' => 'free'];
-		self::assertSame($version, FullBackupService::exportRow('notarch_versions', $version, false));
+		self::assertSame($version, FullBackupService::exportRow('cantoria_versions', $version, false));
 		self::assertSame(['id' => 2, 'confirmed_by' => '', 'confirmed_by_name' => '', 'valid_set_by' => null, 'rights_status' => 'free'],
-			FullBackupService::exportRow('notarch_versions', $version, true));
-		foreach (['notarch_folder_loans', 'notarch_audit', 'notarch_links', 'notarch_tasks', 'notarch_proposals'] as $table) {
+			FullBackupService::exportRow('cantoria_versions', $version, true));
+		foreach (['cantoria_folder_loans', 'cantoria_audit', 'cantoria_links', 'cantoria_tasks', 'cantoria_proposals'] as $table) {
 			self::assertNotContains($table, FullBackupService::SNAPSHOT_TABLES, $table . ' names people or holds tokens');
 			self::assertContains($table, FullBackupService::TABLES);
 		}

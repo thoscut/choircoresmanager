@@ -134,7 +134,7 @@ try {
 	// Reports of transcriptions are not needed here; without them the file sync reads none.
 	$modules->change(array_fill_keys($needed, true) + ['transcription_review' => false]);
 	$check('the module is active with what it needs', $modules->isEnabled(Modules::VERSION_STATES) && $modules->isEnabled('corrections'));
-	$check('the complete backup covers the revisions', in_array('notarch_states', FullBackupService::TABLES, true));
+	$check('the complete backup covers the revisions', in_array('cantoria_states', FullBackupService::TABLES, true));
 
 	$score = $catalog->entry($copy->getId(), $uid)['score'];
 	$check('the copy has a MusicXML score', $score !== null && $score['canView'], $shelfmark);

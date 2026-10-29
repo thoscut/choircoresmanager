@@ -58,10 +58,10 @@ class FullBackupService {
 
 	/** Tables in an order that satisfies the references on restore */
 	public const TABLES = [
-		'notarch_works', 'notarch_versions', 'notarch_copies', 'notarch_files', 'notarch_states', 'notarch_licenses',
-		'notarch_proposals', 'notarch_tasks', 'notarch_links', 'notarch_events', 'notarch_event_items',
-		'notarch_persons', 'notarch_contributions', 'notarch_merges', 'notarch_review_reports', 'notarch_review_points',
-		'notarch_folders', 'notarch_folder_loans', 'notarch_audit',
+		'cantoria_works', 'cantoria_versions', 'cantoria_copies', 'cantoria_files', 'cantoria_states', 'cantoria_licenses',
+		'cantoria_proposals', 'cantoria_tasks', 'cantoria_links', 'cantoria_events', 'cantoria_event_items',
+		'cantoria_persons', 'cantoria_contributions', 'cantoria_merges', 'cantoria_review_reports', 'cantoria_review_points',
+		'cantoria_folders', 'cantoria_folder_loans', 'cantoria_audit',
 	];
 
 	public function __construct(
@@ -80,8 +80,8 @@ class FullBackupService {
 	 * or accounts or hold link tokens.
 	 */
 	public const SNAPSHOT_TABLES = [
-		'notarch_works', 'notarch_versions', 'notarch_copies', 'notarch_files', 'notarch_states', 'notarch_licenses',
-		'notarch_events', 'notarch_event_items', 'notarch_persons', 'notarch_contributions', 'notarch_folders',
+		'cantoria_works', 'cantoria_versions', 'cantoria_copies', 'cantoria_files', 'cantoria_states', 'cantoria_licenses',
+		'cantoria_events', 'cantoria_event_items', 'cantoria_persons', 'cantoria_contributions', 'cantoria_folders',
 	];
 	/** Columns with accounts or their names, emptied in an annual snapshot */
 	public const ACCOUNT_COLUMNS = ['confirmed_by', 'confirmed_by_name', 'valid_set_by', 'created_by', 'created_by_name', 'checked_by'];
@@ -144,10 +144,10 @@ class FullBackupService {
 	 * @return array<array-key, mixed>
 	 */
 	public static function exportRow(string $table, array $row, bool $snapshot): array {
-		if ($table === 'notarch_links' && array_key_exists('token', $row)) {
+		if ($table === 'cantoria_links' && array_key_exists('token', $row)) {
 			$row['token'] = '';
 		}
-		if ($table === 'notarch_links' && array_key_exists('token_secret', $row)) {
+		if ($table === 'cantoria_links' && array_key_exists('token_secret', $row)) {
 			$row['token_secret'] = null;
 		}
 		if ($snapshot) {
@@ -214,7 +214,7 @@ class FullBackupService {
 				}
 				$columns = $this->columns($schema, $table);
 				foreach ($rows as $index => $row) {
-					if ($table === 'notarch_links' && ($row['token'] ?? '') === '') {
+					if ($table === 'cantoria_links' && ($row['token'] ?? '') === '') {
 						// Backups hold no tokens: the link comes back revoked.
 						// Only the hash of a token nobody knows: the link stays dead.
 						$row['token'] = ExcerptLink::hashToken($this->random->generate(LinkTokens::LENGTH, ISecureRandom::CHAR_ALPHANUMERIC));

@@ -28,7 +28,7 @@ use OCP\AppFramework\Db\Entity;
  * measures; never the score file.
  *
  * `scan_file_id` (circles `members` and `public` only) is the PDF scan
- * (`notarch_files.id`, role `score_pdf`) offered besides the notes; null
+ * (`cantoria_files.id`, role `score_pdf`) offered besides the notes; null
  * for none.
  *
  * `token` holds the SHA-256 hash of the token in the address (milestone

@@ -39,35 +39,35 @@ final class AnnualSnapshotServiceTest extends TestCase {
 	 */
 	private static function lastYear(): array {
 		return self::backup([
-			'notarch_works' => [['id' => 1, 'title' => 'Ave verum'], ['id' => 2, 'title' => 'Locus iste']],
-			'notarch_versions' => [
+			'cantoria_works' => [['id' => 1, 'title' => 'Ave verum'], ['id' => 2, 'title' => 'Locus iste']],
+			'cantoria_versions' => [
 				['id' => 1, 'work_id' => 1, 'rights_status' => 'open', 'confirmed_at' => null, 'preservation_copy' => '0'],
 				['id' => 2, 'work_id' => 2, 'rights_status' => 'public_domain', 'confirmed_at' => '2025-03-01', 'preservation_copy' => '0'],
 			],
-			'notarch_copies' => [
+			'cantoria_copies' => [
 				['id' => 1, 'version_id' => 1, 'shelfmark' => '4-1', 'status' => 'active', 'kind' => null],
 				['id' => 2, 'version_id' => 2, 'shelfmark' => '4-2', 'status' => 'active', 'kind' => null],
 				['id' => 3, 'version_id' => 2, 'shelfmark' => '4-10', 'status' => 'active', 'kind' => null],
 			],
-			'notarch_licenses' => [['id' => 1, 'version_id' => 1, 'holder' => 'Publisher', 'uses' => 'binder', 'valid_until' => '2026-12-31']],
+			'cantoria_licenses' => [['id' => 1, 'version_id' => 1, 'holder' => 'Publisher', 'uses' => 'binder', 'valid_until' => '2026-12-31']],
 		]);
 	}
 
 	public function testTheDifferencesOfTwoSnapshots(): void {
 		$old = self::lastYear();
 		$new = self::backup([
-			'notarch_works' => [['id' => 1, 'title' => 'Ave verum corpus'], ['id' => 2, 'title' => 'Locus iste'], ['id' => 3, 'title' => 'Abendlied']],
-			'notarch_versions' => [
+			'cantoria_works' => [['id' => 1, 'title' => 'Ave verum corpus'], ['id' => 2, 'title' => 'Locus iste'], ['id' => 3, 'title' => 'Abendlied']],
+			'cantoria_versions' => [
 				['id' => 1, 'work_id' => 1, 'rights_status' => 'public_domain', 'confirmed_at' => '2026-05-01', 'preservation_copy' => 0],
 				['id' => 2, 'work_id' => 2, 'rights_status' => 'public_domain', 'confirmed_at' => '2025-03-01', 'preservation_copy' => false],
 				['id' => 3, 'work_id' => 3, 'rights_status' => 'open'],
 			],
-			'notarch_copies' => [
+			'cantoria_copies' => [
 				['id' => 1, 'version_id' => 1, 'shelfmark' => '4-1', 'status' => 'active', 'kind' => ''],
 				['id' => 3, 'version_id' => 2, 'shelfmark' => '4-10', 'status' => 'retired', 'kind' => null],
 				['id' => 4, 'version_id' => 3, 'shelfmark' => '4-3', 'status' => 'active', 'kind' => null],
 			],
-			'notarch_licenses' => [
+			'cantoria_licenses' => [
 				['id' => 1, 'version_id' => 1, 'holder' => 'Publisher', 'uses' => 'binder,successor', 'valid_until' => '2026-12-31'],
 				['id' => 2, 'version_id' => 3, 'holder' => 'Other', 'uses' => 'portal'],
 			],

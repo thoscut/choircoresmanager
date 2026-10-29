@@ -196,7 +196,7 @@ class FileSyncService {
 		$reportFiles = [];
 		/** @var list<array{file: ArchiveFile, node: File, version: WorkVersion}> $unreadNotices MusicXML files whose rights notice is not read yet */
 		$unreadNotices = [];
-		/** @var list<int> $changedScores MusicXML files found new or changed (notarch_files.id) */
+		/** @var list<int> $changedScores MusicXML files found new or changed (cantoria_files.id) */
 		$changedScores = [];
 		$operation = $this->audit->newOperation();
 

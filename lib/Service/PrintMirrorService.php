@@ -44,7 +44,7 @@ use Psr\Log\LoggerInterface;
  *   preservation copies, named `<shelf mark> <title>.pdf`, and a
  *   `LIESMICH.txt` with the date and a note.
  * - Missing files are copied, changed scans replaced, files no longer
- *   released removed. The manifest (table notarch_mirror_files: name, file
+ *   released removed. The manifest (table cantoria_mirror_files: name, file
  *   id, SHA-256 of what was written) tells which files the app wrote: only
  *   those are replaced or removed, and only while their content is still
  *   the one written. Other files in the folder stay as they are.
@@ -61,7 +61,7 @@ class PrintMirrorService {
 	public const MODULE = Modules::PRINT_MIRROR;
 	public const README = 'LIESMICH.txt';
 	public const OBJECT_TYPE = 'print_mirror';
-	/** Name of this target folder in the manifest (notarch_mirror_files.mirror) */
+	/** Name of this target folder in the manifest (cantoria_mirror_files.mirror) */
 	public const MIRROR = 'print';
 
 	/** Why a file was skipped (keys; the controller translates them) */
@@ -110,7 +110,7 @@ class PrintMirrorService {
 		return 'choir_handover';
 	}
 
-	/** Name of this target folder in the manifest (notarch_mirror_files.mirror) */
+	/** Name of this target folder in the manifest (cantoria_mirror_files.mirror) */
 	protected function mirror(): string {
 		return self::MIRROR;
 	}

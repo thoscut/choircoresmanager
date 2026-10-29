@@ -113,13 +113,13 @@ try {
 		Server::get(MergeService::class)->moveCopy($other->getId(), $versionId, $uid, 'backup test');
 		// A revision of a version (module version_states, milestone 0.8): the
 		// file sync records the first ones; switched on inside the transaction
-		if ($dump($db, 'notarch_states') === []) {
+		if ($dump($db, 'cantoria_states') === []) {
 			if (!$folderBookModules->isEnabled(Modules::VERSION_STATES)) {
 				$folderBookModules->change([Modules::VERSION_STATES => true]);
 			}
 			Server::get(StateService::class)->recordSync([], time(), $uid);
 		}
-		$check('a revision of a version exists', $dump($db, 'notarch_states') !== []);
+		$check('a revision of a version exists', $dump($db, 'cantoria_states') !== []);
 	}
 
 	$before = [];
@@ -135,12 +135,12 @@ try {
 	$json = $backup->export();
 	$parsed = FullBackupService::parse($json);
 	$check('backup passes its own format check with all tables', count($parsed['tables']) === count($tables), count($tables) . ' tables, ' . strlen($json) . ' bytes');
-	$check('the backup holds no link tokens', ($parsed['tables']['notarch_links'] ?? []) !== []
-		&& array_filter(array_column($parsed['tables']['notarch_links'], 'token'), fn ($t): bool => $t !== '') === []);
+	$check('the backup holds no link tokens', ($parsed['tables']['cantoria_links'] ?? []) !== []
+		&& array_filter(array_column($parsed['tables']['cantoria_links'], 'token'), fn ($t): bool => $t !== '') === []);
 	$snapshot = FullBackupService::parse((string)stream_get_contents($backup->exportStream(true)));
 	$check('an annual snapshot leaves out the folder book, the audit log and the links',
-		array_intersect(array_keys($snapshot['tables']), ['notarch_folder_loans', 'notarch_audit', 'notarch_links']) === []
-		&& isset($snapshot['tables']['notarch_copies']));
+		array_intersect(array_keys($snapshot['tables']), ['cantoria_folder_loans', 'cantoria_audit', 'cantoria_links']) === []
+		&& isset($snapshot['tables']['cantoria_copies']));
 
 	try {
 		$backup->restore($json, $uid);
@@ -169,21 +169,21 @@ try {
 
 	// A value that does not fit its column is refused and nothing is written.
 	$data = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
-	$data['tables']['notarch_works'][0]['title'] = str_repeat('x', 501);
+	$data['tables']['cantoria_works'][0]['title'] = str_repeat('x', 501);
 	$error = IntegrationTest::throws(fn () => $backup->restore(json_encode($data, JSON_THROW_ON_ERROR), $uid));
-	$check('a value longer than its column is refused', $error !== null && str_contains($error, 'invalid value in notarch_works'), (string)$error);
-	$check('a refused restore writes nothing', $rowCount('notarch_works') === 0 && $rowCount('notarch_audit') === 0);
+	$check('a value longer than its column is refused', $error !== null && str_contains($error, 'invalid value in cantoria_works'), (string)$error);
+	$check('a refused restore writes nothing', $rowCount('cantoria_works') === 0 && $rowCount('cantoria_audit') === 0);
 	$data = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
-	$data['tables']['notarch_versions'][0]['preservation_copy'] = 'yes please';
+	$data['tables']['cantoria_versions'][0]['preservation_copy'] = 'yes please';
 	$error = IntegrationTest::throws(fn () => $backup->restore(json_encode($data, JSON_THROW_ON_ERROR), $uid));
 	$check('a boolean column refuses text', $error !== null && str_contains($error, 'preservation_copy'), (string)$error);
 
 	// Column names from the file are never used unchecked: unknown ones are left out.
 	$crafted = ['format' => FullBackupService::FORMAT, 'formatVersion' => FullBackupService::FORMAT_VERSION, 'tables' => [
-		'notarch_works' => [['id' => 1, 'title' => 'Crafted', 'title"; DROP TABLE oc_users; --' => 'x', 'created' => '0', 'modified' => 0]],
+		'cantoria_works' => [['id' => 1, 'title' => 'Crafted', 'title"; DROP TABLE oc_users; --' => 'x', 'created' => '0', 'modified' => 0]],
 	]];
 	$restored = $backup->restore(json_encode($crafted, JSON_THROW_ON_ERROR), $uid);
-	$check('unknown columns are left out', ($restored['notarch_works'] ?? 0) === 1 && $rowCount('notarch_works') === 1);
+	$check('unknown columns are left out', ($restored['cantoria_works'] ?? 0) === 1 && $rowCount('cantoria_works') === 1);
 	$emptyAll();
 
 	$restored = $backup->restore($json, $uid);
@@ -191,13 +191,13 @@ try {
 
 	foreach ($tables as $table) {
 		$after = $dump($db, $table);
-		if ($table === 'notarch_audit') {
+		if ($table === 'cantoria_audit') {
 			// The restore itself adds one audit entry.
 			$check('audit log restored plus one entry', count($after) === count($before[$table]) + 1
 				&& array_slice($after, 0, count($before[$table])) === $before[$table]);
 			continue;
 		}
-		if ($table === 'notarch_links') {
+		if ($table === 'cantoria_links') {
 			// Without their tokens, links come back revoked and with new tokens.
 			$strip = fn (array $rows): array => array_map(fn (array $row): array => array_diff_key($row, ['token' => 0, 'token_secret' => 0, 'revoked' => 0]), $rows);
 			$check('links restored, revoked and with new tokens', $strip($after) === $strip($before[$table])

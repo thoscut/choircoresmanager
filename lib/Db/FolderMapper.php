@@ -21,7 +21,7 @@ use OCP\IDBConnection;
  */
 class FolderMapper extends QBMapper {
 	public function __construct(IDBConnection $db) {
-		parent::__construct($db, 'notarch_folders', Folder::class);
+		parent::__construct($db, 'cantoria_folders', Folder::class);
 	}
 
 	public function find(int $id): Folder {

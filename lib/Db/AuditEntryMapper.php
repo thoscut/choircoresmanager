@@ -25,7 +25,7 @@ use OCP\IDBConnection;
  */
 class AuditEntryMapper extends QBMapper {
 	public function __construct(IDBConnection $db) {
-		parent::__construct($db, 'notarch_audit', AuditEntry::class);
+		parent::__construct($db, 'cantoria_audit', AuditEntry::class);
 	}
 
 	/**

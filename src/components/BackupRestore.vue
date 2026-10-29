@@ -100,7 +100,7 @@ async function restore(): Promise<void> {
  * @param table - table name
  */
 function tableLabel(table: string): string {
-	switch (table.replace(/^notarch_/, '')) {
+	switch (table.replace(/^cantoria_/, '')) {
 	case 'works':
 		return t('cantoria', 'Works')
 	case 'versions':

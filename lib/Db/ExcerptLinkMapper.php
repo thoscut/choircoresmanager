@@ -18,7 +18,7 @@ use OCP\IDBConnection;
  */
 class ExcerptLinkMapper extends QBMapper {
 	public function __construct(IDBConnection $db) {
-		parent::__construct($db, 'notarch_links', ExcerptLink::class);
+		parent::__construct($db, 'cantoria_links', ExcerptLink::class);
 	}
 
 	public function find(int $id): ExcerptLink {

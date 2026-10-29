@@ -18,7 +18,7 @@ use OCP\IDBConnection;
  */
 class ReviewPointMapper extends QBMapper {
 	public function __construct(IDBConnection $db) {
-		parent::__construct($db, 'notarch_review_points', ReviewPoint::class);
+		parent::__construct($db, 'cantoria_review_points', ReviewPoint::class);
 	}
 
 	public function find(int $id): ReviewPoint {

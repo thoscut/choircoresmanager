@@ -18,7 +18,7 @@ use OCP\IDBConnection;
  */
 class CopyMapper extends QBMapper {
 	public function __construct(IDBConnection $db) {
-		parent::__construct($db, 'notarch_copies', Copy::class);
+		parent::__construct($db, 'cantoria_copies', Copy::class);
 	}
 
 	public function find(int $id): Copy {

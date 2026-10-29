@@ -289,7 +289,7 @@ class StateService {
 	 * revision of the version and of the file. One file that cannot be read
 	 * does not stop the others.
 	 *
-	 * @param list<int> $changedFileIds notarch_files.id of the MusicXML files the sync found new or changed
+	 * @param list<int> $changedFileIds cantoria_files.id of the MusicXML files the sync found new or changed
 	 * @param int $since start of the sync: reports read since then name the change
 	 * @return array{recorded: int, first: int, failed: int, switchedOff: bool}
 	 */

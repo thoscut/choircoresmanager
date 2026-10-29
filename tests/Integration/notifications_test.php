@@ -91,7 +91,7 @@ try {
 		&& count(preg_grep('/_backup_weekly\.json$/', $new)) === 1, implode(', ', $new));
 	$json = array_values(preg_grep('/_backup_weekly\.json$/', $new) ?: [])[0] ?? null;
 	$jsonFile = $json === null ? null : $settings->backupFolder()->get($json);
-	$links = $jsonFile instanceof \OCP\Files\File ? (FullBackupService::parse($jsonFile->getContent())['tables']['notarch_links'] ?? []) : [];
+	$links = $jsonFile instanceof \OCP\Files\File ? (FullBackupService::parse($jsonFile->getContent())['tables']['cantoria_links'] ?? []) : [];
 	$check('the backup holds no link tokens', array_filter(array_column($links, 'token'), fn ($t): bool => $t !== '') === []);
 } finally {
 	$db->rollBack();
