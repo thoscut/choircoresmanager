@@ -53,6 +53,15 @@ restore at most 64 MB; larger files are refused with 400
 Field names are the keys from `lib/Service/Fields.php` (snake_case). User-facing
 texts are English source strings translated via Nextcloud l10n (German first).
 
+## Database tables
+
+The tables carry the prefix `notarch_` (for example `notarch_works`,
+`notarch_versions`, `notarch_links`). The prefix comes from the working
+name "Notenarchiv" and stays on purpose: Nextcloud does not tie a table to
+an app id, so when the app id became `cantoria` (version 0.16.0) the data
+of existing test instances stayed in its tables without being copied, and
+the migrations did not need to change. New tables use the same prefix.
+
 ## Domain glossary
 
 | Code | German UI term | Meaning |

@@ -10,6 +10,23 @@ All notable changes to this app are documented in this file. The format follows
 
 ## [Unreleased]
 
+## [0.16.0] - 2026-10-29
+
+### Changed
+
+- **The app is called Cantoria.** The app id is `cantoria` and the PHP
+  namespace `OCA\Cantoria`: routes `/apps/cantoria/…` and
+  `/ocs/v2.php/apps/cantoria/api/v1/…`, `occ cantoria:*`, the environment
+  variables `CANTORIA_*` of the MCP server (`cantoria-mcp`) and the agent,
+  the header `X-Cantoria-Page`, the folder `_cantoria-app` in the archive
+  folder and the demo folder `Cantoria-Demo`. The interface names the app
+  Cantoria in every language (Administration → Cantoria, "Open in
+  Cantoria", the widget "Cantoria – due"); in German, "Notenarchiv" stays
+  the word for the archive of a choir. The database tables keep their
+  prefix `notarch_`. Before, the app ran as "Notenarchiv" (`notenarchiv`)
+  on test instances only and was never published; links under
+  `/apps/notenarchiv/…` no longer work.
+
 ## [0.15.0] - 2026-10-29
 
 ### Added
