@@ -457,10 +457,10 @@ onBeforeUnmount(() => {
 		<!-- The visible heading is the page heading: no hidden second one (WCAG 2.4.6) -->
 		<NcAppContent :page-title="t('cantoria', 'Concert folder') + ' - ' + t('cantoria', 'Cantoria')">
 			<div class="folder-app" :class="{ 'folder-app--stage': stageOn }">
-				<h1 class="folder-app__title">
+				<h1 class="folder-app__title no-print">
 					{{ t('cantoria', 'Concert folder') }}
 				</h1>
-				<p class="folder-app__intro">
+				<p class="folder-app__intro no-print">
 					{{ offlineOn
 						? t('cantoria', 'The programmes still to be sung, in their order: view, play and practise each piece, and make a whole programme available without a network for the rehearsal and the concert.')
 						: t('cantoria', 'The programmes still to be sung, in their order: view, play and practise each piece.') }}
@@ -482,7 +482,7 @@ onBeforeUnmount(() => {
 				</NcEmptyContent>
 
 				<div v-else class="folder-app__layout">
-					<div class="folder-app__programmes">
+					<div class="folder-app__programmes no-print">
 						<!-- On a narrow screen the list folds away once a piece is open -->
 						<NcButton v-if="selected"
 							variant="secondary"
@@ -567,6 +567,7 @@ onBeforeUnmount(() => {
 								</p>
 							</div>
 							<NcButton variant="tertiary"
+								class="no-print"
 								:aria-pressed="stageOn ? 'true' : 'false'"
 								@click="toggleStage">
 								<template #icon>
@@ -575,14 +576,15 @@ onBeforeUnmount(() => {
 								{{ t('cantoria', 'Stage view') }}
 							</NcButton>
 						</div>
-						<nav class="folder-app__turn" :aria-label="t('cantoria', 'Programme order')">
+						<!-- two buttons, no links: a group, not a navigation landmark -->
+						<div class="folder-app__turn no-print" role="group" :aria-label="t('cantoria', 'Programme order')">
 							<NcButton v-if="neighbours.previous" variant="tertiary" @click="select(neighbours.previous)">
 								{{ t('cantoria', 'Previous: {title}', { title: neighbours.previous.title }) }}
 							</NcButton>
 							<NcButton v-if="neighbours.next" variant="secondary" @click="select(neighbours.next)">
 								{{ t('cantoria', 'Next: {title}', { title: neighbours.next.title }) }}
 							</NcButton>
-						</nav>
+						</div>
 						<p v-if="offlineOn && !selected.offline && selected.offlineReason" class="folder-app__muted">
 							{{ selected.offlineReason }}
 						</p>
@@ -591,6 +593,7 @@ onBeforeUnmount(() => {
 						</p>
 						<ScanFrame v-else-if="selected.scan"
 							:key="selected.id"
+							class="no-print"
 							collection="folder"
 							:piece-key="String(selected.id)"
 							:title="selected.title" />
@@ -643,7 +646,7 @@ onBeforeUnmount(() => {
 							</template>
 						</ExcerptViewer>
 						<!-- At the end of the notes: on to the next piece without scrolling up -->
-						<div v-if="neighbours.next" class="folder-app__end">
+						<div v-if="neighbours.next" class="folder-app__end no-print">
 							<NcButton ref="nextButton"
 								variant="primary"
 								@click="select(neighbours.next)">
@@ -665,7 +668,7 @@ onBeforeUnmount(() => {
 					</p>
 				</div>
 
-				<section v-if="offlineOn || state.offline" class="folder-app__device-section" :aria-labelledby="deviceHeadingId">
+				<section v-if="offlineOn || state.offline" class="folder-app__device-section no-print" :aria-labelledby="deviceHeadingId">
 					<h2 :id="deviceHeadingId" class="folder-app__concert-title">
 						{{ t('cantoria', 'Without a network') }}
 					</h2>
@@ -928,6 +931,23 @@ onBeforeUnmount(() => {
 @media (pointer: coarse) {
 	.folder-app {
 		--default-clickable-area: 44px;
+	}
+}
+
+/* Printing: the piece only, black on white */
+@media print {
+	.folder-app .no-print,
+	.folder-app :deep(.notecard[role="status"]) {
+		display: none !important;
+	}
+
+	.folder-app__layout {
+		display: block;
+	}
+
+	.folder-app,
+	.folder-app__muted {
+		color: #000;
 	}
 }
 </style>

@@ -864,8 +864,8 @@ MusicXML nicht geändert, bleiben sie offen.
    genau diese Takte (nur wo Abspielen erlaubt ist; die Rechteprüfung ist
    dieselbe wie immer).
 3. **Scan**: Ist ein PDF-Scan mit dem Exemplar verknüpft, zeigt **Scan neben
-   den Noten zeigen** ihn neben den Noten, und **Scan in neuem Fenster
-   öffnen** öffnet ihn in einem zweiten Fenster, beide auf der **Seite im
+   den Noten zeigen** ihn neben den Noten, und **Scan in einem neuen Tab
+   öffnen** öffnet ihn in einem eigenen Tab, beide auf der **Seite im
    Scan** (der Seite des Punkts oder der Seite, die du zuletzt angesehen
    hast). Beide nutzen den PDF-Viewer des Browsers; nichts geht an einen
    anderen Server. Das zweite Fenster hilft auf kleinen Bildschirmen und mit

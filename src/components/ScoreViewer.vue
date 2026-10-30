@@ -63,6 +63,7 @@ import NcIconSvgWrapper from '@nextcloud/vue/components/NcIconSvgWrapper'
 import NcLoadingIcon from '@nextcloud/vue/components/NcLoadingIcon'
 import NcModal from '@nextcloud/vue/components/NcModal'
 import NcNoteCard from '@nextcloud/vue/components/NcNoteCard'
+import NcSelect from '@nextcloud/vue/components/NcSelect'
 import NcTextField from '@nextcloud/vue/components/NcTextField'
 import GuideLink from './GuideLink.vue'
 import PlaybackSettings from './PlaybackSettings.vue'
@@ -126,10 +127,10 @@ const emit = defineEmits<{
 const headingId = useId()
 const summaryId = useId()
 const volumeId = useId()
-const scanSelectId = useId()
 const settingsId = useId()
 const placeId = useId()
 const scoreHintId = useId()
+const reviewPanelId = useId()
 
 const score = computed(() => props.detail.score)
 /** Playback (module "playback"); the server also refuses it when switched off. */
@@ -505,6 +506,16 @@ watch(() => score.value?.fileId, (id, previous) => {
 
 const scans = computed(() => scanFiles(props.detail.files))
 const scanFileId = ref<number | null>(scans.value[0]?.id ?? null)
+/** The scan files as options of the select */
+const scanOptions = computed(() => scans.value.map((file) => ({ id: file.id, label: file.name })))
+const scanChoice = computed({
+	get: () => scanOptions.value.find((option) => option.id === scanFileId.value) ?? null,
+	set: (option: { id: number, label: string } | null) => {
+		if (option) {
+			scanFileId.value = option.id
+		}
+	},
+})
 const scanShown = ref(false)
 const scanPage = ref(scanFileId.value !== null ? storedScanPage(props.detail.copy.id, scanFileId.value) : 1)
 const scanPageInput = ref(String(scanPage.value))
@@ -1451,7 +1462,9 @@ onBeforeUnmount(() => {
 						<NcButton v-else-if="!notShared"
 							variant="secondary"
 							:href="adminGuideUrl(ADMIN_GUIDE.archive)"
-							target="_blank">
+							target="_blank"
+							rel="noopener noreferrer"
+							:aria-label="t('cantoria', 'Help: access to the archive folder (opens in a new tab)')">
 							<template #icon>
 								<NcIconSvgWrapper :path="mdiHelpCircleOutline" />
 							</template>
@@ -1668,7 +1681,8 @@ onBeforeUnmount(() => {
 						:aria-label="t('cantoria', 'Review and scan')">
 						<NcButton v-if="reviewOn"
 							variant="secondary"
-							:aria-pressed="reviewShown ? 'true' : 'false'"
+							:aria-expanded="reviewShown ? 'true' : 'false'"
+							:aria-controls="reviewShown ? reviewPanelId : undefined"
 							@click="toggleReview">
 							<template #icon>
 								<NcIconSvgWrapper :path="mdiTextBoxCheckOutline" />
@@ -1693,14 +1707,13 @@ onBeforeUnmount(() => {
 								{{ t('cantoria', 'Show scan beside the score') }}
 							</NcCheckboxRadioSwitch>
 							<!-- file and page only while the scan is shown (a review point sets the page, too) -->
-							<label v-if="scanShown && scans.length > 1" class="score-viewer__scan-choice" :for="scanSelectId">
-								<span>{{ t('cantoria', 'Scan file') }}</span>
-								<select :id="scanSelectId" v-model.number="scanFileId">
-									<option v-for="file in scans" :key="file.id" :value="file.id">
-										{{ file.name }}
-									</option>
-								</select>
-							</label>
+							<NcSelect v-if="scanShown && scans.length > 1"
+								v-model="scanChoice"
+								class="score-viewer__scan-choice"
+								:input-label="t('cantoria', 'Scan file')"
+								:options="scanOptions"
+								:clearable="false"
+								:searchable="false" />
 							<div v-if="scanShown" class="score-viewer__page-field">
 								<NcTextField v-model="scanPageInput"
 									type="number"
@@ -1709,11 +1722,12 @@ onBeforeUnmount(() => {
 							</div>
 							<NcButton variant="tertiary"
 								:href="scanSrc"
-								target="_blank">
+								target="_blank"
+								rel="noopener">
 								<template #icon>
 									<NcIconSvgWrapper :path="mdiOpenInNew" />
 								</template>
-								{{ t('cantoria', 'Open scan in a new window') }}
+								{{ t('cantoria', 'Open the scan in a new tab') }}
 							</NcButton>
 						</div>
 						<p v-if="correctionHint" class="score-viewer__hint score-viewer__line" role="status">
@@ -1765,6 +1779,7 @@ onBeforeUnmount(() => {
 							:title="t('cantoria', 'Scan {name}, page {page}', { name: scanName, page: scanPage })" />
 					</div>
 					<ReviewPanel v-if="reviewOn && reviewShown"
+						:id="reviewPanelId"
 						class="score-viewer__review-panel"
 						:review="review"
 						:loading="reviewLoading"
@@ -2087,14 +2102,7 @@ onBeforeUnmount(() => {
 }
 
 .score-viewer__scan-choice {
-	display: flex;
-	flex-direction: column;
-	gap: 2px;
-}
-
-.score-viewer__scan-choice select {
-	min-height: var(--default-clickable-area);
-	max-width: 20em;
+	width: min(20em, 100%);
 }
 
 .score-viewer__score:focus-visible {

@@ -806,8 +806,8 @@ changed, they stay open.
    (only where playback is allowed; the rights check is the same as
    always).
 3. **Scan**: when a PDF scan is linked to the copy, **Show scan beside the
-   score** shows it next to the score, and **Open scan in a new window** opens
-   it in a second window, both at the **Page of the scan** (the page of the
+   score** shows it next to the score, and **Open the scan in a new tab**
+   opens it in a tab of its own, both at the **Page of the scan** (the page of the
    point, or the page you last looked at). Both use the browser's own PDF
    viewer; nothing is sent to another server. The second window helps on
    small screens and with a magnifier.

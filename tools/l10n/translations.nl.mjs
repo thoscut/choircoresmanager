@@ -1201,7 +1201,7 @@ export const singular = {
 	"Scan": "Scan",
 	"Show scan beside the score": "Scan naast de bladmuziek tonen",
 	"Scan file": "Scanbestand",
-	"Open scan in a new window": "Scan in nieuw venster openen",
+	"Open the scan in a new tab": "Scan in een nieuw tabblad openen",
 	"Space plays and pauses. The arrow keys left and right go to the previous or next measure.": "Spatie speelt af en pauzeert. Met de pijltoetsen links en rechts ga je naar de vorige of volgende maat.",
 	"Scan {name}, page {page}": "Scan {name}, pagina {page}",
 	"Settings of Cantoria for the whole instance. The daily work happens in the app.": "Instellingen van Cantoria voor de hele Nextcloud. Het dagelijkse werk gebeurt in de app.",
@@ -2522,6 +2522,8 @@ export const singular = {
 	"Adds public links without login and a public page with the repertoire.": "Voegt openbare links zonder aanmelden toe en een openbare pagina met het repertoire.",
 	"Only for confirmed public domain or a license for online publication. Enter the imprint and the privacy policy under Administration → Theming first.": "Alleen bij bevestigd publiek domein of een licentie voor online publicatie. Vul eerst bij Beheer → Thema het colofon en de privacyverklaring in.",
 	"In Cantoria, the list of what the choir may get. Where the choir gets it is the choir system outside Cantoria, or the page \"Shared with me\" of the choir members.": "In Cantoria de lijst van wat het koor mag krijgen. Waar het koor het krijgt, is het koorsysteem buiten Cantoria, of de pagina “Gedeeld met mij” van de koorleden.",
+	"Open file {path} (opens in a new tab)": "Bestand {path} openen (opent in een nieuw tabblad)",
+	"Help: access to the archive folder (opens in a new tab)": "Hulp: toegang tot de archiefmap (opent in een nieuw tabblad)",
 }
 
 export const plural = {

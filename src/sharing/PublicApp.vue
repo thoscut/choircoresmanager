@@ -170,7 +170,7 @@ onMounted(async () => {
 				{{ t('cantoria', 'No network: this piece is shown from this device. {checked}', { checked: checkedText }) }}
 			</NcNoteCard>
 			<!-- Above the notes, as on the other pages: one switch, the scan below it -->
-			<section v-if="offlineOn" class="public-excerpt__device" :aria-labelledby="deviceHeadingId">
+			<section v-if="offlineOn" class="public-excerpt__device no-print" :aria-labelledby="deviceHeadingId">
 				<h3 :id="deviceHeadingId" class="public-excerpt__device-title">
 					{{ t('cantoria', 'Without a network') }}
 				</h3>
@@ -196,6 +196,7 @@ onMounted(async () => {
 				</p>
 			</section>
 			<ScanFrame v-if="excerpt.scan && (!fromDevice || scanKept)"
+				class="no-print"
 				collection="public"
 				:piece-key="token"
 				:title="excerpt.title" />
@@ -279,5 +280,12 @@ onMounted(async () => {
 .public-excerpt__composer {
 	margin: 0;
 	color: var(--color-text-maxcontrast);
+}
+
+/* Printing: the piece and its notices, black on white */
+@media print {
+	.no-print {
+		display: none !important;
+	}
 }
 </style>

@@ -1201,7 +1201,7 @@ export const singular = {
 	"Scan": "Scan",
 	"Show scan beside the score": "Afficher le scan à côté de la partition",
 	"Scan file": "Fichier du scan",
-	"Open scan in a new window": "Ouvrir le scan dans une nouvelle fenêtre",
+	"Open the scan in a new tab": "Ouvrir le scan dans un nouvel onglet",
 	"Space plays and pauses. The arrow keys left and right go to the previous or next measure.": "La barre d'espace lance et met en pause la lecture. Les flèches gauche et droite passent à la mesure précédente ou suivante.",
 	"Scan {name}, page {page}": "Scan {name}, page {page}",
 	"Settings of Cantoria for the whole instance. The daily work happens in the app.": "Paramètres de Cantoria pour toute l'instance. Le travail quotidien se fait dans l'application.",
@@ -2522,6 +2522,8 @@ export const singular = {
 	"Adds public links without login and a public page with the repertoire.": "Ajoute des liens publics sans connexion et une page publique avec le répertoire.",
 	"Only for confirmed public domain or a license for online publication. Enter the imprint and the privacy policy under Administration → Theming first.": "Uniquement pour un domaine public confirmé ou une licence de publication en ligne. Saisissez d'abord les mentions légales et la politique de confidentialité sous Administration → Personnalisation.",
 	"In Cantoria, the list of what the choir may get. Where the choir gets it is the choir system outside Cantoria, or the page \"Shared with me\" of the choir members.": "Dans Cantoria, la liste de ce que le chœur peut recevoir. L'endroit où le chœur le reçoit est le système du chœur en dehors de Cantoria, ou la page « Partagé avec moi » des membres du chœur.",
+	"Open file {path} (opens in a new tab)": "Ouvrir le fichier {path} (s'ouvre dans un nouvel onglet)",
+	"Help: access to the archive folder (opens in a new tab)": "Aide : accès au dossier d'archives (s'ouvre dans un nouvel onglet)",
 }
 
 export const plural = {

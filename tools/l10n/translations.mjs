@@ -2188,7 +2188,7 @@ export const singular = {
 	Scan: 'Scan',
 	'Scan file': 'Scan-Datei',
 	'Show scan beside the score': 'Scan neben den Noten zeigen',
-	'Open scan in a new window': 'Scan in neuem Fenster öffnen',
+	'Open the scan in a new tab': 'Scan in einem neuen Tab öffnen',
 	'Scan {name}, page {page}': 'Scan {name}, Seite {page}',
 	'Correct notes …': 'Noten korrigieren …',
 	'Please choose a focus voice first: the form shows the notes of one voice.': [
@@ -3373,6 +3373,8 @@ export const singular = {
 		'Nur bei bestätigter Gemeinfreiheit oder mit einer Lizenz für die Online-Veröffentlichung. Tragen Sie vorher unter Verwaltung → Design Impressum und Datenschutzerklärung ein.',
 	],
 	'In Cantoria, the list of what the choir may get. Where the choir gets it is the choir system outside Cantoria, or the page "Shared with me" of the choir members.': 'In Cantoria die Liste dessen, was der Chor bekommen darf. Wo der Chor es bekommt, ist das Chorsystem außerhalb von Cantoria oder die Seite „Mit mir geteilt“ der Chormitglieder.',
+	'Open file {path} (opens in a new tab)': 'Datei {path} öffnen (öffnet sich in einem neuen Tab)',
+	'Help: access to the archive folder (opens in a new tab)': 'Hilfe: Zugriff auf den Archivordner (öffnet sich in einem neuen Tab)',
 }
 
 export const plural = {

@@ -1201,7 +1201,7 @@ export const singular = {
 	"Scan": "Skan",
 	"Show scan beside the score": "Pokaż skan obok nut",
 	"Scan file": "Plik skanu",
-	"Open scan in a new window": "Otwórz skan w nowym oknie",
+	"Open the scan in a new tab": "Otwórz skan w nowej karcie",
 	"Space plays and pauses. The arrow keys left and right go to the previous or next measure.": "Spacja odtwarza i wstrzymuje. Strzałki w lewo i w prawo przechodzą do poprzedniego lub następnego taktu.",
 	"Scan {name}, page {page}": "Skan {name}, strona {page}",
 	"Settings of Cantoria for the whole instance. The daily work happens in the app.": "Ustawienia aplikacji Cantoria dla całej instancji. Codzienna praca odbywa się w aplikacji.",
@@ -2522,6 +2522,8 @@ export const singular = {
 	"Adds public links without login and a public page with the repertoire.": "Dodaje publiczne linki bez logowania i publiczną stronę z repertuarem.",
 	"Only for confirmed public domain or a license for online publication. Enter the imprint and the privacy policy under Administration → Theming first.": "Tylko przy potwierdzonej domenie publicznej lub licencji na publikację online. Najpierw wpisz notę prawną i politykę prywatności w Administracja → Motyw.",
 	"In Cantoria, the list of what the choir may get. Where the choir gets it is the choir system outside Cantoria, or the page \"Shared with me\" of the choir members.": "W Cantorii lista tego, co chór może otrzymać. Miejscem, w którym chór to otrzymuje, jest system chóru poza Cantorią albo strona „Udostępnione mi” osób z chóru.",
+	"Open file {path} (opens in a new tab)": "Otwórz plik {path} (otwiera się w nowej karcie)",
+	"Help: access to the archive folder (opens in a new tab)": "Pomoc: dostęp do folderu archiwum (otwiera się w nowej karcie)",
 }
 
 export const plural = {
