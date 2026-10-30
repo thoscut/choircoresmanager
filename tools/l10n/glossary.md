@@ -45,6 +45,9 @@ The other languages follow the same split with the terms below.
 | Freigabe, freigegeben | release by the rights | sharing in Nextcloud or with choir members (*teilen*, *Mit mir geteilt*) |
 | Schleife | the loop of the playback | the repeats of the score (*Wiederholungen*) |
 | H | the note B (German and Polish note names in the correction form) | B flat, which is *B* |
+| Tonhöhe | the pitch one sings, in the pitch display (*Meine Tonhöhe zeigen*) | moving the playback up or down (*Transponieren*) |
+| Chorportal | the release of a version for the choir and the list of what is released (*Im Chorportal*) | the members' system of the choir outside Cantoria (*Chorsystem*), the page of a choir member in Cantoria (*Mit mir geteilt*) |
+| Chorsystem | the members' system of the choir outside Cantoria, which gets the handover folder | the release for the choir (*Chorportal*) |
 
 ## Core terms
 

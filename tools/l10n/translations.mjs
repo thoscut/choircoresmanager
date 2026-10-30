@@ -494,7 +494,6 @@ export const singular = {
 	'{percent} % volume': '{percent} % Lautstärke',
 	'Play repeats': 'Wiederholungen spielen',
 	'Scroll along': 'Mitscrollen',
-	'Measures and voice': 'Takte und Stimme',
 	'From measure': 'Von Takt',
 	'To measure': 'Bis Takt',
 	Show: 'Anzeigen',
@@ -2352,7 +2351,7 @@ export const singular = {
 	'This file is not listed in the music archive.': 'Diese Datei ist im Notenarchiv nicht verzeichnet.',
 
 	// ---- design pass (0.1.29) ----
-	'Tempo, volume and practising': 'Tempo, Lautstärke und Üben',
+	'Voice, measures and practising': 'Stimme, Takte und Üben',
 	'This passage': 'Diese Stelle',
 	Help: 'Hilfe',
 	'Help: access to the archive folder': 'Hilfe: Zugriff auf den Archivordner',
@@ -2694,9 +2693,9 @@ export const singular = {
 	'Score of {title}': 'Noten von {title}',
 	'"Loop" plays the shown measures again and again.': '„Schleife“ spielt die gezeigten Takte immer wieder.',
 	'Description of the piece': 'Beschreibung des Stücks',
-	'A practice file of the shown measures ({measures}) for your own practising, made in your browser from the playback above: {choice}. Choose the voice and "Focus voice louder" or "Focus voice only" above. Every practice file is recorded in the audit log of the music archive.': [
-		'Eine Übe-Datei der gezeigten Takte ({measures}) zum eigenen Üben, erstellt in deinem Browser aus dem Abspielen oben: {choice}. Wähle oben die Stimme und „Stimme betont“ oder „Nur diese Stimme“. Jede Übe-Datei wird im Protokoll des Notenarchivs festgehalten.',
-		'Eine Übe-Datei der gezeigten Takte ({measures}) zum eigenen Üben, erstellt in Ihrem Browser aus dem Abspielen oben: {choice}. Wählen Sie oben die Stimme und „Stimme betont“ oder „Nur diese Stimme“. Jede Übe-Datei wird im Protokoll des Notenarchivs festgehalten.',
+	'A practice file of the shown measures ({measures}), made in your browser from the playback: {choice}. The voice and how it sounds are set under "Voice, measures and practising". Every practice file is recorded in the audit log of the music archive.': [
+		'Eine Übe-Datei der gezeigten Takte ({measures}), in deinem Browser aus der Wiedergabe erstellt: {choice}. Die Stimme und wie sie klingt, stellst du unter „Stimme, Takte und Üben“ ein. Jede Übe-Datei wird im Protokoll des Notenarchivs vermerkt.',
+		'Eine Übe-Datei der gezeigten Takte ({measures}), in Ihrem Browser aus der Wiedergabe erstellt: {choice}. Die Stimme und wie sie klingt, stellen Sie unter „Stimme, Takte und Üben“ ein. Jede Übe-Datei wird im Protokoll des Notenarchivs vermerkt.',
 	],
 	'Please choose a piece from the list first.': [
 		'Bitte wähle zuerst ein Stück aus der Liste.',
@@ -2978,7 +2977,6 @@ export const singular = {
 		'Nichts wurde erfasst. Bitte korrigiere diese Zeilen und erfasse erneut:',
 		'Nichts wurde erfasst. Bitte korrigieren Sie diese Zeilen und erfassen Sie erneut:',
 	],
-	'Measures, voice and size': 'Takte, Stimme und Größe',
 	// ---- 0.12: header of printouts ----
 	'Search: {text}': 'Suche: {text}',
 	'Filter: {filter}': 'Filter: {filter}',
@@ -3074,7 +3072,7 @@ export const singular = {
 	'The files of the versions released for the portal (in order, to add and not decided), with a list of the pieces and the conductor\'s notes, copied into a folder that the choir system reads.': 'Die Dateien der für das Portal freigegebenen Fassungen (in Ordnung, hinzuzufügen und nicht entschieden), mit einer Liste der Stücke und den Hinweisen der Chorleitung, kopiert in einen Ordner, den das Chorsystem liest.',
 	// practising (0.13)
 	'as written': 'wie notiert',
-	'Pitch: {change}': 'Tonhöhe: {change}',
+	'Transpose: {change}': 'Transponieren: {change}',
 	Pitch: 'Tonhöhe',
 	'{voice}: muted': '{voice}: stumm',
 	'{voice}: {percent} %': '{voice}: {percent} %',
@@ -3129,8 +3127,8 @@ export const singular = {
 		'Nutzt das Mikrofon, solange es an ist. Die Tonhöhe wird in diesem Browser erkannt; nichts wird aufgenommen oder gespeichert. Nehmen Sie Kopfhörer.',
 	],
 	'Choose a focus voice to compare your pitch with it.': [
-		'Wähle eine Fokusstimme, um deine Tonhöhe mit ihr zu vergleichen.',
-		'Wählen Sie eine Fokusstimme, um Ihre Tonhöhe mit ihr zu vergleichen.',
+		'Wähle unter „Meine Stimme“ deine Stimme, um deine Tonhöhe mit ihr zu vergleichen.',
+		'Wählen Sie unter „Meine Stimme“ Ihre Stimme, um Ihre Tonhöhe mit ihr zu vergleichen.',
 	],
 	'Pitch display: the tones of {voice} as bars, your singing as a line': 'Tonhöhen-Anzeige: die Töne von {voice} als Balken, der Gesang als Linie',
 	'The pitch display needs a secure connection (https).': 'Die Tonhöhen-Anzeige braucht eine sichere Verbindung (https).',
@@ -3162,9 +3160,9 @@ export const singular = {
 	'Listen with the accompaniment': 'Mit Begleitung anhören',
 	'Save recording': 'Aufnahme speichern',
 	'Delete recording': 'Aufnahme löschen',
-	'The playback starts with the recording. The recording stays in this browser and is gone when you leave the page, unless you save it. Use headphones so that the accompaniment is not recorded, too.': [
-		'Mit der Aufnahme beginnt die Wiedergabe. Die Aufnahme bleibt in diesem Browser und ist weg, wenn du die Seite verlässt, außer du speicherst sie. Nimm Kopfhörer, damit die Begleitung nicht mit aufgenommen wird.',
-		'Mit der Aufnahme beginnt die Wiedergabe. Die Aufnahme bleibt in diesem Browser und ist weg, wenn Sie die Seite verlassen, außer Sie speichern sie. Nehmen Sie Kopfhörer, damit die Begleitung nicht mit aufgenommen wird.',
+	'The playback starts with the recording. The recording stays in this browser until you leave the piece; save it to keep it. Use headphones.': [
+		'Die Wiedergabe startet mit der Aufnahme. Die Aufnahme bleibt in diesem Browser, bis du das Stück verlässt; speichere sie, um sie zu behalten. Nimm Kopfhörer.',
+		'Die Wiedergabe startet mit der Aufnahme. Die Aufnahme bleibt in diesem Browser, bis Sie das Stück verlassen; speichern Sie sie, um sie zu behalten. Nehmen Sie Kopfhörer.',
 	],
 	// ---- milestone 0.15: practising without a network ----
 	'Practice files need a network: the server checks the rights and records each file first. Playing and practising work without one.':
@@ -3253,6 +3251,18 @@ export const singular = {
 	'Choose a piece of a programme to see and hear it.': [
 		'Wähle ein Stück eines Programms, um es zu sehen und zu hören.',
 		'Wählen Sie ein Stück eines Programms, um es zu sehen und zu hören.',
+	],
+	'My voice': 'Meine Stimme',
+	'Choose your voice to hear it louder or alone.': [
+		'Wähle deine Stimme, um sie lauter oder allein zu hören.',
+		'Wählen Sie Ihre Stimme, um sie lauter oder allein zu hören.',
+	],
+	'Measures and tempo': 'Takte und Tempo',
+	'More for practising': 'Mehr zum Üben',
+	'Starting tones, metronome, transposing, mixer, lyrics, your pitch, remembered passages and recording yourself.': 'Anfangstöne, Metronom, Transponieren, Mischpult, Text, deine Tonhöhe, gemerkte Stellen und Selbst aufnehmen.',
+	'Tap or click a note to play from there.': [
+		'Tippe oder klicke auf eine Note, um ab dort zu spielen.',
+		'Tippen oder klicken Sie auf eine Note, um ab dort zu spielen.',
 	],
 }
 

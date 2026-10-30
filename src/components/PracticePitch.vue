@@ -326,4 +326,11 @@ const words = computed(() => {
 	color: var(--color-text-maxcontrast);
 	font-size: var(--font-size-small, 13px);
 }
+
+/* A low screen (a phone held sideways): a flatter display */
+@media (max-height: 560px) {
+	.practice-pitch__display {
+		height: 48px;
+	}
+}
 </style>

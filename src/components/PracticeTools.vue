@@ -40,7 +40,7 @@ const mixerId = useId()
 const transposeId = useId()
 const transposeHintId = useId()
 
-const transposeLabel = computed(() => t('cantoria', 'Pitch: {change}', { change: transposeText(transpose.value) }))
+const transposeLabel = computed(() => t('cantoria', 'Transpose: {change}', { change: transposeText(transpose.value) }))
 
 /**
  * Level of a voice in percent.

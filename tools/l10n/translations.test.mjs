@@ -32,6 +32,7 @@ function serverPlural(pluralForm) {
  * so. "Stand" is the revision of a version, "Ausgabe" the loan of a folder,
  * "Freigabe" the release by the rights and "Schleife" the loop of the
  * playback; sharing is "teilen", repeats in the score are "Wiederholungen".
+ * "Tonhöhe" is the pitch one sings, moving the playback is "Transponieren".
  */
 const TERMS = [
 	{ german: /\bStand(e?s)?\b|\bStände\b/, source: /revision/i },
@@ -39,6 +40,8 @@ const TERMS = [
 	{ german: /Freigabe|freigegeben|freigeben|freizugeben/, source: /releas/i },
 	{ german: /Schleife/, source: /loop/i },
 	{ german: /Wiederhol/, source: /repeat|again|repetition/i },
+	{ german: /Tonhöhe/, source: /pitch/i },
+	{ german: /Transponier/, source: /transpos/i },
 ]
 
 /**
