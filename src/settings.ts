@@ -120,7 +120,7 @@ export function normalizeSettings(data: unknown): Settings {
 		groupsMissing: list(raw.groupsMissing).filter((group): group is string => typeof group === 'string'),
 		roleLabels,
 		archive: archive(raw.archive),
-		backups: { path: typeof backups.path === 'string' ? backups.path : null, oldBackups: backups.oldBackups === true },
+		backups: { path: typeof backups.path === 'string' ? backups.path : null },
 		repertoire: raw.repertoire === null || raw.repertoire === undefined
 			? null
 			: { current: count(thresholds.current), dormant: count(thresholds.dormant) },

@@ -783,8 +783,7 @@ einmal, um Stand 1 mit seiner Prüfsumme festzuhalten; bei einem großen
 Archiv dauert dieser Abgleich etwas länger. Er läuft als das Konto, das den
 Dateiabgleich startet und daher Zugriff auf den Archivordner braucht.
 
-**Bestehende Installationen** behalten jede Funktion: Ein Update von einer
-Version vor 0.1.27 speichert alle Schalter als eingeschaltet. Die Schalter
+Die Schalter
 werden bei jeder Installation und jedem Update gespeichert; eine spätere
 Änderung der Standardwerte schaltet daher an einer bestehenden Installation
 nie etwas um; ein Modul, das eine spätere Version hinzufügt, bekommt seinen

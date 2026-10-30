@@ -122,40 +122,21 @@ final class ModuleSettingsTest extends TestCase {
 		self::assertSame(['imprint' => true, 'privacy' => false], $themed['legalPages']);
 	}
 
-	/**
-	 * @param array<string, string> $installed app => installed version
-	 */
-	private function runRepairStep(array $installed): void {
-		$config = $this->createStub(IAppConfig::class);
-		$config->method('getAppInstalledVersions')->willReturn($installed);
-		(new ModuleDefaults($config, $this->modules()))->run($this->createStub(IOutput::class));
-	}
-
-	public function testAnUpdateFromBeforeTheModulesKeepsEveryFunction(): void {
-		$this->runRepairStep(['cantoria' => '0.1.26', 'files' => '2.0']);
-		self::assertTrue($this->moduleConfig['module_statistics']);
-		self::assertTrue($this->moduleConfig['module_practice_audio']);
-		self::assertFalse($this->moduleConfig['module_agent_api']);
+	private function runRepairStep(): void {
+		(new ModuleDefaults($this->modules()))->run($this->createStub(IOutput::class));
 	}
 
 	public function testANewInstallationGetsTheStandard(): void {
-		$this->runRepairStep(['files' => '2.0']);
+		$this->runRepairStep();
 		self::assertFalse($this->moduleConfig['module_statistics']);
 		self::assertTrue($this->moduleConfig['module_concerts']);
+		self::assertFalse($this->moduleConfig['module_agent_api']);
 	}
 
-	public function testALaterUpdateKeepsTheSwitchesAndAddsNewOnes(): void {
+	public function testAnUpdateKeepsTheSwitchesAndAddsNewOnes(): void {
 		$this->moduleConfig = ['module_concerts' => false];
-		$this->runRepairStep(['cantoria' => '0.1.27']);
+		$this->runRepairStep();
 		self::assertFalse($this->moduleConfig['module_concerts'], 'a stored switch is never changed');
 		self::assertFalse($this->moduleConfig['module_statistics'], 'a module new to the installation gets its default');
-	}
-
-	public function testVersionsBeforeTheModules(): void {
-		self::assertTrue(ModuleDefaults::isExistingInstallation('0.1.26'));
-		self::assertTrue(ModuleDefaults::isExistingInstallation('0.1.9'));
-		self::assertFalse(ModuleDefaults::isExistingInstallation('0.1.27'));
-		self::assertFalse(ModuleDefaults::isExistingInstallation('0.2.0'));
-		self::assertFalse(ModuleDefaults::isExistingInstallation(''));
 	}
 }

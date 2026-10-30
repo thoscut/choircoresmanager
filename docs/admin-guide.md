@@ -711,8 +711,7 @@ MusicXML of the copies once to record revision 1 with its checksum; on a
 large archive that sync takes a little longer. It runs as the account that
 starts the file sync, which needs access to the archive folder.
 
-**Existing installations** keep every function: an update from a version
-before 0.1.27 stores all switches as on. The switches are stored on every
+The switches are stored on every
 installation and update, so a later change of the defaults never switches
 anything at an existing installation; a module added by a later version gets
 its default. The **interface for agents** starts off everywhere and is

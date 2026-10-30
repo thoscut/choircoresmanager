@@ -850,10 +850,9 @@ export interface Settings {
 	archive: ArchiveInfo
 	/**
 	 * Backups and annual snapshots: a folder in the files of the account that
-	 * set the archive folder, outside it (null until the first backup);
-	 * oldBackups: some of versions before 0.10 are still in the archive folder
+	 * set the archive folder, outside it (null until the first backup)
 	 */
-	backups: { path: string | null, oldBackups: boolean }
+	backups: { path: string | null }
 	/** null while the module "repertoire" is not active */
 	repertoire: RepertoireThresholds | null
 	/** the module "folder_book" is active: its retention period */

@@ -10,6 +10,22 @@ All notable changes to this app are documented in this file. The format follows
 
 ## [Unreleased]
 
+### Changed
+
+- **One migration for the first release.** The 18 migrations of the
+  internal builds are folded into `Version001700Date20261030000000`; an
+  instance that ran them skips it. A test keeps released migrations
+  unchanged (`tests/Unit/Migration/ReleasedMigrationsTest.php`). The log
+  gets an index on the account (`cantoria_audit_user`) for information on
+  a person.
+
+### Removed
+
+- Upgrade code for internal builds that were never published: the module
+  switches of installations before 0.1.27, moving backups of versions
+  before 0.10 out of the archive folder, and moving practice passages
+  stored under title and composer to the practice key.
+
 ## [0.16.1] - 2026-10-29
 
 ### Changed

@@ -202,10 +202,9 @@ class SettingsController extends Controller {
 			'roleLabels' => Roles::LABELS,
 			'archive' => $this->settings->archiveInfo(),
 			// Backups and annual snapshots: a folder of the account above,
-			// outside the archive folder; oldBackups: some are still in it
+			// outside the archive folder
 			'backups' => [
 				'path' => $this->settings->backupFolderPath(),
-				'oldBackups' => $this->settings->hasOldBackups($uid),
 			],
 			// The thresholds belong to the module "repertoire".
 			'repertoire' => $this->modules->isEnabled('repertoire') ? $this->repertoire->thresholds() : null,

@@ -60,7 +60,7 @@ import { targetNotes } from '../score/pitch.ts'
 import { ScorePlayer, voiceGains } from '../score/player.ts'
 import { partGains, practiceFileName, practiceMidi, SAMPLE_RATE } from '../score/practice.ts'
 import { mixChanged, mixedGains, startingTones, transposedFifths, transposeTimeline } from '../score/practising.ts'
-import { moveOldMarks, sharedPieceKey, storedPracticeSettings, storePracticeSettings } from '../score/practiceSettings.ts'
+import { sharedPieceKey, storedPracticeSettings, storePracticeSettings } from '../score/practiceSettings.ts'
 import { RenderCancelled, renderTimeline } from '../score/render.ts'
 import { sanitizeSvg } from '../score/sanitize.ts'
 import { measureStarts, nextPass, noteStarts } from '../score/timeline.ts'
@@ -342,7 +342,6 @@ const countInChoice = computed<'0' | '1' | '2'>({
 	},
 })
 // Passages and settings remembered per piece in this browser (milestone 0.15)
-moveOldMarks(props.practiceKey, props.title, props.composer)
 const marksKey = sharedPieceKey(props.practiceKey, props.title, props.composer)
 const remembered = props.practiceKey ? storedPracticeSettings(props.practiceKey, [TEMPO_MIN, TEMPO_MAX]) : null
 // the own tempo, unless the link now suggests another one

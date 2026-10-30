@@ -510,22 +510,19 @@ class Modules {
 	/**
 	 * Writes every switch that has no stored value yet, so that a later
 	 * change of the defaults switches nothing (repair step on installation
-	 * and update). An installation from before the modules (< 0.1.27) keeps
-	 * every function it had: all switches on, except planned modules and
-	 * OUTSIDE_PRESETS (the interface for agents starts off everywhere). A
-	 * new installation gets the preset "standard".
+	 * and update): the value of the preset "standard", off for modules
+	 * outside the presets.
 	 *
 	 * @return list<string> the keys written
 	 */
-	public function writeBaseline(bool $existingInstallation): array {
+	public function writeBaseline(): array {
 		$standard = self::presetValues(self::STANDARD);
 		$written = [];
 		foreach (array_keys(self::MODULES) as $key) {
 			if ($this->appConfig->hasKey(Application::APP_ID, self::CONFIG_PREFIX . $key, null)) {
 				continue;
 			}
-			$value = self::inPresets($key) && ($existingInstallation || $standard[$key]);
-			$this->appConfig->setValueBool(Application::APP_ID, self::CONFIG_PREFIX . $key, $value);
+			$this->appConfig->setValueBool(Application::APP_ID, self::CONFIG_PREFIX . $key, self::inPresets($key) && $standard[$key]);
 			$written[] = $key;
 		}
 		$this->active = null;

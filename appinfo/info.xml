@@ -84,8 +84,8 @@ Keine fremden Server und keine Telemetrie: Notensatz, Schriften und Klänge sind
 		<job>OCA\Cantoria\BackgroundJob\AnnualSnapshotJob</job>
 	</background-jobs>
 	<repair-steps>
-		<!-- Stores the module switches: all on for installations from before
-		     0.1.27, the preset "standard" for new ones; never changes a stored switch. -->
+		<!-- Stores the module switches: the preset "standard" for new ones;
+		     never changes a stored switch. -->
 		<post-migration>
 			<step>OCA\Cantoria\Migration\ModuleDefaults</step>
 		</post-migration>

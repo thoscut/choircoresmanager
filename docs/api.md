@@ -519,8 +519,7 @@ role; `members` for the choir members and `public` for everyone, see
 `token` of a link for choir members or a public link is only sent to its
 creator and the catalog librarian, otherwise it is `null`; it is also
 `null` for links restored from a backup. The database holds the token only
-as hash and encrypted (`cantoria_links.token`, `token_secret`, migration
-`Version001100Date20261029100000`). `own` says whether the account made the
+as hash and encrypted (`cantoria_links.token`, `token_secret`). `own` says whether the account made the
 link; links name no account, only the display name of the creator. Lists
 leave out links to internal preservation copies for roles that may not view
 them.
@@ -2345,11 +2344,10 @@ them while `public_repertoire` is active):
 | `cpdl_url` | text (500) | An https link to `cpdl.org` or `www.cpdl.org` (400 `"%s" must be an https link to the page of the work on cpdl.org or imslp.org.`). |
 | `imslp_url` | text (500) | An https link to `imslp.org` or `www.imslp.org`. |
 
-Migration `Version000710Date20261025100000` adds these three columns to
-`cantoria_works`; links for choir members and public links use the existing
-column `circle` of `cantoria_links`. Migration
-`Version000830Date20261028100000` adds `cantoria_links.scan_file_id`
-(nullable, no default); a whole piece needs no column.
+The three columns are in `cantoria_works`; links for choir members and
+public links use the column `circle` of `cantoria_links`, the scan of a
+link `cantoria_links.scan_file_id` (nullable, no default); a whole piece
+needs no column.
 ## Folder book (module `folder_book`, milestone 0.7)
 
 Which choir folder is out with whom since when. Read by `librarian`,
