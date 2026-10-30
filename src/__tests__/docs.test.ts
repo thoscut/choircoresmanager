@@ -15,6 +15,12 @@ import { ADMIN_GUIDE, adminGuideUrl, headingAnchor, USER_GUIDE, userGuideUrl } f
 const DOCS = Object.fromEntries(Object.entries(import.meta.glob('../../docs/**/*.md', { query: '?raw', import: 'default', eager: true }))
 	.map(([path, text]) => [path.replace('../../', ''), text as string]))
 
+/** The German texts of the interface, to compare the messages the guides quote. */
+const DOCS_L10N = {
+	de: Object.values(import.meta.glob('../../l10n/de.json', { query: '?raw', import: 'default', eager: true }))[0] as string,
+	de_DE: Object.values(import.meta.glob('../../l10n/de_DE.json', { query: '?raw', import: 'default', eager: true }))[0] as string,
+}
+
 /** Other files the documentation may link (only their existence counts). */
 const OTHER_FILES = new Set(Object.keys(import.meta.glob([
 	'../../docs/screenshots/**/*.png',
@@ -203,5 +209,49 @@ describe('the guides in English and German', () => {
 			}
 		}
 		expect(broken).toEqual([])
+	})
+})
+
+describe('messages quoted in the guides', () => {
+	/** Texts of the interface: English sources, German in both forms of address. */
+	const de = JSON.parse(DOCS_L10N.de).translations as Record<string, string | string[]>
+	const deFormal = JSON.parse(DOCS_L10N.de_DE).translations as Record<string, string | string[]>
+	const english = Object.keys(de).map(spaced)
+	const german = [...Object.values(de), ...Object.values(deFormal)].flat().map(spaced)
+
+	/**
+	 * Whitespace as one space, as in a wrapped Markdown line.
+	 *
+	 * @param text - the text
+	 */
+	function spaced(text: string): string {
+		return text.replace(/\s+/g, ' ').trim()
+	}
+
+	/**
+	 * The parts of a quoted message that must appear in a text of the
+	 * interface: without "…" and placeholders.
+	 *
+	 * @param quote - the message as quoted
+	 */
+	function parts(quote: string): string[] {
+		return spaced(quote).split(/…|\{[^}]*\}/).map((part) => part.replace(/^[\s.]+|[\s.]+$/g, '')).filter((part) => part.length > 6)
+	}
+
+	// A message is quoted in italics: *„…“* in German, *"…"* in English.
+	it.each([
+		['docs/de/benutzerhandbuch.md', /\*„([^“]+)“\*/g, german],
+		['docs/de/administrationshandbuch.md', /\*„([^“]+)“\*/g, german],
+		['docs/de/schnellstart.md', /\*„([^“]+)“\*/g, german],
+		['docs/user-guide.md', /\*"([^"]+)"\*/g, english],
+		['docs/admin-guide.md', /\*"([^"]+)"\*/g, english],
+	] as const)('%s quotes messages as the interface says them', (path, pattern, texts) => {
+		const missing: string[] = []
+		for (const [, quote] of doc(path).matchAll(pattern)) {
+			if (!parts(quote!).every((part) => texts.some((text) => text.includes(part)))) {
+				missing.push(spaced(quote!))
+			}
+		}
+		expect(missing).toEqual([])
 	})
 })
