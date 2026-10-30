@@ -214,6 +214,8 @@ class SettingsController extends Controller {
 			'choirHandover' => $this->modules->isEnabled('choir_handover'),
 			// For the setup steps: imported copies and files found by the file sync
 			'catalog' => ['copies' => $counts['cantoria_copies'] ?? 0, 'files' => $counts['cantoria_files'] ?? 0],
+			// ... and whether the functions for the choir were chosen (milestone 0.19)
+			'modulesChosen' => $this->modules->chosen(),
 			// Restoring a backup stays with admins (and the catalog role in the app).
 			'admin' => $admin,
 			'catalogEmpty' => $admin ? array_sum($counts) === 0 : null,

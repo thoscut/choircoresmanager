@@ -31,7 +31,7 @@ documentation for developers is in English.
 
 | You are … | Read |
 |---|---|
-| a Nextcloud administrator who installs and sets up the app | [Administration guide](admin-guide.md), starting with [Setting up in five steps](admin-guide.md#setting-up-in-five-steps) |
+| a Nextcloud administrator who installs and sets up the app | [Administration guide](admin-guide.md), starting with [Setting up in six steps](admin-guide.md#setting-up-in-six-steps) |
 | a music librarian to whom an admin gave the settings page | [Administration guide, "Giving the settings to a group"](admin-guide.md#giving-the-settings-to-a-group) |
 | responsible for backups and data protection | [Administration guide](admin-guide.md) and [SECURITY.md](../SECURITY.md) |
 | deciding whether to share excerpts with choir members or the public | [Administration guide, section 14](admin-guide.md#14-sharing-with-choir-members-and-the-public) and [SECURITY.md](../SECURITY.md) |

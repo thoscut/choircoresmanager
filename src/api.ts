@@ -441,6 +441,8 @@ function normalizeModuleSettings(data: ModuleSettings): ModuleSettings {
 		groups: list(data.groups),
 		presets: list<ModuleSettings['presets'][number]>(data.presets)
 			.map((preset) => ({ ...preset, modules: preset.modules && !Array.isArray(preset.modules) ? preset.modules : {} })),
+		scenarios: list<ModuleSettings['scenarios'][number]>(data.scenarios)
+			.map((scenario) => ({ ...scenario, modules: scenario.modules && !Array.isArray(scenario.modules) ? scenario.modules : {} })),
 		core: list(data.core),
 		publicModules: list<string>(data.publicModules),
 		legalPages: data.legalPages,
@@ -454,12 +456,12 @@ export async function fetchModuleSettings(): Promise<ModuleSettings> {
 }
 
 /**
- * Switch modules on or off, or apply a preset (admins only). Switching on
- * also switches on what a module requires.
+ * Switch modules on or off, or apply a preset or a scenario (admins only).
+ * Switching on also switches on what a module requires.
  *
- * @param change - `{ modules: { key: on } }` or `{ preset: name }`
+ * @param change - `{ modules: { key: on } }`, `{ preset: name }` or `{ scenario: name }`
  */
-export async function saveModules(change: { modules: Record<string, boolean> } | { preset: string }): Promise<ModuleSettingsResult> {
+export async function saveModules(change: { modules: Record<string, boolean> } | { preset: string } | { scenario: string }): Promise<ModuleSettingsResult> {
 	const { data } = await axios.put<ModuleSettingsResult>(apiUrl('/settings/modules'), change)
 	const changes = data.changes ?? {}
 	return {

@@ -136,7 +136,7 @@ function resolve(page: string, target: string): string {
 describe('links into the guides', () => {
 	it('computes the anchors the way GitHub does', () => {
 		expect(headingAnchor('2. Roles and groups')).toBe('2-roles-and-groups')
-		expect(headingAnchor('Setting up in five steps')).toBe('setting-up-in-five-steps')
+		expect(headingAnchor('Setting up in six steps')).toBe('setting-up-in-six-steps')
 		expect(headingAnchor('"The score cannot be shown"')).toBe('the-score-cannot-be-shown')
 		expect(headingAnchor('Startseite „Fällig“')).toBe('startseite-fällig')
 		expect(headingAnchor('Dateien, die sich nicht öffnen lassen')).toBe('dateien-die-sich-nicht-öffnen-lassen')

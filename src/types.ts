@@ -887,6 +887,8 @@ export interface Settings {
 	groupsMissing: string[]
 	/** imported copies and files found by the file sync (setup steps) */
 	catalog: { copies: number, files: number }
+	/** the functions for the choir were chosen (a scenario, a preset or a switch) */
+	modulesChosen?: boolean
 	/** role key => English label */
 	roleLabels: Record<string, string>
 	archive: ArchiveInfo
@@ -989,11 +991,23 @@ export interface ModulePreset {
 	modules: Record<string, boolean>
 }
 
+/** What Cantoria should do for a choir, in words (milestone 0.19). */
+export interface ModuleScenario {
+	key: string
+	label: string
+	description: string
+	/** what the rights must allow for it to work, or null */
+	rights: string | null
+	/** module key => on, as the scenario sets it */
+	modules: Record<string, boolean>
+}
+
 /** `GET /api/settings/modules` */
 export interface ModuleSettings {
 	modules: ModuleInfo[]
 	groups: ModuleGroup[]
 	presets: ModulePreset[]
+	scenarios: ModuleScenario[]
 	/** the core, always on (translated) */
 	core: string[]
 	/** modules with pages for everyone (milestone 0.11) */

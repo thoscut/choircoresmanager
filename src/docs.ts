@@ -32,7 +32,7 @@ export interface GuideSection {
 
 /** Sections of the administration guide. */
 export const ADMIN_GUIDE = {
-	setup: { en: 'setting-up-in-five-steps', de: 'einrichten-in-fünf-schritten' },
+	setup: { en: 'setting-up-in-six-steps', de: 'einrichten-in-sechs-schritten' },
 	roles: { en: '2-roles-and-groups', de: '2-rollen-und-gruppen' },
 	delegation: { en: 'giving-the-settings-to-a-group', de: 'die-einstellungen-einer-gruppe-übertragen' },
 	archive: { en: '3-archive-folder', de: '3-archivordner' },

@@ -288,7 +288,7 @@ export const singular = {
 	'Check access to the archive folder': 'Zugriff auf den Archivordner prüfen',
 	'Files you cannot open (user guide)': 'Dateien, die sich nicht öffnen lassen (Benutzerhandbuch)',
 	'Roles and groups (administration guide)': 'Rollen und Gruppen (Administrationshandbuch)',
-	'Setting up in five steps (administration guide)': 'Einrichten in fünf Schritten (Administrationshandbuch)',
+	'Setting up in six steps (administration guide)': 'Einrichten in sechs Schritten (Administrationshandbuch)',
 	'Files in the former folder are not moved or deleted; after the next file sync they are listed as "not found" until they are in the new folder too.': 'Dateien im bisherigen Ordner werden weder verschoben noch gelöscht; nach dem nächsten Dateiabgleich stehen sie als „nicht gefunden“ da, bis sie auch im neuen Ordner liegen.',
 	'Checking who of the role groups can open this folder …': 'Es wird geprüft, wer aus den Rollengruppen diesen Ordner öffnen kann …',
 	'It could not be checked who can open this folder: {error}': 'Es ließ sich nicht prüfen, wer diesen Ordner öffnen kann: {error}',
@@ -1507,7 +1507,7 @@ export const singular = {
 	'Catalog, files and the score view with playback.': 'Werkverzeichnis, Dateien und Notenansicht mit Abspielen.',
 	Standard: 'Standard',
 	'For most choirs: everything except practice audio files, the print station, the proposals inbox, checksums, the folder book, annual snapshots and statistics.': 'Für die meisten Chöre: alles außer Übe-Audio-Dateien, Druckstation, Vorschlagseingang, Prüfsummen, Mappenbuch, Jahresständen und Auswertungen.',
-	'All functions. The interface for agents, the sharing with choir members and the public, and the mirror folder of the print station are switched on separately.': 'Alle Funktionen. Die Schnittstelle für Agenten, das Teilen mit Chormitgliedern und der Öffentlichkeit sowie der Spiegelordner der Druckstation werden eigens eingeschaltet.',
+	'All functions. The interface for agents, the sharing with choir members and the public, practising without a network, the concert folder and the folders for the print station and a choir system are switched on separately.': 'Alle Funktionen. Die Schnittstelle für Agenten, das Teilen mit Chormitgliedern und der Öffentlichkeit, das Üben ohne Netz, die Konzertmappe und die Ordner für die Druckstation und ein Chorsystem werden eigens eingeschaltet.',
 	Complete: 'Vollständig',
 	Interfaces: 'Schnittstellen',
 	'Rights and persons': 'Rechte und Personen',
@@ -3336,6 +3336,42 @@ export const singular = {
 		'Ein widerrufener Link lässt sich nicht verlängern. Bitte erstellen Sie einen neuen.',
 	],
 	'Not shared:': 'Nicht geteilt:',
+	'Currently: “{scenario}”.': 'Derzeit: „{scenario}“.',
+	'{module} (on)': '{module} (an)',
+	'{module} (off)': '{module} (aus)',
+	'What should Cantoria do for your choir?': [
+		'Was soll Cantoria für euren Chor tun?',
+		'Was soll Cantoria für Ihren Chor tun?',
+	],
+	'Current': 'Aktuell',
+	'Choose': 'Wählen',
+	'({on} of {total} switched on)': '({on} von {total} eingeschaltet)',
+	'Choose “{scenario}”?': '„{scenario}“ wählen?',
+	'The switches already match.': 'Die Schalter passen schon.',
+	'The data of switched-off functions are kept. The single switches below stay changeable.': 'Die Daten abgeschalteter Funktionen bleiben erhalten. Die einzelnen Schalter darunter bleiben änderbar.',
+	'Functions for your choir': [
+		'Funktionen für euren Chor',
+		'Funktionen für Ihren Chor',
+	],
+	'Choose what Cantoria should do for your choir: keep the archive in order, plan concerts, let the singers practise, or publish pages.': [
+		'Wähle, was Cantoria für euren Chor tun soll: das Archiv ordnen, Konzerte planen, den Chor üben lassen oder Seiten veröffentlichen.',
+		'Wählen Sie, was Cantoria für Ihren Chor tun soll: das Archiv ordnen, Konzerte planen, den Chor üben lassen oder Seiten veröffentlichen.',
+	],
+	'To the functions': 'Zu den Funktionen',
+	'Unknown scenario: %s': 'Unbekannte Wahl: %s',
+	'Keep the archive in order': 'Das Archiv ordnen',
+	'Catalog, files and the score view with playback, for the music librarians.': 'Werkverzeichnis, Dateien und die Notenansicht mit Abspielen, für die Archivverwaltung.',
+	'Archive, rights and concerts': 'Archiv, Rechte und Konzerte',
+	'Adds rights and licenses, releases, concerts and song lists, and the concert folder for the conductor. Nothing leaves the archive roles.': 'Dazu Rechte und Lizenzen, Freigaben, Konzerte und Notenlisten und die Konzertmappe für die Chorleitung. Nichts verlässt die Archivrollen.',
+	'Also practising for the singers': 'Dazu Üben für den Chor',
+	'Adds the page "Shared with me" for the choir members: the pieces shared with them, to play and practise on their phone, also without a network.': 'Dazu die Seite „Mit mir geteilt“ für die Chormitglieder: die mit ihnen geteilten Stücke, zum Abspielen und Üben am Handy, auch ohne Netz.',
+	'Choir members see only versions released for the singers\' portal. Keeping a piece on a device needs confirmed public domain or a license for download or self-printing. The role "Choir members" needs a group.': 'Chormitglieder sehen nur Fassungen, die für das Chorportal freigegeben sind. Ein Stück auf einem Gerät zu behalten, braucht bestätigte Gemeinfreiheit oder eine Lizenz für Download oder Selbstausdruck. Die Rolle „Chormitglieder“ braucht eine Gruppe.',
+	'Also public pages': 'Dazu öffentliche Seiten',
+	'Adds public links without login and a public page with the repertoire.': 'Dazu öffentliche Links ohne Anmeldung und eine öffentliche Seite mit dem Repertoire.',
+	'Only for confirmed public domain or a license for online publication. Enter the imprint and the privacy policy under Administration → Theming first.': [
+		'Nur bei bestätigter Gemeinfreiheit oder mit einer Lizenz für die Online-Veröffentlichung. Trage vorher unter Verwaltung → Design Impressum und Datenschutzerklärung ein.',
+		'Nur bei bestätigter Gemeinfreiheit oder mit einer Lizenz für die Online-Veröffentlichung. Tragen Sie vorher unter Verwaltung → Design Impressum und Datenschutzerklärung ein.',
+	],
 }
 
 export const plural = {
@@ -3554,5 +3590,13 @@ export const plural = {
 	'%n piece was not shared:|%n pieces were not shared:': [
 		'%n Stück wurde nicht geteilt:',
 		'%n Stücke wurden nicht geteilt:',
+	],
+	'Currently closest to “{scenario}”, with %n difference.|Currently closest to “{scenario}”, with %n differences.': [
+		'Derzeit am nächsten an „{scenario}“, mit %n Abweichung.',
+		'Derzeit am nächsten an „{scenario}“, mit %n Abweichungen.',
+	],
+	'Currently closest to “{scenario}”, with %n difference: {modules}.|Currently closest to “{scenario}”, with %n differences: {modules}.': [
+		'Derzeit am nächsten an „{scenario}“, mit %n Abweichung: {modules}.',
+		'Derzeit am nächsten an „{scenario}“, mit %n Abweichungen: {modules}.',
 	],
 }

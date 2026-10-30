@@ -13,7 +13,7 @@ danach übernimmt. Die tägliche Arbeit mit der App beschreibt das
 
 **Inhalt**
 
-- [Einrichten in fünf Schritten](#einrichten-in-fünf-schritten) – der kurze Weg
+- [Einrichten in sechs Schritten](#einrichten-in-sechs-schritten) – der kurze Weg
 1. [Installation](#1-installation)
 2. [Rollen und Gruppen](#2-rollen-und-gruppen) – die Einstellungsseite, sie einer Gruppe übertragen
 3. [Archivordner](#3-archivordner) – ihn freigeben, die Zugriffsprüfung
@@ -32,10 +32,10 @@ danach übernimmt. Die tägliche Arbeit mit der App beschreibt das
 16. [Spiegelordner für die Druckstation](#16-spiegelordner-für-die-druckstation)
 - [Häufige Probleme](#häufige-probleme) – eine Meldung, ihre Ursache und was zu tun ist
 
-## Einrichten in fünf Schritten
+## Einrichten in sechs Schritten
 
 Öffne nach der [Installation](#1-installation) **Verwaltungseinstellungen →
-Cantoria**. Die Liste **Einrichtung** oben auf der Seite zeigt diese fünf
+Cantoria**. Die Liste **Einrichtung** oben auf der Seite zeigt diese sechs
 Schritte, jeden als *Erledigt*, *Noch zu tun* oder *Bitte prüfen*, mit einem
 Link an die Stelle, wo er erledigt wird.
 
@@ -49,17 +49,25 @@ Link an die Stelle, wo er erledigt wird.
 3. **Zugriff auf den Archivordner** – teile den Ordner mit den Gruppen der
    Rollen (Lesen genügt) und wähle **Zugriff prüfen**, bis niemand mehr
    aufgeführt ist ([Den Archivordner freigeben](#den-archivordner-freigeben)).
-4. **Werkverzeichnis importieren** – die Archivverwaltung, in der App:
+4. **Funktionen für euren Chor** – wähle unter **Was soll Cantoria für euren
+   Chor tun?**, wofür ihr die App nutzt: das Archiv ordnen, Konzerte planen,
+   Üben für den Chor oder öffentliche Seiten
+   ([Was soll Cantoria für euren Chor tun?](#was-soll-cantoria-für-euren-chor-tun)).
+   Erledigt ist der Schritt, sobald die Administration hier etwas gewählt
+   oder einen Schalter geändert hat.
+5. **Werkverzeichnis importieren** – die Archivverwaltung, in der App:
    **Archivverwaltung → Werkverzeichnis importieren**, zuerst ein Probelauf
    ([Abschnitt 4](#4-erster-import)).
-5. **Dateiabgleich** – die Archivverwaltung, in der App: **Archivverwaltung →
+6. **Dateiabgleich** – die Archivverwaltung, in der App: **Archivverwaltung →
    Dateiabgleich starten**; er verknüpft die Dateien des Archivordners mit den
    Exemplaren.
 
-Die Schritte 1 bis 3 kann auch eine Gruppe erledigen, der du die
+Die Schritte 1 bis 4 kann auch eine Gruppe erledigen, der du die
 Einstellungsseite überträgst
 ([Die Einstellungen einer Gruppe übertragen](#die-einstellungen-einer-gruppe-übertragen));
-die Schritte 4 und 5 brauchen die Rolle „Bestand“. Um die App erst
+was das Archiv für Chormitglieder, die Öffentlichkeit oder Werkzeuge öffnet,
+schaltet nur die Administration ein. Die Schritte 5 und 6 brauchen die Rolle
+„Bestand“. Um die App erst
 auszuprobieren, nimm die [Demodaten](../../tools/demo/README.md) (englisch).
 
 ## 1. Installation
@@ -727,13 +735,43 @@ Regeln:
 
 Jede Änderung eines Schalters steht im Protokoll (Objekttyp `settings`).
 
+### Was soll Cantoria für euren Chor tun?
+
+Statt einzelne Module zu suchen, wählst du oben auf der Seite, wofür euer
+Chor die App nutzt. Jede Wahl nennt, was die Rechte dafür erlauben müssen,
+und fragt vorher nach, mit der Liste der Schalter, die sich ändern:
+
+| Wahl | Schaltet ein |
+|---|---|
+| **Das Archiv ordnen** | die Voreinstellung **Einfach**: Werkverzeichnis, Dateien und die Notenansicht mit Abspielen |
+| **Archiv, Rechte und Konzerte** | die Voreinstellung **Standard** und die Konzertmappe |
+| **Dazu Üben für den Chor** | dazu „Mit mir geteilt“ für die Chormitglieder, ihre Übe-Dateien und das Üben ohne Netz (mit allem, was diese brauchen, z. B. den Übe-Audio-Dateien) |
+| **Dazu öffentliche Seiten** | dazu öffentliche Links und die öffentliche Repertoire-Seite |
+
+Die Wahlen bauen aufeinander auf; eine engere schaltet ab, was nur die
+weiteren brauchen (die Daten bleiben). Die Schnittstelle für Agenten, der
+Spiegelordner der Druckstation und der Übergabeordner für ein Chorsystem
+bleiben, wie sie sind. Darüber steht, welcher Wahl die Schalter gerade
+entsprechen, zum Beispiel *Derzeit: am nächsten an „Archiv, Rechte und
+Konzerte“, mit 2 Abweichungen: Auswertungen (an), Kalender (aus).* Die
+einzelnen Schalter darunter bleiben jederzeit änderbar; die
+Benachrichtigungen sind eingeklappt.
+
+Die Chormitglieder sehen nur Fassungen, die für das Chorportal freigegeben
+sind; auf einem Gerät behalten lässt sich ein Stück nur mit bestätigter
+Gemeinfreiheit oder einer Lizenz für Download oder Selbstausdruck, und die
+Rolle „Chormitglieder“ braucht eine Gruppe. Öffentliche Seiten gehen nur
+mit bestätigter Gemeinfreiheit oder einer Lizenz für die
+Online-Veröffentlichung; trage vorher Impressum und Datenschutzerklärung
+unter **Verwaltungseinstellungen → Design** ein.
+
 ### Voreinstellungen
 
 | Voreinstellung | Schaltet ein |
 |---|---|
 | **Einfach** | den Kern, die Notenansicht mit Abspielen und die Benachrichtigungen (vom Kern bleibt nur die über eine fehlgeschlagene wöchentliche Sicherung) |
 | **Standard** | alles außer Übe-Audio-Dateien, Druckstation, Vorschlagseingang, Prüfsummen, Mappenbuch, Jahresständen und Auswertungen |
-| **Vollständig** | alles außer der Schnittstelle für Agenten, den vier Modulen zum Teilen und dem Spiegelordner für die Druckstation |
+| **Vollständig** | alles außer der Schnittstelle für Agenten, den Modulen zum Teilen und für das Üben ohne Netz, der Konzertmappe, dem Spiegelordner für die Druckstation und dem Übergabeordner für ein Chorsystem |
 
 Eine Voreinstellung setzt alle Schalter auf einmal; die Einstellungen fragen
 vorher nach und listen, was sich ändert.

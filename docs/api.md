@@ -315,6 +315,7 @@ config API (`getAuthorizedAppConfig()` is empty).
   "archive": { "id": 123, "path": "/Notenarchiv", "user": "admin" },
   "repertoire": { "current": 3, "dormant": 10 },
   "catalog": { "copies": 23, "files": 30 },
+  "modulesChosen": true,
   "admin": true,
   "catalogEmpty": false }
 ```
@@ -326,6 +327,9 @@ that no longer exist. `roleLabels` are English source strings.
 `catalog` counts the imported copies and the files found by the file sync;
 with the archive folder, the groups of the role `librarian` and the access
 check, the page derives the setup steps from it (nothing of it is stored).
+`modulesChosen` (milestone 0.19): the modules were changed once from the
+settings or the command line (a scenario, a preset or a switch; app config
+`modules_chosen`), the step "Functions for your choir" of the setup.
 `admin` tells whether the caller is an admin; only then does the page offer
 the complete backup and restore, and only then is `catalogEmpty` (whether a
 restore is possible: every table of the app is empty) a boolean, otherwise
@@ -1490,18 +1494,29 @@ Like the other settings: admins and the groups given the settings page
                 "requires": ["score_viewer"], "enabled": true, "active": false }],
   "groups": [{ "key": "scores", "label": "Score view" }],
   "presets": [{ "key": "simple", "label": "Simple", "description": "…", "modules": { "rights": false, "...": "..." } }],
+  "scenarios": [{ "key": "singers", "label": "Also practising for the singers", "description": "…",
+                  "rights": "Choir members see only versions released for the singers' portal. …",
+                  "modules": { "member_links": true, "practice_audio": true, "...": "..." } }],
   "core": ["Catalog: works, versions, copies, fields, search and status", "…"] }
 ```
 
 `enabled` is the module's own switch, `active` whether it works (its switch
 and everything it requires is on). `requires` lists the direct
 requirements. Planned modules (none at the moment) are not listed.
-`agent_api` is in the group `interfaces`, the four sharing modules in the
-group `sharing` ("Sharing beyond the archive roles"); all five are missing
+`agent_api` is in the group `interfaces`, the sharing modules in the
+group `sharing` ("Sharing beyond the archive roles"); they are missing
 from the `modules` of every preset (no preset changes them).
+`scenarios` (milestone 0.19, `Modules::SCENARIOS`): what Cantoria should do
+for the choir, from the narrowest to the widest (`archive`, `concerts`,
+`singers`, `public`): a preset plus the concert folder, the modules for
+choir members and practising without a network, and the public modules,
+on or off, with everything they require (`modules`); `rights` (or `null`)
+says what the rights must allow. The interface for agents and the folders
+for the print station and a choir system are not part of a scenario.
 
-`PUT /api/settings/modules` with either `{ "modules": { "concerts": false } }`
-(one or more switches) or `{ "preset": "standard" }` returns the same plus
+`PUT /api/settings/modules` with one of `{ "modules": { "concerts": false } }`
+(one or more switches), `{ "preset": "standard" }` or `{ "scenario":
+"singers" }` returns the same plus
 
 ```json
 "changes": { "enabled": ["calendar"], "alsoEnabled": ["concerts"], "disabled": [],
@@ -1512,12 +1527,16 @@ from the `modules` of every preset (no preset changes them).
 requirements switched on as well; `inactive`: modules whose switch stays on
 but that no longer work (they need a module switched off now);
 `activated`: modules that work again without being switched themselves.
-Errors (400): `Unknown module: %s`, `Unknown preset: %s`, `This function is
+Errors (400): `Unknown module: %s`, `Unknown preset: %s`, `Unknown
+scenario: %s`, `This function is
 not available yet: %s`, `"%1$s" needs "%2$s".` (a module to switch on needs
 one to switch off in the same request), `Please choose a module or a
-preset.` (none or both), `"%s" must be yes or no.`. Every changed switch is
-recorded in the audit log (object type `settings`, field `module_{key}`,
-`on`/`off`, reason `preset {name}` for a preset). No password confirmation,
+preset.` (none or more than one), `"%s" must be yes or no.`; 403 when a
+group given the settings page would switch on a module that opens the
+archive to agents, choir members, the public or the print station (also
+with a scenario). Every changed switch is recorded in the audit log (object
+type `settings`, field `module_{key}`, `on`/`off`, reason `preset {name}`
+or `scenario {name}`). No password confirmation,
 like the other settings.
 
 On the command line: `occ cantoria:modules list|enable|disable|preset`

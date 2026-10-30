@@ -8,7 +8,7 @@ Daily work with the app is described in the [user guide](user-guide.md).
 
 **Contents**
 
-- [Setting up in five steps](#setting-up-in-five-steps) – the short way
+- [Setting up in six steps](#setting-up-in-six-steps) – the short way
 1. [Installation](#1-installation)
 2. [Roles and groups](#2-roles-and-groups) – the settings page, giving it to a group
 3. [Archive folder](#3-archive-folder) – sharing it, the access check
@@ -27,10 +27,10 @@ Daily work with the app is described in the [user guide](user-guide.md).
 16. [Mirror folder for the print station](#16-mirror-folder-for-the-print-station)
 - [Common problems](#common-problems) – a message, its cause and what to do
 
-## Setting up in five steps
+## Setting up in six steps
 
-After the [installation](#1-installation), open **Administration → Music
-archive**. The list **Setting up** at the top of the page shows these five
+After the [installation](#1-installation), open **Administration →
+Cantoria**. The list **Setting up** at the top of the page shows these six
 steps, each as *done*, *missing* or *problem*, with a link to the place where
 it is done.
 
@@ -43,15 +43,22 @@ it is done.
 3. **Access to the archive folder** – share the folder with the groups of the
    roles (reading is enough) and **Check access** until nobody is listed
    ([Sharing the archive folder](#sharing-the-archive-folder)).
-4. **Import the catalog** – a music librarian, in the app: **Archive
+4. **Functions for your choir** – under **What should Cantoria do for your
+   choir?**, choose what you use the app for: keeping the archive in order,
+   planning concerts, practising for the singers or public pages
+   ([What should Cantoria do for your choir?](#what-should-cantoria-do-for-your-choir)).
+   The step is done once the administration has chosen something here or
+   changed a switch.
+5. **Import the catalog** – a music librarian, in the app: **Archive
    management → Import catalog**, a dry run first
    ([section 4](#4-first-import)).
-5. **File sync** – a music librarian, in the app: **Archive management →
+6. **File sync** – a music librarian, in the app: **Archive management →
    Run file sync**; it links the files of the archive folder to the copies.
 
-Steps 1 to 3 can also be done by a group you give the settings page
-([Giving the settings to a group](#giving-the-settings-to-a-group)); steps 4
-and 5 need the catalog role. To try the app first, use the
+Steps 1 to 4 can also be done by a group you give the settings page
+([Giving the settings to a group](#giving-the-settings-to-a-group)); only
+admins switch on what opens the archive to choir members, the public or
+tools. Steps 5 and 6 need the catalog role. To try the app first, use the
 [demo data](../tools/demo/README.md).
 
 ## 1. Installation
@@ -632,8 +639,8 @@ problem, is in the [accessibility statement](accessibility.md).
 ## 12. Modules and presets
 
 Not every choir needs every function. Everything outside the core is a
-**module** that admins switch on and off under **Administration → Music
-archive → Modules** (also the groups the settings page was given to). The core is always on: the catalog (works, versions, copies,
+**module** that admins switch on and off under **Administration →
+Cantoria → Modules** (also the groups the settings page was given to). The core is always on: the catalog (works, versions, copies,
 fields, search, status), the start page, the file sync with the archive
 folder, roles, the audit log, CSV import and export, backup and restore, and
 the settings.
@@ -661,13 +668,41 @@ Rules:
 Every change of a switch is recorded in the audit log (object type
 `settings`).
 
+### What should Cantoria do for your choir?
+
+Instead of looking for single modules, choose at the top of the page what
+your choir uses the app for. Each choice says what the rights must allow
+for it and asks first, with the list of the switches that change:
+
+| Choice | Switches on |
+|---|---|
+| **Keep the archive in order** | the preset **Simple**: catalog, files and the score view with playback |
+| **Archive, rights and concerts** | the preset **Standard** and the concert folder |
+| **Also practising for the singers** | also "Shared with me" for the choir members, their practice files and practising without a network (with everything they need, e.g. the practice audio files) |
+| **Also public pages** | also public links and the public repertoire page |
+
+The choices build on each other; a narrower one switches off what only the
+wider ones need (the data stay). The interface for agents, the mirror
+folder of the print station and the hand-over folder for a choir system
+stay as they are. Above them the page says which choice the switches match
+at the moment, for example *Currently closest to "Archive, rights and
+concerts", with 2 differences: Statistics (on), Calendar (off).* The single
+switches below can be changed at any time; the notifications are folded.
+
+Choir members see only versions released for the singers' portal; a piece
+can be kept on a device only with confirmed public domain or a license for
+download or self-printing, and the role "Choir members" needs a group.
+Public pages need confirmed public domain or a license for online
+publication; enter the imprint and the privacy policy under
+**Administration → Theming** first.
+
 ### Presets
 
 | Preset | Switches on |
 |---|---|
 | **Simple** | the core, the score view with playback and the notifications (of the core only the one about a failed weekly backup is left) |
 | **Standard** | everything except practice audio files, the print station, the proposals inbox, checksums, the folder book, annual snapshots and statistics |
-| **Complete** | everything except the interface for agents, the four sharing modules and the mirror folder for the print station |
+| **Complete** | everything except the interface for agents, the modules for sharing and for practising without a network, the concert folder, the mirror folder for the print station and the hand-over folder for a choir system |
 
 A preset sets every switch at once; the settings ask first and list what
 changes.

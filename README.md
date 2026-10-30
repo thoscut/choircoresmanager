@@ -131,7 +131,7 @@ The screenshots show the invented demo archive from [tools/demo](tools/demo/READ
     <td width="33%" valign="top">
       <a href="docs/screenshots/admin-settings.png"><img src="docs/screenshots/admin-settings.png" width="280" alt="The access check under Administration, Music archive: per role and group how many accounts can open the archive folder, who cannot, and how to give access."></a>
       <h3>Easy to set up</h3>
-      <p>Administration → Cantoria guides through five steps (archive folder, roles and groups, access, import, file sync) and shows what is done and what needs attention. It checks who of the role groups cannot open the archive folder and says what to do. Admins can give the page to a group, such as the music librarians. In the app, a "?" next to the terms explains them, empty views name the next step, and accounts without a role learn whom to ask.</p>
+      <p>Administration → Cantoria guides through six steps (archive folder, roles and groups, access, the functions for the choir, import, file sync) and shows what is done and what needs attention. It checks who of the role groups cannot open the archive folder and says what to do. Admins can give the page to a group, such as the music librarians. In the app, a "?" next to the terms explains them, empty views name the next step, and accounts without a role learn whom to ask.</p>
     </td>
     <td width="33%" valign="top">
       <a href="docs/screenshots/files-action.png"><img src="docs/screenshots/files-action.png" width="280" alt="The Files app with the actions menu of a MusicXML file and the action Open in Cantoria."></a>

@@ -88,6 +88,8 @@ class Modules {
 	public const NOTIFY_PREFIX = 'notify_';
 
 	public const CONFIG_PREFIX = 'module_';
+	/** Set once the administration changed the modules (a scenario, a preset or a switch): the step of the setup is done */
+	public const CHOSEN_KEY = 'modules_chosen';
 
 	/** Reasons in the score view (English source strings, translated by the controller) */
 	public const PLAYBACK_OFF = 'Playback is switched off.';
@@ -124,7 +126,43 @@ class Modules {
 	public const PRESET_LABELS = [
 		self::SIMPLE => ['label' => 'Simple', 'description' => 'Catalog, files and the score view with playback.'],
 		self::STANDARD => ['label' => 'Standard', 'description' => 'For most choirs: everything except practice audio files, the print station, the proposals inbox, checksums, the folder book, annual snapshots and statistics.'],
-		self::COMPLETE => ['label' => 'Complete', 'description' => 'All functions. The interface for agents, the sharing with choir members and the public, and the mirror folder of the print station are switched on separately.'],
+		self::COMPLETE => ['label' => 'Complete', 'description' => 'All functions. The interface for agents, the sharing with choir members and the public, practising without a network, the concert folder and the folders for the print station and a choir system are switched on separately.'],
+	];
+
+	/**
+	 * What Cantoria should do for a choir (milestone 0.19), in words instead
+	 * of module names: a preset, and the modules outside the presets that the
+	 * scenario switches on or off. Choosing one also switches on what they
+	 * require. `rights` says what the rights must allow for it to work.
+	 * English source strings.
+	 *
+	 * @var array<string, array{preset: string, modules: array<string, bool>, label: string, description: string, rights: ?string}>
+	 */
+	public const SCENARIOS = [
+		'archive' => ['preset' => self::SIMPLE,
+			'modules' => [self::CONCERT_FOLDER => false, self::MEMBER_LINKS => false, self::MEMBER_PRACTICE_AUDIO => false, self::OFFLINE => false,
+				self::PUBLIC_LINKS => false, self::PUBLIC_REPERTOIRE => false],
+			'label' => 'Keep the archive in order',
+			'description' => 'Catalog, files and the score view with playback, for the music librarians.',
+			'rights' => null],
+		'concerts' => ['preset' => self::STANDARD,
+			'modules' => [self::CONCERT_FOLDER => true, self::MEMBER_LINKS => false, self::MEMBER_PRACTICE_AUDIO => false, self::OFFLINE => false,
+				self::PUBLIC_LINKS => false, self::PUBLIC_REPERTOIRE => false],
+			'label' => 'Archive, rights and concerts',
+			'description' => 'Adds rights and licenses, releases, concerts and song lists, and the concert folder for the conductor. Nothing leaves the archive roles.',
+			'rights' => null],
+		'singers' => ['preset' => self::STANDARD,
+			'modules' => [self::CONCERT_FOLDER => true, self::MEMBER_LINKS => true, self::MEMBER_PRACTICE_AUDIO => true, self::OFFLINE => true,
+				self::PUBLIC_LINKS => false, self::PUBLIC_REPERTOIRE => false],
+			'label' => 'Also practising for the singers',
+			'description' => 'Adds the page "Shared with me" for the choir members: the pieces shared with them, to play and practise on their phone, also without a network.',
+			'rights' => 'Choir members see only versions released for the singers\' portal. Keeping a piece on a device needs confirmed public domain or a license for download or self-printing. The role "Choir members" needs a group.'],
+		'public' => ['preset' => self::STANDARD,
+			'modules' => [self::CONCERT_FOLDER => true, self::MEMBER_LINKS => true, self::MEMBER_PRACTICE_AUDIO => true, self::OFFLINE => true,
+				self::PUBLIC_LINKS => true, self::PUBLIC_REPERTOIRE => true],
+			'label' => 'Also public pages',
+			'description' => 'Adds public links without login and a public page with the repertoire.',
+			'rights' => 'Only for confirmed public domain or a license for online publication. Enter the imprint and the privacy policy under Administration → Theming first.'],
 	];
 
 	/**
@@ -405,6 +443,39 @@ class Modules {
 	}
 
 	/**
+	 * What a scenario switches on and off: its preset, its own modules and
+	 * everything they require.
+	 *
+	 * @return array<string, bool>
+	 * @throws InvalidInputException for an unknown scenario
+	 */
+	public static function scenarioValues(string $scenario): array {
+		$definition = self::SCENARIOS[$scenario] ?? null;
+		if ($definition === null) {
+			throw new InvalidInputException('Unknown scenario: %s', [$scenario]);
+		}
+		$values = $definition['modules'] + self::presetValues($definition['preset']);
+		foreach (array_keys(array_filter($definition['modules'])) as $key) {
+			foreach (self::requirements($key) as $required) {
+				$values[$required] = true;
+			}
+		}
+		return $values;
+	}
+
+	/**
+	 * Whether the administration has chosen what Cantoria does for the
+	 * choir: the step "Functions for your choir" of the setup.
+	 */
+	public function chosen(): bool {
+		try {
+			return $this->appConfig->getValueBool(Application::APP_ID, self::CHOSEN_KEY);
+		} catch (\Throwable) {
+			return false;
+		}
+	}
+
+	/**
 	 * Whether a module is active: its own switch is on and every module it
 	 * requires is active.
 	 *
@@ -505,6 +576,17 @@ class Modules {
 	 */
 	public function applyPreset(string $preset): array {
 		return $this->write(self::presetValues($preset), []);
+	}
+
+	/**
+	 * Sets the switches of a scenario (SCENARIOS); the modules outside it
+	 * keep their switch.
+	 *
+	 * @return array{enabled: list<string>, alsoEnabled: list<string>, disabled: list<string>, inactive: list<string>, activated: list<string>}
+	 * @throws InvalidInputException for an unknown scenario
+	 */
+	public function applyScenario(string $scenario): array {
+		return $this->write(self::scenarioValues($scenario), []);
 	}
 
 	/**

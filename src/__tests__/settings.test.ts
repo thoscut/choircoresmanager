@@ -80,6 +80,7 @@ describe('settings of the app', () => {
 			backups: { path: 'Music archive backups' },
 			repertoire: { current: 3, dormant: 10 },
 			catalog: { copies: 23, files: 30 },
+			modulesChosen: 'yes',
 			folderBook: true,
 			printMirror: 'yes',
 			admin: true,
@@ -93,6 +94,7 @@ describe('settings of the app', () => {
 			backups: { path: 'Music archive backups' },
 			repertoire: { current: 3, dormant: 10 },
 			catalog: { copies: 23, files: 30 },
+			modulesChosen: false,
 			folderBook: true,
 			printMirror: false,
 			choirHandover: false,
@@ -112,6 +114,7 @@ describe('settings of the app', () => {
 			backups: { path: null },
 			repertoire: null,
 			catalog: { copies: 0, files: 0 },
+			modulesChosen: false,
 			folderBook: false,
 			printMirror: false,
 			choirHandover: false,
@@ -194,7 +197,7 @@ describe('repertoire thresholds', () => {
 	})
 })
 
-describe('setup in five steps', () => {
+describe('setup in six steps', () => {
 	const fresh = normalizeSettings({ roles: {}, archive: { id: 0 } })
 
 	/**
@@ -209,13 +212,13 @@ describe('setup in five steps', () => {
 	}
 
 	it('starts with everything missing, in the order of the setup', () => {
-		expect(setupSteps(fresh, null).map((step) => step.key)).toEqual(['archive', 'roles', 'access', 'import', 'fileSync'])
-		expect(statuses({})).toEqual({ archive: 'missing', roles: 'missing', access: 'missing', import: 'missing', fileSync: 'missing' })
+		expect(setupSteps(fresh, null).map((step) => step.key)).toEqual(['archive', 'roles', 'access', 'modules', 'import', 'fileSync'])
+		expect(statuses({})).toEqual({ archive: 'missing', roles: 'missing', access: 'missing', modules: 'missing', import: 'missing', fileSync: 'missing' })
 	})
 
 	it('derives every step from what the server reports', () => {
-		const settings = { archive: { id: 4711 }, roles: { librarian: ['archive'] }, catalog: { copies: 23, files: 30 } }
-		expect(statuses(settings)).toEqual({ archive: 'done', roles: 'done', access: 'unchecked', import: 'done', fileSync: 'done' })
+		const settings = { archive: { id: 4711 }, roles: { librarian: ['archive'] }, catalog: { copies: 23, files: 30 }, modulesChosen: true }
+		expect(statuses(settings)).toEqual({ archive: 'done', roles: 'done', access: 'unchecked', modules: 'done', import: 'done', fileSync: 'done' })
 		expect(statuses(settings, { ...REPORT, roles: [REPORT.roles[0]] }).access).toBe('done')
 		expect(statuses(settings, REPORT).access).toBe('problem')
 	})
