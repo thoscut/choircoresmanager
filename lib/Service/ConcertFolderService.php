@@ -12,7 +12,6 @@ namespace OCA\Cantoria\Service;
 use OCA\Cantoria\Db\ArchiveFile;
 use OCA\Cantoria\Db\ArchiveFileMapper;
 use OCA\Cantoria\Db\Copy;
-use OCA\Cantoria\Db\CopyMapper;
 use OCA\Cantoria\Db\Event;
 use OCA\Cantoria\Db\EventItem;
 use OCA\Cantoria\Db\EventItemMapper;
@@ -56,7 +55,6 @@ class ConcertFolderService {
 		private Roles $roles,
 		private EventMapper $events,
 		private EventItemMapper $items,
-		private CopyMapper $copies,
 		private WorkVersionMapper $versions,
 		private WorkMapper $works,
 		private ArchiveFileMapper $files,
@@ -64,6 +62,7 @@ class ConcertFolderService {
 		private ScoreService $scores,
 		private ScanService $scans,
 		private Modules $modules,
+		private ProgrammeCopies $programmeCopies,
 	) {
 	}
 
@@ -166,7 +165,7 @@ class ConcertFolderService {
 	 * @return FolderItem
 	 */
 	private function describe(EventItem $item, string $uid): array {
-		$copy = $this->copyOf($item);
+		$copy = $this->programmeCopies->copyOf($item);
 		$version = $this->versionOf($item, $copy);
 		$work = null;
 		$workId = $version?->getWorkId() ?? $item->getWorkId();
@@ -219,7 +218,7 @@ class ConcertFolderService {
 		if (!in_array($event->getStatus(), ['draft', 'fixed'], true) || $item->getStruck() === true) {
 			throw new NotFoundException('This programme item is no longer in the concert folder.');
 		}
-		$copy = $this->copyOf($item);
+		$copy = $this->programmeCopies->copyOf($item);
 		$version = $this->versionOf($item, $copy);
 		if ($copy === null || $version === null) {
 			throw new NotFoundException('This programme item has no score.');
@@ -238,32 +237,6 @@ class ConcertFolderService {
 		if (!$this->mayOpen($uid)) {
 			throw new AccessDeniedException('The concert folder is for the conductor and the catalog librarian.');
 		}
-	}
-
-	/**
-	 * The copy of an item: the one of the programme, otherwise the first copy
-	 * of its version that has a score.
-	 */
-	private function copyOf(EventItem $item): ?Copy {
-		$copyId = $item->getCopyId();
-		try {
-			if ($copyId !== null) {
-				return $this->copies->find($copyId);
-			}
-		} catch (DoesNotExistException) {
-			return null;
-		}
-		$versionId = $item->getVersionId();
-		if ($versionId === null) {
-			return null;
-		}
-		$copies = $this->copies->findByVersion($versionId);
-		foreach ($copies as $copy) {
-			if (ScoreService::pick($this->files->findByCopy($copy->getId())) !== null) {
-				return $copy;
-			}
-		}
-		return $copies[0] ?? null;
 	}
 
 	private function versionOf(EventItem $item, ?Copy $copy): ?WorkVersion {

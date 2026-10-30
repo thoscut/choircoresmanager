@@ -621,8 +621,8 @@ Music librarians, operations and the conductor share from the score viewer
    months). **Note (optional)**: the choir members see this note, for
    example "Please practise until Thursday".
 6. Where the copy has a scan, **Include the scan (PDF)** offers it too (with
-   several scans, choose one under **Which scan?**). The recipients open it
-   in the PDF viewer of their browser. Whoever sees the scan can also save
+   several scans, choose one under **Which scan?**). The recipients see the
+   scan in the page. Whoever sees the scan can also save
    it; share it only where that is fine. The whole PDF is shared, also with
    a link to some measures.
 7. **What the recipients see** lists what is shared (**Whole piece** or the
@@ -659,6 +659,34 @@ excerpt.
 (**Internal**, **For choir members**, **Public**), what it shares
 (**Whole piece** or the measures, and **with scan (PDF)**), validity and
 number of calls; **Revoke link** stops a link at once for everyone.
+**Extend link** gives it a new last day (at most six months from today).
+The link keeps its address: whoever got it by message can go on using it,
+and what choir members made available without a network stays on their
+devices. The creator of the link and the catalog librarian can extend it; a
+revoked link cannot be extended.
+
+#### Sharing a whole programme with the choir
+
+Before a concert the choir members usually need every piece. Instead of
+sharing each piece on its own:
+
+1. Open the concert or song list under **Concerts**.
+2. Choose **Share with the choir …**.
+3. The dialog checks the rights of each piece and says for each what
+   happens: *A new link for the choir members*, *Already shared until …:
+   the link is extended and keeps its address*, or why not. The pieces that
+   can be shared are ticked; untick what the choir does not need yet.
+4. **Valid until** is set to two weeks after the concert (at most six
+   months). The choir members see a **Note** with each new link. Where the
+   rights allow it, **Include the scans (PDF) where the rights allow it**
+   adds the scans.
+5. Choose **Share … pieces**. At the end the dialog says how many links are
+   new, how many were extended, and which pieces were not shared and why.
+
+Each piece is shared as if you shared it on its own: as the whole piece,
+with the same rights and the same entry in the audit log. Where a piece
+says *Available without a network.*, the choir members can keep it on
+their device and practise it on the train, too.
 
 > [!NOTE]
 > The whole piece plays in the full order of the score, with all repeats,
@@ -949,6 +977,11 @@ Conductors and music librarians plan concerts:
    license for the binders and without a recorded number of originals.
 4. **Fix programme** when it is settled; it can still be changed until the
    concert is confirmed as sung.
+5. **Share with the choir …** gives the choir members every piece at once
+   (see [Sharing a whole programme with the
+   choir](#sharing-a-whole-programme-with-the-choir)); **Open in the concert
+   folder** shows the programme as it is on the tablet at the rehearsal and
+   the concert.
 
 Deadline notifications go to the conductor and the music librarians 10, 8
 and 6 weeks before the concert. If a concert does not take place, **Cancel

@@ -2687,7 +2687,6 @@ export const singular = {
 	'All pages of the piece, with repeats and jumps as in the score.': 'Alle Seiten des Stücks, mit Wiederholungen und Sprüngen wie in den Noten.',
 	'Include the scan (PDF)': 'Scan (PDF) mitgeben',
 	'Which scan?': 'Welcher Scan?',
-	'The recipients open the scan in the PDF viewer of their browser. Whoever sees the scan can also save it.': 'Wer den Link hat, öffnet den Scan im PDF-Betrachter des Browsers. Wer den Scan sieht, kann ihn auch speichern.',
 	'with scan (PDF)': 'mit Scan (PDF)',
 	'Share …': 'Teilen …',
 	'Score of {title}': 'Noten von {title}',
@@ -3161,10 +3160,8 @@ export const singular = {
 		'Die Wiedergabe startet mit der Aufnahme. Die Aufnahme bleibt in diesem Browser, bis Sie das Stück verlassen; speichern Sie sie, um sie zu behalten. Nehmen Sie Kopfhörer.',
 	],
 	// ---- milestone 0.15: practising without a network ----
-	'Practice files need a network: the server checks the rights and records each file first. Playing and practising work without one.':
-		'Übe-Dateien brauchen ein Netz: Der Server prüft zuerst die Rechte und protokolliert jede Datei. Abspielen und Üben gehen auch ohne.',
-	'This link has expired. It is removed from this device at the next start with a network.':
-		'Dieser Link ist abgelaufen. Er wird beim nächsten Start mit Netz von diesem Gerät entfernt.',
+	'Practice files need a network: the server checks the rights and records each file first. Playing and practising work without one.': 'Übe-Dateien brauchen ein Netz: Der Server prüft zuerst die Rechte und protokolliert jede Datei. Abspielen und Üben gehen auch ohne.',
+	'This link has expired. It is removed from this device at the next start with a network.': 'Dieser Link ist abgelaufen. Er wird beim nächsten Start mit Netz von diesem Gerät entfernt.',
 	'There is no network, and this piece is not available without a network.': 'Es gibt kein Netz, und dieses Stück ist nicht ohne Netz verfügbar.',
 	'"{title}" is available without a network.': '„{title}“ ist ohne Netz verfügbar.',
 	'"{title}" is removed from this device.': '„{title}“ ist von diesem Gerät entfernt.',
@@ -3302,6 +3299,43 @@ export const singular = {
 	'No access to the music archive (guide)': 'Kein Zugang zum Notenarchiv (Anleitung)',
 	'Guide for choir members': 'Anleitung für Chormitglieder',
 	'Without the scans; each piece can take its scan along.': 'Ohne die Scans; jedes Stück kann seinen Scan mitnehmen.',
+	'Share with the choir …': 'Mit dem Chor teilen …',
+	'Open in the concert folder': 'In der Konzertmappe öffnen',
+	'No: the rights allow no copy on the device': 'Nein: Die Rechte erlauben keine Kopie auf dem Gerät',
+	'The recipients see the scan in the page. Whoever sees the scan can also save it.': 'Wer den Link bekommt, sieht den Scan in der Seite. Wer den Scan sieht, kann ihn auch speichern.',
+	'Please choose a day between today and {date}.': [
+		'Bitte wähle einen Tag zwischen heute und {date}.',
+		'Bitte wählen Sie einen Tag zwischen heute und {date}.',
+	],
+	'The link is valid until {date}.': 'Der Link gilt bis {date}.',
+	'Extend link': 'Link verlängern',
+	'Extend': 'Verlängern',
+	'The link keeps its address: whoever has it can go on using it, and what the choir members keep on their devices stays.': 'Der Link behält seine Adresse: Wer ihn hat, kann ihn weiter nutzen, und was die Chormitglieder auf ihren Geräten gespeichert haben, bleibt.',
+	'This piece cannot be shared.': 'Dieses Stück lässt sich nicht teilen.',
+	'Already shared until {date}: the link is extended and keeps its address.': 'Schon geteilt bis {date}: Der Link wird verlängert und behält seine Adresse.',
+	'A new link for the choir members.': 'Ein neuer Link für die Chormitglieder.',
+	'Share "{title}" with the choir': '„{title}“ mit dem Chor teilen',
+	'Please choose at least one piece.': [
+		'Bitte wähle mindestens ein Stück.',
+		'Bitte wählen Sie mindestens ein Stück.',
+	],
+	'Checking the rights of each piece …': 'Die Rechte jedes Stücks werden geprüft …',
+	'Each piece is shared as a whole with the choir members under "Shared with me", as if you shared it on its own. The rights are checked for each piece.': [
+		'Jedes Stück wird als Ganzes mit den Chormitgliedern geteilt und erscheint bei ihnen unter „Mit mir geteilt“, als hättest du es einzeln geteilt. Die Rechte werden für jedes Stück geprüft.',
+		'Jedes Stück wird als Ganzes mit den Chormitgliedern geteilt und erscheint bei ihnen unter „Mit mir geteilt“, als hätten Sie es einzeln geteilt. Die Rechte werden für jedes Stück geprüft.',
+	],
+	'Available without a network.': 'Ohne Netz verfügbar.',
+	'Not available without a network: the rights allow no copy on the device.': 'Nicht ohne Netz verfügbar: Die Rechte erlauben keine Kopie auf dem Gerät.',
+	'The choir members see this note with each new link; extended links keep theirs.': 'Die Chormitglieder sehen diese Notiz bei jedem neuen Link; verlängerte Links behalten ihre.',
+	'Include the scans (PDF) where the rights allow it': 'Die Scans (PDF) mitgeben, wo die Rechte es erlauben',
+	'Where it says "Available without a network", the singers can practise the piece on the train, too.': 'Wo „Ohne Netz verfügbar“ steht, können die Chormitglieder das Stück auch im Zug üben.',
+	'{created} new, {extended} extended. The choir members find them under "Shared with me".': '{created} neu, {extended} verlängert. Die Chormitglieder finden sie unter „Mit mir geteilt“.',
+	'Only the creator or the catalog librarian can extend this link.': 'Diesen Link können nur die Person, die ihn erstellt hat, und die Rolle „Bestand“ verlängern.',
+	'A revoked link cannot be extended. Please make a new one.': [
+		'Ein widerrufener Link lässt sich nicht verlängern. Bitte erstelle einen neuen.',
+		'Ein widerrufener Link lässt sich nicht verlängern. Bitte erstellen Sie einen neuen.',
+	],
+	'Not shared:': 'Nicht geteilt:',
 }
 
 export const plural = {
@@ -3494,14 +3528,8 @@ export const plural = {
 	'%n semitone higher|%n semitones higher': ['%n Halbton höher', '%n Halbtöne höher'],
 	'%n semitone lower|%n semitones lower': ['%n Halbton tiefer', '%n Halbtöne tiefer'],
 	'Locked: not checked with the server for more than %n day. Please open this page once with a network.|Locked: not checked with the server for more than %n days. Please open this page once with a network.': {
-		du: [
-			'Gesperrt: seit mehr als %n Tag nicht mit dem Server abgeglichen. Bitte öffne diese Seite einmal mit Netz.',
-			'Gesperrt: seit mehr als %n Tagen nicht mit dem Server abgeglichen. Bitte öffne diese Seite einmal mit Netz.',
-		],
-		sie: [
-			'Gesperrt: seit mehr als %n Tag nicht mit dem Server abgeglichen. Bitte öffnen Sie diese Seite einmal mit Netz.',
-			'Gesperrt: seit mehr als %n Tagen nicht mit dem Server abgeglichen. Bitte öffnen Sie diese Seite einmal mit Netz.',
-		],
+		du: ['Gesperrt: seit mehr als %n Tag nicht mit dem Server abgeglichen. Bitte öffne diese Seite einmal mit Netz.', 'Gesperrt: seit mehr als %n Tagen nicht mit dem Server abgeglichen. Bitte öffne diese Seite einmal mit Netz.'],
+		sie: ['Gesperrt: seit mehr als %n Tag nicht mit dem Server abgeglichen. Bitte öffnen Sie diese Seite einmal mit Netz.', 'Gesperrt: seit mehr als %n Tagen nicht mit dem Server abgeglichen. Bitte öffnen Sie diese Seite einmal mit Netz.'],
 	},
 	'%n piece is available without a network.|%n pieces are available without a network.': [
 		'%n Stück ist ohne Netz verfügbar.',
@@ -3518,5 +3546,13 @@ export const plural = {
 	'%n piece available without a network|All %n pieces available without a network': [
 		'%n Stück ohne Netz verfügbar',
 		'Alle %n Stücke ohne Netz verfügbar',
+	],
+	'Share %n piece|Share %n pieces': [
+		'%n Stück teilen',
+		'%n Stücke teilen',
+	],
+	'%n piece was not shared:|%n pieces were not shared:': [
+		'%n Stück wurde nicht geteilt:',
+		'%n Stücke wurden nicht geteilt:',
 	],
 }

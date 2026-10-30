@@ -197,6 +197,8 @@ const preview = computed(() => {
 		playback: t('cantoria', 'Playback'),
 		practiceFiles: t('cantoria', 'Practice files'),
 		scan: t('cantoria', 'Scan (PDF)'),
+		offline: t('cantoria', 'Without a network'),
+		offlineNo: t('cantoria', 'No: the rights allow no copy on the device'),
 		yes,
 		no,
 	})
@@ -387,7 +389,7 @@ async function copyLink(): Promise<void> {
 				</NcCheckboxRadioSwitch>
 			</fieldset>
 			<p class="action-dialog__hint">
-				{{ t('cantoria', 'The recipients open the scan in the PDF viewer of their browser. Whoever sees the scan can also save it.') }}
+				{{ t('cantoria', 'The recipients see the scan in the page. Whoever sees the scan can also save it.') }}
 				{{ t('cantoria', 'The whole PDF is shared, also with a link to some measures.') }}
 			</p>
 		</div>

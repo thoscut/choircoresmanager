@@ -26,6 +26,7 @@ use OCA\Cantoria\Exception\NotFoundException;
 use OCA\Cantoria\Service\ConcertFolderService;
 use OCA\Cantoria\Service\Modules;
 use OCA\Cantoria\Service\MusicXmlExcerpt;
+use OCA\Cantoria\Service\ProgrammeCopies;
 use OCA\Cantoria\Service\RightsPolicy;
 use OCA\Cantoria\Service\Roles;
 use OCA\Cantoria\Service\ScanService;
@@ -45,6 +46,7 @@ use PHPUnit\Framework\TestCase;
  */
 #[CoversClass(ConcertFolderService::class)]
 #[UsesClass(Modules::class)]
+#[UsesClass(ProgrammeCopies::class)]
 #[UsesClass(MusicXmlExcerpt::class)]
 #[UsesClass(SharedLinkService::class)]
 final class ConcertFolderTest extends TestCase {
@@ -110,8 +112,8 @@ final class ConcertFolderTest extends TestCase {
 		$scores = $this->createStub(ScoreService::class);
 		$scores->method('content')->willReturn(['content' => self::SCORE, 'mime' => 'application/vnd.recordare.musicxml+xml', 'name' => 'a.musicxml', 'type' => 'musicxml']);
 		$scores->method('scoreText')->willReturn(['xml' => self::SCORE, 'entry' => null]);
-		return new ConcertFolderService($roles, $eventMapper, $itemMapper, $copies, $versions, $works, $files, $policy, $scores,
-			$this->createStub(ScanService::class), $this->modulesWithout($off));
+		return new ConcertFolderService($roles, $eventMapper, $itemMapper, $versions, $works, $files, $policy, $scores,
+			$this->createStub(ScanService::class), $this->modulesWithout($off), new ProgrammeCopies($copies, $files));
 	}
 
 	private static function event(int $id, string $status, string $date, string $title): Event {

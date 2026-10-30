@@ -31,6 +31,7 @@ Request bodies are checked strictly: unknown fields are refused with 400
 | `GET /api/statistics/csv`, `GET /api/statistics/report/csv` | 30 in 10 minutes |
 | `GET /api/events/{id}/ics`, `GET /api/events/upcoming/ics` | 60 in 10 minutes |
 | `POST /api/events/{id}/calendar`, `POST /api/events/upcoming/calendar` | 30 in 10 minutes |
+| `POST /api/events/{id}/share` | 30 in 10 minutes |
 | `GET /api/nextcloud-files/{fileId}/copy` | 120 in 10 minutes |
 | `GET /api/settings/access` | 20 in 10 minutes |
 | `GET /api/member/links/{token}/score` | 120 in 10 minutes |
@@ -552,6 +553,7 @@ Creating a task or a link refuses fields other than the ones listed below
 | `GET /api/links` | – | any role: all active links of every circle (board/auditors can review them) |
 | `GET /api/links/{token}` | – | any role (rights checked on every call) |
 | `POST /api/links/{id}/revoke` | – | creator or librarian |
+| `POST /api/links/{id}/extend` | `{ expires? }` | creator or librarian; a new last day, the token stays (milestone 0.19, see "Sharing a programme and extending links") |
 
 Start page card keys: `tasks_open`, `tasks_answered`, `ambiguous_items`,
 `proposals`, `portal_remove`, `portal_add`, `confirm_current`, `rule1_current`,
@@ -1393,7 +1395,7 @@ other check of the app. The routes and their modules:
 | `corrections` | `POST /api/versions/{id}/corrections` (and `score_viewer`) |
 | `version_states` | `GET /api/versions/{id}/states`, `PUT /api/states/{id}/current` (and `score_viewer`) |
 | `practice_audio` | `POST /api/versions/{id}/practice-audio` |
-| `excerpt_links` | `POST /api/copies/{id}/links`, `GET /api/copies/{id}/link-options`, `GET /api/links`, `GET /api/links/{token}`, `POST /api/links/{id}/revoke` |
+| `excerpt_links` | `POST /api/copies/{id}/links`, `GET /api/copies/{id}/link-options`, `GET /api/links`, `GET /api/links/{token}`, `POST /api/links/{id}/revoke`, `POST /api/links/{id}/extend`; with `member_links`: `GET /api/events/{id}/share-options`, `POST /api/events/{id}/share` |
 | `member_links` | `GET /api/member/links/{token}/score`; `POST /api/copies/{id}/links` with `circle: "members"`; the page "Shared with me" (`GET /` answers 403 for choir members) |
 | `member_practice_audio` | `POST /api/member/links/{token}/practice-audio` (and `member_links`) |
 | `public_links` | `GET /p/{token}` (the 404 page of the public pages instead of the JSON message); `POST /api/copies/{id}/links` with `circle: "public"` |
@@ -2115,7 +2117,55 @@ the use `member_download` or `self_print` (milestone 0.11), and
 `score_pdf`, still found) that an allowed link may offer; the dialog offers
 "Include the scan (PDF)" only when there is one and `scan` is true. A
 public link plays a protected version only with a license with the use
-`online_audio`; `practice_audio` covers the choir only.
+`online_audio`; `practice_audio` covers the choir only. `offline`
+(milestone 0.19): whether the recipients can keep the piece on their
+device; `null` while the module `offline` is off, for `members` the release
+for downloading or self-printing (`RightsPolicy::deviceCopyDenial`), for
+`public` confirmed public domain.
+
+### Sharing a programme and extending links
+
+Milestone 0.19. A whole concert or song list can be shared with the choir
+members in one step, and a link can be given a new last day without a new
+token: what choir members kept on their devices stays, and a link sent by
+message goes on working.
+
+`GET /api/events/{id}/share-options` (modules `excerpt_links` and
+`member_links`; roles librarian, conductor, operations) says per item of
+the programme what sharing would do, struck items left out:
+
+```json
+{ "expires": "2027-01-24", "latest": "2027-04-30",
+  "items": [{ "id": 12, "title": "Ave verum corpus", "shelfmark": "1-03", "allowed": true, "reason": null,
+              "scan": true, "offline": true, "existing": { "id": 40, "expires": "2026-12-01" },
+              "copyId": 7, "scanFileId": 81 }] }
+```
+
+`expires`: the suggested last day, 14 days after the concert and at most
+`latest` (today plus 183 days); `latest` for a programme without a date or
+in the past. Per item: `allowed` and `reason` (translated) as for a link
+for choir members to the whole piece (`GET /api/copies/{id}/link-options`);
+`reason` is `No copy of this piece is in the catalog.` for an item without
+a copy. `scan` and `offline` as there. `existing`: an active link for
+choir members to the whole piece that the account may extend (its own, or
+any for the librarian), the one that lasts longest; sharing extends it
+instead of making a second one.
+
+`POST /api/events/{id}/share` with `{ items: [itemId, …], expires?, note?,
+scan? }` shares the chosen items: each one goes through `POST
+/api/copies/{id}/links` with `circle: "members"`, the whole piece and, with
+`scan: true`, the scan where `scan` is true; an `existing` link is extended
+to `expires` (its note stays). The answer is `{ created, extended, failed:
+[{ id, title, reason }] }`; one piece that fails does not stop the others.
+No item: 400 `Please choose at least one piece.`.
+
+`POST /api/links/{id}/extend` with `{ expires? }` (no date: the latest)
+sets a new last day for the creator of the link or the librarian (else 403
+`Only the creator or the catalog librarian can extend this link.`). A
+revoked link is refused (400 `A revoked link cannot be extended. Please
+make a new one.`); an expired one can be extended. The module of the circle
+and the rights are checked again as for a new link. The audit log records
+`extended` with the old and the new day.
 
 ### The page of the choir members
 

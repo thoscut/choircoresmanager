@@ -668,7 +668,7 @@ mit **Neuer Link** im Reiter für Aufgaben und Links eines Exemplars):
    zum Beispiel „Bitte bis Donnerstag üben“.
 6. Hat das Exemplar einen Scan, gibt **Scan (PDF) mitgeben** ihn ebenfalls
    mit (bei mehreren Scans wählst du einen unter **Welcher Scan?**). Wer den
-   Link hat, öffnet ihn im PDF-Betrachter des Browsers. Wer den Scan sieht,
+   Link hat, sieht den Scan in der Seite. Wer den Scan sieht,
    kann ihn auch speichern; gib ihn nur mit, wo das in Ordnung ist. Geteilt
    wird immer das ganze PDF, auch bei einem Link auf einige Takte.
 7. **Das ist beim Öffnen des Links zu sehen** nennt, was geteilt wird
@@ -676,8 +676,8 @@ mit **Neuer Link** im Reiter für Aufgaben und Links eines Exemplars):
    Tempo, ob es sich abspielen lässt, ob sich Übe-Dateien erstellen lassen,
    ob der Scan dabei ist und wie lange der Link gilt.
 8. Wähle **Link erstellen** und dann **Link kopieren**, wenn du ihn
-   verschicken willst. Chormitglieder finden es ohnehin unter „Für mich
-   freigegeben“, bis der Link abläuft.
+   verschicken willst. Chormitglieder finden es ohnehin unter „Mit mir
+   geteilt“, bis der Link abläuft.
 
 Ein Link für Chormitglieder ist nur für eine Fassung möglich, die **für das
 Chorportal freigegeben** ist: bestätigt gemeinfrei oder mit einer gültigen
@@ -707,7 +707,37 @@ einen Ausschnitt.
 (**Intern**, **Für Chormitglieder**, **Öffentlich**), mit dem, was er teilt
 (**Ganzes Stück** oder die Takte, dazu **mit Scan (PDF)**), seiner
 Gültigkeit und der Zahl der Aufrufe; **Link widerrufen** sperrt einen Link
-sofort für alle.
+sofort für alle. **Link verlängern** gibt ihm einen neuen letzten Tag
+(höchstens sechs Monate ab heute). Der Link behält seine Adresse: Wer ihn
+per Nachricht bekommen hat, kann ihn weiter nutzen, und was Chormitglieder
+ohne Netz verfügbar gemacht haben, bleibt auf ihren Geräten. Verlängern
+können die Person, die den Link erstellt hat, und die Rolle „Bestand“; ein
+widerrufener Link lässt sich nicht verlängern.
+
+#### So teilst du ein ganzes Programm mit dem Chor
+
+Vor einem Konzert brauchen die Chormitglieder meist alle Stücke. Statt jedes
+Stück einzeln zu teilen:
+
+1. Öffne das Konzert oder die Notenliste unter **Konzerte**.
+2. Wähle **Mit dem Chor teilen …**.
+3. Der Dialog prüft die Rechte jedes Stücks und sagt bei jedem, was
+   passiert: *Ein neuer Link für die Chormitglieder*, *Schon geteilt bis …:
+   Der Link wird verlängert und behält seine Adresse* oder warum es nicht
+   geht. Stücke, die sich teilen lassen, sind angehakt; nimm weg, was der
+   Chor noch nicht braucht.
+4. **Gültig bis** steht auf zwei Wochen nach dem Konzert (höchstens sechs
+   Monate). Eine **Notiz** sehen die Chormitglieder bei jedem neuen Link.
+   Wo die Rechte es erlauben, gibt **Die Scans (PDF) mitgeben, wo die Rechte
+   es erlauben** auch die Scans mit.
+5. Wähle **… Stücke teilen**. Am Ende steht, wie viele Links neu sind, wie
+   viele verlängert wurden und welche Stücke aus welchem Grund nicht geteilt
+   sind.
+
+Jedes Stück wird geteilt, als hättest du es einzeln geteilt: als ganzes
+Stück, mit denselben Rechten und demselben Eintrag im Änderungsprotokoll.
+Steht bei einem Stück *Ohne Netz verfügbar.*, können die Chormitglieder es
+auf ihrem Gerät behalten und auch im Zug üben.
 
 > [!NOTE]
 > Das ganze Stück spielt in der vollen Reihenfolge der Noten, mit allen
@@ -1016,6 +1046,11 @@ Chorleitung und Archivverwaltung planen Konzerte:
    die Konzertmappen und ohne erfasste Zahl der Originale.
 4. Wähle **Programm festlegen**, wenn es steht; ändern lässt es sich noch,
    bis das Konzert als gesungen bestätigt ist.
+5. Mit **Mit dem Chor teilen …** bekommen die Chormitglieder alle Stücke auf
+   einmal (siehe [Ein ganzes Programm mit dem Chor
+   teilen](#so-teilst-du-ein-ganzes-programm-mit-dem-chor)); **In der
+   Konzertmappe öffnen** zeigt das Programm so, wie es bei der Probe und im
+   Konzert auf dem Tablet steht.
 
 Benachrichtigungen zu den Fristen gehen 10, 8 und 6 Wochen vor dem Konzert an
 Chorleitung und Archivverwaltung. Findet ein Konzert nicht statt, wähle

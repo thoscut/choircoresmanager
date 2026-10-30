@@ -399,6 +399,40 @@ export interface CircleOption {
 	playback: boolean
 	/** choir members can make practice files of it */
 	practiceAudio: boolean
+	/** the recipients can keep it on their device (milestone 0.19); null while the module "offline" is off */
+	offline?: boolean | null
+}
+
+/** A piece of a programme in the dialog "Share the programme with the choir" (milestone 0.19). */
+export interface ProgrammeShareItem {
+	/** id of the programme item */
+	id: number
+	title: string
+	shelfmark: string | null
+	/** the piece may be shared with the choir members */
+	allowed: boolean
+	/** translated reason why not */
+	reason: string | null
+	/** a scan may be offered with it */
+	scan: boolean
+	/** the singers can keep it on their device; null while the module "offline" is off */
+	offline: boolean | null
+	/** an active link to the whole piece that is extended instead of making a second one */
+	existing: { id: number, expires: string | null } | null
+}
+
+export interface ProgrammeShareOptions {
+	/** suggested last day: two weeks after the concert */
+	expires: string
+	/** the latest last day a link may have */
+	latest: string
+	items: ProgrammeShareItem[]
+}
+
+export interface ProgrammeShareResult {
+	created: number
+	extended: number
+	failed: { id: number, title: string, reason: string }[]
 }
 
 export interface LinkOptions {
