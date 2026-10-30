@@ -842,7 +842,7 @@ können (siehe Abschnitt 16).
 | Übe-Audio für Chormitglieder | Links für Chormitglieder, Übe-Audio-Dateien | aus (in keiner Voreinstellung) | Chormitglieder erstellen keine Übe-Dateien; der Server lehnt jede Anfrage ab. |
 | Öffentliche Links | Ausschnitt-Links, Wiedergabe, Veröffentlichung | aus (in keiner Voreinstellung) | Jeder öffentliche Link antwortet mit derselben 404-Seite; keine neuen öffentlichen Links. Vorhandene Links bleiben erhalten und laufen ab wie bisher. |
 | Öffentliche Repertoireseite | Rechtebestätigung und Lizenzen | aus (in keiner Voreinstellung) | `/apps/cantoria/repertoire` antwortet mit 404; die Werkfelder für die Seite sind ausgeblendet. |
-| Üben ohne Netz | – | aus (in keiner Voreinstellung) | Aus „Mit mir geteilt“ und von öffentlichen Links lässt sich nichts auf einem Gerät speichern; der nächste Besuch mit Netz entfernt, was dort gespeichert war. |
+| Üben ohne Netz | – | aus (in keiner Voreinstellung) | Aus „Mit mir geteilt“, von öffentlichen Links und aus der Konzertmappe lässt sich nichts auf einem Gerät speichern; der nächste Besuch mit Netz entfernt, was dort gespeichert war. Wirkt nur zusammen mit **Links für Chormitglieder**, **Öffentliche Links** oder **Konzertmappe**. |
 | Schnittstelle für Agenten | – | aus (in keiner Voreinstellung) | Die API für Agenten (`/ocs/v2.php/apps/cantoria/api/v1/…`) antwortet mit 404; der MCP-Server meldet die Schnittstelle als abgeschaltet. Sonst ändert sich nichts. |
 
 ### Kommandozeile
@@ -950,7 +950,7 @@ zu „Vollständig“: Schalte sie einzeln ein, nachdem der Chor entschieden hat
 | **Übe-Audio für Chormitglieder** | Chormitglieder erstellen eine WAV- oder MIDI-Datei einer Stimme eines solchen Stücks oder Ausschnitts, wo die Rechte Übe-Audio-Dateien erlauben. Jede Datei steht im Protokoll. |
 | **Öffentliche Links** | Ein Link, der ein ganzes Stück oder einen Ausschnitt ohne Anmeldung zeigt und abspielt (`/apps/cantoria/p/<token>`), auf Wunsch mit dem Scan (PDF). Nur für Fassungen, die zur Veröffentlichung freigegeben sind und bestätigt gemeinfrei sind oder eine Lizenz zur Online-Veröffentlichung haben. |
 | **Öffentliche Repertoireseite** | `/apps/cantoria/repertoire`: die Werke, die die Archivverwaltung unter denen mit einer bestätigt gemeinfreien Fassung auswählt, mit Lebensdaten, Besetzung und Links zu CPDL und IMSLP. |
-| **Üben ohne Netz** | Chormitglieder speichern Stücke aus „Mit mir geteilt“ auf ihrem Gerät und können sie dort ohne Netz ansehen, abspielen und üben: im Browser, ohne App zum Installieren. Nur für Links, deren Fassung Chormitglieder speichern und drucken dürfen. Mit **Öffentliche Links** können Besucher einen öffentlichen Link ebenso speichern, nur wo die Gemeinfreiheit der Fassung bestätigt ist. |
+| **Üben ohne Netz** | Chormitglieder machen Stücke aus „Mit mir geteilt“ auf ihrem Gerät ohne Netz verfügbar und können sie dort ansehen, abspielen und üben: im Browser, ohne App zum Installieren. Nur für Links, deren Fassung Chormitglieder speichern und drucken dürfen. Mit **Öffentliche Links** können Besucher einen öffentlichen Link ebenso mitnehmen, nur wo die Gemeinfreiheit der Fassung bestätigt ist; mit der **Konzertmappe** die Chorleitung ein Programm. |
 
 Was die Schalter auch sagen: Chormitglieder und die Öffentlichkeit bekommen
 immer nur den Inhalt für die Ansicht (das ganze Stück oder die Takte eines
@@ -1003,7 +1003,7 @@ ohne Namen.
 offline`):
 
 - **Was gespeichert wird, und wo.** Nichts wird gespeichert, bevor ein
-  Chormitglied bei einem Stück **Auf diesem Gerät speichern** wählt, auf
+  Chormitglied bei einem Stück **Ohne Netz verfügbar** einschaltet, auf
   Wunsch **Mit dem Scan (PDF)**. Dann liegen die Noten des Links, der Scan,
   falls gewählt, die Seite „Mit mir geteilt“ und ihre Skripte im Browser
   dieses Geräts (ein Service Worker der App unter
@@ -1021,15 +1021,19 @@ offline`):
   gespeicherten Stücke gesperrt, und ein abgelaufener Link wird nie
   gezeigt, auch ohne Netz. Ein Stück, das vom Gerät kommt, zählt nicht als
   Aufruf des Links.
-- **Geräte.** Es braucht HTTPS und einen aktuellen Browser. Auf iPhone und
-  iPad die Seite auf den Home-Bildschirm legen: Sonst kann Safari die
-  gespeicherten Stücke nach einigen Tagen ohne Nutzung löschen. Auf einem
+- **Geräte.** Es braucht HTTPS und einen aktuellen Browser. Die Stücke
+  liegen je Browser, nicht je Gerät. Auf iPhone und iPad die Seite zuerst
+  auf den Home-Bildschirm legen, von dort öffnen und dann die Stücke
+  einschalten: Der Home-Bildschirm hat einen eigenen Speicher und eine
+  eigene Anmeldung, getrennt von Safari, und Safari kann Gespeichertes nach
+  einigen Tagen ohne Nutzung löschen. Die Seite sagt das vor dem ersten
+  Stück. Bei jedem Start mit Netz legt die Seite ihre Skripte neu ab, damit
+  sie nach einem Update der App auch ohne Netz öffnet. Auf einem
   geteilten Gerät löschen Chormitglieder alles mit **Alles auf diesem Gerät
   löschen**; das Abmelden bei Nextcloud löscht es nicht. Öffnet ein anderes
   Konto die Seite im selben Browser, werden die Stücke des vorigen entfernt.
 - **Öffentliche Links.** Wo die Gemeinfreiheit der Fassung bestätigt ist,
-  bietet auch die Seite eines öffentlichen Links **Auf diesem Gerät
-  speichern**. Besucher haben kein Konto, deshalb wird je Browser
+  bietet auch die Seite eines öffentlichen Links **Ohne Netz verfügbar**. Besucher haben kein Konto, deshalb wird je Browser
   gespeichert; jeder Besuch mit Netz ist der Abgleich, und ein widerrufener
   oder abgelaufener Link wird beim nächsten vom Gerät entfernt. Eine Lizenz
   reicht hier nie: Sie deckt das öffentliche Zeigen, keine Kopie auf dem
@@ -1042,14 +1046,20 @@ offline`):
 concert_folder`, Gruppe **Konzerte und Repertoire**, in keiner
 Voreinstellung): Die Rollen „Chorleitung“ und „Bestand“ bekommen eine eigene Seite,
 `/apps/cantoria/concert-folder` (auch in der Navigation), mit den
-Programmen, die noch zu singen sind, und Noten und Scan jedes Stücks; ein
-ganzes Programm lässt sich für Probe und Konzert ohne Netz auf dem Gerät
-speichern. Es gelten die Rechte der Notenansicht; eine interne
-Erhaltungskopie wird nie auf einem Gerät gespeichert. Sie nutzt denselben
-Service Worker mit einem eigenen Speicher, denselben Abgleich bei jedem
-Start mit Netz und dieselbe Sperre nach 30 Tagen. Die Mappe liest nur. Ein
-anderes Konto im selben Browser oder ein Besuch ohne die Rolle entfernt,
-was gespeichert war. Sie braucht das Modul **Üben ohne Netz** nicht.
+Programmen, die noch zu singen sind, und Noten und Scan jedes Stücks, auch
+in einer Bühnenansicht, bei der der Bildschirm anbleibt. Zum Ansehen
+gelten die Rechte der Notenansicht; eine interne Erhaltungskopie öffnet die
+Mappe nicht, denn sie ist eine Kopie für das Archiv und kein Material für
+Probe und Konzert. Mit dem Modul **Üben ohne Netz** lässt sich ein ganzes
+Programm für Probe und Konzert ohne Netz auf dem Gerät speichern, aber nur
+die Stücke, deren Rechte eine Kopie erlauben: bestätigte Gemeinfreiheit
+oder eine Lizenz für Download oder Selbstausdruck (§ 53 Abs. 4 UrhG; eine
+Kopie, die wochenlang auf dem Tablet bleibt, ist kein bloßes Ansehen). Sie
+nutzt denselben Service Worker mit einem eigenen Speicher, denselben
+Abgleich bei jedem Start mit Netz und dieselbe Sperre nach 30 Tagen. Die
+Mappe liest nur. Ein anderes Konto im selben Browser oder ein Besuch ohne
+die Rolle entfernt, was gespeichert war; ist **Üben ohne Netz** aus,
+entfernt der nächste Besuch alles.
 
 **Häufige Probleme:**
 
@@ -1062,7 +1072,7 @@ was gespeichert war. Sie braucht das Modul **Üben ohne Netz** nicht.
 | „Die Noten dieses Links sind gerade nicht verfügbar.“ oder „Der Scan dieses Links ist gerade nicht verfügbar.“ | Das Konto, das den Archivordner gewählt hat (Einstellungen → Archivordner), muss noch vorhanden sein und den Ordner sehen. Die MusicXML-Datei oder der PDF-Scan muss noch darin liegen und mit dem Exemplar verknüpft sein. |
 | Ein öffentlicher Scan zeigt „nicht gefunden“ | Dieselben Gründe wie bei der Seite, oder die PDF-Datei liegt nicht mehr im Archivordner; verknüpfe den Scan erneut und erstelle einen neuen Link. |
 | Ein öffentlicher Link zeigt „nicht gefunden“ | Er ist abgelaufen, wurde widerrufen, die Fassung ist nicht mehr freigegeben, oder das Modul ist ausgeschaltet; die Seite sagt nicht, was davon. Erstelle bei Bedarf einen neuen Link. |
-| **Auf diesem Gerät speichern** fehlt | Das Modul **Üben ohne Netz** ist aus, oder der Browser kann keine Stücke speichern (kein HTTPS, ein privates Fenster); die Seite sagt es unter **Auf diesem Gerät**. Bei einem einzelnen Stück steht „Lässt sich nicht auf diesem Gerät speichern“, wenn die Rechte das Speichern nicht erlauben. |
+| **Ohne Netz verfügbar** fehlt | Das Modul **Üben ohne Netz** ist aus, oder der Browser kann keine Stücke speichern (kein HTTPS, ein privates Fenster); die Seite sagt es unter **Ohne Netz**. Bei einem einzelnen Stück steht „Ohne Netz nicht verfügbar“ mit dem Grund, wenn die Rechte keine Kopie erlauben. |
 | Gespeicherte Stücke sind auf iPhone oder iPad weg | Safari löscht den Speicher einer Seite nach einigen Tagen ohne Nutzung, wenn sie nicht auf dem Home-Bildschirm liegt. Lege sie dort ab, öffne sie einmal mit Netz und speichere die Stücke erneut. |
 
 ## 15. Mappenbuch: Löschfrist

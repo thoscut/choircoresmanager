@@ -30,14 +30,17 @@ use OCP\Files\File;
  * The concert folder of the conductor (milestone 0.15, module
  * "concert_folder"): the programmes still to be sung, in their order, with
  * the score and the scan of each item, to view, play and practise and to
- * keep on the device for the rehearsal and the concert without a network.
- * Only reads: nothing is changed from the folder. For the conductor and the
- * catalog librarian; the rights policy decides about every piece as in the
- * score view (RightsPolicy::viewDenial, playDenial), and an internal
- * preservation copy is never kept on a device.
+ * keep on the device for the rehearsal and the concert without a network
+ * (with the module "offline", milestone 0.19). Only reads: nothing is
+ * changed from the folder. For the conductor and the catalog librarian; the
+ * rights policy decides about every piece as in the score view
+ * (RightsPolicy::viewDenial, playDenial), a copy on the device needs the
+ * rights for one (RightsPolicy::deviceCopyDenial), and an internal
+ * preservation copy is not opened at all: it is a copy for the archive, not
+ * material for the rehearsal and the concert.
  *
  * @psalm-type FolderItem = array{id: int, position: int, title: string, composer: string, shelfmark: ?string,
- *     participation: ?string, note: ?string, encore: bool, duration: ?int, score: bool, scan: bool, canPlay: bool,
+ *     participation: ?string, note: ?string, encore: bool, duration: ?int, score: bool, scan: bool, scanSize: ?int, canPlay: bool,
  *     reason: ?string, offline: bool, offlineReason: ?string, practiceKey: ?string}
  * @psalm-type FolderConcert = array{id: int, kind: string, title: string, date: ?string, startTime: ?string,
  *     location: ?string, status: string, items: list<FolderItem>}
@@ -46,8 +49,8 @@ class ConcertFolderService {
 	/** Roles that open the concert folder */
 	public const ROLES = [Roles::CONDUCTOR, Roles::LIBRARIAN];
 
-	/** Why a preservation copy stays off the device (translated by the controller) */
-	public const PRESERVATION_COPY = 'Internal preservation copy: it is not kept on a device.';
+	/** Why a preservation copy is not opened in the folder (translated by the controller) */
+	public const PRESERVATION_COPY = 'Internal preservation copy: not for the rehearsal and the concert. Add another copy of the version to the programme.';
 
 	public function __construct(
 		private Roles $roles,
@@ -136,13 +139,27 @@ class ConcertFolderService {
 	}
 
 	/**
-	 * Why a version may not be kept on a device, or null. As the score
-	 * view, and never an internal preservation copy: it may be viewed, but
-	 * it is no copy to take along.
+	 * Whether pieces can be kept on a device at all: the module "offline"
+	 * (milestone 0.19). Without it the folder keeps nothing, as an
+	 * administration that switches it off expects.
+	 */
+	public function offlineOn(): bool {
+		return $this->modules->isEnabled(Modules::OFFLINE);
+	}
+
+	/**
+	 * Why a version may not be viewed in the folder, or null: as the score
+	 * view, and never an internal preservation copy.
+	 */
+	private function folderViewDenial(WorkVersion $version, string $uid, ?Copy $copy): ?string {
+		return RightsPolicy::isPreservationCopy($version, $copy) ? self::PRESERVATION_COPY : $this->policy->viewDenial($version, $uid, $copy);
+	}
+
+	/**
+	 * Why a version may not be kept on a device, or null.
 	 */
 	public function keepDenial(WorkVersion $version, string $uid, ?Copy $copy): ?string {
-		return $this->policy->viewDenial($version, $uid, $copy)
-			?? (RightsPolicy::isPreservationCopy($version, $copy) ? self::PRESERVATION_COPY : null);
+		return $this->folderViewDenial($version, $uid, $copy) ?? $this->policy->deviceCopyDenial($version, $uid, $copy);
 	}
 
 	/**
@@ -158,12 +175,13 @@ class ConcertFolderService {
 		} catch (DoesNotExistException) {
 		}
 		$files = $copy === null ? ['score' => null, 'scan' => null] : $this->filesOf($copy);
-		$viewDenial = $version === null ? null : $this->policy->viewDenial($version, $uid, $copy);
+		$viewDenial = $version === null ? null : $this->folderViewDenial($version, $uid, $copy);
 		$playDenial = $version === null ? null : ($this->policy->playDenial($version, $uid, $copy)
 			?? ($this->modules->isEnabled('playback') ? null : Modules::PLAYBACK_OFF));
 		$score = $files['score'] !== null && $viewDenial === null;
 		$scan = $files['scan'] !== null && $viewDenial === null;
 		$keepDenial = $version === null ? null : $this->keepDenial($version, $uid, $copy);
+		$offline = $this->offlineOn() && ($score || $scan);
 		return [
 			'id' => $item->getId(),
 			'position' => $item->getPosition(),
@@ -176,10 +194,11 @@ class ConcertFolderService {
 			'duration' => $item->getDuration(),
 			'score' => $score,
 			'scan' => $scan,
+			'scanSize' => $files['scan'] !== null && $scan ? $files['scan']->getSize() : null,
 			'canPlay' => $score && $playDenial === null,
 			'reason' => $viewDenial ?? ($score ? $playDenial : null),
-			'offline' => ($score || $scan) && $keepDenial === null,
-			'offlineReason' => ($score || $scan) ? $keepDenial : null,
+			'offline' => $offline && $keepDenial === null,
+			'offlineReason' => $offline ? $keepDenial : null,
 			'practiceKey' => $version === null ? null : SharedLinkService::practiceKey($version),
 		];
 	}
@@ -205,7 +224,7 @@ class ConcertFolderService {
 		if ($copy === null || $version === null) {
 			throw new NotFoundException('This programme item has no score.');
 		}
-		$denial = $this->policy->viewDenial($version, $uid, $copy);
+		$denial = $this->folderViewDenial($version, $uid, $copy);
 		if ($denial !== null) {
 			throw new AccessDeniedException($denial);
 		}

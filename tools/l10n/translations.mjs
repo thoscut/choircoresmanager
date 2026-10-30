@@ -18,8 +18,8 @@ export const singular = {
 		'Dein Konto hat keine Rolle im Notenarchiv. Bitte die Administration, dein Konto in die Gruppe deiner Rolle aufzunehmen.',
 		'Ihr Konto hat keine Rolle im Notenarchiv. Bitten Sie die Administration, Ihr Konto in die Gruppe Ihrer Rolle aufzunehmen.',
 	],
-	'No access to the music archive (guide)': 'Kein Zugang zum Notenarchiv (Anleitung)',
-	'Access forbidden': 'Zugriff verboten',
+	'No access to the music archive (guide, opens in a new tab)': 'Kein Zugang zum Notenarchiv (Anleitung, öffnet in einem neuen Tab)',
+	'No access yet': 'Noch kein Zugang',
 	'You have no access to the music archive: your account has no role in it. Please ask the administration to add your account to the group of your role.': [
 		'Du hast keinen Zugang zum Notenarchiv: Dein Konto hat dort keine Rolle. Bitte die Administration, dein Konto in die Gruppe deiner Rolle aufzunehmen.',
 		'Sie haben keinen Zugang zum Notenarchiv: Ihr Konto hat dort keine Rolle. Bitten Sie die Administration, Ihr Konto in die Gruppe Ihrer Rolle aufzunehmen.',
@@ -2727,10 +2727,6 @@ export const singular = {
 	'The folder in Nextcloud that holds the score files (for example one subfolder per binder). The app only reads files. Exports of the catalog are stored in its subfolder "_cantoria-app".': 'Der Ordner in der Nextcloud mit den Notendateien (zum Beispiel ein Unterordner je Archivmappe). Die App liest Dateien nur. Exporte des Werkverzeichnisses legt sie im Unterordner „_cantoria-app“ ab.',
 	'Backups and annual snapshots name choir members and accounts. They lie outside the archive folder, in a folder of the account that set it, which the role groups do not see unless it is shared with them.': 'Sicherungen und Jahresstände nennen Chormitglieder und Konten. Sie liegen außerhalb des Archivordners in einem Ordner des Kontos, das ihn festgelegt hat. Die Rollengruppen sehen ihn nicht, solange er nicht mit ihnen geteilt wird.',
 	'Backup folder:': 'Sicherungsordner:',
-	'The subfolder "_cantoria-app" of the archive folder still holds backups or annual snapshots of an earlier version, which everyone with access to the archive folder can read. Move them into the backup folder or delete them.': [
-		'Im Unterordner „_cantoria-app“ des Archivordners liegen noch Sicherungen oder Jahresstände einer früheren Version, die alle mit Zugriff auf den Archivordner lesen können. Verschiebe sie in den Sicherungsordner oder lösche sie.',
-		'Im Unterordner „_cantoria-app“ des Archivordners liegen noch Sicherungen oder Jahresstände einer früheren Version, die alle mit Zugriff auf den Archivordner lesen können. Verschieben Sie sie in den Sicherungsordner oder löschen Sie sie.',
-	],
 	'Only an administrator can change the archive folder: background jobs and backups run as the account that sets it.': 'Nur die Administration kann den Archivordner ändern: Hintergrundjobs und Sicherungen laufen mit dem Konto, das ihn festlegt.',
 	'Saving makes this folder the archive folder: the app reads the score files from it as your account sees it, and writes the weekly backups into a folder of your own files outside it ("Music archive backups").': [
 		'Beim Speichern wird dieser Ordner zum Archivordner: Die App liest die Notendateien daraus so, wie dein Konto ihn sieht, und schreibt die wöchentlichen Sicherungen in einen Ordner deiner eigenen Dateien außerhalb davon („Notenarchiv-Sicherungen“).',
@@ -2945,9 +2941,9 @@ export const singular = {
 		'Du bist nicht mehr angemeldet. Bitte lade die Seite neu und melde dich wieder an.',
 		'Sie sind nicht mehr angemeldet. Bitte laden Sie die Seite neu und melden Sie sich wieder an.',
 	],
-	'Your account may not do this. Please ask the music librarians for the role you need.': [
-		'Dein Konto darf das nicht. Bitte frag die Archivverwaltung nach der Rolle, die du brauchst.',
-		'Ihr Konto darf das nicht. Bitte fragen Sie die Archivverwaltung nach der Rolle, die Sie brauchen.',
+	'Your account may not do this. The administration assigns the roles; about a shared piece, ask the conductor.': [
+		'Dein Konto darf das nicht. Die Rollen vergibt die Administration; zu einem geteilten Stück frag die Chorleitung.',
+		'Ihr Konto darf das nicht. Die Rollen vergibt die Administration; zu einem geteilten Stück fragen Sie die Chorleitung.',
 	],
 	'This no longer exists or is switched off. Please reload the page.': [
 		'Das gibt es nicht mehr oder es ist ausgeschaltet. Bitte lade die Seite neu.',
@@ -3169,34 +3165,21 @@ export const singular = {
 		'Übe-Dateien brauchen ein Netz: Der Server prüft zuerst die Rechte und protokolliert jede Datei. Abspielen und Üben gehen auch ohne.',
 	'This link has expired. It is removed from this device at the next start with a network.':
 		'Dieser Link ist abgelaufen. Er wird beim nächsten Start mit Netz von diesem Gerät entfernt.',
-	'There is no network, and this piece is not kept on this device.': 'Es gibt kein Netz, und dieses Stück ist nicht auf diesem Gerät gespeichert.',
-	'"{title}" is kept on this device.': '„{title}“ ist auf diesem Gerät gespeichert.',
+	'There is no network, and this piece is not available without a network.': 'Es gibt kein Netz, und dieses Stück ist nicht ohne Netz verfügbar.',
+	'"{title}" is available without a network.': '„{title}“ ist ohne Netz verfügbar.',
 	'"{title}" is removed from this device.': '„{title}“ ist von diesem Gerät entfernt.',
-	'"{title}" could not be kept on this device: {reason}': '„{title}“ ließ sich nicht auf diesem Gerät speichern: {reason}',
-	'Please check the network and the space on the device.': [
-		'Bitte prüfe das Netz und den freien Speicher auf dem Gerät.',
-		'Bitte prüfen Sie das Netz und den freien Speicher auf dem Gerät.',
-	],
 	'Everything Cantoria kept on this device is deleted.': 'Alles, was Cantoria auf diesem Gerät gespeichert hatte, ist gelöscht.',
 	'{used} used on this device.': '{used} auf diesem Gerät belegt.',
 	'{used} of {available} used on this device.': '{used} von {available} auf diesem Gerät belegt.',
 	'Last checked with the server: {time}.': 'Zuletzt mit dem Server abgeglichen: {time}.',
-	'No network: the pieces kept on this device can be viewed, played and practised. {checked}':
-		'Kein Netz: Die auf diesem Gerät gespeicherten Stücke lassen sich ansehen, abspielen und üben. {checked}',
-	'No network, and no piece is kept on this device.': 'Kein Netz, und auf diesem Gerät ist kein Stück gespeichert.',
-	'Keep on this device': 'Auf diesem Gerät speichern',
+	'No network, and no piece is available without a network on this device.': 'Kein Netz, und auf diesem Gerät ist kein Stück ohne Netz verfügbar.',
 	'With the scan (PDF)': 'Mit dem Scan (PDF)',
-	'Keeping on this device …': 'Wird auf diesem Gerät gespeichert …',
-	'Cannot be kept on this device: the rights do not allow saving the notes.':
-		'Lässt sich nicht auf diesem Gerät speichern: Die Rechte erlauben das Speichern der Noten nicht.',
-	'Not on this device: needs a network.': 'Nicht auf diesem Gerät: braucht ein Netz.',
-	'The scan is not kept on this device.': 'Der Scan ist nicht auf diesem Gerät gespeichert.',
-	'On this device': 'Auf diesem Gerät',
+	'Making it available without a network …': 'Wird ohne Netz verfügbar gemacht …',
+	'Needs a network': 'Braucht Netz',
+	'The scan is not available without a network.': 'Der Scan ist ohne Netz nicht verfügbar.',
+	'Without a network': 'Ohne Netz',
 	'The browser keeps them even when space runs short.': 'Der Browser behält sie auch, wenn der Speicher knapp wird.',
-	'The browser may delete them when space runs short; on an iPhone or iPad, add this page to the home screen.': [
-		'Der Browser kann sie löschen, wenn der Speicher knapp wird; auf iPhone oder iPad lege diese Seite auf den Home-Bildschirm.',
-		'Der Browser kann sie löschen, wenn der Speicher knapp wird; auf iPhone oder iPad legen Sie diese Seite auf den Home-Bildschirm.',
-	],
+	'The browser may delete them when space runs short.': 'Der Browser kann sie löschen, wenn der Speicher knapp wird.',
 	'This browser cannot keep pieces for practising without a network.': 'Dieser Browser kann keine Stücke zum Üben ohne Netz speichern.',
 	'Passages and settings for practising are remembered in this browser only. On a shared device, delete them when you are done.': [
 		'Übe-Stellen und Übe-Einstellungen merkt sich nur dieser Browser. Auf einem geteilten Gerät lösche sie, wenn du fertig bist.',
@@ -3206,12 +3189,9 @@ export const singular = {
 	'Delete kept pieces, passages and settings': 'Gespeicherte Stücke, Übe-Stellen und Einstellungen löschen',
 	'The app is not built.': 'Die App ist nicht gebaut.',
 	'Practising without a network': 'Üben ohne Netz',
-	'Choir members keep pieces shared with them on their device and view, play and practise them without a network (with the sharing with choir members); so can visitors of a public link to a piece whose public domain is confirmed (with public links). Only for versions whose rights allow choir members to save and print the notes; expired and revoked links are removed at the next start with a network, and kept pieces are locked after 30 days without one. Nothing is written to the server without a network. Not part of any preset.':
-		'Chormitglieder speichern Stücke, die mit ihnen geteilt sind, auf ihrem Gerät und können sie ohne Netz ansehen, abspielen und üben (mit dem Teilen mit Chormitgliedern); ebenso Besuchende eines öffentlichen Links zu einem Stück mit bestätigter Gemeinfreiheit (mit öffentlichen Links). Nur für Fassungen, deren Rechte Chormitgliedern das Speichern und Drucken der Noten erlauben; abgelaufene und widerrufene Links werden beim nächsten Start mit Netz entfernt, gespeicherte Stücke nach 30 Tagen ohne Netz gesperrt. Ohne Netz wird nichts auf den Server geschrieben. Gehört zu keiner Voreinstellung.',
-	'Not every piece could be kept on this device: {reason}': 'Nicht jedes Stück ließ sich auf diesem Gerät speichern: {reason}',
+	'Pieces are kept on a device and viewed, played and practised without a network: by choir members (with the sharing with choir members), by visitors of a public link to a piece whose public domain is confirmed (with public links) and in the concert folder. Only where the rights allow a copy. Kept pieces are checked at every start with a network and locked after 30 days without one. Without this module nothing is kept on a device. Not part of any preset.': 'Stücke werden auf einem Gerät gespeichert und ohne Netz angesehen, abgespielt und geübt: von Chormitgliedern (mit dem Teilen mit Chormitgliedern), von Besuchern eines öffentlichen Links zu einem Stück mit bestätigter Gemeinfreiheit (mit öffentlichen Links) und in der Konzertmappe. Nur wo die Rechte eine Kopie erlauben. Gespeicherte Stücke werden bei jedem Start mit Netz abgeglichen und nach 30 Tagen ohne Netz gesperrt. Ohne dieses Modul wird nichts auf einem Gerät gespeichert. Gehört zu keiner Voreinstellung.',
 	'With the scans (PDF)': 'Mit den Scans (PDF)',
-	'On this device, with the scan': 'Auf diesem Gerät, mit dem Scan',
-	'Cannot be kept on this device: {reason}': 'Lässt sich nicht auf diesem Gerät speichern: {reason}',
+	'Available without a network, with the scan': 'Ohne Netz verfügbar, mit Scan',
 	'No network: this piece is shown from this device. {checked}': 'Kein Netz: Dieses Stück wird von diesem Gerät gezeigt. {checked}',
 	'Kept in this browser: this page opens without a network, while the link is valid. Open it once with a network at least every {days} days.': [
 		'In diesem Browser gespeichert: Diese Seite öffnet sich ohne Netz, solange der Link gilt. Öffne sie mindestens alle {days} Tage einmal mit Netz.',
@@ -3228,8 +3208,7 @@ export const singular = {
 	'Scan of {title}': 'Scan von „{title}“',
 	// ---- milestone 0.15: the concert folder ----
 	'Concert folder': 'Konzertmappe',
-	'The conductor and the catalog librarian open the programmes still to be sung in their order, with score and scan of each item, and keep a whole programme on their device for the rehearsal and the concert without a network. Rights as in the score view; internal preservation copies are never kept on a device. Kept pieces are checked at every start with a network and locked after 30 days without one. Only reads. Not part of any preset.':
-		'Die Chorleitung und die Rolle „Bestand“ öffnen die noch zu singenden Programme in ihrer Reihenfolge, mit Partitur und Scan je Programmpunkt, und speichern ein ganzes Programm für Probe und Konzert ohne Netz auf ihrem Gerät. Rechte wie in der Notenansicht; interne Erhaltungskopien werden nie auf einem Gerät gespeichert. Gespeicherte Stücke werden bei jedem Start mit Netz abgeglichen und nach 30 Tagen ohne Netz gesperrt. Nur lesend. Gehört zu keiner Voreinstellung.',
+	'The conductor and the catalog librarian open the programmes still to be sung in their order, with score and scan of each item, also in a stage view that keeps the screen on. With "Practising without a network" they make a whole programme available on their device for the rehearsal and the concert, where the rights allow a copy. Internal preservation copies are not opened here. Only reads. Not part of any preset.': 'Die Chorleitung und die Rolle „Bestand“ öffnen die noch zu singenden Programme in ihrer Reihenfolge, mit Partitur und Scan je Programmpunkt, auch in einer Bühnenansicht, bei der der Bildschirm anbleibt. Mit „Üben ohne Netz“ machen sie ein ganzes Programm für Probe und Konzert auf ihrem Gerät ohne Netz verfügbar, wo die Rechte eine Kopie erlauben. Interne Erhaltungskopien werden hier nicht geöffnet. Nur lesend. Gehört zu keiner Voreinstellung.',
 	'The concert folder is for the conductor and the catalog librarian.': 'Die Konzertmappe ist für die Chorleitung und die Rolle „Bestand“.',
 	'Internal preservation copy: it is not kept on a device.': 'Interne Erhaltungskopie: Sie wird nicht auf einem Gerät gespeichert.',
 	'This programme item has no score.': 'Dieser Programmpunkt hat keine Partitur.',
@@ -3237,8 +3216,6 @@ export const singular = {
 	'This programme item is no longer in the concert folder.': 'Dieser Programmpunkt ist nicht mehr in der Konzertmappe.',
 	'This programme item has no MusicXML score.': 'Dieser Programmpunkt hat keine MusicXML-Partitur.',
 	'Everything the concert folder kept on this device is deleted.': 'Alles, was die Konzertmappe auf diesem Gerät gespeichert hatte, ist gelöscht.',
-	'The programmes still to be sung, in their order: view, play and practise each piece, and keep a whole programme on this device for the rehearsal and the concert without a network.':
-		'Die noch zu singenden Programme in ihrer Reihenfolge: jedes Stück ansehen, abspielen und üben und ein ganzes Programm für Probe und Konzert ohne Netz auf diesem Gerät speichern.',
 	'Back to Cantoria': 'Zurück zu Cantoria',
 	'No programme to be sung': 'Kein Programm zu singen',
 	'Concerts and song lists in draft or fixed appear here, the next one first.': 'Konzerte und Notenlisten im Entwurf oder festgelegt erscheinen hier, das nächste zuerst.',
@@ -3264,6 +3241,67 @@ export const singular = {
 		'Tippe oder klicke auf eine Note, um ab dort zu spielen.',
 		'Tippen oder klicken Sie auf eine Note, um ab dort zu spielen.',
 	],
+	'There is not enough space on this device. Remove other pieces or leave out the scans.': [
+		'Auf diesem Gerät ist nicht genug Platz. Entferne andere Stücke oder lass die Scans weg.',
+		'Auf diesem Gerät ist nicht genug Platz. Entfernen Sie andere Stücke oder lassen Sie die Scans weg.',
+	],
+	'There is no connection. Please try again with a network.': [
+		'Keine Verbindung. Bitte versuche es mit Netz noch einmal.',
+		'Keine Verbindung. Bitte versuchen Sie es mit Netz noch einmal.',
+	],
+	'It did not work. Please check the network and the space on the device and try again.': [
+		'Das hat nicht geklappt. Bitte prüfe das Netz und den Platz auf dem Gerät und versuche es noch einmal.',
+		'Das hat nicht geklappt. Bitte prüfen Sie das Netz und den Platz auf dem Gerät und versuchen Sie es noch einmal.',
+	],
+	'{done} of {total} pieces ready …': '{done} von {total} Stücken bereit …',
+	'Scan only': 'Nur Scan',
+	'End of the piece. Press again for "{title}".': [
+		'Ende des Stücks. Drück noch einmal für „{title}“.',
+		'Ende des Stücks. Drücken Sie noch einmal für „{title}“.',
+	],
+	'The programmes still to be sung, in their order: view, play and practise each piece, and make a whole programme available without a network for the rehearsal and the concert.': 'Die noch zu singenden Programme in ihrer Reihenfolge: jedes Stück ansehen, abspielen und üben und ein ganzes Programm für Probe und Konzert ohne Netz verfügbar machen.',
+	'The programmes still to be sung, in their order: view, play and practise each piece.': 'Die noch zu singenden Programme in ihrer Reihenfolge: jedes Stück ansehen, abspielen und üben.',
+	'No network: the pieces available without a network can be viewed, played and practised. {checked}': 'Kein Netz: Die Stücke, die ohne Netz verfügbar sind, lassen sich ansehen, abspielen und üben. {checked}',
+	'Hide the programme': 'Programm ausblenden',
+	'Programme: {title}, piece {position} of {count}': 'Programm: {title}, Stück {position} von {count}',
+	'Available without a network': 'Ohne Netz verfügbar',
+	'Stage view': 'Bühnenansicht',
+	'Next': 'Nächstes',
+	'End of the programme "{title}".': 'Ende des Programms „{title}“.',
+	'Cantoria keeps them in this browser on this device; another browser does not see them.': 'Cantoria legt sie in diesem Browser auf diesem Gerät ab; ein anderer Browser sieht sie nicht.',
+	'Safari and the home screen keep pieces apart: open this page the way you want to use it without a network.': [
+		'Safari und der Home-Bildschirm halten die Stücke getrennt: Öffne diese Seite so, wie du sie ohne Netz nutzen willst.',
+		'Safari und der Home-Bildschirm halten die Stücke getrennt: Öffnen Sie diese Seite so, wie Sie sie ohne Netz nutzen wollen.',
+	],
+	'Discard the recording?': 'Aufnahme verwerfen?',
+	'Your recording is not saved. If you open "{title}" now, it is gone.': [
+		'Deine Aufnahme ist nicht gespeichert. Wenn du jetzt „{title}“ öffnest, ist sie weg.',
+		'Ihre Aufnahme ist nicht gespeichert. Wenn Sie jetzt „{title}“ öffnen, ist sie weg.',
+	],
+	'Discard and open': 'Verwerfen und öffnen',
+	'Keep the recording': 'Aufnahme behalten',
+	'With the scans (PDF, {size})': 'Mit den Scans (PDF, {size})',
+	'With the scan (PDF, {size})': 'Mit dem Scan (PDF, {size})',
+	'Not available without a network: the rights do not allow downloading it.': 'Ohne Netz nicht verfügbar: Die Rechte erlauben kein Herunterladen.',
+	'On an iPhone or iPad: first add this page to the home screen, open it from there, sign in and then make the pieces available. Safari and the home screen keep them apart.': [
+		'Auf iPhone oder iPad: Lege diese Seite zuerst auf den Home-Bildschirm, öffne sie von dort, melde dich an und mach dann die Stücke verfügbar. Safari und der Home-Bildschirm halten sie getrennt.',
+		'Auf iPhone oder iPad: Legen Sie diese Seite zuerst auf den Home-Bildschirm, öffnen Sie sie von dort, melden Sie sich an und machen Sie dann die Stücke verfügbar. Safari und der Home-Bildschirm halten sie getrennt.',
+	],
+	'Needs a network to change.': 'Zum Ändern braucht es Netz.',
+	'Guide for choir members (opens in a new tab)': 'Anleitung für Chormitglieder (öffnet in einem neuen Tab)',
+	'Other pieces ({count})': 'Andere Stücke ({count})',
+	'Internal preservation copy: not for the rehearsal and the concert. Add another copy of the version to the programme.': [
+		'Interne Erhaltungskopie: nicht für Probe und Konzert. Nimm ein anderes Exemplar der Fassung ins Programm.',
+		'Interne Erhaltungskopie: nicht für Probe und Konzert. Nehmen Sie ein anderes Exemplar der Fassung ins Programm.',
+	],
+	'Not available without a network: unless public domain is confirmed, a copy on a device needs a license for download or self-printing. The catalog librarian records it on the tab "Rights".': 'Ohne Netz nicht verfügbar: Ohne bestätigte Gemeinfreiheit braucht eine Kopie auf einem Gerät eine Lizenz für Download oder Selbstausdruck. Die Archivverwaltung trägt sie im Reiter „Rechte“ ein.',
+	'The page for choir members is switched off at the moment. Please ask the conductor.': [
+		'Die Seite für Chormitglieder ist gerade ausgeschaltet. Frag bitte die Chorleitung.',
+		'Die Seite für Chormitglieder ist gerade ausgeschaltet. Fragen Sie bitte die Chorleitung.',
+	],
+	'No access to the music archive (guide)': 'Kein Zugang zum Notenarchiv (Anleitung)',
+	'Guide for choir members': 'Anleitung für Chormitglieder',
+	'Without the scans; each piece can take its scan along.': 'Ohne die Scans; jedes Stück kann seinen Scan mitnehmen.',
 }
 
 export const plural = {
@@ -3465,16 +3503,20 @@ export const plural = {
 			'Gesperrt: seit mehr als %n Tagen nicht mit dem Server abgeglichen. Bitte öffnen Sie diese Seite einmal mit Netz.',
 		],
 	},
-	'%n piece is kept on this device for practising without a network.|%n pieces are kept on this device for practising without a network.': [
-		'%n Stück ist zum Üben ohne Netz auf diesem Gerät gespeichert.',
-		'%n Stücke sind zum Üben ohne Netz auf diesem Gerät gespeichert.',
+	'%n piece is available without a network.|%n pieces are available without a network.': [
+		'%n Stück ist ohne Netz verfügbar.',
+		'%n Stücke sind ohne Netz verfügbar.',
 	],
-	'%n piece is kept on this device.|%n pieces are kept on this device.': [
-		'%n Stück ist auf diesem Gerät gespeichert.',
-		'%n Stücke sind auf diesem Gerät gespeichert.',
+	'Make %n available without a network|Make all %n available without a network': [
+		'%n ohne Netz verfügbar machen',
+		'Alle %n ohne Netz verfügbar machen',
 	],
-	'Keep %n piece on this device|Keep all %n pieces on this device': [
-		'%n Stück auf diesem Gerät speichern',
-		'Alle %n Stücke auf diesem Gerät speichern',
+	'%n piece is not available without a network yet. {reason}|%n pieces are not available without a network yet. {reason}': [
+		'%n Stück ist noch nicht ohne Netz verfügbar. {reason}',
+		'%n Stücke sind noch nicht ohne Netz verfügbar. {reason}',
+	],
+	'%n piece available without a network|All %n pieces available without a network': [
+		'%n Stück ohne Netz verfügbar',
+		'Alle %n Stücke ohne Netz verfügbar',
 	],
 }

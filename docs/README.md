@@ -12,6 +12,7 @@ documentation for developers is in English.
 | Using the app | [User guide](user-guide.md) | [Benutzerhandbuch](de/benutzerhandbuch.md) |
 | Running the app | [Administration guide](admin-guide.md) | [Administrationshandbuch](de/administrationshandbuch.md) |
 | The essentials in a few minutes | – | [Schnellstart](de/schnellstart.md) |
+| One page for the singers, to pass on | [For choir members](for-choir-members.md) | [Für Chormitglieder](de/fuer-chormitglieder.md) |
 | The law behind the rights checks | [Legal background](legal-background.md) | [Rechtlicher Hintergrund](de/rechtlicher-hintergrund.md) |
 | Data protection templates for the choir | [Privacy templates](privacy-templates.md) | [Datenschutz-Vorlagen](de/datenschutz-vorlagen.md) |
 | Running it next to a member app or choir website | [Alongside a choir system](alongside-a-choir-system.md) | [Neben einem Chorsystem](de/neben-einem-chorsystem.md) |
@@ -24,7 +25,7 @@ documentation for developers is in English.
 | a music librarian who keeps the catalog, the rights and the backups | [User guide](user-guide.md) |
 | a conductor who chooses versions, answers questions and plans concerts | [User guide](user-guide.md) |
 | a board member or auditor who reads the catalog and the audit log | [User guide](user-guide.md) |
-| a choir member who practises with the excerpts shared with you | [User guide, "As a choir member"](user-guide.md#as-a-choir-member) |
+| a choir member who practises with the excerpts shared with you | [For choir members](for-choir-members.md), one page; details in the [user guide, "As a choir member"](user-guide.md#as-a-choir-member) |
 
 ## Running the app
 

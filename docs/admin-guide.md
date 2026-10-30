@@ -767,7 +767,7 @@ writes files into a folder others can open (see section 16).
 | Practice audio for choir members | Links for choir members, Practice audio files | off (in no preset) | Choir members make no practice files; the server refuses every request. |
 | Public links | Excerpt links, Playback, Publication | off (in no preset) | Every public link answers the same 404 page; no new public links. Existing links are kept and expire as before. |
 | Public repertoire page | Rights confirmation and licenses | off (in no preset) | `/apps/cantoria/repertoire` answers 404; the work fields for the page are hidden. |
-| Practising without a network | – | off (in no preset) | Nothing can be kept on a device from "Shared with me" or a public link; the next visit with a network removes what was kept there. |
+| Practising without a network | – | off (in no preset) | Nothing can be kept on a device from "Shared with me", a public link or the concert folder; the next visit with a network removes what was kept there. Works only together with **Links for choir members**, **Public links** or **Concert folder**. |
 | Interface for agents | – | off (in no preset) | The API for agents (`/ocs/v2.php/apps/cantoria/api/v1/…`) answers 404; the MCP server reports the interface as switched off. Nothing else changes. |
 
 ### Command line
@@ -865,7 +865,7 @@ one by one, after the choir has decided.
 | **Practice audio for choir members** | Choir members make a WAV or MIDI file of one voice of such a piece or excerpt, where the rights allow practice audio files. Every file is recorded in the audit log. |
 | **Public links** | A link that shows and plays a whole piece or an excerpt without login (`/apps/cantoria/p/<token>`), optionally with the scan (PDF). Only for versions released for publication that are confirmed public domain or have a license for online publication. |
 | **Public repertoire page** | `/apps/cantoria/repertoire`: the works the catalog librarian chooses among those with a version confirmed as public domain, with life dates, scoring and links to CPDL and IMSLP. |
-| **Practising without a network** | Choir members keep pieces of "Shared with me" on their device and view, play and practise them there without a network: in the browser, no app to install. Only for links whose version choir members may save and print. With **Public links**, visitors can keep a public link the same way, only where the public domain of the version is confirmed. |
+| **Practising without a network** | Choir members make pieces of "Shared with me" available without a network on their device and view, play and practise them there: in the browser, no app to install. Only for links whose version choir members may save and print. With **Public links**, visitors can take a public link along the same way, only where the public domain of the version is confirmed; with the **Concert folder**, the conductor a programme. |
 
 Whatever the switches say, choir members and the public only ever get the
 content for the view (the whole piece or the measures of an excerpt), never
@@ -913,7 +913,7 @@ counted, but without names.
 enable offline`):
 
 - **What is kept, and where.** Nothing is kept until a choir member chooses
-  **Keep on this device** for a piece, optionally **With the scan (PDF)**.
+  **Available without a network** for a piece, optionally **With the scan (PDF)**.
   Then the notes of the link, the scan if chosen, the page "Shared with me"
   and its scripts are stored in the browser of that device (a service
   worker of the app at `/apps/cantoria/offline-worker`, which only
@@ -929,14 +929,19 @@ enable offline`):
   ones are removed. Without a check for 30 days the kept pieces are locked,
   and an expired link is never shown, also without a network. A piece shown
   from the device does not count as a call of the link.
-- **Devices.** It needs HTTPS and a current browser. On iPhone and iPad,
-  add the page to the home screen: otherwise Safari may delete the kept
-  pieces after some days without use. On a shared device, choir members
+- **Devices.** It needs HTTPS and a current browser. Pieces are kept per
+  browser, not per device. On iPhone and iPad, add the page to the home
+  screen first, open it from there and then switch the pieces on: the home
+  screen has a storage and a sign-in of its own, apart from Safari, and
+  Safari may delete what it kept after some days without use. The page
+  says so before the first piece. At every start with a network the page
+  keeps its scripts again, so that it opens without a network also after an
+  update of the app. On a shared device, choir members
   delete everything with **Delete everything on this device**; signing out
   of Nextcloud does not delete it. When another account opens the page in
   the same browser, the pieces of the previous one are removed.
 - **Public links.** Where the public domain of the version is confirmed,
-  the page of a public link offers **Keep on this device**, too. Visitors
+  the page of a public link offers **Available without a network**, too. Visitors
   have no account, so their pieces are kept per browser; each visit with a
   network is the check, and a revoked or expired link is removed from the
   device at the next one. A license is never enough here: it covers the
@@ -949,14 +954,20 @@ enable offline`):
 enable concert_folder`, group **Concerts and repertoire**, in no preset):
 the conductor and the catalog librarian get a page of their own,
 `/apps/cantoria/concert-folder` (also in the navigation), with the
-programmes still to be sung and the score and scan of each item; a whole
-programme can be kept on the device for the rehearsal and the concert
-without a network. The rights are those of the score view; an internal
-preservation copy is never kept on a device. It uses the same service
+programmes still to be sung and the score and scan of each item, also in a
+stage view that keeps the screen on. Viewing follows the rights of the
+score view; the folder does not open an internal preservation copy, which
+is a copy for the archive and no material for the rehearsal and the
+concert. With the module **Practising without a network** a whole
+programme can be kept on the device for the rehearsal and the concert, but
+only the pieces whose rights allow a copy: confirmed public domain, or a
+license for download or self-printing (§ 53 (4) UrhG; a copy that stays on
+the tablet for weeks is more than viewing). It uses the same service
 worker, with a cache of its own, the same check at every start with a
 network and the same lock after 30 days. The folder only reads. Another
 account in the same browser, or a visit without the role, removes what was
-kept. It does not need the module **Practising without a network**.
+kept; with **Practising without a network** off, the next visit removes
+everything.
 
 **Common problems:**
 
@@ -969,7 +980,7 @@ kept. It does not need the module **Practising without a network**.
 | "The score of this link is not available at the moment." or "The scan of this link is not available at the moment." | The account that chose the archive folder (Settings → Archive folder) must still exist and see the folder, and the MusicXML file or the PDF scan must still be in it and linked to the copy. |
 | A public scan shows "not found" | The same reasons as for the page, or the PDF is no longer in the archive folder; make a new link with the scan linked again. |
 | A public link shows "not found" | It has expired, was revoked, the version is no longer released, or the module is off; the page does not tell which. Make a new link if needed. |
-| **Keep on this device** is missing | The module **Practising without a network** is off, or the browser cannot keep pieces (no HTTPS, a private window); the page says so under **On this device**. For a single piece it says "Cannot be kept on this device" when the rights do not allow saving. |
+| **Available without a network** is missing | The module **Practising without a network** is off, or the browser cannot keep pieces (no HTTPS, a private window); the page says so under **Without a network**. For a single piece it says "Not available without a network" with the reason when the rights do not allow a copy. |
 | Kept pieces are gone on an iPhone or iPad | Safari deletes the storage of a page after some days without use unless it was added to the home screen. Add it, open it once with a network and keep the pieces again. |
 
 ## 15. Folder book: retention period

@@ -414,6 +414,7 @@ final class SharingTest extends TestCase {
 		$file->setType('musicxml');
 		$file->setName('1-03.musicxml');
 		$scan = self::archiveFile(5, 35, 'score_pdf', '1-03.pdf');
+		$scan->setSize(2_400_000);
 		$files = $this->createStub(ArchiveFileMapper::class);
 		$files->method('findByCopy')->willReturn([$file, $scan]);
 		$files->method('find')->willReturnCallback(fn (int $id): ArchiveFile => match ($id) {
@@ -470,7 +471,7 @@ final class SharingTest extends TestCase {
 		self::assertCount(1, $list, 'only active links for choir members');
 		self::assertSame(['token' => self::TOKEN, 'title' => 'Abendlied', 'composer' => 'J. Rheinberger', 'measure_from' => '2', 'measure_to' => '3',
 			'voice' => 'Alto', 'verse' => null, 'tempo' => null, 'note' => 'Please practise until Thursday.', 'expires' => '2026-12-31',
-			'canPlay' => true, 'canExportAudio' => true, 'reason' => null, 'scan' => false, 'offline' => true,
+			'canPlay' => true, 'canExportAudio' => true, 'reason' => null, 'scan' => false, 'scanSize' => null, 'offline' => true,
 			'practiceKey' => SharedLinkService::practiceKey($this->version()),
 			'credits' => [['role' => 'lyricist', 'name' => 'H. Claudius'], ['role' => 'arranger', 'name' => 'K. Satz']],
 			'notices' => ['By kind permission of Carus']], $list[0], 'the authors by name only, the notices of licenses valid today');
@@ -505,7 +506,9 @@ final class SharingTest extends TestCase {
 		$shared = $this->shared([$whole, $excerpt]);
 		$list = $shared->forMember('singer');
 		self::assertSame([null, null, true], [$list[0]['measure_from'], $list[0]['measure_to'], $list[0]['scan']]);
+		self::assertSame(2_400_000, $list[0]['scanSize'], 'the size of the scan for the switch on the device');
 		self::assertFalse($list[1]['scan']);
+		self::assertNull($list[1]['scanSize']);
 
 		$xml = $shared->memberScore(self::TOKEN, 'singer');
 		foreach (['1', '2', '3'] as $number) {
@@ -563,7 +566,7 @@ final class SharingTest extends TestCase {
 	public function testAPublicLinkShowsOnlyTheExcerptAndNothingInternal(): void {
 		$excerpt = $this->shared([$this->link('public')])->publicExcerpt(self::TOKEN);
 		self::assertNotNull($excerpt);
-		self::assertSame(['title', 'composer', 'measureFrom', 'measureTo', 'voice', 'verse', 'tempo', 'canPlay', 'scan', 'practiceKey', 'expires', 'offline',
+		self::assertSame(['title', 'composer', 'measureFrom', 'measureTo', 'voice', 'verse', 'tempo', 'canPlay', 'scan', 'scanSize', 'practiceKey', 'expires', 'offline',
 			'served', 'xml', 'credits', 'notices'], array_keys($excerpt), 'no note, no shelf mark, no account');
 		self::assertMatchesRegularExpression('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/', $excerpt['served'], 'when the page was made, for the check on the device');
 		self::assertSame(['By kind permission of Carus'], $excerpt['notices']);

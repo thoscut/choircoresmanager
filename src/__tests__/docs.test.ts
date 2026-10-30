@@ -39,6 +39,7 @@ const PAIRS = [
 	['docs/privacy-templates.md', 'docs/de/datenschutz-vorlagen.md'],
 	['docs/alongside-a-choir-system.md', 'docs/de/neben-einem-chorsystem.md'],
 	['docs/accessibility.md', 'docs/de/barrierefreiheit.md'],
+	['docs/for-choir-members.md', 'docs/de/fuer-chormitglieder.md'],
 ] as const
 
 /** The pages whose links are checked. */
@@ -153,7 +154,7 @@ describe('links into the guides', () => {
 		}
 	})
 
-	it('are the same on the page "Access forbidden" of the server', () => {
+	it('are the same on the page "No access yet" of the server', () => {
 		expect(pageController).toContain(`'user-guide.md#${USER_GUIDE.noAccess.en}'`)
 		expect(pageController).toContain(`'de/benutzerhandbuch.md#${USER_GUIDE.noAccess.de}'`)
 	})

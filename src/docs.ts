@@ -19,6 +19,7 @@ const DOCS = 'https://github.com/thoscut/choircoresmanager/blob/main/docs/'
 const FILES = {
 	admin: { en: 'admin-guide.md', de: 'de/administrationshandbuch.md' },
 	user: { en: 'user-guide.md', de: 'de/benutzerhandbuch.md' },
+	members: { en: 'for-choir-members.md', de: 'de/fuer-chormitglieder.md' },
 } as const
 
 /** A section of a guide: GitHub's anchor of its heading in each language. */
@@ -82,6 +83,14 @@ export function userGuideUrl(section: GuideSection): string {
 /** The guide behind "Help": the user guide in the language of the user. */
 export function helpUrl(): string {
 	return DOCS + (isGerman() ? FILES.user.de : FILES.user.en)
+}
+
+/**
+ * The one-page guide for choir members (milestone 0.19), which the conductor
+ * can pass on; linked from the empty page "Shared with me".
+ */
+export function membersGuideUrl(): string {
+	return DOCS + (isGerman() ? FILES.members.de : FILES.members.en)
 }
 
 /**

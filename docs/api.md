@@ -2128,14 +2128,17 @@ role (module `member_links`) returns the page "Shared with me" (template
 { "links": [{ "token": "…", "title": "Abendlied", "composer": "J. Rheinberger", "measure_from": null, "measure_to": null,
               "voice": "Alto", "verse": null, "tempo": null, "note": "Please practise until Thursday.",
               "expires": "2027-04-23", "canPlay": true, "canExportAudio": false, "reason": null, "scan": true,
-              "offline": true, "practiceKey": "2922db9b58cb760f1724",
+              "scanSize": 2400000, "offline": true, "practiceKey": "2922db9b58cb760f1724",
               "credits": [{ "role": "lyricist", "name": "Matthias Claudius" }], "notices": ["By kind permission of …"] }],
   "offline": { "enabled": true, "version": "0.15.0" } }
 ```
 
 `offline` (milestone 0.15) of a link: it may be kept on the device, with the
 module `offline` and where choir members may save and print the notes (the
-rule of `scan`, `RightsPolicy::memberScanDenial`). `practiceKey`: the key
+rule of `scan`, `RightsPolicy::memberScanDenial`). `scanSize` (milestone
+0.19): the size of the scan in bytes as the file sync last saw it, for the
+switch "With the scan (PDF, 2.4 MB)"; `null` without a scan or when unknown.
+`practiceKey`: the key
 under which the browser remembers the passages and settings for practising
 of the version, the same for every link to it, a hash without catalog ids;
 the public page has it, too. `offline` of the page: the module is on, and
@@ -2238,7 +2241,7 @@ device.
 `GET /concert-folder` (module `concert_folder`, milestone 0.15) is a page
 of its own for the roles `conductor` and `librarian` (template
 `concert-folder`, script `js/cantoria-concert-folder.mjs`); other
-accounts get the page "Access forbidden" with 403. It answers with the
+accounts get the page "No access yet" with 403. It answers with the
 header `X-Cantoria-Page: concert-folder` and the policy of the member
 page (`worker-src 'self'`, `frame-src blob:`). Initial state `folder`:
 
@@ -2247,18 +2250,25 @@ page (`worker-src 'self'`, `frame-src blob:`). Initial state `folder`:
                  "location": "St. Marien", "status": "fixed",
                  "items": [{ "id": 31, "position": 1, "title": "Abendlied", "composer": "J. Rheinberger", "shelfmark": "1-03",
                              "participation": null, "note": null, "encore": false, "duration": 180, "score": true, "scan": true,
-                             "canPlay": true, "reason": null, "offline": true, "offlineReason": null,
+                             "scanSize": 2400000, "canPlay": true, "reason": null, "offline": true, "offlineReason": null,
                              "practiceKey": "2922db9b58cb760f1724" }] }],
-  "version": "0.15.0" }
+  "version": "0.15.0", "offline": true }
 ```
 
 The programmes (`draft` or `fixed`, the next first, those without a date
 last) with their items in order; struck items are left out. `score` and
 `scan`: the copy of the item (or the first copy of its version with a
 score) has a MusicXML file or a PDF scan that the account may view
-(`RightsPolicy::viewDenial`). `canPlay` and `reason` (translated) as in the
-score view. `offline`: the item may be kept on the device: as viewing, and
-never an internal preservation copy (`offlineReason`, translated).
+(`RightsPolicy::viewDenial`); an internal preservation copy is not opened
+in the folder (milestone 0.19: `reason` says so, and the score and scan
+routes answer 403). `scanSize` as on the member page. `canPlay` and
+`reason` (translated) as in the score view. `offline`: the item may be kept
+on the device: the module `offline` is on, and the rights allow a copy on
+the device (`RightsPolicy::deviceCopyDenial`: confirmed public domain or a
+license `member_download` or `self_print`); otherwise `offlineReason`
+(translated), which is `null` while the module is off. `offline` of the
+page: the module `offline` is on; without it the page keeps nothing on the
+device.
 
 | Method and path | Body | Who |
 |---|---|---|
@@ -2296,7 +2306,7 @@ download of the score file and no practice audio:
 ```json
 { "title": "Abendlied", "composer": "J. Rheinberger", "measureFrom": "9", "measureTo": "12",
   "voice": "Alto", "verse": null, "tempo": null, "canPlay": true, "scan": false,
-  "practiceKey": "2922db9b58cb760f1724", "expires": "2027-04-23", "offline": false,
+  "scanSize": null, "practiceKey": "2922db9b58cb760f1724", "expires": "2027-04-23", "offline": false,
   "served": "2026-10-28T12:00:00Z", "xml": "<?xml …?><score-partwise …>…</score-partwise>" }
 ```
 

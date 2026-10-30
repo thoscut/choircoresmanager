@@ -1047,19 +1047,44 @@ Mit dem Modul „Konzertmappe“ öffnen die Rollen „Chorleitung“ und „Bes
 Navigation die **Konzertmappe**: eine eigene Seite mit den Programmen, die
 noch zu singen sind (Entwurf oder fest), das nächste zuerst, jedes Stück in
 seiner Reihenfolge. Wähle ein Stück, um es mit denselben Werkzeugen wie auf
-einer geteilten Seite anzusehen, abzuspielen und zu üben (Tempo, Stimmen,
-Einzähler, Metronom, Tonhöhe, Mischpult, Stellen, Text, Selbst aufnehmen);
-**Scan (PDF) zeigen** öffnet den Scan in der Seite, und **Weiter** blättert
-zum nächsten Stück des Programms.
+einer geteilten Seite anzusehen, abzuspielen und zu üben (siehe
+[Mit mir geteilt](#mit-mir-geteilt)); **Scan (PDF) zeigen** öffnet den Scan
+in der Seite. Auf einem schmalen Bildschirm, etwa einem iPad im
+Hochformat, klappt die Programmliste weg, sobald ein Stück offen ist;
+**Programm: …, Stück 3 von 12** klappt sie wieder auf.
 
-Für die Probe oder das Konzert ohne Netz wähle mit Netz bei einem Programm
-**Alle … Stücke auf diesem Gerät speichern**, auf Wunsch **Mit den Scans
-(PDF)**. Ohne Netz öffnest du die Konzertmappe wie gewohnt (ein Lesezeichen
-oder der Home-Bildschirm): Die gespeicherten Stücke kommen vom Gerät. Wie
-bei „Mit mir geteilt“ gleicht jeder Start mit Netz sie mit dem Server ab,
-und nach 30 Tagen ohne Netz sind sie gesperrt. Eine interne Erhaltungskopie
-lässt sich ansehen, aber nie auf einem Gerät speichern. Die Konzertmappe
-liest nur: **Als gesungen bestätigen** bleibt im Konzert im Archiv.
+Für die Probe und die Bühne:
+
+- **Bühnenansicht** zeigt nur das Stück, wo der Browser es kann auf dem
+  ganzen Bildschirm, und hält den Bildschirm an. Ein zweiter Druck auf
+  **Bühnenansicht** oder die Escape-Taste beendet sie.
+- **Nächstes** steht in der Leiste, die oben bleibt, und am Ende der Noten,
+  **Vorheriges: …** und **Nächstes: …** unter dem Titel.
+- Ein Fußpedal zum Blättern (Bild ab, Bild auf) blättert System für System.
+  Nach dem letzten System sagt Bild ab das nächste Stück an und setzt den
+  Fokus auf **Nächstes: …**; ein weiterer Druck öffnet es.
+- Ist eine eigene Aufnahme nicht gespeichert, fragt die Mappe, bevor ein
+  anderes Stück sie verwirft.
+
+Mit dem Modul „Üben ohne Netz“ schaltest du für die Probe oder das Konzert
+mit Netz bei einem Programm **Alle … Stücke ohne Netz verfügbar** ein. Den
+Schalter **Mit den Scans (PDF, …)** darunter kannst du vorher oder nachher
+umstellen; er nennt den Platz, den die Scans brauchen. Unter dem Schalter
+stehen der Fortschritt („3 von 12 Stücken bereit …“) und, falls etwas nicht
+klappt, der Grund und was zu tun ist. Ohne Netz öffnest du die Konzertmappe
+wie gewohnt (ein Lesezeichen oder der Home-Bildschirm): Die Stücke kommen
+vom Gerät, in der Liste mit **Ohne Netz verfügbar** markiert. Wie bei „Mit
+mir geteilt“ gleicht jeder Start mit Netz sie mit dem Server ab, und nach
+30 Tagen ohne Netz sind sie gesperrt. Ohne das Modul speichert die
+Konzertmappe nichts auf dem Gerät.
+
+Ohne Netz verfügbar wird ein Stück nur, wo die Rechte eine Kopie auf dem
+Gerät erlauben: bestätigte Gemeinfreiheit oder eine Lizenz für Download
+oder Selbstausdruck. Sonst nennt die Mappe beim Stück den Grund. Eine
+interne Erhaltungskopie öffnet die Konzertmappe nicht: Sie ist eine Kopie
+für das Archiv, kein Material für Probe und Konzert; nimm ein anderes
+Exemplar der Fassung ins Programm. Die Konzertmappe liest nur: **Als
+gesungen bestätigen** bleibt im Konzert im Archiv.
 
 ### Konzerte im eigenen Kalender
 
@@ -1771,98 +1796,109 @@ Schrift; **Jahresbericht als CSV** lädt seine Tabellen herunter.
 ## Für Chormitglieder
 
 Chormitglieder haben keine Rolle im Notenarchiv. Wo die Administration
-Links für Chormitglieder eingeschaltet hat, sehen sie nur die Seite **Für
-mich freigegeben** mit den Stücken und Ausschnitten, die mit dem Chor geteilt
-sind. Siehst du Cantoria gar nicht, lies
-[Kein Zugang zum Notenarchiv](#kein-zugang-zum-notenarchiv).
+Links für Chormitglieder eingeschaltet hat, sehen sie nur die Seite **Mit
+mir geteilt** mit den Stücken und Ausschnitten, die mit dem Chor geteilt
+sind. Zum Weitergeben an den Chor gibt es die einseitige
+[Anleitung für Chormitglieder](fuer-chormitglieder.md). Siehst du Cantoria
+gar nicht, lies [Kein Zugang zum Notenarchiv](#kein-zugang-zum-notenarchiv).
 
 ### Mit mir geteilt
 
 Chormitglieder melden sich bei Nextcloud an und öffnen **Cantoria**. Sie
 sehen **Mit mir geteilt**: die mit dem Chor geteilten Stücke und
-Ausschnitte mit Titel, Komposition, **Ganzes Stück** oder den Takten,
-Stimme, der Notiz und wie lange jedes gilt, ob es sich abspielen lässt
-(**Abspielen: ja** oder **Abspielen: nein**) und ob der Scan dabei ist
-(**mit Scan (PDF)**).
+Ausschnitte. Jeder Eintrag der Liste ist kurz: der Titel, Komposition und
+**Ganzes Stück** oder die Takte mit der Stimme, wie lange er gilt und, wo
+es eingeschaltet ist, **Ohne Netz verfügbar**.
 
-![Die Seite „Mit mir geteilt“ eines Chormitglieds: das ganze Stück „Der Mond ist aufgegangen“ mit der Notiz der Chorleitung, der Gültigkeit, dem Link „Scan (PDF) öffnen“, der Wiedergabe mit Einzähler und Schleife und den Noten mit hervorgehobenem Alt.](../screenshots/shared-with-me.png)
+![Die Seite „Mit mir geteilt“ eines Chormitglieds mit dem Stück „Der Mond ist aufgegangen“ und den Noten mit hervorgehobenem Alt.](../screenshots/shared-with-me.png)
 
 1. Wähle ein Stück in der Liste (ein Link, den du bekommen hast, öffnet es
    direkt). Die Noten erscheinen unter der Liste, auf einem breiten
-   Bildschirm daneben, bei einem ganzen Stück alle seine Seiten.
+   Bildschirm daneben, bei einem ganzen Stück alle seine Seiten. Darüber
+   stehen die Notiz der Chorleitung, die Gültigkeit und was erlaubt ist
+   (**Abspielen: ja**, **Übe-Dateien: ja**, **mit Scan (PDF)**). **Andere
+   Stücke (…)** unter dem Titel führt auf dem Handy zurück zur Liste.
 2. **Abspielen**, **Pause** und **Stopp**, **Kleiner** und **Größer** (die
-   Größe; dein Browser merkt sie sich für das nächste Stück) und
-   **Einstellungen** stehen in einer Leiste, die oben bleibt,
-   während du durch die Noten scrollst. **Einstellungen** zeigt oder
-   verbirgt die übrigen Einstellungen; auf dem Handy sind sie zuerst
-   verborgen. Wähle unter **Stimmen beim Abspielen** **Alle gleich**,
-   **Stimme betont** oder **Nur diese Stimme** und stelle das Tempo ein.
-   **Hervorgehobene Stimme** wählt eine andere Stimme. Die Leertaste spielt
-   und hält an. **Einzähler** klickt einen oder zwei Takte vor der Musik. Ein
-   Klick oder Tipp auf eine Note startet dort; mit der Tastatur gehst du in
-   den Noten mit den Pfeiltasten links und rechts zum vorigen oder nächsten
-   Takt.
-3. Um eine Stelle zu üben, gib **Von Takt** und **Bis Takt** an und wähle
-   **Anzeigen**; **Schleife** spielt die gezeigten Takte immer wieder.
-   **Alle Takte** zeigt wieder alles. **Anfangstöne**, **Metronom**,
-   **Tonhöhe**, **Mischpult**, gemerkte Stellen und **Selbst aufnehmen**
-   arbeiten wie in der Notenansicht (siehe
-   [So übst du mit Anfangstönen, Metronom, Tonhöhe, Mischpult, Stellen und Aufnahmen](#so-übst-du-mit-anfangstönen-metronom-tonhöhe-mischpult-stellen-und-aufnahmen)).
-4. **Scan (PDF) öffnen** (wo mitgegeben) öffnet den Scan im PDF-Betrachter
-   deines Browsers, in einem neuen Tab.
-5. **Textverweis** und **Beschreibung des Stücks** (oder **des
-   Ausschnitts**) beschreiben es in Worten.
-6. Wo Übe-Dateien angeboten werden (**Übe-Dateien: ja**): Wähle die Stimme
-   und „Stimme betont“ oder „Nur diese Stimme“, dann unter **Übe-Datei** das
-   Format **WAV (Audio)** oder **MIDI** und **Übe-Datei erstellen**. Die
-   Datei umfasst die gezeigten Takte; sie entsteht in deinem Browser, und
-   jede Übe-Datei wird im Protokoll des Notenarchivs festgehalten.
+   Größe; dein Browser merkt sie sich für das nächste Stück) und **Stimme,
+   Takte und Üben** stehen in einer Leiste, die oben bleibt, während du
+   durch die Noten scrollst. **Stimme, Takte und Üben** zeigt oder verbirgt
+   die Einstellungen; auf dem Handy sind sie zuerst verborgen. Sie stehen in
+   drei Gruppen, in der Reihenfolge, in der man sie meist braucht:
+   - **Meine Stimme**: Wähle unter **Hervorgehobene Stimme** deine Stimme
+     und unter **Stimmen beim Abspielen** **Alle gleich**, **Stimme betont**
+     oder **Nur diese Stimme**.
+   - **Takte und Tempo**: Gib **Von Takt** und **Bis Takt** an und wähle
+     **Anzeigen**; **Schleife** spielt die gezeigten Takte immer wieder,
+     **Alle Takte** zeigt wieder alles. Darunter das Tempo und der
+     **Einzähler**, der einen oder zwei Takte vor der Musik klickt.
+   - **Mehr zum Üben** (zuerst eingeklappt): Anfangstöne, Metronom,
+     Transponieren, Mischpult, Text, deine Tonhöhe, gemerkte Stellen und
+     Selbst aufnehmen; sie arbeiten wie in der Notenansicht (siehe
+     [So übst du mit Anfangstönen, Metronom, Tonhöhe, Mischpult, Stellen und Aufnahmen](#so-übst-du-mit-anfangstönen-metronom-tonhöhe-mischpult-stellen-und-aufnahmen)).
 
-Dein Browser merkt sich das Tempo, **Tonhöhe**, **Metronom**, das
+   Die Leertaste spielt und hält an. Ein Tipp oder Klick auf eine Note
+   startet dort; mit der Tastatur gehst du in den Noten mit den Pfeiltasten
+   links und rechts zum vorigen oder nächsten Takt. Eine laufende Aufnahme
+   bleibt in der Leiste sichtbar; bevor ein anderes Stück eine nicht
+   gespeicherte Aufnahme verwirft, fragt die Seite.
+3. **Scan (PDF) zeigen** (wo mitgegeben) öffnet den Scan in der Seite.
+4. **Textverweis** und **Beschreibung des Stücks** (oder **des
+   Ausschnitts**) beschreiben es in Worten.
+5. Wo Übe-Dateien angeboten werden (**Übe-Dateien: ja**): Stelle unter
+   **Stimme, Takte und Üben** die Stimme und „Stimme betont“ oder „Nur diese
+   Stimme“ ein, dann unter **Übe-Datei** das Format **WAV (Audio)** oder
+   **MIDI** und **Übe-Datei erstellen**. Die Datei umfasst die gezeigten
+   Takte; sie entsteht in deinem Browser, und jede Übe-Datei wird im
+   Protokoll des Notenarchivs festgehalten.
+
+Dein Browser merkt sich das Tempo, **Transponieren**, **Metronom**, das
 **Mischpult** und die Stellen jedes Stücks, auch für einen neuen Link zum
 selben Stück.
 
 ### Üben ohne Netz
 
-Wo die Administration es eingeschaltet hat, kannst du ein Stück auf deinem
-Gerät speichern und es dann ohne Netz ansehen, abspielen und üben, zum
+Wo die Administration es eingeschaltet hat, kannst du ein Stück ohne Netz
+verfügbar machen und es dann ohne Netz ansehen, abspielen und üben, zum
 Beispiel im Zug oder in einer Kirche ohne WLAN. Keine App zum Installieren:
 Es geht im Browser.
 
-1. Öffne mit Netz **Mit mir geteilt** und wähle in der Liste bei jedem
-   Stück, das du brauchst, **Auf diesem Gerät speichern**; **Mit dem Scan
-   (PDF)** speichert auch den Scan, der viel Platz brauchen kann. **Alle …
-   Stücke auf diesem Gerät speichern** über der Liste speichert auf einmal
-   jedes Stück, das gespeichert werden darf, ohne die Scans. Bei manchen
-   Stücken steht „Lässt sich nicht auf diesem Gerät speichern“: Ihre Rechte
-   erlauben das Ansehen, nicht das Speichern.
-2. Ohne Netz öffnest du dieselbe Seite wie gewohnt (ein Lesezeichen oder der
-   Home-Bildschirm). Ein Hinweis sagt, dass die auf diesem Gerät
-   gespeicherten Stücke gezeigt werden. Abspielen, Einzähler, Metronom,
-   Tonhöhe, Mischpult, Stellen, Text und Selbst aufnehmen gehen alle;
-   **Übe-Datei** braucht ein Netz.
-3. Jeder Start mit Netz gleicht die gespeicherten Stücke ab: Abgelaufene
-   oder widerrufene Links verschwinden vom Gerät. Nach 30 Tagen ohne Netz
-   sind die gespeicherten Stücke gesperrt, bis du die Seite einmal mit Netz
-   öffnest.
-4. **Auf diesem Gerät**, unten auf der Seite, zeigt, wie viele Stücke
-   gespeichert sind und wie viel Platz sie belegen. **Alles auf diesem Gerät
-   löschen** entfernt die gespeicherten Stücke, Stellen und Einstellungen;
+1. **Auf iPhone oder iPad zuerst:** Lege die Seite auf den Home-Bildschirm
+   (Teilen → **Zum Home-Bildschirm**), öffne sie von dort und melde dich an.
+   Safari und der Home-Bildschirm halten die Stücke getrennt: Was du in
+   Safari speicherst, fehlt auf dem Home-Bildschirm und umgekehrt. Die
+   Seite sagt das vor dem ersten Stück.
+2. Öffne mit Netz **Mit mir geteilt**, wähle ein Stück und schalte über den
+   Noten **Ohne Netz verfügbar** ein. **Mit dem Scan (PDF, …)** darunter
+   nimmt auch den Scan mit; er nennt den Platz und lässt sich jederzeit
+   umstellen. **Alle … Stücke ohne Netz verfügbar machen (ohne Scans)** über
+   der Liste nimmt auf einmal jedes Stück mit, das darf, und zeigt den
+   Fortschritt („3 von 12 Stücken bereit …“). Bei manchen Stücken steht
+   „Ohne Netz nicht verfügbar: Die Rechte erlauben kein Herunterladen“.
+3. Ohne Netz öffnest du dieselbe Seite wie gewohnt (ein Lesezeichen oder der
+   Home-Bildschirm). Ein Hinweis sagt, dass die Stücke vom Gerät kommen.
+   Abspielen, Einzähler, Metronom, Transponieren, Mischpult, Stellen, Text
+   und Selbst aufnehmen gehen alle; **Übe-Datei** braucht ein Netz.
+4. Jeder Start mit Netz gleicht die Stücke ab: Abgelaufene oder widerrufene
+   Links verschwinden vom Gerät. Nach 30 Tagen ohne Netz sind die Stücke
+   gesperrt, bis du die Seite einmal mit Netz öffnest.
+5. **Ohne Netz**, unten auf der Seite, zeigt, wie viele Stücke verfügbar
+   sind und wie viel Platz sie belegen. Cantoria legt sie in diesem Browser
+   auf diesem Gerät ab; ein anderer Browser sieht sie nicht. **Alles auf
+   diesem Gerät löschen** entfernt die Stücke, Stellen und Einstellungen;
    tu das auf einem geteilten Gerät. Das Abmelden bei Nextcloud löscht sie
    nicht.
 
-Lege die Seite auf iPhone oder iPad auf den Home-Bildschirm (Teilen →
-**Zum Home-Bildschirm**) und öffne sie von dort: Sonst kann Safari die
-gespeicherten Stücke nach einigen Tagen ohne Nutzung löschen. **Scan (PDF)
-zeigen** öffnet den Scan in der Seite, ohne Netz auch dort, wo er
-gespeichert ist.
+Klappt etwas nicht, steht der Grund direkt unter dem Schalter, zum Beispiel
+„Keine Verbindung“ oder „Auf diesem Gerät ist nicht genug Platz“. **Scan
+(PDF) zeigen** öffnet den Scan in der Seite, ohne Netz auch dort, wo er
+mitgenommen ist.
 
 Ein **öffentlicher Link** zu einem Stück, dessen Gemeinfreiheit bestätigt
-ist, bietet unten auf seiner Seite ebenfalls **Auf diesem Gerät
-speichern**: Dann öffnet sich die Seite ohne Netz, solange der Link gilt.
-Jeder Besuch mit Netz gleicht sie ab; ein widerrufener oder abgelaufener
-Link verschwindet beim nächsten Besuch vom Gerät. Öffne ihn mindestens alle
-30 Tage einmal mit Netz.
+ist, bietet über den Noten ebenfalls **Ohne Netz verfügbar**: Dann öffnet
+sich die Seite ohne Netz, solange der Link gilt. Jeder Besuch mit Netz
+gleicht sie ab; ein widerrufener oder abgelaufener Link verschwindet beim
+nächsten Besuch vom Gerät. Öffne ihn mindestens alle 30 Tage einmal mit
+Netz.
 
 ## Für Mitwirkende und Werkzeuge
 
@@ -1885,7 +1921,7 @@ ist. Probleme der Einrichtung stehen im
 ### Kein Zugang zum Notenarchiv
 
 *„Du hast keinen Zugang zum Notenarchiv.“* Dein Konto hat keine Rolle im
-Notenarchiv; die App oder die Seite „Zugriff verboten“ sagt dir das. Rollen
+Notenarchiv; die App oder die Seite „Noch kein Zugang“ sagt dir das. Rollen
 hängen an Nextcloud-Gruppen, nicht an Personen. Bitte die Administration,
 dein Konto in die Gruppe deiner Rolle aufzunehmen (siehe das
 [Administrationshandbuch](administrationshandbuch.md#2-rollen-und-gruppen)).

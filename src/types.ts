@@ -434,6 +434,8 @@ export interface MemberLink {
 	reason: string | null
 	/** the link offers the scan (PDF) */
 	scan?: boolean
+	/** size of the scan in bytes, when known */
+	scanSize?: number | null
 	/** the rights allow keeping the piece on the device (module "offline", milestone 0.15) */
 	offline?: boolean
 	/** key of the piece for what is remembered in the browser while practising (milestone 0.15) */
@@ -470,6 +472,8 @@ export interface FolderItem {
 	score: boolean
 	/** the item has a scan (PDF) the account may view */
 	scan: boolean
+	/** size of the scan in bytes, when known */
+	scanSize?: number | null
 	canPlay: boolean
 	/** translated reason why the score cannot be viewed or played */
 	reason: string | null
@@ -497,6 +501,8 @@ export interface FolderPageState {
 	concerts: FolderConcert[]
 	/** version of the app, names the cache of the page */
 	version: string
+	/** programmes can be kept on the device: module "offline" (milestone 0.19) */
+	offline?: boolean
 }
 
 /** Initial state `excerpt` of a public link: the excerpt, already cut by the server, or the whole piece. */
@@ -512,6 +518,8 @@ export interface PublicExcerpt {
 	canPlay: boolean
 	/** the link offers the scan (PDF) at `/p/{token}/scan` */
 	scan?: boolean
+	/** size of the scan in bytes, when known */
+	scanSize?: number | null
 	/** key of the piece for what is remembered in the browser while practising (milestone 0.15) */
 	practiceKey?: string
 	/** last valid day of the link (YYYY-MM-DD), null without end */

@@ -1130,6 +1130,8 @@ onBeforeUnmount(() => {
 					</template>
 					<span class="excerpt-viewer__settings-label">{{ t('cantoria', 'Voice, measures and practising') }}</span>
 				</NcButton>
+				<!-- e.g. "Next: …" of the concert folder, in reach while the score scrolls -->
+				<slot name="bar" />
 				<!-- A running recording stays in view while its tool is folded; Stop ends it -->
 				<span v-if="recorderState === 'recording'" class="excerpt-viewer__recording">
 					<NcIconSvgWrapper :path="mdiRecordCircleOutline" :size="20" aria-hidden="true" />
