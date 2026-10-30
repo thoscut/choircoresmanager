@@ -599,9 +599,10 @@ Where the administration has switched them on, a whole piece or an excerpt
 can be shared beyond the archive roles: with the **choir members** (they
 sign in and see it under "Shared with me") or with **everyone** through a
 public link without signing in. Both get only what you share, the whole
-piece or the chosen measures, never the score file; the server sends only
-that and checks the rights on every call. Optionally the link also offers
-the **scan (PDF)** of the copy.
+piece or the chosen measures as notation, not the score file of the
+archive; the server checks the rights on every call. Optionally the link
+also offers the **scan (PDF)** of the copy. What arrives in a browser can be
+saved there, so do not promise a publisher "no download".
 
 #### How to share a whole piece with the choir
 
@@ -675,8 +676,8 @@ number of calls; **Revoke link** stops a link at once for everyone.
 #### Public links
 
 A public link shows and plays a whole piece or an excerpt to anyone who has
-the link, without signing in: without the score file, without names and
-without a note. Choose **Public (without signing in)** in the same dialog.
+the link, without signing in: as notation, not the score file of the
+archive, without names and without a note. Choose **Public (without signing in)** in the same dialog.
 It is only possible when
 
 - the version is **released for publication**: the catalog librarian sets

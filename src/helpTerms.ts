@@ -79,7 +79,7 @@ export function helpTerm(term: HelpTermKey): HelpTermText {
 	case 'preservationCopy':
 		return {
 			name: t('cantoria', 'Internal preservation copy'),
-			text: t('cantoria', 'A copy kept only for the archive, e.g. the scan of a protected print. It is never shared, played or exported.'),
+			text: t('cantoria', 'A copy kept only for the archive, e.g. a paper copy of a crumbling original of your own. It is never shared, played or exported. A digital scan of a protected print is usually not covered by the law for such copies.'),
 			section: USER_GUIDE.termPreservationCopy,
 		}
 	case 'revision':

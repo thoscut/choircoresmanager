@@ -139,9 +139,9 @@ const dialogName = computed(() => (canShareOutside.value
 const circleHint = computed(() => {
 	switch (circle.value) {
 	case 'members':
-		return t('cantoria', 'Choir members see it in Cantoria under "Shared with me", without the catalog: the whole piece or the chosen measures with all voices, the voice highlighted. The server sends only that, never the score file, and checks the rights on every call.')
+		return t('cantoria', 'Choir members see it in Cantoria under "Shared with me", without the catalog: the whole piece or the chosen measures with all voices, the voice highlighted. The server sends only the shared measures as notation, and the scan only if you add it; it checks the rights on every call. What arrives in a browser can be saved there.')
 	case 'public':
-		return t('cantoria', 'Anyone who has the link can view and play it without signing in, until it expires or is revoked: the whole piece or the chosen measures, without the score file, without names and without a note. The server sends only that and checks the rights on every call.')
+		return t('cantoria', 'Anyone who has the link can view and play it without signing in, until it expires or is revoked: the whole piece or the chosen measures, without names and without a note. The server sends only the shared measures as notation, and the scan only if you add it; it checks the rights on every call. What arrives in a browser can be saved there.')
 	default:
 		return t('cantoria', 'Only people with a role in the music archive can open the link. It shows the whole piece or the measures with all voices; the voice is highlighted. The server checks the rights on every call.')
 	}

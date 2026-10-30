@@ -642,9 +642,11 @@ Hat die Administration es eingeschaltet, lässt sich ein ganzes Stück oder ein
 Ausschnitt über die Archivrollen hinaus teilen: mit den **Chormitgliedern**
 (sie melden sich an und sehen es unter „Mit mir geteilt“) oder mit
 **allen** über einen öffentlichen Link ohne Anmeldung. Beide bekommen nur,
-was du teilst, das ganze Stück oder die gewählten Takte, nie die Notendatei;
-der Server sendet nur das und prüft bei jedem Aufruf die Rechte. Auf Wunsch
-gibt der Link auch den **Scan (PDF)** des Exemplars mit.
+was du teilst, das ganze Stück oder die gewählten Takte als Notenbild, nicht
+die Notendatei des Archivs; der Server prüft bei jedem Aufruf die Rechte. Auf
+Wunsch gibt der Link auch den **Scan (PDF)** des Exemplars mit. Was im
+Browser ankommt, lässt sich dort speichern; sag einem Verlag daher nicht
+„kein Download“ zu.
 
 #### So teilst du ein ganzes Stück mit dem Chor
 
@@ -724,8 +726,8 @@ sofort für alle.
 #### Öffentliche Links
 
 Ein öffentlicher Link zeigt ein ganzes Stück oder einen Ausschnitt allen, die
-den Link haben, und spielt es ab, ohne Anmeldung: ohne die Notendatei, ohne
-Namen und ohne Notiz. Wähle im selben Dialog **Öffentlich (ohne Anmeldung)**.
+den Link haben, und spielt es ab, ohne Anmeldung: als Notenbild, nicht die
+Notendatei des Archivs, ohne Namen und ohne Notiz. Wähle im selben Dialog **Öffentlich (ohne Anmeldung)**.
 Das geht nur, wenn
 
 - die Fassung **zur Veröffentlichung freigegeben** ist: Die Rolle „Bestand“
