@@ -1471,6 +1471,60 @@ onBeforeUnmount(() => {
 	transform-origin: center;
 }
 
+/* Windows contrast themes: system colours for the score (see ScoreViewer.vue) */
+@media (forced-colors: active) {
+	.excerpt-viewer__page :deep(svg.definition-scale),
+	.excerpt-viewer__page :deep(.score-muted .score-shared) {
+		color: CanvasText;
+		fill: CanvasText;
+	}
+
+	.excerpt-viewer__page :deep(g.layer.score-focus) {
+		color: Highlight;
+		fill: Highlight;
+	}
+
+	.excerpt-viewer__page :deep(.score-muted) {
+		color: GrayText;
+		fill: GrayText;
+	}
+
+	.excerpt-viewer__page :deep(g.note.score-playing) {
+		color: LinkText;
+		fill: LinkText;
+	}
+}
+
+/* Printing: the score only, black on white, the focus voice bold */
+@media print {
+	.excerpt-viewer > :not(.excerpt-viewer__score):not(.excerpt-viewer__reference) {
+		display: none !important;
+	}
+
+	.excerpt-viewer__score {
+		height: auto !important;
+		overflow: visible !important;
+		border: none;
+	}
+
+	.excerpt-viewer__page {
+		break-inside: avoid;
+	}
+
+	.excerpt-viewer__page :deep(svg.definition-scale),
+	.excerpt-viewer__page :deep(g.layer.score-focus),
+	.excerpt-viewer__page :deep(.score-muted),
+	.excerpt-viewer__page :deep(g.note.score-playing) {
+		color: #000;
+		fill: #000;
+	}
+
+	.excerpt-viewer__page :deep(g.note.score-playing g.notehead) {
+		stroke: none;
+		transform: none;
+	}
+}
+
 @media (min-width: 1024px) and (min-height: 640px) {
 	.excerpt-viewer__score {
 		height: max(16em, min(65vh, 40em));

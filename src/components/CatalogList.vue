@@ -478,6 +478,18 @@ function statusText(entry: Entry): string {
 	background-color: var(--color-primary-element-light);
 }
 
+/* not only a colour: a bar at the start of the row and the shelf mark
+   underlined, as on the pages of the choir members */
+.catalog-table__row--selected > td:first-child {
+	box-shadow: inset 4px 0 0 var(--color-primary-element);
+}
+
+.catalog-table__row--selected .catalog-table__open {
+	text-decoration: underline;
+	text-decoration-thickness: 2px;
+	text-underline-offset: 3px;
+}
+
 .catalog-table__detail {
 	display: block;
 	color: var(--color-text-maxcontrast);
@@ -575,6 +587,7 @@ function statusText(entry: Entry): string {
 .catalog-card--selected {
 	border-color: var(--color-primary-element);
 	background-color: var(--color-primary-element-light);
+	box-shadow: inset 4px 0 0 var(--color-primary-element);
 }
 
 .catalog-card__head {

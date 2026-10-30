@@ -2169,6 +2169,86 @@ onBeforeUnmount(() => {
 	rx: 40px;
 }
 
+/* Windows contrast themes: the browser replaces colours of text and
+   backgrounds but leaves fill and stroke of the SVG, so the score takes the
+   system colours itself. The focus voice keeps its bolder note heads. */
+@media (forced-colors: active) {
+	.score-viewer__page :deep(svg.definition-scale),
+	.score-viewer__page :deep(.score-muted .score-shared) {
+		color: CanvasText;
+		fill: CanvasText;
+	}
+
+	.score-viewer__page :deep(g.layer.score-focus) {
+		color: Highlight;
+		fill: Highlight;
+	}
+
+	.score-viewer__page :deep(.score-muted) {
+		color: GrayText;
+		fill: GrayText;
+	}
+
+	.score-viewer__page :deep(g.note.score-playing) {
+		color: LinkText;
+		fill: LinkText;
+	}
+
+	.score-viewer__page :deep(rect.score-measure-marker) {
+		fill: none;
+		stroke: Highlight;
+	}
+}
+
+/* Printing: title, version line and the score, black on white; the focus
+   voice bold instead of coloured; no controls, no scan, no marker */
+@media print {
+	.score-viewer {
+		height: auto;
+		padding: 0;
+		overflow: visible;
+	}
+
+	.score-viewer__state,
+	.score-viewer__playbar,
+	.score-viewer__no-playback,
+	.score-viewer__settings,
+	.score-viewer__tools,
+	.score-viewer__error,
+	.score-viewer__summary,
+	.score-viewer__scan,
+	.score-viewer__review-panel {
+		display: none !important;
+	}
+
+	.score-viewer__workspace,
+	.score-viewer__score {
+		height: auto;
+		overflow: visible;
+	}
+
+	.score-viewer__page {
+		break-inside: avoid;
+	}
+
+	.score-viewer__page :deep(svg.definition-scale),
+	.score-viewer__page :deep(g.layer.score-focus),
+	.score-viewer__page :deep(.score-muted),
+	.score-viewer__page :deep(g.note.score-playing) {
+		color: #000;
+		fill: #000;
+	}
+
+	.score-viewer__page :deep(g.note.score-playing g.notehead) {
+		stroke: none;
+		transform: none;
+	}
+
+	.score-viewer__page :deep(rect.score-measure-marker) {
+		display: none;
+	}
+}
+
 /* Wide and tall enough: score, scan and review fill the rest of the window
    side by side and scroll inside, instead of the whole view scrolling */
 @media (min-width: 1024px) and (min-height: 640px) {
@@ -2217,6 +2297,36 @@ onBeforeUnmount(() => {
 
 	.score-viewer__slider {
 		min-width: 100%;
+	}
+}
+</style>
+
+<style>
+/* Printing the score view: it is a modal outside the page of the app, so
+   only the modal is printed, in the flow of the page instead of fixed */
+@media print {
+	body:has(.score-viewer) > :not(:has(.score-viewer)) {
+		display: none !important;
+	}
+
+	.modal-mask:has(.score-viewer),
+	.modal-mask:has(.score-viewer) .modal-wrapper,
+	.modal-mask:has(.score-viewer) .modal-container,
+	.modal-mask:has(.score-viewer) .modal-container__content {
+		position: static !important;
+		display: block !important;
+		width: auto !important;
+		height: auto !important;
+		max-height: none !important;
+		overflow: visible !important;
+		background: none !important;
+		box-shadow: none !important;
+		transform: none !important;
+	}
+
+	.modal-mask:has(.score-viewer) .modal-container__close,
+	.modal-mask:has(.score-viewer) .modal-header {
+		display: none !important;
 	}
 }
 </style>

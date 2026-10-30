@@ -327,6 +327,24 @@ const words = computed(() => {
 	font-size: var(--font-size-small, 13px);
 }
 
+/* Windows contrast themes: the tones as frames, the sung line in the
+   highlight colour */
+@media (forced-colors: active) {
+	.practice-pitch__tone {
+		fill: Canvas;
+		stroke: CanvasText;
+	}
+
+	.practice-pitch__now {
+		stroke: GrayText;
+	}
+
+	.practice-pitch__sung,
+	.practice-pitch__dot {
+		stroke: Highlight;
+	}
+}
+
 /* A low screen (a phone held sideways): a flatter display */
 @media (max-height: 560px) {
 	.practice-pitch__display {

@@ -425,10 +425,10 @@ onBeforeUnmount(() => window.removeEventListener('online', onOnline))
 		<!-- The visible heading is the page heading: no hidden second one (WCAG 2.4.6) -->
 		<NcAppContent :page-title="t('cantoria', 'Shared with me') + ' - ' + t('cantoria', 'Cantoria')">
 			<div class="member-app">
-				<h1 class="member-app__title">
+				<h1 class="member-app__title no-print">
 					{{ t('cantoria', 'Shared with me') }}
 				</h1>
-				<p class="member-app__intro">
+				<p class="member-app__intro no-print">
 					{{ t('cantoria', 'Pieces and excerpts that the conductor or the music librarians share with the choir members: view, listen and practise your voice. Each link is valid for a limited time.') }}
 				</p>
 
@@ -462,7 +462,7 @@ onBeforeUnmount(() => window.removeEventListener('online', onOnline))
 
 				<template v-else>
 					<div class="member-app__layout">
-						<section class="member-app__list" :aria-labelledby="listHeadingId">
+						<section class="member-app__list no-print" :aria-labelledby="listHeadingId">
 							<h2 :id="listHeadingId" ref="listHeading" class="member-app__list-title">
 								{{ n('cantoria', '%n shared link', '%n shared links', links.length) }}
 							</h2>
@@ -525,7 +525,7 @@ onBeforeUnmount(() => window.removeEventListener('online', onOnline))
 							</p>
 							<NcButton v-if="links.length > 1"
 								variant="tertiary"
-								class="member-app__to-list"
+								class="member-app__to-list no-print"
 								@click="toList">
 								<template #icon>
 									<NcIconSvgWrapper :path="mdiArrowUp" />
@@ -546,6 +546,7 @@ onBeforeUnmount(() => window.removeEventListener('online', onOnline))
 							</p>
 							<KeepOffline v-if="offlineOn"
 								:key="selected.token"
+								class="no-print"
 								:kept="isKept(selected)"
 								:scan-kept="scanKept(selected)"
 								:scan-offered="selected.scan === true"
@@ -559,11 +560,12 @@ onBeforeUnmount(() => window.removeEventListener('online', onOnline))
 								:lock="isKept(selected) ? lockText(selected) : ''"
 								:first-keep="keptCount === 0"
 								@change="(keep: boolean, withScan: boolean) => setKept(selected!, keep, withScan)" />
-							<p v-if="selected.scan && withoutNetwork && !scanKept(selected)" class="member-app__muted">
+							<p v-if="selected.scan && withoutNetwork && !scanKept(selected)" class="member-app__muted no-print">
 								{{ t('cantoria', 'The scan is not available without a network.') }}
 							</p>
 							<ScanFrame v-else-if="selected.scan"
 								:key="selected.token"
+								class="no-print"
 								collection="member"
 								:piece-key="selected.token"
 								:title="selected.title" />
@@ -608,7 +610,7 @@ onBeforeUnmount(() => window.removeEventListener('online', onOnline))
 					</div>
 				</template>
 
-				<section class="member-app__device-section" :aria-labelledby="deviceHeadingId">
+				<section class="member-app__device-section no-print" :aria-labelledby="deviceHeadingId">
 					<h2 :id="deviceHeadingId" class="member-app__list-title">
 						{{ t('cantoria', 'Without a network') }}
 					</h2>
@@ -835,6 +837,24 @@ onBeforeUnmount(() => window.removeEventListener('online', onOnline))
 @media (pointer: coarse) {
 	.member-app {
 		--default-clickable-area: 44px;
+	}
+}
+
+/* Printing: the piece only (title, composer, note, what is shared and the
+   score), black on white */
+@media print {
+	.member-app .no-print,
+	.member-app :deep(.notecard[role="status"]) {
+		display: none !important;
+	}
+
+	.member-app__layout {
+		display: block;
+	}
+
+	.member-app,
+	.member-app__muted {
+		color: #000;
 	}
 }
 </style>
