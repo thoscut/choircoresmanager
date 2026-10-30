@@ -419,14 +419,7 @@ festgelegt hat. Ein Jahresstand bleibt über Jahre und nennt deshalb
 **niemanden**: Er enthält das Werkverzeichnis ohne Konten, ohne Mappenbuch,
 Protokoll, Aufgaben, Vorschläge und Links. Die Prüfsummen stammen aus dem
 Prüfsummen-Job, solange eine Datei seitdem unverändert ist, sonst werden sie
-berechnet. Jahresstände von vor 0.10 enthalten noch Namen; lösche sie, wenn
-du sie nicht mehr brauchst.
-
-**Update von einer Version vor 0.10.** Frühere Versionen schrieben
-Sicherungen und Jahresstände nach `_cantoria-app` im Archivordner. Die
-erste Sicherung nach dem Update verschiebt sie in den Sicherungsordner. Was
-sich nicht verschieben lässt (zum Beispiel ohne Löschrecht im Archivordner),
-nennt die Einstellungsseite; verschiebe es von Hand oder lösche es.
+berechnet.
 
 Öffne die CSV-Dateien in einer Tabellenkalkulation über
 deren Importdialog (alle Spalten als Text) statt per Doppelklick, oder nimm

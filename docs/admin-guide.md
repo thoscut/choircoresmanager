@@ -383,14 +383,7 @@ every archive file), as the account that set the archive folder. A snapshot
 is kept for years and therefore names **nobody**: it holds the catalog
 without accounts, without the folder book, the audit log, tasks, proposals
 and links. The checksums come from the checksum job while a file is
-unchanged since, otherwise they are computed. Snapshots made before 0.10
-still hold names; delete them when you no longer need them.
-
-**Updating from a version before 0.10.** Earlier versions wrote backups and
-snapshots into `_cantoria-app` inside the archive folder. The first
-backup after the update moves them into the backup folder. Whatever cannot
-be moved (for example without permission to delete in the archive folder)
-is named on the settings page; move it by hand or delete it.
+unchanged since, otherwise they are computed.
 
 Open the CSV files in a spreadsheet program
 through its import dialog (all columns as text) rather than by double-click,

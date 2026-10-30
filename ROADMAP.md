@@ -30,7 +30,9 @@ und nutzerfreundlich** (Leitlinien 11, 13, 14 und 15).
    - Exemplare bekommen einen Status.
    - Jede Änderung wird protokolliert: wer, wann, alt, neu, Grund.
 4. **Dateien werden nur gelesen.** Die App ändert, verschiebt und benennt
-   keine Datei um. Es gibt zwei Ausnahmen:
+   keine Datei um. Sie schreibt nur in ihren eigenen Unterordner
+   `_cantoria-app` (Exporte und Stände des Werkverzeichnisses) und in den
+   Sicherungsordner außerhalb des Archivordners. Es gibt zwei Ausnahmen:
    - Eine kleine Korrektur einer MusicXML (Tonhöhe, Vorzeichen, Silbe)
      speichert die App als neue Datei neben der alten. Die alte bleibt
      unverändert, die Änderung steht im Protokoll.
@@ -47,8 +49,9 @@ und nutzerfreundlich** (Leitlinien 11, 13, 14 und 15).
      sind, und das nur, solange das Modul eingeschaltet ist.
 6. **Werkzeuge schlagen vor, Menschen übernehmen.** Massenänderungen aus
    Skripten landen in einem Eingang.
-7. **Es gibt immer einen Rückweg.** Ein datierter Export (CSV/ODS) liegt
-   regelmäßig im Archivordner.
+7. **Es gibt immer einen Rückweg.** Ein datierter Export (CSV) liegt
+   regelmäßig in `_cantoria-app` im Archivordner; die Sicherungen liegen in
+   einem eigenen Ordner außerhalb davon.
 8. **Papier bleibt die Rückfallebene.** Alle Listen lassen sich in A4
    schwarzweiß drucken.
 9. **Keine fremden Server.** Notensatz, Schriften und Klänge sind in der App
@@ -134,10 +137,10 @@ begonnen.
 | 0.14 Text und Tonhöhe beim Mitsingen | fertig (nicht in einem echten Nextcloud abgenommen) | Version 0.15.0 |
 | 0.15 Ohne Netz üben und vortragen | fertig bis auf die Abnahme auf echten Geräten | Version 0.15.0 |
 | Umbenennung in Cantoria (App-ID `cantoria`, Tabellen `cantoria_*`) | fertig | Version 0.16.0, 0.16.1 |
-| 0.17 Bereit zur ersten Veröffentlichung | geplant | – |
+| 0.17 Bereit zur ersten Veröffentlichung | im Review bis auf Markenprüfung, Signaturzertifikat und Branch-Schutz (Sache des Maintainers) | PR #14 |
 | 0.18 Rechte auf allen neuen Wegen | geplant | – |
-| 0.19 Üben und Vortragen am Gerät | geplant | – |
-| 0.20 Einführen und umsteigen | geplant | – |
+| 0.19 Üben und Vortragen am Gerät | im Review bis auf Scan am Handy, gemeinsame Abspiel-Logik und Abnahme auf echten Geräten | PR #14 |
+| 0.20 Einführen und umsteigen | im Review: Szenarien, Begriffe, Anleitung für Chormitglieder, App-Icon, Store-Text; offen: Import-Assistent, Screenshots, Rückweg, Demo | PR #14 |
 | 1.0 Stabil | geplant | – |
 
 Die aktuelle Version ist 0.16.1: Die App heißt jetzt Cantoria, vorher
@@ -612,7 +615,9 @@ Konzert mit Netz.
 
 ### 0.17 Bereit zur ersten Veröffentlichung
 
-*Geplant (Review 29. Oktober 2026).* Was nach dem ersten Release im App
+*Im Review (PR #14). Umgesetzt bis auf drei Schritte, die nur der
+Maintainer gehen kann: amtliche Markenprüfung, Antrag auf das
+Signaturzertifikat und Branch-Schutz mit Pflicht-CI auf GitHub.* Was nach dem ersten Release im App
 Store nur noch schwer zu ändern ist, kommt zuerst.
 
 - **Migrationen zusammenfassen und einfrieren:** die 18 Migrationen zu
@@ -693,7 +698,15 @@ die mit 0.12 bis 0.15 dazukamen.
 
 ### 0.19 Üben und Vortragen am Gerät
 
-*Geplant (Review 29. Oktober 2026).*
+*Im Review (PR #14). Umgesetzt:* Sängeransicht mit einem Übe-Bereich in
+benannten Abschnitten in beiden Ansichten, Faltung nach der Höhe, Leiste
+in der Höhe begrenzt, Vortragsmodus der Konzertmappe, ein Muster für „ohne
+Netz speichern“ mit Hinweis auf den Home-Bildschirm, Skripte bei jedem
+Start mit Netz, Programm mit dem Chor teilen und Links verlängern,
+Kontrastmodus und Auswahl nicht nur über Farbe, Druck der Noten.
+*Offen:* Scan am Handy als eigene Ansicht, gemeinsames `usePlayback` und
+`useKeptPieces`, Vortragsmodus in der Notenansicht des Archivs, Abnahme
+auf echten Geräten.
 
 - **Sängeransicht neu ordnen:** zuerst die Stimme, dann was von ihr
   abhängt; die Übe-Werkzeuge in benannte Abschnitte statt über 20
@@ -728,7 +741,14 @@ die mit 0.12 bis 0.15 dazukamen.
 
 ### 0.20 Einführen und umsteigen
 
-*Geplant (Review 29. Oktober 2026).*
+*Teilweise im Review (PR #14). Umgesetzt:* Einrichtung nach Szenarien als
+eigener Schritt, Begriffe (Chorportal, Chorsystem, „Mit mir geteilt“,
+Tonhöhe und Transponieren, englische Rollennamen) mit Glossar und
+Doku-Test, der zitierte Meldungen gegen die Oberfläche prüft, die Meldung
+„für Chormitglieder abgeschaltet“ statt „keine Rolle“, einseitige
+Anleitung für Chormitglieder, neues App-Icon, Store-Text.
+*Offen:* Import-Assistent, Screenshots aus einem echten Nextcloud, Doku
+für Hoster, Rückweg, Demo.
 
 - **Import-Assistent:** XLSX und ODS neben CSV, eine Vorlagedatei und
   neutrale Spaltennamen (heute z. B. „Auf Singste seit“); die freie
