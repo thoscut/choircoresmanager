@@ -704,7 +704,6 @@ export const singular = {
 	"Checksum (SHA-256): {sha256}": "Controlesom (SHA-256): {sha256}",
 	"Binder {binder} ({active} active, {uncounted} never counted)": "Archiefordner {binder} ({active} actief, {uncounted} nooit geteld)",
 	"Binder {binder} ({active} active)": "Archiefordner {binder} ({active} actief)",
-	"Please enter whole numbers (0 or more) for the marked copies.": "Voer voor de gemarkeerde exemplaren gehele getallen in (0 of meer).",
 	"Please tick the copies that have been counted.": "Vink de exemplaren aan die zijn geteld.",
 	"The date of the count must not lie in the future.": "De datum van de telling mag niet in de toekomst liggen.",
 	"never": "nooit",
@@ -1147,7 +1146,6 @@ export const singular = {
 	"Please show at most {count} measures first (fields \"From measure\" and \"To measure\").": "Toon eerst maximaal {count} maten (velden “Vanaf maat” en “Tot maat”).",
 	"Printed measure numbers {first} to {last}.": "Gedrukte maatnummers {first} tot {last}.",
 	"The pickup is measure 0.": "De opmaat is maat 0.",
-	"Click a note to play from there.": "Klik op een noot om vanaf daar af te spelen.",
 	"Measure {to} does not come after measure {from}.": "Maat {to} komt niet na maat {from}.",
 	"There is no measure {number} in this score.": "Er is geen maat {number} in deze bladmuziek.",
 	"{part}, voice {number}": "{part}, stem {number}",
@@ -2524,6 +2522,7 @@ export const singular = {
 	"In Cantoria, the list of what the choir may get. Where the choir gets it is the choir system outside Cantoria, or the page \"Shared with me\" of the choir members.": "In Cantoria de lijst van wat het koor mag krijgen. Waar het koor het krijgt, is het koorsysteem buiten Cantoria, of de pagina “Gedeeld met mij” van de koorleden.",
 	"Open file {path} (opens in a new tab)": "Bestand {path} openen (opent in een nieuw tabblad)",
 	"Help: access to the archive folder (opens in a new tab)": "Hulp: toegang tot de archiefmap (opent in een nieuw tabblad)",
+	"Filters": "Filters",
 }
 
 export const plural = {
@@ -2651,4 +2650,8 @@ export const plural = {
 	"Locked: not checked with the server for more than %n day. Please open this page once with a network.|Locked: not checked with the server for more than %n days. Please open this page once with a network.": ["Vergrendeld: al meer dan %n dag niet bij de server gecontroleerd. Open deze pagina een keer met netwerk.", "Vergrendeld: al meer dan %n dagen niet bij de server gecontroleerd. Open deze pagina een keer met netwerk."],
 	"Currently closest to “{scenario}”, with %n difference.|Currently closest to “{scenario}”, with %n differences.": ["Op dit moment het dichtst bij “{scenario}”, met %n verschil.", "Op dit moment het dichtst bij “{scenario}”, met %n verschillen."],
 	"Currently closest to “{scenario}”, with %n difference: {modules}.|Currently closest to “{scenario}”, with %n differences: {modules}.": ["Op dit moment het dichtst bij “{scenario}”, met %n verschil: {modules}.", "Op dit moment het dichtst bij “{scenario}”, met %n verschillen: {modules}."],
+	"%n performance|%n performances": ["%n uitvoering", "%n uitvoeringen"],
+	"%n song list|%n song lists": ["%n bladmuzieklijst", "%n bladmuzieklijsten"],
+	"Filters (%n set)|Filters (%n set)": ["Filters (%n ingesteld)", "Filters (%n ingesteld)"],
+	"Please enter whole numbers (0 or more) for %n copy: {shelfmarks}.|Please enter whole numbers (0 or more) for %n copies: {shelfmarks}.": ["Voer gehele getallen (0 of meer) in voor %n exemplaar: {shelfmarks}.", "Voer gehele getallen (0 of meer) in voor %n exemplaren: {shelfmarks}."],
 }

@@ -309,6 +309,7 @@
         "last {date}": "última vez: {date}",
         "Catalog": "Catálogo",
         "Shelf mark, title or composer": "Signatura, título o composición",
+        "Filters": "Filtros",
         "Sort by": "Ordenar por",
         "No matches": "Sin resultados",
         "No copy matches the search and filters. Retired copies are only shown when the status filter includes them.": "Ningún ejemplar coincide con la búsqueda y los filtros. Los ejemplares dados de baja solo se muestran si el filtro de estado los incluye.",
@@ -726,7 +727,6 @@
         "Also copies that are not active": "También ejemplares no activos",
         "Binder {binder} ({active} active, {uncounted} never counted)": "Archivador {binder} ({active} activos, {uncounted} nunca contados)",
         "Binder {binder} ({active} active)": "Archivador {binder} ({active} activos)",
-        "Please enter whole numbers (0 or more) for the marked copies.": "Introduce números enteros (0 o más) para los ejemplares marcados.",
         "Please tick the copies that have been counted.": "Marca los ejemplares que se han contado.",
         "The date of the count must not lie in the future.": "La fecha del recuento no puede estar en el futuro.",
         "never": "nunca",
@@ -1310,7 +1310,7 @@
         "Please show at most {count} measures first (fields \"From measure\" and \"To measure\").": "Muestra primero como máximo {count} compases (campos “Desde el compás” y “Hasta el compás”).",
         "Printed measure numbers {first} to {last}.": "Números de compás impresos del {first} al {last}.",
         "The pickup is measure 0.": "La anacrusa es el compás 0.",
-        "Click a note to play from there.": "Haz clic en una nota para reproducir desde allí.",
+        "Tap or click a note to play from there.": "Toca o haz clic en una nota para reproducir desde ahí.",
         "Measure {to} does not come after measure {from}.": "El compás {to} no va después del compás {from}.",
         "There is no measure {number} in this score.": "No hay ningún compás {number} en esta partitura.",
         "{part}, voice {number}": "{part}, voz {number}",
@@ -1802,7 +1802,6 @@
         "Text reference": "Referencia en texto",
         "Playback is not available for this excerpt.": "La reproducción no está disponible para este fragmento.",
         "Percent of the tempo in the score.": "Porcentaje del tempo de la partitura.",
-        "Tap or click a note to play from there.": "Toca o haz clic en una nota para reproducir desde ahí.",
         "Description of the piece": "Descripción de la pieza",
         "Description of the excerpt": "Descripción del fragmento",
         "Practice file": "Archivo de ensayo",
@@ -2605,9 +2604,21 @@
             "en %n lista de partituras",
             "en %n listas de partituras"
         ],
+        "_%n performance_::_%n performances_": [
+            "%n interpretación",
+            "%n interpretaciones"
+        ],
+        "_%n song list_::_%n song lists_": [
+            "%n lista de partituras",
+            "%n listas de partituras"
+        ],
         "_%n open review point_::_%n open review points_": [
             "%n punto de revisión abierto",
             "%n puntos de revisión abiertos"
+        ],
+        "_Filters (%n set)_::_Filters (%n set)_": [
+            "Filtros (%n activo)",
+            "Filtros (%n activos)"
         ],
         "_Each hourly run reads up to %n file._::_Each hourly run reads up to %n files._": [
             "Cada ejecución horaria lee hasta %n archivo.",
@@ -2708,6 +2719,10 @@
         "_%n copy is no longer in the CSV_::_%n copies are no longer in the CSV_": [
             "%n ejemplar ya no está en el CSV",
             "%n ejemplares ya no están en el CSV"
+        ],
+        "_Please enter whole numbers (0 or more) for %n copy: {shelfmarks}._::_Please enter whole numbers (0 or more) for %n copies: {shelfmarks}._": [
+            "Introduce números enteros (0 o más) para %n ejemplar: {shelfmarks}.",
+            "Introduce números enteros (0 o más) para %n ejemplares: {shelfmarks}."
         ],
         "_The count of %n copy has been recorded._::_The count of %n copies has been recorded._": [
             "Se ha registrado el recuento de %n ejemplar.",

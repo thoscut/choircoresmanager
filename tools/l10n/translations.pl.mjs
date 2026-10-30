@@ -704,7 +704,6 @@ export const singular = {
 	"Checksum (SHA-256): {sha256}": "Suma kontrolna (SHA-256): {sha256}",
 	"Binder {binder} ({active} active, {uncounted} never counted)": "Segregator archiwalny {binder} (aktywne: {active}, nigdy nieliczone: {uncounted})",
 	"Binder {binder} ({active} active)": "Segregator archiwalny {binder} (aktywne: {active})",
-	"Please enter whole numbers (0 or more) for the marked copies.": "Wpisz liczby całkowite (0 lub więcej) dla zaznaczonych egzemplarzy.",
 	"Please tick the copies that have been counted.": "Zaznacz policzone egzemplarze.",
 	"The date of the count must not lie in the future.": "Data liczenia nie może być datą przyszłą.",
 	"never": "nigdy",
@@ -1147,7 +1146,6 @@ export const singular = {
 	"Please show at most {count} measures first (fields \"From measure\" and \"To measure\").": "Najpierw wyświetl najwyżej {count} taktów (pola „Od taktu” i „Do taktu”).",
 	"Printed measure numbers {first} to {last}.": "Drukowane numery taktów od {first} do {last}.",
 	"The pickup is measure 0.": "Przedtakt to takt 0.",
-	"Click a note to play from there.": "Kliknij nutę, aby odtwarzać od tego miejsca.",
 	"Measure {to} does not come after measure {from}.": "Takt {to} nie występuje po takcie {from}.",
 	"There is no measure {number} in this score.": "W tych nutach nie ma taktu {number}.",
 	"{part}, voice {number}": "{part}, głos {number}",
@@ -2524,6 +2522,7 @@ export const singular = {
 	"In Cantoria, the list of what the choir may get. Where the choir gets it is the choir system outside Cantoria, or the page \"Shared with me\" of the choir members.": "W Cantorii lista tego, co chór może otrzymać. Miejscem, w którym chór to otrzymuje, jest system chóru poza Cantorią albo strona „Udostępnione mi” osób z chóru.",
 	"Open file {path} (opens in a new tab)": "Otwórz plik {path} (otwiera się w nowej karcie)",
 	"Help: access to the archive folder (opens in a new tab)": "Pomoc: dostęp do folderu archiwum (otwiera się w nowej karcie)",
+	"Filters": "Filtry",
 }
 
 export const plural = {
@@ -2651,4 +2650,8 @@ export const plural = {
 	"Locked: not checked with the server for more than %n day. Please open this page once with a network.|Locked: not checked with the server for more than %n days. Please open this page once with a network.": ["Zablokowane: niesprawdzane z serwerem od ponad %n dnia. Otwórz tę stronę raz z siecią.", "Zablokowane: niesprawdzane z serwerem od ponad %n dni. Otwórz tę stronę raz z siecią.", "Zablokowane: niesprawdzane z serwerem od ponad %n dni. Otwórz tę stronę raz z siecią."],
 	"Currently closest to “{scenario}”, with %n difference.|Currently closest to “{scenario}”, with %n differences.": ["Obecnie najbliżej „{scenario}”, z %n różnicą.", "Obecnie najbliżej „{scenario}”, z %n różnicami.", "Obecnie najbliżej „{scenario}”, z %n różnicami."],
 	"Currently closest to “{scenario}”, with %n difference: {modules}.|Currently closest to “{scenario}”, with %n differences: {modules}.": ["Obecnie najbliżej „{scenario}”, z %n różnicą: {modules}.", "Obecnie najbliżej „{scenario}”, z %n różnicami: {modules}.", "Obecnie najbliżej „{scenario}”, z %n różnicami: {modules}."],
+	"%n performance|%n performances": ["%n wykonanie", "%n wykonania", "%n wykonań"],
+	"%n song list|%n song lists": ["%n lista nut", "%n listy nut", "%n list nut"],
+	"Filters (%n set)|Filters (%n set)": ["Filtry (ustawione: %n)", "Filtry (ustawione: %n)", "Filtry (ustawione: %n)"],
+	"Please enter whole numbers (0 or more) for %n copy: {shelfmarks}.|Please enter whole numbers (0 or more) for %n copies: {shelfmarks}.": ["Wpisz liczby całkowite (0 lub więcej) dla %n egzemplarza: {shelfmarks}.", "Wpisz liczby całkowite (0 lub więcej) dla %n egzemplarzy: {shelfmarks}.", "Wpisz liczby całkowite (0 lub więcej) dla %n egzemplarzy: {shelfmarks}."],
 }

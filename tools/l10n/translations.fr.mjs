@@ -704,7 +704,6 @@ export const singular = {
 	"Checksum (SHA-256): {sha256}": "Somme de contrôle (SHA-256) : {sha256}",
 	"Binder {binder} ({active} active, {uncounted} never counted)": "Classeur d'archives {binder} ({active} actifs, {uncounted} jamais comptés)",
 	"Binder {binder} ({active} active)": "Classeur d'archives {binder} ({active} actifs)",
-	"Please enter whole numbers (0 or more) for the marked copies.": "Veuillez saisir des nombres entiers (0 ou plus) pour les exemplaires signalés.",
 	"Please tick the copies that have been counted.": "Veuillez cocher les exemplaires qui ont été comptés.",
 	"The date of the count must not lie in the future.": "La date du comptage ne peut pas être dans le futur.",
 	"never": "jamais",
@@ -1147,7 +1146,6 @@ export const singular = {
 	"Please show at most {count} measures first (fields \"From measure\" and \"To measure\").": "Veuillez d'abord afficher au plus {count} mesures (champs « De la mesure » et « À la mesure »).",
 	"Printed measure numbers {first} to {last}.": "Numéros de mesure imprimés {first} à {last}.",
 	"The pickup is measure 0.": "L'anacrouse est la mesure 0.",
-	"Click a note to play from there.": "Cliquez sur une note pour lancer la lecture à partir de là.",
 	"Measure {to} does not come after measure {from}.": "La mesure {to} ne vient pas après la mesure {from}.",
 	"There is no measure {number} in this score.": "Il n'y a pas de mesure {number} dans cette partition.",
 	"{part}, voice {number}": "{part}, voix {number}",
@@ -2524,6 +2522,7 @@ export const singular = {
 	"In Cantoria, the list of what the choir may get. Where the choir gets it is the choir system outside Cantoria, or the page \"Shared with me\" of the choir members.": "Dans Cantoria, la liste de ce que le chœur peut recevoir. L'endroit où le chœur le reçoit est le système du chœur en dehors de Cantoria, ou la page « Partagé avec moi » des membres du chœur.",
 	"Open file {path} (opens in a new tab)": "Ouvrir le fichier {path} (s'ouvre dans un nouvel onglet)",
 	"Help: access to the archive folder (opens in a new tab)": "Aide : accès au dossier d'archives (s'ouvre dans un nouvel onglet)",
+	"Filters": "Filtres",
 }
 
 export const plural = {
@@ -2651,4 +2650,8 @@ export const plural = {
 	"Locked: not checked with the server for more than %n day. Please open this page once with a network.|Locked: not checked with the server for more than %n days. Please open this page once with a network.": ["Verrouillé : pas vérifié auprès du serveur depuis plus de %n jour. Veuillez ouvrir cette page une fois avec un réseau.", "Verrouillé : pas vérifié auprès du serveur depuis plus de %n jours. Veuillez ouvrir cette page une fois avec un réseau."],
 	"Currently closest to “{scenario}”, with %n difference.|Currently closest to “{scenario}”, with %n differences.": ["Actuellement le plus proche de « {scenario} », avec %n différence.", "Actuellement le plus proche de « {scenario} », avec %n différences."],
 	"Currently closest to “{scenario}”, with %n difference: {modules}.|Currently closest to “{scenario}”, with %n differences: {modules}.": ["Actuellement le plus proche de « {scenario} », avec %n différence : {modules}.", "Actuellement le plus proche de « {scenario} », avec %n différences : {modules}."],
+	"%n performance|%n performances": ["%n exécution", "%n exécutions"],
+	"%n song list|%n song lists": ["%n liste de partitions", "%n listes de partitions"],
+	"Filters (%n set)|Filters (%n set)": ["Filtres (%n actif)", "Filtres (%n actifs)"],
+	"Please enter whole numbers (0 or more) for %n copy: {shelfmarks}.|Please enter whole numbers (0 or more) for %n copies: {shelfmarks}.": ["Veuillez saisir des nombres entiers (0 ou plus) pour %n exemplaire : {shelfmarks}.", "Veuillez saisir des nombres entiers (0 ou plus) pour %n exemplaires : {shelfmarks}."],
 }

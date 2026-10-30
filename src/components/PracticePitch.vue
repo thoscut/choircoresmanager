@@ -276,7 +276,7 @@ const words = computed(() => {
 .practice-pitch__choices {
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
+	gap: var(--default-grid-baseline);
 	flex-basis: 100%;
 }
 

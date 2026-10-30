@@ -517,10 +517,6 @@ export const singular = {
 	'Loop on: measures {from} to {to} play again and again.': 'Schleife an: Die Takte {from} bis {to} werden immer wieder gespielt.',
 	'Loop off.': 'Schleife aus.',
 	'Start at measure {number}.': 'Start bei Takt {number}.',
-	'Click a note to play from there.': [
-		'Klicke auf eine Note, um ab dort abzuspielen.',
-		'Klicken Sie auf eine Note, um ab dort abzuspielen.',
-	],
 	'Space plays and pauses. The arrow keys left and right go to the previous or next measure.': 'Leertaste: abspielen und anhalten. Pfeiltasten links und rechts: zum vorigen oder nächsten Takt.',
 	'Score of {shelfmark} {title}': 'Noten von {shelfmark} {title}',
 	'The focus voice {voice} is shown in color with bold note heads and stems, the other voices in a lighter gray.': 'Die Stimme {voice} ist farbig und mit kräftigen Notenköpfen und Hälsen hervorgehoben, die übrigen Stimmen sind in hellerem Grau.',
@@ -1901,7 +1897,6 @@ export const singular = {
 	'Tick the copies that are there. Enter a figure only when it differs; an empty field keeps the listed one.': ['Hake die vorhandenen Exemplare ab. Trage eine Zahl nur ein, wenn sie abweicht. Ein leeres Feld behält die bisherige Zahl.', 'Haken Sie die vorhandenen Exemplare ab. Tragen Sie eine Zahl nur ein, wenn sie abweicht. Ein leeres Feld behält die bisherige Zahl.'],
 	'Tick all': 'Alle abhaken',
 	'Date of the count': 'Datum der Zählung',
-	'Please enter whole numbers (0 or more) for the marked copies.': ['Bitte gib für die markierten Exemplare ganze Zahlen (0 oder mehr) ein.', 'Bitte geben Sie für die markierten Exemplare ganze Zahlen (0 oder mehr) ein.'],
 	'Please tick the copies that have been counted.': ['Bitte hake die gezählten Exemplare ab.', 'Bitte haken Sie die gezählten Exemplare ab.'],
 
 	// checksums
@@ -3375,6 +3370,7 @@ export const singular = {
 	'In Cantoria, the list of what the choir may get. Where the choir gets it is the choir system outside Cantoria, or the page "Shared with me" of the choir members.': 'In Cantoria die Liste dessen, was der Chor bekommen darf. Wo der Chor es bekommt, ist das Chorsystem außerhalb von Cantoria oder die Seite „Mit mir geteilt“ der Chormitglieder.',
 	'Open file {path} (opens in a new tab)': 'Datei {path} öffnen (öffnet sich in einem neuen Tab)',
 	'Help: access to the archive folder (opens in a new tab)': 'Hilfe: Zugriff auf den Archivordner (öffnet sich in einem neuen Tab)',
+	'Filters': 'Filter',
 }
 
 export const plural = {
@@ -3602,4 +3598,20 @@ export const plural = {
 		'Derzeit am nächsten an „{scenario}“, mit %n Abweichung: {modules}.',
 		'Derzeit am nächsten an „{scenario}“, mit %n Abweichungen: {modules}.',
 	],
+	'%n performance|%n performances': [
+		'%n Aufführung',
+		'%n Aufführungen',
+	],
+	'%n song list|%n song lists': [
+		'%n Notenliste',
+		'%n Notenlisten',
+	],
+	'Filters (%n set)|Filters (%n set)': [
+		'Filter (%n gesetzt)',
+		'Filter (%n gesetzt)',
+	],
+	'Please enter whole numbers (0 or more) for %n copy: {shelfmarks}.|Please enter whole numbers (0 or more) for %n copies: {shelfmarks}.': {
+		du: ['Bitte gib für %n Exemplar ganze Zahlen (0 oder mehr) ein: {shelfmarks}.', 'Bitte gib für %n Exemplare ganze Zahlen (0 oder mehr) ein: {shelfmarks}.'],
+		sie: ['Bitte geben Sie für %n Exemplar ganze Zahlen (0 oder mehr) ein: {shelfmarks}.', 'Bitte geben Sie für %n Exemplare ganze Zahlen (0 oder mehr) ein: {shelfmarks}.'],
+	},
 }

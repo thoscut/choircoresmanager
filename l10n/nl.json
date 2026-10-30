@@ -309,6 +309,7 @@
         "last {date}": "laatst {date}",
         "Catalog": "Catalogus",
         "Shelf mark, title or composer": "Signatuur, titel of compositie",
+        "Filters": "Filters",
         "Sort by": "Sorteren op",
         "No matches": "Geen resultaten",
         "No copy matches the search and filters. Retired copies are only shown when the status filter includes them.": "Geen exemplaar komt overeen met de zoekopdracht en filters. Afgevoerde exemplaren worden alleen getoond als het statusfilter ze omvat.",
@@ -726,7 +727,6 @@
         "Also copies that are not active": "Ook exemplaren die niet actief zijn",
         "Binder {binder} ({active} active, {uncounted} never counted)": "Archiefordner {binder} ({active} actief, {uncounted} nooit geteld)",
         "Binder {binder} ({active} active)": "Archiefordner {binder} ({active} actief)",
-        "Please enter whole numbers (0 or more) for the marked copies.": "Voer voor de gemarkeerde exemplaren gehele getallen in (0 of meer).",
         "Please tick the copies that have been counted.": "Vink de exemplaren aan die zijn geteld.",
         "The date of the count must not lie in the future.": "De datum van de telling mag niet in de toekomst liggen.",
         "never": "nooit",
@@ -1310,7 +1310,7 @@
         "Please show at most {count} measures first (fields \"From measure\" and \"To measure\").": "Toon eerst maximaal {count} maten (velden “Vanaf maat” en “Tot maat”).",
         "Printed measure numbers {first} to {last}.": "Gedrukte maatnummers {first} tot {last}.",
         "The pickup is measure 0.": "De opmaat is maat 0.",
-        "Click a note to play from there.": "Klik op een noot om vanaf daar af te spelen.",
+        "Tap or click a note to play from there.": "Tik of klik op een noot om vanaf daar af te spelen.",
         "Measure {to} does not come after measure {from}.": "Maat {to} komt niet na maat {from}.",
         "There is no measure {number} in this score.": "Er is geen maat {number} in deze bladmuziek.",
         "{part}, voice {number}": "{part}, stem {number}",
@@ -1802,7 +1802,6 @@
         "Text reference": "Tekstverwijzing",
         "Playback is not available for this excerpt.": "Afspelen is voor dit fragment niet beschikbaar.",
         "Percent of the tempo in the score.": "Procent van het tempo in de bladmuziek.",
-        "Tap or click a note to play from there.": "Tik of klik op een noot om vanaf daar af te spelen.",
         "Description of the piece": "Beschrijving van het stuk",
         "Description of the excerpt": "Beschrijving van het fragment",
         "Practice file": "Oefenbestand",
@@ -2605,9 +2604,21 @@
             "op %n bladmuzieklijst",
             "op %n bladmuzieklijsten"
         ],
+        "_%n performance_::_%n performances_": [
+            "%n uitvoering",
+            "%n uitvoeringen"
+        ],
+        "_%n song list_::_%n song lists_": [
+            "%n bladmuzieklijst",
+            "%n bladmuzieklijsten"
+        ],
         "_%n open review point_::_%n open review points_": [
             "%n openstaand controlepunt",
             "%n openstaande controlepunten"
+        ],
+        "_Filters (%n set)_::_Filters (%n set)_": [
+            "Filters (%n ingesteld)",
+            "Filters (%n ingesteld)"
         ],
         "_Each hourly run reads up to %n file._::_Each hourly run reads up to %n files._": [
             "Elke uurlijkse ronde leest maximaal %n bestand.",
@@ -2708,6 +2719,10 @@
         "_%n copy is no longer in the CSV_::_%n copies are no longer in the CSV_": [
             "%n exemplaar staat niet meer in de CSV",
             "%n exemplaren staan niet meer in de CSV"
+        ],
+        "_Please enter whole numbers (0 or more) for %n copy: {shelfmarks}._::_Please enter whole numbers (0 or more) for %n copies: {shelfmarks}._": [
+            "Voer gehele getallen (0 of meer) in voor %n exemplaar: {shelfmarks}.",
+            "Voer gehele getallen (0 of meer) in voor %n exemplaren: {shelfmarks}."
         ],
         "_The count of %n copy has been recorded._::_The count of %n copies has been recorded._": [
             "De telling van %n exemplaar is vastgelegd.",

@@ -101,14 +101,14 @@ const next = computed(() => shownLine(lines.value[lineIndex.value + 1]))
 .practice-lyrics {
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
+	gap: var(--default-grid-baseline);
 	flex-basis: 100%;
 }
 
 .practice-lyrics__choices {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 8px 16px;
+	gap: calc(2 * var(--default-grid-baseline)) calc(4 * var(--default-grid-baseline));
 	align-items: center;
 }
 

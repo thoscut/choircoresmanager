@@ -310,6 +310,7 @@ OC.L10N.register(
         "last {date}": "zuletzt {date}",
         "Catalog": "Werkverzeichnis",
         "Shelf mark, title or composer": "Signatur, Titel oder Komposition",
+        "Filters": "Filter",
         "Sort by": "Sortieren nach",
         "No matches": "Keine Treffer",
         "No copy matches the search and filters. Retired copies are only shown when the status filter includes them.": "Kein Exemplar passt zu Suche und Filtern. Ausgemusterte Exemplare erscheinen nur, wenn der Statusfilter sie einschließt.",
@@ -727,7 +728,6 @@ OC.L10N.register(
         "Also copies that are not active": "Auch nicht aktive Exemplare",
         "Binder {binder} ({active} active, {uncounted} never counted)": "Archivmappe {binder} ({active} aktiv, {uncounted} nie gezählt)",
         "Binder {binder} ({active} active)": "Archivmappe {binder} ({active} aktiv)",
-        "Please enter whole numbers (0 or more) for the marked copies.": "Bitte geben Sie für die markierten Exemplare ganze Zahlen (0 oder mehr) ein.",
         "Please tick the copies that have been counted.": "Bitte haken Sie die gezählten Exemplare ab.",
         "The date of the count must not lie in the future.": "Das Datum der Zählung darf nicht in der Zukunft liegen.",
         "never": "nie",
@@ -1311,7 +1311,7 @@ OC.L10N.register(
         "Please show at most {count} measures first (fields \"From measure\" and \"To measure\").": "Bitte zeigen Sie zuerst höchstens {count} Takte (Felder „Von Takt“ und „Bis Takt“).",
         "Printed measure numbers {first} to {last}.": "Gedruckte Taktnummern {first} bis {last}.",
         "The pickup is measure 0.": "Der Auftakt ist Takt 0.",
-        "Click a note to play from there.": "Klicken Sie auf eine Note, um ab dort abzuspielen.",
+        "Tap or click a note to play from there.": "Tippen oder klicken Sie auf eine Note, um ab dort zu spielen.",
         "Measure {to} does not come after measure {from}.": "Takt {to} kommt nicht nach Takt {from}.",
         "There is no measure {number} in this score.": "In diesen Noten gibt es keinen Takt {number}.",
         "{part}, voice {number}": "{part}, Stimme {number}",
@@ -1803,7 +1803,6 @@ OC.L10N.register(
         "Text reference": "Textverweis",
         "Playback is not available for this excerpt.": "Für diesen Ausschnitt ist Abspielen nicht möglich.",
         "Percent of the tempo in the score.": "Prozent des Tempos in den Noten.",
-        "Tap or click a note to play from there.": "Tippen oder klicken Sie auf eine Note, um ab dort zu spielen.",
         "Description of the piece": "Beschreibung des Stücks",
         "Description of the excerpt": "Beschreibung des Ausschnitts",
         "Practice file": "Übe-Datei",
@@ -2606,9 +2605,21 @@ OC.L10N.register(
             "auf %n Notenliste",
             "auf %n Notenlisten"
         ],
+        "_%n performance_::_%n performances_": [
+            "%n Aufführung",
+            "%n Aufführungen"
+        ],
+        "_%n song list_::_%n song lists_": [
+            "%n Notenliste",
+            "%n Notenlisten"
+        ],
         "_%n open review point_::_%n open review points_": [
             "%n offener Prüfpunkt",
             "%n offene Prüfpunkte"
+        ],
+        "_Filters (%n set)_::_Filters (%n set)_": [
+            "Filter (%n gesetzt)",
+            "Filter (%n gesetzt)"
         ],
         "_Each hourly run reads up to %n file._::_Each hourly run reads up to %n files._": [
             "Jede stündliche Runde liest bis zu %n Datei.",
@@ -2709,6 +2720,10 @@ OC.L10N.register(
         "_%n copy is no longer in the CSV_::_%n copies are no longer in the CSV_": [
             "%n Exemplar ist nicht mehr in der CSV",
             "%n Exemplare sind nicht mehr in der CSV"
+        ],
+        "_Please enter whole numbers (0 or more) for %n copy: {shelfmarks}._::_Please enter whole numbers (0 or more) for %n copies: {shelfmarks}._": [
+            "Bitte geben Sie für %n Exemplar ganze Zahlen (0 oder mehr) ein: {shelfmarks}.",
+            "Bitte geben Sie für %n Exemplare ganze Zahlen (0 oder mehr) ein: {shelfmarks}."
         ],
         "_The count of %n copy has been recorded._::_The count of %n copies has been recorded._": [
             "Die Zählung von %n Exemplar ist eingetragen.",

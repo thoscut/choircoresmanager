@@ -310,6 +310,7 @@ OC.L10N.register(
         "last {date}": "ultima volta {date}",
         "Catalog": "Catalogo",
         "Shelf mark, title or composer": "Segnatura, titolo o composizione",
+        "Filters": "Filtri",
         "Sort by": "Ordina per",
         "No matches": "Nessun risultato",
         "No copy matches the search and filters. Retired copies are only shown when the status filter includes them.": "Nessun esemplare corrisponde alla ricerca e ai filtri. Gli esemplari dismessi vengono mostrati solo se il filtro di stato li include.",
@@ -727,7 +728,6 @@ OC.L10N.register(
         "Also copies that are not active": "Anche esemplari non attivi",
         "Binder {binder} ({active} active, {uncounted} never counted)": "Raccoglitore d'archivio {binder} ({active} attivi, {uncounted} mai contati)",
         "Binder {binder} ({active} active)": "Raccoglitore d'archivio {binder} ({active} attivi)",
-        "Please enter whole numbers (0 or more) for the marked copies.": "Inserisci numeri interi (0 o più) per gli esemplari evidenziati.",
         "Please tick the copies that have been counted.": "Seleziona gli esemplari che sono stati contati.",
         "The date of the count must not lie in the future.": "La data del conteggio non può essere nel futuro.",
         "never": "mai",
@@ -1311,7 +1311,7 @@ OC.L10N.register(
         "Please show at most {count} measures first (fields \"From measure\" and \"To measure\").": "Mostra prima al massimo {count} battute (campi “Dalla battuta” e “Alla battuta”).",
         "Printed measure numbers {first} to {last}.": "Numeri di battuta stampati da {first} a {last}.",
         "The pickup is measure 0.": "L'anacrusi è la battuta 0.",
-        "Click a note to play from there.": "Fai clic su una nota per riprodurre da lì.",
+        "Tap or click a note to play from there.": "Tocca o fai clic su una nota per suonare da lì.",
         "Measure {to} does not come after measure {from}.": "La battuta {to} non viene dopo la battuta {from}.",
         "There is no measure {number} in this score.": "In questo spartito non c'è la battuta {number}.",
         "{part}, voice {number}": "{part}, voce {number}",
@@ -1803,7 +1803,6 @@ OC.L10N.register(
         "Text reference": "Riferimento testuale",
         "Playback is not available for this excerpt.": "La riproduzione non è disponibile per questo estratto.",
         "Percent of the tempo in the score.": "Percentuale del tempo indicato nello spartito.",
-        "Tap or click a note to play from there.": "Tocca o fai clic su una nota per suonare da lì.",
         "Description of the piece": "Descrizione del brano",
         "Description of the excerpt": "Descrizione dell'estratto",
         "Practice file": "File per lo studio",
@@ -2606,9 +2605,21 @@ OC.L10N.register(
             "in %n elenco di spartiti",
             "in %n elenchi di spartiti"
         ],
+        "_%n performance_::_%n performances_": [
+            "%n esecuzione",
+            "%n esecuzioni"
+        ],
+        "_%n song list_::_%n song lists_": [
+            "%n elenco di spartiti",
+            "%n elenchi di spartiti"
+        ],
         "_%n open review point_::_%n open review points_": [
             "%n punto di verifica aperto",
             "%n punti di verifica aperti"
+        ],
+        "_Filters (%n set)_::_Filters (%n set)_": [
+            "Filtri (%n attivo)",
+            "Filtri (%n attivi)"
         ],
         "_Each hourly run reads up to %n file._::_Each hourly run reads up to %n files._": [
             "Ogni passaggio orario legge fino a %n file.",
@@ -2709,6 +2720,10 @@ OC.L10N.register(
         "_%n copy is no longer in the CSV_::_%n copies are no longer in the CSV_": [
             "%n esemplare non è più nel CSV",
             "%n esemplari non sono più nel CSV"
+        ],
+        "_Please enter whole numbers (0 or more) for %n copy: {shelfmarks}._::_Please enter whole numbers (0 or more) for %n copies: {shelfmarks}._": [
+            "Inserisci numeri interi (0 o più) per %n esemplare: {shelfmarks}.",
+            "Inserisci numeri interi (0 o più) per %n esemplari: {shelfmarks}."
         ],
         "_The count of %n copy has been recorded._::_The count of %n copies has been recorded._": [
             "Il conteggio di %n esemplare è stato registrato.",

@@ -309,6 +309,7 @@
         "last {date}": "dernière fois le {date}",
         "Catalog": "Catalogue",
         "Shelf mark, title or composer": "Cote, titre ou composition",
+        "Filters": "Filtres",
         "Sort by": "Trier par",
         "No matches": "Aucun résultat",
         "No copy matches the search and filters. Retired copies are only shown when the status filter includes them.": "Aucun exemplaire ne correspond à la recherche et aux filtres. Les exemplaires retirés ne s'affichent que si le filtre de statut les inclut.",
@@ -726,7 +727,6 @@
         "Also copies that are not active": "Également les exemplaires non actifs",
         "Binder {binder} ({active} active, {uncounted} never counted)": "Classeur d'archives {binder} ({active} actifs, {uncounted} jamais comptés)",
         "Binder {binder} ({active} active)": "Classeur d'archives {binder} ({active} actifs)",
-        "Please enter whole numbers (0 or more) for the marked copies.": "Veuillez saisir des nombres entiers (0 ou plus) pour les exemplaires signalés.",
         "Please tick the copies that have been counted.": "Veuillez cocher les exemplaires qui ont été comptés.",
         "The date of the count must not lie in the future.": "La date du comptage ne peut pas être dans le futur.",
         "never": "jamais",
@@ -1310,7 +1310,7 @@
         "Please show at most {count} measures first (fields \"From measure\" and \"To measure\").": "Veuillez d'abord afficher au plus {count} mesures (champs « De la mesure » et « À la mesure »).",
         "Printed measure numbers {first} to {last}.": "Numéros de mesure imprimés {first} à {last}.",
         "The pickup is measure 0.": "L'anacrouse est la mesure 0.",
-        "Click a note to play from there.": "Cliquez sur une note pour lancer la lecture à partir de là.",
+        "Tap or click a note to play from there.": "Touchez ou cliquez sur une note pour jouer à partir de là.",
         "Measure {to} does not come after measure {from}.": "La mesure {to} ne vient pas après la mesure {from}.",
         "There is no measure {number} in this score.": "Il n'y a pas de mesure {number} dans cette partition.",
         "{part}, voice {number}": "{part}, voix {number}",
@@ -1802,7 +1802,6 @@
         "Text reference": "Référence textuelle",
         "Playback is not available for this excerpt.": "La lecture n'est pas disponible pour cet extrait.",
         "Percent of the tempo in the score.": "Pourcentage du tempo de la partition.",
-        "Tap or click a note to play from there.": "Touchez ou cliquez sur une note pour jouer à partir de là.",
         "Description of the piece": "Description du morceau",
         "Description of the excerpt": "Description de l'extrait",
         "Practice file": "Fichier d'entraînement",
@@ -2605,9 +2604,21 @@
             "sur %n liste de partitions",
             "sur %n listes de partitions"
         ],
+        "_%n performance_::_%n performances_": [
+            "%n exécution",
+            "%n exécutions"
+        ],
+        "_%n song list_::_%n song lists_": [
+            "%n liste de partitions",
+            "%n listes de partitions"
+        ],
         "_%n open review point_::_%n open review points_": [
             "%n point de vérification ouvert",
             "%n points de vérification ouverts"
+        ],
+        "_Filters (%n set)_::_Filters (%n set)_": [
+            "Filtres (%n actif)",
+            "Filtres (%n actifs)"
         ],
         "_Each hourly run reads up to %n file._::_Each hourly run reads up to %n files._": [
             "Chaque passage horaire lit jusqu'à %n fichier.",
@@ -2708,6 +2719,10 @@
         "_%n copy is no longer in the CSV_::_%n copies are no longer in the CSV_": [
             "%n exemplaire ne figure plus dans le fichier CSV",
             "%n exemplaires ne figurent plus dans le fichier CSV"
+        ],
+        "_Please enter whole numbers (0 or more) for %n copy: {shelfmarks}._::_Please enter whole numbers (0 or more) for %n copies: {shelfmarks}._": [
+            "Veuillez saisir des nombres entiers (0 ou plus) pour %n exemplaire : {shelfmarks}.",
+            "Veuillez saisir des nombres entiers (0 ou plus) pour %n exemplaires : {shelfmarks}."
         ],
         "_The count of %n copy has been recorded._::_The count of %n copies has been recorded._": [
             "Le comptage de %n exemplaire a été enregistré.",

@@ -704,7 +704,6 @@ export const singular = {
 	"Checksum (SHA-256): {sha256}": "Suma de verificación (SHA-256): {sha256}",
 	"Binder {binder} ({active} active, {uncounted} never counted)": "Archivador {binder} ({active} activos, {uncounted} nunca contados)",
 	"Binder {binder} ({active} active)": "Archivador {binder} ({active} activos)",
-	"Please enter whole numbers (0 or more) for the marked copies.": "Introduce números enteros (0 o más) para los ejemplares marcados.",
 	"Please tick the copies that have been counted.": "Marca los ejemplares que se han contado.",
 	"The date of the count must not lie in the future.": "La fecha del recuento no puede estar en el futuro.",
 	"never": "nunca",
@@ -1147,7 +1146,6 @@ export const singular = {
 	"Please show at most {count} measures first (fields \"From measure\" and \"To measure\").": "Muestra primero como máximo {count} compases (campos “Desde el compás” y “Hasta el compás”).",
 	"Printed measure numbers {first} to {last}.": "Números de compás impresos del {first} al {last}.",
 	"The pickup is measure 0.": "La anacrusa es el compás 0.",
-	"Click a note to play from there.": "Haz clic en una nota para reproducir desde allí.",
 	"Measure {to} does not come after measure {from}.": "El compás {to} no va después del compás {from}.",
 	"There is no measure {number} in this score.": "No hay ningún compás {number} en esta partitura.",
 	"{part}, voice {number}": "{part}, voz {number}",
@@ -2524,6 +2522,7 @@ export const singular = {
 	"In Cantoria, the list of what the choir may get. Where the choir gets it is the choir system outside Cantoria, or the page \"Shared with me\" of the choir members.": "En Cantoria, la lista de lo que el coro puede recibir. Dónde lo recibe el coro es el sistema del coro fuera de Cantoria, o la página “Compartido conmigo” de las personas del coro.",
 	"Open file {path} (opens in a new tab)": "Abrir el archivo {path} (se abre en una pestaña nueva)",
 	"Help: access to the archive folder (opens in a new tab)": "Ayuda: acceso a la carpeta del archivo (se abre en una pestaña nueva)",
+	"Filters": "Filtros",
 }
 
 export const plural = {
@@ -2651,4 +2650,8 @@ export const plural = {
 	"Locked: not checked with the server for more than %n day. Please open this page once with a network.|Locked: not checked with the server for more than %n days. Please open this page once with a network.": ["Bloqueado: sin comprobar con el servidor desde hace más de %n día. Abre esta página una vez con red.", "Bloqueado: sin comprobar con el servidor desde hace más de %n días. Abre esta página una vez con red."],
 	"Currently closest to “{scenario}”, with %n difference.|Currently closest to “{scenario}”, with %n differences.": ["Ahora lo más parecido a “{scenario}”, con %n diferencia.", "Ahora lo más parecido a “{scenario}”, con %n diferencias."],
 	"Currently closest to “{scenario}”, with %n difference: {modules}.|Currently closest to “{scenario}”, with %n differences: {modules}.": ["Ahora lo más parecido a “{scenario}”, con %n diferencia: {modules}.", "Ahora lo más parecido a “{scenario}”, con %n diferencias: {modules}."],
+	"%n performance|%n performances": ["%n interpretación", "%n interpretaciones"],
+	"%n song list|%n song lists": ["%n lista de partituras", "%n listas de partituras"],
+	"Filters (%n set)|Filters (%n set)": ["Filtros (%n activo)", "Filtros (%n activos)"],
+	"Please enter whole numbers (0 or more) for %n copy: {shelfmarks}.|Please enter whole numbers (0 or more) for %n copies: {shelfmarks}.": ["Introduce números enteros (0 o más) para %n ejemplar: {shelfmarks}.", "Introduce números enteros (0 o más) para %n ejemplares: {shelfmarks}."],
 }

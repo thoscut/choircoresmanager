@@ -662,7 +662,7 @@ const rangeHint = computed(() => {
 		parts.push(t('cantoria', 'The pickup is measure 0.'))
 	}
 	if (canPlay.value) {
-		parts.push(t('cantoria', 'Click a note to play from there.'))
+		parts.push(t('cantoria', 'Tap or click a note to play from there.'))
 	}
 	return parts.join(' ')
 })

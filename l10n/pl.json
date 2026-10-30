@@ -309,6 +309,7 @@
         "last {date}": "ostatnio {date}",
         "Catalog": "Katalog",
         "Shelf mark, title or composer": "Sygnatura, tytuł lub kompozycja",
+        "Filters": "Filtry",
         "Sort by": "Sortuj według",
         "No matches": "Brak wyników",
         "No copy matches the search and filters. Retired copies are only shown when the status filter includes them.": "Żaden egzemplarz nie pasuje do wyszukiwania i filtrów. Wycofane egzemplarze są pokazywane tylko wtedy, gdy obejmuje je filtr statusu.",
@@ -726,7 +727,6 @@
         "Also copies that are not active": "Także nieaktywne egzemplarze",
         "Binder {binder} ({active} active, {uncounted} never counted)": "Segregator archiwalny {binder} (aktywne: {active}, nigdy nieliczone: {uncounted})",
         "Binder {binder} ({active} active)": "Segregator archiwalny {binder} (aktywne: {active})",
-        "Please enter whole numbers (0 or more) for the marked copies.": "Wpisz liczby całkowite (0 lub więcej) dla zaznaczonych egzemplarzy.",
         "Please tick the copies that have been counted.": "Zaznacz policzone egzemplarze.",
         "The date of the count must not lie in the future.": "Data liczenia nie może być datą przyszłą.",
         "never": "nigdy",
@@ -1310,7 +1310,7 @@
         "Please show at most {count} measures first (fields \"From measure\" and \"To measure\").": "Najpierw wyświetl najwyżej {count} taktów (pola „Od taktu” i „Do taktu”).",
         "Printed measure numbers {first} to {last}.": "Drukowane numery taktów od {first} do {last}.",
         "The pickup is measure 0.": "Przedtakt to takt 0.",
-        "Click a note to play from there.": "Kliknij nutę, aby odtwarzać od tego miejsca.",
+        "Tap or click a note to play from there.": "Dotknij lub kliknij nutę, aby odtwarzać od tego miejsca.",
         "Measure {to} does not come after measure {from}.": "Takt {to} nie występuje po takcie {from}.",
         "There is no measure {number} in this score.": "W tych nutach nie ma taktu {number}.",
         "{part}, voice {number}": "{part}, głos {number}",
@@ -1802,7 +1802,6 @@
         "Text reference": "Odwołanie tekstowe",
         "Playback is not available for this excerpt.": "Odtwarzanie tego fragmentu jest niedostępne.",
         "Percent of the tempo in the score.": "Procent tempa zapisanego w nutach.",
-        "Tap or click a note to play from there.": "Dotknij lub kliknij nutę, aby odtwarzać od tego miejsca.",
         "Description of the piece": "Opis utworu",
         "Description of the excerpt": "Opis fragmentu",
         "Practice file": "Plik do ćwiczeń",
@@ -2628,10 +2627,25 @@
             "na %n listach nut",
             "na %n listach nut"
         ],
+        "_%n performance_::_%n performances_": [
+            "%n wykonanie",
+            "%n wykonania",
+            "%n wykonań"
+        ],
+        "_%n song list_::_%n song lists_": [
+            "%n lista nut",
+            "%n listy nut",
+            "%n list nut"
+        ],
         "_%n open review point_::_%n open review points_": [
             "%n otwarty punkt kontrolny",
             "%n otwarte punkty kontrolne",
             "%n otwartych punktów kontrolnych"
+        ],
+        "_Filters (%n set)_::_Filters (%n set)_": [
+            "Filtry (ustawione: %n)",
+            "Filtry (ustawione: %n)",
+            "Filtry (ustawione: %n)"
         ],
         "_Each hourly run reads up to %n file._::_Each hourly run reads up to %n files._": [
             "Każde cogodzinne uruchomienie odczytuje do %n pliku.",
@@ -2757,6 +2771,11 @@
             "%n egzemplarz nie występuje już w pliku CSV",
             "%n egzemplarze nie występują już w pliku CSV",
             "%n egzemplarzy nie występuje już w pliku CSV"
+        ],
+        "_Please enter whole numbers (0 or more) for %n copy: {shelfmarks}._::_Please enter whole numbers (0 or more) for %n copies: {shelfmarks}._": [
+            "Wpisz liczby całkowite (0 lub więcej) dla %n egzemplarza: {shelfmarks}.",
+            "Wpisz liczby całkowite (0 lub więcej) dla %n egzemplarzy: {shelfmarks}.",
+            "Wpisz liczby całkowite (0 lub więcej) dla %n egzemplarzy: {shelfmarks}."
         ],
         "_The count of %n copy has been recorded._::_The count of %n copies has been recorded._": [
             "Zapisano wynik liczenia %n egzemplarza.",
