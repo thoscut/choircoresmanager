@@ -548,7 +548,7 @@ commands are a convenience for self-hosted instances:
 | `occ cantoria:export [--extended] [--full]` | writes the catalog CSV, all fields, or the complete backup (JSON) to standard output |
 | `occ cantoria:file-sync <account>` | runs the file sync; refused (exit code 1) while another one is running |
 | `occ cantoria:restore <file> [<account>]` | restores a complete backup into an empty catalog |
-| `occ cantoria:modules list\|enable\|disable\|preset` | shows and switches the modules (section 12) |
+| `occ cantoria:modules list\|enable\|disable\|preset\|scenario` | shows and switches the modules (section 12) |
 | `occ cantoria:privacy-report <account or name>` | writes what the app stores about a person as JSON (access, Art. 15 GDPR; section 10) |
 | `occ cantoria:privacy-erase <account or name> [--execute]` | removes a person from the folder book and the audit log (erasure, Art. 17 GDPR); a dry run unless `--execute` is given |
 
@@ -815,6 +815,7 @@ occ cantoria:modules list            # table: switch, active, needs (--json for 
 occ cantoria:modules enable calendar # also switches on "concerts" if needed
 occ cantoria:modules disable statistics practice_audio
 occ cantoria:modules preset standard # simple | standard | complete
+occ cantoria:modules scenario singers # archive | concerts | singers | public
 ```
 
 Module keys are listed in `docs/api.md` ("Modules and the personal view").

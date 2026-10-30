@@ -602,7 +602,7 @@ Erleichterung für selbst betriebene Instanzen:
 | `occ cantoria:export [--extended] [--full]` | schreibt die CSV-Datei des Werkverzeichnisses, alle Felder oder die vollständige Sicherung (JSON) auf die Standardausgabe |
 | `occ cantoria:file-sync <account>` | startet den Dateiabgleich; abgelehnt (Exit-Code 1), solange ein anderer läuft |
 | `occ cantoria:restore <file> [<account>]` | stellt eine vollständige Sicherung in ein leeres Werkverzeichnis wieder her |
-| `occ cantoria:modules list\|enable\|disable\|preset` | zeigt und schaltet die Module (Abschnitt 12) |
+| `occ cantoria:modules list\|enable\|disable\|preset\|scenario` | zeigt und schaltet die Module (Abschnitt 12) |
 | `occ cantoria:privacy-report <Konto oder Name>` | schreibt, was die App über eine Person speichert, als JSON (Auskunft, Art. 15 DSGVO; Abschnitt 10) |
 | `occ cantoria:privacy-erase <Konto oder Name> [--execute]` | entfernt eine Person aus Mappenbuch und Protokoll (Löschung, Art. 17 DSGVO); ein Probelauf, solange `--execute` fehlt |
 
@@ -893,6 +893,7 @@ occ cantoria:modules list            # table: switch, active, needs (--json for 
 occ cantoria:modules enable calendar # also switches on "concerts" if needed
 occ cantoria:modules disable statistics practice_audio
 occ cantoria:modules preset standard # simple | standard | complete
+occ cantoria:modules scenario singers # archive | concerts | singers | public
 ```
 
 Die Schlüssel der Module stehen in `docs/api.md` („Modules and the personal
