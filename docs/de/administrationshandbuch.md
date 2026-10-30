@@ -16,7 +16,7 @@ danach übernimmt. Die tägliche Arbeit mit der App beschreibt das
 - [Einrichten in sechs Schritten](#einrichten-in-sechs-schritten) – der kurze Weg
 1. [Installation](#1-installation)
 2. [Rollen und Gruppen](#2-rollen-und-gruppen) – die Einstellungsseite, sie einer Gruppe übertragen
-3. [Archivordner](#3-archivordner) – ihn freigeben, die Zugriffsprüfung
+3. [Archivordner](#3-archivordner) – ihn teilen, die Zugriffsprüfung
 4. [Erster Import](#4-erster-import)
 5. [Sicherung und Wiederherstellung](#5-sicherung-und-wiederherstellung)
 6. [Benachrichtigungen](#6-benachrichtigungen)
@@ -48,7 +48,7 @@ Link an die Stelle, wo er erledigt wird.
    oder verlieren.
 3. **Zugriff auf den Archivordner** – teile den Ordner mit den Gruppen der
    Rollen (Lesen genügt) und wähle **Zugriff prüfen**, bis niemand mehr
-   aufgeführt ist ([Den Archivordner freigeben](#den-archivordner-freigeben)).
+   aufgeführt ist ([Den Archivordner teilen](#den-archivordner-teilen)).
 4. **Funktionen für euren Chor** – wähle unter **Was soll Cantoria für euren
    Chor tun?**, wofür ihr die App nutzt: das Archiv ordnen, Konzerte planen,
    Üben für den Chor oder öffentliche Seiten
@@ -169,7 +169,7 @@ sie ab.
 > Werkverzeichnisses schreibt sie nur, wenn sie auch eine Rolle hat. Nimm
 > dich dafür in eine Gruppe mit der Rolle auf, die du brauchst. Um Noten und
 > Scans zu öffnen, braucht ihr Konto wie alle anderen Zugriff auf den
-> Archivordner ([Abschnitt 3](#den-archivordner-freigeben)).
+> Archivordner ([Abschnitt 3](#den-archivordner-teilen)).
 
 **Repertoire** in denselben Einstellungen legt fest, wann ein Werk zum
 aktuellen Repertoire zählt (standardmäßig in den letzten 3 Jahren gesungen)
@@ -261,13 +261,13 @@ relativ zu den Dateien des Kontos). Ist ein Archivordner gesetzt, endet der
 Befehl mit der Zugriffsprüfung unten in Kurzform und nennt die Konten der
 Rollengruppen, die den Ordner nicht öffnen können.
 
-### Den Archivordner freigeben
+### Den Archivordner teilen
 
 Die App liest Dateien nur mit den Rechten der Person, die sie benutzt. Wer
 eine Rolle hat, aber mit dem eigenen Konto den Archivordner nicht öffnen
 kann, sieht das Werkverzeichnis, aber keine Noten, Scans oder Übe-Dateien;
-die Notenansicht sagt dann „Die Datei liegt in einem Ordner, der für dein
-Konto nicht freigegeben ist“. Die Administration ohne Rolle ist keine
+die Notenansicht sagt dann „Die Datei liegt in einem Ordner, der nicht mit
+deinem Konto geteilt ist“. Die Administration ohne Rolle ist keine
 Ausnahme: Um Noten zu öffnen, braucht auch sie Zugriff auf den Ordner.
 
 - Teile den Archivordner mit den **Gruppen der Rollen**, oder lege ihn in
@@ -1003,8 +1003,8 @@ Monaten ab und lassen sich widerrufen. [SECURITY.md](../../SECURITY.md)
 
 1. Lege eine Gruppe für die Chormitglieder an, zum Beispiel „Chor“, und nimm
    ihre Konten auf. Nimm keine Gruppe, die auch eine Archivrolle hat: Ein
-   Konto mit Archivrolle bekommt immer das Archiv, nicht „Für mich
-   freigegeben“.
+   Konto mit Archivrolle bekommt immer das Archiv, nicht „Mit mir
+   geteilt“.
 2. Einstellungen → **Rollen und Gruppen** → **Chormitglieder (nur geteilte
    Ausschnitte)**: Wähle die Gruppe und **Rollen speichern** (oder
    `occ cantoria:setup <account> --role member=Choir`).
@@ -1311,19 +1311,19 @@ Ursache und was zu tun ist.
 
 ### Die Noten können nicht angezeigt werden
 
-*„Die Datei liegt in einem Ordner, der für dein Konto nicht freigegeben
+*„Die Datei liegt in einem Ordner, der nicht mit deinem Konto geteilt
 ist“* (*The score cannot be shown – The file lies in a folder that is not
 shared with your account*). Dasselbe Konto bekommt auch einen Hinweis oben in
 der App und im Reiter „Dateien“.
 
 - **Ursache:** Die App liest Dateien nur mit den Rechten der Person, die sie
-  benutzt, und der Archivordner ist nicht für dieses Konto freigegeben. Das
+  benutzt, und der Archivordner ist nicht mit diesem Konto geteilt. Das
   passiert auch der Administration ohne Rolle.
 - **Zu tun:** Teile den Archivordner mit der Gruppe der Rolle der Person
   oder lege ihn in einen Team-Ordner; Lesen genügt. Danach darf
   **Verwaltungseinstellungen → Cantoria → Zugriff auf den Archivordner →
   Zugriff prüfen** niemanden mehr aufführen
-  ([Den Archivordner freigeben](#den-archivordner-freigeben)). Wer die
+  ([Den Archivordner teilen](#den-archivordner-teilen)). Wer die
   Einstellungen ändern darf, bekommt direkt in der Meldung eine Schaltfläche
   zur Prüfung.
 

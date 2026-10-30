@@ -36,7 +36,7 @@ export const ADMIN_GUIDE = {
 	roles: { en: '2-roles-and-groups', de: '2-rollen-und-gruppen' },
 	delegation: { en: 'giving-the-settings-to-a-group', de: 'die-einstellungen-einer-gruppe-übertragen' },
 	archive: { en: '3-archive-folder', de: '3-archivordner' },
-	sharing: { en: 'sharing-the-archive-folder', de: 'den-archivordner-freigeben' },
+	sharing: { en: 'sharing-the-archive-folder', de: 'den-archivordner-teilen' },
 	access: { en: 'checking-who-can-open-the-archive-folder', de: 'prüfen-wer-den-archivordner-öffnen-kann' },
 	import: { en: '4-first-import', de: '4-erster-import' },
 	backup: { en: '5-backups-and-restore', de: '5-sicherung-und-wiederherstellung' },
@@ -59,6 +59,7 @@ export const USER_GUIDE = {
 	termRelease: { en: 'release', de: 'freigabe' },
 	termValidVersion: { en: 'valid-version', de: 'geltende-fassung' },
 	termPreservationCopy: { en: 'internal-preservation-copy', de: 'interne-erhaltungskopie' },
+	termPortal: { en: 'singers-portal-choir-system-and-shared-with-me', de: 'chorportal-chorsystem-und-mit-mir-geteilt' },
 } as const satisfies Record<string, GuideSection>
 
 /**

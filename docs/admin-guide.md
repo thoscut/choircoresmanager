@@ -1202,7 +1202,7 @@ cause and what to do.
 
 *"The file lies in a folder that is not shared with your account"*
 (*Die Noten können nicht angezeigt werden – Die Datei liegt in einem Ordner,
-der für dein Konto nicht freigegeben ist*). The same account also gets a note
+der nicht mit deinem Konto geteilt ist*). The same account also gets a note
 at the top of the app and on the tab "Files".
 
 - **Cause:** the app reads files only with the permissions of the person who

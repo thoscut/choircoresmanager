@@ -73,6 +73,22 @@ the confirmed rights or from a valid license for that use. Internal
 preservation copies are never released (see
 [Releases: singers' portal and print station](#releases-singers-portal-and-print-station)).
 
+### Singers' portal, choir system and "Shared with me"
+
+Three terms are close to each other and mean different things:
+
+| Term | What it is | Who uses it |
+|---|---|---|
+| **Singers' portal** | in Cantoria, the release of a version for the choir and the list of what the choir may get | the music librarians |
+| **Choir system** | the choir's member app or website outside Cantoria; it can get the hand-over folder | the choir, outside Cantoria |
+| **Shared with me** | the page of the choir members in Cantoria with the pieces shared with them | the choir members |
+
+So the singers' portal says *what* the choir may get; the choir system or
+"Shared with me" is *where* it gets it (see
+[Alongside a choir system](alongside-a-choir-system.md)). **Available
+without a network** is a piece that a choir member or the conductor has kept
+in the browser of their own device, to open it without a network, too.
+
 ### Valid version
 
 The valid version is the version the conductor has chosen as the one the

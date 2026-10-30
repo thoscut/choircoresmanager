@@ -3372,6 +3372,7 @@ export const singular = {
 		'Nur bei bestätigter Gemeinfreiheit oder mit einer Lizenz für die Online-Veröffentlichung. Trage vorher unter Verwaltung → Design Impressum und Datenschutzerklärung ein.',
 		'Nur bei bestätigter Gemeinfreiheit oder mit einer Lizenz für die Online-Veröffentlichung. Tragen Sie vorher unter Verwaltung → Design Impressum und Datenschutzerklärung ein.',
 	],
+	'In Cantoria, the list of what the choir may get. Where the choir gets it is the choir system outside Cantoria, or the page "Shared with me" of the choir members.': 'In Cantoria die Liste dessen, was der Chor bekommen darf. Wo der Chor es bekommt, ist das Chorsystem außerhalb von Cantoria oder die Seite „Mit mir geteilt“ der Chormitglieder.',
 }
 
 export const plural = {

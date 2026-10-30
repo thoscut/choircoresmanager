@@ -1640,6 +1640,7 @@
         "The version the conductor has chosen for the choir, at most one per work. It says nothing about the rights.": "La versione che la direzione del coro ha scelto per il coro, al massimo una per opera. Non dice nulla sui diritti.",
         "A copy kept only for the archive, e.g. a paper copy of a crumbling original of your own. It is never shared, played or exported. A digital scan of a protected print is usually not covered by the law for such copies.": "Una copia conservata solo per l'archivio, ad es. una fotocopia di un proprio originale che si deteriora. Non viene mai condivisa, riprodotta o esportata. Una scansione digitale di un'edizione protetta di solito non è coperta dalla legge per queste copie.",
         "A revision is one state of the MusicXML of a version, numbered 1, 2, 3 …: after a correction or a better transcription. The current revision is the one exports and printouts name.": "Una revisione è uno stato del MusicXML di una versione, numerato 1, 2, 3 …: dopo una correzione o una trascrizione migliore. La revisione valida è quella indicata da esportazioni e stampe.",
+        "In Cantoria, the list of what the choir may get. Where the choir gets it is the choir system outside Cantoria, or the page \"Shared with me\" of the choir members.": "In Cantoria, l'elenco di ciò che il coro può ricevere. Dove il coro lo riceve è il sistema del coro fuori da Cantoria, oppure la pagina “Condivisi con me” dei componenti del coro.",
         "Check": "Controllo",
         "Report": "Segnalazione",
         "Applied": "Applicato",

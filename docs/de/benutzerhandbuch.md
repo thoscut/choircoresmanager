@@ -80,6 +80,22 @@ Sie folgt aus den bestätigten Rechten oder aus einer gültigen Lizenz für
 diese Nutzung. Interne Erhaltungskopien werden nie freigegeben (siehe
 [Freigaben: Chorportal und Druckstation](#freigaben-chorportal-und-druckstation)).
 
+### Chorportal, Chorsystem und „Mit mir geteilt“
+
+Drei Begriffe liegen nah beieinander und meinen Verschiedenes:
+
+| Begriff | Was es ist | Wer es nutzt |
+|---|---|---|
+| **Chorportal** | in Cantoria die Freigabe einer Fassung für den Chor und die Liste, was der Chor bekommen darf | die Archivverwaltung |
+| **Chorsystem** | die Mitglieder-App oder Website des Chors außerhalb von Cantoria; sie bekommt auf Wunsch den Übergabeordner | der Chor, außerhalb von Cantoria |
+| **Mit mir geteilt** | die Seite der Chormitglieder in Cantoria mit den Stücken, die mit ihnen geteilt sind | die Chormitglieder |
+
+Das Chorportal sagt also, *was* der Chor bekommen darf; das Chorsystem oder
+„Mit mir geteilt“ ist, *wo* er es bekommt (siehe
+[Neben einem Chorsystem](neben-einem-chorsystem.md)). **Ohne Netz
+verfügbar** heißt ein Stück, das ein Chormitglied oder die Chorleitung im
+Browser des eigenen Geräts gespeichert hat, um es auch ohne Netz zu öffnen.
+
 ### Geltende Fassung
 
 Die geltende Fassung ist die Fassung, die der Chor singt; die Chorleitung
@@ -1024,7 +1040,7 @@ seiner MusicXML.
   Archivverwaltung (Rolle „Bestand“) legt den geltenden Stand fest; bitte
   sie darum.
 - **Eine Notendatei ließ sich beim Dateiabgleich nicht lesen.** Der
-  Archivordner ist nicht für das Konto freigegeben, das den Dateiabgleich
+  Archivordner ist nicht mit dem Konto geteilt, das den Dateiabgleich
   startet, oder die Datei ist beschädigt. Der nächste Dateiabgleich versucht
   es erneut.
 
@@ -1965,9 +1981,9 @@ und das nur, solange Links für Chormitglieder eingeschaltet sind.
 
 ### „Die Noten können nicht angezeigt werden“
 
-*„Die Datei liegt in einem Ordner, der für dein Konto nicht freigegeben
+*„Die Datei liegt in einem Ordner, der nicht mit deinem Konto geteilt
 ist.“* Mit der Datei und deiner Rolle ist alles in Ordnung: Der Archivordner
-ist nicht für dich freigegeben. Siehe
+ist nicht mit dir geteilt. Siehe
 [Dateien, die sich nicht öffnen lassen](#dateien-die-sich-nicht-öffnen-lassen).
 
 ### Der Bereich „Cantoria“ fehlt in der Nextcloud-Suche

@@ -15,9 +15,9 @@ Schritte in Cantoria. Ausführlich beschreiben es das
 
 > [!TIP]
 > Die App öffnet Dateien nur mit den Rechten deines eigenen Kontos. Meldet
-> sie „Die Datei liegt in einem Ordner, der für dein Konto nicht freigegeben
-> ist“, bitte die Archivverwaltung, den Archivordner für dich oder deine
-> Gruppe freizugeben; Leserechte genügen.
+> sie „Die Datei liegt in einem Ordner, der nicht mit deinem Konto geteilt
+> ist“, bitte die Archivverwaltung, den Archivordner mit dir oder deiner
+> Gruppe zu teilen; Leserechte genügen.
 
 **Inhalt**
 
@@ -295,9 +295,9 @@ eingeschaltet ist.
 
 ### Datei lässt sich nicht öffnen
 
-Der Archivordner ist nicht für dein Konto freigegeben; mit der Datei und
+Der Archivordner ist nicht mit deinem Konto geteilt; mit der Datei und
 deiner Rolle ist alles in Ordnung. Bitte die Archivverwaltung, den
-Archivordner für dich oder deine Gruppe freizugeben; Leserechte genügen.
+Archivordner mit dir oder deiner Gruppe zu teilen; Leserechte genügen.
 Lade danach die Seite neu.
 
 ### Ein Exemplar fehlt im Werkverzeichnis

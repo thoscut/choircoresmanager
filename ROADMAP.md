@@ -43,7 +43,7 @@ und nutzerfreundlich** (Leitlinien 11, 13, 14 und 15).
    - Jede Rolle schreibt nur ihre Felder.
    - Wer keine Rolle hat, sieht die App nicht.
    - Chormitglieder sind eine eigene Rolle, aber keine Archivrolle: Sie sehen
-     nur „Für mich freigegeben“ mit den Ausschnitten, die für sie geteilt
+     nur „Mit mir geteilt“ mit den Stücken und Ausschnitten, die mit ihnen geteilt
      sind, und das nur, solange das Modul eingeschaltet ist.
 6. **Werkzeuge schlagen vor, Menschen übernehmen.** Massenänderungen aus
    Skripten landen in einem Eingang.

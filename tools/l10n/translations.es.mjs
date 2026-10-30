@@ -2521,6 +2521,7 @@ export const singular = {
 	"Also public pages": "Además, páginas públicas",
 	"Adds public links without login and a public page with the repertoire.": "Añade enlaces públicos sin inicio de sesión y una página pública con el repertorio.",
 	"Only for confirmed public domain or a license for online publication. Enter the imprint and the privacy policy under Administration → Theming first.": "Solo con dominio público confirmado o una licencia de publicación en línea. Indica antes el aviso legal y la política de privacidad en Administración → Personalización.",
+	"In Cantoria, the list of what the choir may get. Where the choir gets it is the choir system outside Cantoria, or the page \"Shared with me\" of the choir members.": "En Cantoria, la lista de lo que el coro puede recibir. Dónde lo recibe el coro es el sistema del coro fuera de Cantoria, o la página “Compartido conmigo” de las personas del coro.",
 }
 
 export const plural = {

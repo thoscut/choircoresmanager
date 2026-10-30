@@ -2521,6 +2521,7 @@ export const singular = {
 	"Also public pages": "Daarbij openbare pagina's",
 	"Adds public links without login and a public page with the repertoire.": "Voegt openbare links zonder aanmelden toe en een openbare pagina met het repertoire.",
 	"Only for confirmed public domain or a license for online publication. Enter the imprint and the privacy policy under Administration → Theming first.": "Alleen bij bevestigd publiek domein of een licentie voor online publicatie. Vul eerst bij Beheer → Thema het colofon en de privacyverklaring in.",
+	"In Cantoria, the list of what the choir may get. Where the choir gets it is the choir system outside Cantoria, or the page \"Shared with me\" of the choir members.": "In Cantoria de lijst van wat het koor mag krijgen. Waar het koor het krijgt, is het koorsysteem buiten Cantoria, of de pagina “Gedeeld met mij” van de koorleden.",
 }
 
 export const plural = {
