@@ -2470,7 +2470,7 @@ export const singular = {
 	'Measures %1$s to %2$s': 'Takte %1$s bis %2$s',
 	'Works in the public domain': 'Gemeinfreie Werke',
 	'Repertoire in the public domain': 'Gemeinfreies Repertoire',
-	'Works from our repertoire that are in the public domain. The links lead to the score libraries CPDL and IMSLP on the internet. Not every edition offered there is free in every country.': 'Werke aus unserem Repertoire, die gemeinfrei sind. Die Links führen zu den Notenbibliotheken CPDL und IMSLP im Internet. Nicht jede Ausgabe, die dort angeboten wird, ist in jedem Land frei.',
+	'Works from our repertoire that are in the public domain. The links lead to the score libraries CPDL and IMSLP on the internet. Not every edition offered there is free in every country.': 'Werke aus unserem Repertoire, die gemeinfrei sind. Die Links führen zu den Notenbibliotheken CPDL und IMSLP im Internet. Nicht jede Edition, die dort angeboten wird, ist in jedem Land frei.',
 	'No works are listed yet.': 'Noch sind keine Werke aufgeführt.',
 	'Scores on CPDL (external site)': 'Noten bei CPDL (externe Seite)',
 	'Scores on IMSLP (external site)': 'Noten bei IMSLP (externe Seite)',
